@@ -1,0 +1,714 @@
+.journaling-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2.75rem;
+}
+
+.journaling-page__breadcrumb {
+  align-self: flex-start;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #ec4899;
+}
+
+.journaling-page__accent-bar {
+  height: 0.55rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #fce7f3 0%, #f472b6 50%, #f9a8d4 100%);
+  box-shadow: 0 12px 40px rgba(236, 72, 153, 0.28);
+}
+
+.journaling-page__footer-bar {
+  height: 2.2rem;
+  border-radius: 28px;
+  background: linear-gradient(140deg, #ffe4f1 0%, #fbcfe8 40%, #f472b6 100%);
+  box-shadow: 0 28px 90px rgba(236, 72, 153, 0.22);
+}
+
+.journaling-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: 2.5rem;
+  padding: 2.7rem;
+  border-radius: 32px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(252, 231, 243, 0.92) 45%, rgba(224, 231, 255, 0.88) 100%);
+  box-shadow: 0 38px 100px rgba(69, 62, 65, 0.22);
+  position: relative;
+  overflow: hidden;
+}
+
+.journaling-hero::after {
+  content: '';
+  position: absolute;
+  inset: -30% 20% 10% -25%;
+  background: radial-gradient(circle at center, rgba(244, 114, 182, 0.32) 0%, rgba(148, 163, 184, 0) 65%);
+  transform: rotate(12deg);
+  pointer-events: none;
+}
+
+.journaling-hero__text {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  color: rgba(15, 23, 42, 0.82);
+}
+
+.journaling-hero__tag {
+  align-self: flex-start;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #ec4899;
+  background: rgba(236, 72, 153, 0.15);
+}
+
+.journaling-hero h1 {
+  margin: 0;
+  font-size: clamp(2.1rem, 3.2vw, 2.8rem);
+  color: #1e1b4b;
+  letter-spacing: -0.01em;
+}
+
+.journaling-hero p {
+  margin: 0;
+  max-width: 32rem;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: rgba(30, 27, 75, 0.75);
+}
+
+.journaling-hero__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.journaling-hero__stats article {
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 20px;
+  padding: 1rem 1.2rem;
+  box-shadow: 0 24px 55px rgba(236, 72, 153, 0.16);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.journaling-hero__stats span {
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(236, 72, 153, 0.8);
+}
+
+.journaling-hero__stats strong {
+  font-size: 1.4rem;
+  color: #1e1b4b;
+  font-weight: 700;
+}
+
+.journaling-hero__stats small {
+  font-size: 0.85rem;
+  color: rgba(30, 27, 75, 0.65);
+}
+
+.journaling-hero__date-card {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1rem 1.25rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 20px 50px rgba(59, 130, 246, 0.18);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  color: rgba(30, 27, 75, 0.82);
+  min-width: 200px;
+}
+
+.journaling-hero__date-card time {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #3730a3;
+}
+
+.journaling-hero__visual {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.journaling-hero__visual-main {
+  border-radius: 26px;
+  overflow: hidden;
+  box-shadow: 0 28px 70px rgba(30, 27, 75, 0.2);
+}
+
+.journaling-hero__visual-main img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.journaling-hero__gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.journaling-hero__photo {
+  border-radius: 20px;
+  overflow: hidden;
+  height: 120px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 20px 50px rgba(30, 27, 75, 0.18);
+}
+
+.journaling-hero__photo--2 {
+  transform: translateY(12px);
+}
+
+.journaling-hero__photo--3 {
+  grid-column: span 2;
+  height: 140px;
+}
+
+.journaling-hero__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.journaling-prompts {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.journaling-prompts__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 1.75rem 2rem;
+  border-radius: 24px;
+  box-shadow: 0 22px 60px rgba(79, 70, 229, 0.12);
+}
+
+.journaling-prompts__header h2 {
+  margin: 0;
+  font-size: clamp(1.6rem, 2.8vw, 2rem);
+  color: #1e1b4b;
+}
+
+.journaling-prompts__header p {
+  margin: 0.4rem 0 0;
+  color: rgba(30, 27, 75, 0.68);
+  max-width: 540px;
+}
+
+.journaling-prompts__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.75rem;
+}
+
+.journaling-prompts__card {
+  padding: 1.75rem 1.9rem;
+  border-radius: 26px;
+  box-shadow: 0 28px 60px rgba(30, 64, 175, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+}
+
+.journaling-prompts__card-header {
+  display: flex;
+  gap: 1.1rem;
+  align-items: center;
+  color: rgba(30, 27, 75, 0.85);
+}
+
+.journaling-prompts__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 18px;
+  font-size: 1.6rem;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 14px 40px rgba(30, 27, 75, 0.12);
+}
+
+.journaling-prompts__card-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #312e81;
+}
+
+.journaling-prompts__card-header p {
+  margin: 0.35rem 0 0;
+  font-size: 0.95rem;
+  color: rgba(30, 27, 75, 0.7);
+}
+
+.journaling-prompts__helper {
+  margin: 0;
+  padding: 0.6rem 0.9rem;
+  border-radius: 14px;
+  font-size: 0.9rem;
+  background: rgba(255, 255, 255, 0.55);
+  color: rgba(30, 27, 75, 0.7);
+  box-shadow: inset 0 0 0 1px rgba(49, 46, 129, 0.08);
+}
+
+.journaling-prompts__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.journaling-prompts__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  color: rgba(30, 27, 75, 0.7);
+  font-size: 0.9rem;
+}
+
+.journaling-prompts__field textarea {
+  border-radius: 18px;
+  border: 1px solid rgba(30, 27, 75, 0.12);
+  background: rgba(255, 255, 255, 0.92);
+  padding: 0.95rem 1rem;
+  font-size: 0.95rem;
+  resize: vertical;
+  min-height: 110px;
+  box-shadow: 0 18px 44px rgba(30, 27, 75, 0.12);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.journaling-prompts__field textarea:focus {
+  outline: none;
+  border-color: rgba(99, 102, 241, 0.6);
+  box-shadow: 0 22px 50px rgba(99, 102, 241, 0.22);
+}
+
+.journaling-prompts__field textarea[rows='2'] {
+  min-height: 80px;
+}
+
+.journaling-prompts__choices {
+  margin: 0;
+  border: 1px solid rgba(49, 46, 129, 0.12);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 1.1rem 1.25rem 1.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.journaling-prompts__choices legend {
+  font-weight: 600;
+  color: #312e81;
+  font-size: 0.95rem;
+  padding: 0 0.25rem;
+}
+
+.journaling-prompts__choices-count {
+  font-size: 0.8rem;
+  color: rgba(30, 27, 75, 0.55);
+}
+
+.journaling-prompts__options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.journaling-prompts__option {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(49, 46, 129, 0.1);
+  font-size: 0.9rem;
+  color: rgba(30, 27, 75, 0.75);
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.journaling-prompts__option:hover {
+  border-color: rgba(99, 102, 241, 0.45);
+  box-shadow: 0 14px 36px rgba(99, 102, 241, 0.15);
+}
+
+.journaling-prompts__option.is-selected {
+  border-color: rgba(99, 102, 241, 0.7);
+  background: rgba(99, 102, 241, 0.14);
+  box-shadow: 0 18px 44px rgba(99, 102, 241, 0.2);
+}
+
+.journaling-prompts__option input {
+  margin-top: 0.25rem;
+}
+
+.journaling-prompts__option span {
+  flex: 1;
+}
+
+.journaling-editor,
+.journaling-history {
+  background: rgba(255, 255, 255, 0.92);
+  padding: 2rem;
+  border-radius: 24px;
+  box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.journaling-editor__form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.journaling-editor__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  color: rgba(15, 23, 42, 0.68);
+  font-size: 0.9rem;
+}
+
+.journaling-editor__field--full {
+  grid-column: 1 / -1;
+}
+
+.journaling-editor__field input,
+.journaling-editor__field select,
+.journaling-editor__field textarea {
+  border-radius: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  background: #fff;
+  box-shadow: 0 14px 36px rgba(15, 23, 42, 0.06);
+}
+
+.journaling-editor__feelings {
+  border-radius: 18px;
+  border: 1px solid rgba(79, 70, 229, 0.12);
+  background: rgba(248, 250, 252, 0.75);
+  padding: 1rem 1.25rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.journaling-editor__feelings legend {
+  font-weight: 600;
+  color: #1e1b4b;
+  font-size: 0.95rem;
+}
+
+.journaling-editor__feelings-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.85rem;
+}
+
+.journaling-editor__feeling-option {
+  position: relative;
+  display: block;
+  cursor: pointer;
+}
+
+.journaling-editor__feeling-option input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.journaling-editor__feeling-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: #fff;
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.journaling-editor__feeling-option:hover .journaling-editor__feeling-content {
+  border-color: rgba(99, 102, 241, 0.45);
+}
+
+.journaling-editor__feeling-option input:checked + .journaling-editor__feeling-content {
+  border-color: rgba(99, 102, 241, 0.75);
+  background: rgba(99, 102, 241, 0.12);
+  box-shadow: 0 16px 40px rgba(99, 102, 241, 0.18);
+}
+
+.journaling-editor__feeling-emoji {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.journaling-editor__feeling-label {
+  font-weight: 600;
+  color: #1e1b4b;
+}
+
+.journaling-editor__submit {
+  grid-column: 1 / -1;
+  justify-self: flex-end;
+  padding: 0.9rem 1.6rem;
+  border-radius: 14px;
+  background-color: #f472b6;
+  border: none;
+  color: #f8fafc;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 18px 40px rgba(244, 114, 182, 0.28);
+}
+
+.journaling-history__list {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.journaling-history__group {
+  border-radius: 20px;
+  padding: 1.5rem;
+  background: rgba(248, 250, 252, 0.85);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.journaling-history__group header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.9rem;
+  color: rgba(15, 23, 42, 0.6);
+}
+
+.journaling-history__group ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.journaling-history__group li {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  box-shadow: 0 12px 25px rgba(15, 23, 42, 0.08);
+}
+
+.journaling-history__feeling {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.journaling-history__feeling-emoji {
+  font-size: 1.7rem;
+}
+
+.journaling-history__feeling-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.journaling-history__feeling-label {
+  font-weight: 600;
+  color: #1e1b4b;
+}
+
+.journaling-history__mood {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: rgba(99, 102, 241, 0.9);
+  letter-spacing: 0.08em;
+}
+
+.journaling-history__why {
+  margin: 0;
+  color: rgba(15, 23, 42, 0.7);
+  font-size: 0.95rem;
+}
+
+.journaling-history__why strong {
+  color: #1e1b4b;
+  font-weight: 600;
+  margin-right: 0.35rem;
+}
+
+.journaling-history__prompts {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 0.35rem;
+}
+
+.journaling-history__prompt-section {
+  background: rgba(99, 102, 241, 0.08);
+  border-radius: 18px;
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.12);
+}
+
+.journaling-history__prompt-section h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #312e81;
+}
+
+.journaling-history__prompt-section > ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  color: rgba(30, 27, 75, 0.75);
+}
+
+.journaling-history__prompt-section > ul > li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.journaling-history__prompt-section > ul > li strong {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(30, 27, 75, 0.72);
+}
+
+.journaling-history__prompt-section ul ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.3rem;
+  list-style: disc;
+}
+
+.journaling-history__freewrite {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  background: rgba(236, 72, 153, 0.06);
+  border-radius: 16px;
+  padding: 0.9rem 1rem;
+  color: rgba(30, 27, 75, 0.8);
+}
+
+.journaling-history__freewrite h4 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #be185d;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.journaling-history__freewrite p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+@media (max-width: 1024px) {
+  .journaling-hero {
+    grid-template-columns: 1fr;
+    padding: 2.2rem;
+    text-align: center;
+  }
+
+  .journaling-hero__text {
+    align-items: center;
+  }
+
+  .journaling-hero__tag {
+    align-self: center;
+  }
+
+  .journaling-hero__stats {
+    justify-items: center;
+  }
+
+  .journaling-hero__date-card {
+    align-items: center;
+  }
+}
+
+@media (max-width: 720px) {
+  .journaling-hero {
+    gap: 1.8rem;
+    padding: 2rem 1.5rem;
+  }
+
+  .journaling-hero__visual {
+    order: -1;
+  }
+
+  .journaling-hero__visual-main {
+    height: 240px;
+  }
+
+  .journaling-hero__gallery {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+
+  .journaling-hero__photo {
+    height: 140px;
+  }
+
+  .journaling-hero__photo--3 {
+    grid-column: span 1;
+  }
+
+  .journaling-prompts__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+  }
+
+  .journaling-prompts__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .journaling-editor__form {
+    grid-template-columns: 1fr;
+  }
+}

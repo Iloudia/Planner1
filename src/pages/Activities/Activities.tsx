@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'  
+import { useEffect, useMemo, useState } from 'react'
 import type { ChangeEvent, FormEvent } from 'react'
 import usePersistentState from '../../hooks/usePersistentState'
 import activitiesMood01 from '../../assets/planner-05.jpg'
