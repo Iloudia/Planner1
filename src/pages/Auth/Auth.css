@@ -1,0 +1,128 @@
+﻿.auth-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.auth-hero {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: clamp(1.6rem, 4vw, 2.4rem);
+  align-items: center;
+}
+
+.auth-visual {
+  display: flex;
+  justify-content: center;
+}
+
+.auth-visual img {
+  width: min(520px, 100%);
+  border-radius: 28px;
+  box-shadow: 0 32px 90px rgba(15, 23, 42, 0.18);
+}
+
+.auth-panel {
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  border-radius: 28px;
+  padding: clamp(1.8rem, 4vw, 2.4rem);
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.auth-title {
+  margin: 0;
+  font-size: clamp(1.8rem, 1vw + 1.6rem, 2.3rem);
+}
+
+.auth-lead {
+  margin: 0;
+  color: rgba(15, 23, 42, 0.7);
+  line-height: 1.6;
+}
+
+.auth-status {
+  margin: 0;
+  background: rgba(244, 114, 182, 0.12);
+  padding: 0.6rem 0.9rem;
+  border-radius: 12px;
+  color: #9d174d;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.auth-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.auth-form input {
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+}
+
+.auth-form input:focus {
+  outline: none;
+  border-color: rgba(99, 102, 241, 0.65);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.auth-error {
+  margin: 0;
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.auth-remember {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: rgba(15, 23, 42, 0.7);
+}
+
+.auth-forgot {
+  border: none;
+  background: transparent;
+  color: #312e81;
+  font-weight: 700;
+  cursor: pointer;
+  align-self: flex-start;
+  padding: 0;
+}
+
+.auth-submit {
+  border: none;
+  border-radius: 12px;
+  padding: 0.85rem 1.4rem;
+  background: linear-gradient(135deg, #818cf8 0%, #f472b6 100%);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 16px 38px rgba(129, 140, 248, 0.25);
+}
+
+.auth-switch {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  color: rgba(15, 23, 42, 0.7);
+}
+
+.auth-switch a {
+  font-weight: 700;
+  color: #312e81;
+}

@@ -1,6 +1,6 @@
-# Planner Home (React + TSX)
+﻿# Planner Home (React + TSX)
 
-Page d’accueil du planner avec 12 cartes, un carrousel de tâches à gauche, et à droite un panneau profil + progression (année/mois/journée) + bloc-notes persisté en localStorage. L’UI tourne en React/TSX via Vite.
+Page d'accueil du planner avec 12 cartes, un carrousel de tâches à gauche, et à droite un panneau profil + progression (année/mois/journée) + bloc-notes persisté en localStorage. L'UI tourne en React/TSX via Vite.
 
 ## Prérequis
 - Node.js 18+ (et npm).
@@ -14,7 +14,7 @@ npm install
 ```bash
 npm run dev
 ```
-Vite ouvre l’app (par défaut sur http://localhost:5173). Ajoute `-- --host` si tu veux tester depuis un mobile sur le réseau local.
+Vite ouvre l'app (par défaut sur http://localhost:5173). Ajoute `-- --host` si tu veux tester depuis un mobile sur le réseau local.
 
 ## Build et prévisualisation
 ```bash

@@ -1,6 +1,15 @@
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function Header() {
+  const { isAuthenticated, userEmail, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   return (
     <header className="site-header">
       <div className="site-header__inner">
@@ -10,11 +19,11 @@ function Header() {
 
         <nav className="nav-links">
           <NavLink
-            to="/"
+            to="/home"
             className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
             end
           >
-            Home
+            Planner
           </NavLink>
         </nav>
 
@@ -29,7 +38,22 @@ function Header() {
             </button>
           </div>
 
-          <button className="profile-circle" aria-label="Ouvrir le profil">
+          <div className="header-auth">
+            {isAuthenticated ? (
+              <>
+                <span className="header-user">{userEmail}</span>
+                <button className="auth-button auth-button--logout" onClick={handleLogout}>
+                  Déconnexion
+                </button>
+              </>
+            ) : (
+              <button className="auth-button auth-button--login" onClick={() => navigate("/login")}>
+                Connexion
+              </button>
+            )}
+          </div>
+
+          <button className="profile-circle" aria-label="Ouvrir le profil" onClick={() => navigate("/home")}>
             <span className="profile-initials">P</span>
           </button>
         </div>

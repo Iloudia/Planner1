@@ -236,6 +236,35 @@ body {
   cursor: pointer;
 }
 
+.header-auth {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.header-user {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.auth-button {
+  border: none;
+  border-radius: 12px;
+  padding: 0.45rem 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.auth-button--login {
+  background: rgba(129, 140, 248, 0.15);
+  color: #312e81;
+}
+
+.auth-button--logout {
+  background: rgba(244, 114, 182, 0.18);
+  color: #9d174d;
+}
+
 .profile-circle {
   width: 44px;
   height: 44px;

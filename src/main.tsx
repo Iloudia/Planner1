@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { TasksProvider } from "./context/TasksContext";
+import { AuthProvider } from "./context/AuthContext";
 import App from "./App";
 import "./styles.css";
 
@@ -14,9 +15,11 @@ if (!rootElement) {
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <BrowserRouter>
-      <TasksProvider>
-        <App />
-      </TasksProvider>
+      <AuthProvider>
+        <TasksProvider>
+          <App />
+        </TasksProvider>
+      </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>
 );
