@@ -42,7 +42,8 @@
   font-weight: 600;
 }
 
-.wishlist-hero__content h1 {
+.wishlist-hero__content h1,
+.wishlist-hero__content h2 {
   margin: 0;
   font-size: clamp(2rem, 3.4vw, 2.8rem);
   line-height: 1.1;

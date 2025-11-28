@@ -14,6 +14,7 @@ import ProjetsPage from "./pages/Projets/Projets";
 import CulturePage from "./pages/Culture/Culture";
 import AlimentationPage from "./pages/Alimentation/Alimentation";
 import VoyagePage from "./pages/Voyage/Voyage";
+import SportWorkoutPage from "./pages/Sport/Workout";
 
 function NotFound() {
   return (
@@ -40,6 +41,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/sport" element={<SportPage />} />
+          <Route path="/sport/workout/*" element={<SportWorkoutPage />} />
           <Route path="/activites" element={<ActivitiesPage />} />
           <Route path="/journaling" element={<JournalingPage />} />
           <Route path="/self-love" element={<SelfLovePage />} />

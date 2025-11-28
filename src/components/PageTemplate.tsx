@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import PageHeading from "./PageHeading";
 
 type PageSection = {
   title: string;
@@ -32,9 +33,11 @@ function PageTemplate({
 }: PageTemplateProps) {
   return (
     <div className={`content-page ${className}`}>
+      <PageHeading eyebrow={kicker} title={title} />
+
       <div className="page-hero">
         <div className="hero-chip">{kicker}</div>
-        <h1>{title}</h1>
+        <h2>{title}</h2>
         <p className="muted">{summary}</p>
         <div className="hero-actions">
           <Link to={primaryCta.to} className="pill">

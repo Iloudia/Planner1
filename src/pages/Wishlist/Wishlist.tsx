@@ -1,4 +1,4 @@
-﻿import type { FormEvent, KeyboardEvent as ReactKeyboardEvent, MouseEvent } from "react"
+import type { FormEvent, KeyboardEvent as ReactKeyboardEvent, MouseEvent } from "react"
 import { useEffect, useMemo, useRef, useState } from "react"
 import type { ChangeEvent } from "react"
 import usePersistentState from "../../hooks/usePersistentState"
@@ -12,6 +12,7 @@ import wishlistRoom from "../../assets/planner-06.jpg"
 import wishlistTravel from "../../assets/planner-09.jpg"
 import wishlistJewelry from "../../assets/planner-04.jpg"
 import wishlistBag from "../../assets/planner-08.jpg"
+import PageHeading from "../../components/PageHeading"
 import "./Wishlist.css"
 
 type WishlistCategoryId = string
@@ -797,10 +798,11 @@ const WishlistPage = () => {
   return (
     <div className="wishlist-page aesthetic-page" onClick={() => setOpenMenuFor(null)}>
       <div className="wishlist-page__breadcrumb">wishlist</div>
+      <PageHeading eyebrow="Envies" title="Wishlist ideal" />
       <header className="wishlist-hero dashboard-panel">
         <div className="wishlist-hero__content">
           <span className="wishlist-hero__eyebrow">envies a collectionner</span>
-          <h1>Imagine ta wishlist ideale, categorie par categorie.</h1>
+          <h2>Imagine ta wishlist ideale, categorie par categorie.</h2>
           <p>
             Organise tes inspirations shopping, deco ou voyages en un seul espace pastel. Chaque categorie devient une
             mini moodboard pret a etre partage.
@@ -877,7 +879,7 @@ const WishlistPage = () => {
                 </span>
                 <div className="wishlist-card__title">
                   <h2>{displayTitle}</h2>
-                  {isFavorite ? <span aria-label="Categorie favorite" className="wishlist-card__favorite">★</span> : null}
+                  {isFavorite ? <span aria-label="Categorie favorite" className="wishlist-card__favorite">?</span> : null}
                 </div>
                 <p>{category.blurb}</p>
               </div>
@@ -890,7 +892,7 @@ const WishlistPage = () => {
         <div className="wishlist-modal__backdrop" role="dialog" aria-modal="true">
           <div className="wishlist-modal">
             <button type="button" className="wishlist-modal__close" aria-label="Fermer" onClick={closeModal}>
-              ×
+              �
             </button>
             <div className="wishlist-modal__cover">
               <img src={selectedCategoryCard.cover} alt={`Photo ${selectedCategoryState.title}`} />

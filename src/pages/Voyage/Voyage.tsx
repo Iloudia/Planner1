@@ -1,45 +1,159 @@
-import PageTemplate from "../../components/PageTemplate";
-import "./Voyage.css";
+import { useEffect } from "react"
+import travelCity from "../../assets/planner-09.jpg"
+import travelBeach from "../../assets/planner-12.jpg"
+import travelNature from "../../assets/planner-06.jpg"
+import PageHeading from "../../components/PageHeading"
+import "./Voyage.css"
 
-const sections = [
-  {
-    title: "Rêver et choisir",
-    items: [
-      "Destinations shortlist avec saisons idéales",
-      "Mood du trip : city-break, nature, slow",
-      "Durée et budget cible"
-    ]
-  },
-  {
-    title: "Planifier doucement",
-    items: [
-      "Itinéraire par journée (souple)",
-      "Transport, logement, to-dos admins",
-      "Check-list sac et documents"
-    ]
-  },
-  {
-    title: "Souvenirs & partages",
-    items: [
-      "Highlights du séjour et lieux préférés",
-      "Photos / liens utiles pour plus tard",
-      "Idées pour la prochaine escapade"
-    ]
-  }
-];
+type TripStatus = "booked" | "ideation" | "packing"
 
-function VoyagePage() {
-  return (
-    <PageTemplate
-      className="voyage-page"
-      kicker="Voyage rêvé"
-      title="Préparer sans stress, profiter sur place"
-      summary="Destinations, itinéraires doux et check-lists prêtes. Tu poses tes idées, le planner garde le fil."
-      sections={sections}
-      primaryCta={{ label: "Tracer l'itinéraire", to: "/calendrier" }}
-      secondaryCta={{ label: "Budget voyage", to: "/finances", variant: "ghost" }}
-    />
-  );
+type TripCard = {
+  id: string
+  title: string
+  location: string
+  dates: string
+  focus: string
+  budget: string
+  status: TripStatus
+  cover: string
 }
 
-export default VoyagePage;
+const TRIP_STATUS_LABELS: Record<TripStatus, string> = {
+  booked: "Reserve",
+  ideation: "A planifier",
+  packing: "Check-in",
+}
+
+const TRIPS: TripCard[] = [
+  {
+    id: "lisbon-weekend",
+    title: "City break Lisbonne",
+    location: "Portugal",
+    dates: "20 - 23 mars",
+    focus: "Cafes, librairies, balade a Belem",
+    budget: "450 EUR",
+    status: "booked",
+    cover: travelCity,
+  },
+  {
+    id: "crete-ete",
+    title: "Crete en ete",
+    location: "Chania",
+    dates: "5 - 12 juillet",
+    focus: "Plages, sunset boat, marche local",
+    budget: "980 EUR",
+    status: "packing",
+    cover: travelBeach,
+  },
+  {
+    id: "alpines",
+    title: "Cabane en montagne",
+    location: "Haute-Savoie",
+    dates: "11 - 13 octobre",
+    focus: "Randos faciles + spa nordique",
+    budget: "320 EUR",
+    status: "ideation",
+    cover: travelNature,
+  },
+]
+
+const packingList = [
+  "Passeport + billets",
+  "Trousse sante / assurances",
+  "Chargeurs + adaptateur",
+  "Tenues jour et soir",
+  "Maillot, lunettes, creme SPF",
+  "Kindle + playlist offline",
+  "Mini kit photo / video",
+]
+
+const quickReminders = [
+  "Verifier les check-in en ligne la veille",
+  "Screenshot des confirmations (airbnb, vols, transferts)",
+  "Preparer 2 resto coup de coeur sur place",
+  "Partager l'itineraire avec le +1",
+]
+
+const VoyagePage = () => {
+  useEffect(() => {
+    document.body.classList.add("planner-page--white")
+    return () => {
+      document.body.classList.remove("planner-page--white")
+    }
+  }, [])
+
+  return (
+    <div className="content-page voyage-page">
+      <PageHeading eyebrow="Voyage" title="Planifier les escapades" />
+      <div className="page-hero">
+        <div className="hero-chip">Voyage</div>
+        <h2>Planifier les prochaines escapades</h2>
+        <p className="muted">Dossiers voyages, budget et checklist cabine regroupes au meme endroit.</p>
+        <div className="hero-actions">
+          <button type="button" className="pill">
+            Ajouter une idee
+          </button>
+          <button type="button" className="pill pill-ghost">
+            Exporter en PDF
+          </button>
+        </div>
+      </div>
+
+      <div className="voyage-layout">
+        <section className="voyage-trips">
+          <header className="voyage-section-header">
+            <div>
+              <p className="eyebrow">Prochains departs</p>
+              <h2>Itineraires</h2>
+            </div>
+            <span className="voyage-tag">{TRIPS.length} voyages</span>
+          </header>
+
+          <div className="voyage-grid">
+            {TRIPS.map((trip) => (
+              <article key={trip.id} className="voyage-card">
+                <div className="voyage-card__media">
+                  <img src={trip.cover} alt={trip.title} />
+                  <span className={`voyage-status voyage-status--${trip.status}`}>
+                    {TRIP_STATUS_LABELS[trip.status]}
+                  </span>
+                </div>
+                <div className="voyage-card__body">
+                  <div className="voyage-card__meta">
+                    <span className="voyage-location">{trip.location}</span>
+                    <span className="voyage-budget">{trip.budget}</span>
+                  </div>
+                  <h3>{trip.title}</h3>
+                  <p className="voyage-focus">{trip.focus}</p>
+                  <div className="voyage-dates">{trip.dates}</div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <aside className="voyage-sidebar">
+          <div className="voyage-panel">
+            <p className="eyebrow">Checklist bagage</p>
+            <ul className="voyage-list">
+              {packingList.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="voyage-panel">
+            <p className="eyebrow">Notes rapides</p>
+            <ul className="voyage-list">
+              {quickReminders.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </div>
+  )
+}
+
+export default VoyagePage

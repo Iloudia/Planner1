@@ -3,6 +3,7 @@ import type { ChangeEvent, FormEvent } from 'react'
 import usePersistentState from '../../hooks/usePersistentState'
 import activitiesMood01 from '../../assets/planner-05.jpg'
 import activitiesMood02 from '../../assets/planner-08.jpg'
+import PageHeading from '../../components/PageHeading'
 import './ActivitiesPage.css'
 
 type ActivityStatus = 'a-faire' | 'planifie' | 'fait'
@@ -178,11 +179,12 @@ const ActivitiesPage = () => {
     <div className="activities-page aesthetic-page">
       <div className="activities-page__breadcrumb">ActivitÃ©s</div>
       <div className="activities-page__accent-bar" aria-hidden="true" />
+      <PageHeading eyebrow="Inspiration" title="Activites et sorties" />
 
       <section className="activities-hero dashboard-panel">
         <div className="activities-hero__content">
           <span className="activities-hero__eyebrow">Moments Ã  crÃ©er</span>
-          <h1>Compose ta to-do plaisir et crÃ©ative.</h1>
+          <h2>Compose ta to-do plaisir et crÃ©ative.</h2>
           <p>Un espace pour rassembler les idÃ©es dâ€™activitÃ©s qui te font du bien et nourrissent ton Ã©nergie.</p>
           <div className="activities-hero__stats">
             {activitiesStats.map((stat) => (

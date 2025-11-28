@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import type { ChangeEvent, FormEvent } from 'react'
 import usePersistentState from '../../hooks/usePersistentState'
 import journalingIllustration from '../../assets/planner-09.jpg'
+import PageHeading from '../../components/PageHeading'
 import './Journaling.css'
 
 type JournalFeeling = 'happy' | 'pout' | 'angry' | 'tired'
@@ -413,10 +414,11 @@ const JournalingPage = () => {
     <div className="journaling-page aesthetic-page">
       <div className="journaling-page__breadcrumb">journal</div>
       <div className="journaling-page__accent-bar" aria-hidden="true" />
+      <PageHeading eyebrow="Reflet" title="Mon journal pastel" />
       <section className="journaling-hero">
         <div className="journaling-hero__text">
           <span className="journaling-hero__tag">Rituel du jour</span>
-          <h1>Mon journal pastel</h1>
+          <h2>Mon journal pastel</h2>
           <p>Prends un instant pour respirer, ecrire et manifester ta vie de reve.</p>
           <div className="journaling-hero__stats">
             {journalingStats.map((stat) => (

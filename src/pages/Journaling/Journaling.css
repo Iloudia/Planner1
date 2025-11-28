@@ -68,7 +68,8 @@
   background: rgba(236, 72, 153, 0.15);
 }
 
-.journaling-hero h1 {
+.journaling-hero h1,
+.journaling-hero h2 {
   margin: 0;
   font-size: clamp(2.1rem, 3.2vw, 2.8rem);
   color: #1e1b4b;

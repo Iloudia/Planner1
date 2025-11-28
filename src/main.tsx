@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
+import { TasksProvider } from "./context/TasksContext";
 import App from "./App";
 import "./styles.css";
 
@@ -13,7 +14,9 @@ if (!rootElement) {
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
+      <TasksProvider>
+        <App />
+      </TasksProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

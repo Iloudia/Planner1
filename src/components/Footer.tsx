@@ -30,9 +30,6 @@ const Footer = () => {
     <footer className="site-footer">
       <div className="site-footer__inner">
         <div className="site-footer__brand">
-          <div className="site-footer__brand-icon">
-            <InstagramIcon />
-          </div>
           <h2 className="site-footer__title">Cultive ton equilibre comme dans ton Planner.</h2>
         </div>
 
