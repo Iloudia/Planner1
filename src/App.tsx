@@ -13,15 +13,21 @@ import WishlistPage from "./pages/Wishlist/Wishlist"
 import CalendrierPage from "./pages/Calendrier/Calendrier"
 import FinancesPage from "./pages/Finances/Finances"
 import RoutinePage from "./pages/Routine/Routine"
-import ProjetsPage from "./pages/Projets/Projets"
+import GoalsPage from "./pages/Projets/Projets"
 import CulturePage from "./pages/Culture/Culture"
-import AlimentationPage from "./pages/Alimentation/Alimentation"
+import DietPage from "./pages/Alimentation/Alimentation"
 import VoyagePage from "./pages/Voyage/Voyage"
 import SportWorkoutPage from "./pages/Sport/Workout"
+import FAQPage from "./pages/FAQ/FaqPage"
+import ConfidentialitePage from "./pages/Legal/ConfidentialitePage"
+import ContactPage from "./pages/Legal/ContactPage"
+import GestionCookiesPage from "./pages/Legal/GestionCookiesPage"
+import MentionsLegalesPage from "./pages/Legal/MentionsLegalesPage"
 
 function NotFound() {
   return (
     <div className="content-page notfound-page">
+      <div className="page-accent-bar" aria-hidden="true" />
       <div className="page-hero">
         <div className="hero-chip">Oups</div>
         <h1>Page introuvable</h1>
@@ -32,6 +38,7 @@ function NotFound() {
           </Link>
         </div>
       </div>
+      <div className="page-footer-bar" aria-hidden="true" />
     </div>
   )
 }
@@ -55,13 +62,18 @@ function App() {
             <Route path="/self-love" element={<SelfLovePage />} />
             <Route path="/wishlist" element={<WishlistPage />} />
             <Route path="/calendrier" element={<CalendrierPage />} />
-            <Route path="/finances" element={<FinancesPage />} />
-            <Route path="/routine" element={<RoutinePage />} />
-            <Route path="/projets" element={<ProjetsPage />} />
-            <Route path="/culture" element={<CulturePage />} />
-            <Route path="/alimentation" element={<AlimentationPage />} />
-            <Route path="/voyage" element={<VoyagePage />} />
-          </Route>
+          <Route path="/finances" element={<FinancesPage />} />
+          <Route path="/routine" element={<RoutinePage />} />
+          <Route path="/goals" element={<GoalsPage />} />
+          <Route path="/culture" element={<CulturePage />} />
+          <Route path="/diet" element={<DietPage />} />
+          <Route path="/voyage" element={<VoyagePage />} />
+          <Route path="/faq" element={<FAQPage />} />
+          <Route path="/confidentialite" element={<ConfidentialitePage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/cookies" element={<GestionCookiesPage />} />
+          <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
+        </Route>
 
           <Route path="*" element={<NotFound />} />
         </Routes>

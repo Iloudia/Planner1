@@ -1,4 +1,4 @@
-import type { ChangeEvent, FormEvent } from 'react'
+﻿import type { ChangeEvent, FormEvent } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import usePersistentState from '../../hooks/usePersistentState'
 import './SelfLove.css'
@@ -43,31 +43,31 @@ const createDefaultState = (): SelfLoveState => ({
   qualities: [
     { id: 'quality-1', text: 'Mon sourire illumine les gens.' },
     { id: 'quality-2', text: "J'ai une force tranquille." },
-    { id: 'quality-3', text: 'Je sais écouter avec le cœur.' },
+    { id: 'quality-3', text: 'Je sais Ã©couter avec le cÅ“ur.' },
   ],
   thoughts: [
     { id: 'thought-1', text: 'Je ne suis pas assez.' },
-    { id: 'thought-2', text: 'Je dois tout contrôler.' },
-    { id: 'thought-3', text: "Je ne mérite pas ce que j'ai." },
+    { id: 'thought-2', text: 'Je dois tout contrÃ´ler.' },
+    { id: 'thought-3', text: "Je ne mÃ©rite pas ce que j'ai." },
   ],
   journal: [],
 })
 
 const affirmations = [
-  "Je m'offre la même douceur que je donne aux autres.",
-  'Je suis déjà assez et je le reste à chaque souffle.',
-  'Ma présence est un cadeau pour ce monde.',
+  "Je m'offre la mÃªme douceur que je donne aux autres.",
+  'Je suis dÃ©jÃ  assez et je le reste Ã  chaque souffle.',
+  'Ma prÃ©sence est un cadeau pour ce monde.',
   "Je choisis de me regarder avec de l'amour aujourd'hui.",
-  'Je laisse ma lumière briller sans me cacher.',
+  'Je laisse ma lumiÃ¨re briller sans me cacher.',
   'Je suis digne de tendresse, de joie et de paix.',
 ]
 
 const inspiringQuotes = [
-  '"S’aimer soi-même est le début d’une histoire d’amour qui dure toute la vie." — Oscar Wilde',
+  '"Sâ€™aimer soi-mÃªme est le dÃ©but dâ€™une histoire dâ€™amour qui dure toute la vie." â€” Oscar Wilde',
   '"Tu es ton propre refuge. Tu es ton propre soleil."',
-  '"Tu es le résultat de l’amour de toutes les femmes qui t’ont précédée."',
-  '"N’oublie pas de t’émerveiller de ta force douce."',
-  '"Tu es une œuvre en mouvement, magnifique à chaque étape."',
+  '"Tu es le rÃ©sultat de lâ€™amour de toutes les femmes qui tâ€™ont prÃ©cÃ©dÃ©e."',
+  '"Nâ€™oublie pas de tâ€™Ã©merveiller de ta force douce."',
+  '"Tu es une Å“uvre en mouvement, magnifique Ã  chaque Ã©tape."',
 ]
 
 const STORAGE_KEY = 'planner.selfLove'
@@ -285,9 +285,9 @@ const SelfLovePage = () => {
   const handleShareCertificate = async () => {
     const qualities = safeState.qualities.map((quality) => `- ${quality.text}`).join('\n')
     const shareText = [
-      '✨ Certificat de pure beauté ✨',
+      'âœ¨ Certificat de pure beautÃ© âœ¨',
       '',
-      'Je célèbre la personne que je suis :',
+      'Je cÃ©lÃ¨bre la personne que je suis :',
       qualities.length > 0 ? qualities : "- Je m'aime pour qui je suis.",
       '',
       affirmationOfDay,
@@ -297,7 +297,7 @@ const SelfLovePage = () => {
 
     try {
       await navigator.clipboard.writeText(shareText)
-      window.alert('Ton certificat a été copié. Partage-le avec amour !')
+      window.alert('Ton certificat a Ã©tÃ© copiÃ©. Partage-le avec amour !')
     } catch (error) {
       console.error('Clipboard share failed', error)
       window.prompt('Copie ton certificat :', shareText)
@@ -306,11 +306,12 @@ const SelfLovePage = () => {
 
   return (
     <div className="self-love-page">
+      <div className="self-love-accent-bar" aria-hidden="true" />
       <header className="self-love-hero">
         <div className="self-love-hero__copy">
           <span className="self-love-hero__eyebrow">moment douceur</span>
-          <h1>S&apos;aimer soi-même</h1>
-          <p>Tu es déjà assez. Prends un moment pour te célébrer.</p>
+          <h1>S&apos;aimer soi-mÃªme</h1>
+          <p>Tu es dÃ©jÃ  assez. Prends un moment pour te cÃ©lÃ©brer.</p>
         </div>
         <div className="self-love-hero__glow" aria-hidden="true" />
       </header>
@@ -318,7 +319,7 @@ const SelfLovePage = () => {
       <section className="self-love-section self-love-section--photos">
         <div className="self-love-section__header">
           <h2>Aime-toi !</h2>
-          <p>Aime-toi ! Regarde-toi avec bienveillance et choisis six souvenirs où tu rayonnes.</p>
+          <p>Aime-toi ! Regarde-toi avec bienveillance et choisis six souvenirs oÃ¹ tu rayonnes.</p>
         </div>
         <div className="self-love-photos-frame">
           <div className="self-love-photos">
@@ -330,7 +331,7 @@ const SelfLovePage = () => {
                   ) : (
                     <span className="self-love-photo-card__placeholder">
                       <span role="img" aria-label="mirror">
-                        🪞
+                        ðŸªž
                       </span>
                       Souvenir {index + 1}
                     </span>
@@ -353,16 +354,16 @@ const SelfLovePage = () => {
       <section className="self-love-section self-love-section--qualities">
         <div className="self-love-section__header">
           <h2>Ce que j&apos;aime chez moi</h2>
-          <p>Note tes qualités, tes victoires, tout ce qui te rend fière.</p>
+          <p>Note tes qualitÃ©s, tes victoires, tout ce qui te rend fiÃ¨re.</p>
         </div>
         <form className="self-love-form-row" onSubmit={handleAddQuality}>
           <input
             type="text"
-            placeholder="Ajoute une qualité qui te rend fière"
+            placeholder="Ajoute une qualitÃ© qui te rend fiÃ¨re"
             value={qualityDraft}
             onChange={(event) => setQualityDraft(event.target.value)}
           />
-          <button type="submit">+ Ajouter une qualité</button>
+          <button type="submit">+ Ajouter une qualitÃ©</button>
         </form>
         <ul className="self-love-list">
           {safeState.qualities.map((quality) => (
@@ -381,13 +382,13 @@ const SelfLovePage = () => {
 
       <section className="self-love-section self-love-section--thoughts">
         <div className="self-love-section__header">
-          <h2>Pensées négatives à oublier</h2>
-          <p>Clique sur une pensée pour la laisser s&apos;envoler.</p>
+          <h2>PensÃ©es nÃ©gatives Ã  oublier</h2>
+          <p>Clique sur une pensÃ©e pour la laisser s&apos;envoler.</p>
         </div>
         <form className="self-love-form-row" onSubmit={handleAddThought}>
           <input
             type="text"
-            placeholder="Ex. Je dois être parfait·e."
+            placeholder="Ex. Je dois Ãªtre parfaitÂ·e."
             value={thoughtDraft}
             onChange={(event) => setThoughtDraft(event.target.value)}
           />
@@ -410,95 +411,17 @@ const SelfLovePage = () => {
           })}
           {safeState.thoughts.length === 0 ? (
             <div className="self-love-thought self-love-thought--empty">
-              <span>Plus aucune pensée limitante ici. Bravo !</span>
+              <span>Plus aucune pensÃ©e limitante ici. Bravo !</span>
             </div>
           ) : null}
         </div>
       </section>
 
-      <section className="self-love-section self-love-section--extras">
-        <div className="self-love-extras">
-          <article className="self-love-card self-love-card--affirmation">
-            <h3>Affirmation du jour</h3>
-            <p>{affirmationOfDay}</p>
-          </article>
-          <article className="self-love-card self-love-card--quote">
-            <h3>Inspiration</h3>
-            <p>{quoteOfDay}</p>
-          </article>
-          <article className="self-love-card self-love-card--journal">
-            <h3>Journal d&apos;amour-propre</h3>
-            <form onSubmit={handleAddJournalEntry}>
-              <textarea
-                rows={3}
-                placeholder="Écris une phrase de gratitude envers toi-même..."
-                value={journalDraft}
-                onChange={(event) => setJournalDraft(event.target.value)}
-              />
-              <button type="submit">Ajouter</button>
-            </form>
-            <ul>
-              {safeState.journal.map((entry) => (
-                <li key={entry.id}>
-                  <span>{formatDate(entry.createdAt)}</span>
-                  <p>{entry.text}</p>
-                </li>
-              ))}
-              {safeState.journal.length === 0 ? (
-                <li className="self-love-card__empty">Écris ta première lettre d&apos;amour.</li>
-              ) : null}
-            </ul>
-          </article>
-          <article className="self-love-card self-love-card--music">
-            <h3>Ambiance bien-être</h3>
-            <p>Laisse cette playlist t&apos;accompagner dans ta bulle de douceur.</p>
-            <iframe
-              title="Playlist bien-être"
-              src="https://open.spotify.com/embed/playlist/37i9dQZF1DX3rxVfibe1L0?utm_source=generator"
-              width="100%"
-              height="152"
-              frameBorder="0"
-              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-              loading="lazy"
-            />
-          </article>
-        </div>
-      </section>
-
-      <section className="self-love-section self-love-section--certificate">
-        <div className="self-love-certificate">
-          <h2>✨ Certifiée Pure Beauté ✨</h2>
-          <p className="self-love-certificate__subtitle">Savoure ton éclat. Cette image est ton rappel que tu es déjà assez.</p>
-          <div className="self-love-certificate__canvas">
-            {certificateImage ? (
-              <img src={certificateImage} alt="Portrait célébré" />
-            ) : (
-              <div className="self-love-certificate__placeholder">
-                <span role="img" aria-label="sparkles">
-                  ✨
-                </span>
-                <p>Ajoute une photo pour rayonner en grand.</p>
-              </div>
-            )}
-          </div>
-          <div className="self-love-certificate__controls">
-            <label className="self-love-certificate__upload">
-              <input type="file" accept="image/*" onChange={handleCertificatePhotoChange} />
-              <span>Choisir une photo</span>
-            </label>
-            {safeState.certificatePhoto ? (
-              <button type="button" onClick={handleClearCertificatePhoto}>
-                Retirer
-              </button>
-            ) : null}
-          </div>
-          <button type="button" className="self-love-certificate__share" onClick={handleShareCertificate}>
-            Partager mon certificat d&apos;amour de soi
-          </button>
-        </div>
-      </section>
+      <div className="self-love-footer-bar" aria-hidden="true" />
     </div>
   )
 }
 
 export default SelfLovePage
+
+

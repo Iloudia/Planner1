@@ -36,16 +36,15 @@ const Footer = () => {
         <div className="site-footer__sections" aria-label="Navigation complementaire">
           <div className="site-footer__section">
             <h3 className="site-footer__section-title">A propos</h3>
-            <FooterLink href="#apropos">A propos de moi</FooterLink>
-            <FooterLink href="#faq">FAQ</FooterLink>
-            <FooterLink href="#contact">Contacte-moi</FooterLink>
+            <FooterLink href="/contact">Contacte-moi</FooterLink>
+            <FooterLink href="/faq">FAQ</FooterLink>
+            <FooterLink href="/mentions-legales">Mentions legales</FooterLink>
+            <FooterLink href="/confidentialite">Politique de confidentialite</FooterLink>
           </div>
 
           <div className="site-footer__section">
             <h3 className="site-footer__section-title">Infos</h3>
-            <FooterLink href="#mentions-legales">Mentions legales</FooterLink>
-            <FooterLink href="#cookies">Gestion des cookies</FooterLink>
-            <FooterLink href="#confidentialite">Politique de confidentialite</FooterLink>
+            <FooterLink href="/cookies">Gestion des cookies</FooterLink>
           </div>
 
           <div className="site-footer__section">

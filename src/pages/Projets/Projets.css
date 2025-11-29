@@ -1,4 +1,219 @@
-.projets-page {
+.goals-page {
   --page-accent: #7ae0ff;
   --page-glow: rgba(122, 224, 255, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+
+.goals-hero {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.goals-hero h2 {
+  margin: 0.2rem 0 0;
+}
+
+.goals-hero p {
+  margin: 0.25rem 0 0;
+}
+
+.goals-focus {
+  min-width: 260px;
+  padding: 1rem 1.1rem;
+  border-radius: 16px;
+  background: rgba(122, 224, 255, 0.12);
+  border: 1px solid rgba(122, 224, 255, 0.24);
+}
+
+.goals-focus__label {
+  margin: 0 0 0.4rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #0f172a;
+}
+
+.goals-focus ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.35rem;
+  color: #334155;
+}
+
+.page-photo-strip {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0;
+  margin-bottom: 1.2rem;
+}
+
+.page-photo-strip__item {
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+
+.page-photo-strip__item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.goals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.2rem;
+}
+
+.goal-card {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 18px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.goal-card__media {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.goal-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.goal-card__body {
+  padding: 1rem 1.1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.goal-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #475569;
+}
+
+.goal-card__tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(122, 224, 255, 0.16);
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.goal-card h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  color: #0f172a;
+}
+
+.goal-card p {
+  margin: 0;
+  color: #334155;
+}
+
+.goal-card__progress {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.goal-card__progress-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #7ae0ff 0%, #6366f1 100%);
+}
+
+.goal-card__progress-value {
+  font-weight: 700;
+  color: #0f172a;
+  font-size: 0.95rem;
+}
+
+.body-goals {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.body-goals__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.body-goals__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.body-goal-slot {
+  position: relative;
+  border: 1px dashed rgba(15, 23, 42, 0.25);
+  border-radius: 14px;
+  min-height: 180px;
+  background: rgba(248, 250, 252, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.body-goal-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.body-goal-slot__upload {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  background: rgba(122, 224, 255, 0.16);
+  color: #0f172a;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.body-goal-slot__upload input {
+  display: none;
+}
+
+.body-goal-slot__action {
+  position: absolute;
+  bottom: 0.6rem;
+  right: 0.6rem;
+  border: none;
+  border-radius: 8px;
+  padding: 0.4rem 0.8rem;
+  background: rgba(15, 23, 42, 0.8);
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.18);
 }

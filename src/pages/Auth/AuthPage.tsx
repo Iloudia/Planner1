@@ -57,6 +57,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
 
   return (
     <div className="auth-page">
+      <div className="page-accent-bar" aria-hidden="true" />
       <div className="auth-hero">
         <div className="auth-visual">
           <img src={heroIllustration} alt="Moodboard Planner" />
@@ -119,6 +120,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
           </div>
         </div>
       </div>
+      <div className="page-footer-bar" aria-hidden="true" />
     </div>
   )
 }

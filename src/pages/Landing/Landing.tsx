@@ -47,6 +47,7 @@ const LandingPage = ({ onOpenAuth }: LandingAuthProps) => {
 
   return (
     <div className="landing-page">
+      <div className="page-accent-bar" aria-hidden="true" />
       <section className="landing-hero">
         <div className="landing-hero__content">
           <span className="landing-hero__tagline">Un espace pour planifier en douceur</span>
@@ -164,6 +165,7 @@ const LandingPage = ({ onOpenAuth }: LandingAuthProps) => {
           </div>
         </div>
       ) : null}
+      <div className="page-footer-bar" aria-hidden="true" />
     </div>
   )
 }

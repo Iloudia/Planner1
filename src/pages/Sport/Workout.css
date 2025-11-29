@@ -9,6 +9,7 @@
   border-radius: 999px;
   background: linear-gradient(90deg, #818cf8 0%, #f472b6 50%, #f9a8d4 100%);
   box-shadow: 0 12px 40px rgba(129, 140, 248, 0.26);
+  margin-top: 0.8rem;
 }
 
 .workout-page__footer-bar {
@@ -118,14 +119,14 @@
 
 .workout-cards {
   display: grid;
-  grid-template-columns: repeat(4, minmax(120px, 1fr));
-  gap: 0.5rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
   justify-items: stretch;
 }
 
 .workout-card {
   width: 100%;
-  border-radius: 16px;
+  border-radius: 18px;
   overflow: hidden;
   border: 1px solid rgba(99, 102, 241, 0.18);
   background: #fff;
@@ -145,10 +146,10 @@
 }
 
 .workout-card__body {
-  padding: 0.5rem 0.6rem 0.65rem;
+  padding: 0.6rem 0.7rem 0.8rem;
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.25rem;
 }
 
 .workout-card__meta {
@@ -157,7 +158,7 @@
   flex-wrap: wrap;
   color: #475569;
   margin: 0;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
 }
 
 .workout-video-form {
@@ -196,14 +197,14 @@
 
 .workout-video-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(140px, 1fr));
-  gap: 0.5rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
   justify-items: stretch;
 }
 
 .workout-video-card {
   width: 100%;
-  border-radius: 16px;
+  border-radius: 18px;
   overflow: hidden;
   border: 1px solid rgba(15, 23, 42, 0.1);
   background: #fff;
@@ -223,7 +224,7 @@
 }
 
 .workout-video-card__body {
-  padding: 0.45rem 0.6rem 0.65rem;
+  padding: 0.55rem 0.65rem 0.75rem;
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
@@ -233,7 +234,27 @@
   color: #0f172a;
   font-weight: 700;
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+}
+
+.workout-banner-strip {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0;
+  margin-bottom: 1.2rem;
+}
+
+.workout-banner-strip__item {
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: #0f172a;
+}
+
+.workout-banner-strip__item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 @media (max-width: 900px) {
@@ -246,11 +267,11 @@
   }
 
   .workout-cards {
-    grid-template-columns: repeat(2, minmax(140px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .workout-video-grid {
-    grid-template-columns: repeat(2, minmax(140px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

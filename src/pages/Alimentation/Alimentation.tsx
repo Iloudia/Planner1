@@ -1,45 +1,33 @@
-import PageTemplate from "../../components/PageTemplate";
+import photo1 from "../../assets/planner-01.jpg";
+import photo2 from "../../assets/planner-02.jpg";
+import photo3 from "../../assets/planner-03.jpg";
+import photo4 from "../../assets/planner-04.jpg";
+import photo5 from "../../assets/planner-05.jpg";
+import photo6 from "../../assets/planner-06.jpg";
 import "./Alimentation.css";
 
-const sections = [
-  {
-    title: "Menus simples",
-    items: [
-      "Plan hebdo (midi/soir) selon énergie",
-      "Recettes rapides, équilibrées ou confort",
-      "Repas invités ou batch cooking notés"
-    ]
-  },
-  {
-    title: "Courses maîtrisées",
-    items: [
-      "Liste par rayon ou par recette",
-      "Stocks du placard et du frais",
-      "Budget courses vs prévu"
-    ]
-  },
-  {
-    title: "Hygiène de vie",
-    items: [
-      "Hydratation, fibres, protéines par jour",
-      "Rappel collations intelligentes",
-      "Notes digestion / énergie"
-    ]
-  }
-];
+const stripImages = [photo1, photo2, photo3, photo4, photo5, photo6];
 
-function AlimentationPage() {
+function DietPage() {
   return (
-    <PageTemplate
-      className="alimentation-page"
-      kicker="Alimentation"
-      title="Bien manger sans y passer des heures"
-      summary="Des menus réalistes, une liste de courses claire et une vue budget pour rester serein."
-      sections={sections}
-      primaryCta={{ label: "Préparer les courses", to: "/alimentation" }}
-      secondaryCta={{ label: "Planifier les repas", to: "/calendrier", variant: "ghost" }}
-    />
+    <>
+      <div className="page-photo-strip" aria-hidden="true">
+        {stripImages.map((src, index) => (
+          <div key={index} className="page-photo-strip__item">
+            <img src={src} alt={`Inspiration ${index + 1}`} />
+          </div>
+        ))}
+      </div>
+      <div className="content-page diet-page">
+        <div className="page-accent-bar" aria-hidden="true" />
+        <div className="page-hero">
+          <div className="hero-chip">Diet</div>
+          <h2>Diet</h2>
+        </div>
+        <div className="page-footer-bar" aria-hidden="true" />
+      </div>
+    </>
   );
 }
 
-export default AlimentationPage;
+export default DietPage;

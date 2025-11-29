@@ -78,6 +78,10 @@ const getTaskDateTime = (task: ScheduledTask) => {
 const CalendrierPage = () => {
   const { tasks, addTask, updateTask, removeTask } = useTasks()
   const today = new Date()
+  const [currentMonthDate, setCurrentMonthDate] = useState(() => {
+    const base = new Date()
+    return new Date(base.getFullYear(), base.getMonth(), 1)
+  })
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
   const [activeDateKey, setActiveDateKey] = useState<string | null>(null)
   const [isDayModalOpen, setDayModalOpen] = useState(false)
@@ -89,8 +93,8 @@ const CalendrierPage = () => {
   const [newTaskForm, setNewTaskForm] = useState<NewTaskFormState>(() => createNewTaskForm(getDateKey(today)))
   const [newTaskError, setNewTaskError] = useState<string | null>(null)
 
-  const year = today.getFullYear()
-  const month = today.getMonth()
+  const year = currentMonthDate.getFullYear()
+  const month = currentMonthDate.getMonth()
   const firstDay = new Date(year, month, 1)
   const daysInMonth = new Date(year, month + 1, 0).getDate()
   const offset = (firstDay.getDay() + 6) % 7
@@ -117,7 +121,7 @@ const CalendrierPage = () => {
   )
 
   const heroStats = [
-    { id: 'events', label: 'Événements planifiés', value: tasksThisMonth.length.toString() },
+    { id: 'events', label: 'Evenements planifies', value: tasksThisMonth.length.toString() },
     { id: 'activeDays', label: 'Jours actifs', value: activeDays.toString() },
     { id: 'focus', label: 'Blocs focus', value: focusBlocks.toString() },
   ]
@@ -158,8 +162,16 @@ const CalendrierPage = () => {
     if (!startLabel || !endLabel) {
       return ''
     }
-    return startLabel === endLabel ? startLabel : `${startLabel} → ${endLabel}`
+    return startLabel === endLabel ? startLabel : `${startLabel} -> ${endLabel}`
   }, [newTaskForm.repeatStart, newTaskForm.repeatEnd])
+
+  const handleMonthChange = (delta: number) => {
+    setCurrentMonthDate((previous) => {
+      const next = new Date(previous)
+      next.setMonth(previous.getMonth() + delta, 1)
+      return next
+    })
+  }
 
   const handlePlanForDate = (dateKey: string) => {
     handleDaySelect(dateKey, { presetForm: true })
@@ -254,16 +266,32 @@ const CalendrierPage = () => {
     }))
   }
 
+  const handleResetDay = () => {
+    if (!activeDateKey) {
+      return
+    }
+    const tasksForDay = tasksByDate.get(activeDateKey) ?? []
+    tasksForDay.forEach((task) => removeTask(task.id))
+    setNewTaskForm(createNewTaskForm(activeDateKey))
+    setNewTaskError(null)
+    setEditingTaskId(null)
+    setEditDraft({
+      start: '',
+      end: '',
+      color: '#000000',
+    })
+  }
+
   const handleSubmitNewTask = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setNewTaskError(null)
     const title = newTaskForm.title.trim()
     if (!title) {
-      setNewTaskError('Ajoute un titre à ton bloc.')
+      setNewTaskError('Ajoute un titre a ton bloc.')
       return
     }
     if (!newTaskForm.repeatStart || !newTaskForm.repeatEnd) {
-      setNewTaskError('Sélectionne une période valide.')
+      setNewTaskError('Selectionne une periode valide.')
       return
     }
     const startDate = parseDateKey(newTaskForm.repeatStart)
@@ -273,7 +301,7 @@ const CalendrierPage = () => {
       return
     }
     if (startDate.getTime() > endDate.getTime()) {
-      setNewTaskError('La date de fin doit être postérieure à la date de début.')
+      setNewTaskError('La date de fin doit etre posterieure a la date de debut.')
       return
     }
 
@@ -336,13 +364,14 @@ const CalendrierPage = () => {
 
   return (
     <div className="calendar-page">
+      <div className="page-accent-bar" aria-hidden="true" />
       <section className="calendar-hero">
         <div className="calendar-hero__content">
           <span className="calendar-hero__eyebrow">calendrier mensuel</span>
           <h1>Orchestre ton mois avec intention et douceur.</h1>
           <p>
-            Visualise d&apos;un coup d&apos;œil tes rendez-vous stratégiques, tes temps de respiration et tes moments de
-            création. Chaque bloc que tu poses solidifie ton rythme idéal.
+            Visualise d&apos;un coup d&apos;oeil tes rendez-vous strategiques, tes temps de respiration et tes moments de
+            creation. Chaque bloc que tu poses solidifie ton rythme ideal.
           </p>
           <div className="calendar-hero__actions">
             <button
@@ -377,9 +406,9 @@ const CalendrierPage = () => {
         <div className="calendar-hero__panel">
           <div className="calendar-next">
             <span className="calendar-next__label">Prochain rendez-vous</span>
-            <strong>{nextTask ? nextTask.title : 'Aucun bloc prévu'}</strong>
+            <strong>{nextTask ? nextTask.title : 'Aucun bloc prevu'}</strong>
             <p>
-              {nextTask ? `${nextTaskLabel} · ${nextTask.start} - ${nextTask.end}` : 'Ajoute un créneau pour rester alignée.'}
+              {nextTask ? `${nextTaskLabel} - ${nextTask.start} - ${nextTask.end}` : 'Ajoute un creneau pour rester alignee.'}
             </p>
             {nextTask?.tag ? <span className="calendar-next__tag">{nextTask.tag}</span> : null}
           </div>
@@ -388,8 +417,17 @@ const CalendrierPage = () => {
 
       <header className="calendar-header">
         <div>
-          <h1 className="calendar-month">{formatMonthTitle(today)}</h1>
-          <p className="calendar-subtitle">Visualise tes engagements. {totalScheduled} créneaux déjà posés.</p>
+          <span className="calendar-month-eyebrow">calendrier mensuel</span>
+          <h1 className="calendar-month">{formatMonthTitle(currentMonthDate)}</h1>
+          <div className="sport-header__divider" aria-hidden="true" />
+        </div>
+        <div className="calendar-month-nav">
+          <button type="button" onClick={() => handleMonthChange(-1)} aria-label="Mois precedent">
+            &lt;
+          </button>
+          <button type="button" onClick={() => handleMonthChange(1)} aria-label="Mois suivant">
+            &gt;
+          </button>
         </div>
       </header>
 
@@ -411,7 +449,7 @@ const CalendrierPage = () => {
               onKeyDown={(event) => handleDayKeyDown(event, cell.dateKey!)}
               role="button"
               tabIndex={0}
-              aria-label={`Voir la journée du ${cell.dateKey}`}
+              aria-label={`Voir la journee du ${cell.dateKey}`}
             >
               <div className="calendar-day__header">
                 <span className="calendar-day__number">{cell.day}</span>
@@ -436,7 +474,6 @@ const CalendrierPage = () => {
                         cell.tasks[0].color,
                         0.32,
                       )} 100%)`,
-                      borderLeft: `4px solid ${cell.tasks[0].color}`,
                     }}
                   >
                     <span className="calendar-day__preview-time">
@@ -449,7 +486,7 @@ const CalendrierPage = () => {
                   ) : null}
                 </>
               ) : (
-                <span className="calendar-day__empty">Rien de prévu</span>
+                <span className="calendar-day__empty">Rien de prevu</span>
               )}
             </div>
           ),
@@ -462,16 +499,16 @@ const CalendrierPage = () => {
           <div className="calendar-modal__panel">
             <header className="calendar-modal__header">
               <div>
-                <span className="calendar-modal__eyebrow">séance du jour</span>
+                <span className="calendar-modal__eyebrow">seance du jour</span>
                 <h2 id="calendar-modal-title">{activeDateLabel}</h2>
                 <p>
                   {activeDateTasks.length > 0
-                    ? `${activeDateTasks.length} créneau${activeDateTasks.length > 1 ? 'x' : ''} placés.`
-                    : 'Aucun créneau pour linstant, profite pour en poser un.'}
+                    ? `${activeDateTasks.length} creneau${activeDateTasks.length > 1 ? 'x' : ''} places.`
+                    : "Aucun creneau pour l'instant, profite pour en poser un."}
                 </p>
               </div>
               <button type="button" className="calendar-modal__close" onClick={handleCloseModal} aria-label="Fermer">
-                ✕
+                X
               </button>
             </header>
 
@@ -479,16 +516,13 @@ const CalendrierPage = () => {
               <button
                 type="button"
                 className="calendar-hero__cta calendar-hero__cta--ghost"
-                onClick={() => {
-                  if (activeDateKey) {
-                    handlePrepareNewTask(activeDateKey)
-                  }
-                }}
+                onClick={handleResetDay}
               >
-                Réinitialiser le formulaire
+                Reinitialiser la journee
               </button>
             </div>
 
+            <div className="calendar-modal__columns">
             <section className="calendar-modal__section">
               <div className="calendar-modal__section-header">
                 <h3>Programmer un bloc</h3>
@@ -507,7 +541,7 @@ const CalendrierPage = () => {
                 </label>
                 <div className="calendar-task__form-row">
                   <label className="calendar-task__field">
-                    <span>Début</span>
+                    <span>Debut</span>
                     <input
                       type="time"
                       value={newTaskForm.start}
@@ -562,15 +596,16 @@ const CalendrierPage = () => {
                 </button>
               </form>
             </section>
+            <div className="calendar-modal__divider" aria-hidden="true" />
 
             <section className="calendar-modal__section">
               <div className="calendar-modal__section-header">
                 <h3>Agenda du jour</h3>
-                <span>{activeDateLabel || 'Sélectionne un jour'}</span>
+                <span>{activeDateLabel || 'Selectionne un jour'}</span>
               </div>
               <div className="calendar-modal__list">
                 {activeDateTasks.length === 0 ? (
-                  <p className="calendar-modal__empty">Dépose ton premier bloc pour cette journée.</p>
+                  <p className="calendar-modal__empty">Depose ton premier bloc pour cette journee.</p>
                 ) : (
                   activeDateTasks.map((task) => (
                     <div
@@ -581,7 +616,6 @@ const CalendrierPage = () => {
                           task.color,
                           0.32,
                         )} 100%)`,
-                        borderLeft: `4px solid ${task.color}`,
                       }}
                       onClick={() => {
                         if (editingTaskId === task.id) {
@@ -594,7 +628,7 @@ const CalendrierPage = () => {
                         <form className="calendar-task__form" onSubmit={(event) => handleSubmitEdit(event, task.id)}>
                           <div className="calendar-task__form-row">
                             <label className="calendar-task__field">
-                              <span>Début</span>
+                              <span>Debut</span>
                               <input
                                 type="time"
                                 value={editDraft.start}
@@ -674,11 +708,14 @@ const CalendrierPage = () => {
                 )}
               </div>
             </section>
+            </div>
           </div>
         </div>
       ) : null}
+      <div className="page-footer-bar" aria-hidden="true" />
     </div>
   )
 }
 
 export default CalendrierPage
+

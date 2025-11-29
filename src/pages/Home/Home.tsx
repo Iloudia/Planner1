@@ -8,6 +8,7 @@ import planner05 from "../../assets/planner-05.jpg"
 import planner06 from "../../assets/planner-06.jpg"
 import planner07 from "../../assets/planner-07.jpg"
 import planner08 from "../../assets/planner-08.jpg"
+import moodboard from "../../assets/MoodBoard.png"
 import "./Home.css"
 
 type Task = {
@@ -138,7 +139,10 @@ function HomePage() {
   }
 
   return (
-    <div className="page home-page">
+    <>
+      <div className="home-accent-bar" aria-hidden="true" />
+      <div className="page home-page">
+
       <aside className="aside-right">
         <div className="profile-card">
           <div className="profile-photo">
@@ -288,7 +292,13 @@ function HomePage() {
           </div>
         </div>
       </aside>
-    </div>
+
+        <section className="home-moodboard">
+          <img src={moodboard} alt="Moodboard" />
+        </section>
+        <div className="home-footer-bar" aria-hidden="true" />
+      </div>
+    </>
   )
 }
 

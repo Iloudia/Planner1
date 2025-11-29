@@ -33,6 +33,7 @@ function PageTemplate({
 }: PageTemplateProps) {
   return (
     <div className={`content-page ${className}`}>
+      <div className="page-accent-bar" aria-hidden="true" />
       <PageHeading eyebrow={kicker} title={title} />
 
       <div className="page-hero">
@@ -66,6 +67,8 @@ function PageTemplate({
           </article>
         ))}
       </div>
+
+      <div className="page-footer-bar" aria-hidden="true" />
     </div>
   );
 }

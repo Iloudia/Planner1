@@ -5,6 +5,20 @@
   padding-bottom: 4rem;
 }
 
+.self-love-accent-bar {
+  height: 0.55rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #fce7f3 0%, #f472b6 50%, #f9a8d4 100%);
+  box-shadow: 0 12px 40px rgba(244, 114, 182, 0.28);
+}
+
+.self-love-footer-bar {
+  height: 2.2rem;
+  border-radius: 28px;
+  background: linear-gradient(140deg, #ffe4f1 0%, #fbcfe8 40%, #f472b6 100%);
+  box-shadow: 0 24px 80px rgba(244, 114, 182, 0.22);
+}
+
 .self-love-page--gradient {
   background: linear-gradient(140deg, #fff3f8 0%, #f0f4ff 60%, #fff7fb 100%) !important;
 }

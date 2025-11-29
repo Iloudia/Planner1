@@ -2,7 +2,6 @@ import { createContext, useContext, useMemo } from 'react'
 import type { ReactNode } from 'react'
 import usePersistentState from '../hooks/usePersistentState'
 import type { ScheduledTask } from '../data/sampleData'
-import { sampleTasks } from '../data/sampleData'
 
 type TasksContextValue = {
   tasks: ScheduledTask[]
@@ -20,7 +19,7 @@ type TasksProviderProps = {
 const STORAGE_KEY = 'planner.calendar.tasks'
 
 export const TasksProvider = ({ children }: TasksProviderProps) => {
-  const [tasks, setTasks] = usePersistentState<ScheduledTask[]>(STORAGE_KEY, () => sampleTasks)
+  const [tasks, setTasks] = usePersistentState<ScheduledTask[]>(STORAGE_KEY, () => [])
 
   const value = useMemo<TasksContextValue>(
     () => ({

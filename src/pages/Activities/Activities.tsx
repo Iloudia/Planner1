@@ -3,7 +3,9 @@ import type { ChangeEvent, FormEvent } from 'react'
 import usePersistentState from '../../hooks/usePersistentState'
 import activitiesMood01 from '../../assets/planner-05.jpg'
 import activitiesMood02 from '../../assets/planner-08.jpg'
-import PageHeading from '../../components/PageHeading'
+import activitiesMood03 from '../../assets/planner-06.jpg'
+import PageHero from '../../components/PageHero'
+import '../Finances/FinancePage.css'
 import './ActivitiesPage.css'
 
 type ActivityStatus = 'a-faire' | 'planifie' | 'fait'
@@ -22,28 +24,28 @@ type ActivityDraft = {
   category: string
   status: ActivityStatus
   idealDate: string
+  photo?: string
 }
 
 const statusLabels: Record<ActivityStatus, string> = {
-  'a-faire': 'Non planifiÃ©e',
-  planifie: 'PlanifiÃ©e',
-  fait: 'RÃ©alisÃ©e',
+  'a-faire': 'Non planifiee',
+  planifie: 'Planifiee',
+  fait: 'Realisee',
 }
 
 const categoryPalette = ['#C7D2FE', '#FBCFE8', '#FDE68A', '#E9D5FF', '#BFDBFE']
 
 const defaultActivities: Activity[] = [
-  { id: 'act-1', title: 'Cours de poterie', category: 'CrÃ©ativitÃ©', status: 'planifie', idealDate: '', photo: undefined },
-  { id: 'act-2', title: 'RandonnÃ©e au lever du soleil', category: 'Nature', status: 'a-faire', idealDate: '', photo: undefined },
-  { id: 'act-3', title: 'Atelier photo', category: 'CrÃ©ativitÃ©', status: 'fait', idealDate: '', photo: undefined },
+  { id: 'act-1', title: 'Cours de poterie', category: 'Creativite', status: 'planifie', idealDate: '', photo: undefined },
+  { id: 'act-2', title: 'Randonnee au lever du soleil', category: 'Nature', status: 'a-faire', idealDate: '', photo: undefined },
+  { id: 'act-3', title: 'Atelier photo', category: 'Creativite', status: 'fait', idealDate: '', photo: undefined },
 ]
 
-const activitiesHeroImage = {
-  src: activitiesMood01,
-  alt: 'Palette pastel pour atelier crÃ©atif',
-}
-
-const activitiesFormIllustration = activitiesMood02
+const activitiesHeroImages = [
+  { src: activitiesMood01, alt: 'Moment creatif en couleur pastel' },
+  { src: activitiesMood02, alt: 'Carnet ouvert sur une table claire' },
+  { src: activitiesMood03, alt: 'Palette et couleurs douces' },
+]
 
 const formatDate = (value?: string) => {
   if (!value) {
@@ -65,6 +67,7 @@ const ActivitiesPage = () => {
     category: '',
     status: 'a-faire',
     idealDate: '',
+    photo: undefined,
   })
 
   useEffect(() => {
@@ -89,11 +92,28 @@ const ActivitiesPage = () => {
     const scheduled = activities.filter((activity) => activity.status === 'planifie').length
     const completed = activities.filter((activity) => activity.status === 'fait').length
     return [
-      { id: 'ideas', label: 'IdÃ©es', value: inspirations.toString() },
-      { id: 'scheduled', label: 'Dates prÃ©vues', value: scheduled.toString() },
-      { id: 'done', label: 'Moments vÃ©cus', value: completed.toString() },
+      { id: 'ideas', label: 'Idees', value: inspirations.toString() },
+      { id: 'scheduled', label: 'Dates prevues', value: scheduled.toString() },
+      { id: 'done', label: 'Moments vecus', value: completed.toString() },
     ]
   }, [activities])
+
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement
+      if (!target.closest('.activity-card__menu')) {
+        setOpenMenuId(null)
+      }
+    }
+    if (openMenuId) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [openMenuId])
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -107,11 +127,30 @@ const ActivitiesPage = () => {
       category: draft.category.trim().length > 0 ? draft.category.trim() : 'Inspiration',
       status: draft.status,
       idealDate: draft.idealDate,
-      photo: undefined,
+      photo: draft.photo,
     }
 
     setActivities((previous) => [nextActivity, ...previous])
-    setDraft({ title: '', category: '', status: draft.status, idealDate: '' })
+    setDraft({ title: '', category: '', status: draft.status, idealDate: '', photo: undefined })
+  }
+
+  const handleDraftPhotoChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) {
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        setDraft((previous) => ({ ...previous, photo: reader.result }))
+      }
+    }
+    reader.readAsDataURL(file)
+    event.target.value = ''
+  }
+
+  const handleClearDraftPhoto = () => {
+    setDraft((previous) => ({ ...previous, photo: undefined }))
   }
 
   const handlePhotoChange = (activityId: string) => (event: ChangeEvent<HTMLInputElement>) => {
@@ -137,6 +176,31 @@ const ActivitiesPage = () => {
     )
   }
 
+  const handleDelete = (activityId: string) => {
+    setActivities((previous) => previous.filter((activity) => activity.id !== activityId))
+    setOpenMenuId(null)
+  }
+
+  const handleMarkDone = (activityId: string) => {
+    setActivities((previous) =>
+      previous.map((activity) => (activity.id === activityId ? { ...activity, status: 'fait' } : activity)),
+    )
+  }
+
+  const handleChangeDate = (activityId: string) => {
+    const newDate = window.prompt('Nouvelle date (YYYY-MM-DD) :')
+    if (!newDate) {
+      setOpenMenuId(null)
+      return
+    }
+    setActivities((previous) =>
+      previous.map((activity) =>
+        activity.id === activityId ? { ...activity, idealDate: newDate.trim() } : activity,
+      ),
+    )
+    setOpenMenuId(null)
+  }
+
   const renderActivityCard = (activity: Activity, index: number) => {
     return (
       <li
@@ -154,21 +218,45 @@ const ActivitiesPage = () => {
         <div className="activity-card__content">
           <div className="activity-card__header">
             <strong>{activity.title}</strong>
+            <div className="activity-card__menu">
+              <button
+                type="button"
+                className="activity-card__menu-trigger"
+                onClick={() => setOpenMenuId(openMenuId === activity.id ? null : activity.id)}
+                aria-expanded={openMenuId === activity.id}
+                aria-label="Ouvrir le menu de l'activite"
+              >
+                ⋯
+              </button>
+              {openMenuId === activity.id ? (
+                <div className="activity-card__menu-panel">
+                  <label className="activity-card__menu-item">
+                    <input type="file" accept="image/*" onChange={handlePhotoChange(activity.id)} />
+                    Modifier la photo
+                  </label>
+                  <button type="button" className="activity-card__menu-item" onClick={() => handleChangeDate(activity.id)}>
+                    Changer la date
+                  </button>
+                  <button type="button" className="activity-card__menu-item activity-card__menu-item--danger" onClick={() => handleDelete(activity.id)}>
+                    Supprimer l'activite
+                  </button>
+                </div>
+              ) : null}
+            </div>
           </div>
           <p className="activity-card__meta">
             <span>{activity.category}</span>
             {activity.idealDate ? <time dateTime={activity.idealDate}>{formatDate(activity.idealDate)}</time> : null}
           </p>
           <div className="activity-card__actions">
-            <label className="activity-card__photo-button">
-              <input type="file" accept="image/*" onChange={handlePhotoChange(activity.id)} />
-              {activity.photo ? 'Changer la photo' : 'Ajouter une photo'}
-            </label>
-            {activity.photo ? (
-              <button type="button" className="activity-card__remove-photo" onClick={() => handleRemovePhoto(activity.id)}>
-                Retirer
-              </button>
-            ) : null}
+            <button
+              type="button"
+              className="activity-card__primary-action"
+              onClick={() => handleMarkDone(activity.id)}
+              disabled={activity.status === 'fait'}
+            >
+              {activity.status === 'fait' ? 'Activite realisee' : 'Marquer comme faite'}
+            </button>
           </div>
         </div>
       </li>
@@ -177,35 +265,22 @@ const ActivitiesPage = () => {
 
   return (
     <div className="activities-page aesthetic-page">
-      <div className="activities-page__breadcrumb">ActivitÃ©s</div>
+      <div className="activities-page__breadcrumb">Activites</div>
       <div className="activities-page__accent-bar" aria-hidden="true" />
-      <PageHeading eyebrow="Inspiration" title="Activites et sorties" />
-
-      <section className="activities-hero dashboard-panel">
-        <div className="activities-hero__content">
-          <span className="activities-hero__eyebrow">Moments Ã  crÃ©er</span>
-          <h2>Compose ta to-do plaisir et crÃ©ative.</h2>
-          <p>Un espace pour rassembler les idÃ©es dâ€™activitÃ©s qui te font du bien et nourrissent ton Ã©nergie.</p>
-          <div className="activities-hero__stats">
-            {activitiesStats.map((stat) => (
-              <article key={stat.id}>
-                <span>{stat.label}</span>
-                <strong>{stat.value}</strong>
-              </article>
-            ))}
-          </div>
-        </div>
-        <div className="activities-hero__image">
-          <img src={activitiesHeroImage.src} alt={activitiesHeroImage.alt} />
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Inspiration"
+        title="Activites et sorties"
+        description="Un espace pour rassembler les idees d activites qui te font du bien et nourrissent ton energie."
+        stats={activitiesStats}
+        images={activitiesHeroImages}
+      />
 
       <section className="activities-dashboard">
         <div className="activities-form">
           <div className="activities-form__panel dashboard-panel">
             <header className="activities-section-header">
-              <span className="activities-section-header__eyebrow">Nouvelle idÃ©e</span>
-              <h2>Ajouter une activitÃ©</h2>
+              <span className="activities-section-header__eyebrow">Nouvelle idee</span>
+              <h2>Ajouter une activite</h2>
             </header>
             <form onSubmit={handleSubmit}>
               <label>
@@ -219,12 +294,12 @@ const ActivitiesPage = () => {
                 />
               </label>
               <label>
-                <span>CatÃ©gorie</span>
+                <span>Categorie</span>
                 <input
                   type="text"
                   value={draft.category}
                   onChange={(event) => setDraft((previous) => ({ ...previous, category: event.target.value }))}
-                  placeholder="Ex : Bien-Ãªtre"
+                  placeholder="Ex : Bien-etre"
                 />
               </label>
               <label className="activities-form__select">
@@ -243,60 +318,78 @@ const ActivitiesPage = () => {
                 </select>
               </label>
               <label>
-                <span>Date idÃ©ale</span>
+                <span>Date ideale</span>
                 <input
                   type="date"
                   value={draft.idealDate}
                   onChange={(event) => setDraft((previous) => ({ ...previous, idealDate: event.target.value }))}
                 />
               </label>
+              <div className="activities-form__photo">
+                <div
+                  className={`activities-form__photo-preview${draft.photo ? ' activities-form__photo-preview--has-image' : ''}`}
+                >
+                  {draft.photo ? (
+                    <img className="activities-form__photo-img" src={draft.photo} alt="Apercu de la photo selectionnee" />
+                  ) : (
+                    <p>Ajoute une photo souvenir depuis ton ordinateur.</p>
+                  )}
+                  <div className="activities-form__photo-actions">
+                    <label>
+                      <input type="file" accept="image/*" onChange={handleDraftPhotoChange} />
+                      Choisir une photo
+                    </label>
+                    {draft.photo ? (
+                      <button type="button" onClick={handleClearDraftPhoto}>
+                        Retirer
+                      </button>
+                    ) : null}
+                  </div>
+                  <span className="activities-form__photo-hint">Formats image acceptes (JPG, PNG, GIF).</span>
+                </div>
+              </div>
               <button type="submit" className="activities-form__submit">
-                Ajouter Ã  la liste
+                Ajouter a la liste
               </button>
             </form>
           </div>
-          <div className="activities-form__illustration" aria-hidden="true">
-            <img src={activitiesFormIllustration} alt="" />
-          </div>
         </div>
 
-        <div className="activities-groups">
-          <article className="activities-group dashboard-panel">
-            <header>
-              <h2>PlanifiÃ©</h2>
-              <span>{plannedActivities.length} activitÃ©(s)</span>
-            </header>
-            {plannedActivities.length === 0 ? (
-              <p className="activities-group__empty">Ajoute une idÃ©e ou une sortie pour la prÃ©parer ici.</p>
-            ) : (
-              <ul className="activities-group__list">
-                {plannedActivities.map((activity, index) => renderActivityCard(activity, index))}
-              </ul>
-            )}
-          </article>
-        </div>
       </section>
 
-      <div className="activities-page__footer-bar" aria-hidden="true" />
-
-      <section className="activities-completed">
-        <article className="activities-completed__panel dashboard-panel">
-          <header className="activities-completed__header">
+      <div className="activities-split">
+        <article className="activities-group dashboard-panel">
+          <header>
+            <h2>Planifie</h2>
+            <span>{plannedActivities.length} activite(s)</span>
+          </header>
+          {plannedActivities.length === 0 ? (
+            <p className="activities-group__empty">Ajoute une idee ou une sortie pour la preparer ici.</p>
+          ) : (
+            <ul className="activities-group__list">
+              {plannedActivities.map((activity, index) => renderActivityCard(activity, index))}
+            </ul>
+          )}
+        </article>
+        <div className="activities-split__divider" aria-hidden="true" />
+        <article className="activities-group dashboard-panel">
+          <header>
             <div>
-              <h2>RÃ©alisÃ©</h2>
-              <p>Archive ici tes moments prÃ©fÃ©rÃ©s Ã  revivre en images.</p>
+              <h2>Realise</h2>
             </div>
-            <span>{completedActivities.length} activitÃ©(s)</span>
+            <span>{completedActivities.length} activite(s)</span>
           </header>
           {completedActivities.length === 0 ? (
-            <p className="activities-group__empty">Capture les souvenirs de tes activitÃ©s dÃ©jÃ  vÃ©cues.</p>
+            <p className="activities-group__empty">Capture les souvenirs de tes activites deja vecues.</p>
           ) : (
             <ul className="activities-group__list">
               {completedActivities.map((activity, index) => renderActivityCard(activity, index))}
             </ul>
           )}
         </article>
-      </section>
+      </div>
+
+      <div className="activities-page__footer-bar" aria-hidden="true" />
     </div>
   )
 }

@@ -312,6 +312,19 @@ const SportPage = () => {
           </div>
         </div>
       </section>
+
+      <section className="sport-reminders">
+        <div className="sport-reminders__header">
+          <span className="sport-reminders__title">Reminders</span>
+        </div>
+        <div className="sport-reminders__card">
+          <div className="sport-reminders__list">
+            <span>consistency</span>
+            <span>discipline</span>
+            <span>patience</span>
+          </div>
+        </div>
+      </section>
       <div className="sport-page__footer-bar" aria-hidden="true" />
     </div>
   )

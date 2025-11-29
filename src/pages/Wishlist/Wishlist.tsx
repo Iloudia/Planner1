@@ -797,6 +797,7 @@ const WishlistPage = () => {
   }
   return (
     <div className="wishlist-page aesthetic-page" onClick={() => setOpenMenuFor(null)}>
+      <div className="page-accent-bar" aria-hidden="true" />
       <div className="wishlist-page__breadcrumb">wishlist</div>
       <PageHeading eyebrow="Envies" title="Wishlist ideal" />
       <header className="wishlist-hero dashboard-panel">
@@ -892,7 +893,7 @@ const WishlistPage = () => {
         <div className="wishlist-modal__backdrop" role="dialog" aria-modal="true">
           <div className="wishlist-modal">
             <button type="button" className="wishlist-modal__close" aria-label="Fermer" onClick={closeModal}>
-              ×
+              ï¿½
             </button>
             <div className="wishlist-modal__cover">
               <img src={selectedCategoryCard.cover} alt={`Photo ${selectedCategoryState.title}`} />
@@ -1206,6 +1207,7 @@ const WishlistPage = () => {
       ) : null}
 
       {feedback ? <div className="wishlist-toast">{feedback}</div> : null}
+      <div className="page-footer-bar" aria-hidden="true" />
     </div>
   )
 }
