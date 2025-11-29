@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import type { FormEvent } from "react"
 import PageHeading from "../../components/PageHeading"
 import workoutBanner1 from "../../assets/planner-01.jpg"
@@ -44,7 +44,7 @@ const DEFAULT_EXERCISES: ExerciseCard[] = [
 const DEFAULT_VIDEOS: VideoCard[] = [
   {
     id: "vid-1",
-    title: "Full body mobilité",
+    title: "Full body mobilite",
     url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
   },
@@ -99,7 +99,7 @@ const WorkoutPage = () => {
 
   const handleVideoSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const title = videoForm.title.trim() || "Session vidéo"
+    const title = videoForm.title.trim() || "Session video"
     const id = extractYoutubeId(videoForm.url.trim())
     if (!id) return
     const nextVideo: VideoCard = {
@@ -112,13 +112,34 @@ const WorkoutPage = () => {
     setVideoForm({ title: "", url: "" })
   }
 
+  const handleDeleteExercise = (exerciseId: string) => {
+    setExercises((previous) => previous.filter((item) => item.id !== exerciseId))
+  }
+
+  const handleDeleteVideo = (videoId: string) => {
+    setVideos((previous) => previous.filter((item) => item.id !== videoId))
+  }
+
+  const handleImageChange = (file: File | undefined | null) => {
+    if (!file) {
+      setForm((prev) => ({ ...prev, image: "" }))
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = () => {
+      const result = typeof reader.result === "string" ? reader.result : ""
+      setForm((prev) => ({ ...prev, image: result }))
+    }
+    reader.readAsDataURL(file)
+  }
+
   const rituals = useMemo(
     () => [
-      "🎧 Hype playlist",
-      "💧 Water bottle ready",
-      "📱 Flight mode / Do not disturb",
-      "🧠 Quick stretch & visualization",
-      "🍌 Pre-workout snack",
+      "Hype playlist",
+      "Gourde prete",
+      "Mode avion / DND",
+      "Stretch rapide",
+      "Snack pre-workout",
     ],
     [],
   )
@@ -139,7 +160,9 @@ const WorkoutPage = () => {
 
       <div className="workout-layout">
         <section className="workout-rituals">
-          <h2>Pre-Workout Rituals Section</h2>
+          <div className="workout-section-header">
+            <h2>Pre-Workout Rituals</h2>
+          </div>
           <ul>
             {rituals.map((item) => (
               <li key={item}>{item}</li>
@@ -149,8 +172,9 @@ const WorkoutPage = () => {
 
         <section className="workout-exercises">
           <header className="workout-exercises__header">
-            <h2>Liste d'exercices</h2>
-            <p>Ajoute des cartes avec une image, le muscle ciblé et le type.</p>
+            <div className="workout-section-header">
+              <h2>Liste d'exercices</h2>
+            </div>
           </header>
 
           <form className="workout-form" onSubmit={handleSubmit}>
@@ -165,7 +189,7 @@ const WorkoutPage = () => {
               />
             </label>
             <label>
-              <span>Muscle ciblé</span>
+              <span>Muscle cible</span>
               <input
                 type="text"
                 value={form.muscle}
@@ -183,23 +207,25 @@ const WorkoutPage = () => {
               />
             </label>
             <label>
-              <span>Image (URL)</span>
-              <input
-                type="url"
-                value={form.image}
-                onChange={(e) => setForm((prev) => ({ ...prev, image: e.target.value }))}
-                placeholder="https://..."
-              />
+              <span>Image (import)</span>
+              <input type="file" accept="image/*" onChange={(e) => handleImageChange(e.target.files?.[0])} />
             </label>
             <button type="submit">Ajouter la carte</button>
           </form>
         </section>
 
         <section className="workout-library workout-section--full">
-          <h2>Cartes d'exercices</h2>
           <div className="workout-cards">
             {exercises.map((exercise) => (
               <article key={exercise.id} className="workout-card">
+                <button
+                  type="button"
+                  className="workout-card__delete"
+                  aria-label={`Supprimer ${exercise.title}`}
+                  onClick={() => handleDeleteExercise(exercise.id)}
+                >
+                  ×
+                </button>
                 <div className="workout-card__media">
                   <img src={exercise.image} alt={exercise.title} />
                 </div>
@@ -216,7 +242,6 @@ const WorkoutPage = () => {
         </section>
 
         <section className="workout-videos workout-section--full">
-          <h2>Vidéos YouTube</h2>
           <form className="workout-video-form" onSubmit={handleVideoSubmit}>
             <label>
               <span>Titre</span>
@@ -224,7 +249,7 @@ const WorkoutPage = () => {
                 type="text"
                 value={videoForm.title}
                 onChange={(e) => setVideoForm((prev) => ({ ...prev, title: e.target.value }))}
-                placeholder="Nom de la vidéo"
+                placeholder="Nom de la video"
               />
             </label>
             <label>
@@ -237,11 +262,19 @@ const WorkoutPage = () => {
                 required
               />
             </label>
-            <button type="submit">Ajouter la vidéo</button>
+            <button type="submit">Ajouter la video</button>
           </form>
           <div className="workout-video-grid">
             {videos.map((video) => (
               <article key={video.id} className="workout-video-card">
+                <button
+                  type="button"
+                  className="workout-card__delete"
+                  aria-label={`Supprimer ${video.title}`}
+                  onClick={() => handleDeleteVideo(video.id)}
+                >
+                  ×
+                </button>
                 <div className="workout-video-thumb">
                   <img src={video.thumbnail} alt={video.title} />
                 </div>
