@@ -6,6 +6,7 @@ import usePersistentState from "../../hooks/usePersistentState"
 import planner01 from "../../assets/planner-01.jpg"
 import planner02 from "../../assets/planner-02.jpg"
 import planner03 from "../../assets/planner-03.jpg"
+import planner05 from "../../assets/planner-05.jpg"
 import planner06 from "../../assets/planner-06.jpg"
 import "./Sport.css"
 
@@ -58,6 +59,18 @@ const DEFAULT_BOARD_ACTIVITIES: SportBoardActivity[] = [
   "Repos actif",
 ]
 
+const HABIT_ROWS = [
+  "Workout",
+  "5k+ steps",
+  "Drinking 2 Litres of Water",
+  "Healthy meals",
+  "No junk/ sugar",
+  "1 Fruit",
+  "8 Hours of Sleep",
+]
+
+const HABIT_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
 const formatBoardDate = (isoDate: string) =>
   new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "short" }).format(new Date(isoDate))
 
@@ -98,6 +111,9 @@ const computeWeekRange = (board: SportBoardDay[]) => {
 
 const SportPage = () => {
   const [board, setBoard] = usePersistentState<SportBoardDay[]>(SPORT_BOARD_STORAGE_KEY, createDefaultBoard)
+  const [habitChecks, setHabitChecks] = useState<boolean[][]>(() =>
+    HABIT_ROWS.map(() => HABIT_DAYS.map(() => false)),
+  )
   const lifeCards = useMemo(
     () => [
       { id: "life-workout", label: "Workout", image: planner01 },
@@ -131,6 +147,17 @@ const SportPage = () => {
     const { checked } = event.target
     setBoard((previous) => previous.map((day) => (day.id === dayId ? { ...day, done: checked } : day)))
   }
+
+  const toggleHabit = (rowIndex: number, dayIndex: number) => {
+    setHabitChecks((previous) =>
+      previous.map((row, rIdx) =>
+        row.map((value, dIdx) => (rIdx === rowIndex && dIdx === dayIndex ? !value : value)),
+      ),
+    )
+  }
+
+  const computeRowTotal = (rowIndex: number) =>
+    habitChecks[rowIndex]?.reduce((sum, checked) => sum + (checked ? 1 : 0), 0) ?? 0
 
   return (
     <div className="sport-page">
@@ -169,12 +196,20 @@ const SportPage = () => {
           <div className="sport-quick-panel__divider" />
           <div className="sport-quick-panel__cards">
             {lifeCards.map((card) => (
-              <Link
-                key={card.id}
-                className="sport-life-card"
-                to={card.id === "life-workout" ? "/sport/workout" : "#"}
-                aria-label={`Ouvrir ${card.label}`}
-              >
+                <Link
+                  key={card.id}
+                  className="sport-life-card"
+                  to={
+                    card.id === "life-workout"
+                      ? "/sport/workout"
+                    : card.id === "life-diet"
+                      ? "/diet"
+                      : card.id === "life-goals"
+                        ? "/goals"
+                        : "#"
+                  }
+                  aria-label={`Ouvrir ${card.label}`}
+                >
                 <div className="sport-life-card__media">
                   <img src={card.image} alt={card.label} />
                 </div>
@@ -222,6 +257,57 @@ const SportPage = () => {
                   <span>Séance effectuée</span>
                 </label>
               </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="sport-habits">
+        <div className="sport-habits__image">
+          <img src={planner05} alt="Inspiration sport" />
+        </div>
+        <div className="sport-habits__table-wrapper">
+          <div className="sport-habits__header">
+            <h3>Daily goals</h3>
+            <p className="muted">Coche tes objectifs pour chaque jour.</p>
+          </div>
+          <div className="sport-habits__table" role="table" aria-label="Suivi objectifs quotidiens">
+            <div className="sport-habits__row sport-habits__row--head" role="row">
+              <div className="sport-habits__cell sport-habits__cell--head" role="columnheader">
+                Objectif
+              </div>
+              {HABIT_DAYS.map((day) => (
+                <div key={day} className="sport-habits__cell sport-habits__cell--head" role="columnheader">
+                  {day}
+                </div>
+              ))}
+              <div className="sport-habits__cell sport-habits__cell--head" role="columnheader">
+                Total
+              </div>
+            </div>
+            {HABIT_ROWS.map((rowLabel, rowIndex) => (
+              <div key={rowLabel} className="sport-habits__row" role="row">
+                <div className="sport-habits__cell sport-habits__cell--label" role="rowheader">
+                  {rowLabel}
+                </div>
+                {HABIT_DAYS.map((day, dayIndex) => (
+                  <label
+                    key={`${rowLabel}-${day}`}
+                    className="sport-habits__cell sport-habits__cell--checkbox"
+                    role="cell"
+                    aria-label={`${rowLabel} ${day}`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={habitChecks[rowIndex]?.[dayIndex] ?? false}
+                      onChange={() => toggleHabit(rowIndex, dayIndex)}
+                    />
+                  </label>
+                ))}
+                <div className="sport-habits__cell sport-habits__cell--total" role="cell">
+                  {computeRowTotal(rowIndex)}
+                </div>
+              </div>
             ))}
           </div>
         </div>
