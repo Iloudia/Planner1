@@ -3,6 +3,7 @@ import type { FormEvent, KeyboardEvent } from 'react'
 import { getDateKey } from '../../data/sampleData'
 import type { ScheduledTask } from '../../data/sampleData'
 import { useTasks } from '../../context/TasksContext'
+import PageHeading from '../../components/PageHeading'
 import './CalendarPage.css'
 
 const weekDays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
@@ -416,11 +417,7 @@ const CalendrierPage = () => {
       </section>
 
       <header className="calendar-header">
-        <div>
-          <span className="calendar-month-eyebrow">calendrier mensuel</span>
-          <h1 className="calendar-month">{formatMonthTitle(currentMonthDate)}</h1>
-          <div className="sport-header__divider" aria-hidden="true" />
-        </div>
+        <PageHeading eyebrow="calendrier mensuel" title={formatMonthTitle(currentMonthDate)} />
         <div className="calendar-month-nav">
           <button type="button" onClick={() => handleMonthChange(-1)} aria-label="Mois precedent">
             &lt;

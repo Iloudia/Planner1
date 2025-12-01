@@ -6,7 +6,7 @@
 .home-accent-bar {
   height: 0.5rem;
   border-radius: 999px;
-  background: linear-gradient(90deg, #818cf8 0%, #f472b6 50%, #f9a8d4 100%);
+  background: linear-gradient(90deg, #fce7f3 0%, #f472b6 50%, #f9a8d4 100%);
   box-shadow: 0 12px 40px rgba(129, 140, 248, 0.25);
   margin-bottom: 1rem;
 }
@@ -14,9 +14,11 @@
 .home-footer-bar {
   height: 2.6rem;
   border-radius: 28px;
-  background: linear-gradient(140deg, #ffe4f1 0%, #fbcfe8 40%, #f472b6 100%);
-  box-shadow: 0 24px 70px rgba(129, 140, 248, 0.24);
+  background: linear-gradient(90deg, #fce7f3 0%, #f472b6 50%, #f9a8d4 100%);
+  box-shadow: 0 24px 80px rgba(99, 102, 241, 0.18);
   margin-top: 1.5rem;
+  grid-column: 1 / -1;
+  width: 100%;
 }
 
 .home-moodboard {
@@ -63,13 +65,74 @@
   position: relative;
 }
 
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.card {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: none;
+  transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+  cursor: pointer;
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(236, 72, 153, 0.12), rgba(249, 168, 212, 0.08));
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(236, 72, 153, 0.35);
+  box-shadow: none;
+}
+
+.card:hover::after {
+  opacity: 1;
+}
+
+.card img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  display: block;
+}
+
+.card-body {
+  position: relative;
+  padding: 14px 14px 16px;
+  z-index: 1;
+}
+
+.card h3 {
+  margin: 0 0 6px;
+  font-size: 18px;
+}
+
+.card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
 .profile-photo {
   position: relative;
   width: 100%;
   max-width: 260px;
-  border-radius: 24px;
-  overflow: hidden;
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
+  border-radius: 0;
+  overflow: visible;
+  box-shadow: none;
+  background: none;
+  margin: 0 auto;
 }
 
 .profile-photo img {
@@ -134,11 +197,11 @@
   height: 36px;
   border-radius: 12px;
   border: none;
-  background: linear-gradient(135deg, #818cf8 0%, #f472b6 100%);
+  background: #f472b6;
   color: #fff;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 10px 24px rgba(129, 140, 248, 0.25);
+  box-shadow: none;
 }
 
 .todo-input input {

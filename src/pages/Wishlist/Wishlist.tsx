@@ -798,7 +798,6 @@ const WishlistPage = () => {
   return (
     <div className="wishlist-page aesthetic-page" onClick={() => setOpenMenuFor(null)}>
       <div className="page-accent-bar" aria-hidden="true" />
-      <div className="wishlist-page__breadcrumb">wishlist</div>
       <PageHeading eyebrow="Envies" title="Wishlist ideal" />
       <header className="wishlist-hero dashboard-panel">
         <div className="wishlist-hero__content">

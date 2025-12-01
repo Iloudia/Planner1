@@ -449,7 +449,6 @@ const JournalingPage = () => {
 
   return (
     <div className="journaling-page aesthetic-page">
-      <div className="journaling-page__breadcrumb">journal</div>
       <div className="journaling-page__accent-bar" aria-hidden="true" />
       <PageHeading eyebrow="Reflet" title="Mon journal pastel" />
       <section className="journaling-hero">

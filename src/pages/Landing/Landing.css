@@ -1,8 +1,11 @@
-﻿.landing-page {
+.landing-page {
   display: flex;
   flex-direction: column;
   gap: clamp(3rem, 6vw, 5rem);
+  min-height: 100vh;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
 }
+
 
 .landing-hero {
   display: grid;
@@ -11,8 +14,8 @@
   align-items: center;
   padding: clamp(2.4rem, 5vw, 3.4rem);
   border-radius: 36px;
-  background: linear-gradient(135deg, rgba(251, 191, 217, 0.32) 0%, rgba(191, 219, 254, 0.4) 100%);
-  box-shadow: 0 32px 90px rgba(124, 58, 237, 0.18);
+  box-shadow: 0 32px 90px rgba(244, 114, 182, 0.22);
+  background: linear-gradient(135deg, #ffe4f1 0%, #fbcfe8 40%, #f472b6 100%);
 }
 
 .landing-hero__content {
@@ -26,8 +29,8 @@
   display: inline-block;
   padding: 0.6rem 1.2rem;
   border-radius: 999px;
-  background: rgba(147, 197, 253, 0.32);
-  color: #1f2937;
+  background: rgba(244, 114, 182, 0.14);
+  color: #9d174d;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -175,18 +178,19 @@
   align-items: center;
   padding: clamp(2.6rem, 5vw, 3.2rem);
   border-radius: 34px;
-  background: linear-gradient(135deg, rgba(191, 219, 254, 0.35) 0%, rgba(221, 214, 254, 0.45) 100%);
   display: flex;
   flex-direction: column;
   gap: 1.8rem;
-  box-shadow: 0 32px 90px rgba(59, 130, 246, 0.22);
+  box-shadow: 0 32px 90px rgba(244, 114, 182, 0.24);
+  background: #ffffff;
 }
 
 .landing-onboarding h2 {
   margin: 0;
   font-size: clamp(1.8rem, 1.5vw + 1.3rem, 2.5rem);
-  color: #1f2937;
+  color: #ffffff;
 }
+
 
 .landing-steps {
   margin: 0;
@@ -353,3 +357,8 @@
     padding: 1.8rem;
   }
 }
+
+
+
+
+

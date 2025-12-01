@@ -5,6 +5,7 @@ import activitiesMood01 from '../../assets/planner-05.jpg'
 import activitiesMood02 from '../../assets/planner-08.jpg'
 import activitiesMood03 from '../../assets/planner-06.jpg'
 import PageHero from '../../components/PageHero'
+import PageHeading from '../../components/PageHeading'
 import '../Finances/FinancePage.css'
 import './ActivitiesPage.css'
 
@@ -238,7 +239,7 @@ const ActivitiesPage = () => {
                     Changer la date
                   </button>
                   <button type="button" className="activity-card__menu-item activity-card__menu-item--danger" onClick={() => handleDelete(activity.id)}>
-                    Supprimer l'activite
+                    Supprimer l'activité
                   </button>
                 </div>
               ) : null}
@@ -265,7 +266,6 @@ const ActivitiesPage = () => {
 
   return (
     <div className="activities-page aesthetic-page">
-      <div className="activities-page__breadcrumb">Activites</div>
       <div className="activities-page__accent-bar" aria-hidden="true" />
       <PageHero
         eyebrow="Inspiration"
@@ -274,13 +274,14 @@ const ActivitiesPage = () => {
         stats={activitiesStats}
         images={activitiesHeroImages}
       />
+      <PageHeading eyebrow="Activites" title="Planning d activites" />
 
       <section className="activities-dashboard">
         <div className="activities-form">
           <div className="activities-form__panel dashboard-panel">
             <header className="activities-section-header">
-              <span className="activities-section-header__eyebrow">Nouvelle idee</span>
-              <h2>Ajouter une activite</h2>
+              <span className="activities-section-header__eyebrow">Nouvelle idée</span>
+              <h2>Ajouter une activité</h2>
             </header>
             <form onSubmit={handleSubmit}>
               <label>
@@ -318,7 +319,7 @@ const ActivitiesPage = () => {
                 </select>
               </label>
               <label>
-                <span>Date ideale</span>
+                <span>Date idéale</span>
                 <input
                   type="date"
                   value={draft.idealDate}
@@ -345,11 +346,11 @@ const ActivitiesPage = () => {
                       </button>
                     ) : null}
                   </div>
-                  <span className="activities-form__photo-hint">Formats image acceptes (JPG, PNG, GIF).</span>
+                  <span className="activities-form__photo-hint">Formats image acceptés (JPG, PNG, GIF).</span>
                 </div>
               </div>
               <button type="submit" className="activities-form__submit">
-                Ajouter a la liste
+                Ajouter à la liste
               </button>
             </form>
           </div>
@@ -360,11 +361,11 @@ const ActivitiesPage = () => {
       <div className="activities-split">
         <article className="activities-group dashboard-panel">
           <header>
-            <h2>Planifie</h2>
-            <span>{plannedActivities.length} activite(s)</span>
+            <h2>Planifié</h2>
+            <span>{plannedActivities.length} activité(s)</span>
           </header>
           {plannedActivities.length === 0 ? (
-            <p className="activities-group__empty">Ajoute une idee ou une sortie pour la preparer ici.</p>
+            <p className="activities-group__empty">Ajoute une idée ou une sortie pour la préparer ici.</p>
           ) : (
             <ul className="activities-group__list">
               {plannedActivities.map((activity, index) => renderActivityCard(activity, index))}
@@ -375,12 +376,12 @@ const ActivitiesPage = () => {
         <article className="activities-group dashboard-panel">
           <header>
             <div>
-              <h2>Realise</h2>
+              <h2>Réalisé</h2>
             </div>
-            <span>{completedActivities.length} activite(s)</span>
+            <span>{completedActivities.length} activité(s)</span>
           </header>
           {completedActivities.length === 0 ? (
-            <p className="activities-group__empty">Capture les souvenirs de tes activites deja vecues.</p>
+            <p className="activities-group__empty">Capture les souvenirs de tes activités déjà vécues.</p>
           ) : (
             <ul className="activities-group__list">
               {completedActivities.map((activity, index) => renderActivityCard(activity, index))}

@@ -1,6 +1,7 @@
 import type { FormEvent } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import PageHero from '../../components/PageHero'
+import PageHeading from '../../components/PageHeading'
 import usePersistentState from '../../hooks/usePersistentState'
 import financeMood01 from '../../assets/planner-04.jpg'
 import financeMood02 from '../../assets/planner-07.jpg'
@@ -500,13 +501,12 @@ const FinancePage = () => {
 
   return (
     <div className="finance-page aesthetic-page">
-      <div className="finance-page__breadcrumb">finances</div>
       <div className="finance-page__accent-bar" aria-hidden="true" />
 
       <PageHero
         eyebrow="Équilibre pastel"
         title="Pilote ton budget tout en douceur"
-        description="Visualise tes entrées, tes sorties et l’énergie que tu souhaites donner à ton mois."
+        description="Visualise tes entrées et tes sorties pour mieux organiser ton mois."
         stats={financeHeroStats}
         images={financeMoodboard}
         tone="blue"
@@ -540,15 +540,16 @@ const FinancePage = () => {
           )}
         </div>
       </PageHero>
+      <PageHeading eyebrow='Finances' title='Tableau de bord budget' />
 
       <section className="finance-dashboard">
         <div className="finance-dashboard__main">
           <section className="finance-summary dashboard-panel">
             <header className="finance-section-header">
-              <span className="finance-section-header__eyebrow">couleurs de dépenses</span>
+              <span className="finance-section-header__eyebrow">Vue d’ensemble</span>
               <div>
                 <h2>Répartition par catégorie</h2>
-                <p>Visualise où part ton énergie financière avec une palette ultra douce.</p>
+                <p>Repère rapidement les catégories qui te coûtent le plus</p>
               </div>
             </header>
             <div className="finance-summary__grid">
@@ -657,7 +658,7 @@ const FinancePage = () => {
               <span className="finance-section-header__eyebrow">suivi du mois</span>
               <div>
                 <h2>Balance du mois</h2>
-                <p>Configure ton montant initial pour suivre au plus pres tes mouvements.</p>
+                <p>Définis ton solde de départ pour un suivi précis</p>
               </div>
             </header>
             <form className="finance-balance__form" onSubmit={handleStartingAmountSubmit}>
@@ -858,3 +859,4 @@ const BalanceLineChart = ({ points }: BalanceLineChartProps) => {
 }
 
 export default FinancePage
+

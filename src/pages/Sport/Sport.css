@@ -9,7 +9,7 @@
   overflow: hidden;
   border-radius: 18px;
   max-height: 260px;
-  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 16px 36px rgba(236, 72, 153, 0.15);
 }
 
 .sport-hero-image img {
@@ -21,16 +21,16 @@
 
 .sport-page__accent-bar {
   height: 0.55rem;
-  background: linear-gradient(90deg, #dbeafe 0%, #c7d2fe 40%, #a5b4fc 100%);
+  background: linear-gradient(90deg, #fce7f3 0%, #f9a8d4 45%, #f472b6 100%);
   border-radius: 999px;
-  box-shadow: 0 12px 40px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 12px 40px rgba(236, 72, 153, 0.2);
 }
 
 .sport-page__footer-bar {
   height: 2.2rem;
-  background: linear-gradient(120deg, #dbeafe 0%, #c7d2fe 50%, #a5b4fc 100%);
+  background: linear-gradient(120deg, #fce7f3 0%, #f9a8d4 55%, #f472b6 100%);
   border-radius: 28px;
-  box-shadow: 0 -20px 60px rgba(99, 102, 241, 0.16);
+  box-shadow: 0 -20px 60px rgba(236, 72, 153, 0.18);
 }
 
 .sport-section-header {
@@ -63,7 +63,7 @@
 
 .sport-board__range {
   margin: 0;
-  color: #475569;
+  color: #9d174d;
   font-weight: 600;
 }
 
@@ -74,7 +74,7 @@
 }
 
 .sport-board__group {
-  background: linear-gradient(135deg, rgba(237, 218, 255, 0.55), rgb(255, 248, 255));
+  background: linear-gradient(135deg, rgba(252, 231, 243, 0.7), rgb(255, 245, 250));
   border-radius: 16px;
   padding: 1.1rem;
 }
@@ -82,9 +82,9 @@
 .sport-board-card {
   border-radius: 18px;
   padding: 1.2rem 1.1rem;
-  background: linear-gradient(145deg, rgba(219, 234, 254, 0.95), rgba(221, 214, 254, 0.85));
-  border: 1px solid rgba(99, 102, 241, 0.18);
-  box-shadow: 0 18px 38px rgba(99, 102, 241, 0.14);
+  background: #ffffff;
+  border: 1px solid rgba(236, 72, 153, 0.22);
+  box-shadow: 0 18px 38px rgba(236, 72, 153, 0.14);
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
@@ -111,8 +111,8 @@
 .sport-board-card__status {
   padding: 0.4rem 0.75rem;
   border-radius: 999px;
-  background: rgba(99, 102, 241, 0.12);
-  color: #1e1b4b;
+  background: rgba(236, 72, 153, 0.12);
+  color: #9d174d;
   font-weight: 700;
   font-size: 0.85rem;
 }
@@ -132,12 +132,12 @@
 
 .sport-board-card__field select {
   border-radius: 12px;
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  border: 1px solid rgba(236, 72, 153, 0.2);
   padding: 0.6rem 0.75rem;
   font-size: 1rem;
   background: rgba(255, 255, 255, 0.95);
   color: #0f172a;
-  box-shadow: 0 10px 24px rgba(99, 102, 241, 0.12);
+  box-shadow: 0 10px 24px rgba(236, 72, 153, 0.12);
 }
 
 .sport-board-card__checkbox {
@@ -151,7 +151,7 @@
 .sport-board-card__checkbox input {
   width: 20px;
   height: 20px;
-  accent-color: #6366f1;
+  accent-color: #ec4899;
 }
 
 .sport-quick-panels {
@@ -177,8 +177,8 @@
 }
 
 .sport-quick-panel__title {
-  background: rgba(99, 102, 241, 0.16);
-  color: #1e1b4b;
+  background: rgba(236, 72, 153, 0.16);
+  color: #9d174d;
   padding: 0.4rem 0.9rem;
   display: block;
   width: 100%;
@@ -192,7 +192,7 @@
   height: 2px;
   width: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #818cf8 0%, #60a5fa 100%);
+  background: linear-gradient(90deg, #f472b6 0%, #fb7185 100%);
   opacity: 0.6;
 }
 
@@ -205,9 +205,10 @@
 .sport-chip {
   display: inline-flex;
   align-self: flex-start;
-  border: 1px solid rgba(99, 102, 241, 0.25);
+  border: 1px solid rgba(236, 72, 153, 0.25);
   border-radius: 7px;
   padding: 0.55rem 0.85rem;
+  background: #ffffff;
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.2s ease;
@@ -215,7 +216,7 @@
 
 .sport-chip:hover {
   transform: translateY(-1px);
-  box-shadow: 0 12px 24px rgba(99, 102, 241, 0.16);
+  box-shadow: 0 12px 24px rgba(236, 72, 153, 0.16);
 }
 
 .sport-quick-panel__cards {
@@ -227,12 +228,13 @@
 .sport-life-card {
   padding: 0.95rem 1rem;
   border-radius: 14px;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(99, 102, 241, 0.14));
-  border: 1px solid rgba(99, 102, 241, 0.18);
-  box-shadow: 0 16px 30px rgba(15, 23, 42, 0.08);
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.08), rgba(236, 72, 153, 0.14));
+  border: 1px solid rgba(236, 72, 153, 0.2);
+  box-shadow: 0 16px 30px rgba(236, 72, 153, 0.12);
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
+  text-decoration: none;
 }
 
 .sport-life-card__media {
@@ -253,7 +255,8 @@
 .sport-life-card h3 {
   margin: 0;
   font-size: 1rem;
-  color: #1f2937;
+  color: #7f1d1d;
+  text-decoration: none;
 }
 
 .sport-habits {
@@ -261,6 +264,13 @@
   grid-template-columns: minmax(260px, 0.9fr) minmax(0, 1.6fr);
   gap: 0.9rem;
   align-items: stretch;
+}
+
+.sport-habits__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  align-self: stretch;
 }
 
 .sport-habits__image {
@@ -281,14 +291,16 @@
 .sport-habits__table-wrapper {
   background: #ffffff;
   border-radius: 16px;
-  padding: 1.2rem;
+  padding: 1rem;
   border: 1px solid rgba(15, 23, 42, 0.08);
   box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
   display: inline-flex;
   flex-direction: column;
   gap: 0.55rem;
-  width: auto;
-  max-width: none;
+  width: fit-content;
+  max-width: 100%;
+  justify-self: start;
+  align-self: start;
 }
 
 .sport-habits__header {
@@ -315,7 +327,7 @@
   grid-template-columns: 1.2fr repeat(7, minmax(0, 1fr)) 0.6fr;
   align-items: center;
   gap: 0;
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  border: 1px solid rgba(236, 72, 153, 0.2);
   border-radius: 12px;
   overflow: hidden;
   min-width: 640px;
@@ -323,25 +335,25 @@
 
 .sport-habits__row--head {
   font-weight: 700;
-  color: #0f172a;
-  background: linear-gradient(90deg, #e0e7ff 0%, #dbeafe 100%);
+  color: #7f1d1d;
+  background: linear-gradient(90deg, #fce7f3 0%, #f9a8d4 100%);
 }
 
 .sport-habits__cell {
   padding: 0.42rem 0.55rem;
   text-align: center;
-  border-right: 1px solid rgba(226, 232, 240, 0.9);
+  border-right: 1px solid rgba(236, 72, 153, 0.16);
   background: #fff;
 }
 
 .sport-habits__cell--head {
-  border-right: 1px solid rgba(99, 102, 241, 0.16);
+  border-right: 1px solid rgba(236, 72, 153, 0.16);
 }
 
 .sport-habits__cell--label {
   text-align: left;
   font-weight: 600;
-  background: #f8fafc;
+  background: #fff1f5;
 }
 
 .sport-habits__cell--checkbox {
@@ -351,7 +363,7 @@
 .sport-habits__cell--checkbox input {
   width: 18px;
   height: 18px;
-  accent-color: #6366f1;
+  accent-color: #ec4899;
 }
 
 .sport-habits__cell--total {
@@ -361,7 +373,7 @@
 }
 
 .sport-habits__row:not(.sport-habits__row--head):nth-of-type(odd) .sport-habits__cell {
-  background: #f9fafb;
+  background: #fff7fb;
 }
 
 .sport-reminders {
@@ -375,8 +387,8 @@
 }
 
 .sport-reminders__title {
-  background: rgba(99, 102, 241, 0.16);
-  color: #1e1b4b;
+  background: rgba(236, 72, 153, 0.16);
+  color: #9d174d;
   padding: 0.4rem 0.9rem;
   display: inline-block;
   font-weight: 700;
@@ -394,16 +406,17 @@
   padding: 0.95rem 1.05rem;
   border-radius: 14px;
   background: #ffffff;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.08);
-  max-width: 420px;
+  border: 1px solid rgba(236, 72, 153, 0.18);
+  box-shadow: 0 14px 32px rgba(236, 72, 153, 0.12);
+  max-width: none;
+  width: 100%;
 }
 
 .sport-reminders__list {
   display: grid;
   gap: 0.25rem;
   font-weight: 700;
-  color: #0f172a;
+  color: #7f1d1d;
   text-transform: lowercase;
 }
 

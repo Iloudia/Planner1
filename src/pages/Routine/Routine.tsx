@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import type { RoutineItem } from '../../data/sampleData'
 import { eveningRoutine as defaultEveningRoutine, morningRoutine as defaultMorningRoutine } from '../../data/sampleData'
 import usePersistentState from '../../hooks/usePersistentState'
+import PageHeading from '../../components/PageHeading'
 import morningIllustration from '../../assets/morning-note.svg'
 import eveningIllustration from '../../assets/evening-note.svg'
 import './RoutinePage.css'
@@ -192,7 +193,6 @@ const RoutinePage = () => {
 
   return (
     <div className="routine-page aesthetic-page">
-      <div className="routine-page__breadcrumb">Routine</div>
       <div className="routine-page__accent-bar" aria-hidden="true" />
 
       <section className="routine-hero dashboard-panel">
@@ -213,6 +213,7 @@ const RoutinePage = () => {
           </div>
         </div>
       </section>
+      <PageHeading eyebrow="Routine" title="Rituels quotidiens" />
 
       <div className="routine-notes">
         <section className="routine-note routine-note--morning">

@@ -4,15 +4,6 @@
   gap: 2.75rem;
 }
 
-.wishlist-page__breadcrumb {
-  align-self: flex-start;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #f472b6;
-}
-
 .wishlist-hero {
   position: relative;
   overflow: hidden;
