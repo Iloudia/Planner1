@@ -501,7 +501,6 @@ const FinancePage = () => {
 
   return (
     <div className="finance-page aesthetic-page">
-      <div className="finance-page__accent-bar" aria-hidden="true" />
 
       <PageHero
         eyebrow="Équilibre pastel"
@@ -540,17 +539,20 @@ const FinancePage = () => {
           )}
         </div>
       </PageHero>
+      <div className="finance-page__accent-bar" aria-hidden="true" />
       <PageHeading eyebrow='Finances' title='Tableau de bord budget' />
+      
 
       <section className="finance-dashboard">
         <div className="finance-dashboard__main">
+          <div className="finance-section-chip">
+            <span className="finance-section-chip__title">Répartition par catégorie</span>
+            <div className="finance-section-chip__divider" aria-hidden="true" />
+          </div>
           <section className="finance-summary dashboard-panel">
             <header className="finance-section-header">
               <span className="finance-section-header__eyebrow">Vue d’ensemble</span>
-              <div>
-                <h2>Répartition par catégorie</h2>
-                <p>Repère rapidement les catégories qui te coûtent le plus</p>
-              </div>
+              <p>Repère rapidement les catégories qui te coûtent le plus</p>
             </header>
             <div className="finance-summary__grid">
               {Object.entries(totals).map(([categoryKey, amount]) => {
@@ -653,13 +655,14 @@ const FinancePage = () => {
         </div>
 
         <aside className="finance-dashboard__aside">
+          <div className="finance-section-chip">
+            <span className="finance-section-chip__title">Balance du mois</span>
+            <div className="finance-section-chip__divider" aria-hidden="true" />
+          </div>
           <section className="finance-balance dashboard-panel">
             <header className="finance-section-header finance-section-header--vertical">
               <span className="finance-section-header__eyebrow">suivi du mois</span>
-              <div>
-                <h2>Balance du mois</h2>
-                <p>Définis ton solde de départ pour un suivi précis</p>
-              </div>
+              <p>Définis ton solde de départ pour un suivi précis</p>
             </header>
             <form className="finance-balance__form" onSubmit={handleStartingAmountSubmit}>
               <label className="finance-balance__field">
@@ -859,4 +862,3 @@ const BalanceLineChart = ({ points }: BalanceLineChartProps) => {
 }
 
 export default FinancePage
-

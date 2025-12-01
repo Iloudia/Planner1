@@ -197,7 +197,6 @@ const RoutinePage = () => {
 
       <section className="routine-hero dashboard-panel">
         <div className="routine-hero__content">
-          <span className="routine-hero__eyebrow">Rituels doux</span>
           <h1>Routines du matin et du soir</h1>
           <p>
             Crée ton équilibre intérieur avec des gestes simples, répétés chaque jour pour te recentrer et te faire du

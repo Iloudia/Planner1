@@ -42,7 +42,7 @@ function Header() {
             )}
           </div>
 
-          <button className="profile-circle" aria-label="Ouvrir le profil" onClick={() => navigate("/home")}>
+          <button className="profile-circle" aria-label="Ouvrir le profil" onClick={() => navigate("/profil")}>
             <span className="profile-initials">P</span>
           </button>
         </div>

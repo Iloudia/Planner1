@@ -153,9 +153,10 @@ body {
   gap: 6px;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: var(--text);
+  color: #ec4899;
   text-decoration: none;
   padding-left: 0.2rem;
+  font-size: 25px;
 }
 
 .brand-dot {
@@ -289,7 +290,7 @@ body {
 
 .site-footer__title {
   margin: 0;
-  font-size: clamp(1.5rem, 1vw + 1.2rem, 1.9rem);
+  font-size: 40px;
   font-weight: 700;
   letter-spacing: 0.02em;
 }

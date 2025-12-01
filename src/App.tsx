@@ -23,6 +23,7 @@ import ConfidentialitePage from "./pages/Legal/ConfidentialitePage"
 import ContactPage from "./pages/Legal/ContactPage"
 import GestionCookiesPage from "./pages/Legal/GestionCookiesPage"
 import MentionsLegalesPage from "./pages/Legal/MentionsLegalesPage"
+import ProfilePage from "./pages/Profile/ProfilePage"
 
 function NotFound() {
   return (
@@ -61,13 +62,14 @@ function App() {
             <Route path="/journaling" element={<JournalingPage />} />
             <Route path="/self-love" element={<SelfLovePage />} />
             <Route path="/wishlist" element={<WishlistPage />} />
-            <Route path="/calendrier" element={<CalendrierPage />} />
+          <Route path="/calendrier" element={<CalendrierPage />} />
           <Route path="/finances" element={<FinancesPage />} />
           <Route path="/routine" element={<RoutinePage />} />
           <Route path="/goals" element={<GoalsPage />} />
           <Route path="/culture" element={<CulturePage />} />
           <Route path="/diet" element={<DietPage />} />
           <Route path="/voyage" element={<VoyagePage />} />
+          <Route path="/profil" element={<ProfilePage />} />
           <Route path="/faq" element={<FAQPage />} />
           <Route path="/confidentialite" element={<ConfidentialitePage />} />
           <Route path="/contact" element={<ContactPage />} />

@@ -220,6 +220,32 @@
   gap: 2rem;
 }
 
+.finance-section-chip {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.finance-section-chip__title {
+  background: rgba(244, 114, 182, 0.16);
+  color: #9d174d;
+  padding: 0.4rem 0.9rem;
+  font-weight: 700;
+  width: 100%;
+  display: block;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.82rem;
+}
+
+.finance-section-chip__divider {
+  height: 2px;
+  width: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f472b6 0%, #fb7185 100%);
+  opacity: 0.6;
+}
+
 .finance-section-header {
   display: flex;
   flex-direction: column;
