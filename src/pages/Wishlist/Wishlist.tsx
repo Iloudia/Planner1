@@ -220,6 +220,7 @@ const WishlistPage = () => {
   const [editingItemId, setEditingItemId] = useState<string | null>(null)
   const [itemMenuOpenFor, setItemMenuOpenFor] = useState<string | null>(null)
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({})
+  const [isNoteMenuOpen, setIsNoteMenuOpen] = useState(false)
   const [movingItem, setMovingItem] = useState<WishlistItem | null>(null)
   const [moveTargetCategoryId, setMoveTargetCategoryId] = useState<WishlistCategoryId | null>(null)
   const [moveSubcategory, setMoveSubcategory] = useState("")
@@ -383,6 +384,7 @@ const WishlistPage = () => {
     setExpandedItems({})
     setItemMenuOpenFor(null)
     setIsCategoryPickerOpen(false)
+    setIsNoteMenuOpen(false)
     if (!selectedCategoryId) {
       setNoteDraft("")
       setIsEditingNote(false)
@@ -390,7 +392,7 @@ const WishlistPage = () => {
     }
     const currentNote = wishlist[selectedCategoryId]?.note ?? ""
     setNoteDraft(currentNote)
-    setIsEditingNote(currentNote.trim().length > 0)
+    setIsEditingNote(false)
   }, [resetItemDraft, selectedCategoryId, wishlist])
 
   useEffect(() => {
@@ -414,7 +416,12 @@ const WishlistPage = () => {
   useEffect(() => {
     const handleGlobalPointerDown = (event: PointerEvent) => {
       const target = event.target as HTMLElement | null
-      if (target?.closest(".wishlist-card__menu") || target?.closest(".wishlist-card__menu-popover")) {
+      if (
+        target?.closest(".wishlist-card__menu") ||
+        target?.closest(".wishlist-card__menu-popover") ||
+        target?.closest(".wishlist-note__menu") ||
+        target?.closest(".wishlist-note__menu-popover")
+      ) {
         return
       }
       if (target?.closest(".wishlist-item__menu")) {
@@ -422,6 +429,9 @@ const WishlistPage = () => {
       }
       setOpenMenuFor(null)
       setItemMenuOpenFor(null)
+      if (!target?.closest(".wishlist-note__menu") && !target?.closest(".wishlist-note__menu-popover")) {
+        setIsNoteMenuOpen(false)
+      }
     }
     window.addEventListener("pointerdown", handleGlobalPointerDown)
     return () => window.removeEventListener("pointerdown", handleGlobalPointerDown)
@@ -523,6 +533,9 @@ const WishlistPage = () => {
 
   const subcategoryOptions = useMemo(() => getCategorySubcategories(selectedCategoryId), [getCategorySubcategories, selectedCategoryId])
 
+  const currentMemoValue = selectedCategoryState?.note?.trim() ?? ""
+  const hasMemo = currentMemoValue.length > 0
+
   const movableCategories = useMemo(
     () => categoryCards.filter((card) => card.id !== selectedCategoryId),
     [categoryCards, selectedCategoryId],
@@ -584,6 +597,12 @@ const WishlistPage = () => {
       ...previous,
       [itemId]: !previous[itemId],
     }))
+  }
+
+  const handleToggleNoteMenu = (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation()
+    event.preventDefault()
+    setIsNoteMenuOpen((previous) => !previous)
   }
 
   const handleStartEditItem = (item: WishlistItem) => {
@@ -681,6 +700,17 @@ const WishlistPage = () => {
     })
     setItemMenuOpenFor(null)
     setFeedback("Element duplique")
+  }
+
+  const handleStartEditNote = () => {
+    if (!selectedCategoryState) {
+      setIsEditingNote(true)
+      setIsNoteMenuOpen(false)
+      return
+    }
+    setNoteDraft(selectedCategoryState.note ?? "")
+    setIsEditingNote(true)
+    setIsNoteMenuOpen(false)
   }
 
   const handleDeleteItem = (item: WishlistItem) => {
@@ -1065,6 +1095,7 @@ const WishlistPage = () => {
     if (!selectedCategoryId) {
       return
     }
+    const trimmedNote = noteDraft.trim()
     setWishlist((previous) => {
       const current = previous[selectedCategoryId]
       if (!current) {
@@ -1074,12 +1105,37 @@ const WishlistPage = () => {
         ...previous,
         [selectedCategoryId]: {
           ...current,
-          note: noteDraft.trim(),
+          note: trimmedNote,
         },
       }
     })
-    setIsEditingNote(noteDraft.trim().length > 0)
+    setNoteDraft(trimmedNote)
+    setIsEditingNote(false)
+    setIsNoteMenuOpen(false)
     setFeedback("Note mise a jour")
+  }
+
+  const handleDeleteNote = () => {
+    if (!selectedCategoryId) {
+      return
+    }
+    setWishlist((previous) => {
+      const current = previous[selectedCategoryId]
+      if (!current) {
+        return previous
+      }
+      return {
+        ...previous,
+        [selectedCategoryId]: {
+          ...current,
+          note: "",
+        },
+      }
+    })
+    setNoteDraft("")
+    setIsEditingNote(false)
+    setIsNoteMenuOpen(false)
+    setFeedback("Memo supprime")
   }
 
   const closeModal = () => {
@@ -1091,6 +1147,7 @@ const WishlistPage = () => {
     setEditingItemId(null)
     setItemMenuOpenFor(null)
     setExpandedItems({})
+    setIsNoteMenuOpen(false)
     resetItemDraft()
   }
   return (
@@ -1217,8 +1274,15 @@ const WishlistPage = () => {
                 >
                   <label>
                     <span className="wishlist-memo-label">
-                      <svg className="wishlist-memo-label__icon" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M4 5a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H9l-4 4v-4a3 3 0 0 1-3-3Z" />
+                      <svg className="wishlist-memo-label__icon" viewBox="0 0 26 26" aria-hidden="true">
+                        <path
+                          d="M4 6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H9l-4 5v-5H7a3 3 0 0 1-3-3Z"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.8"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
                       </svg>
                       <span>Memo</span>
                     </span>
@@ -1242,17 +1306,58 @@ const WishlistPage = () => {
                     </button>
                   </div>
                 </form>
-              ) : selectedCategoryState.note && selectedCategoryState.note.trim().length > 0 ? (
+              ) : (
                 <div className="wishlist-modal__note-display">
-                  <strong className="wishlist-memo-label">
-                    <svg className="wishlist-memo-label__icon" viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M4 5a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H9l-4 4v-4a3 3 0 0 1-3-3Z" />
-                    </svg>
-                    <span>Memo</span>
-                  </strong>
-                  <p>{selectedCategoryState.note}</p>
+                  <div className="wishlist-note__header">
+                    <strong className="wishlist-memo-label">
+                      <svg className="wishlist-memo-label__icon" viewBox="0 0 26 26" aria-hidden="true">
+                        <path
+                          d="M4 6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H9l-4 5v-5H7a3 3 0 0 1-3-3Z"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.8"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                      <span>Memo</span>
+                    </strong>
+                    <div className="wishlist-note__menu">
+                      <button
+                        type="button"
+                        className="wishlist-note__menu-toggle"
+                        aria-haspopup="true"
+                        aria-expanded={isNoteMenuOpen}
+                        onClick={handleToggleNoteMenu}
+                      >
+                        <span />
+                        <span />
+                        <span />
+                      </button>
+                      {isNoteMenuOpen ? (
+                        <div className="wishlist-note__menu-popover" role="menu">
+                          <button type="button" onClick={handleStartEditNote}>
+                            Modifier
+                          </button>
+                          <button type="button" disabled={!hasMemo} onClick={handleDeleteNote} className="wishlist-note__menu-danger">
+                            Supprimer
+                          </button>
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                  {hasMemo ? (
+                    <p>{selectedCategoryState.note}</p>
+                  ) : (
+                    <p className="wishlist-modal__note-placeholder">Ajoute un memo pour cette categorie.</p>
+                  )}
+                  {!hasMemo ? (
+                    <button className="wishlist-note__add" type="button" onClick={handleStartEditNote}>
+                      Ajouter un memo
+                    </button>
+                  ) : null}
                 </div>
-              ) : null}
+              )}
 
               {isAddingItem ? (
                 <form className="wishlist-modal__form" onSubmit={handleAddItem}>

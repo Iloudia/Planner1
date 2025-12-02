@@ -577,14 +577,98 @@
 }
 
 .wishlist-memo-label__icon {
-  width: 1.05rem;
-  height: 1.05rem;
-  fill: currentColor;
+  width: 1.2rem;
+  height: 1.2rem;
+  display: inline-block;
+  overflow: visible;
 }
 
 .wishlist-modal__note .wishlist-memo-label {
   font-size: 0.75rem;
   color: rgba(190, 24, 93, 0.78);
+}
+
+.wishlist-note__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.wishlist-note__menu {
+  position: relative;
+}
+
+.wishlist-note__menu-toggle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(148, 163, 184, 0.2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  cursor: pointer;
+}
+
+.wishlist-note__menu-toggle span {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.7);
+  display: block;
+}
+
+.wishlist-note__menu-popover {
+  position: absolute;
+  top: calc(100% + 0.3rem);
+  right: 0;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+  display: flex;
+  flex-direction: column;
+  padding: 0.35rem;
+  min-width: 160px;
+  z-index: 6;
+}
+
+.wishlist-note__menu-popover button {
+  border: none;
+  background: transparent;
+  text-align: left;
+  padding: 0.45rem 0.6rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: rgba(15, 23, 42, 0.8);
+  cursor: pointer;
+}
+
+.wishlist-note__menu-popover button:hover {
+  background: rgba(236, 72, 153, 0.08);
+  color: #be185d;
+}
+
+.wishlist-note__menu-danger {
+  color: #dc2626;
+}
+
+.wishlist-modal__note-placeholder {
+  margin: 0;
+  color: rgba(31, 26, 47, 0.65);
+}
+
+.wishlist-note__add {
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 12px;
+  background: rgba(236, 72, 153, 0.1);
+  color: #be185d;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  align-self: flex-start;
 }
 
 .wishlist-modal__file-field-control {
