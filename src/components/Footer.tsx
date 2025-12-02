@@ -1,4 +1,5 @@
 import { PropsWithChildren } from "react";
+import { useCookieConsent } from "../context/CookieConsentContext";
 
 const InstagramIcon = ({ className = "" }: { className?: string }) => (
   <svg
@@ -25,6 +26,7 @@ const FooterLink = ({ href, children }: PropsWithChildren<{ href: string }>) => 
 
 const Footer = () => {
   const instagramUrl = "https://www.instagram.com/";
+  const { openPreferences } = useCookieConsent();
 
   return (
     <footer className="site-footer">
@@ -45,6 +47,9 @@ const Footer = () => {
           <div className="site-footer__section">
             <h3 className="site-footer__section-title">Infos</h3>
             <FooterLink href="/cookies">Gestion des cookies</FooterLink>
+            <button type="button" className="site-footer__link site-footer__link--button" onClick={openPreferences}>
+              Personnaliser
+            </button>
           </div>
 
           <div className="site-footer__section">

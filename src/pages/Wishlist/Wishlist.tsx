@@ -1,5 +1,5 @@
 import type { FormEvent, KeyboardEvent as ReactKeyboardEvent, MouseEvent } from "react"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import type { ChangeEvent } from "react"
 import usePersistentState from "../../hooks/usePersistentState"
 import wishlistHair from "../../assets/planner-03.jpg"
@@ -26,6 +26,7 @@ type WishlistItem = {
   imageName?: string
   link?: string
   subcategory?: string
+  isDone?: boolean
 }
 
 type WishlistStorageEntry = {
@@ -168,6 +169,24 @@ type WishlistItemDraft = {
   subcategory: string
 }
 
+const createEmptyItemDraft = (): WishlistItemDraft => ({
+  title: "",
+  subtitle: "",
+  imageUrl: "",
+  imageName: "",
+  link: "",
+  subcategory: "",
+})
+
+const formatLinkHost = (value: string) => {
+  try {
+    const url = new URL(value)
+    return url.host.replace(/^www\./, "")
+  } catch {
+    return value
+  }
+}
+
 type NewCategoryDraft = {
   title: string
   blurb: string
@@ -193,19 +212,25 @@ const WishlistPage = () => {
   const [renamingCategoryId, setRenamingCategoryId] = useState<WishlistCategoryId | null>(null)
   const [renameDraft, setRenameDraft] = useState("")
   const [noteDraft, setNoteDraft] = useState("")
-  const [itemDraft, setItemDraft] = useState<WishlistItemDraft>(() => ({
-    title: "",
-    subtitle: "",
-    imageUrl: "",
-    imageName: "",
-    link: "",
-    subcategory: "",
-  }))
+  const [itemDraft, setItemDraft] = useState<WishlistItemDraft>(() => createEmptyItemDraft())
   const [feedback, setFeedback] = useState<string | null>(null)
   const [isCreatingCategory, setIsCreatingCategory] = useState(false)
   const [categoryDraft, setCategoryDraft] = useState<NewCategoryDraft>(() => createNewCategoryDraft())
+  const [isCategoryPickerOpen, setIsCategoryPickerOpen] = useState(false)
+  const [editingItemId, setEditingItemId] = useState<string | null>(null)
+  const [itemMenuOpenFor, setItemMenuOpenFor] = useState<string | null>(null)
+  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({})
+  const [movingItem, setMovingItem] = useState<WishlistItem | null>(null)
+  const [moveTargetCategoryId, setMoveTargetCategoryId] = useState<WishlistCategoryId | null>(null)
+  const [moveSubcategory, setMoveSubcategory] = useState("")
   const itemImageInputRef = useRef<HTMLInputElement | null>(null)
   const categoryCoverInputRef = useRef<HTMLInputElement | null>(null)
+  const resetItemDraft = useCallback(() => {
+    setItemDraft(createEmptyItemDraft())
+    if (itemImageInputRef.current) {
+      itemImageInputRef.current.value = ""
+    }
+  }, [])
 
   useEffect(() => {
     setWishlist((previous) => {
@@ -353,21 +378,20 @@ const WishlistPage = () => {
   }, [])
 
   useEffect(() => {
+    resetItemDraft()
+    setEditingItemId(null)
+    setExpandedItems({})
+    setItemMenuOpenFor(null)
+    setIsCategoryPickerOpen(false)
     if (!selectedCategoryId) {
+      setNoteDraft("")
+      setIsEditingNote(false)
       return
     }
-    setItemDraft({
-      title: "",
-      subtitle: "",
-      imageUrl: "",
-      imageName: "",
-      link: "",
-      subcategory: "",
-    })
     const currentNote = wishlist[selectedCategoryId]?.note ?? ""
     setNoteDraft(currentNote)
     setIsEditingNote(currentNote.trim().length > 0)
-  }, [selectedCategoryId, wishlist])
+  }, [resetItemDraft, selectedCategoryId, wishlist])
 
   useEffect(() => {
     if (!renamingCategoryId) {
@@ -388,8 +412,16 @@ const WishlistPage = () => {
   }, [feedback])
 
   useEffect(() => {
-    const handleGlobalPointerDown = () => {
+    const handleGlobalPointerDown = (event: PointerEvent) => {
+      const target = event.target as HTMLElement | null
+      if (target?.closest(".wishlist-card__menu") || target?.closest(".wishlist-card__menu-popover")) {
+        return
+      }
+      if (target?.closest(".wishlist-item__menu")) {
+        return
+      }
       setOpenMenuFor(null)
+      setItemMenuOpenFor(null)
     }
     window.addEventListener("pointerdown", handleGlobalPointerDown)
     return () => window.removeEventListener("pointerdown", handleGlobalPointerDown)
@@ -408,11 +440,18 @@ const WishlistPage = () => {
         setSelectedCategoryId(null)
         setIsAddingItem(false)
         setIsEditingNote(false)
+        setIsCategoryPickerOpen(false)
       }
     }
     window.addEventListener("keydown", handleEscape)
     return () => window.removeEventListener("keydown", handleEscape)
   }, [renamingCategoryId, selectedCategoryId])
+
+  useEffect(() => {
+    if (!isAddingItem) {
+      setIsCategoryPickerOpen(false)
+    }
+  }, [isAddingItem])
 
   const selectedCategoryCard = useMemo(() => {
     if (!selectedCategoryId) {
@@ -422,6 +461,25 @@ const WishlistPage = () => {
   }, [categoryCards, selectedCategoryId])
 
   const selectedCategoryState = selectedCategoryCard?.entry ?? null
+  useEffect(() => {
+    if (!selectedCategoryState) {
+      setExpandedItems({})
+      setItemMenuOpenFor(null)
+      return
+    }
+    setExpandedItems((previous) => {
+      const next: Record<string, boolean> = {}
+      selectedCategoryState.items.forEach((item) => {
+        if (previous[item.id]) {
+          next[item.id] = true
+        }
+      })
+      return next
+    })
+    if (itemMenuOpenFor && !selectedCategoryState.items.some((item) => item.id === itemMenuOpenFor)) {
+      setItemMenuOpenFor(null)
+    }
+  }, [itemMenuOpenFor, selectedCategoryState])
   const groupedSelectedItems = useMemo(() => {
     if (!selectedCategoryState) {
       return []
@@ -443,18 +501,57 @@ const WishlistPage = () => {
     }))
   }, [selectedCategoryState])
 
-  const subcategoryOptions = useMemo(() => {
-    if (!selectedCategoryState) {
-      return []
-    }
-    const unique = new Set<string>()
-    selectedCategoryState.items.forEach((item) => {
-      if (item.subcategory && item.subcategory.trim().length > 0) {
-        unique.add(item.subcategory.trim())
+  const getCategorySubcategories = useCallback(
+    (categoryId: WishlistCategoryId | null | undefined) => {
+      if (!categoryId) {
+        return []
       }
-    })
-    return Array.from(unique).sort((a, b) => a.localeCompare(b))
-  }, [selectedCategoryState])
+      const entry = wishlist[categoryId]
+      if (!entry) {
+        return []
+      }
+      const unique = new Set<string>()
+      entry.items.forEach((item) => {
+        if (item.subcategory && item.subcategory.trim().length > 0) {
+          unique.add(item.subcategory.trim())
+        }
+      })
+      return Array.from(unique).sort((a, b) => a.localeCompare(b, "fr", { sensitivity: "base" }))
+    },
+    [wishlist],
+  )
+
+  const subcategoryOptions = useMemo(() => getCategorySubcategories(selectedCategoryId), [getCategorySubcategories, selectedCategoryId])
+
+  const movableCategories = useMemo(
+    () => categoryCards.filter((card) => card.id !== selectedCategoryId),
+    [categoryCards, selectedCategoryId],
+  )
+
+  const moveTargetCategories = useMemo(
+    () => (movingItem ? categoryCards.filter((card) => card.id !== movingItem.categoryId) : []),
+    [categoryCards, movingItem],
+  )
+
+  useEffect(() => {
+    if (!movingItem) {
+      setMoveTargetCategoryId(null)
+      setMoveSubcategory("")
+      return
+    }
+    setMoveTargetCategoryId(null)
+    setMoveSubcategory(movingItem.subcategory ?? "")
+  }, [movingItem])
+
+  useEffect(() => {
+    if (!moveTargetCategoryId) {
+      return
+    }
+    const options = getCategorySubcategories(moveTargetCategoryId)
+    if (options.length > 0 && !options.includes(moveSubcategory)) {
+      setMoveSubcategory(options[0])
+    }
+  }, [getCategorySubcategories, moveTargetCategoryId, moveSubcategory])
 
   const handleToggleMenu = (event: MouseEvent<HTMLButtonElement>, categoryId: WishlistCategoryId) => {
     event.stopPropagation()
@@ -466,6 +563,7 @@ const WishlistPage = () => {
     setSelectedCategoryId(categoryId)
     setOpenMenuFor(null)
     setIsAddingItem(false)
+    setIsCategoryPickerOpen(false)
   }
 
   const handleCardKeyDown = (event: ReactKeyboardEvent<HTMLElement>, categoryId: WishlistCategoryId) => {
@@ -473,6 +571,41 @@ const WishlistPage = () => {
       event.preventDefault()
       handleCardActivate(categoryId)
     }
+  }
+
+  const handleToggleItemMenu = (event: MouseEvent<HTMLButtonElement>, itemId: string) => {
+    event.stopPropagation()
+    event.preventDefault()
+    setItemMenuOpenFor((current) => (current === itemId ? null : itemId))
+  }
+
+  const handleToggleItemDetails = (itemId: string) => {
+    setExpandedItems((previous) => ({
+      ...previous,
+      [itemId]: !previous[itemId],
+    }))
+  }
+
+  const handleStartEditItem = (item: WishlistItem) => {
+    setItemDraft({
+      title: item.title,
+      subtitle: item.subtitle ?? "",
+      imageUrl: item.imageUrl ?? "",
+      imageName: item.imageName ?? "",
+      link: item.link ?? "",
+      subcategory: item.subcategory ?? "",
+    })
+    setEditingItemId(item.id)
+    setIsAddingItem(true)
+    setIsCategoryPickerOpen(false)
+    setItemMenuOpenFor(null)
+  }
+
+  const handleCancelItemForm = () => {
+    setIsAddingItem(false)
+    setEditingItemId(null)
+    setIsCategoryPickerOpen(false)
+    resetItemDraft()
   }
   const handleItemImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -509,6 +642,148 @@ const WishlistPage = () => {
       itemImageInputRef.current.value = ""
     }
   }
+
+  const handleToggleItemDone = (item: WishlistItem) => {
+    setWishlist((previous) => {
+      const category = previous[item.categoryId]
+      if (!category) {
+        return previous
+      }
+      return {
+        ...previous,
+        [item.categoryId]: {
+          ...category,
+          items: category.items.map((entry) => (entry.id === item.id ? { ...entry, isDone: !entry.isDone } : entry)),
+        },
+      }
+    })
+    setItemMenuOpenFor(null)
+    setFeedback(item.isDone ? "Element remis a faire" : "Element marque comme fait")
+  }
+
+  const handleDuplicateItem = (item: WishlistItem) => {
+    setWishlist((previous) => {
+      const category = previous[item.categoryId]
+      if (!category) {
+        return previous
+      }
+      const clone: WishlistItem = {
+        ...item,
+        id: `wish-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      }
+      return {
+        ...previous,
+        [item.categoryId]: {
+          ...category,
+          items: [clone, ...category.items],
+        },
+      }
+    })
+    setItemMenuOpenFor(null)
+    setFeedback("Element duplique")
+  }
+
+  const handleDeleteItem = (item: WishlistItem) => {
+    const categoryId = item.categoryId
+    setWishlist((previous) => {
+      const category = previous[categoryId]
+      if (!category) {
+        return previous
+      }
+      return {
+        ...previous,
+        [categoryId]: {
+          ...category,
+          items: category.items.filter((entry) => entry.id !== item.id),
+        },
+      }
+    })
+    if (editingItemId === item.id) {
+      setEditingItemId(null)
+      resetItemDraft()
+      setIsAddingItem(false)
+    }
+    setItemMenuOpenFor(null)
+    setFeedback("Element supprime")
+  }
+
+  const handleMoveItem = (item: WishlistItem, targetCategoryId: WishlistCategoryId, targetSubcategory?: string) => {
+    if (item.categoryId === targetCategoryId) {
+      if (typeof targetSubcategory !== "undefined") {
+        setWishlist((previous) => {
+          const category = previous[item.categoryId]
+          if (!category) {
+            return previous
+          }
+          return {
+            ...previous,
+            [item.categoryId]: {
+              ...category,
+              items: category.items.map((entry) => (entry.id === item.id ? { ...entry, subcategory: targetSubcategory } : entry)),
+            },
+          }
+        })
+        setFeedback("Categorie mise a jour")
+      }
+      setItemMenuOpenFor(null)
+      return
+    }
+    setWishlist((previous) => {
+      const sourceCategory = previous[item.categoryId]
+      if (!sourceCategory) {
+        return previous
+      }
+      const nextSourceItems = sourceCategory.items.filter((entry) => entry.id !== item.id)
+      const movedItem: WishlistItem = {
+        ...item,
+        categoryId: targetCategoryId,
+        subcategory: targetSubcategory ?? item.subcategory,
+      }
+      const targetCategory =
+        previous[targetCategoryId] ??
+        buildDefaultEntry(targetCategoryId, getCategoryDefinition(targetCategoryId)?.label ?? "Wishlist")
+      return {
+        ...previous,
+        [item.categoryId]: {
+          ...sourceCategory,
+          items: nextSourceItems,
+        },
+        [targetCategoryId]: {
+          ...targetCategory,
+          items: [movedItem, ...(targetCategory.items ?? [])],
+        },
+      }
+    })
+    if (editingItemId === item.id) {
+      setEditingItemId(null)
+      resetItemDraft()
+      setIsAddingItem(false)
+    }
+    setItemMenuOpenFor(null)
+    setFeedback("Element deplace")
+  }
+
+  const handleOpenMoveDialog = (item: WishlistItem) => {
+    setMovingItem(item)
+    setMoveTargetCategoryId(null)
+    setMoveSubcategory(item.subcategory ?? "")
+    setItemMenuOpenFor(null)
+  }
+
+  const handleCancelMove = () => {
+    setMovingItem(null)
+    setMoveTargetCategoryId(null)
+    setMoveSubcategory("")
+  }
+
+  const handleConfirmMove = () => {
+    if (!movingItem || !moveTargetCategoryId) {
+      return
+    }
+    handleMoveItem(movingItem, moveTargetCategoryId, moveSubcategory.trim().length > 0 ? moveSubcategory.trim() : undefined)
+    handleCancelMove()
+  }
+
 
   const resetCategoryDraft = () => {
     setCategoryDraft(createNewCategoryDraft())
@@ -597,42 +872,60 @@ const WishlistPage = () => {
     const trimmedImage = itemDraft.imageUrl.trim()
     const trimmedLink = itemDraft.link.trim()
     const trimmedSubcategory = itemDraft.subcategory.trim()
+    const trimmedImageName = itemDraft.imageName.trim()
 
-    const nextItem: WishlistItem = {
-      id: `wish-${Date.now()}`,
-      categoryId: selectedCategoryId,
-      title: trimmedTitle,
-      subtitle: trimmedSubtitle.length > 0 ? trimmedSubtitle : undefined,
-      imageUrl: trimmedImage.length > 0 ? trimmedImage : undefined,
-      imageName: itemDraft.imageName.trim().length > 0 ? itemDraft.imageName.trim() : undefined,
-      link: trimmedLink.length > 0 ? trimmedLink : undefined,
-      subcategory: trimmedSubcategory.length > 0 ? trimmedSubcategory : undefined,
+    const saveToCategory = (updater: (currentCategory: WishlistStorageEntry) => WishlistStorageEntry) => {
+      setWishlist((previous) => {
+        const currentCategory = previous[selectedCategoryId] ?? buildDefaultEntry(selectedCategoryId)
+        return {
+          ...previous,
+          [selectedCategoryId]: updater(currentCategory),
+        }
+      })
     }
 
-    setWishlist((previous) => {
-      const currentCategory = previous[selectedCategoryId] ?? buildDefaultEntry(selectedCategoryId)
-      return {
-        ...previous,
-        [selectedCategoryId]: {
-          ...currentCategory,
-          items: [nextItem, ...currentCategory.items],
-        },
+    if (editingItemId) {
+      saveToCategory((currentCategory) => ({
+        ...currentCategory,
+        items: currentCategory.items.map((item) =>
+          item.id === editingItemId
+            ? {
+                ...item,
+                title: trimmedTitle,
+                subtitle: trimmedSubtitle.length > 0 ? trimmedSubtitle : undefined,
+                imageUrl: trimmedImage.length > 0 ? trimmedImage : undefined,
+                imageName: trimmedImageName.length > 0 ? trimmedImageName : undefined,
+                link: trimmedLink.length > 0 ? trimmedLink : undefined,
+                subcategory: trimmedSubcategory.length > 0 ? trimmedSubcategory : undefined,
+              }
+            : item,
+        ),
+      }))
+      setFeedback("Element mis a jour")
+    } else {
+      const nextItem: WishlistItem = {
+        id: `wish-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        categoryId: selectedCategoryId,
+        title: trimmedTitle,
+        subtitle: trimmedSubtitle.length > 0 ? trimmedSubtitle : undefined,
+        imageUrl: trimmedImage.length > 0 ? trimmedImage : undefined,
+        imageName: trimmedImageName.length > 0 ? trimmedImageName : undefined,
+        link: trimmedLink.length > 0 ? trimmedLink : undefined,
+        subcategory: trimmedSubcategory.length > 0 ? trimmedSubcategory : undefined,
+        isDone: false,
       }
-    })
-    setItemDraft((previous) => ({
-      ...previous,
-      title: "",
-      subtitle: "",
-      imageUrl: "",
-      imageName: "",
-      link: "",
-      subcategory: "",
-    }))
-    if (itemImageInputRef.current) {
-      itemImageInputRef.current.value = ""
+      saveToCategory((currentCategory) => ({
+        ...currentCategory,
+        items: [nextItem, ...currentCategory.items],
+      }))
+      setFeedback("Produit ajoute a ta wishlist")
     }
+
     setIsAddingItem(false)
-    setFeedback("Produit ajoute a ta wishlist")
+    setIsCategoryPickerOpen(false)
+    setEditingItemId(null)
+    setItemMenuOpenFor(null)
+    resetItemDraft()
   }
 
   const handleRenameSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -794,12 +1087,15 @@ const WishlistPage = () => {
     setIsAddingItem(false)
     setIsEditingNote(false)
     setNoteDraft("")
+    setIsCategoryPickerOpen(false)
+    setEditingItemId(null)
+    setItemMenuOpenFor(null)
+    setExpandedItems({})
+    resetItemDraft()
   }
   return (
     <div className="wishlist-page aesthetic-page" onClick={() => setOpenMenuFor(null)}>
-      <div className="page-accent-bar" aria-hidden="true" />
-      <PageHeading eyebrow="Envies" title="Wishlist ideal" />
-      <header className="wishlist-hero dashboard-panel">
+            <header className="wishlist-hero dashboard-panel">
         <div className="wishlist-hero__content">
           <span className="wishlist-hero__eyebrow">envies a collectionner</span>
           <h2>Imagine ta wishlist ideale, categorie par categorie.</h2>
@@ -820,6 +1116,9 @@ const WishlistPage = () => {
           </button>
         </div>
       </header>
+      <div className="page-accent-bar" aria-hidden="true" />
+      <PageHeading eyebrow="Envies" title="Wishlist ideal" />
+
 
       <section className="wishlist-grid">
         {categoryCards.map((category) => {
@@ -889,8 +1188,8 @@ const WishlistPage = () => {
       </section>
 
       {selectedCategoryId && selectedCategoryCard && selectedCategoryState ? (
-        <div className="wishlist-modal__backdrop" role="dialog" aria-modal="true">
-          <div className="wishlist-modal">
+        <div className="wishlist-modal__backdrop" role="dialog" aria-modal="true" onClick={closeModal}>
+          <div className="wishlist-modal" onClick={(event) => event.stopPropagation()}>
             <button type="button" className="wishlist-modal__close" aria-label="Fermer" onClick={closeModal}>
               �
             </button>
@@ -957,45 +1256,53 @@ const WishlistPage = () => {
 
               {isAddingItem ? (
                 <form className="wishlist-modal__form" onSubmit={handleAddItem}>
-                  <h4>Ajouter un element</h4>
-                  <label>
-                    <span>Titre</span>
-                    <input
-                      type="text"
-                      value={itemDraft.title}
-                      onChange={(event) => setItemDraft((previous) => ({ ...previous, title: event.target.value }))}
-                      placeholder="Nom du produit"
-                      required
-                    />
-                  </label>
-                  <label>
-                    <span>Sous-titre (optionnel)</span>
-                    <input
-                      type="text"
-                      value={itemDraft.subtitle}
-                      onChange={(event) => setItemDraft((previous) => ({ ...previous, subtitle: event.target.value }))}
-                      placeholder="Couleur, edition limitee..."
-                    />
-                  </label>
-                  <label className="wishlist-modal__file-field">
-                    <span>Photo</span>
-                    <div className="wishlist-modal__file-field-control">
-                      <input
-                        ref={itemImageInputRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleItemImageChange}
-                      />
-                      <span className="wishlist-modal__file-name">
-                        {itemDraft.imageName ? itemDraft.imageName : "Aucune image selectionnee"}
-                      </span>
+                  <h4>{editingItemId ? "Modifier l'element" : "Ajouter un element"}</h4>
+                  <div className="wishlist-modal__form-media">
+                    <div className="wishlist-upload">
+                      <span className="wishlist-upload__label">Photo</span>
+                      <label
+                        className={
+                          itemDraft.imageUrl ? "wishlist-upload__trigger wishlist-upload__trigger--has-image" : "wishlist-upload__trigger"
+                        }
+                      >
+                        <input ref={itemImageInputRef} type="file" accept="image/*" onChange={handleItemImageChange} />
+                        {itemDraft.imageUrl ? (
+                          <img src={itemDraft.imageUrl} alt={itemDraft.title || "Previsualisation de l'element"} />
+                        ) : (
+                          <div className="wishlist-upload__placeholder">
+                            <span>+</span>
+                            <small>Ajouter une photo</small>
+                          </div>
+                        )}
+                      </label>
                       {itemDraft.imageUrl ? (
-                        <button type="button" onClick={handleClearItemImage}>
-                          Retirer
+                        <button type="button" className="wishlist-upload__remove" onClick={handleClearItemImage}>
+                          Retirer l'image
                         </button>
                       ) : null}
                     </div>
-                  </label>
+                    <div className="wishlist-modal__form-text">
+                      <label>
+                        <span>Titre</span>
+                        <input
+                          type="text"
+                          value={itemDraft.title}
+                          onChange={(event) => setItemDraft((previous) => ({ ...previous, title: event.target.value }))}
+                          placeholder="Nom du produit"
+                          required
+                        />
+                      </label>
+                      <label>
+                        <span>Sous-titre (optionnel)</span>
+                        <input
+                          type="text"
+                          value={itemDraft.subtitle}
+                          onChange={(event) => setItemDraft((previous) => ({ ...previous, subtitle: event.target.value }))}
+                          placeholder="Couleur, edition limitee..."
+                        />
+                      </label>
+                    </div>
+                  </div>
                   <label>
                     <span>Lien (optionnel)</span>
                     <input
@@ -1005,26 +1312,64 @@ const WishlistPage = () => {
                       placeholder="Lien boutique ou reference"
                     />
                   </label>
-                  <label>
-                    <span>Sous-categorie (optionnel)</span>
-                    <input
-                      type="text"
-                      value={itemDraft.subcategory}
-                      onChange={(event) => setItemDraft((previous) => ({ ...previous, subcategory: event.target.value }))}
-                      placeholder="Classe ton element (ex: Accessoires)"
-                      list={subcategoryOptions.length > 0 ? "wishlist-subcategories" : undefined}
-                    />
-                    {subcategoryOptions.length > 0 ? (
-                      <datalist id="wishlist-subcategories">
-                        {subcategoryOptions.map((option) => (
-                          <option key={option} value={option} />
-                        ))}
-                      </datalist>
+                  <div className="wishlist-category-picker">
+                    {itemDraft.subcategory.trim().length > 0 ? (
+                      <span className="wishlist-category-picker__current">Categorie actuelle : {itemDraft.subcategory}</span>
                     ) : null}
-                  </label>
+                    <button
+                      type="button"
+                      className="wishlist-category-picker__toggle"
+                      onClick={() => setIsCategoryPickerOpen((previous) => !previous)}
+                      aria-expanded={isCategoryPickerOpen}
+                    >
+                      <span>+ Ajouter a la categorie</span>
+                      <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        className={isCategoryPickerOpen ? "wishlist-category-picker__chevron wishlist-category-picker__chevron--open" : "wishlist-category-picker__chevron"}
+                      >
+                        <path d="M8.5 5.5 15 12l-6.5 6.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
+                    {isCategoryPickerOpen ? (
+                      <div className="wishlist-category-picker__panel">
+                        <label>
+                          <span>Nom de la categorie</span>
+                          <input
+                            type="text"
+                            value={itemDraft.subcategory}
+                            onChange={(event) => setItemDraft((previous) => ({ ...previous, subcategory: event.target.value }))}
+                            placeholder="Ex: Accessoires, Noel, Lecture..."
+                          />
+                        </label>
+                        {subcategoryOptions.length > 0 ? (
+                          <>
+                            <span className="wishlist-category-picker__hint">Suggestions deja utilisees</span>
+                            <ul className="wishlist-category-picker__list">
+                              {subcategoryOptions.map((option) => (
+                                <li key={option}>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setItemDraft((previous) => ({ ...previous, subcategory: option }))
+                                      setIsCategoryPickerOpen(false)
+                                    }}
+                                  >
+                                    {option}
+                                  </button>
+                                </li>
+                              ))}
+                            </ul>
+                          </>
+                        ) : (
+                          <p className="wishlist-category-picker__empty">Tu n'as pas encore cree de categorie personnalisee.</p>
+                        )}
+                      </div>
+                    ) : null}
+                  </div>
                   <footer className="wishlist-modal__form-actions">
                     <button type="submit">Enregistrer</button>
-                    <button type="button" onClick={() => setIsAddingItem(false)}>
+                    <button type="button" onClick={handleCancelItemForm}>
                       Annuler
                     </button>
                   </footer>
@@ -1042,27 +1387,91 @@ const WishlistPage = () => {
                       {group.key !== "__uncategorized" ? <h4>{group.label}</h4> : null}
                       <ul>
                         {group.items.map((item) => (
-                          <li key={item.id}>
-                            <div className="wishlist-item__media">
-                              {item.imageUrl ? (
-                                <img src={item.imageUrl} alt={item.title} />
-                              ) : (
-                                <span className="wishlist-item__placeholder" aria-hidden="true">
-                                  {item.title.charAt(0).toUpperCase()}
-                                </span>
-                              )}
+                          <li key={item.id} className={item.isDone ? "wishlist-item wishlist-item--done" : "wishlist-item"}>
+                            <div className="wishlist-item__header">
+                              <div className="wishlist-item__media">
+                                {item.imageUrl ? (
+                                  <img src={item.imageUrl} alt={item.title} />
+                                ) : (
+                                  <span className="wishlist-item__placeholder" aria-hidden="true">
+                                    {item.title.charAt(0).toUpperCase()}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="wishlist-item__text">
+                                <strong>{item.title}</strong>
+                                {item.subtitle ? <span>{item.subtitle}</span> : null}
+                                {item.isDone ? <span className="wishlist-item__status">Fait</span> : null}
+                                {group.key === "__uncategorized" && item.subcategory ? (
+                                  <span className="wishlist-item__subcategory">{item.subcategory}</span>
+                                ) : null}
+                              </div>
+                              <div className="wishlist-item__actions">
+                                <button
+                                  type="button"
+                                  className={
+                                    expandedItems[item.id]
+                                      ? "wishlist-item__toggle wishlist-item__toggle--open"
+                                      : "wishlist-item__toggle"
+                                  }
+                                  aria-expanded={expandedItems[item.id] ?? false}
+                                  onClick={() => handleToggleItemDetails(item.id)}
+                                >
+                                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                  </svg>
+                                </button>
+                                <div className="wishlist-item__menu">
+                                  <button
+                                    type="button"
+                                    className="wishlist-item__menu-toggle"
+                                    aria-haspopup="true"
+                                    aria-expanded={itemMenuOpenFor === item.id}
+                                    onClick={(event) => handleToggleItemMenu(event, item.id)}
+                                  >
+                                    <span />
+                                    <span />
+                                    <span />
+                                  </button>
+                                  {itemMenuOpenFor === item.id ? (
+                                    <div className="wishlist-item__menu-popover" role="menu">
+                                      <button type="button" onClick={() => handleStartEditItem(item)}>
+                                        Modifier
+                                      </button>
+                                      <button type="button" onClick={() => handleToggleItemDone(item)}>
+                                        {item.isDone ? "Marquer comme a faire" : "Marquer comme fait"}
+                                      </button>
+                                      <button type="button" onClick={() => handleDuplicateItem(item)}>
+                                        Dupliquer
+                                      </button>
+                                      <button type="button" onClick={() => handleOpenMoveDialog(item)}>
+                                        Deplacer vers une autre wishlist
+                                      </button>
+                                      <button
+                                        type="button"
+                                        className="wishlist-item__menu-danger"
+                                        onClick={() => handleDeleteItem(item)}
+                                      >
+                                        Supprimer
+                                      </button>
+                                    </div>
+                                  ) : null}
+                                </div>
+                              </div>
                             </div>
-                            <div className="wishlist-item__details">
-                              <strong>{item.title}</strong>
-                              {item.subtitle ? <span>{item.subtitle}</span> : null}
-                              {group.key === "__uncategorized" && item.subcategory ? (
-                                <span className="wishlist-item__subcategory">{item.subcategory}</span>
-                              ) : null}
-                            </div>
-                            {item.link ? (
-                              <a className="wishlist-item__link" href={item.link} target="_blank" rel="noreferrer">
-                                Voir
-                              </a>
+                            {expandedItems[item.id] ? (
+                              <div className="wishlist-item__details-panel">
+                                {item.link ? (
+                                  <a className="wishlist-item__link-chip" href={item.link} target="_blank" rel="noreferrer">
+                                    Visiter {formatLinkHost(item.link)}
+                                  </a>
+                                ) : (
+                                  <p className="wishlist-item__details-empty">Ajoute un lien pour retrouver l'article.</p>
+                                )}
+                                {item.subcategory ? (
+                                  <span className="wishlist-item__detail-tag">Categorie : {item.subcategory}</span>
+                                ) : null}
+                              </div>
                             ) : null}
                           </li>
                         ))}
@@ -1082,7 +1491,22 @@ const WishlistPage = () => {
               >
                 Modifier
               </button>
-              <button type="button" onClick={() => setIsAddingItem((value) => !value)} aria-pressed={isAddingItem}>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsAddingItem((value) => {
+                    const next = !value
+                    setEditingItemId(null)
+                    resetItemDraft()
+                    if (!next) {
+                      setIsCategoryPickerOpen(false)
+                    }
+                    return next
+                  })
+                  setItemMenuOpenFor(null)
+                }}
+                aria-pressed={isAddingItem}
+              >
                 +
               </button>
               <button
@@ -1113,7 +1537,7 @@ const WishlistPage = () => {
       ) : null}
 
       {isCreatingCategory ? (
-        <div className="wishlist-modal__backdrop" role="dialog" aria-modal="true">
+        <div className="wishlist-modal__backdrop" role="dialog" aria-modal="true" onClick={() => setIsCreatingCategory(false)}>
           <form className="wishlist-create" onSubmit={handleCreateCategorySubmit} onClick={(event) => event.stopPropagation()}>
             <h3>Nouvelle carte</h3>
             <label>
@@ -1182,7 +1606,7 @@ const WishlistPage = () => {
       ) : null}
 
       {renamingCategoryId ? (
-        <div className="wishlist-modal__backdrop" role="dialog" aria-modal="true">
+        <div className="wishlist-modal__backdrop" role="dialog" aria-modal="true" onClick={() => setRenamingCategoryId(null)}>
           <form className="wishlist-rename" onSubmit={handleRenameSubmit} onClick={(event) => event.stopPropagation()}>
             <h3>Renommer la categorie</h3>
             <label>
@@ -1202,6 +1626,64 @@ const WishlistPage = () => {
               </button>
             </div>
           </form>
+        </div>
+      ) : null}
+
+      {movingItem ? (
+        <div className="wishlist-modal__backdrop" role="dialog" aria-modal="true" onClick={handleCancelMove}>
+          <div className="wishlist-move" onClick={(event) => event.stopPropagation()}>
+            <h3>Deplacer vers une autre wishlist</h3>
+            {moveTargetCategories.length === 0 ? (
+              <p>Crée une nouvelle carte pour pouvoir deplacer cet element.</p>
+            ) : (
+              <>
+                <p>Choisis la wishlist de destination puis selectionne la categorie dans laquelle ranger cet element.</p>
+                <div className="wishlist-move__grid">
+                  {moveTargetCategories.map((card) => (
+                    <button
+                      type="button"
+                      key={card.id}
+                      className={moveTargetCategoryId === card.id ? "wishlist-move__card wishlist-move__card--selected" : "wishlist-move__card"}
+                      onClick={() => setMoveTargetCategoryId(card.id)}
+                    >
+                      <img src={card.cover} alt={card.title} />
+                      <span>{card.title}</span>
+                    </button>
+                  ))}
+                </div>
+                {moveTargetCategoryId ? (
+                  <div className="wishlist-move__category">
+                    <label>
+                      <span>Categorie dans la nouvelle wishlist</span>
+                      <input
+                        type="text"
+                        value={moveSubcategory}
+                        onChange={(event) => setMoveSubcategory(event.target.value)}
+                        placeholder="Saisis ou choisis une categorie"
+                      />
+                    </label>
+                    {getCategorySubcategories(moveTargetCategoryId).length > 0 ? (
+                      <div className="wishlist-move__choices">
+                        {getCategorySubcategories(moveTargetCategoryId).map((option) => (
+                          <button type="button" key={option} onClick={() => setMoveSubcategory(option)}>
+                            {option}
+                          </button>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                ) : null}
+              </>
+            )}
+            <div className="wishlist-move__actions">
+              <button type="button" onClick={handleCancelMove}>
+                Annuler
+              </button>
+              <button type="button" data-primary="true" disabled={!moveTargetCategoryId} onClick={handleConfirmMove}>
+                Confirmer
+              </button>
+            </div>
+          </div>
         </div>
       ) : null}
 

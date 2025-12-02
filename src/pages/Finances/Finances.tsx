@@ -571,23 +571,14 @@ const FinancePage = () => {
             </div>
           </section>
 
-          {savingsIdea && (
-            <section className="finance-tip dashboard-panel">
-              <header className="finance-section-header">
-                <span className="finance-section-header__eyebrow">idée douceur</span>
-                <h2>Astuce épargne</h2>
-              </header>
-              <p>
-                En visant {euroFormatter.format(savingsIdea.target)} pour {savingsIdea.label}, tu économises{' '}
-                {euroFormatter.format(savingsIdea.current - savingsIdea.target)} ce mois-ci.
-              </p>
-            </section>
-          )}
-
+          <div className="finance-section-chip">
+            <span className="finance-section-chip__title">Ajouter une dépense</span>
+            <div className="finance-section-chip__divider" aria-hidden="true" />
+          </div>
           <section className="finance-form dashboard-panel">
             <header className="finance-section-header">
               <span className="finance-section-header__eyebrow">ajoute ton mouvement</span>
-              <h2>Ajouter une dépense</h2>
+              <p>Consigne instantanément dépenses et revenus du mois</p>
             </header>
             <form onSubmit={handleSubmit} className="finance-form__grid">
               <label className="finance-form__field">

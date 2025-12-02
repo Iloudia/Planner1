@@ -307,11 +307,12 @@ const SelfLovePage = () => {
 
   return (
     <div className="self-love-page">
-      <div className="self-love-accent-bar" aria-hidden="true" />
       <header className="self-love-hero">
         <div className="self-love-hero__glow" aria-hidden="true" />
       </header>
+      <div className="self-love-accent-bar" aria-hidden="true" />
       <PageHeading eyebrow='Self love' title='Prendre soin de soi' />
+      
 
       <section className="self-love-section self-love-section--photos">
         <div className="self-love-section__header">

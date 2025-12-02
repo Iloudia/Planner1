@@ -193,7 +193,6 @@ const RoutinePage = () => {
 
   return (
     <div className="routine-page aesthetic-page">
-      <div className="routine-page__accent-bar" aria-hidden="true" />
 
       <section className="routine-hero dashboard-panel">
         <div className="routine-hero__content">
@@ -212,7 +211,9 @@ const RoutinePage = () => {
           </div>
         </div>
       </section>
+      <div className="routine-page__accent-bar" aria-hidden="true" />
       <PageHeading eyebrow="Routine" title="Rituels quotidiens" />
+      
 
       <div className="routine-notes">
         <section className="routine-note routine-note--morning">

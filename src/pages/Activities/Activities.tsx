@@ -266,7 +266,7 @@ const ActivitiesPage = () => {
 
   return (
     <div className="activities-page aesthetic-page">
-      <div className="activities-page__accent-bar" aria-hidden="true" />
+      
       <PageHero
         eyebrow="Inspiration"
         title="Activites et sorties"
@@ -274,7 +274,9 @@ const ActivitiesPage = () => {
         stats={activitiesStats}
         images={activitiesHeroImages}
       />
+      <div className="activities-page__accent-bar" aria-hidden="true" />
       <PageHeading eyebrow="Activites" title="Planning d activites" />
+      
 
       <section className="activities-dashboard">
         <div className="activities-form">

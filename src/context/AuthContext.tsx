@@ -9,6 +9,7 @@ export type AuthContextValue = {
   userEmail: string | null
   login: (credentials: { email: string; password: string; remember?: boolean }) => boolean
   register: (credentials: { email: string; password: string; remember?: boolean }) => boolean
+  loginWithGoogle: (credential: string) => boolean
   logout: () => void
 }
 
@@ -42,40 +43,51 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }, [])
 
-  const persistUser = (nextUser: StoredUser | null) => {
+  const persistUser = (nextUser: StoredUser | null, remember = false) => {
     setUser(nextUser)
-    if (nextUser) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(nextUser))
-    } else {
-      localStorage.removeItem(STORAGE_KEY)
+    try {
+      if (nextUser && remember) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(nextUser))
+      } else {
+        localStorage.removeItem(STORAGE_KEY)
+      }
+    } catch (error) {
+      console.error("Auth storage write failed", error)
     }
   }
 
   const login = (credentials: { email: string; password: string; remember?: boolean }) => {
-    const { email, password, remember = true } = credentials
+    const { email, password, remember = false } = credentials
     if (!email || !password) return false
-    if (remember) {
-      persistUser({ email, password })
-    } else {
-      setUser({ email, password })
-      localStorage.removeItem(STORAGE_KEY)
-    }
+    persistUser({ email, password }, remember)
     return true
   }
 
   const register = (credentials: { email: string; password: string; remember?: boolean }) => {
-    const { email, password, remember = true } = credentials
+    const { email, password, remember = false } = credentials
     if (!email || !password) return false
-    if (remember) {
-      persistUser({ email, password })
-    } else {
-      setUser({ email, password })
-      localStorage.removeItem(STORAGE_KEY)
-    }
+    persistUser({ email, password }, remember)
     return true
   }
 
   const logout = () => persistUser(null)
+
+  const loginWithGoogle = (credential: string) => {
+    try {
+      const payload = credential.split(".")[1]
+      const normalizedPayload = payload.replace(/-/g, "+").replace(/_/g, "/")
+      const decodedPayload = atob(normalizedPayload)
+      const parsed = JSON.parse(decodedPayload) as { email?: string }
+      if (!parsed.email) {
+        return false
+      }
+      persistUser({ email: parsed.email, password: "__google__" }, true)
+      return true
+    } catch (error) {
+      console.error("Invalid Google credential", error)
+      return false
+    }
+  }
 
   const value = useMemo<AuthContextValue>(() => {
     const email = user?.email ?? null
@@ -86,6 +98,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       userEmail: email,
       login,
       register,
+      loginWithGoogle,
       logout,
     }
   }, [user])

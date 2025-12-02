@@ -2,7 +2,10 @@ import { useEffect, useMemo, useState } from 'react'
 import type { ChangeEvent, FormEvent } from 'react'
 import usePersistentState from '../../hooks/usePersistentState'
 import journalingIllustration from '../../assets/planner-09.jpg'
+import journalingMoodSecondary from '../../assets/planner-08.jpg'
+import journalingMoodTertiary from '../../assets/planner-03.jpg'
 import PageHeading from '../../components/PageHeading'
+import PageHero from '../../components/PageHero'
 import './Journaling.css'
 
 type JournalFeeling = 'happy' | 'pout' | 'angry' | 'tired'
@@ -70,6 +73,12 @@ const feelings: Array<{ value: JournalFeeling; label: string; emoji: string }> =
   { value: 'tired', label: 'Fatiguee', emoji: 'zzz' },
 ]
 const DATE_PROMPT_FIELD_ID = 'prompt-date'
+
+const journalingMoodboard = [
+  { src: journalingIllustration, alt: 'Carnet pastel accompagne de fleurs sechees' },
+  { src: journalingMoodSecondary, alt: 'Pause ecriture et tasse de the' },
+  { src: journalingMoodTertiary, alt: 'Planche inspirante pour journaling' },
+] as const
 
 const journalingPromptSections: JournalingPromptSection[] = [
   {
@@ -449,33 +458,22 @@ const JournalingPage = () => {
 
   return (
     <div className="journaling-page aesthetic-page">
+      
+      
+      <PageHero
+        eyebrow="Rituel du jour"
+        title="Mon journal pastel"
+        description="Prends un instant pour respirer, ecrire et manifester ta vie de reve."
+        stats={journalingStats.map(({ id, label, value }) => ({ id, label, value }))}
+        images={journalingMoodboard}
+        tone="pink"
+      >
+        <div className="finance-hero__period">
+          <span className="finance-hero__badge">Journee du {draft.date}</span>
+        </div>
+      </PageHero>
       <div className="journaling-page__accent-bar" aria-hidden="true" />
       <PageHeading eyebrow="Reflet" title="Mon journal pastel" />
-      <section className="journaling-hero">
-        <div className="journaling-hero__text">
-          <span className="journaling-hero__tag">Rituel du jour</span>
-          <h2>Mon journal pastel</h2>
-          <p>Prends un instant pour respirer, ecrire et manifester ta vie de reve.</p>
-          <div className="journaling-hero__stats">
-            {journalingStats.map((stat) => (
-              <article key={stat.id}>
-                <span>{stat.label}</span>
-                <strong>{stat.value}</strong>
-                {stat.hint && <small>{stat.hint}</small>}
-              </article>
-            ))}
-          </div>
-          <div className="journaling-hero__date-card">
-            <span>Date du jour</span>
-            <time>{draft.date}</time>
-          </div>
-        </div>
-        <div className="journaling-hero__visual">
-          <div className="journaling-hero__visual-main">
-            <img src={journalingIllustration} alt="Carnet pastel accompagne de fleurs sechees" />
-          </div>
-        </div>
-      </section>
 
       <section className="journaling-prompts">
         <header className="journaling-prompts__header">

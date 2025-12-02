@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import { TasksProvider } from "./context/TasksContext";
 import { AuthProvider } from "./context/AuthContext";
 import App from "./App";
+import { CookieConsentProvider } from "./context/CookieConsentContext";
 import "./styles.css";
 
 const rootElement = document.getElementById("root");
@@ -17,7 +18,9 @@ ReactDOM.createRoot(rootElement).render(
     <BrowserRouter>
       <AuthProvider>
         <TasksProvider>
-          <App />
+          <CookieConsentProvider>
+            <App />
+          </CookieConsentProvider>
         </TasksProvider>
       </AuthProvider>
     </BrowserRouter>

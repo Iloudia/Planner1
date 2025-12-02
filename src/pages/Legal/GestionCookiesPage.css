@@ -58,6 +58,45 @@
   color: rgba(15, 23, 42, 0.68);
 }
 
+.legal-list {
+  margin: 0;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  color: rgba(15, 23, 42, 0.7);
+}
+
+.legal-list strong {
+  color: rgba(15, 23, 42, 0.95);
+}
+
+.legal-steps {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  color: rgba(15, 23, 42, 0.68);
+}
+
+.legal-link {
+  color: #ec4899;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.legal-link:hover {
+  text-decoration: underline;
+}
+
+.cookie-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
 @media (max-width: 640px) {
   .legal-page {
     padding: clamp(1.6rem, 7vw, 2.2rem);

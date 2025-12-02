@@ -365,7 +365,6 @@ const CalendrierPage = () => {
 
   return (
     <div className="calendar-page">
-      <div className="page-accent-bar" aria-hidden="true" />
       <section className="calendar-hero">
         <div className="calendar-hero__content">
           <span className="calendar-hero__eyebrow">calendrier mensuel</span>
@@ -394,6 +393,7 @@ const CalendrierPage = () => {
               Bloquer demain maintenant
             </button>
           </div>
+          
 
           <div className="calendar-hero__stats">
             {heroStats.map((stat) => (
@@ -404,6 +404,7 @@ const CalendrierPage = () => {
             ))}
           </div>
         </div>
+        
         <div className="calendar-hero__panel">
           <div className="calendar-next">
             <span className="calendar-next__label">Prochain rendez-vous</span>
@@ -415,6 +416,7 @@ const CalendrierPage = () => {
           </div>
         </div>
       </section>
+      <div className="page-accent-bar" aria-hidden="true" />
 
       <header className="calendar-header">
         <PageHeading eyebrow="calendrier mensuel" title={formatMonthTitle(currentMonthDate)} />

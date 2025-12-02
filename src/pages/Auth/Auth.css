@@ -79,6 +79,40 @@
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
+.auth-password-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.auth-password-field input {
+  width: 100%;
+  padding-right: 3rem;
+}
+
+.auth-password-toggle {
+  position: absolute;
+  right: 0.85rem;
+  background: transparent;
+  border: none;
+  padding: 0.2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #4b5563;
+  cursor: pointer;
+}
+
+.auth-password-toggle:focus-visible {
+  outline: 2px solid rgba(99, 102, 241, 0.8);
+  border-radius: 999px;
+}
+
+.auth-password-toggle svg {
+  width: 22px;
+  height: 22px;
+}
+
 .auth-error {
   margin: 0;
   color: #dc2626;
@@ -125,4 +159,19 @@
 .auth-switch a {
   font-weight: 700;
   color: #312e81;
+}
+
+.auth-google {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  align-items: stretch;
+}
+
+.auth-google__hint {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #9ca3af;
+  text-align: center;
 }
