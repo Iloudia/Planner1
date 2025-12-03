@@ -1,5 +1,6 @@
 ﻿import { useMemo, useState } from "react"
 import usePersistentState from "../../hooks/usePersistentState"
+import PageHeading from "../../components/PageHeading"
 import photo1 from "../../assets/planner-01.jpg"
 import photo2 from "../../assets/planner-02.jpg"
 import photo3 from "../../assets/planner-03.jpg"
@@ -89,10 +90,9 @@ function DietPage() {
           </div>
         ))}
       </div>
-<div className="page-accent-bar" aria-hidden="true" />
+      <div className="page-accent-bar" aria-hidden="true" />
+      <PageHeading eyebrow="Alimentation" title="Planifier ses repas avec douceur" />
       <main className="content-page diet-page">
-        
-
         <section className="page-section diet-week">
           <header>
             <h3>Planning des repas de la semaine</h3>

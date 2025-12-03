@@ -1,14 +1,39 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+﻿import { Link, useNavigate } from "react-router-dom"
+import { useEffect, useRef, useState } from "react"
+import { useAuth } from "../context/AuthContext"
 
 function Header() {
-  const { isAuthenticated, logout } = useAuth();
-  const navigate = useNavigate();
+  const { isAuthenticated, logout } = useAuth()
+  const navigate = useNavigate()
+  const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement | null>(null)
+
+  const closeMenus = () => {
+    setMenuOpen(false)
+  }
 
   const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
+    logout()
+    navigate("/login")
+    closeMenus()
+  }
+
+  const handleNavigate = (path: string) => {
+    navigate(path)
+    closeMenus()
+  }
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        closeMenus()
+      }
+    }
+    if (menuOpen) {
+      document.addEventListener("mousedown", handleClickOutside)
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [menuOpen])
 
   return (
     <header className="site-header">
@@ -29,27 +54,66 @@ function Header() {
           </div>
 
           <div className="header-auth">
-            {isAuthenticated ? (
-              <>
-                <button className="auth-button auth-button--logout" onClick={handleLogout}>
-                  Déconnexion
-                </button>
-              </>
-            ) : (
+            {!isAuthenticated ? (
               <button className="auth-button auth-button--login" onClick={() => navigate("/login")}>
                 Connexion
               </button>
-            )}
+            ) : null}
           </div>
 
-          <button className="profile-circle" aria-label="Ouvrir le profil" onClick={() => navigate("/profil")}>
-            <span className="profile-initials">P</span>
-          </button>
+          <div className="header-menu" ref={menuRef}>
+            <button
+              type="button"
+              className={menuOpen ? "header-menu__toggle is-open" : "header-menu__toggle"}
+              aria-haspopup="true"
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen((previous) => !previous)}
+            >
+              <span />
+              <span />
+              <span />
+            </button>
+            {menuOpen ? (
+              <div className="header-menu__panel" role="menu">
+                <ul className="header-menu__list">
+                  <li>
+                    <button type="button" className="header-menu__item" onClick={() => handleNavigate("/parametres")}>
+                      Parametres
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" className="header-menu__item" onClick={() => handleNavigate("/activite")}>
+                      Votre activite
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" className="header-menu__item" onClick={() => closeMenus()}>
+                      Changer l apparence
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" className="header-menu__item" onClick={() => closeMenus()}>
+                      Signaler un probleme
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" className="header-menu__item" onClick={() => handleNavigate("/login")}>
+                      Changer de compte
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" className="header-menu__item header-menu__item--danger" onClick={handleLogout}>
+                      Deconnexion
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
     </header>
-  );
+  )
 }
 
-export default Header;
-
+export default Header

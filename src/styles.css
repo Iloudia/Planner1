@@ -1289,3 +1289,104 @@ p {
 
 
 
+/* Header burger menu */
+.header-menu {
+  position: relative;
+  justify-self: end;
+}
+
+.header-menu__toggle {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.92), rgba(249, 168, 212, 0.28));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  box-shadow: 0 12px 30px rgba(236, 72, 153, 0.18);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.header-menu__toggle span {
+  width: 18px;
+  height: 2px;
+  border-radius: 999px;
+  background: #0f172a;
+  display: block;
+}
+
+.header-menu__toggle.is-open {
+  box-shadow: 0 16px 34px rgba(236, 72, 153, 0.26);
+  transform: translateY(-1px);
+}
+
+.header-menu__panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  width: 240px;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 28px 60px rgba(15, 23, 42, 0.18);
+  padding: 0.8rem;
+  z-index: 50;
+}
+
+.header-menu__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.header-menu__item {
+  width: 100%;
+  border: none;
+  background: transparent;
+  text-align: left;
+  padding: 0.55rem 0.65rem;
+  border-radius: 12px;
+  font-weight: 600;
+  color: #0f172a;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-menu__item:hover {
+  background: rgba(236, 72, 153, 0.08);
+}
+
+.header-menu__item--danger {
+  color: #b91c1c;
+}
+
+.header-menu__chevron {
+  font-weight: 700;
+  font-size: 1rem;
+  margin-left: 0.5rem;
+}
+
+.header-menu__sublist {
+  list-style: none;
+  margin: 0.35rem 0 0;
+  padding: 0.4rem 0.6rem 0.2rem;
+  border-left: 2px solid rgba(236, 72, 153, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.92rem;
+  color: #475569;
+}
+
+.header-menu__sublist li {
+  padding-left: 0.3rem;
+}

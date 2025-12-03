@@ -26,9 +26,14 @@ import GestionCookiesPage from "./pages/Legal/GestionCookiesPage"
 import MentionsLegalesPage from "./pages/Legal/MentionsLegalesPage"
 import CookieBanner from "./components/CookieBanner"
 import CookiePreferencesModal from "./components/CookiePreferencesModal"
-import ProfilePage from "./pages/Profile/ProfilePage"
 import AdminPage from "./pages/Admin/AdminPage"
 import AdminRoute from "./components/AdminRoute"
+import SettingsLayout from "./pages/Settings/SettingsLayout"
+import SettingsAccount from "./pages/Settings/SettingsAccount"
+import SettingsNotifications from "./pages/Settings/SettingsNotifications"
+import SettingsAccessibility from "./pages/Settings/SettingsAccessibility"
+import SettingsDisplay from "./pages/Settings/SettingsDisplay"
+import SettingsHelp from "./pages/Settings/SettingsHelp"
 
 function NotFound() {
   return (
@@ -75,7 +80,13 @@ function App() {
             <Route path="/diet" element={<DietClassicPage />} />
             <Route path="/alimentation" element={<CuisinePage />} />
             <Route path="/voyage" element={<VoyagePage />} />
-            <Route path="/profil" element={<ProfilePage />} />
+            <Route path="/parametres" element={<SettingsLayout />}>
+              <Route index element={<SettingsAccount />} />
+              <Route path="notifications" element={<SettingsNotifications />} />
+              <Route path="accessibilite" element={<SettingsAccessibility />} />
+              <Route path="affichage" element={<SettingsDisplay />} />
+              <Route path="aide" element={<SettingsHelp />} />
+            </Route>
             <Route path="/faq" element={<FAQPage />} />
             <Route path="/confidentialite" element={<ConfidentialitePage />} />
             <Route path="/contact" element={<ContactPage />} />
