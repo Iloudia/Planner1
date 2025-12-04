@@ -63,6 +63,11 @@ function App() {
           <Route path="/login" element={<AuthPage mode="login" />} />
           <Route path="/register" element={<AuthPage mode="register" />} />
           <Route path="/" element={<LandingPage />} />
+          <Route path="/faq" element={<FAQPage />} />
+          <Route path="/confidentialite" element={<ConfidentialitePage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/cookies" element={<GestionCookiesPage />} />
+          <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
 
           <Route element={<ProtectedRoute />}>
             <Route path="/home" element={<HomePage />} />
@@ -87,11 +92,6 @@ function App() {
               <Route path="affichage" element={<SettingsDisplay />} />
               <Route path="aide" element={<SettingsHelp />} />
             </Route>
-            <Route path="/faq" element={<FAQPage />} />
-            <Route path="/confidentialite" element={<ConfidentialitePage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/cookies" element={<GestionCookiesPage />} />
-            <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
           </Route>
 
           <Route element={<AdminRoute />}>

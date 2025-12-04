@@ -1,4 +1,4 @@
-:root {
+ï»¿:root {
   --color-rose-50: #fff7fb;
   --color-rose-100: #ffe9f4;
   --color-rose-200: #fbcfe8;
@@ -376,6 +376,7 @@ p {
   font-size: 40px;
   font-weight: 700;
   letter-spacing: 0.02em;
+  color: #ec4899;
 }
 
 .site-footer__sections {
@@ -952,7 +953,7 @@ p {
 }
 
 .bullet-list li::before {
-  content: "•";
+  content: "ï¿½";
   position: absolute;
   left: 0;
   color: var(--page-accent);

@@ -1,12 +1,28 @@
-﻿import { Link, useNavigate } from "react-router-dom"
-import { useEffect, useRef, useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useAuth } from "../context/AuthContext"
 
 function Header() {
   const { isAuthenticated, logout } = useAuth()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [searchTerm, setSearchTerm] = useState("")
   const menuRef = useRef<HTMLDivElement | null>(null)
+
+  const searchTargets = useMemo(
+    () => [
+      { label: "Accueil", path: "/home" },
+      { label: "Contact", path: "/contact" },
+      { label: "Finances", path: "/finances" },
+      { label: "Cuisine", path: "/alimentation" },
+      { label: "Wishlist", path: "/wishlist" },
+      { label: "Sport", path: "/sport" },
+      { label: "FAQ", path: "/faq" },
+      { label: "Cookies", path: "/cookies" },
+      { label: "Parametres", path: "/parametres" },
+    ],
+    [],
+  )
 
   const closeMenus = () => {
     setMenuOpen(false)
@@ -21,6 +37,20 @@ function Header() {
   const handleNavigate = (path: string) => {
     navigate(path)
     closeMenus()
+  }
+
+  const handleSearchSubmit = () => {
+    const query = searchTerm.trim().toLowerCase()
+    if (!query) {
+      return
+    }
+    const match = searchTargets.find((target) => target.label.toLowerCase().includes(query))
+    if (match) {
+      navigate(match.path)
+      setSearchTerm("")
+    } else {
+      window.alert(`Aucun resultat pour "${searchTerm}".`)
+    }
   }
 
   useEffect(() => {
@@ -44,8 +74,27 @@ function Header() {
 
         <div className="header-cta">
           <div className="nav-search nav-search--center">
-            <input className="nav-search__input" type="search" placeholder="Rechercher" aria-label="Rechercher" />
-            <button className="nav-search__button" aria-label="Valider la recherche">
+            <input
+              className="nav-search__input"
+              type="search"
+              placeholder="Rechercher"
+              aria-label="Rechercher"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault()
+                  handleSearchSubmit()
+                }
+              }}
+              list="planner-search-suggestions"
+            />
+            <datalist id="planner-search-suggestions">
+              {searchTargets.map((target) => (
+                <option key={target.path} value={target.label} />
+              ))}
+            </datalist>
+            <button className="nav-search__button" aria-label="Valider la recherche" onClick={handleSearchSubmit}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="11" cy="11" r="7" />
                 <line x1="16.65" y1="16.65" x2="21" y2="21" />

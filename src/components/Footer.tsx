@@ -61,7 +61,8 @@ const Footer = () => {
       </div>
 
       <div className="site-footer__bottom">
-        Propulse ta journee - garde l'equilibre entre ambition et serenite.
+        <span>© 2025 Planner. Tous droits réservés.</span>
+        <span>4 décembre 2025</span>
       </div>
     </footer>
   );

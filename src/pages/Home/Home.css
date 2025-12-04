@@ -127,7 +127,7 @@
 .profile-photo {
   position: relative;
   width: min(220px, 100%);
-  /* aspect-ratio: 1 / 1; */
+  height: 220px;
   overflow: hidden;
   background: rgba(15, 23, 42, 0.06);
   margin: 0 auto;
@@ -249,4 +249,105 @@
   color: #dc2626;
   cursor: pointer;
   font-weight: 700;
+}
+
+.task-window {
+  border-radius: 24px;
+  padding: 1.4rem 1.2rem;
+  background: linear-gradient(160deg, rgba(236, 72, 153, 0.08), rgba(59, 130, 246, 0.06));
+  border: 1px solid rgba(236, 72, 153, 0.15);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4), 0 20px 50px rgba(15, 23, 42, 0.15);
+}
+
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+  padding-left: 1.2rem;
+}
+
+.task-list::before {
+  content: "";
+  position: absolute;
+  left: 14px;
+  top: 0.2rem;
+  bottom: 0.2rem;
+  width: 2px;
+  background: linear-gradient(180deg, rgba(236, 72, 153, 0.3), rgba(14, 165, 233, 0.3));
+}
+
+.task-card {
+  position: relative;
+  background: #fff;
+  border-radius: 18px;
+  padding: 1rem 1.1rem 1rem 1.3rem;
+  border: 1px solid rgba(236, 72, 153, 0.16);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.task-card::before {
+  content: "";
+  position: absolute;
+  left: -1.3rem;
+  top: 1.1rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ec4899;
+  box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.2);
+}
+
+.task-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.task-date {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.task-tag {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #0ea5e9;
+}
+
+.task-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.task-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: rgba(15, 23, 42, 0.65);
+}
+
+.task-time-chip {
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(236, 72, 153, 0.12);
+  color: #be185d;
+  font-weight: 600;
+}
+
+.task-meta-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.4);
 }
