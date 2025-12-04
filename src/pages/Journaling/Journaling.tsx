@@ -496,7 +496,7 @@ const JournalingPage = () => {
         </div>
       </PageHero>
       <div className="journaling-page__accent-bar" aria-hidden="true" />
-      <PageHeading eyebrow="Reflet" title="Mon journal pastel" />
+      <PageHeading eyebrow="Reflet" title="Mon journal" />
 
       <section className="journaling-prompts">
         <header className="journaling-prompts__header">
@@ -579,7 +579,7 @@ const JournalingPage = () => {
         <h2>Ecriture libre</h2>
         <p>Laisse venir les mots qui reflètent ton état intérieur.</p>
         <form onSubmit={handleSubmit} className="journaling-editor__form">
-          <label>
+          <label className="journaling-editor__field">
             <span>Date</span>
             <input
               type="date"
@@ -588,25 +588,8 @@ const JournalingPage = () => {
             />
           </label>
 
-          <div>
-            <span>Humeur</span>
-            <div className="journaling-editor__chips">
-              {moods.map((mood) => (
-                <button
-                  type="button"
-                  key={mood}
-                  className={
-                    draft.mood === mood ? 'journaling-editor__chip journaling-editor__chip--active' : 'journaling-editor__chip'
-                  }
-                  onClick={() => handleDraftChange('mood', mood)}
-                >
-                  {mood}
-                </button>
-              ))}
-            </div>
-          </div>
 
-          <fieldset className="journaling-editor__feelings">
+          <fieldset className="journaling-editor__feelings journaling-editor__field journaling-editor__field--full">
             <legend>Comment t'es-tu sentie aujourd'hui ?</legend>
             <div className="journaling-editor__feelings-options">
               {feelings.map((option) => {
@@ -643,7 +626,7 @@ const JournalingPage = () => {
             </div>
           </fieldset>
 
-          <label>
+          <label className="journaling-editor__field journaling-editor__field--full">
             <span>Pourquoi ?</span>
             <textarea
               value={draft.feelingReason}
@@ -653,7 +636,7 @@ const JournalingPage = () => {
             />
           </label>
 
-          <label>
+          <label className="journaling-editor__field journaling-editor__field--full">
             <span>Texte libre</span>
             <textarea
               value={draft.content}

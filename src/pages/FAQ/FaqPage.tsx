@@ -1,41 +1,73 @@
-﻿import "./FaqPage.css"
+import { useState } from "react"
+import "./FaqPage.css"
 
-const FAQPage = () => (
-  <div className="legal-page">
-    <div className="page-accent-bar" aria-hidden="true" />
-    <header className="legal-page__header">
-      <p className="legal-page__eyebrow">FAQ</p>
-      <h1 className="legal-page__title">Questions frequentes</h1>
-      <p className="legal-page__intro">
-        Tu trouveras ici les reponses aux questions les plus posees sur l utilisation de Planner.
-      </p>
-    </header>
+const faqItems = [
+  {
+    question: "Est-ce que Planner est gratuit ?",
+    answer:
+      "Oui, le projet est disponible librement pour t accompagner au quotidien. Les nouvelles fonctionnalites sont ajoutees progressivement pour enrichir ton experience.",
+  },
+  {
+    question: "Comment sauvegarder mes donnees ?",
+    answer:
+      "Tes donnees sont stockees localement sur ton appareil. Pour plus de securite, exporte tes notes importantes afin de conserver une copie personnelle.",
+  },
+  {
+    question: "Puis-je suggerer des idees ?",
+    answer:
+      "Bien sur ! J adore recevoir vos retours. Ecris-moi via la page contact pour partager tes envies et inspirer les evolutions du Planner.",
+  },
+  {
+    question: "Planner fonctionne-t-il hors connexion ?",
+    answer:
+      "Oui. Les pages restent accessibles meme sans connexion car les donnees sont gardées dans ton navigateur. Reviens en ligne regulierement pour profiter des mises a jour.",
+  },
+]
 
-    <section className="legal-section">
-      <h2 className="legal-section__title">Est-ce que Planner est gratuit ?</h2>
-      <p className="legal-section__text">
-        Oui, le projet est disponible librement pour t accompagner au quotidien. Les nouvelles
-        fonctionnalites sont ajoutees progressivement.
-      </p>
-    </section>
+const FAQPage = () => {
+  const [openIndex, setOpenIndex] = useState<number | null>(0)
 
-    <section className="legal-section">
-      <h2 className="legal-section__title">Comment sauvegarder mes donnees ?</h2>
-      <p className="legal-section__text">
-        Tes donnees sont stockees localement sur ton appareil. Je recommande dans tous les cas
-        d exporter tes notes importantes pour conserver une copie personnelle.
-      </p>
-    </section>
+  return (
+    <div className="legal-page faq-page">
+      <div className="page-accent-bar" aria-hidden="true" />
+      <header className="legal-page__header">
+        <p className="legal-page__eyebrow">FAQ</p>
+        <h1 className="legal-page__title">Questions frequentes</h1>
+        <p className="legal-page__intro">Toutes les reponses essentielles pour tirer le meilleur du Planner.</p>
+      </header>
 
-    <section className="legal-section">
-      <h2 className="legal-section__title">Puis-je suggerer des idees ?</h2>
-      <p className="legal-section__text">
-        Bien sûr ! J adore recevoir vos retours. Tu peux m ecrire via la page contact et partager tes
-        envies pour les prochaines evolutions.
-      </p>
-    </section>
-    <div className="page-footer-bar" aria-hidden="true" />
-  </div>
-)
+      <div className="faq-accordion">
+        {faqItems.map((item, index) => {
+          const isOpen = openIndex === index
+          return (
+            <article key={item.question} className={isOpen ? "faq-item is-open" : "faq-item"}>
+              <button
+                type="button"
+                className="faq-item__header"
+                onClick={() => setOpenIndex((current) => (current === index ? null : index))}
+                aria-expanded={isOpen}
+                aria-controls={`faq-panel-${index}`}
+              >
+                <span>{item.question}</span>
+                <span className="faq-item__icon" aria-hidden="true">
+                  {isOpen ? "−" : "+"}
+                </span>
+              </button>
+              <div
+                id={`faq-panel-${index}`}
+                className="faq-item__body"
+                style={{ maxHeight: isOpen ? "280px" : "0px" }}
+              >
+                <p>{item.answer}</p>
+              </div>
+            </article>
+          )
+        })}
+      </div>
+
+      <div className="page-footer-bar" aria-hidden="true" />
+    </div>
+  )
+}
 
 export default FAQPage

@@ -126,19 +126,18 @@
 
 .profile-photo {
   position: relative;
-  width: 100%;
-  max-width: 260px;
-  border-radius: 0;
-  overflow: visible;
-  box-shadow: none;
-  background: none;
+  width: min(220px, 100%);
+  /* aspect-ratio: 1 / 1; */
+  overflow: hidden;
+  background: rgba(15, 23, 42, 0.06);
   margin: 0 auto;
+  box-shadow: 0 16px 50px rgba(15, 23, 42, 0.12);
 }
 
 .profile-photo img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
   object-fit: cover;
 }
 

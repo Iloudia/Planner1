@@ -221,6 +221,7 @@ const WishlistPage = () => {
   const [itemMenuOpenFor, setItemMenuOpenFor] = useState<string | null>(null)
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({})
   const [isNoteMenuOpen, setIsNoteMenuOpen] = useState(false)
+  const [isNotePanelOpen, setIsNotePanelOpen] = useState(false)
   const [movingItem, setMovingItem] = useState<WishlistItem | null>(null)
   const [moveTargetCategoryId, setMoveTargetCategoryId] = useState<WishlistCategoryId | null>(null)
   const [moveSubcategory, setMoveSubcategory] = useState("")
@@ -388,11 +389,13 @@ const WishlistPage = () => {
     if (!selectedCategoryId) {
       setNoteDraft("")
       setIsEditingNote(false)
+      setIsNotePanelOpen(false)
       return
     }
     const currentNote = wishlist[selectedCategoryId]?.note ?? ""
     setNoteDraft(currentNote)
     setIsEditingNote(false)
+    setIsNotePanelOpen(false)
   }, [resetItemDraft, selectedCategoryId, wishlist])
 
   useEffect(() => {
@@ -703,12 +706,10 @@ const WishlistPage = () => {
   }
 
   const handleStartEditNote = () => {
-    if (!selectedCategoryState) {
-      setIsEditingNote(true)
-      setIsNoteMenuOpen(false)
-      return
+    if (selectedCategoryState) {
+      setNoteDraft(selectedCategoryState.note ?? "")
     }
-    setNoteDraft(selectedCategoryState.note ?? "")
+    setIsNotePanelOpen(true)
     setIsEditingNote(true)
     setIsNoteMenuOpen(false)
   }
@@ -1142,6 +1143,7 @@ const WishlistPage = () => {
     setSelectedCategoryId(null)
     setIsAddingItem(false)
     setIsEditingNote(false)
+    setIsNotePanelOpen(false)
     setNoteDraft("")
     setIsCategoryPickerOpen(false)
     setEditingItemId(null)
@@ -1248,7 +1250,9 @@ const WishlistPage = () => {
         <div className="wishlist-modal__backdrop" role="dialog" aria-modal="true" onClick={closeModal}>
           <div className="wishlist-modal" onClick={(event) => event.stopPropagation()}>
             <button type="button" className="wishlist-modal__close" aria-label="Fermer" onClick={closeModal}>
-              �
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
             </button>
             <div className="wishlist-modal__cover">
               <img src={selectedCategoryCard.cover} alt={`Photo ${selectedCategoryState.title}`} />
@@ -1264,49 +1268,50 @@ const WishlistPage = () => {
                 </span>
               </header>
 
-              {isEditingNote ? (
+              {isNotePanelOpen && isEditingNote ? (
                 <form
                   className="wishlist-modal__note"
                   onSubmit={(event) => {
                     event.preventDefault()
                     handleSaveNote()
-                  }}
-                >
-                  <label>
-                    <span className="wishlist-memo-label">
-                      <svg className="wishlist-memo-label__icon" viewBox="0 0 26 26" aria-hidden="true">
-                        <path
-                          d="M4 6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H9l-4 5v-5H7a3 3 0 0 1-3-3Z"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="1.8"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                      <span>Memo</span>
-                    </span>
-                    <textarea
-                      rows={3}
-                      value={noteDraft}
-                      onChange={(event) => setNoteDraft(event.target.value)}
-                      placeholder="Ajouter des details ou un moodboard rapide..."
-                    />
-                  </label>
-                  <div className="wishlist-modal__note-actions">
-                    <button type="submit">Enregistrer</button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsEditingNote(false)
-                        setNoteDraft(selectedCategoryState.note ?? "")
-                      }}
-                    >
-                      Annuler
+                    }}
+                  >
+                    <label>
+                      <span className="wishlist-memo-label">
+                        <svg className="wishlist-memo-label__icon" viewBox="0 0 26 26" aria-hidden="true">
+                          <path
+                            d="M4 6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H9l-4 5v-5H7a3 3 0 0 1-3-3Z"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.8"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        <span>Memo</span>
+                      </span>
+                      <textarea
+                        rows={3}
+                        value={noteDraft}
+                        onChange={(event) => setNoteDraft(event.target.value)}
+                        placeholder="Ajouter des details ou un moodboard rapide..."
+                      />
+                    </label>
+                    <div className="wishlist-modal__note-actions">
+                      <button type="submit">Enregistrer</button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsEditingNote(false)
+                          setNoteDraft(selectedCategoryState.note ?? "")
+                        }}
+                      >
+                        Annuler
                     </button>
                   </div>
                 </form>
-              ) : (
+              ) : null}
+              {(!isEditingNote && (hasMemo || isNotePanelOpen)) ? (
                 <div className="wishlist-modal__note-display">
                   <div className="wishlist-note__header">
                     <strong className="wishlist-memo-label">
@@ -1351,13 +1356,13 @@ const WishlistPage = () => {
                   ) : (
                     <p className="wishlist-modal__note-placeholder">Ajoute un memo pour cette categorie.</p>
                   )}
-                  {!hasMemo ? (
+                  {!hasMemo && isNotePanelOpen ? (
                     <button className="wishlist-note__add" type="button" onClick={handleStartEditNote}>
                       Ajouter un memo
                     </button>
                   ) : null}
                 </div>
-              )}
+              ) : null}
 
               {isAddingItem ? (
                 <form className="wishlist-modal__form" onSubmit={handleAddItem}>
@@ -1617,10 +1622,17 @@ const WishlistPage = () => {
               <button
                 type="button"
                 onClick={() => {
-                  setIsEditingNote((value) => !value)
+                  setIsNotePanelOpen((previous) => {
+                    const next = !previous
+                    setIsEditingNote(false)
+                    if (!next) {
+                      setIsNoteMenuOpen(false)
+                    }
+                    return next
+                  })
                   setNoteDraft(selectedCategoryState.note ?? "")
                 }}
-                aria-pressed={isEditingNote}
+                aria-pressed={isNotePanelOpen}
               >
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M5 4h14a1 1 0 0 1 1 1v11.59l-4-4a1 1 0 0 0-1.42 0L11 16.17l-2.59-2.58A1 1 0 0 0 7 13.59l-3 3V5a1 1 0 0 1 1-1Z" />

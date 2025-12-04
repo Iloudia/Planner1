@@ -1,10 +1,11 @@
-import { useState, useMemo, useEffect, useRef, type FormEvent } from "react"
+﻿import { useState, useMemo, useEffect, useRef, type FormEvent } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../../context/AuthContext"
 import heroIllustration from "../../assets/MoodBoard.png"
 import "./Auth.css"
 
 const REMEMBER_PREFERENCE_KEY = "planner.auth.remember"
+const PROFILE_STORAGE_KEY = "planner.profile.preferences.v1"
 
 type AuthMode = "login" | "register"
 
@@ -71,6 +72,12 @@ const AuthPage = ({ mode }: AuthFormProps) => {
     return window.localStorage.getItem(REMEMBER_PREFERENCE_KEY) === "true"
   })
   const [error, setError] = useState("")
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
+  const [username, setUsername] = useState("")
+  const [birthday, setBirthday] = useState("")
+  const [gender, setGender] = useState("")
+  const [acceptTerms, setAcceptTerms] = useState(false)
   const [isGoogleReady, setIsGoogleReady] = useState(false)
   const googleButtonRef = useRef<HTMLDivElement | null>(null)
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
@@ -133,12 +140,44 @@ const AuthPage = ({ mode }: AuthFormProps) => {
     window.localStorage.setItem(REMEMBER_PREFERENCE_KEY, remember ? "true" : "false")
   }, [remember])
 
+  const persistProfileData = (emailValue: string) => {
+    try {
+      const existing = localStorage.getItem(PROFILE_STORAGE_KEY)
+      let payload = existing ? JSON.parse(existing) : {}
+      payload = {
+        ...payload,
+        personalInfo: {
+          ...payload.personalInfo,
+          firstName,
+          lastName,
+          email: emailValue,
+        },
+        identityInfo: {
+          ...payload.identityInfo,
+          username,
+          birthday,
+          gender,
+        },
+      }
+      localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(payload))
+    } catch {
+      // ignore
+    }
+  }
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    if (mode === "register" && !acceptTerms) {
+      setError("Merci d accepter les conditions generales.")
+      return
+    }
     const success = mode === "login" ? login({ email, password, remember }) : register({ email, password, remember })
     if (!success) {
       setError("Merci de renseigner un email et un mot de passe valides.")
       return
+    }
+    if (mode === "register") {
+      persistProfileData(email)
     }
     setError("")
     navigate(destinationPath, { replace: true })
@@ -178,9 +217,27 @@ const AuthPage = ({ mode }: AuthFormProps) => {
           ) : null}
 
           <form className="auth-form" onSubmit={handleSubmit}>
+            {mode === "register" && (
+              <div className="auth-form__row">
+                <label>
+                  Prenom
+                  <input type="text" value={firstName} onChange={(event) => setFirstName(event.target.value)} placeholder="Prenom" required />
+                </label>
+                <label>
+                  Nom
+                  <input type="text" value={lastName} onChange={(event) => setLastName(event.target.value)} placeholder="Nom" required />
+                </label>
+              </div>
+            )}
+            {mode === "register" && (
+              <label>
+                Pseudo
+                <input type="text" value={username} onChange={(event) => setUsername(event.target.value)} placeholder="Ton pseudo" required />
+              </label>
+            )}
             <label>
               Email
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="toi@exemple.com" required />
+              <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="toi@exemple.com" required />
             </label>
             <label>
               Mot de passe
@@ -188,7 +245,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(event) => setPassword(event.target.value)}
                   placeholder="********"
                   minLength={6}
                   required
@@ -204,14 +261,39 @@ const AuthPage = ({ mode }: AuthFormProps) => {
                 </button>
               </div>
             </label>
+            {mode === "register" && (
+              <div className="auth-form__row">
+                <label>
+                  Anniversaire
+                  <input type="date" value={birthday} onChange={(event) => setBirthday(event.target.value)} required />
+                </label>
+                <label>
+                  Genre
+                  <select value={gender} onChange={(event) => setGender(event.target.value)}>
+                    <option value="">Ne pas preciser</option>
+                    <option value="femme">Femme</option>
+                    <option value="homme">Homme</option>
+                  </select>
+                </label>
+              </div>
+            )}
             {error ? <p className="auth-error">{error}</p> : null}
-            <label className="auth-remember">
-              <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
-              Se souvenir de moi
-            </label>
-            <button type="button" className="auth-forgot" onClick={handleForgot}>
-              Mot de passe oublie ?
-            </button>
+            {mode === "register" ? (
+              <label className="auth-terms">
+                <input type="checkbox" checked={acceptTerms} onChange={(event) => setAcceptTerms(event.target.checked)} required />
+                J accepte les conditions generales
+              </label>
+            ) : (
+              <label className="auth-remember">
+                <input type="checkbox" checked={remember} onChange={(event) => setRemember(event.target.checked)} />
+                Se souvenir de moi
+              </label>
+            )}
+            {mode === "login" ? (
+              <button type="button" className="auth-forgot" onClick={handleForgot}>
+                Mot de passe oublie ?
+              </button>
+            ) : null}
             <button type="submit" className="auth-submit">
               {ctaLabel}
             </button>
@@ -234,4 +316,3 @@ const AuthPage = ({ mode }: AuthFormProps) => {
 }
 
 export default AuthPage
-

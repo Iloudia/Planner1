@@ -58,6 +58,57 @@
   color: rgba(15, 23, 42, 0.68);
 }
 
+.contact-form {
+  gap: 1.2rem;
+}
+
+.contact-form__body {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem 1.2rem;
+}
+
+.contact-form__body label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  color: rgba(15, 23, 42, 0.7);
+  font-weight: 600;
+}
+
+.contact-form__body input,
+.contact-form__body textarea {
+  border: 1px solid rgba(236, 72, 153, 0.25);
+  border-radius: 14px;
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+.contact-form__body textarea {
+  resize: vertical;
+  min-height: 140px;
+}
+
+.contact-form__field--full {
+  grid-column: 1 / -1;
+}
+
+.contact-form__submit {
+  grid-column: 1 / -1;
+  justify-self: flex-start;
+  border: none;
+  border-radius: 999px;
+  padding: 0.9rem 2.2rem;
+  background: linear-gradient(120deg, #f472b6, #ec4899);
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 18px 40px rgba(236, 72, 153, 0.25);
+}
 @media (max-width: 640px) {
   .legal-page {
     padding: clamp(1.6rem, 7vw, 2.2rem);
