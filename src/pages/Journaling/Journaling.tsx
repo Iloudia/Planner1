@@ -8,7 +8,18 @@ import PageHeading from '../../components/PageHeading'
 import PageHero from '../../components/PageHero'
 import './Journaling.css'
 
-type JournalFeeling = 'happy' | 'pout' | 'angry' | 'tired'
+type JournalFeeling =
+  | 'joy'
+  | 'sad'
+  | 'angry'
+  | 'excited'
+  | 'surprised'
+  | 'scared'
+  | 'shy'
+  | 'confused'
+  | 'embarrassed'
+  | 'calm'
+  | 'depressed'
 
 type PromptAnswer =
   | { label: string; type: 'text'; value: string }
@@ -25,7 +36,8 @@ type JournalEntry = {
   date: string
   mood: string
   content: string
-  feeling: JournalFeeling
+  feelings?: JournalFeeling[]
+  feeling?: JournalFeeling
   feelingReason: string
   prompts?: PromptEntrySection[]
   freeWriting?: string
@@ -67,10 +79,17 @@ const initialEntries: JournalEntry[] = []
 
 const moods = ['Sereine', 'Energisee', 'Equilibree', 'Fatiguee', 'Fiere']
 const feelings: Array<{ value: JournalFeeling; label: string; emoji: string }> = [
-  { value: 'happy', label: 'Bien', emoji: ':)' },
-  { value: 'pout', label: 'Boudeuse', emoji: ':|' },
-  { value: 'angry', label: 'En colere', emoji: '!' },
-  { value: 'tired', label: 'Fatiguee', emoji: 'zzz' },
+  { value: 'joy', label: 'Joyeuse', emoji: '😊' },
+  { value: 'sad', label: 'Triste', emoji: '😢' },
+  { value: 'angry', label: 'En colere', emoji: '😡' },
+  { value: 'excited', label: 'Excitee', emoji: '🤩' },
+  { value: 'surprised', label: 'Surprise', emoji: '😲' },
+  { value: 'scared', label: 'Effrayee', emoji: '😱' },
+  { value: 'shy', label: 'Timide', emoji: '😳' },
+  { value: 'confused', label: 'Confuse', emoji: '😕' },
+  { value: 'embarrassed', label: 'Embarrassee', emoji: '😅' },
+  { value: 'calm', label: 'Calme', emoji: '😌' },
+  { value: 'depressed', label: 'Deprimee', emoji: '😞' },
 ]
 const DATE_PROMPT_FIELD_ID = 'prompt-date'
 
@@ -262,7 +281,7 @@ const JournalingPage = () => {
     date: getTodayISO(),
     mood: 'Equilibree',
     content: '',
-    feeling: feelings[0]?.value ?? 'happy',
+    feelings: feelings.length > 0 ? [feelings[0].value] : [],
     feelingReason: '',
   })
   const [promptResponses, setPromptResponses] = useState<Record<string, string>>(() => createInitialPromptResponses())
@@ -374,19 +393,27 @@ const JournalingPage = () => {
 
     const combinedContent = [promptSummaryText, freeWriting].filter((value) => value.length > 0).join('\n\n')
 
+    const normalizedFeelings = draft.feelings.length > 0 ? [...draft.feelings] : (feelings.length > 0 ? [feelings[0].value] : [])
+
     const newEntry: JournalEntry = {
       id: `entry-${Date.now()}`,
       date: draft.date,
       mood: draft.mood,
       content: combinedContent,
-      feeling: draft.feeling,
+      feelings: normalizedFeelings,
+      feeling: normalizedFeelings[0],
       feelingReason: draft.feelingReason.trim(),
       prompts: promptSectionsForEntry.length > 0 ? promptSectionsForEntry : undefined,
       freeWriting: freeWriting.length > 0 ? freeWriting : undefined,
     }
 
     setEntries((previous) => [newEntry, ...previous])
-    setDraft((previous) => ({ ...previous, content: '', feelingReason: '' }))
+    setDraft((previous) => ({
+      ...previous,
+      content: '',
+      feelingReason: '',
+      feelings: feelings.length > 0 ? [feelings[0].value] : [],
+    }))
     setPromptResponses(createInitialPromptResponses())
     setPromptSelections(createInitialPromptSelections())
   }
@@ -405,33 +432,17 @@ const JournalingPage = () => {
   const totalEntries = entries.length
   const activeDays = entriesByDate.length
   const latestEntry = entries[0]
+  const referenceFeelings =
+    latestEntry && latestEntry.feelings && latestEntry.feelings.length > 0
+      ? latestEntry.feelings
+      : latestEntry && latestEntry.feeling
+        ? [latestEntry.feeling]
+        : draft.feelings
   const highlightedFeeling =
-    feelings.find((option) => option.value === (latestEntry?.feeling ?? draft.feeling)) ?? feelings[0]
-  const [collapsedDates, setCollapsedDates] = useState<Set<string>>(new Set())
+    feelings.find((option) => referenceFeelings.includes(option.value)) ?? feelings[0]
+  const [collapsedDates, setCollapsedDates] = useState<Set<string>>(() => new Set(entries.map((entry) => entry.date)))
 
-  const [customAffirmations, setCustomAffirmations] = usePersistentState<
-    { id: string; text: string; done: boolean }[]
-  >('planner.journal.customAffirmations', () => [])
-  const [affirmationDraft, setAffirmationDraft] = useState('')
-  const [archiveOpen, setArchiveOpen] = useState(true)
-
-  const handleAddAffirmation = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const text = affirmationDraft.trim()
-    if (text.length === 0) return
-    setCustomAffirmations((previous) => [{ id: `aff-${Date.now()}`, text, done: false }, ...previous])
-    setAffirmationDraft('')
-  }
-
-  const toggleAffirmation = (id: string) => {
-    setCustomAffirmations((previous) =>
-      previous.map((item) => (item.id === id ? { ...item, done: !item.done } : item)),
-    )
-  }
-
-  const removeAffirmation = (id: string) => {
-    setCustomAffirmations((previous) => previous.filter((item) => item.id !== id))
-  }
+  const [archiveOpen, setArchiveOpen] = useState(false)
 
   const toggleDateSection = (date: string) => {
     setCollapsedDates((previous) => {
@@ -444,6 +455,18 @@ const JournalingPage = () => {
       return next
     })
   }
+
+  useEffect(() => {
+    setCollapsedDates((previous) => {
+      const next = new Set(previous)
+      entriesByDate.forEach(([date]) => {
+        if (!next.has(date)) {
+          next.add(date)
+        }
+      })
+      return next
+    })
+  }, [entriesByDate])
 
   const journalingStats = [
     { id: 'pages', label: 'Pages ecrites', value: totalEntries.toString() },
@@ -552,51 +575,11 @@ const JournalingPage = () => {
         </div>
       </section>
 
-      <section className="journaling-custom-affirmations">
-        <div className="journaling-custom-affirmations__header">
-          <div>
-            <h2>Affirmations personnelles</h2>
-            <p>Ajoute tes phrases positives et repete-les quand tu le souhaites.</p>
-          </div>
-          <form className="journaling-custom-affirmations__form" onSubmit={handleAddAffirmation}>
-            <input
-              type="text"
-              placeholder="Ex: Je merite de me sentir bien aujourd hui."
-              value={affirmationDraft}
-              onChange={(event) => setAffirmationDraft(event.target.value)}
-            />
-            <button type="submit">Ajouter</button>
-          </form>
-        </div>
-        <div className="journaling-custom-affirmations__list">
-          {customAffirmations.length === 0 ? (
-            <p className="journaling-custom-affirmations__empty">Ajoute ta premiere affirmation pour la retrouver ici.</p>
-          ) : (
-            customAffirmations.map((item) => (
-              <div
-                key={item.id}
-                className={`journaling-custom-affirmations__item${
-                  item.done ? ' journaling-custom-affirmations__item--done' : ''
-                }`}
-              >
-                <label>
-                  <input type="checkbox" checked={item.done} onChange={() => toggleAffirmation(item.id)} />
-                  <span>{item.text}</span>
-                </label>
-                <button type="button" onClick={() => removeAffirmation(item.id)}>
-                  Supprimer
-                </button>
-              </div>
-            ))
-          )}
-        </div>
-      </section>
-
       <section className="journaling-editor">
         <h2>Ecriture libre</h2>
         <p>Laisse venir les mots qui reflètent ton état intérieur.</p>
         <form onSubmit={handleSubmit} className="journaling-editor__form">
-          <label className="journaling-editor__field">
+          <label>
             <span>Date</span>
             <input
               type="date"
@@ -605,46 +588,62 @@ const JournalingPage = () => {
             />
           </label>
 
-          <label className="journaling-editor__field">
+          <div>
             <span>Humeur</span>
-            <select
-              value={draft.mood}
-              onChange={(event: ChangeEvent<HTMLSelectElement>) => handleDraftChange('mood', event.target.value)}
-            >
+            <div className="journaling-editor__chips">
               {moods.map((mood) => (
-                <option key={mood} value={mood}>
+                <button
+                  type="button"
+                  key={mood}
+                  className={
+                    draft.mood === mood ? 'journaling-editor__chip journaling-editor__chip--active' : 'journaling-editor__chip'
+                  }
+                  onClick={() => handleDraftChange('mood', mood)}
+                >
                   {mood}
-                </option>
+                </button>
               ))}
-            </select>
-          </label>
+            </div>
+          </div>
 
-          <fieldset className="journaling-editor__feelings journaling-editor__field journaling-editor__field--full">
+          <fieldset className="journaling-editor__feelings">
             <legend>Comment t'es-tu sentie aujourd'hui ?</legend>
             <div className="journaling-editor__feelings-options">
-              {feelings.map((option) => (
-                <label key={option.value} className="journaling-editor__feeling-option">
-                  <input
-                    type="radio"
-                    name="journal-feeling"
-                    value={option.value}
-                    checked={draft.feeling === option.value}
-                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                      handleDraftChange('feeling', event.target.value as JournalFeeling)
-                    }
-                  />
-                  <div className="journaling-editor__feeling-content">
-                    <span aria-hidden="true" className="journaling-editor__feeling-emoji">
-                      {option.emoji}
-                    </span>
-                    <span className="journaling-editor__feeling-label">{option.label}</span>
-                  </div>
-                </label>
-              ))}
+              {feelings.map((option) => {
+                const isSelected = draft.feelings.includes(option.value)
+                return (
+                  <label key={option.value} className={isSelected ? 'journaling-editor__feeling-option is-active' : 'journaling-editor__feeling-option'}>
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => {
+                        setDraft((previous) => {
+                          let next: JournalFeeling[]
+                          if (previous.feelings.includes(option.value)) {
+                            next = previous.feelings.filter((value) => value !== option.value)
+                          } else {
+                            next = [...previous.feelings, option.value]
+                          }
+                          if (next.length === 0 && feelings.length > 0) {
+                            next = [feelings[0].value]
+                          }
+                          return { ...previous, feelings: next }
+                        })
+                      }}
+                    />
+                    <div className="journaling-editor__feeling-content">
+                      <span aria-hidden="true" className="journaling-editor__feeling-emoji">
+                        {option.emoji}
+                      </span>
+                      <span className="journaling-editor__feeling-label">{option.label}</span>
+                    </div>
+                  </label>
+                )
+              })}
             </div>
           </fieldset>
 
-          <label className="journaling-editor__field journaling-editor__field--full">
+          <label>
             <span>Pourquoi ?</span>
             <textarea
               value={draft.feelingReason}
@@ -654,7 +653,7 @@ const JournalingPage = () => {
             />
           </label>
 
-          <label className="journaling-editor__field journaling-editor__field--full">
+          <label>
             <span>Texte libre</span>
             <textarea
               value={draft.content}
@@ -703,7 +702,15 @@ const JournalingPage = () => {
                 {!collapsedDates.has(date) ? (
                   <ul>
                     {items.map((entry) => {
-                      const feelingOption = feelings.find((option) => option.value === entry.feeling)
+                      const entryFeelings =
+                        entry.feelings && entry.feelings.length > 0
+                          ? entry.feelings
+                          : entry.feeling
+                            ? [entry.feeling]
+                            : []
+                      const feelingEmojis = entryFeelings
+                        .map((value) => feelings.find((option) => option.value === value)?.emoji)
+                        .filter((emoji): emoji is string => Boolean(emoji))
                       const freeWritingText =
                         entry.freeWriting ??
                         (entry.prompts && entry.prompts.length > 0 ? '' : entry.content)
@@ -712,11 +719,15 @@ const JournalingPage = () => {
                         <li key={entry.id}>
                           <div className="journaling-history__feeling">
                             <span aria-hidden="true" className="journaling-history__feeling-emoji">
-                              {feelingOption?.emoji ?? ':)'}
+                              {feelingEmojis.length > 0 ? feelingEmojis.join(' ') : '🙂'}
                             </span>
                             <div className="journaling-history__feeling-info">
                               <span className="journaling-history__feeling-label">
-                                {feelingOption?.label ?? entry.feeling}
+                                {entryFeelings.length > 0
+                                  ? entryFeelings
+                                      .map((value) => feelings.find((option) => option.value === value)?.label ?? value)
+                                      .join(', ')
+                                  : 'Humeur'}
                               </span>
                               <span className="journaling-history__mood">{entry.mood}</span>
                             </div>
