@@ -1,0 +1,268 @@
+.page-photo-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+  padding: 2rem clamp(1rem, 3vw, 2rem);
+}
+
+.page-photo-strip__item {
+  border-radius: 18px;
+  overflow: hidden;
+  height: 140px;
+  background: #f3f4f6;
+}
+
+.page-photo-strip__item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.page-accent-bar,
+.page-footer-bar {
+  height: 4px;
+  margin: 0 clamp(1rem, 3vw, 2rem);
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f472b6, #facc15, #34d399);
+  opacity: 0.7;
+}
+
+.page-footer-bar {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.diet-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem clamp(1rem, 4vw, 3rem) 3rem;
+}
+
+.page-section {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 2rem;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
+}
+
+.page-section header h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: #0f172a;
+}
+
+.page-section header p {
+  margin: 0.5rem 0 0;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.diet-week__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.diet-week__card {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 18px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.diet-week__card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.diet-week__tag {
+  background: rgba(244, 114, 182, 0.15);
+  color: #be185d;
+  padding: 0.1rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+}
+
+.diet-week__slot {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.diet-week__slot small {
+  font-weight: 400;
+  color: #94a3b8;
+}
+
+.diet-week__slot input {
+  border: 1px solid rgba(15, 23, 42, 0.15);
+  border-radius: 12px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.95rem;
+  background: #f8fafc;
+}
+
+.diet-week__slot input:focus {
+  outline: 2px solid rgba(236, 72, 153, 0.35);
+  border-color: transparent;
+  background: #fff;
+}
+
+.diet-shopping {
+  display: grid;
+  grid-template-columns: minmax(280px, 420px) 1fr;
+  gap: 1.5rem;
+}
+
+.diet-shopping__panel {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 20px;
+  padding: 1.5rem;
+  background: #fdf2f8;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.diet-shopping__input {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.diet-shopping__input input {
+  flex: 1;
+  border: 1px solid rgba(15, 23, 42, 0.2);
+  border-radius: 999px;
+  padding: 0.6rem 1rem;
+}
+
+.diet-shopping__input button {
+  border: none;
+  background: #ec4899;
+  color: #fff;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+.diet-shopping__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.diet-shopping__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  border-radius: 14px;
+  padding: 0.5rem 0.8rem;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.diet-shopping__item label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #0f172a;
+}
+
+.diet-shopping__item button {
+  border: none;
+  background: transparent;
+  font-size: 1.2rem;
+  color: #94a3b8;
+  cursor: pointer;
+}
+
+.diet-shopping__item.is-done span {
+  text-decoration: line-through;
+  color: #94a3b8;
+}
+
+.diet-shopping__empty {
+  text-align: center;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.diet-ideas {
+  border: 1px dashed rgba(15, 23, 42, 0.2);
+  border-radius: 20px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.diet-section__intro {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.diet-ideas__chips {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0;
+  margin: 0;
+}
+
+.diet-ideas__chips li {
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.15);
+  padding: 0.35rem 0.85rem;
+  font-size: 0.85rem;
+  color: #0f172a;
+  background: #fff;
+}
+
+.diet-ideas__tips {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.8rem;
+}
+
+.diet-ideas__tips article {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  padding: 1rem;
+}
+
+.diet-ideas__tips h4 {
+  margin: 0 0 0.4rem;
+  color: #0f172a;
+}
+
+.diet-ideas__tips p {
+  margin: 0;
+  color: #475569;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .diet-shopping {
+    grid-template-columns: 1fr;
+  }
+}

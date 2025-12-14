@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react"
 import { useNavigate } from "react-router-dom"
 import { useTasks } from "../../context/TasksContext"
-import { sampleTasks } from "../../data/sampleData"
 import planner01 from "../../assets/planner-01.jpg"
 import planner02 from "../../assets/planner-02.jpg"
 import planner03 from "../../assets/planner-03.jpg"
@@ -28,7 +27,6 @@ type TaskDisplay = {
   date: string
   start?: string
   end?: string
-  note?: string
 }
 
 const cards: CardItem[] = [
@@ -148,7 +146,7 @@ function HomePage() {
   const upcomingTasks = useMemo(() => {
     const nowTs = now.getTime()
     const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
-    const baseTasks = tasks.length > 0 ? tasks : sampleTasks
+    const baseTasks = tasks
 
     const normalized = baseTasks
       .map((task) => {
@@ -161,7 +159,6 @@ function HomePage() {
           date: task.date,
           start: task.start,
           end: task.end,
-          note: task.tag,
           dateTs: Number.isFinite(dateTs) ? dateTs : 0,
           startTs,
         }
@@ -175,7 +172,6 @@ function HomePage() {
 
   return (
     <>
-      <div className="home-accent-bar" aria-hidden="true" />
       <div className="page home-page">
         <aside className="aside-right">
           <div className="profile-card">
@@ -308,10 +304,7 @@ function HomePage() {
         </main>
 
         <aside className="aside-left">
-          <div className="aside-title">
-            <span className="dot" />
-            Prochaines taches
-          </div>
+          <div className="aside-title">Prochaines taches</div>
           <div className="task-window">
             <div className="task-list">
               {upcomingTasks.length > 0 ? (
@@ -319,17 +312,15 @@ function HomePage() {
                   <article key={`${task.title}-${task.date}`} className="task-card">
                     <div className="task-card__header">
                       <p className="task-date">{formatDate(task.date)}</p>
-                      {task.note ? <span className="task-tag">{task.note}</span> : null}
                     </div>
                     <h4 className="task-title">{task.title}</h4>
-                    <div className="task-meta">
-                      {task.start || task.end ? (
+                    {task.start || task.end ? (
+                      <div className="task-meta">
                         <span className="task-time-chip">
                           {task.start ?? ""} {task.end ? `- ${task.end}` : ""}
                         </span>
-                      ) : null}
-                      <span className="task-meta-dot" />
-                    </div>
+                      </div>
+                    ) : null}
                   </article>
                 ))
               ) : (

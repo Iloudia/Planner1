@@ -391,3 +391,33 @@
   border-radius: 50%;
   background: rgba(15, 23, 42, 0.4);
 }
+
+/* Overrides to simplify the task panel visuals */
+.home-accent-bar {
+  display: none;
+}
+
+.aside-title .dot {
+  display: none;
+}
+
+.task-window {
+  overflow: visible;
+}
+
+.task-list {
+  padding-left: 0;
+}
+
+.task-list::before {
+  display: none;
+}
+
+.task-card::before {
+  display: none;
+}
+
+.task-tag,
+.task-meta-dot {
+  display: none;
+}

@@ -317,7 +317,6 @@ const MassContent = () => (
       Ici tu boostes ton corps sans malbouffe ni pression. Les repas restent chaleureux, les collations restent gourmandes et chaque bouchee nourrit
       reellement tes entrainements.
     </p>
-    <p>Inspire-toi librement, mixe les idees et construis ton propre plan de 4 repas quotidiens pour alimenter tes muscles avec intention.</p>
   </article>
 )
 
@@ -329,8 +328,6 @@ const HealthyContent = () => (
       Manger healthy, c'est choisir des assiettes qui respectent ton energie et ton rythme. Ici, pas de restriction: juste des idees claires pour rester
       legere, concentree et inspiree.
     </p>
-    <p>Tu trouveras ici des repères simples pour tes matins lumineux, tes midis colores et tes soirees apaisantes, sans listes imposées ni routines rigides.</p>
-    <p>Laisse-toi guider par ton intuition: mixes les recettes, ajoute tes propres snacks feel good et construis une alimentation douce qui reste plaisante.</p>
   </article>
 )
 
@@ -385,13 +382,6 @@ const DietClassicPage = () => {
       {tab === "mass" ? <MassContent /> : <HealthyContent />}
 
       <section className="diet-blog">
-        {tab === "healthy" ? (
-          <>
-            <h2>Recettes healthy & feel good</h2>
-            <p>14 recettes legeres et gourmandes a deguster quand tu veux. Clique pour afficher les details et sauvegarde celles que tu veux refaire.</p>
-          </>
-        ) : null}
-
         <div className="diet-recipe-grid">
           {activeRecipes.map((recipe) => (
             <article
@@ -449,19 +439,24 @@ const DietClassicPage = () => {
           <div className="diet-recipe-modal__panel">
             <img src={selectedRecipe.image} alt={selectedRecipe.title} className="diet-recipe-modal__image" />
             <div className="diet-recipe-modal__content">
-              <header>
-                <h3>{selectedRecipe.title}</h3>
-                <div className="diet-recipe-info">
-                  <span className="diet-info-pill" data-icon={selectedRecipe.flavor === "sucre" ? "S" : "L"}>
-                    {selectedRecipe.flavor === "sucre" ? "Sucre" : "Sale"}
-                  </span>
-                  <span className="diet-info-pill" data-icon="T">
-                    {selectedRecipe.prepTime}
-                  </span>
-                  <span className="diet-info-pill" data-icon="P">
-                    {selectedRecipe.servings}
-                  </span>
+              <header className="diet-recipe-modal__header">
+                <div>
+                  <h3>{selectedRecipe.title}</h3>
+                  <div className="diet-recipe-info">
+                    <span className="diet-info-pill" data-icon={selectedRecipe.flavor === "sucre" ? "S" : "L"}>
+                      {selectedRecipe.flavor === "sucre" ? "Sucre" : "Sale"}
+                    </span>
+                    <span className="diet-info-pill" data-icon="T">
+                      {selectedRecipe.prepTime}
+                    </span>
+                    <span className="diet-info-pill" data-icon="P">
+                      {selectedRecipe.servings}
+                    </span>
+                  </div>
                 </div>
+                <button type="button" className="diet-recipe-close-icon" onClick={() => setSelectedRecipe(null)} aria-label="Fermer">
+                  <span aria-hidden="true" />
+                </button>
               </header>
               <div className="diet-recipe-modal__body">
                 <section>
@@ -481,9 +476,6 @@ const DietClassicPage = () => {
                   </ol>
                 </section>
               </div>
-              <button type="button" className="diet-recipe-close" onClick={() => setSelectedRecipe(null)}>
-                Fermer
-              </button>
             </div>
           </div>
         </div>
@@ -493,6 +485,12 @@ const DietClassicPage = () => {
 }
 
 export default DietClassicPage
+
+
+
+
+
+
 
 
 
