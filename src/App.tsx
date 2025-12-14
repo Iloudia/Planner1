@@ -13,7 +13,7 @@ import WishlistPage from "./pages/Wishlist/Wishlist"
 import CalendrierPage from "./pages/Calendrier/Calendrier"
 import FinancesPage from "./pages/Finances/Finances"
 import RoutinePage from "./pages/Routine/Routine"
-import GoalsPage from "./pages/Projets/Projets"
+import GoalsPage from "./pages/Goals/Goals"
 import CulturePage from "./pages/Culture/Culture"
 import CuisinePage from "./pages/Alimentation/Alimentation"
 import DietClassicPage from "./pages/Diet/DietPage"
@@ -33,7 +33,7 @@ import SettingsAccount from "./pages/Settings/SettingsAccount"
 import SettingsNotifications from "./pages/Settings/SettingsNotifications"
 import SettingsAccessibility from "./pages/Settings/SettingsAccessibility"
 import SettingsDisplay from "./pages/Settings/SettingsDisplay"
-import SettingsHelp from "./pages/Settings/SettingsHelp"
+import SettingsLanguages from "./pages/Settings/SettingsLanguages"
 
 function NotFound() {
   return (
@@ -90,7 +90,7 @@ function App() {
               <Route path="notifications" element={<SettingsNotifications />} />
               <Route path="accessibilite" element={<SettingsAccessibility />} />
               <Route path="affichage" element={<SettingsDisplay />} />
-              <Route path="aide" element={<SettingsHelp />} />
+              <Route path="langues" element={<SettingsLanguages />} />
             </Route>
           </Route>
 

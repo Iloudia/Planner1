@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react"
 import { useNavigate } from "react-router-dom"
 import { useTasks } from "../../context/TasksContext"
 import { sampleTasks } from "../../data/sampleData"
@@ -11,7 +11,7 @@ import planner06 from "../../assets/planner-06.jpg"
 import planner07 from "../../assets/planner-07.jpg"
 import planner08 from "../../assets/planner-08.jpg"
 import planner09 from "../../assets/planner-09.jpg"
-import moodboard from "../../assets/MoodBoard.png"
+import { useMoodboard } from "../../context/MoodboardContext"
 import "./Home.css"
 
 type CardItem = {
@@ -79,6 +79,7 @@ function HomePage() {
   const [now, setNow] = useState(() => new Date())
   const [profileSrc, setProfileSrc] = useState<string>(planner02)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const moodboardInputRef = useRef<HTMLInputElement | null>(null)
   const [todoInput, setTodoInput] = useState("")
   const [todos, setTodos] = useState<{ id: string; text: string; done: boolean }[]>(() => {
     const saved = localStorage.getItem("planner-todos")
@@ -92,6 +93,7 @@ function HomePage() {
   })
   const [progress, setProgress] = useState(() => computeProgress())
   const userInfo = { pseudo: "Planner lover", birthday: "12 mars", sign: "Poissons" }
+  const { moodboardSrc, updateMoodboard, resetMoodboard, isCustom } = useMoodboard()
 
   useEffect(() => {
     const savedProfile = localStorage.getItem("planner-profile-photo")
@@ -127,6 +129,20 @@ function HomePage() {
 
   const deleteTodo = (id: string) => {
     setTodos((prev) => prev.filter((item) => item.id !== id))
+  }
+
+  const handleMoodboardInput = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      const result = typeof reader.result === "string" ? reader.result : null
+      if (result) {
+        updateMoodboard(result)
+      }
+    }
+    reader.readAsDataURL(file)
+    event.target.value = ""
   }
 
   const upcomingTasks = useMemo(() => {
@@ -327,7 +343,20 @@ function HomePage() {
         </aside>
 
         <section className="home-moodboard">
-          <img src={moodboard} alt="Moodboard" />
+          <div className="home-moodboard__top">
+            <button type="button" className="home-moodboard__button" onClick={() => moodboardInputRef.current?.click()}>
+              Changer l image
+            </button>
+            <input ref={moodboardInputRef} type="file" accept="image/*" className="home-moodboard__file-input" onChange={handleMoodboardInput} />
+          </div>
+          <div className="home-moodboard__preview">
+            {isCustom ? (
+              <button type="button" className="home-moodboard__reset" onClick={resetMoodboard}>
+                Reinitialiser
+              </button>
+            ) : null}
+            <img src={moodboardSrc} alt="Moodboard personnalise" />
+          </div>
         </section>
         <div className="home-footer-bar" aria-hidden="true" />
       </div>

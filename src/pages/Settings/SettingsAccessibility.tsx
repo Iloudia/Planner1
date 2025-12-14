@@ -1,8 +1,4 @@
-﻿const accessibilityOptions = [
-  {
-    label: "Contraste et taille du texte",
-    description: "Ajustez le contraste et la taille des caracteres pour ameliorer la lecture.",
-  },
+const accessibilityOptions = [
   {
     label: "Navigation au clavier",
     description: "Activez les options pour faciliter l utilisation du clavier dans les menus.",

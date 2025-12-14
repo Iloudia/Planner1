@@ -1,11 +1,12 @@
 import { useState, type ChangeEvent } from "react";
+import DailyGoalsTracker from "../../components/DailyGoalsTracker";
 import photo1 from "../../assets/planner-01.jpg";
 import photo2 from "../../assets/planner-02.jpg";
 import photo3 from "../../assets/planner-03.jpg";
 import photo4 from "../../assets/planner-04.jpg";
 import photo5 from "../../assets/planner-05.jpg";
 import photo6 from "../../assets/planner-06.jpg";
-import "./Projets.css";
+import "./Goals.css";
 
 const stripImages = [photo1, photo2, photo3, photo4, photo5, photo6];
 
@@ -44,13 +45,6 @@ const sportGoals = [
   },
 ];
 
-const focusList = [
-  "3 blocs par semaine pour le bas du corps",
-  "1 sortie cardio long format (45+ min) le week-end",
-  "Routine d'activation epaules avant chaque seance",
-  "Review video toutes les 2 semaines",
-];
-
 const GoalsPage = () => {
   const [bodyGoals, setBodyGoals] = useState<Array<string | null>>([null, null, null, null]);
 
@@ -74,22 +68,14 @@ const GoalsPage = () => {
           </div>
         ))}
       </div>
+      <div className="page-accent-bar" aria-hidden="true" />
       <div className="content-page goals-page">
-        <div className="page-accent-bar" aria-hidden="true" />
 
         <header className="goals-hero">
           <div>
             <div className="hero-chip">Goals</div>
             <h2>Sport goals</h2>
             <p className="muted">Visualise tes priorites sportives et suis leur avancee.</p>
-          </div>
-          <div className="goals-focus">
-            <p className="goals-focus__label">Plan hebdo</p>
-            <ul>
-              {focusList.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
           </div>
         </header>
 
@@ -112,6 +98,10 @@ const GoalsPage = () => {
               </div>
             </article>
           ))}
+        </section>
+
+        <section className="goals-daily">
+          <DailyGoalsTracker />
         </section>
 
         <section className="body-goals" aria-label="Body goals photos">
@@ -140,8 +130,8 @@ const GoalsPage = () => {
           </div>
         </section>
 
-        <div className="page-footer-bar" aria-hidden="true" />
       </div>
+      <div className="page-footer-bar" aria-hidden="true" />
     </>
   );
 };

@@ -5,6 +5,7 @@ import { TasksProvider } from "./context/TasksContext";
 import { AuthProvider } from "./context/AuthContext";
 import App from "./App";
 import { CookieConsentProvider } from "./context/CookieConsentContext";
+import { MoodboardProvider } from "./context/MoodboardContext";
 import "./styles.css";
 
 const rootElement = document.getElementById("root");
@@ -19,7 +20,9 @@ ReactDOM.createRoot(rootElement).render(
       <AuthProvider>
         <TasksProvider>
           <CookieConsentProvider>
-            <App />
+            <MoodboardProvider>
+              <App />
+            </MoodboardProvider>
           </CookieConsentProvider>
         </TasksProvider>
       </AuthProvider>

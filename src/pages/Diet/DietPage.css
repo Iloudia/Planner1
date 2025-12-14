@@ -1,0 +1,279 @@
+﻿.diet-gymgirl-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem clamp(1rem, 4vw, 3rem);
+}
+
+.diet-toggle {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.diet-toggle button {
+  border: 1px solid rgba(236, 72, 153, 0.4);
+  background: transparent;
+  color: #be185d;
+  font-weight: 600;
+  padding: 0.5rem 1.3rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.diet-toggle button.is-active {
+  background: rgba(236, 72, 153, 0.12);
+  color: #831843;
+}
+
+.diet-blog {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  line-height: 1.7;
+  color: #111827;
+}
+
+.diet-blog h1,
+.diet-blog h2,
+.diet-blog h3 {
+  margin: 0;
+  color: #0f172a;
+}
+
+.diet-blog p {
+  margin: 0;
+}
+
+.diet-eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.8rem;
+  color: #be185d;
+  font-weight: 700;
+}
+
+.diet-block {
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+  padding-top: 0.9rem;
+}
+
+.diet-block header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.diet-block h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.diet-block span {
+  font-size: 0.9rem;
+  color: #be123c;
+  font-weight: 600;
+}
+
+.diet-block ul,
+.diet-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.3rem;
+  color: #374151;
+}
+
+.diet-note {
+  margin-top: 0.6rem;
+  font-style: italic;
+  color: #7c3aed;
+}
+
+.diet-recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.diet-recipe-card {
+  position: relative;
+  min-height: 260px;
+  border-radius: 24px;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+}
+
+.diet-recipe-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+}
+
+.diet-recipe-card__content {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1.2rem;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.diet-recipe-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-top: auto;
+}
+
+.diet-recipe-card__header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: auto;
+}
+
+.diet-favorite {
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.diet-favorite.is-active {
+  color: #f87171;
+}
+
+.diet-recipe-card h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.diet-recipe-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  font-weight: 600;
+}
+
+.diet-info-pill {
+  background: rgba(255, 255, 255, 0.18);
+  padding: 0.2rem 0.65rem 0.2rem 1.4rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  column-gap: 0.35rem;
+  color: #fff;
+  position: relative;
+}
+
+.diet-info-pill::before {
+  content: attr(data-icon);
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #fff;
+  position: absolute;
+  left: 0.35rem;
+}
+
+.diet-recipe-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.diet-recipe-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+}
+
+.diet-recipe-modal__panel {
+  position: relative;
+  z-index: 1;
+  background: #ffffff;
+  border-radius: 20px;
+  width: min(540px, calc(100% - 2rem));
+  max-height: 90vh;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.diet-recipe-modal__image {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+
+.diet-recipe-modal__content {
+  padding: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.diet-recipe-modal__body h4 {
+  margin: 0 0 0.3rem;
+}
+
+.diet-recipe-modal__body ul,
+.diet-recipe-modal__body ol {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: #374151;
+}
+
+.diet-recipe-close {
+  align-self: flex-end;
+  border: none;
+  border-radius: 999px;
+  padding: 0.45rem 1.1rem;
+  background: rgba(15, 23, 42, 0.1);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .diet-recipe-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .diet-gymgirl-page {
+    padding: 1.5rem 1rem;
+  }
+
+  .diet-block header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

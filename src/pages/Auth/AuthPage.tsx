@@ -1,11 +1,12 @@
 ﻿import { useState, useMemo, useEffect, useRef, type FormEvent } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../../context/AuthContext"
-import heroIllustration from "../../assets/MoodBoard.png"
+import { useMoodboard } from "../../context/MoodboardContext"
 import "./Auth.css"
 
 const REMEMBER_PREFERENCE_KEY = "planner.auth.remember"
 const PROFILE_STORAGE_KEY = "planner.profile.preferences.v1"
+const EMAIL_HISTORY_KEY = "planner.auth.email_history.v1"
 
 type AuthMode = "login" | "register"
 
@@ -62,7 +63,19 @@ const AuthPage = ({ mode }: AuthFormProps) => {
   const navigate = useNavigate()
   const location = useLocation()
   const { isAuthenticated, login, register, userEmail, loginWithGoogle } = useAuth()
+  const { moodboardSrc } = useMoodboard()
   const [email, setEmail] = useState("")
+  const [emailHistory, setEmailHistory] = useState<string[]>(() => {
+    if (typeof window === "undefined") {
+      return []
+    }
+    try {
+      const stored = window.localStorage.getItem(EMAIL_HISTORY_KEY)
+      return stored ? (JSON.parse(stored) as string[]) : []
+    } catch {
+      return []
+    }
+  })
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [remember, setRemember] = useState(() => {
@@ -140,6 +153,27 @@ const AuthPage = ({ mode }: AuthFormProps) => {
     window.localStorage.setItem(REMEMBER_PREFERENCE_KEY, remember ? "true" : "false")
   }, [remember])
 
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return
+    }
+    try {
+      window.localStorage.setItem(EMAIL_HISTORY_KEY, JSON.stringify(emailHistory))
+    } catch {
+      // ignore
+    }
+  }, [emailHistory])
+
+  const rememberEmail = (emailValue: string) => {
+    const normalized = emailValue.trim()
+    if (!normalized) return
+    setEmailHistory((prev) => {
+      if (prev[0] === normalized) return prev
+      const filtered = prev.filter((value) => value !== normalized)
+      return [normalized, ...filtered].slice(0, 5)
+    })
+  }
+
   const persistProfileData = (emailValue: string) => {
     try {
       const existing = localStorage.getItem(PROFILE_STORAGE_KEY)
@@ -165,6 +199,10 @@ const AuthPage = ({ mode }: AuthFormProps) => {
     }
   }
 
+  const handleEmailBlur = () => {
+    rememberEmail(email)
+  }
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (mode === "register" && !acceptTerms) {
@@ -179,6 +217,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
     if (mode === "register") {
       persistProfileData(email)
     }
+    rememberEmail(email)
     setError("")
     navigate(destinationPath, { replace: true })
   }
@@ -202,7 +241,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
       <div className="page-accent-bar" aria-hidden="true" />
       <div className="auth-hero">
         <div className="auth-visual">
-          <img src={heroIllustration} alt="Moodboard Planner" />
+          <img src={moodboardSrc} alt="Moodboard Planner" />
         </div>
         <div className="auth-panel">
           <h1 className="auth-title">{heading}</h1>
@@ -237,8 +276,24 @@ const AuthPage = ({ mode }: AuthFormProps) => {
             )}
             <label>
               Email
-              <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="toi@exemple.com" required />
+              <input
+                type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                onBlur={handleEmailBlur}
+                placeholder="toi@exemple.com"
+                required
+                autoComplete="email"
+                list="auth-email-history"
+              />
             </label>
+            {emailHistory.length > 0 ? (
+              <datalist id="auth-email-history">
+                {emailHistory.map((savedEmail) => (
+                  <option key={savedEmail} value={savedEmail} />
+                ))}
+              </datalist>
+            ) : null}
             <label>
               Mot de passe
               <div className="auth-password-field">

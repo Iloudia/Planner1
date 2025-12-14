@@ -1,4 +1,4 @@
-﻿import PageHeading from "../../components/PageHeading"
+import PageHeading from "../../components/PageHeading"
 import "./SettingsPage.css"
 
 const settingsSections = [
@@ -16,19 +16,15 @@ const settingsSections = [
         description: "Changez votre mot de passe a tout moment.",
       },
       {
-        title: "Telechargez une archive de vos donnees",
-        description: "Decouvrez le type d informations stockees pour votre compte.",
-      },
-      {
-        title: "Desactivez votre compte",
-        description: "Decouvrez comment desactiver votre compte.",
+        title: "Desactiver ou supprimer le compte",
+        description: "Programmer la desactivation pendant 30 jours ou supprimer immediatement.",
       },
     ],
   },
   { id: "notifications", title: "Notifications", description: "Choisir comment recevoir les alertes." },
   { id: "accessibility", title: "Accessibilite", description: "Adapter l experience a tes besoins." },
-  { id: "display", title: "Affichage et langues", description: "Modifier les couleurs et la langue de l interface." },
-  { id: "help", title: "Centre d aides", description: "Trouver des conseils et contacter le support." },
+  { id: "display", title: "Affichage", description: "Modifier la taille de la police et l ambiance visuelle." },
+  { id: "languages", title: "Langues", description: "Choisir la langue principale de l interface." },
 ]
 
 const SettingsPage = () => {

@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   --color-rose-50: #fff7fb;
   --color-rose-100: #ffe9f4;
   --color-rose-200: #fbcfe8;
@@ -50,6 +50,7 @@
   --space-2xl: 2.5rem;
   --space-3xl: 3rem;
   --space-4xl: 4rem;
+  --user-font-scale: 1;
 }
 
 * {
@@ -60,7 +61,7 @@ body {
   margin: 0;
   min-height: 100vh;
   font-family: var(--font-body);
-  font-size: var(--font-size-body);
+  font-size: calc(var(--font-size-body) * var(--user-font-scale));
   line-height: var(--leading-body);
   color: var(--text);
   background: radial-gradient(circle at 20% 10%, rgba(249, 168, 212, 0.28), transparent 30%),
@@ -68,6 +69,13 @@ body {
     radial-gradient(circle at 40% 80%, rgba(236, 72, 153, 0.16), transparent 45%),
     var(--bg);
   padding: 0;
+}
+
+:root[data-background-tone="dark"] body {
+  background: radial-gradient(circle at 20% 10%, rgba(79, 70, 229, 0.35), transparent 32%),
+    radial-gradient(circle at 75% 15%, rgba(15, 118, 110, 0.35), transparent 35%),
+    radial-gradient(circle at 40% 80%, rgba(15, 23, 42, 0.6), transparent 55%),
+    var(--bg);
 }
 
 h1,
@@ -265,6 +273,7 @@ p {
   border-radius: 14px;
   border: 1px solid rgba(15, 23, 42, 0.08);
   background: rgba(255, 255, 255, 0.9);
+  position: relative;
 }
 
 .nav-search--center {
@@ -293,6 +302,44 @@ p {
   justify-content: center;
   color: var(--text);
   cursor: pointer;
+}
+
+.nav-search__suggestions {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  right: 0;
+  padding: 0.3rem 0;
+  margin: 0;
+  list-style: none;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid var(--color-border-strong);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.12);
+  z-index: 25;
+}
+
+.nav-search__suggestions li {
+  margin: 0;
+}
+
+.nav-search__suggestion {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 0.5rem 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 0.92rem;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.nav-search__suggestion:hover,
+.nav-search__suggestion:focus-visible {
+  background: rgba(236, 72, 153, 0.08);
+  outline: none;
 }
 
 .header-auth {
@@ -953,7 +1000,7 @@ p {
 }
 
 .bullet-list li::before {
-  content: "�";
+  content: "?";
   position: absolute;
   left: 0;
   color: var(--page-accent);
@@ -1391,3 +1438,5 @@ p {
 .header-menu__sublist li {
   padding-left: 0.3rem;
 }
+
+
