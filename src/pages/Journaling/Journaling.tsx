@@ -577,7 +577,6 @@ const JournalingPage = () => {
 
       <section className="journaling-editor">
         <h2>Ecriture libre</h2>
-        <p>Laisse venir les mots qui reflètent ton état intérieur.</p>
         <form onSubmit={handleSubmit} className="journaling-editor__form">
           <label className="journaling-editor__field">
             <span>Date</span>
