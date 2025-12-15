@@ -2,7 +2,7 @@ import type { FormEvent, KeyboardEvent as ReactKeyboardEvent, MouseEvent } from 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import type { ChangeEvent } from "react"
 import usePersistentState from "../../hooks/usePersistentState"
-import wishlistHair from "../../assets/planner-03.jpg"
+import wishlistHair from "../../assets/ruby--dupe.jpeg"
 import wishlistOutfit from "../../assets/planner-05.jpg"
 import wishlistMakeup from "../../assets/planner-01.jpg"
 import wishlistElectronics from "../../assets/planner-10.jpg"
@@ -39,6 +39,7 @@ type WishlistStorageEntry = {
   blurb?: string
   createdAt?: number
   order?: number
+  definitionVersion?: number
 }
 
 type WishlistState = Record<WishlistCategoryId, WishlistStorageEntry>
@@ -65,6 +66,8 @@ type WishlistCategoryCard = {
   order: number
   label: string
 }
+
+const WISHLIST_DEFINITION_VERSION = 2
 
 const CATEGORY_DEFINITIONS: CategoryDefinition[] = [
   { id: "hair", label: "Hair essentials", accent: "#f497c0", cover: wishlistHair, blurb: "Brushes, soins et petits accessoires pour une routine cheveux complete." },
@@ -128,6 +131,7 @@ const createEntryFromDefinition = (definition: CategoryDefinition): WishlistStor
   cover: definition.cover,
   blurb: definition.blurb,
   createdAt: Date.now(),
+  definitionVersion: WISHLIST_DEFINITION_VERSION,
 })
 
 const createFallbackEntry = (id: WishlistCategoryId, title: string): WishlistStorageEntry => {
@@ -142,6 +146,7 @@ const createFallbackEntry = (id: WishlistCategoryId, title: string): WishlistSto
     cover,
     blurb: CUSTOM_BLURB,
     createdAt: Date.now(),
+    definitionVersion: WISHLIST_DEFINITION_VERSION,
   }
 }
 
@@ -248,6 +253,16 @@ const WishlistPage = () => {
         }
 
         let updated = existing
+        const needsDefinitionSync = (existing.definitionVersion ?? 0) < WISHLIST_DEFINITION_VERSION
+
+        if (needsDefinitionSync) {
+          updated = updated === existing ? { ...updated } : updated
+          updated.accent = definition.accent
+          updated.cover = definition.cover
+          updated.blurb = definition.blurb
+          updated.definitionVersion = WISHLIST_DEFINITION_VERSION
+          changed = true
+        }
 
         if (!existing.title || existing.title.trim().length === 0) {
           updated = updated === existing ? { ...updated } : updated
@@ -1154,7 +1169,7 @@ const WishlistPage = () => {
   }
   return (
     <div className="wishlist-page aesthetic-page" onClick={() => setOpenMenuFor(null)}>
-            <header className="wishlist-hero dashboard-panel">
+      <header className="wishlist-hero dashboard-panel">
         <div className="wishlist-hero__content">
           <span className="wishlist-hero__eyebrow">envies a collectionner</span>
           <h2>Imagine ta wishlist ideale, categorie par categorie.</h2>
@@ -1163,21 +1178,21 @@ const WishlistPage = () => {
             mini moodboard pret a etre partage.
           </p>
         </div>
-        <div className="wishlist-hero__actions">
-          <button
-            type="button"
-            onClick={() => {
-              resetCategoryDraft()
-              setIsCreatingCategory(true)
-            }}
-          >
-            Ajouter une carte
-          </button>
-        </div>
       </header>
       <div className="page-accent-bar" aria-hidden="true" />
-      <PageHeading eyebrow="Envies" title="Wishlist ideal" />
-
+      <div className="wishlist-heading-row">
+        <PageHeading eyebrow="Envies" title="Wishlist ideal" />
+        <button
+          type="button"
+          className="wishlist-heading-row__button"
+          onClick={() => {
+            resetCategoryDraft()
+            setIsCreatingCategory(true)
+          }}
+        >
+          Ajouter une carte
+        </button>
+      </div>
 
       <section className="wishlist-grid">
         {categoryCards.map((category) => {
@@ -1634,9 +1649,7 @@ const WishlistPage = () => {
                 }}
                 aria-pressed={isNotePanelOpen}
               >
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M5 4h14a1 1 0 0 1 1 1v11.59l-4-4a1 1 0 0 0-1.42 0L11 16.17l-2.59-2.58A1 1 0 0 0 7 13.59l-3 3V5a1 1 0 0 1 1-1Z" />
-                </svg>
+                <i className="fa-solid fa-message" aria-hidden="true" />
               </button>
               <button
                 type="button"
@@ -1678,27 +1691,43 @@ const WishlistPage = () => {
             </label>
             <label>
               <span>Couleur</span>
-              <input
-                type="color"
-                value={categoryDraft.accent}
-                onChange={(event) => setCategoryDraft((previous) => ({ ...previous, accent: event.target.value }))}
-              />
+              <div className="wishlist-color-picker">
+                <input
+                  type="color"
+                  className="wishlist-color-picker__input"
+                  value={categoryDraft.accent}
+                  onChange={(event) => setCategoryDraft((previous) => ({ ...previous, accent: event.target.value }))}
+                  aria-label="Choisir la couleur de la carte"
+                />
+              </div>
             </label>
             <label className="wishlist-modal__file-field">
               <span>Image de couverture</span>
-              <div className="wishlist-modal__file-field-control">
-                <input
-                  ref={categoryCoverInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleCategoryCoverChange}
-                />
-                <span className="wishlist-modal__file-name">
-                  {categoryDraft.coverName ? categoryDraft.coverName : "Aucune image selectionnee"}
-                </span>
+              <div className="wishlist-cover-upload">
+                <input ref={categoryCoverInputRef} type="file" accept="image/*" onChange={handleCategoryCoverChange} className="wishlist-cover-upload__input" />
+                <button
+                  type="button"
+                  className="wishlist-cover-upload__button"
+                  onClick={() => categoryCoverInputRef.current?.click()}
+                >
+                  <svg className="wishlist-cover-upload__icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      d="M4 7a2 2 0 0 1 2-2h3l1-1.5A2 2 0 0 1 11.6 3h0.8A2 2 0 0 1 14 3.5L15 5h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path d="M9 12.5 11 15l4-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  <span>{categoryDraft.coverName ? "Changer l'image" : "Importer une image"}</span>
+                </button>
+                {categoryDraft.coverName ? <span className="wishlist-cover-upload__name">{categoryDraft.coverName}</span> : null}
                 {categoryDraft.coverData ? (
                   <button
                     type="button"
+                    className="wishlist-cover-upload__remove"
                     onClick={() =>
                       setCategoryDraft((previous) => ({
                         ...previous,
