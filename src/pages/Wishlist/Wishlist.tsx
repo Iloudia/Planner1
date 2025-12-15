@@ -3,15 +3,15 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import type { ChangeEvent } from "react"
 import usePersistentState from "../../hooks/usePersistentState"
 import wishlistHair from "../../assets/ruby--dupe.jpeg"
-import wishlistOutfit from "../../assets/planner-05.jpg"
-import wishlistMakeup from "../../assets/planner-01.jpg"
-import wishlistElectronics from "../../assets/planner-10.jpg"
-import wishlistSkincare from "../../assets/planner-02.jpg"
-import wishlistBooks from "../../assets/planner-07.jpg"
-import wishlistRoom from "../../assets/planner-06.jpg"
-import wishlistTravel from "../../assets/planner-09.jpg"
-import wishlistJewelry from "../../assets/planner-04.jpg"
-import wishlistBag from "../../assets/planner-08.jpg"
+import wishlistOutfit from "../../assets/emma-masur-dupe.jpeg"
+import wishlistMakeup from "../../assets/makeup.jpeg"
+import wishlistElectronics from "../../assets/ebony-forsyth-dupe.jpeg"
+import wishlistSkincare from "../../assets/margaux-martinez-dupe.jpeg"
+import wishlistBooks from "../../assets/madeline- edwards-dupe.jpeg"
+import wishlistRoom from "../../assets/rowena-regterschot-dupe.jpeg"
+import wishlistTravel from "../../assets/voyage.jpeg"
+import wishlistJewelry from "../../assets/lauren-lista-dupe.jpeg"
+import wishlistBag from "../../assets/frances-leynes-dupe.jpeg"
 import PageHeading from "../../components/PageHeading"
 import "./Wishlist.css"
 
@@ -67,7 +67,7 @@ type WishlistCategoryCard = {
   label: string
 }
 
-const WISHLIST_DEFINITION_VERSION = 2
+const WISHLIST_DEFINITION_VERSION = 3
 
 const CATEGORY_DEFINITIONS: CategoryDefinition[] = [
   { id: "hair", label: "Hair essentials", accent: "#f497c0", cover: wishlistHair, blurb: "Brushes, soins et petits accessoires pour une routine cheveux complete." },

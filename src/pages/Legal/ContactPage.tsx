@@ -1,6 +1,7 @@
 import "./ContactPage.css"
 
 const ContactPage = () => (
+  
   <div className="legal-page contact-page">
     <div className="page-accent-bar" aria-hidden="true" />
     <header className="legal-page__header">
