@@ -914,7 +914,7 @@ const BalanceLineChart = ({ points }: BalanceLineChartProps) => {
           <polygon className="finance-line-chart__area" points={areaPoints} />
           <polyline className="finance-line-chart__line" points={polylinePoints} />
           {coordinates.map(({ x, y, point }) => (
-            <circle key={point.date} className="finance-line-chart__dot" cx={x} cy={y} r="1.6" />
+            <circle key={point.date} className="finance-line-chart__dot" cx={x} cy={y} r="1" />
           ))}
         </svg>
         <div className="finance-line-chart__y-labels">

@@ -4,9 +4,10 @@
 
 .about-shell {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: clamp(1.5rem, 4vw, 3rem);
-  align-items: stretch;
+  align-items: center;
+  padding: clamp(1.5rem, 4vw, 2.5rem) 0;
 }
 
 .about-article {
@@ -24,16 +25,17 @@
 
 .about-figure {
   margin: 0;
-  border-radius: 28px;
+  border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.15);
-  max-height: 620px;
+  box-shadow: 0 30px 60px rgba(15, 23, 42, 0.14);
+  max-height: 420px;
+  align-self: center;
 }
 
 .about-figure img {
   width: 100%;
   height: 100%;
-  max-height: 720px;
+  max-height: 420px;
   object-fit: cover;
   display: block;
 }

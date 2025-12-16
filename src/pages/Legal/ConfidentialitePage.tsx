@@ -1,8 +1,12 @@
 import PageHeading from "../../components/PageHeading"
+import heroImage from "../../assets/kalina-wolf-dupe.jpeg"
 import "./ConfidentialitePage.css"
 
 const ConfidentialitePage = () => (
   <>
+    <section className="page-hero-banner" aria-hidden="true">
+      <img src={heroImage} alt="" loading="lazy" />
+    </section>
     <div className="page-accent-bar" aria-hidden="true" />
     <PageHeading eyebrow="Confidentialité" title="Politique de confidentialité" />
     <div className="legal-page">
@@ -22,8 +26,16 @@ const ConfidentialitePage = () => (
       <section className="legal-section">
         <h2 className="legal-section__title">Données collectées</h2>
         <p className="legal-section__text">
-          Selon l’utilisation du site, les données suivantes peuvent être collectées : prénom, adresse email, messages
-          envoyés via les formulaires, données de navigation (cookies), informations nécessaires à l’accès aux services.
+          Selon l’utilisation du site, les données suivantes peuvent être collectées :
+        </p>
+        <ul className="legal-list">
+          <li>prénom</li>
+          <li>adresse email</li>
+          <li>messages envoyés via les formulaires</li>
+          <li>données de navigation (cookies)</li>
+          <li>informations nécessaires à l’accès aux services</li>
+        </ul>
+        <p className="legal-section__text">
           Dans le cadre de l’achat de produits (ebooks ou autres contenus payants), certaines données peuvent être
           collectées à des fins de gestion de commande. Les données bancaires ne sont jamais stockées par le site et sont
           traitées exclusivement par des prestataires de paiement sécurisés.
@@ -33,18 +45,27 @@ const ConfidentialitePage = () => (
       <section className="legal-section">
         <h2 className="legal-section__title">Finalité de la collecte</h2>
         <p className="legal-section__text">
-          Les données personnelles sont collectées pour : permettre l’accès et l’utilisation du site, répondre aux
-          messages et demandes, envoyer des contenus ou informations liées au projet, gérer les commandes et la
-          facturation, améliorer le fonctionnement du site.
+          Les données personnelles sont collectées pour :
         </p>
+        <ul className="legal-list">
+          <li>permettre l’accès et l’utilisation du site</li>
+          <li>répondre aux messages et demandes</li>
+          <li>envoyer des contenus ou informations liées au projet</li>
+          <li>gérer les commandes et la facturation</li>
+          <li>améliorer le fonctionnement du site</li>
+        </ul>
       </section>
 
       <section className="legal-section">
         <h2 className="legal-section__title">Base légale</h2>
         <p className="legal-section__text">
-          La collecte des données repose sur : le consentement de l’utilisateur, l’exécution d’un contrat (achat de
-          produits), le respect d’obligations légales.
+          La collecte des données repose sur :
         </p>
+        <ul className="legal-list">
+          <li>le consentement de l’utilisateur</li>
+          <li>l’exécution d’un contrat (achat de produits)</li>
+          <li>le respect d’obligations légales</li>
+        </ul>
       </section>
 
       <section className="legal-section">
@@ -59,9 +80,9 @@ const ConfidentialitePage = () => (
         <h2 className="legal-section__title">Partage des données</h2>
         <p className="legal-section__text">
           Les données peuvent être transmises à des prestataires techniques (hébergement, outils d’emailing, paiement,
-          statistiques) uniquement dans le cadre du fonctionnement du site. Aucune donnée personnelle n’est vendue ou
-          cédée à des tiers.
+          statistiques) uniquement dans le cadre du fonctionnement du site.
         </p>
+        <p className="legal-section__text">Aucune donnée personnelle n’est vendue ou cédée à des tiers.</p>
       </section>
 
       <section className="legal-section">
@@ -75,9 +96,17 @@ const ConfidentialitePage = () => (
       <section className="legal-section">
         <h2 className="legal-section__title">Droits des utilisateurs</h2>
         <p className="legal-section__text">
-          Conformément à la réglementation en vigueur, vous disposez des droits suivants : droit d’accès, droit de
-          rectification, droit de suppression, droit d’opposition, droit à la limitation du traitement. Pour exercer ces
-          droits, il suffit d’envoyer un email à : [email de contact].
+          Conformément à la réglementation en vigueur, vous disposez des droits suivants :
+        </p>
+        <ul className="legal-list">
+          <li>droit d’accès</li>
+          <li>droit de rectification</li>
+          <li>droit de suppression</li>
+          <li>droit d’opposition</li>
+          <li>droit à la limitation du traitement</li>
+        </ul>
+        <p className="legal-section__text">
+          Pour exercer ces droits, il suffit d’envoyer un email à : [email de contact].
         </p>
       </section>
     </div>

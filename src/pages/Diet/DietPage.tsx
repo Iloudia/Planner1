@@ -1,4 +1,4 @@
-﻿﻿import { useEffect, useState } from "react"
+﻿import { useEffect, useState } from "react"
 import recipeImg1 from "../../assets/planner-01.jpg"
 import recipeImg2 from "../../assets/planner-02.jpg"
 import recipeImg3 from "../../assets/planner-03.jpg"
@@ -369,118 +369,122 @@ const DietClassicPage = () => {
   }
 
   return (
-    <main className="diet-gymgirl-page">
-      <div className="diet-toggle">
-        <button type="button" className={tab === "mass" ? "is-active" : ""} onClick={() => setTab("mass")}>
-          Prise de masse
-        </button>
-        <button type="button" className={tab === "healthy" ? "is-active" : ""} onClick={() => setTab("healthy")}>
-          Healthy
-        </button>
-      </div>
-
-      {tab === "mass" ? <MassContent /> : <HealthyContent />}
-
-      <section className="diet-blog">
-        <div className="diet-recipe-grid">
-          {activeRecipes.map((recipe) => (
-            <article
-              key={recipe.id}
-              className="diet-recipe-card"
-              style={{ backgroundImage: `url(${recipe.image})` }}
-              onClick={() => setSelectedRecipe(recipe)}
-            >
-              <div className="diet-recipe-card__overlay" />
-              <div className="diet-recipe-card__content">
-                <div className="diet-recipe-card__header">
-                  <button
-                    type="button"
-                    className={favoriteIds.has(recipe.id) ? "diet-favorite is-active" : "diet-favorite"}
-                    onClick={(event) => {
-                      event.stopPropagation()
-                      toggleFavorite(recipe.id)
-                    }}
-                    aria-label="Ajouter en favoris"
-                  >
-                    {favoriteIds.has(recipe.id) ? "\u2665" : "\u2661"}
-                  </button>
-                </div>
-                <div className="diet-recipe-card__body">
-                  <h3>{recipe.title}</h3>
-                  <div className="diet-recipe-info">
-                    <span className="diet-info-pill" data-icon={recipe.flavor === "sucre" ? "S" : "L"}>
-                      {recipe.flavor === "sucre" ? "Sucre" : "Sale"}
-                    </span>
-                    <span className="diet-info-pill" data-icon="T">
-                      {recipe.prepTime}
-                    </span>
-                    <span className="diet-info-pill" data-icon="P">
-                      {recipe.servings}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </article>
-          ))}
+    <>
+      <div className="page-accent-bar" aria-hidden="true" />
+      <main className="diet-gymgirl-page">
+        <div className="diet-toggle">
+          <button type="button" className={tab === "mass" ? "is-active" : ""} onClick={() => setTab("mass")}>
+            Prise de masse
+          </button>
+          <button type="button" className={tab === "healthy" ? "is-active" : ""} onClick={() => setTab("healthy")}>
+            Healthy
+          </button>
         </div>
-      </section>
 
-      <section className="diet-blog">
-        <h2>Message final</h2>
-        <p>
-          Ton corps n'a pas besoin d'etre puni. Il a besoin d'etre nourri, respecte et aime. Que tu sois en prise de masse ou en mode healthy, cet espace
-          est la pour t'aider a construire une relation saine avec la nourriture.
-        </p>
-      </section>
+        {tab === "mass" ? <MassContent /> : <HealthyContent />}
 
-      {selectedRecipe ? (
-        <div className="diet-recipe-modal" role="dialog" aria-label={`Recette ${selectedRecipe.title}`}>
-          <div className="diet-recipe-modal__backdrop" onClick={() => setSelectedRecipe(null)} />
-          <div className="diet-recipe-modal__panel">
-            <img src={selectedRecipe.image} alt={selectedRecipe.title} className="diet-recipe-modal__image" />
-            <div className="diet-recipe-modal__content">
-              <header className="diet-recipe-modal__header">
-                <div>
-                  <h3>{selectedRecipe.title}</h3>
-                  <div className="diet-recipe-info">
-                    <span className="diet-info-pill" data-icon={selectedRecipe.flavor === "sucre" ? "S" : "L"}>
-                      {selectedRecipe.flavor === "sucre" ? "Sucre" : "Sale"}
-                    </span>
-                    <span className="diet-info-pill" data-icon="T">
-                      {selectedRecipe.prepTime}
-                    </span>
-                    <span className="diet-info-pill" data-icon="P">
-                      {selectedRecipe.servings}
-                    </span>
+        <section className="diet-blog">
+          <div className="diet-recipe-grid">
+            {activeRecipes.map((recipe) => (
+              <article
+                key={recipe.id}
+                className="diet-recipe-card"
+                style={{ backgroundImage: `url(${recipe.image})` }}
+                onClick={() => setSelectedRecipe(recipe)}
+              >
+                <div className="diet-recipe-card__overlay" />
+                <div className="diet-recipe-card__content">
+                  <div className="diet-recipe-card__header">
+                    <button
+                      type="button"
+                      className={favoriteIds.has(recipe.id) ? "diet-favorite is-active" : "diet-favorite"}
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        toggleFavorite(recipe.id)
+                      }}
+                      aria-label="Ajouter en favoris"
+                    >
+                      {favoriteIds.has(recipe.id) ? "\u2665" : "\u2661"}
+                    </button>
+                  </div>
+                  <div className="diet-recipe-card__body">
+                    <h3>{recipe.title}</h3>
+                    <div className="diet-recipe-info">
+                      <span className="diet-info-pill" data-icon={recipe.flavor === "sucre" ? "S" : "L"}>
+                        {recipe.flavor === "sucre" ? "Sucre" : "Sale"}
+                      </span>
+                      <span className="diet-info-pill" data-icon="T">
+                        {recipe.prepTime}
+                      </span>
+                      <span className="diet-info-pill" data-icon="P">
+                        {recipe.servings}
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <button type="button" className="diet-recipe-close-icon" onClick={() => setSelectedRecipe(null)} aria-label="Fermer">
-                  <span aria-hidden="true" />
-                </button>
-              </header>
-              <div className="diet-recipe-modal__body">
-                <section>
-                  <h4>Ingredients</h4>
-                  <ul>
-                    {selectedRecipe.ingredients.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section>
-                  <h4>Etapes</h4>
-                  <ol>
-                    {selectedRecipe.steps.map((step) => (
-                      <li key={step}>{step}</li>
-                    ))}
-                  </ol>
-                </section>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="diet-blog">
+          <h2>Message final</h2>
+          <p>
+            Ton corps n'a pas besoin d'être puni. Il a besoin d'être nourri, respecté et aimé. Que tu sois en prise de
+            masse ou en mode healthy, cet espace est là pour t'aider à construire une relation saine avec la nourriture.
+          </p>
+        </section>
+
+        {selectedRecipe ? (
+          <div className="diet-recipe-modal" role="dialog" aria-label={`Recette ${selectedRecipe.title}`}>
+            <div className="diet-recipe-modal__backdrop" onClick={() => setSelectedRecipe(null)} />
+            <div className="diet-recipe-modal__panel">
+              <img src={selectedRecipe.image} alt={selectedRecipe.title} className="diet-recipe-modal__image" />
+              <div className="diet-recipe-modal__content">
+                <header className="diet-recipe-modal__header">
+                  <div>
+                    <h3>{selectedRecipe.title}</h3>
+                    <div className="diet-recipe-info">
+                      <span className="diet-info-pill" data-icon={selectedRecipe.flavor === "sucre" ? "S" : "L"}>
+                        {selectedRecipe.flavor === "sucre" ? "Sucre" : "Sale"}
+                      </span>
+                      <span className="diet-info-pill" data-icon="T">
+                        {selectedRecipe.prepTime}
+                      </span>
+                      <span className="diet-info-pill" data-icon="P">
+                        {selectedRecipe.servings}
+                      </span>
+                    </div>
+                  </div>
+                  <button type="button" className="diet-recipe-close-icon" onClick={() => setSelectedRecipe(null)} aria-label="Fermer">
+                    <span aria-hidden="true" />
+                  </button>
+                </header>
+                <div className="diet-recipe-modal__body">
+                  <section>
+                    <h4>Ingredients</h4>
+                    <ul>
+                      {selectedRecipe.ingredients.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </section>
+                  <section>
+                    <h4>Etapes</h4>
+                    <ol>
+                      {selectedRecipe.steps.map((step) => (
+                        <li key={step}>{step}</li>
+                      ))}
+                    </ol>
+                  </section>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      ) : null}
-    </main>
+        ) : null}
+      </main>
+      <div className="page-footer-bar" aria-hidden="true" />
+    </>
   )
 }
 

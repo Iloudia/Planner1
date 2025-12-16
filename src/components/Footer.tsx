@@ -33,7 +33,7 @@ const Footer = () => {
     <footer className="site-footer">
       <div className="site-footer__inner">
         <div className="site-footer__brand">
-          <h2 className="site-footer__title">Cultive ton équilibre comme <br />dans ton Planner.</h2>
+          <h2 className="site-footer__title">Organise ton esprit.<br /> Aligne ton énergie.<br /> Créer la vie qui te ressemble.</h2>
         </div>
 
         <div className="site-footer__sections" aria-label="Navigation complementaire">

@@ -672,17 +672,18 @@
   color: rgba(15, 23, 42, 0.6);
 }
 
-.journaling-day-state__icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 16px;
-  background: rgba(236, 72, 153, 0.12);
+.journaling-day-state__number {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  color: #be185d;
-  font-size: 1.2rem;
+  width: 60px;
+  height: 60px;
+  border-radius: 18px;
+  background: rgba(236, 72, 153, 0.18);
+  color: #db2777;
+  font-size: clamp(1.8rem, 2.8vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1;
 }
 
 .journaling-day-state__fields {

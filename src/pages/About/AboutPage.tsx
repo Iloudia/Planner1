@@ -1,4 +1,5 @@
 import PageHeading from "../../components/PageHeading"
+import heroImage from "../../assets/natalia-grabarczyk-dupe.jpeg"
 import portrait from "../../assets/madison-hart-dupe.jpeg"
 import "./AboutPage.css"
 
@@ -16,10 +17,13 @@ const paragraphs = [
 
 const AboutPage = () => (
   <>
+    <section className="page-hero-banner" aria-hidden="true">
+      <img src={heroImage} alt="" loading="lazy" />
+    </section>
     <div className="page-accent-bar" aria-hidden="true" />
     <div className="about-page">
       <PageHeading eyebrow="À propos" title="À propos de moi" />
-      <div className="about-shell content-page">
+      <div className="about-shell">
         <article className="about-article" aria-label="À propos">
           {paragraphs.map((text) => (
             <p key={text}>{text}</p>

@@ -1,8 +1,12 @@
 import PageHeading from "../../components/PageHeading"
+import heroImage from "../../assets/jenna-van der heide-dupe.jpeg"
 import "./ContactPage.css"
 
 const ContactPage = () => (
   <>
+    <section className="page-hero-banner" aria-hidden="true">
+      <img src={heroImage} alt="" loading="lazy" />
+    </section>
     <div className="page-accent-bar" aria-hidden="true" />
     <PageHeading eyebrow="Contact" title="Contacte-moi" />
     <div className="legal-page contact-page">

@@ -1,28 +1,34 @@
 import { useState } from "react"
 import PageHeading from "../../components/PageHeading"
+import heroImage from "../../assets/kalen-mcdonald-dupe.jpeg"
 import faqPortrait from "../../assets/maria-bolinder-dupe.jpeg"
 import "./FaqPage.css"
 
-const faqItems = [
+type FaqItem = {
+  question: string
+  answer: string
+}
+
+const faqItems: FaqItem[] = [
   {
     question: "Est-ce que Planner est gratuit ?",
     answer:
-      "Oui, le projet est disponible librement pour t accompagner au quotidien. Les nouvelles fonctionnalites sont ajoutees progressivement pour enrichir ton experience.",
+      "Oui, le projet est disponible librement pour t’accompagner au quotidien. De nouvelles fonctionnalités arrivent régulièrement pour enrichir ton expérience.",
   },
   {
-    question: "Comment sauvegarder mes donnees ?",
+    question: "Comment sauvegarder mes données ?",
     answer:
-      "Tes donnees sont stockees localement sur ton appareil. Pour plus de securite, exporte tes notes importantes afin de conserver une copie personnelle.",
+      "Tes notes restent enregistrées localement sur ton appareil. Pour plus de sécurité, exporte les informations clés afin d’en garder une copie personnelle.",
   },
   {
-    question: "Puis-je suggerer des idees ?",
+    question: "Puis-je suggérer des idées ?",
     answer:
-      "Bien sur ! J adore recevoir vos retours. Ecris-moi via la page contact pour partager tes envies et inspirer les evolutions du Planner.",
+      "Bien sûr ! J’adore recevoir vos retours. Écris-moi via la page contact pour partager tes envies et inspirer les prochaines évolutions du Planner.",
   },
   {
     question: "Planner fonctionne-t-il hors connexion ?",
     answer:
-      "Oui. Les pages restent accessibles meme sans connexion car les donnees sont gardées dans ton navigateur. Reviens en ligne regulierement pour profiter des mises a jour.",
+      "Oui. Les pages restent accessibles même sans connexion car les données sont gardées dans ton navigateur. Reviens en ligne régulièrement pour profiter des mises à jour.",
   },
 ]
 
@@ -31,11 +37,14 @@ const FAQPage = () => {
 
   return (
     <>
+      <section className="page-hero-banner" aria-hidden="true">
+        <img src={heroImage} alt="" loading="lazy" />
+      </section>
       <div className="page-accent-bar" aria-hidden="true" />
       <PageHeading eyebrow="FAQ" title="FAQ" />
       <div className="faq-wrapper">
         <div className="legal-page faq-page">
-          <p className="legal-page__intro">Toutes les reponses essentielles pour tirer le meilleur du Planner.</p>
+          <p className="legal-page__intro">Toutes les réponses essentielles pour tirer le meilleur du Planner.</p>
 
           <div className="faq-accordion">
             {faqItems.map((item, index) => {
@@ -51,7 +60,7 @@ const FAQPage = () => {
                   >
                     <span>{item.question}</span>
                     <span className="faq-item__icon" aria-hidden="true">
-                      {isOpen ? "−" : "+"}
+                      {isOpen ? "-" : "+"}
                     </span>
                   </button>
                   <div

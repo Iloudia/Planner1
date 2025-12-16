@@ -68,10 +68,7 @@ const SettingsCookies = () => {
               <span aria-hidden="true" />
             </label>
           </header>
-          <p>
-            Analyse anonyme des visites pour comprendre ce qui fonctionne, détecter les erreurs et améliorer les
-            contenus.
-          </p>
+          <p>Analyse anonyme des visites pour comprendre ce qui fonctionne, détecter les erreurs et améliorer les contenus.</p>
           <small>Sans ces cookies, nous ne suivons aucune statistique de navigation.</small>
         </article>
 
@@ -106,8 +103,8 @@ const SettingsCookies = () => {
 
       {feedback ? <p className="settings-success">{feedback}</p> : null}
       <p className="settings-note">
-        Statut actuel : <strong>{status === "unknown" ? "à décider" : status}</strong>. Tu peux également gérer tes
-        cookies depuis le bandeau ou le lien « Modifier mes cookies » présent en bas de page.
+        Statut actuel : <strong>{status === "unknown" ? "À décider" : status}</strong>. Tu peux également gérer tes cookies
+        depuis le bandeau ou le lien « Modifier mes cookies » présent en bas de page.
       </p>
     </section>
   )

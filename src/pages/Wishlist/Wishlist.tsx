@@ -216,6 +216,9 @@ const WishlistPage = () => {
   const [isEditingNote, setIsEditingNote] = useState(false)
   const [renamingCategoryId, setRenamingCategoryId] = useState<WishlistCategoryId | null>(null)
   const [renameDraft, setRenameDraft] = useState("")
+  const [renameCoverPreview, setRenameCoverPreview] = useState("")
+  const [renameCoverName, setRenameCoverName] = useState("")
+  const [renameInitialCover, setRenameInitialCover] = useState("")
   const [noteDraft, setNoteDraft] = useState("")
   const [itemDraft, setItemDraft] = useState<WishlistItemDraft>(() => createEmptyItemDraft())
   const [feedback, setFeedback] = useState<string | null>(null)
@@ -232,6 +235,7 @@ const WishlistPage = () => {
   const [moveSubcategory, setMoveSubcategory] = useState("")
   const itemImageInputRef = useRef<HTMLInputElement | null>(null)
   const categoryCoverInputRef = useRef<HTMLInputElement | null>(null)
+  const renameCoverInputRef = useRef<HTMLInputElement | null>(null)
   const resetItemDraft = useCallback(() => {
     setItemDraft(createEmptyItemDraft())
     if (itemImageInputRef.current) {
@@ -415,12 +419,26 @@ const WishlistPage = () => {
 
   useEffect(() => {
     if (!renamingCategoryId) {
+      setRenameDraft("")
+      setRenameCoverPreview("")
+      setRenameCoverName("")
+      setRenameInitialCover("")
+      if (renameCoverInputRef.current) {
+        renameCoverInputRef.current.value = ""
+      }
       return
     }
     const card = categoryCards.find((item) => item.id === renamingCategoryId)
-    const fallback = getCategoryDefinition(renamingCategoryId)?.label ?? ""
-    const title = card?.entry.title ?? card?.title ?? fallback
+    const fallbackTitle = getCategoryDefinition(renamingCategoryId)?.label ?? ""
+    const title = card?.entry.title ?? card?.title ?? fallbackTitle
+    const cover = card?.entry.cover ?? card?.cover ?? getCoverForId(renamingCategoryId)
     setRenameDraft(title)
+    setRenameInitialCover(cover)
+    setRenameCoverPreview(cover)
+    setRenameCoverName("")
+    if (renameCoverInputRef.current) {
+      renameCoverInputRef.current.value = ""
+    }
   }, [renamingCategoryId, categoryCards])
 
   useEffect(() => {
@@ -863,6 +881,35 @@ const WishlistPage = () => {
     reader.readAsDataURL(file)
   }
 
+  const handleRenameCoverChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) {
+      setRenameCoverName("")
+      setRenameCoverPreview(renameInitialCover)
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = () => {
+      const result = typeof reader.result === "string" ? reader.result : ""
+      if (!result) {
+        setRenameCoverName("")
+        setRenameCoverPreview(renameInitialCover)
+        return
+      }
+      setRenameCoverPreview(result)
+      setRenameCoverName(file.name)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handleResetRenameCover = () => {
+    setRenameCoverPreview(renameInitialCover)
+    setRenameCoverName("")
+    if (renameCoverInputRef.current) {
+      renameCoverInputRef.current.value = ""
+    }
+  }
+
   const handleCancelCreateCategory = () => {
     resetCategoryDraft()
     setIsCreatingCategory(false)
@@ -983,20 +1030,41 @@ const WishlistPage = () => {
     if (trimmedTitle.length === 0) {
       return
     }
-    setWishlist((previous) => ({
-      ...previous,
-      [renamingCategoryId]: {
-        ...(previous[renamingCategoryId] ?? {
+    setWishlist((previous) => {
+      const existing = previous[renamingCategoryId]
+      const fallbackCover = existing?.cover ?? renameInitialCover ?? getCoverForId(renamingCategoryId)
+      const coverToSave =
+        renameCoverPreview && renameCoverPreview.trim().length > 0 ? renameCoverPreview : fallbackCover
+
+      if (existing) {
+        return {
+          ...previous,
+          [renamingCategoryId]: {
+            ...existing,
+            title: trimmedTitle,
+            cover: coverToSave,
+          },
+        }
+      }
+
+      const definition = getCategoryDefinition(renamingCategoryId)
+      return {
+        ...previous,
+        [renamingCategoryId]: {
           title: trimmedTitle,
           items: [],
           note: "",
           isFavorite: false,
-        }),
-        title: trimmedTitle,
-      },
-    }))
+          accent: definition?.accent ?? getAccentForId(renamingCategoryId),
+          cover: coverToSave,
+          blurb: definition?.blurb ?? CUSTOM_BLURB,
+          createdAt: Date.now(),
+          order: Date.now(),
+        },
+      }
+    })
     setRenamingCategoryId(null)
-    setFeedback("Categorie renommee avec succes")
+    setFeedback("Categorie mise à jour")
   }
 
   const handleResetCategory = (categoryId: WishlistCategoryId) => {
@@ -1764,6 +1832,41 @@ const WishlistPage = () => {
                 placeholder="Nom de la categorie"
                 required
               />
+            </label>
+            <label className="wishlist-modal__file-field">
+              <span>Image de couverture</span>
+              <div className="wishlist-cover-upload">
+                <input
+                  ref={renameCoverInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleRenameCoverChange}
+                  className="wishlist-cover-upload__input"
+                />
+                <button type="button" className="wishlist-cover-upload__button" onClick={() => renameCoverInputRef.current?.click()}>
+                  <svg className="wishlist-cover-upload__icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      d="M4 7a2 2 0 0 1 2-2h3l1-1.5A2 2 0 0 1 11.6 3h0.8A2 2 0 0 1 14 3.5L15 5h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path d="M9 12.5 11 15l4-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  <span>{renameCoverName ? "Changer l'image" : "Choisir une image"}</span>
+                </button>
+                {renameCoverName ? <span className="wishlist-cover-upload__name">{renameCoverName}</span> : null}
+                <div className="wishlist-rename__preview">
+                  {renameCoverPreview ? <img src={renameCoverPreview} alt={`Aperçu de ${renameDraft || "la carte"}`} /> : <span>Aucune image</span>}
+                </div>
+                {renameCoverName ? (
+                  <button type="button" className="wishlist-cover-upload__remove" onClick={handleResetRenameCover}>
+                    Revenir à la photo actuelle
+                  </button>
+                ) : null}
+              </div>
             </label>
             <div className="wishlist-rename__actions">
               <button type="submit">Enregistrer</button>

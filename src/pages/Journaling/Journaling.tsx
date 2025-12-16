@@ -543,34 +543,40 @@ const JournalingPage = () => {
           </div>
         </header>
         <div className="journaling-day-state__content">
-          {dayStateSections.map((section) => (
-            <div key={section.id} className="journaling-day-state__group">
-              <div className="journaling-day-state__group-heading">
-                <span aria-hidden="true" className="journaling-day-state__icon">
-                  {section.icon}
-                </span>
-                <div>
-                  <h3>{section.title}</h3>
-                  {section.description && <p>{section.description}</p>}
+          {dayStateSections.map((section, index) => {
+            const [rawNumber, ...titleParts] = section.title.split('.')
+            const displayNumber = rawNumber?.trim().replace(/\D+/g, '') || `${index + 1}`
+            const cleanTitle = titleParts.length > 0 ? titleParts.join('.').trim() : section.title
+
+            return (
+              <div key={section.id} className="journaling-day-state__group">
+                <div className="journaling-day-state__group-heading">
+                  <span aria-hidden="true" className="journaling-day-state__number">
+                    {displayNumber}
+                  </span>
+                  <div>
+                    <h3>{cleanTitle}</h3>
+                    {section.description && <p>{section.description}</p>}
+                  </div>
+                </div>
+                <div className="journaling-day-state__fields">
+                  {section.fields.map((field) => (
+                    <label key={field.id}>
+                      <span>{field.label}</span>
+                      <textarea
+                        value={promptResponses[field.id] ?? ''}
+                        onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
+                          handlePromptResponseChange(field.id, event.target.value)
+                        }
+                        placeholder={field.placeholder}
+                        rows={field.id === DATE_PROMPT_FIELD_ID ? 2 : 3}
+                      />
+                    </label>
+                  ))}
                 </div>
               </div>
-              <div className="journaling-day-state__fields">
-                {section.fields.map((field) => (
-                  <label key={field.id}>
-                    <span>{field.label}</span>
-                    <textarea
-                      value={promptResponses[field.id] ?? ''}
-                      onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
-                        handlePromptResponseChange(field.id, event.target.value)
-                      }
-                      placeholder={field.placeholder}
-                      rows={field.id === DATE_PROMPT_FIELD_ID ? 2 : 3}
-                    />
-                  </label>
-                ))}
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </section>
 

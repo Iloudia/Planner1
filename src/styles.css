@@ -443,7 +443,7 @@ p {
   font-size: 0.85rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(236, 72, 153, 0.7);
+  color: #db2777;
 }
 
 .site-footer__link,
@@ -826,6 +826,23 @@ p {
   border-radius: 28px;
   background: linear-gradient(140deg, #ffe4f1 0%, #fbcfe8 40%, #f472b6 100%);
   box-shadow: 0 24px 80px rgba(244, 114, 182, 0.22);
+}
+
+.page-hero-banner {
+  width: 100%;
+  border-radius: 34px;
+  overflow: hidden;
+  box-shadow: 0 30px 70px rgba(15, 23, 42, 0.18);
+  background: radial-gradient(circle at 20% 20%, rgba(236, 72, 153, 0.12), transparent 50%),
+    rgba(255, 255, 255, 0.95);
+  margin-bottom: clamp(1.1rem, 3vw, 2rem);
+}
+
+.page-hero-banner img {
+  width: 100%;
+  height: clamp(180px, 28vw, 320px);
+  object-fit: cover;
+  display: block;
 }
 
 .progress-panel {
@@ -1424,5 +1441,3 @@ p {
 .header-menu__sublist li {
   padding-left: 0.3rem;
 }
-
-
