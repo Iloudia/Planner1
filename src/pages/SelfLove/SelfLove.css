@@ -1013,13 +1013,7 @@
   z-index: 1;
 }
 
-.self-love-list-pad__bow span {
-  width: 48px;
-  height: 28px;
-  border-radius: 24px 24px 6px 6px / 24px 24px 12px 12px;
-  background: linear-gradient(90deg, #fbcfe8 0%, #f472b6 100%);
-  position: relative;
-}
+
 
 .self-love-list-pad__bow span::after {
   content: '';
@@ -1104,9 +1098,9 @@
 }
 
 .self-love-thoughts {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
 }
 
 .self-love-thought {

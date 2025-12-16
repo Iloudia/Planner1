@@ -1,4 +1,4 @@
-import type { FormEvent } from 'react'
+﻿import type { FormEvent } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import type { RoutineItem } from '../../data/sampleData'
 import { eveningRoutine as defaultEveningRoutine, morningRoutine as defaultMorningRoutine } from '../../data/sampleData'
@@ -6,6 +6,7 @@ import usePersistentState from '../../hooks/usePersistentState'
 import PageHeading from '../../components/PageHeading'
 import morningIllustration from '../../assets/morning-note.svg'
 import eveningIllustration from '../../assets/evening-note.svg'
+import routineHeroImage from '../../assets/kalen-mcdonald-dupe.jpeg'
 import './RoutinePage.css'
 
 type RoutineId = string
@@ -96,7 +97,7 @@ const RoutineComposer = ({
       />
     </label>
     <label>
-      <span>Détail (optionnel)</span>
+      <span>DÃ©tail (optionnel)</span>
       <textarea
         value={draft.detail}
         onChange={(event) => onDraftChange('detail', event.target.value)}
@@ -185,31 +186,11 @@ const RoutinePage = () => {
     })
   }
 
-  const routineStats = [
-    { id: 'morning', label: 'Rituels du matin', value: morningRoutines.length.toString() },
-    { id: 'evening', label: 'Rituels du soir', value: eveningRoutines.length.toString() },
-    { id: 'checked', label: 'Cases cochées', value: completedSet.size.toString() },
-  ]
-
   return (
     <div className="routine-page aesthetic-page">
 
-      <section className="routine-hero dashboard-panel">
-        <div className="routine-hero__content">
-          <h1>Routines du matin et du soir</h1>
-          <p>
-            Crée ton équilibre intérieur avec des gestes simples, répétés chaque jour pour te recentrer et te faire du
-            bien.
-          </p>
-          <div className="routine-hero__stats">
-            {routineStats.map((stat) => (
-              <article key={stat.id}>
-                <span>{stat.label}</span>
-                <strong>{stat.value}</strong>
-              </article>
-            ))}
-          </div>
-        </div>
+      <section className="routine-hero-image">
+        <img src={routineHeroImage} alt="Ambiance douce pour ritualiser ses routines quotidiennes" />
       </section>
       <div className="routine-page__accent-bar" aria-hidden="true" />
       <PageHeading eyebrow="Routine" title="Rituels quotidiens" />
@@ -242,9 +223,9 @@ const RoutinePage = () => {
               draft={routineDrafts.morning}
               onDraftChange={(field, value) => handleRoutineDraftChange('morning', field, value)}
               onSubmit={handleRoutineSubmit('morning')}
-              buttonLabel="Ajouter à ma routine du matin"
-              placeholderTitle="Ex : Boire un verre d'eau tiède citronné"
-              placeholderDetail="Détaille si besoin (durée, intention, mantra...)"
+              buttonLabel="Ajouter Ã  ma routine du matin"
+              placeholderTitle="Ex : Boire un verre d'eau tiÃ¨de citronnÃ©"
+              placeholderDetail="DÃ©taille si besoin (durÃ©e, intention, mantra...)"
             />
           </div>
         </section>
@@ -271,8 +252,8 @@ const RoutinePage = () => {
               draft={routineDrafts.evening}
               onDraftChange={(field, value) => handleRoutineDraftChange('evening', field, value)}
               onSubmit={handleRoutineSubmit('evening')}
-              buttonLabel="Ajouter à ma routine du soir"
-              placeholderTitle="Ex : Préparer mes vêtements pour demain"
+              buttonLabel="Ajouter Ã  ma routine du soir"
+              placeholderTitle="Ex : PrÃ©parer mes vÃªtements pour demain"
               placeholderDetail="Note ce que tu veux te rappeler ou ressentir"
             />
           </div>

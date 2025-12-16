@@ -622,19 +622,6 @@ p {
   box-shadow: 0 0 0 6px rgba(236, 72, 153, 0.12);
 }
 
-.task-window {
-  position: relative;
-  overflow-y: auto;
-  border-radius: 16px;
-  background: radial-gradient(circle at 14% 22%, rgba(236, 72, 153, 0.12), transparent 32%),
-    radial-gradient(circle at 80% 10%, rgba(249, 168, 212, 0.14), transparent 38%),
-    rgba(255, 255, 255, 0.9);
-  max-height: 620px;
-  padding: 22px;
-  border: none;
-  box-shadow: 0 20px 48px rgba(236, 72, 153, 0.15);
-}
-
 .task-list {
   display: flex;
   flex-direction: column;
@@ -651,7 +638,6 @@ p {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 16px;
   min-height: 240px;
   box-shadow: 0 22px 54px rgba(236, 72, 153, 0.24);
   overflow: hidden;

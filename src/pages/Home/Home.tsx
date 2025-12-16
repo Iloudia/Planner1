@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react"
 import { useNavigate } from "react-router-dom"
 import { useTasks } from "../../context/TasksContext"
-import planner01 from "../../assets/planner-01.jpg"
-import planner02 from "../../assets/planner-02.jpg"
-import planner03 from "../../assets/planner-03.jpg"
-import planner04 from "../../assets/planner-04.jpg"
-import planner05 from "../../assets/planner-05.jpg"
-import planner06 from "../../assets/planner-06.jpg"
-import planner07 from "../../assets/planner-07.jpg"
-import planner08 from "../../assets/planner-08.jpg"
-import planner09 from "../../assets/planner-09.jpg"
+import planner01 from "../../assets/sport.jpeg"
+import planner02 from "../../assets/activities.jpeg"
+import planner03 from "../../assets/mallika-jain-dupe.jpeg"
+import planner04 from "../../assets/selflove.jpeg"
+import planner05 from "../../assets/medhanshi-mandawewala-dupe.jpeg"
+import planner06 from "../../assets/katie-huber-rhoades-dupe (1).jpeg"
+import planner07 from "../../assets/ebony-forsyth-dupe.jpeg"
+import planner08 from "../../assets/l-b-dupe.jpeg"
+import planner09 from "../../assets/katie-mansfield-dupe.jpeg"
 import { useMoodboard } from "../../context/MoodboardContext"
 import "./Home.css"
 
@@ -332,7 +332,6 @@ function HomePage() {
             </div>
           </div>
         </aside>
-
         <section className="home-moodboard">
           <div className="home-moodboard__top">
             <button type="button" className="home-moodboard__button" onClick={() => moodboardInputRef.current?.click()}>

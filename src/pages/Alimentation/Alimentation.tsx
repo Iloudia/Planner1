@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from "react"
+import { useMemo } from "react"
 import usePersistentState from "../../hooks/usePersistentState"
 import PageHeading from "../../components/PageHeading"
 import photo1 from "../../assets/planner-01.jpg"
@@ -43,21 +43,23 @@ const buildDefaultWeeklyPlan = (): WeeklyPlan => {
 
 function DietPage() {
   const [weeklyPlan, setWeeklyPlan] = usePersistentState<WeeklyPlan>("planner.diet.weeklyPlan", buildDefaultWeeklyPlan)
-  const [shoppingItems, setShoppingItems] = usePersistentState<ShoppingItem[]>("planner.diet.groceries", [])
-  const [shoppingInput, setShoppingInput] = useState("")
+  const [shoppingNotes, setShoppingNotes] = usePersistentState<string>("planner.diet.groceriesNotes", "")
 
-  const highlightedIngredients = useMemo(() => {
-    const picks = new Set<string>()
-    weekDays.forEach((day) => {
-      const morning = weeklyPlan[day].morning.trim()
-      const midday = weeklyPlan[day].midday.trim()
-      const evening = weeklyPlan[day].evening.trim()
-      if (morning) picks.add(morning)
-      if (midday) picks.add(midday)
-      if (evening) picks.add(evening)
-    })
-    return Array.from(picks).slice(0, 6)
-  }, [weeklyPlan])
+  const weekRangeLabel = useMemo(() => {
+    const today = new Date()
+    const dayIndex = today.getDay()
+    const diffToMonday = (dayIndex + 6) % 7
+    const monday = new Date(today)
+    monday.setDate(today.getDate() - diffToMonday)
+    const sunday = new Date(monday)
+    sunday.setDate(monday.getDate() + 6)
+    const format = (date: Date) =>
+      date
+        .toLocaleDateString("fr-FR", { day: "numeric", month: "short" })
+        .replace(".", "")
+        .trim()
+    return `Semaine du ${format(monday)} - ${format(sunday)}`
+  }, [])
 
   const handleMealChange = (day: typeof weekDays[number], slot: MealSlotId, value: string) => {
     setWeeklyPlan((previous) => ({
@@ -66,116 +68,65 @@ function DietPage() {
     }))
   }
 
-  const addShoppingItem = () => {
-    const text = shoppingInput.trim()
-    if (!text) return
-    setShoppingItems((previous) => [{ id: `item-${Date.now()}`, text, done: false }, ...previous])
-    setShoppingInput("")
-  }
-
-  const toggleShoppingItem = (id: string) => {
-    setShoppingItems((previous) => previous.map((item) => (item.id === id ? { ...item, done: !item.done } : item)))
-  }
-
-  const removeShoppingItem = (id: string) => {
-    setShoppingItems((previous) => previous.filter((item) => item.id !== id))
-  }
-
   return (
     <>
-      <div className="page-photo-strip" aria-hidden="true">
-        {stripImages.map((src, index) => (
-          <div key={index} className="page-photo-strip__item">
-            <img src={src} alt={`Inspiration ${index + 1}`} />
-          </div>
-        ))}
+      <div className="diet-hero-photo" aria-hidden="true">
+        <img src={stripImages[0]} alt="" />
       </div>
       <div className="page-accent-bar" aria-hidden="true" />
       <PageHeading eyebrow="Alimentation" title="Planifier ses repas avec douceur" />
       <main className="content-page diet-page">
         <section className="page-section diet-week">
-          <header>
-            <h3>Planning des repas de la semaine</h3>
-            <p>
-              Ajuste chaque creneau matin, midi et soir au fil des jours. Ton choix est enregistre automatiquement pour que tu retrouves
-              tes idees a chaque visite.
-            </p>
+          <header className="diet-week__header">
+            <div>
+              <span className="diet-week__eyebrow">Organisation</span>
+              <h3>Planning des repas de la semaine</h3>
+              <p>
+                Ajuste chaque creneau matin, midi et soir au fil des jours. Ton choix est enregistre automatiquement pour que tu retrouves
+                tes idees a chaque visite.
+              </p>
+            </div>
+            <p className="diet-week__range">{weekRangeLabel}</p>
           </header>
-          <div className="diet-week__grid">
-            {weekDays.map((day) => (
-              <article key={day} className="diet-week__card">
-                <div className="diet-week__card-head">
-                  <span className="diet-week__day">{day}</span>
-                  <span className="diet-week__tag">Equilibre</span>
-                </div>
-                {mealSlots.map((slot) => (
+          <div className="diet-week__group">
+            <div className="diet-week__grid">
+              {weekDays.map((day) => (
+                <article key={day} className="diet-week__card">
+                  <div className="diet-week__card-head">
+                    <span className="diet-week__day">{day}</span>
+                  </div>
+                  {mealSlots.map((slot) => (
                   <label key={slot.id} className="diet-week__slot">
                     <span>
-                      {slot.label} <small>{slot.hint}</small>
+                      {slot.label}
                     </span>
                     <input
-                      type="text"
-                      value={weeklyPlan[day][slot.id]}
-                      placeholder={`Ton plat du ${slot.label.toLowerCase()}`}
-                      onChange={(event) => handleMealChange(day, slot.id, event.target.value)}
-                    />
-                  </label>
-                ))}
-              </article>
-            ))}
+                        type="text"
+                        value={weeklyPlan[day][slot.id]}
+                        placeholder={`Ton plat du ${slot.label.toLowerCase()}`}
+                        onChange={(event) => handleMealChange(day, slot.id, event.target.value)}
+                      />
+                    </label>
+                  ))}
+                </article>
+              ))}
+            </div>
           </div>
         </section>
 
         <section className="page-section diet-shopping">
           <div className="diet-shopping__panel">
             <h3>Liste de courses</h3>
-            <p>
-              Note les ingredients a acheter pendant que tu reflechis a ton menu. Coche ce qui est deja dans ton panier ou supprime les
-              elements termines.
-            </p>
-            <div className="diet-shopping__input">
-              <input
-                type="text"
-                value={shoppingInput}
-                placeholder="Ajouter un ingredient ou un produit"
-                onChange={(event) => setShoppingInput(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") {
-                    event.preventDefault()
-                    addShoppingItem()
-                  }
-                }}
-              />
-              <button type="button" onClick={addShoppingItem}>
-                +
-              </button>
-            </div>
-            <ul className="diet-shopping__list">
-              {shoppingItems.length === 0 ? (
-                <li className="diet-shopping__empty">Ta liste est vide. Ajoute ton premier produit ?</li>
-              ) : (
-                shoppingItems.map((item) => (
-                  <li key={item.id} className={item.done ? "diet-shopping__item is-done" : "diet-shopping__item"}>
-                    <label>
-                      <input type="checkbox" checked={item.done} onChange={() => toggleShoppingItem(item.id)} />
-                      <span>{item.text}</span>
-                    </label>
-                    <button type="button" onClick={() => removeShoppingItem(item.id)} aria-label="Supprimer l'element">
-                      -
-                    </button>
-                  </li>
-                ))
-              )}
-            </ul>
+            <textarea
+              className="diet-shopping__textarea"
+              value={shoppingNotes}
+              onChange={(event) => setShoppingNotes(event.target.value)}
+              placeholder="Ecris librement ta liste comme sur un carnet..."
+            />
           </div>
 
           <div className="diet-ideas">
             <p className="diet-section__intro">Idees a garder sous la main</p>
-            <ul className="diet-ideas__chips">
-              {highlightedIngredients.map((idea) => (
-                <li key={idea}>{idea}</li>
-              ))}
-            </ul>
             <div className="diet-ideas__tips">
               <article>
                 <h4>Batch cooking</h4>
@@ -195,3 +146,4 @@ function DietPage() {
 }
 
 export default DietPage
+

@@ -23,7 +23,7 @@
 
 .home-moodboard {
   grid-column: 1 / -1;
-  margin-top: 1.5rem;
+  margin-top: 0;
   background: #fff;
   border-radius: 24px;
   padding: 1.25rem;
@@ -45,7 +45,10 @@
 .home-moodboard__top {
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 0.75rem;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 0;
+  padding: 0;
   position: relative;
   z-index: 1;
 }
@@ -59,6 +62,8 @@
   color: #fff;
   cursor: pointer;
   font-size: 0.9rem;
+  margin: 0;
+  margin-left: auto;
 }
 
 .home-moodboard__preview {
@@ -291,14 +296,6 @@
   font-weight: 700;
 }
 
-.task-window {
-  border-radius: 24px;
-  padding: 1.4rem 1.2rem;
-  background: linear-gradient(160deg, rgba(236, 72, 153, 0.08), rgba(59, 130, 246, 0.06));
-  border: 1px solid rgba(236, 72, 153, 0.15);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4), 0 20px 50px rgba(15, 23, 42, 0.15);
-}
-
 .task-list {
   display: flex;
   flex-direction: column;
@@ -399,10 +396,6 @@
 
 .aside-title .dot {
   display: none;
-}
-
-.task-window {
-  overflow: visible;
 }
 
 .task-list {

@@ -294,6 +294,7 @@ const SettingsAccount = () => {
       <div className="settings-section">
         <h2>Changez votre mot de passe</h2>
         <p className="settings-section__intro">Renforcez la securite de votre compte Planner.</p>
+        <p className="settings-note">mot de passe oublié</p>
         <form className="settings-password-change" onSubmit={handlePasswordChangeSubmit}>
           <label>
             <span>Mot de passe actuel</span>

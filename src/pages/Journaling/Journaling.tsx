@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import type { ChangeEvent, FormEvent } from 'react'
+import type { ChangeEvent } from 'react'
 import usePersistentState from '../../hooks/usePersistentState'
 import journalingIllustration from '../../assets/planner-09.jpg'
 import journalingMoodSecondary from '../../assets/planner-08.jpg'
@@ -286,6 +286,12 @@ const JournalingPage = () => {
   })
   const [promptResponses, setPromptResponses] = useState<Record<string, string>>(() => createInitialPromptResponses())
   const [promptSelections, setPromptSelections] = useState<Record<string, string[]>>(() => createInitialPromptSelections())
+  const [manifestationBoard, setManifestationBoard] = usePersistentState('planner.journal.manifestation', () => ({
+    affirmations: '',
+    gratitude: '',
+    people: '',
+    intentions: '',
+  }))
 
   useEffect(() => {
     document.body.classList.add('planner-page--white')
@@ -332,9 +338,7 @@ const JournalingPage = () => {
     })
   }
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-
+  const handleSubmit = () => {
     const promptSectionsForEntry = journalingPromptSections
       .map<PromptEntrySection | null>((section) => {
         const answers: PromptAnswer[] = []
@@ -478,6 +482,38 @@ const JournalingPage = () => {
       hint: highlightedFeeling.emoji,
     },
   ]
+  const dayStateIds = useMemo(() => new Set(['daily-state', 'daily-celebration']), [])
+  const dayStateSections = journalingPromptSections.filter((section) => dayStateIds.has(section.id))
+  const manifestationBlocks = [
+    {
+      id: 'affirmations',
+      title: 'Affirmations',
+      emoji: '✨',
+      placeholder: 'Ecris tes phrases positives, separees par des retours a la ligne.',
+      description: 'Rappelle-toi qui tu deviens.',
+    },
+    {
+      id: 'gratitude',
+      title: 'Ce dont je suis reconnaissante',
+      emoji: '🌷',
+      placeholder: 'Liste ce qui remplit ton coeur de douceur.',
+      description: 'Accueille l abondance actuelle.',
+    },
+    {
+      id: 'people',
+      title: 'Croyances limitantes',
+      emoji: '🫶',
+      placeholder: 'Note les phrases ou pensees que tu souhaites transformer.',
+      description: 'Identifie ce qui te retient pour mieux le libere.',
+    },
+    {
+      id: 'intentions',
+      title: 'Visualisations',
+      emoji: '🌙',
+      placeholder: 'Imagine en details la vie que tu manifests.',
+      description: 'Projette-toi vers ta vision ideale.',
+    },
+  ] as const
 
   return (
     <div className="journaling-page aesthetic-page">
@@ -498,157 +534,95 @@ const JournalingPage = () => {
       <div className="journaling-page__accent-bar" aria-hidden="true" />
       <PageHeading eyebrow="Reflet" title="Mon journal" />
 
-      <section className="journaling-prompts">
-        <header className="journaling-prompts__header">
+      <section className="journaling-day-state">
+        <header className="journaling-day-state__header">
           <div>
-            <h2>Journal guide pour explorer ta journee</h2>
-            <p>Choisis les sections qui te parlent et laisse-toi guider par les questions.</p>
+            <p className="journaling-day-state__eyebrow">Bulle du jour</p>
+            <h2>Etat du jour</h2>
+            <p>Une seule bulle toute en longueur pour repondre aux questions des sections 1 et 2.</p>
           </div>
         </header>
-        <div className="journaling-prompts__grid">
-          {journalingPromptSections.map((section) => {
-            const cardStyle = {
-              background: `linear-gradient(160deg, ${section.accent} 0%, rgba(255, 255, 255, 0.95) 100%)`,
-            }
-            return (
-              <article key={section.id} className="journaling-prompts__card" style={cardStyle}>
-                <header className="journaling-prompts__card-header">
-                  <span aria-hidden="true" className="journaling-prompts__icon">
-                    {section.icon}
-                  </span>
-                  <div>
-                    <h3>{section.title}</h3>
-                    {section.description && <p>{section.description}</p>}
-                  </div>
-                </header>
-                {section.helper && <p className="journaling-prompts__helper">{section.helper}</p>}
-                <div className="journaling-prompts__fields">
-                  {section.fields.map((field) => {
-                    if (field.type === 'textarea') {
-                      return (
-                        <label key={field.id} className="journaling-prompts__field">
-                          <span>{field.label}</span>
-                          <textarea
-                            value={promptResponses[field.id] ?? ''}
-                            onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
-                              handlePromptResponseChange(field.id, event.target.value)
-                            }
-                            placeholder={field.placeholder}
-                            rows={field.id === DATE_PROMPT_FIELD_ID ? 2 : 3}
-                          />
-                        </label>
-                      )
-                    }
-
-                    const selected = promptSelections[field.id] ?? []
-                    return (
-                      <fieldset key={field.id} className="journaling-prompts__choices">
-                        <legend>{field.label}</legend>
-                        <span className="journaling-prompts__choices-count">{selected.length} selection(s)</span>
-                        <div className="journaling-prompts__options">
-                          {field.options.map((option) => {
-                            const isSelected = selected.includes(option)
-                            return (
-                              <label
-                                key={option}
-                                className={
-                                  isSelected ? 'journaling-prompts__option is-selected' : 'journaling-prompts__option'
-                                }
-                              >
-                                <input
-                                  type="checkbox"
-                                  checked={isSelected}
-                                  onChange={() => handlePromptSelectionToggle(field.id, option)}
-                                />
-                                <span>{option}</span>
-                              </label>
-                            )
-                          })}
-                        </div>
-                      </fieldset>
-                    )
-                  })}
+        <div className="journaling-day-state__content">
+          {dayStateSections.map((section) => (
+            <div key={section.id} className="journaling-day-state__group">
+              <div className="journaling-day-state__group-heading">
+                <span aria-hidden="true" className="journaling-day-state__icon">
+                  {section.icon}
+                </span>
+                <div>
+                  <h3>{section.title}</h3>
+                  {section.description && <p>{section.description}</p>}
                 </div>
-              </article>
-            )
-          })}
+              </div>
+              <div className="journaling-day-state__fields">
+                {section.fields.map((field) => (
+                  <label key={field.id}>
+                    <span>{field.label}</span>
+                    <textarea
+                      value={promptResponses[field.id] ?? ''}
+                      onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
+                        handlePromptResponseChange(field.id, event.target.value)
+                      }
+                      placeholder={field.placeholder}
+                      rows={field.id === DATE_PROMPT_FIELD_ID ? 2 : 3}
+                    />
+                  </label>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
-      <section className="journaling-editor">
-        <h2>Ecriture libre</h2>
-        <form onSubmit={handleSubmit} className="journaling-editor__form">
-          <label className="journaling-editor__field">
-            <span>Date</span>
-            <input
-              type="date"
-              value={draft.date}
-              onChange={(event: ChangeEvent<HTMLInputElement>) => handleDraftChange('date', event.target.value)}
-            />
-          </label>
-
-
-          <fieldset className="journaling-editor__feelings journaling-editor__field journaling-editor__field--full">
-            <legend>Comment t'es-tu sentie aujourd'hui ?</legend>
-            <div className="journaling-editor__feelings-options">
-              {feelings.map((option) => {
-                const isSelected = draft.feelings.includes(option.value)
-                return (
-                  <label key={option.value} className={isSelected ? 'journaling-editor__feeling-option is-active' : 'journaling-editor__feeling-option'}>
-                    <input
-                      type="checkbox"
-                      checked={isSelected}
-                      onChange={() => {
-                        setDraft((previous) => {
-                          let next: JournalFeeling[]
-                          if (previous.feelings.includes(option.value)) {
-                            next = previous.feelings.filter((value) => value !== option.value)
-                          } else {
-                            next = [...previous.feelings, option.value]
-                          }
-                          if (next.length === 0 && feelings.length > 0) {
-                            next = [feelings[0].value]
-                          }
-                          return { ...previous, feelings: next }
-                        })
-                      }}
-                    />
-                    <div className="journaling-editor__feeling-content">
-                      <span aria-hidden="true" className="journaling-editor__feeling-emoji">
-                        {option.emoji}
+      <section className="journaling-manifestation">
+        <header>
+          <div>
+            <p className="journaling-studio__eyebrow">Espace manifestation</p>
+            <h2>Vibre avec tes mots</h2>
+            <p>Note tes affirmations, ta gratitude et les personnes qui t inspirent.</p>
+          </div>
+        </header>
+        <div className="journaling-manifestation__grid">
+          {manifestationBlocks.map((block) => (
+            <article key={block.id} className="journaling-manifestation__card">
+              <div className="journaling-manifestation__card-heading">
+                <span aria-hidden="true">{block.emoji}</span>
+                <div>
+                  <h3>{block.title}</h3>
+                  <p>{block.description}</p>
+                </div>
+              </div>
+              <textarea
+                value={manifestationBoard[block.id] ?? ''}
+                onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
+                  setManifestationBoard((previous) => ({ ...previous, [block.id]: event.target.value }))
+                }
+                placeholder={block.placeholder}
+                rows={block.id === 'people' ? 4 : 5}
+              />
+              {manifestationBoard[block.id]?.trim().length > 0 ? (
+                <div className="journaling-manifestation__chips">
+                  {manifestationBoard[block.id]
+                    .split('\n')
+                    .map((line) => line.trim())
+                    .filter((line) => line.length > 0)
+                    .slice(0, 4)
+                    .map((line) => (
+                      <span key={`${block.id}-${line}`} className="journaling-manifestation__chip">
+                        {line}
                       </span>
-                      <span className="journaling-editor__feeling-label">{option.label}</span>
-                    </div>
-                  </label>
-                )
-              })}
-            </div>
-          </fieldset>
+                    ))}
+                </div>
+              ) : null}
+            </article>
+          ))}
+        </div>
+      </section>
 
-          <label className="journaling-editor__field journaling-editor__field--full">
-            <span>Pourquoi ?</span>
-            <textarea
-              value={draft.feelingReason}
-              onChange={(event: ChangeEvent<HTMLTextAreaElement>) => handleDraftChange('feelingReason', event.target.value)}
-              placeholder="Qu'est-ce qui a colore ta journee ?"
-              rows={3}
-            />
-          </label>
-
-          <label className="journaling-editor__field journaling-editor__field--full">
-            <span>Texte libre</span>
-            <textarea
-              value={draft.content}
-              onChange={(event: ChangeEvent<HTMLTextAreaElement>) => handleDraftChange('content', event.target.value)}
-              placeholder="Raconte ici tout ce que tu veux ajouter."
-              rows={6}
-            />
-          </label>
-
-          <button type="submit" className="journaling-editor__submit">
-            Ajouter cette page
-          </button>
-        </form>
+      <section className="journaling-save">
+        <button type="button" className="journaling-save__button" onClick={handleSubmit}>
+          Ajouter cette page
+        </button>
       </section>
 
       <section className="journaling-history">
@@ -769,10 +743,12 @@ const JournalingPage = () => {
           </div>
         ) : null}
       </section>
-
       <div className="journaling-page__footer-bar" aria-hidden="true" />
     </div>
+    
   )
+  
 }
+
 
 export default JournalingPage

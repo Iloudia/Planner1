@@ -1,4 +1,6 @@
 import { useState } from "react"
+import PageHeading from "../../components/PageHeading"
+import faqPortrait from "../../assets/maria-bolinder-dupe.jpeg"
 import "./FaqPage.css"
 
 const faqItems = [
@@ -28,45 +30,48 @@ const FAQPage = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   return (
-    <div className="legal-page faq-page">
+    <>
       <div className="page-accent-bar" aria-hidden="true" />
-      <header className="legal-page__header">
-        <p className="legal-page__eyebrow">FAQ</p>
-        <h1 className="legal-page__title">Questions frequentes</h1>
-        <p className="legal-page__intro">Toutes les reponses essentielles pour tirer le meilleur du Planner.</p>
-      </header>
+      <PageHeading eyebrow="FAQ" title="FAQ" />
+      <div className="faq-wrapper">
+        <div className="legal-page faq-page">
+          <p className="legal-page__intro">Toutes les reponses essentielles pour tirer le meilleur du Planner.</p>
 
-      <div className="faq-accordion">
-        {faqItems.map((item, index) => {
-          const isOpen = openIndex === index
-          return (
-            <article key={item.question} className={isOpen ? "faq-item is-open" : "faq-item"}>
-              <button
-                type="button"
-                className="faq-item__header"
-                onClick={() => setOpenIndex((current) => (current === index ? null : index))}
-                aria-expanded={isOpen}
-                aria-controls={`faq-panel-${index}`}
-              >
-                <span>{item.question}</span>
-                <span className="faq-item__icon" aria-hidden="true">
-                  {isOpen ? "−" : "+"}
-                </span>
-              </button>
-              <div
-                id={`faq-panel-${index}`}
-                className="faq-item__body"
-                style={{ maxHeight: isOpen ? "280px" : "0px" }}
-              >
-                <p>{item.answer}</p>
-              </div>
-            </article>
-          )
-        })}
+          <div className="faq-accordion">
+            {faqItems.map((item, index) => {
+              const isOpen = openIndex === index
+              return (
+                <article key={item.question} className={isOpen ? "faq-item is-open" : "faq-item"}>
+                  <button
+                    type="button"
+                    className="faq-item__header"
+                    onClick={() => setOpenIndex((current) => (current === index ? null : index))}
+                    aria-expanded={isOpen}
+                    aria-controls={`faq-panel-${index}`}
+                  >
+                    <span>{item.question}</span>
+                    <span className="faq-item__icon" aria-hidden="true">
+                      {isOpen ? "−" : "+"}
+                    </span>
+                  </button>
+                  <div
+                    id={`faq-panel-${index}`}
+                    className="faq-item__body"
+                    style={{ maxHeight: isOpen ? "280px" : "0px" }}
+                  >
+                    <p>{item.answer}</p>
+                  </div>
+                </article>
+              )
+            })}
+          </div>
+        </div>
+        <figure className="faq-floating-figure" aria-hidden="true">
+          <img src={faqPortrait} alt="" loading="lazy" />
+        </figure>
       </div>
-
       <div className="page-footer-bar" aria-hidden="true" />
-    </div>
+    </>
   )
 }
 

@@ -29,24 +29,25 @@ const Footer = () => {
   const { openPreferences } = useCookieConsent();
 
   return (
+    
     <footer className="site-footer">
       <div className="site-footer__inner">
         <div className="site-footer__brand">
-          <h2 className="site-footer__title">Cultive ton equilibre comme <br />dans ton Planner.</h2>
+          <h2 className="site-footer__title">Cultive ton équilibre comme <br />dans ton Planner.</h2>
         </div>
 
         <div className="site-footer__sections" aria-label="Navigation complementaire">
           <div className="site-footer__section">
-            <h3 className="site-footer__section-title">A propos</h3>
-            <FooterLink href="/a-propos">A propos de nous</FooterLink>
+            <h3 className="site-footer__section-title">À propos</h3>
+            <FooterLink href="/a-propos">À propos de moi</FooterLink>
             <FooterLink href="/contact">Contacte-moi</FooterLink>
             <FooterLink href="/faq">FAQ</FooterLink>
           </div>
 
           <div className="site-footer__section">
             <h3 className="site-footer__section-title">Infos</h3>
-            <FooterLink href="/mentions-legales">Mentions legales</FooterLink>
-            <FooterLink href="/confidentialite">Politique de confidentialite</FooterLink>
+            <FooterLink href="/mentions-legales">Mentions légales</FooterLink>
+            <FooterLink href="/confidentialite">Politique de confidentialité</FooterLink>
             <FooterLink href="/cookies">Gestion des cookies</FooterLink>
           </div>
 

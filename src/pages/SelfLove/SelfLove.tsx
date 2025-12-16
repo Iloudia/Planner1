@@ -469,7 +469,7 @@ const SelfLovePage = () => {
       <section className="self-love-section self-love-section--photos">
         <div className="self-love-section__header">
           <h2>Aime-toi !</h2>
-          <p>Aime-toi ! Regarde-toi avec bienveillance et choisis six souvenirs où tu rayonnes.</p>
+          <p>Aime-toi ! Regarde-toi avec bienveillance et choisis 6 photos où tu rayonnes.</p>
         </div>
         <div className="self-love-photos-frame">
           <div className="self-love-photos">
@@ -483,7 +483,7 @@ const SelfLovePage = () => {
                       <span role="img" aria-label="mirror">
                         🪞
                       </span>
-                      Souvenir {index + 1}
+                      Photo {index + 1}
                     </span>
                   )}
                   <input type="file" accept="image/*" onChange={(event) => handlePhotoChange(photo.id, event)} />
@@ -493,7 +493,7 @@ const SelfLovePage = () => {
                     Changer la photo
                   </button>
                 ) : (
-                  <span className="self-love-photo-card__hint">Ajoute un souvenir lumineux</span>
+                  <span className="self-love-photo-card__hint">Ajoute une photo</span>
                 )}
               </div>
             ))}
@@ -515,8 +515,7 @@ const SelfLovePage = () => {
           <div className="self-love-list-pad__bow">
             <span aria-hidden="true" />
             <div>
-              <strong>Ce que j&apos;aime chez moi</strong>
-              <p>Note tes qualit&eacute;s, tes victoires, tout ce qui te rend fi&egrave;re.</p>
+              <strong>Ce que j'aime chez moi</strong>
             </div>
           </div>
           <ul className="self-love-list">
@@ -547,7 +546,7 @@ const SelfLovePage = () => {
       <section className="self-love-section self-love-section--thoughts">
         <div className="self-love-section__header">
           <h2>Pensées négatives à oublier</h2>
-          <p>Clique sur une pensée pour la laisser s&apos;envoler.</p>
+          <p>Clique sur une pensée pour la laisser s'envoler.</p>
         </div>
         <form className="self-love-form-row" onSubmit={handleAddThought}>
           <input
@@ -583,8 +582,8 @@ const SelfLovePage = () => {
       </div>
       <section className="self-love-section self-love-exercises">
         <div className="self-love-section__header">
-          <h2>Exercices guidés pour t&apos;aimer davantage</h2>
-          <p>Prends quelques minutes pour écrire et laisser ton cœur se déposer.</p>
+          <h2>Exercices guidés pour t'aimer davantage</h2>
+          <p>Prends quelques instants pour écrire et laisser ton cœur s’exprimer</p>
         </div>
         <div className="self-love-exercise__grid">
           <article className="self-love-exercise__card">
@@ -645,27 +644,6 @@ const SelfLovePage = () => {
           </article>
         </div>
       </section>
-      <section className="self-love-section self-love-affirmations">
-        <div className="self-love-section__header">
-          <h2>Affirmations personnalisées</h2>
-          <p>Ecris des phrases réalistes et bienveillantes qui correspondent à ton quotidien.</p>
-        </div>
-        <ul className="self-love-affirmations__list">
-          {safeState.customAffirmations.map((affirmation, index) => (
-            <li key={`custom-affirmation-${index}`} className="self-love-affirmations__item">
-              <label>
-                <span>Affirmation {index + 1}</span>
-                <textarea
-                  value={affirmation}
-                  className="self-love-affirmations__textarea"
-                  onChange={(event) => handleCustomAffirmationChange(index, event.target.value)}
-                />
-              </label>
-            </li>
-          ))}
-        </ul>
-      </section>
-
       <section className="self-love-section self-love-letter">
         <div className="self-love-letter__tabs">
           <button

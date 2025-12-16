@@ -1,8 +1,4 @@
-﻿const notificationOptions = [
-  {
-    label: "Notifications push",
-    description: "Choisissez vos preferences par type de notification. Activez uniquement les alertes importantes pour rester concentre.",
-  },
+const notificationOptions = [
   {
     label: "Notifications par e-mail",
     description: "Recevez un resume de vos activites ou des rappels de taches directement dans votre boite de reception.",

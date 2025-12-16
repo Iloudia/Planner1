@@ -2,12 +2,10 @@
 import type { ChangeEvent } from "react"
 import { Link } from "react-router-dom"
 import PageHeading from "../../components/PageHeading"
-import DailyGoalsTracker from "../../components/DailyGoalsTracker"
 import usePersistentState from "../../hooks/usePersistentState"
 import planner01 from "../../assets/planner-01.jpg"
 import planner02 from "../../assets/planner-02.jpg"
 import planner03 from "../../assets/planner-03.jpg"
-import planner05 from "../../assets/planner-05.jpg"
 import planner06 from "../../assets/planner-06.jpg"
 import "./Sport.css"
 
@@ -214,31 +212,9 @@ const SportPage = () => {
         </div>
       </section>
 
-      <section className="sport-habits">
-        <div className="sport-habits__image">
-          <img src={planner05} alt="Inspiration sport" />
-        </div>
-        <div className="sport-habits__panel">
-          <DailyGoalsTracker />
-
-          <section className="sport-reminders">
-            <div className="sport-reminders__header">
-              <span className="sport-reminders__title">Reminders</span>
-            </div>
-            <div className="sport-reminders__card">
-              <div className="sport-reminders__list">
-                <span>consistency</span>
-                <span>discipline</span>
-                <span>patience</span>
-              </div>
-            </div>
-          </section>
-        </div>
-      </section>
       <div className="sport-page__footer-bar" aria-hidden="true" />
     </div>
   )
 }
 
 export default SportPage
-

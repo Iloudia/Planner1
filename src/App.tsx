@@ -34,6 +34,8 @@ import SettingsNotifications from "./pages/Settings/SettingsNotifications"
 import SettingsAccessibility from "./pages/Settings/SettingsAccessibility"
 import SettingsDisplay from "./pages/Settings/SettingsDisplay"
 import SettingsLanguages from "./pages/Settings/SettingsLanguages"
+import SettingsCookies from "./pages/Settings/SettingsCookies"
+import AboutPage from "./pages/About/AboutPage"
 
 function NotFound() {
   return (
@@ -64,6 +66,7 @@ function App() {
           <Route path="/register" element={<AuthPage mode="register" />} />
           <Route path="/" element={<LandingPage />} />
           <Route path="/faq" element={<FAQPage />} />
+          <Route path="/a-propos" element={<AboutPage />} />
           <Route path="/confidentialite" element={<ConfidentialitePage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/cookies" element={<GestionCookiesPage />} />
@@ -91,6 +94,7 @@ function App() {
               <Route path="accessibilite" element={<SettingsAccessibility />} />
               <Route path="affichage" element={<SettingsDisplay />} />
               <Route path="langues" element={<SettingsLanguages />} />
+              <Route path="cookies" element={<SettingsCookies />} />
             </Route>
           </Route>
 

@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react"
+﻿﻿import { useEffect, useState } from "react"
 import recipeImg1 from "../../assets/planner-01.jpg"
 import recipeImg2 from "../../assets/planner-02.jpg"
 import recipeImg3 from "../../assets/planner-03.jpg"
@@ -485,16 +485,3 @@ const DietClassicPage = () => {
 }
 
 export default DietClassicPage
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,5 @@
+import PageHeading from "../../components/PageHeading"
+import portrait from "../../assets/madison-hart-dupe.jpeg"
 import "./AboutPage.css"
 
 const paragraphs = [
@@ -12,19 +14,24 @@ const paragraphs = [
   "Si toi aussi tu te sens parfois perdue, si ton esprit est rempli de pensées et que tu ressens le besoin de clarté, ce site est là pour t’accompagner. Pour t’aider à reprendre ta vie en main, avec douceur et intention.",
 ]
 
-export default function AboutPage() {
-  return (
-    <>
-      <div className="page-accent-bar" aria-hidden="true" />
-      <div className="about-page content-page">
+const AboutPage = () => (
+  <>
+    <div className="page-accent-bar" aria-hidden="true" />
+    <div className="about-page">
+      <PageHeading eyebrow="À propos" title="À propos de moi" />
+      <div className="about-shell content-page">
         <article className="about-article" aria-label="À propos">
           {paragraphs.map((text) => (
             <p key={text}>{text}</p>
           ))}
         </article>
+        <figure className="about-figure" aria-hidden="true">
+          <img src={portrait} alt="" loading="lazy" />
+        </figure>
       </div>
-      <div className="page-footer-bar" aria-hidden="true" />
-    </>
-  )
-}
+    </div>
+    <div className="page-footer-bar" aria-hidden="true" />
+  </>
+)
 
+export default AboutPage

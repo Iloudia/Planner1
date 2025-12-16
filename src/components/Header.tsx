@@ -13,6 +13,7 @@ function Header() {
 
   const searchTargets = useMemo(
     () => [
+      { label: "À propos", path: "/a-propos" },
       { label: "Accueil", path: "/home" },
       { label: "Contact", path: "/contact" },
       { label: "Finances", path: "/finances" },
@@ -187,11 +188,6 @@ function Header() {
                     </button>
                   </li>
                   <li>
-                    <button type="button" className="header-menu__item" onClick={() => handleNavigate("/activite")}>
-                      Votre activite
-                    </button>
-                  </li>
-                  <li>
                     <button type="button" className="header-menu__item" onClick={() => closeMenus()}>
                       Changer l apparence
                     </button>
@@ -199,11 +195,6 @@ function Header() {
                   <li>
                     <button type="button" className="header-menu__item" onClick={() => closeMenus()}>
                       Signaler un probleme
-                    </button>
-                  </li>
-                  <li>
-                    <button type="button" className="header-menu__item" onClick={() => handleNavigate("/login")}>
-                      Changer de compte
                     </button>
                   </li>
                   <li>

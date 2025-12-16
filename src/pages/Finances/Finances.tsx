@@ -95,6 +95,14 @@ const monthFormatter = new Intl.DateTimeFormat('fr-FR', {
   year: 'numeric',
 })
 
+const historyDateFormatter = new Intl.DateTimeFormat('fr-FR', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+})
+
+const FUTURE_MONTHS_TO_INCLUDE = 14
+
 const formatDateToISO = (date: Date) => {
   const year = date.getFullYear()
   const month = `${date.getMonth() + 1}`.padStart(2, '0')
@@ -121,6 +129,49 @@ const parseMonthKeyToDate = (monthKey: string) => {
 }
 
 const formatMonthKey = (monthKey: string) => capitalize(monthFormatter.format(parseMonthKeyToDate(monthKey)))
+
+const formatHistoryDate = (isoDate: string) => {
+  const parsed = new Date(isoDate)
+  if (Number.isNaN(parsed.getTime())) {
+    return isoDate
+  }
+  return capitalize(historyDateFormatter.format(parsed))
+}
+
+const addMonthsToMonthKey = (monthKey: string, offset: number) => {
+  const baseDate = parseMonthKeyToDate(monthKey)
+  const nextDate = new Date(baseDate.getFullYear(), baseDate.getMonth() + offset, 1)
+  return getMonthKeyFromDate(nextDate)
+}
+
+const generateFutureMonths = (monthKey: string, monthsAhead: number) => {
+  const keys: string[] = []
+  for (let index = 1; index <= monthsAhead; index += 1) {
+    keys.push(addMonthsToMonthKey(monthKey, index))
+  }
+  return keys
+}
+
+const groupHistoryByMonth = (entries: FinanceEntry[]) => {
+  const groups: Array<{ monthKey: string; monthLabel: string; entries: FinanceEntry[] }> = []
+  entries.forEach((entry) => {
+    const monthKey = getMonthKeyFromISO(entry.date)
+    if (!monthKey) {
+      return
+    }
+    let group = groups.find((existing) => existing.monthKey === monthKey)
+    if (!group) {
+      group = {
+        monthKey,
+        monthLabel: formatMonthKey(monthKey),
+        entries: [],
+      }
+      groups.push(group)
+    }
+    group.entries.push(entry)
+  })
+  return groups
+}
 
 const getDefaultDateForMonth = (monthKey: string) => {
   const today = new Date()
@@ -193,6 +244,7 @@ const FinancePage = () => {
     direction: 'out',
   }))
   const [showFullHistory, setShowFullHistory] = useState(false)
+  const [isHistoryCollapsed, setIsHistoryCollapsed] = useState(true)
 
   useEffect(() => {
     document.body.classList.add('planner-page--white')
@@ -227,6 +279,9 @@ const FinancePage = () => {
       }
     })
     keySet.add(currentMonthKey)
+    generateFutureMonths(currentMonthKey, FUTURE_MONTHS_TO_INCLUDE).forEach((futureKey) => {
+      keySet.add(futureKey)
+    })
     return Array.from(keySet).sort((a, b) => b.localeCompare(a))
   }, [entries, monthlySnapshots, currentMonthKey])
 
@@ -423,12 +478,13 @@ const FinancePage = () => {
     setShowFullHistory(false)
   }, [selectedMonthKey])
 
-  const visibleHistory = useMemo(
-    () => (showFullHistory ? selectedMonthEntries : selectedMonthEntries.slice(0, 5)),
-    [selectedMonthEntries, showFullHistory],
-  )
+const visibleHistory = useMemo(
+  () => (showFullHistory ? selectedMonthEntries : selectedMonthEntries.slice(0, 5)),
+  [selectedMonthEntries, showFullHistory],
+)
 
-  const hasHistoryToggle = selectedMonthEntries.length > 5
+const hasHistoryToggle = selectedMonthEntries.length > 5
+const groupedHistory = useMemo(() => groupHistoryByMonth(visibleHistory), [visibleHistory])
 
   const handleDraftChange = <Field extends keyof FinanceDraft>(field: Field, value: FinanceDraft[Field]) => {
     setDraft((previous) => ({
@@ -722,33 +778,67 @@ const FinancePage = () => {
 
       <section className="finance-history dashboard-panel">
         <header className="finance-section-header">
-          <span className="finance-section-header__eyebrow">mémoire du mois</span>
-          <h2>Historique du mois</h2>
+          <div className="finance-history__header">
+            <div className="finance-history__title">
+              <span className="finance-section-header__eyebrow">mémoire du mois</span>
+              <h2>Historique du mois</h2>
+            </div>
+            <button
+              type="button"
+              className="finance-history__collapse"
+              onClick={() => setIsHistoryCollapsed((previous) => !previous)}
+              aria-expanded={!isHistoryCollapsed}
+            >
+              {isHistoryCollapsed ? 'Afficher' : 'Fermer'}
+            </button>
+          </div>
         </header>
-        {selectedMonthEntries.length === 0 ? (
+        {isHistoryCollapsed ? (
+          <p className="finance-history__collapsed">Historique masqué. Cliquez sur "Afficher" pour le rouvrir.</p>
+        ) : selectedMonthEntries.length === 0 ? (
           <p className="finance-history__empty">Aucun mouvement enregistré pour {selectedMonthLabel}.</p>
         ) : (
           <>
-            <ul className="finance-history__list">
-              {visibleHistory.map((entry) => {
-                const definition = entry.category ? categoryDefinitions[entry.category] : undefined
-                const amountValue = entry.direction === 'out' ? -entry.amount : entry.amount
-                const amountColor = entry.direction === 'in' ? '#16a34a' : definition?.color ?? '#1e1b4b'
-                const categoryLabel = entry.direction === 'in' ? 'Revenus' : definition?.label ?? 'Dépense'
-                return (
-                  <li key={entry.id} className="finance-history__item">
-                    <div className="finance-history__meta">
-                      <span className="finance-history__label">{entry.label}</span>
-                      <span className="finance-history__date">{entry.date}</span>
-                    </div>
-                    <div className="finance-history__amount" style={{ color: amountColor }}>
-                      {formatSignedCurrency(amountValue)}
-                    </div>
-                    <span className="finance-history__category">{categoryLabel}</span>
-                  </li>
-                )
-              })}
-            </ul>
+            <div className="finance-history__groups">
+              {groupedHistory.map((group) => (
+                <div key={group.monthKey} className="finance-history__group">
+                  <div className="finance-history__month-chip">{group.monthLabel}</div>
+                  <ul className="finance-history__list">
+                    {group.entries.map((entry) => {
+                      const definition = entry.category ? categoryDefinitions[entry.category] : undefined
+                      const amountValue = entry.direction === 'out' ? -entry.amount : entry.amount
+                      const amountColor = entry.direction === 'in' ? '#16a34a' : definition?.color ?? '#1e1b4b'
+                      const categoryLabel = entry.direction === 'in' ? 'Revenus' : definition?.label ?? 'Dépense'
+                      const formattedDate = formatHistoryDate(entry.date)
+                      const directionLabel = entry.direction === 'in' ? 'Entrée' : 'Sortie'
+
+                      return (
+                        <li key={entry.id} className="finance-history__item">
+                          <div className="finance-history__indicator" style={{ backgroundColor: amountColor }}>
+                            <span aria-hidden="true">{entry.direction === 'in' ? '+' : '-'}</span>
+                          </div>
+                          <div className="finance-history__details">
+                            <div className="finance-history__row">
+                              <span className="finance-history__label">{entry.label}</span>
+                              <span className="finance-history__amount" style={{ color: amountColor }}>
+                                {formatSignedCurrency(amountValue)}
+                              </span>
+                            </div>
+                            <div className="finance-history__meta">
+                              <span className="finance-history__category-chip" style={{ color: amountColor }}>
+                                {categoryLabel}
+                              </span>
+                              <span className="finance-history__direction">{directionLabel}</span>
+                              <span className="finance-history__date">{formattedDate}</span>
+                            </div>
+                          </div>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </div>
+              ))}
+            </div>
             {hasHistoryToggle && (
               <button
                 type="button"
