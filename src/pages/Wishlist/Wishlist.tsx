@@ -391,6 +391,7 @@ const WishlistPage = () => {
     return [...baseCards, ...extras]
   }, [wishlist])
 
+
   useEffect(() => {
     document.body.classList.add("planner-page--white")
     return () => {
@@ -601,6 +602,21 @@ const WishlistPage = () => {
       setMoveSubcategory(options[0])
     }
   }, [getCategorySubcategories, moveTargetCategoryId, moveSubcategory])
+
+  useEffect(() => {
+    if (!isNotePanelOpen || hasMemo || isEditingNote) {
+      return
+    }
+    const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target as HTMLElement | null
+      if (target?.closest(".wishlist-modal__note-display") || target?.closest(".wishlist-modal__note")) {
+        return
+      }
+      setIsNotePanelOpen(false)
+    }
+    window.addEventListener("pointerdown", handlePointerDown)
+    return () => window.removeEventListener("pointerdown", handlePointerDown)
+  }, [hasMemo, isEditingNote, isNotePanelOpen])
 
   const handleToggleMenu = (event: MouseEvent<HTMLButtonElement>, categoryId: WishlistCategoryId) => {
     event.stopPropagation()
@@ -1173,6 +1189,7 @@ const WishlistPage = () => {
         },
       }
     })
+    setFeedback("Categorie marquee comme favorite")
   }
 
   const handleSaveNote = () => {
@@ -1239,17 +1256,13 @@ const WishlistPage = () => {
     <div className="wishlist-page aesthetic-page" onClick={() => setOpenMenuFor(null)}>
       <header className="wishlist-hero dashboard-panel">
         <div className="wishlist-hero__content">
-          <span className="wishlist-hero__eyebrow">envies a collectionner</span>
-          <h2>Imagine ta wishlist ideale, categorie par categorie.</h2>
-          <p>
-            Organise tes inspirations shopping, deco ou voyages en un seul espace pastel. Chaque categorie devient une
-            mini moodboard pret a etre partage.
-          </p>
+          <h2>Imagine ta wishlist idéale, catégorie par catégorie.</h2>
+          <p>Organise tes inspirations shopping, deco ou voyages en un seul espace.</p>
         </div>
       </header>
       <div className="page-accent-bar" aria-hidden="true" />
       <div className="wishlist-heading-row">
-        <PageHeading eyebrow="Envies" title="Wishlist ideal" />
+        <PageHeading eyebrow="Envies" title="Wishlist idéale" />
         <button
           type="button"
           className="wishlist-heading-row__button"
@@ -1883,7 +1896,7 @@ const WishlistPage = () => {
           <div className="wishlist-move" onClick={(event) => event.stopPropagation()}>
             <h3>Deplacer vers une autre wishlist</h3>
             {moveTargetCategories.length === 0 ? (
-              <p>Crée une nouvelle carte pour pouvoir deplacer cet element.</p>
+              <p>Cree une nouvelle carte pour pouvoir deplacer cet element.</p>
             ) : (
               <>
                 <p>Choisis la wishlist de destination puis selectionne la categorie dans laquelle ranger cet element.</p>

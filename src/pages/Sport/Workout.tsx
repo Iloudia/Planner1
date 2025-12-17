@@ -24,6 +24,18 @@ type VideoCard = {
   thumbnail: string
 }
 
+type SeriesItem = {
+  id: string
+  label: string
+  completed: boolean
+}
+
+const STORAGE_KEYS = {
+  exercises: "planner.workout.exercises",
+  videos: "planner.workout.videos",
+  series: "planner.workout.series",
+}
+
 const DEFAULT_EXERCISES: ExerciseCard[] = [
   {
     id: "ex-1",
@@ -68,10 +80,49 @@ const extractYoutubeId = (url: string) => {
 }
 
 const WorkoutPage = () => {
-  const [exercises, setExercises] = useState<ExerciseCard[]>(DEFAULT_EXERCISES)
-  const [videos, setVideos] = useState<VideoCard[]>(DEFAULT_VIDEOS)
+  const [exercises, setExercises] = useState<ExerciseCard[]>(() => {
+    if (typeof window === "undefined") return DEFAULT_EXERCISES
+    try {
+      const stored = window.localStorage.getItem(STORAGE_KEYS.exercises)
+      if (!stored) return DEFAULT_EXERCISES
+      const parsed = JSON.parse(stored)
+      return Array.isArray(parsed) ? parsed : DEFAULT_EXERCISES
+    } catch (error) {
+      console.error("Impossible de restaurer les exercices", error)
+      return DEFAULT_EXERCISES
+    }
+  })
+  const [videos, setVideos] = useState<VideoCard[]>(() => {
+    if (typeof window === "undefined") return DEFAULT_VIDEOS
+    try {
+      const stored = window.localStorage.getItem(STORAGE_KEYS.videos)
+      if (!stored) return DEFAULT_VIDEOS
+      const parsed = JSON.parse(stored)
+      return Array.isArray(parsed) ? parsed : DEFAULT_VIDEOS
+    } catch (error) {
+      console.error("Impossible de restaurer les vidéos", error)
+      return DEFAULT_VIDEOS
+    }
+  })
   const [form, setForm] = useState({ title: "", muscle: "", category: "", image: "" })
   const [videoForm, setVideoForm] = useState({ title: "", url: "" })
+  const [selectedExerciseId, setSelectedExerciseId] = useState<string | null>(null)
+  const [seriesByExercise, setSeriesByExercise] = useState<Record<string, SeriesItem[]>>(() => {
+    if (typeof window === "undefined") return {}
+    try {
+      const stored = window.localStorage.getItem(STORAGE_KEYS.series)
+      if (!stored) return {}
+      const parsed = JSON.parse(stored)
+      if (typeof parsed !== "object" || parsed === null) {
+        return {}
+      }
+      return parsed as Record<string, SeriesItem[]>
+    } catch (error) {
+      console.error("Impossible de restaurer les séries", error)
+      return {}
+    }
+  })
+  const [seriesInput, setSeriesInput] = useState("")
 
   useEffect(() => {
     document.body.classList.add("planner-page--white")
@@ -79,6 +130,51 @@ const WorkoutPage = () => {
       document.body.classList.remove("planner-page--white")
     }
   }, [])
+
+  useEffect(() => {
+    try {
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(STORAGE_KEYS.exercises, JSON.stringify(exercises))
+      }
+    } catch (error) {
+      console.error("Impossible de sauvegarder les exercices", error)
+    }
+  }, [exercises])
+
+  useEffect(() => {
+    try {
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(STORAGE_KEYS.videos, JSON.stringify(videos))
+      }
+    } catch (error) {
+      console.error("Impossible de sauvegarder les vidéos", error)
+    }
+  }, [videos])
+
+  useEffect(() => {
+    try {
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(STORAGE_KEYS.series, JSON.stringify(seriesByExercise))
+      }
+    } catch (error) {
+      console.error("Impossible de sauvegarder les séries", error)
+    }
+  }, [seriesByExercise])
+
+  useEffect(() => {
+    if (!selectedExerciseId) return
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setSelectedExerciseId(null)
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [selectedExerciseId])
+
+  useEffect(() => {
+    setSeriesInput("")
+  }, [selectedExerciseId])
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -114,10 +210,71 @@ const WorkoutPage = () => {
 
   const handleDeleteExercise = (exerciseId: string) => {
     setExercises((previous) => previous.filter((item) => item.id !== exerciseId))
+    setSeriesByExercise((previous) => {
+      if (!previous[exerciseId]) return previous
+      const next = { ...previous }
+      delete next[exerciseId]
+      return next
+    })
+    if (selectedExerciseId === exerciseId) {
+      setSelectedExerciseId(null)
+    }
   }
 
   const handleDeleteVideo = (videoId: string) => {
     setVideos((previous) => previous.filter((item) => item.id !== videoId))
+  }
+
+  const handleOpenVideo = (url: string) => {
+    window.open(url, "_blank", "noopener,noreferrer")
+  }
+
+  const handleOpenPlanner = (exerciseId: string) => {
+    setSelectedExerciseId(exerciseId)
+  }
+
+  const handleClosePlanner = () => {
+    setSelectedExerciseId(null)
+  }
+
+  const handleAddSeries = (exerciseId: string) => {
+    const label = seriesInput.trim()
+    if (!label) return
+    setSeriesByExercise((previous) => {
+      const current = previous[exerciseId] ?? []
+      const nextItem: SeriesItem = {
+        id: `serie-${Date.now()}`,
+        label,
+        completed: false,
+      }
+      return {
+        ...previous,
+        [exerciseId]: [...current, nextItem],
+      }
+    })
+    setSeriesInput("")
+  }
+
+  const toggleSeriesItem = (exerciseId: string, seriesId: string) => {
+    setSeriesByExercise((previous) => {
+      const current = previous[exerciseId] ?? []
+      return {
+        ...previous,
+        [exerciseId]: current.map((item) =>
+          item.id === seriesId ? { ...item, completed: !item.completed } : item,
+        ),
+      }
+    })
+  }
+
+  const handleDeleteSeries = (exerciseId: string, seriesId: string) => {
+    setSeriesByExercise((previous) => {
+      const current = previous[exerciseId] ?? []
+      return {
+        ...previous,
+        [exerciseId]: current.filter((item) => item.id !== seriesId),
+      }
+    })
   }
 
   const handleImageChange = (file: File | undefined | null) => {
@@ -133,15 +290,19 @@ const WorkoutPage = () => {
     reader.readAsDataURL(file)
   }
 
-  const rituals = useMemo(
-    () => [
-      "Hype playlist",
-      "Gourde prete",
-      "Mode avion / DND",
-      "Stretch rapide",
-      "Snack pre-workout",
-    ],
-    [],
+  const selectedExercise = useMemo(
+    () => exercises.find((exercise) => exercise.id === selectedExerciseId) ?? null,
+    [exercises, selectedExerciseId],
+  )
+
+  const selectedSeries = useMemo(() => {
+    if (!selectedExerciseId) return []
+    return seriesByExercise[selectedExerciseId] ?? []
+  }, [seriesByExercise, selectedExerciseId])
+
+  const completedSeriesCount = useMemo(
+    () => selectedSeries.filter((item) => item.completed).length,
+    [selectedSeries],
   )
 
   return (
@@ -159,17 +320,6 @@ const WorkoutPage = () => {
       <PageHeading eyebrow="Routine active" title="Workout board" />
 
       <div className="workout-layout">
-        <section className="workout-rituals">
-          <div className="workout-section-header">
-            <h2>Pre-Workout Rituals</h2>
-          </div>
-          <ul>
-            {rituals.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </section>
-
         <section className="workout-exercises">
           <header className="workout-exercises__header">
             <div className="workout-section-header">
@@ -206,10 +356,25 @@ const WorkoutPage = () => {
                 placeholder="HIIT, cardio, stretching..."
               />
             </label>
-            <label>
-              <span>Image (import)</span>
-              <input type="file" accept="image/*" onChange={(e) => handleImageChange(e.target.files?.[0])} />
-            </label>
+            <div className="workout-form__photo-compact">
+              <span>Image</span>
+              <div className="workout-photo-compact__actions">
+                <label className="workout-photo-compact__button">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(event) => {
+                      handleImageChange(event.target.files?.[0])
+                      event.target.value = ""
+                    }}
+                  />
+                  Ajouter une image
+                </label>
+                <small className="workout-photo-compact__hint">
+                  {form.image ? "Image importée" : "Photo par défaut"}
+                </small>
+              </div>
+            </div>
             <button type="submit">Ajouter la carte</button>
           </form>
         </section>
@@ -217,14 +382,29 @@ const WorkoutPage = () => {
         <section className="workout-library workout-section--full">
           <div className="workout-cards">
             {exercises.map((exercise) => (
-              <article key={exercise.id} className="workout-card">
+              <article
+                key={exercise.id}
+                className="workout-card"
+                role="button"
+                tabIndex={0}
+                onClick={() => handleOpenPlanner(exercise.id)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault()
+                    handleOpenPlanner(exercise.id)
+                  }
+                }}
+              >
                 <button
                   type="button"
                   className="workout-card__delete"
                   aria-label={`Supprimer ${exercise.title}`}
-                  onClick={() => handleDeleteExercise(exercise.id)}
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    handleDeleteExercise(exercise.id)
+                  }}
                 >
-                  ×
+                  &times;
                 </button>
                 <div className="workout-card__media">
                   <img src={exercise.image} alt={exercise.title} />
@@ -266,22 +446,35 @@ const WorkoutPage = () => {
           </form>
           <div className="workout-video-grid">
             {videos.map((video) => (
-              <article key={video.id} className="workout-video-card">
+              <article
+                key={video.id}
+                className="workout-video-card"
+                role="link"
+                tabIndex={0}
+                onClick={() => handleOpenVideo(video.url)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault()
+                    handleOpenVideo(video.url)
+                  }
+                }}
+              >
                 <button
                   type="button"
                   className="workout-card__delete"
                   aria-label={`Supprimer ${video.title}`}
-                  onClick={() => handleDeleteVideo(video.id)}
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    handleDeleteVideo(video.id)
+                  }}
                 >
-                  ×
+                  &times;
                 </button>
                 <div className="workout-video-thumb">
                   <img src={video.thumbnail} alt={video.title} />
                 </div>
                 <div className="workout-video-card__body">
-                  <a href={video.url} target="_blank" rel="noreferrer">
-                    {video.title}
-                  </a>
+                  <p>{video.title}</p>
                   <span>youtube.com</span>
                 </div>
               </article>
@@ -290,6 +483,89 @@ const WorkoutPage = () => {
         </section>
       </div>
       <div className="workout-page__footer-bar" aria-hidden="true" />
+
+      {selectedExercise && (
+        <div
+          className="workout-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="workout-modal-title"
+          onClick={handleClosePlanner}
+        >
+          <div className="workout-modal__panel" onClick={(event) => event.stopPropagation()}>
+            <button
+              type="button"
+              className="workout-modal__close"
+              onClick={handleClosePlanner}
+              aria-label="Fermer le plan d'entraînement"
+            >
+              &times;
+            </button>
+            <header className="workout-modal__header">
+              <div className="workout-modal__cover">
+                <img src={selectedExercise.image} alt={selectedExercise.title} />
+              </div>
+              <div>
+                <p className="workout-modal__eyebrow">Planifier cette session</p>
+                <h3 id="workout-modal-title">{selectedExercise.title}</h3>
+                <p className="workout-modal__meta">
+                  <span>{selectedExercise.muscle}</span>
+                  <span>{selectedExercise.category}</span>
+                </p>
+              </div>
+            </header>
+            <div className="workout-modal__body">
+              <form
+                className="workout-modal__series-form"
+                onSubmit={(event) => {
+                  event.preventDefault()
+                  if (selectedExerciseId) {
+                    handleAddSeries(selectedExerciseId)
+                  }
+                }}
+              >
+                <input
+                  type="text"
+                  value={seriesInput}
+                  onChange={(event) => setSeriesInput(event.target.value)}
+                  placeholder="Ex : 4 x 12 squats, 10 min rameur..."
+                />
+                <button type="submit">Ajouter une série</button>
+              </form>
+              {selectedSeries.length === 0 ? (
+                <p className="workout-modal__empty">Ajoute tes exercices personnalisés pour cette session.</p>
+              ) : (
+                <ul className="workout-modal__series-list">
+                  {selectedSeries.map((serie) => (
+                    <li key={serie.id}>
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={serie.completed}
+                          onChange={() => selectedExerciseId && toggleSeriesItem(selectedExerciseId, serie.id)}
+                        />
+                        <span>{serie.label}</span>
+                      </label>
+                      <button
+                        type="button"
+                        aria-label={`Supprimer ${serie.label}`}
+                        onClick={() => selectedExerciseId && handleDeleteSeries(selectedExerciseId, serie.id)}
+                      >
+                        &times;
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            <footer className="workout-modal__footer">
+              <div className="workout-modal__summary">
+                {completedSeriesCount}/{selectedSeries.length} séries cochées
+              </div>
+            </footer>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

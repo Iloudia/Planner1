@@ -5,6 +5,7 @@ import recipeImg3 from "../../assets/planner-03.jpg"
 import recipeImg4 from "../../assets/planner-04.jpg"
 import recipeImg5 from "../../assets/planner-05.jpg"
 import recipeImg6 from "../../assets/planner-06.jpg"
+import PageHeading from "../../components/PageHeading"
 import "./DietPage.css"
 
 type Recipe = {
@@ -309,27 +310,20 @@ const recipeCollections = {
   healthy: healthyRecipes,
 } as const
 
-const MassContent = () => (
-  <article className="diet-blog">
-    <p className="diet-eyebrow">Prise de masse</p>
-    <h1>4 repas pour une prise de masse</h1>
-    <p>
-      Ici tu boostes ton corps sans malbouffe ni pression. Les repas restent chaleureux, les collations restent gourmandes et chaque bouchee nourrit
-      reellement tes entrainements.
-    </p>
-  </article>
-)
-
-const HealthyContent = () => (
-  <article className="diet-blog">
-    <p className="diet-eyebrow">Healthy lifestyle</p>
-    <h1>Manger sain sans se priver</h1>
-    <p>
-      Manger healthy, c'est choisir des assiettes qui respectent ton energie et ton rythme. Ici, pas de restriction: juste des idees claires pour rester
-      legere, concentree et inspiree.
-    </p>
-  </article>
-)
+const DIET_HEADINGS = {
+  mass: {
+    eyebrow: "Prise de masse",
+    title: "4 repas pour une prise de masse",
+    description:
+      "Ici tu boostes ton corps sans malbouffe ni pression. Les repas restent chaleureux, les collations restent gourmandes et chaque bouchee nourrit reellement tes entrainements.",
+  },
+  healthy: {
+    eyebrow: "Healthy lifestyle",
+    title: "Manger sain sans se priver",
+    description:
+      "Manger healthy, c'est choisir des assiettes qui respectent ton energie et ton rythme. Pas de restriction : juste des idees claires pour rester legere, concentree et inspiree.",
+  },
+} as const
 
 const RECIPE_FAVORITES_KEY = "planner.diet.recipeFavorites"
 
@@ -346,6 +340,7 @@ const DietClassicPage = () => {
   })
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
   const activeRecipes = recipeCollections[tab]
+  const currentHeading = DIET_HEADINGS[tab]
 
   useEffect(() => {
     if (typeof window === "undefined") return
@@ -372,16 +367,17 @@ const DietClassicPage = () => {
     <>
       <div className="page-accent-bar" aria-hidden="true" />
       <main className="diet-gymgirl-page">
-        <div className="diet-toggle">
-          <button type="button" className={tab === "mass" ? "is-active" : ""} onClick={() => setTab("mass")}>
-            Prise de masse
-          </button>
-          <button type="button" className={tab === "healthy" ? "is-active" : ""} onClick={() => setTab("healthy")}>
-            Healthy
-          </button>
-        </div>
-
-        {tab === "mass" ? <MassContent /> : <HealthyContent />}
+        <article className="diet-blog">
+          <PageHeading eyebrow={currentHeading.eyebrow} title={currentHeading.title} className="diet-page-heading" />
+          <div className="diet-toggle diet-toggle--heading">
+            <button type="button" className={tab === "mass" ? "is-active" : ""} onClick={() => setTab("mass")}>
+              Prise de masse
+            </button>
+            <button type="button" className={tab === "healthy" ? "is-active" : ""} onClick={() => setTab("healthy")}>
+              Healthy
+            </button>
+          </div>
+        </article>
 
         <section className="diet-blog">
           <div className="diet-recipe-grid">
@@ -425,14 +421,6 @@ const DietClassicPage = () => {
               </article>
             ))}
           </div>
-        </section>
-
-        <section className="diet-blog">
-          <h2>Message final</h2>
-          <p>
-            Ton corps n'a pas besoin d'être puni. Il a besoin d'être nourri, respecté et aimé. Que tu sois en prise de
-            masse ou en mode healthy, cet espace est là pour t'aider à construire une relation saine avec la nourriture.
-          </p>
         </section>
 
         {selectedRecipe ? (
