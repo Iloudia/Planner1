@@ -49,13 +49,6 @@ const ContactPage = () => (
         </form>
       </section>
 
-      <section className="legal-section">
-        <h2 className="legal-section__title">Autres moyens</h2>
-        <p className="legal-section__text">
-          Tu peux egalement m ecrire en message prive sur Instagram @planner.app pour un echange rapide et spontane, ou a{" "}
-          <a href="mailto:contact@planner.app">contact@planner.app</a>.
-        </p>
-      </section>
     </div>
     <div className="page-footer-bar" aria-hidden="true" />
   </>

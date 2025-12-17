@@ -194,7 +194,7 @@
 
 .finance-dashboard {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
   column-gap: 2rem;
   row-gap: 0;
 }
@@ -373,7 +373,7 @@
 .finance-inspiration img {
   display: block;
   width: 100%;
-  height: 600px;
+  height: 630px;
   object-fit: cover;
   border-radius: 22px;
   box-shadow: 0 24px 55px rgba(15, 23, 42, 0.18);
@@ -384,9 +384,10 @@
 }
 
 .finance-balance__form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.1rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+  align-items: end;
 }
 
 .finance-balance__field {
@@ -407,17 +408,18 @@
 }
 
 .finance-balance__action {
-  padding: 0.55rem 1.4rem; /* hauteur réduite */
-  border-radius: 999px;
+  padding: 0.8rem 1rem;
+  border-radius: 14px;
   border: none;
   background-color: #f472b6;
   color: #f8fafc;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 1rem;
   cursor: pointer;
   box-shadow: 0 12px 32px rgba(244, 114, 182, 0.24);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  align-self: center; /* il ne sera plus stretch comme l'input */
+  width: 100%;
+  justify-self: stretch;
 }
 
 .finance-balance__action:hover {
@@ -429,7 +431,8 @@
 
 .finance-balance__stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, auto);
   gap: 1.1rem;
 }
 
@@ -476,8 +479,9 @@
   gap: 1.25rem;
   border: 1px solid rgba(148, 163, 184, 0.16);
   box-shadow: 0 24px 70px rgba(15, 23, 42, 0.08);
-  min-height: 520px;
-  max-height: 520px;
+  min-height: 560px;
+  max-height: 560px;
+  overflow: hidden;
 }
 
 .finance-balance__chart-card::after {
@@ -676,6 +680,24 @@
   gap: 1rem;
 }
 
+.finance-history__delete {
+  border: none;
+  background: rgba(15, 23, 42, 0.06);
+  color: rgba(15, 23, 42, 0.6);
+  border-radius: 999px;
+  width: 32px;
+  height: 32px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.finance-history__delete:hover {
+  background: rgba(244, 114, 182, 0.12);
+  color: #c026d3;
+}
+
 .finance-history__label {
   font-size: 1.05rem;
   font-weight: 600;
@@ -685,6 +707,7 @@
 .finance-history__amount {
   font-weight: 700;
   font-size: 1.15rem;
+  margin-left: auto;
 }
 
 .finance-history__meta {

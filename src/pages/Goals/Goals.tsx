@@ -1,5 +1,6 @@
 import { useState, type ChangeEvent } from "react";
 import DailyGoalsTracker from "../../components/DailyGoalsTracker";
+import PageHeading from "../../components/PageHeading";
 import photo1 from "../../assets/planner-01.jpg";
 import photo2 from "../../assets/planner-02.jpg";
 import photo3 from "../../assets/planner-03.jpg";
@@ -69,16 +70,16 @@ const GoalsPage = () => {
         ))}
       </div>
       <div className="page-accent-bar" aria-hidden="true" />
+      <PageHeading eyebrow="Goals" title="Sport goals" className="goals-page-heading" />
       <div className="content-page goals-page">
 
-        <header className="goals-hero">
-          <div>
-            <div className="hero-chip">Goals</div>
-            <h2>Sport goals</h2>
-            <p className="muted">Visualise tes priorites sportives et suis leur avancee.</p>
-          </div>
-        </header>
+        
+        <p className="muted goals-page-heading__intro">Visualise tes priorites sportives et suis leur avancee.</p>
 
+        <section className="goals-daily">
+          <DailyGoalsTracker />
+        </section>
+        
         <section className="goals-grid" aria-label="Goals sport">
           {sportGoals.map((goal) => (
             <article key={goal.id} className="goal-card">
@@ -100,9 +101,7 @@ const GoalsPage = () => {
           ))}
         </section>
 
-        <section className="goals-daily">
-          <DailyGoalsTracker />
-        </section>
+
 
         <section className="body-goals" aria-label="Body goals photos">
           <header className="body-goals__header">

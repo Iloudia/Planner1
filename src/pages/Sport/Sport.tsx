@@ -126,7 +126,7 @@ const SportPage = () => {
       <section className="sport-quick-panels">
         <div className="sport-quick-panel">
           <div className="sport-quick-panel__header">
-            <span className="sport-quick-panel__title">Quick Adds</span>
+            <span className="sport-quick-panel__title">Ajouts rapides</span>
           </div>
           <div className="sport-quick-panel__divider" />
           <div className="sport-quick-panel__chips">
@@ -179,7 +179,6 @@ const SportPage = () => {
       <section className="sport-board">
         <header className="sport-section-header">
           <div>
-            <span className="sport-section-header__eyebrow">Organisation</span>
             <h2>Planning de sport</h2>
           </div>
           {weekRange ? <p className="sport-board__range">Semaine du {weekRange}</p> : null}

@@ -97,7 +97,7 @@ const RoutineComposer = ({
       />
     </label>
     <label>
-      <span>DÃ©tail (optionnel)</span>
+      <span>Détail (optionnel)</span>
       <textarea
         value={draft.detail}
         onChange={(event) => onDraftChange('detail', event.target.value)}
@@ -223,9 +223,9 @@ const RoutinePage = () => {
               draft={routineDrafts.morning}
               onDraftChange={(field, value) => handleRoutineDraftChange('morning', field, value)}
               onSubmit={handleRoutineSubmit('morning')}
-              buttonLabel="Ajouter Ã  ma routine du matin"
-              placeholderTitle="Ex : Boire un verre d'eau tiÃ¨de citronnÃ©"
-              placeholderDetail="DÃ©taille si besoin (durÃ©e, intention, mantra...)"
+              buttonLabel="Ajouter à ma routine du matin"
+              placeholderTitle="Ex : Boire un verre d’eau tiède citronné"
+              placeholderDetail="Détaille si besoin (durée, intention, mantra...)"
             />
           </div>
         </section>
@@ -252,8 +252,8 @@ const RoutinePage = () => {
               draft={routineDrafts.evening}
               onDraftChange={(field, value) => handleRoutineDraftChange('evening', field, value)}
               onSubmit={handleRoutineSubmit('evening')}
-              buttonLabel="Ajouter Ã  ma routine du soir"
-              placeholderTitle="Ex : PrÃ©parer mes vÃªtements pour demain"
+              buttonLabel="Ajouter à ma routine du soir"
+              placeholderTitle="Ex : Préparer mes vêtements pour demain"
               placeholderDetail="Note ce que tu veux te rappeler ou ressentir"
             />
           </div>

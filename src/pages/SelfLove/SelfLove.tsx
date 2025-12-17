@@ -1,4 +1,4 @@
-import type { ChangeEvent, FormEvent } from 'react'
+﻿import type { ChangeEvent, FormEvent } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import stampLove from '../../assets/Timbre-1.png'
 import stampKey from '../../assets/Timbre-2.png'
@@ -23,6 +23,15 @@ type SelfLoveJournalEntry = {
   text: string
   createdAt: string
 }
+type SelfLoveInnerChildSnapshot = {
+  message: string
+  reassurance: string
+  neededWords: string
+}
+type SelfLoveBestFriendSnapshot = {
+  advice: string
+  selfTalk: string
+}
 type SelfLoveSavedLetter = {
   id: string
   template: 'classic' | 'kitty'
@@ -30,6 +39,9 @@ type SelfLoveSavedLetter = {
   from?: string
   body: string
   createdAt: string
+  innerChild?: SelfLoveInnerChildSnapshot
+  bestFriend?: SelfLoveBestFriendSnapshot
+  entryType: 'letter' | 'innerChild' | 'bestFriend'
 }
 type SelfLoveState = {
   certificatePhoto: string | null
@@ -51,8 +63,8 @@ type SelfLoveState = {
 }
 const PHOTO_SLOT_COUNT = 6
 const DEFAULT_CUSTOM_AFFIRMATIONS = [
-  "J'apprends à me traiter avec douceur.",
-  'Je mérite l’attention que je me donne.',
+  "J'apprends a me traiter avec douceur.",
+  "Je merite l'attention que je me donne.",
   'Je prends soin de moi un peu plus chaque jour.',
 ]
 const createDefaultState = (): SelfLoveState => ({
@@ -64,12 +76,12 @@ const createDefaultState = (): SelfLoveState => ({
   qualities: [
     { id: 'quality-1', text: 'Mon sourire illumine les gens.' },
     { id: 'quality-2', text: "J'ai une force tranquille." },
-    { id: 'quality-3', text: 'Je sais écouter avec le cœur.' },
+    { id: 'quality-3', text: 'Je sais ecouter avec le coeur.' },
   ],
   thoughts: [
     { id: 'thought-1', text: 'Je ne suis pas assez.' },
-    { id: 'thought-2', text: 'Je dois tout contrôler.' },
-    { id: 'thought-3', text: "Je ne mérite pas ce que j'ai." },
+    { id: 'thought-2', text: 'Je dois tout controler.' },
+    { id: 'thought-3', text: "Je ne merite pas ce que j'ai." },
   ],
   journal: [],
   letterTo: 'Moi du futur',
@@ -86,19 +98,19 @@ const createDefaultState = (): SelfLoveState => ({
   savedLetters: [],
 })
 const affirmations = [
-  "Je m'offre la même douceur que je donne aux autres.",
-  'Je suis déjà assez et je le reste à chaque souffle.',
-  'Ma présence est un cadeau pour ce monde.',
+  "Je m'offre la meme douceur que je donne aux autres.",
+  'Je suis deja assez et je le reste a chaque souffle.',
+  'Ma presence est un cadeau pour ce monde.',
   "Je choisis de me regarder avec de l'amour aujourd'hui.",
-  'Je laisse ma lumière briller sans me cacher.',
+  'Je laisse ma lumiere briller sans me cacher.',
   'Je suis digne de tendresse, de joie et de paix.',
 ]
 const inspiringQuotes = [
-  '"S’aimer soi-même est le début d’une histoire d’amour qui dure toute la vie." — Oscar Wilde',
+  '"S aimer soi-meme est le debut d une histoire d amour qui dure toute la vie." - Oscar Wilde',
   '"Tu es ton propre refuge. Tu es ton propre soleil."',
-  '"Tu es le résultat de l’amour de toutes les femmes qui t’ont précédée."',
-  '"N’oublie pas de t’émerveiller de ta force douce."',
-  '"Tu es une œuvre en mouvement, magnifique à chaque étape."',
+  '"Tu es le resultat de l amour de toutes les femmes qui t ont precedee."',
+  '"N oublie pas de t emerveiller de ta force douce."',
+  '"Tu es une oeuvre en mouvement, magnifique a chaque etape."',
 ]
 const KittyIllustration = () => (
   <svg viewBox="0 0 220 200" role="img" aria-label="Petit chat rose" className="self-love-kitty-letter__cat">
@@ -192,6 +204,29 @@ const normalizeState = (value: unknown): SelfLoveState => {
           from: typeof item.from === 'string' ? item.from : undefined,
           body: item.body,
           createdAt: item.createdAt,
+          innerChild:
+            item.innerChild &&
+            typeof item.innerChild === 'object' &&
+            typeof item.innerChild.message === 'string' &&
+            typeof item.innerChild.reassurance === 'string' &&
+            typeof item.innerChild.neededWords === 'string'
+              ? {
+                  message: item.innerChild.message,
+                  reassurance: item.innerChild.reassurance,
+                  neededWords: item.innerChild.neededWords,
+                }
+              : undefined,
+          bestFriend:
+            item.bestFriend &&
+            typeof item.bestFriend === 'object' &&
+            typeof item.bestFriend.advice === 'string' &&
+            typeof item.bestFriend.selfTalk === 'string'
+              ? {
+                  advice: item.bestFriend.advice,
+                  selfTalk: item.bestFriend.selfTalk,
+                }
+              : undefined,
+          entryType: item.entryType === 'innerChild' || item.entryType === 'bestFriend' ? item.entryType : 'letter',
         }))
     : base.savedLetters
   return {
@@ -223,6 +258,9 @@ const SelfLovePage = () => {
   const [journalDraft, setJournalDraft] = useState('')
   const [releasingThoughtIds, setReleasingThoughtIds] = useState<Set<string>>(new Set())
   const [letterTemplate, setLetterTemplate] = useState<'classic' | 'kitty'>('classic')
+  const [letterArchiveOpen, setLetterArchiveOpen] = useState(false)
+  const [selectedLetterYear, setSelectedLetterYear] = useState<string | null>(null)
+  const [selectedLetterDay, setSelectedLetterDay] = useState<string | null>(null)
   const safeState = useMemo(() => normalizeState(state), [state])
   useEffect(() => {
     document.body.classList.add('self-love-page--gradient')
@@ -247,6 +285,71 @@ const SelfLovePage = () => {
       .reduce((accumulator, character) => accumulator + character.charCodeAt(0), 0)
     return inspiringQuotes[hash % inspiringQuotes.length]
   }, [])
+  const lettersByDate = useMemo(() => {
+    const map = new Map<string, SelfLoveSavedLetter[]>()
+    safeState.savedLetters.forEach((letter) => {
+      const dateKey = new Date(letter.createdAt).toISOString().slice(0, 10)
+      const current = map.get(dateKey) ?? []
+      current.push(letter)
+      map.set(dateKey, current)
+    })
+    return Array.from(map.entries())
+      .map(([date, letters]) => ({
+        date,
+        displayDate: formatDate(date),
+        letters: [...letters].sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1)),
+      }))
+      .sort((a, b) => (a.date > b.date ? -1 : 1))
+  }, [safeState.savedLetters])
+  const lettersByYear = useMemo(() => {
+    const map = new Map<
+      string,
+      { date: string; displayDate: string; letters: SelfLoveSavedLetter[] }[]
+    >()
+    lettersByDate.forEach((group) => {
+      const year = group.date.slice(0, 4)
+      const collection = map.get(year) ?? []
+      collection.push(group)
+      map.set(year, collection)
+    })
+    return Array.from(map.entries())
+      .map(([year, groups]) => ({
+        year,
+        totalLetters: groups.reduce((sum, group) => sum + group.letters.length, 0),
+        dates: groups,
+      }))
+      .sort((a, b) => (a.year > b.year ? -1 : 1))
+  }, [lettersByDate])
+  const selectedLetterYearGroup = useMemo(
+    () => lettersByYear.find((group) => group.year === selectedLetterYear) ?? null,
+    [lettersByYear, selectedLetterYear],
+  )
+  const activeLetterDayGroup = useMemo(() => {
+    if (!selectedLetterYearGroup || !selectedLetterDay) {
+      return null
+    }
+    return selectedLetterYearGroup.dates.find((group) => group.date === selectedLetterDay) ?? null
+  }, [selectedLetterYearGroup, selectedLetterDay])
+  useEffect(() => {
+    if (!letterArchiveOpen) {
+      setSelectedLetterYear(null)
+      setSelectedLetterDay(null)
+    }
+  }, [letterArchiveOpen])
+  useEffect(() => {
+    if (selectedLetterYear && !lettersByYear.some((group) => group.year === selectedLetterYear)) {
+      setSelectedLetterYear(null)
+      setSelectedLetterDay(null)
+    }
+  }, [lettersByYear, selectedLetterYear])
+  useEffect(() => {
+    if (
+      selectedLetterDay &&
+      (!selectedLetterYearGroup || !selectedLetterYearGroup.dates.some((group) => group.date === selectedLetterDay))
+    ) {
+      setSelectedLetterDay(null)
+    }
+  }, [selectedLetterYearGroup, selectedLetterDay])
   const handlePhotoChange = (slotId: string, event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (!file) {
@@ -368,9 +471,9 @@ const SelfLovePage = () => {
   const handleShareCertificate = async () => {
     const qualities = safeState.qualities.map((quality) => `- ${quality.text}`).join('\n')
     const shareText = [
-      '✨ Certificat de pure beauté ✨',
+      'Certificat de pure beaute',
       '',
-      'Je célèbre la personne que je suis :',
+      'Je celebre la personne que je suis :',
       qualities.length > 0 ? qualities : "- Je m'aime pour qui je suis.",
       '',
       affirmationOfDay,
@@ -379,7 +482,7 @@ const SelfLovePage = () => {
       .join('\n')
     try {
       await navigator.clipboard.writeText(shareText)
-      window.alert('Ton certificat a été copié. Partage-le avec amour !')
+      window.alert('Ton certificat a ete copie. Partage-le avec amour !')
     } catch (error) {
       console.error('Clipboard share failed', error)
       window.prompt('Copie ton certificat :', shareText)
@@ -418,13 +521,75 @@ const SelfLovePage = () => {
       return { ...current, customAffirmations: next }
     })
   }
+  const handleSaveInnerChildExercise = () => {
+    const snapshot: SelfLoveInnerChildSnapshot = {
+      message: safeState.innerChildMessage.trim(),
+      reassurance: safeState.innerChildReassurance.trim(),
+      neededWords: safeState.innerChildNeededWords.trim(),
+    }
+    if (!Object.values(snapshot).some((value) => value.length > 0)) {
+      window.alert("Commence par ecrire quelques phrases avant d'ajouter cet exercice.")
+      return
+    }
+    const entry: SelfLoveSavedLetter = {
+      id: `exercise-inner-child-${Date.now()}`,
+      template: 'classic',
+      body: [snapshot.message, snapshot.reassurance, snapshot.neededWords].filter((value) => value.length > 0).join('\n\n'),
+      createdAt: new Date().toISOString(),
+      innerChild: snapshot,
+      entryType: 'innerChild',
+    }
+    setState((previous) => {
+      const current = normalizeState(previous)
+      return {
+        ...current,
+        savedLetters: [entry, ...current.savedLetters].slice(0, 30),
+      }
+    })
+  }
+  const handleSaveBestFriendExercise = () => {
+    const snapshot: SelfLoveBestFriendSnapshot = {
+      advice: safeState.bestFriendAdvice.trim(),
+      selfTalk: safeState.bestFriendSelfTalk.trim(),
+    }
+    if (!Object.values(snapshot).some((value) => value.length > 0)) {
+      window.alert("Commence par ecrire quelques phrases avant d'ajouter cet exercice.")
+      return
+    }
+    const entry: SelfLoveSavedLetter = {
+      id: `exercise-best-friend-${Date.now()}`,
+      template: 'kitty',
+      body: [snapshot.advice, snapshot.selfTalk].filter((value) => value.length > 0).join('\n\n'),
+      createdAt: new Date().toISOString(),
+      bestFriend: snapshot,
+      entryType: 'bestFriend',
+    }
+    setState((previous) => {
+      const current = normalizeState(previous)
+      return {
+        ...current,
+        savedLetters: [entry, ...current.savedLetters].slice(0, 30),
+      }
+    })
+  }
   const handleSaveLetter = (template: 'classic' | 'kitty') => {
     const body = template === 'classic' ? safeState.letterBody : safeState.kittyLetterBody
     const trimmed = body.trim()
     if (trimmed.length === 0) {
-      window.alert('Commence par écrire ta lettre avant de l’enregistrer.')
+      window.alert("Commence par ecrire ta lettre avant de l'enregistrer.")
       return
     }
+    const innerChildSnapshot: SelfLoveInnerChildSnapshot = {
+      message: safeState.innerChildMessage.trim(),
+      reassurance: safeState.innerChildReassurance.trim(),
+      neededWords: safeState.innerChildNeededWords.trim(),
+    }
+    const hasInnerChild = Object.values(innerChildSnapshot).some((value) => value.length > 0);
+    const bestFriendSnapshot: SelfLoveBestFriendSnapshot = {
+      advice: safeState.bestFriendAdvice.trim(),
+      selfTalk: safeState.bestFriendSelfTalk.trim(),
+    };
+    const hasBestFriend = Object.values(bestFriendSnapshot).some((value) => value.length > 0);
     const entry: SelfLoveSavedLetter = {
       id: `saved-letter-${Date.now()}`,
       template,
@@ -432,6 +597,9 @@ const SelfLovePage = () => {
       from: template === 'classic' ? safeState.letterFrom : undefined,
       body: trimmed,
       createdAt: new Date().toISOString(),
+      innerChild: hasInnerChild ? innerChildSnapshot : undefined,
+      bestFriend: hasBestFriend ? bestFriendSnapshot : undefined,
+      entryType: 'letter',
     }
     setState((previous) => {
       const current = normalizeState(previous)
@@ -449,6 +617,28 @@ const SelfLovePage = () => {
         savedLetters: current.savedLetters.filter((letter) => letter.id !== letterId),
       }
     })
+  }
+
+  const getArchiveBadge = (letter: SelfLoveSavedLetter) => {
+    if (letter.entryType === 'innerChild') {
+      return {
+        label: "L'enfant interieur",
+        className: 'self-love-saved-letters__badge',
+      }
+    }
+    if (letter.entryType === 'bestFriend') {
+      return {
+        label: 'Jeu des roles',
+        className: 'self-love-saved-letters__badge self-love-saved-letters__badge--kitty',
+      }
+    }
+    return {
+      label: letter.template === 'classic' ? 'Lettre romantique' : 'Lettre petit chat',
+      className:
+        letter.template === 'classic'
+          ? 'self-love-saved-letters__badge'
+          : 'self-love-saved-letters__badge self-love-saved-letters__badge--kitty',
+    }
   }
 
   const today = useMemo(() => {
@@ -469,7 +659,7 @@ const SelfLovePage = () => {
       <section className="self-love-section self-love-section--photos">
         <div className="self-love-section__header">
           <h2>Aime-toi !</h2>
-          <p>Aime-toi ! Regarde-toi avec bienveillance et choisis 6 photos où tu rayonnes.</p>
+          <p>Aime-toi ! Regarde-toi avec bienveillance et choisis 6 photos ou tu rayonnes.</p>
         </div>
         <div className="self-love-photos-frame">
           <div className="self-love-photos">
@@ -480,9 +670,7 @@ const SelfLovePage = () => {
                     <img src={photo.dataUrl} alt={`Souvenir ${index + 1}`} />
                   ) : (
                     <span className="self-love-photo-card__placeholder">
-                      <span role="img" aria-label="mirror">
-                        🪞
-                      </span>
+                      <span role="img" aria-label="mirror">[]</span>
                       Photo {index + 1}
                     </span>
                   )}
@@ -505,11 +693,11 @@ const SelfLovePage = () => {
         <form className="self-love-form-row" onSubmit={handleAddQuality}>
           <input
             type="text"
-            placeholder="Ajoute une qualité qui te rend fière"
+            placeholder="Ajoute une qualite qui te rend fiere"
             value={qualityDraft}
             onChange={(event) => setQualityDraft(event.target.value)}
           />
-          <button type="submit">+ Ajouter une qualité</button>
+          <button type="submit">+ Ajouter une qualite</button>
         </form>
         <div className="self-love-list-pad">
           <div className="self-love-list-pad__bow">
@@ -521,9 +709,7 @@ const SelfLovePage = () => {
           <ul className="self-love-list">
             {safeState.qualities.map((quality) => (
               <li key={quality.id}>
-                <span className="self-love-list__heart" aria-hidden="true">
-                  ♥
-                </span>
+                <span className="self-love-list__heart" aria-hidden="true">*</span>
                 <span className="self-love-list__text">{quality.text}</span>
                 <button type="button" onClick={() => handleRemoveQuality(quality.id)}>
                   Retirer
@@ -532,9 +718,7 @@ const SelfLovePage = () => {
             ))}
             {safeState.qualities.length === 0 ? (
               <li className="self-love-list__empty">
-                <span className="self-love-list__heart" aria-hidden="true">
-                  ♥
-                </span>
+                <span className="self-love-list__heart" aria-hidden="true">*</span>
                 <span className="self-love-list__text">
                   Commence par noter une seule phrase douce. Le reste suivra.
                 </span>
@@ -545,13 +729,13 @@ const SelfLovePage = () => {
       </section>
       <section className="self-love-section self-love-section--thoughts">
         <div className="self-love-section__header">
-          <h2>Pensées négatives à oublier</h2>
-          <p>Clique sur une pensée pour la laisser s'envoler.</p>
+          <h2>Pensees negatives a oublier</h2>
+          <p>Clique sur une pensee pour la laisser s'envoler.</p>
         </div>
         <form className="self-love-form-row" onSubmit={handleAddThought}>
           <input
             type="text"
-            placeholder="Ex. Je dois être parfait·e."
+            placeholder="Ex. Je dois etre parfait(e)."
             value={thoughtDraft}
             onChange={(event) => setThoughtDraft(event.target.value)}
           />
@@ -574,7 +758,7 @@ const SelfLovePage = () => {
           })}
           {safeState.thoughts.length === 0 ? (
             <div className="self-love-thought self-love-thought--empty">
-              <span>Plus aucune pensée limitante ici. Bravo !</span>
+              <span>Plus aucune pensee limitante ici. Bravo !</span>
             </div>
           ) : null}
         </div>
@@ -582,14 +766,14 @@ const SelfLovePage = () => {
       </div>
       <section className="self-love-section self-love-exercises">
         <div className="self-love-section__header">
-          <h2>Exercices guidés pour t'aimer davantage</h2>
-          <p>Prends quelques instants pour écrire et laisser ton cœur s’exprimer</p>
+          <h2>Exercices guides pour t'aimer davantage</h2>
+          <p>Prends quelques instants pour ecrire et laisser ton coeur s'exprimer.</p>
         </div>
         <div className="self-love-exercise__grid">
           <article className="self-love-exercise__card">
-            <div className="self-love-exercise__eyebrow">L&apos;enfant intérieur</div>
-            <h3>Dialogue doux avec ton passé</h3>
-            <p>Imagine une situation difficile d&apos;enfance et offre-toi aujourd&apos;hui les mots qui avaient manqué.</p>
+            <div className="self-love-exercise__eyebrow">L'enfant interieur</div>
+            <h3>Dialogue doux avec ton passe</h3>
+            <p>Imagine une situation difficile d'enfance et offre-toi aujourd'hui les mots qui avaient manque.</p>
             <label className="self-love-exercise__prompt">
               <span>Que souhaiterais-tu lui dire maintenant ?</span>
               <textarea
@@ -617,11 +801,14 @@ const SelfLovePage = () => {
                 placeholder="Tu avais besoin d'entendre..."
               />
             </label>
+            <button type="button" className="self-love-exercise__save" onClick={handleSaveInnerChildExercise}>
+              Ajouter aux archives
+            </button>
           </article>
           <article className="self-love-exercise__card">
-            <div className="self-love-exercise__eyebrow">Jeu des rôles</div>
+            <div className="self-love-exercise__eyebrow">Jeu des roles</div>
             <h3>Le meilleur ami comme boussole</h3>
-            <p>Imagine qu&apos;un ami cher vive exactement la même situation que toi. Quelles paroles lui offrirais-tu ?</p>
+            <p>Imagine qu'un ami cher vive exactement la meme situation que toi. Quelles paroles lui offrirais-tu ?</p>
             <label className="self-love-exercise__prompt">
               <span>Que lui dirais-tu ?</span>
               <textarea
@@ -632,7 +819,7 @@ const SelfLovePage = () => {
               />
             </label>
             <label className="self-love-exercise__prompt">
-              <span>Quelle différence avec ce que tu te dis à toi-même ?</span>
+              <span>Quelle difference avec ce que tu te dis a toi-meme ?</span>
               <textarea
                 className="self-love-exercise__textarea"
                 value={safeState.bestFriendSelfTalk}
@@ -640,7 +827,10 @@ const SelfLovePage = () => {
                 placeholder="Je remarque que..."
               />
             </label>
-            <p className="self-love-exercise__hint">Cet exercice casse l&apos;auto-critique et rappelle que tu mérites la même douceur.</p>
+            <p className="self-love-exercise__hint">Cet exercice casse l'auto-critique et rappelle que tu merites la meme douceur.</p>
+            <button type="button" className="self-love-exercise__save" onClick={handleSaveBestFriendExercise}>
+              Ajouter aux archives
+            </button>
           </article>
         </div>
       </section>
@@ -736,11 +926,11 @@ const SelfLovePage = () => {
                 <div className="self-love-kitty-letter__art">
                   <KittyIllustration />
                   <div className="self-love-kitty-letter__floating-hearts" aria-hidden="true">
-                    <span>♥</span>
-                    <span>♥</span>
-                    <span>♥</span>
-                    <span>♥</span>
-                    <span>♥</span>
+                    <span>*</span>
+                    <span>*</span>
+                    <span>*</span>
+                    <span>*</span>
+                    <span>*</span>
                   </div>
                 </div>
                 <p className="self-love-kitty-letter__subtitle">
@@ -768,42 +958,153 @@ const SelfLovePage = () => {
           </div>
         </div>
       </section>
-      {safeState.savedLetters.length > 0 ? (
-        <section className="self-love-section self-love-saved-letters">
-          <div className="self-love-section__header">
+      <section className="self-love-section self-love-saved-letters">
+        <div className="self-love-section__header self-love-section__header--archive">
+          <div>
             <h2>Mes lettres sauvegard&eacute;es</h2>
             <p>Retrouve les mots que tu veux garder pr&egrave;s de toi.</p>
           </div>
-          <ul className="self-love-saved-letters__list">
-            {safeState.savedLetters.map((letter) => (
-              <li key={letter.id}>
-                <div>
-                  <div className="self-love-saved-letters__meta">
-                    <span
-                      className={
-                        letter.template === 'classic'
-                          ? 'self-love-saved-letters__badge'
-                          : 'self-love-saved-letters__badge self-love-saved-letters__badge--kitty'
-                      }
-                    >
-                      {letter.template === 'classic' ? 'Lettre romantique' : 'Lettre petit chat'}
-                    </span>
-                    <time>{formatDate(letter.createdAt)}</time>
-                  </div>
-                  {letter.to ? (
-                    <p className="self-love-saved-letters__addresses">
-                      {letter.to} &rarr; {letter.from}
-                    </p>
-                  ) : null}
-                  <p className="self-love-saved-letters__preview">{letter.body}</p>
-                </div>
-                <button type="button" onClick={() => handleDeleteSavedLetter(letter.id)}>
-                  Supprimer
+          {safeState.savedLetters.length > 0 ? (
+            <button
+              type="button"
+              className="self-love-archive__toggle"
+              onClick={() => setLetterArchiveOpen((value) => !value)}
+              aria-expanded={letterArchiveOpen}
+            >
+              {letterArchiveOpen ? 'R&eacute;duire les archives' : 'Ouvrir les archives'}
+            </button>
+          ) : null}
+        </div>
+        {safeState.savedLetters.length === 0 ? (
+          <p className="self-love-archive__empty">Tu n&apos;as pas encore sauvegard&eacute; de lettre.</p>
+        ) : letterArchiveOpen ? (
+          lettersByYear.length > 0 ? (
+            <div className="self-love-archive__years">
+              {lettersByYear.map((group) => (
+                <button
+                  key={group.year}
+                  type="button"
+                  className="self-love-archive__year-card"
+                  onClick={() => {
+                    setSelectedLetterYear(group.year)
+                    setSelectedLetterDay(null)
+                  }}
+                >
+                  <span className="self-love-archive__year">{group.year}</span>
+                  <span className="self-love-archive__count">{group.totalLetters} lettre(s)</span>
                 </button>
-              </li>
-            ))}
-          </ul>
-        </section>
+              ))}
+            </div>
+          ) : (
+            <p className="self-love-archive__empty">Aucune archive pour le moment.</p>
+          )
+        ) : null}
+      </section>
+      {selectedLetterYearGroup ? (
+        <div className="self-love-archive-modal" role="dialog" aria-modal="true">
+          <div className="self-love-archive-modal__backdrop" onClick={() => setSelectedLetterYear(null)} />
+          <div className="self-love-archive-modal__content">
+            <header className="self-love-archive-modal__header">
+              <div>
+                <p>Ann&eacute;e</p>
+                <h3>{selectedLetterYearGroup.year}</h3>
+                <span>{selectedLetterYearGroup.totalLetters} lettre(s)</span>
+              </div>
+              <button type="button" onClick={() => setSelectedLetterYear(null)}>
+                Fermer
+              </button>
+            </header>
+            <div className="self-love-archive-modal__body">
+              <div className="self-love-archive-modal__dates">
+                {selectedLetterYearGroup.dates.map((group) => (
+                  <button
+                    key={group.date}
+                    type="button"
+                    className={`self-love-archive__day-card${selectedLetterDay === group.date ? ' is-active' : ''}`}
+                    onClick={() =>
+                      setSelectedLetterDay((previous) => (previous === group.date ? null : group.date))
+                    }
+                  >
+                    <span>{group.displayDate}</span>
+                    <strong>{group.letters.length} lettre(s)</strong>
+                  </button>
+                ))}
+              </div>
+              {activeLetterDayGroup ? (
+                <ul className="self-love-archive__list">
+                  {activeLetterDayGroup.letters.map((letter) => (
+                    <li key={letter.id} className="self-love-archive__letter">
+                      <div className="self-love-archive__letter-head">
+                        {(() => {
+                          const badge = getArchiveBadge(letter)
+                          return <span className={badge.className}>{badge.label}</span>
+                        })()}
+                        <time>{formatDate(letter.createdAt)}</time>
+                      </div>
+                      {letter.to ? (
+                        <p className="self-love-archive__letter-addresses">
+                          {letter.to} &rarr; {letter.from}
+                        </p>
+                      ) : null}
+                      <p className="self-love-saved-letters__preview">{letter.body}</p>
+                      {letter.innerChild ? (
+                        <div className="self-love-archive__section">
+                          <h4>L&apos;enfant int&eacute;rieur ??" Dialogue doux avec ton pass&eacute;</h4>
+                          <dl>
+                            {letter.innerChild.message.length > 0 ? (
+                              <div className="self-love-archive__pair">
+                                <dt>Que souhaiterais-tu lui dire maintenant ?</dt>
+                                <dd>{letter.innerChild.message}</dd>
+                              </div>
+                            ) : null}
+                            {letter.innerChild.reassurance.length > 0 ? (
+                              <div className="self-love-archive__pair">
+                                <dt>Comment pourrais-tu le rassurer ?</dt>
+                                <dd>{letter.innerChild.reassurance}</dd>
+                              </div>
+                            ) : null}
+                            {letter.innerChild.neededWords.length > 0 ? (
+                              <div className="self-love-archive__pair">
+                                <dt>Qu&apos;aurait-il eu besoin d&apos;entendre ?</dt>
+                                <dd>{letter.innerChild.neededWords}</dd>
+                              </div>
+                            ) : null}
+                          </dl>
+                        </div>
+                      ) : null}
+                      {letter.bestFriend ? (
+                        <div className="self-love-archive__section">
+                          <h4>Jeu des r&ocirc;les ??" Le meilleur ami comme boussole</h4>
+                          <dl>
+                            {letter.bestFriend.advice.length > 0 ? (
+                              <div className="self-love-archive__pair">
+                                <dt>Que lui dirais-tu ?</dt>
+                                <dd>{letter.bestFriend.advice}</dd>
+                              </div>
+                            ) : null}
+                            {letter.bestFriend.selfTalk.length > 0 ? (
+                              <div className="self-love-archive__pair">
+                                <dt>Quelle diff&eacute;rence avec ce que tu te dis &agrave; toi-m&ecirc;me ?</dt>
+                                <dd>{letter.bestFriend.selfTalk}</dd>
+                              </div>
+                            ) : null}
+                          </dl>
+                        </div>
+                      ) : null}
+                      <div className="self-love-archive__letter-actions">
+                        <button type="button" onClick={() => handleDeleteSavedLetter(letter.id)}>
+                          Supprimer
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="self-love-archive-modal__empty">S&eacute;lectionne un jour pour lire tes lettres.</p>
+              )}
+            </div>
+          </div>
+        </div>
       ) : null}
       <div className="self-love-footer-bar" aria-hidden="true" />
     </div>

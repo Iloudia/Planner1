@@ -1,4 +1,4 @@
-import type { FormEvent, KeyboardEvent as ReactKeyboardEvent, MouseEvent } from "react"
+﻿import type { FormEvent, KeyboardEvent as ReactKeyboardEvent, MouseEvent } from "react"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import type { ChangeEvent } from "react"
 import usePersistentState from "../../hooks/usePersistentState"
@@ -67,19 +67,19 @@ type WishlistCategoryCard = {
   label: string
 }
 
-const WISHLIST_DEFINITION_VERSION = 3
+const WISHLIST_DEFINITION_VERSION = 4
 
 const CATEGORY_DEFINITIONS: CategoryDefinition[] = [
-  { id: "hair", label: "Hair essentials", accent: "#f497c0", cover: wishlistHair, blurb: "Brushes, soins et petits accessoires pour une routine cheveux complete." },
-  { id: "outfits", label: "Outfits", accent: "#fcd67d", cover: wishlistOutfit, blurb: "Idees tenues et pieces coups de coeur pour tes looks preferes." },
-  { id: "makeup", label: "Makeup wishlist", accent: "#fbcada", cover: wishlistMakeup, blurb: "Palette, gloss ou nouveaux blushs a tester absolument." },
-  { id: "electronics", label: "Electronic appareil", accent: "#c9d9ff", cover: wishlistElectronics, blurb: "Gadgets tech, accessoires photo ou outils productivite." },
+  { id: "hair", label: "Hair essentials", accent: "#f497c0", cover: wishlistHair, blurb: "Brushes, soins et petits accessoires pour une routine cheveux complète." },
+  { id: "outfits", label: "Outfits", accent: "#fcd67d", cover: wishlistOutfit, blurb: "Idées tenues et pièces coup de coeur pour tes looks préférés." },
+  { id: "makeup", label: "Makeup wishlist", accent: "#fbcada", cover: wishlistMakeup, blurb: "Palette, gloss ou nouveaux blushs à tester absolument." },
+  { id: "electronics", label: "Electronic appareil", accent: "#c9d9ff", cover: wishlistElectronics, blurb: "Gadgets tech, accessoires photo ou outils productivité." },
   { id: "skincare", label: "Skincare", accent: "#c1e7db", cover: wishlistSkincare, blurb: "Soins cocooning, masques favoris et indispensables glow." },
-  { id: "books", label: "Livres", accent: "#b4cfff", cover: wishlistBooks, blurb: "Romans, developpement perso et lectures inspirees." },
-  { id: "room", label: "Chambre", accent: "#d9c5ff", cover: wishlistRoom, blurb: "Deco, ambiance et petits objets cozy pour ta chambre." },
-  { id: "travel", label: "Voyages", accent: "#f6b094", cover: wishlistTravel, blurb: "Destinations ou experiences a ajouter a ta bucket list." },
-  { id: "jewelry", label: "Bijoux", accent: "#ffd4a8", cover: wishlistJewelry, blurb: "Bagues, colliers et accessoires brillants a collectionner." },
-  { id: "bag", label: "Sac", accent: "#f3b4c5", cover: wishlistBag, blurb: "Bags iconiques, tote bags pratiques et petites pochettes." },
+  { id: "books", label: "Livres", accent: "#b4cfff", cover: wishlistBooks, blurb: "Romans, développement perso et lectures inspirées." },
+  { id: "room", label: "Chambre", accent: "#d9c5ff", cover: wishlistRoom, blurb: "Déco, ambiance et petits objets cozy pour ta chambre." },
+  { id: "travel", label: "Voyages", accent: "#f6b094", cover: wishlistTravel, blurb: "Destinations ou expériences à ajouter à ta bucket list." },
+  { id: "jewelry", label: "Bijoux", accent: "#ffd4a8", cover: wishlistJewelry, blurb: "Destinations ou expériences à ajouter à ta bucket list." },
+  { id: "bag", label: "Sac", accent: "#f3b4c5", cover: wishlistBag, blurb: "Bagues, colliers et accessoires brillants à collectionner." },
 ]
 
 const CUSTOM_ACCENTS = ["#f6a6c1", "#c3d9ff", "#ffe3a7", "#c6eed7", "#fbcfe8", "#d9c5ff"] as const
@@ -102,6 +102,8 @@ const CUSTOM_BLURB = "Ta categorie personnalisee."
 const BASE_CATEGORY_IDS = new Set(CATEGORY_DEFINITIONS.map((category) => category.id))
 
 const isBaseCategory = (id: WishlistCategoryId) => BASE_CATEGORY_IDS.has(id)
+
+const formatElementLabel = (count: number) => (count > 1 ? "éléments" : "élément")
 
 const hashString = (value: string) => {
   let hash = 0
@@ -1080,7 +1082,7 @@ const WishlistPage = () => {
       }
     })
     setRenamingCategoryId(null)
-    setFeedback("Categorie mise à jour")
+    setFeedback("Categorie mise Ã  jour")
   }
 
   const handleResetCategory = (categoryId: WishlistCategoryId) => {
@@ -1257,7 +1259,7 @@ const WishlistPage = () => {
       <header className="wishlist-hero dashboard-panel">
         <div className="wishlist-hero__content">
           <h2>Imagine ta wishlist idéale, catégorie par catégorie.</h2>
-          <p>Organise tes inspirations shopping, deco ou voyages en un seul espace.</p>
+          <p>Organise tes inspirations shopping, déco ou voyages en un seul espace pastel.</p>
         </div>
       </header>
       <div className="page-accent-bar" aria-hidden="true" />
@@ -1329,13 +1331,13 @@ const WishlistPage = () => {
               ) : null}
               <div className="wishlist-card__content">
                 <span className="wishlist-card__count">
-                  {itemCount} {itemCount > 1 ? "elements" : "element"}
+                  {itemCount} {formatElementLabel(itemCount)}
                 </span>
                 <div className="wishlist-card__title">
                   <h2>{displayTitle}</h2>
                   {isFavorite ? <span aria-label="Categorie favorite" className="wishlist-card__favorite">?</span> : null}
                 </div>
-                <p>{category.blurb}</p>
+                <p>{category.blurb ?? ""}</p>
               </div>
             </article>
           )
@@ -1360,7 +1362,7 @@ const WishlistPage = () => {
                   <h3>{selectedCategoryState.title}</h3>
                 </div>
                 <span className="wishlist-modal__badge">
-                  {selectedCategoryState.items.length} {selectedCategoryState.items.length > 1 ? "elements" : "element"}
+                  {selectedCategoryState.items.length} {formatElementLabel(selectedCategoryState.items.length)}
                 </span>
               </header>
 
@@ -1462,7 +1464,7 @@ const WishlistPage = () => {
 
               {isAddingItem ? (
                 <form className="wishlist-modal__form" onSubmit={handleAddItem}>
-                  <h4>{editingItemId ? "Modifier l'element" : "Ajouter un element"}</h4>
+                    <h4>{editingItemId ? "Modifier l'élément" : "Ajouter un élément"}</h4>
                   <div className="wishlist-modal__form-media">
                     <div className="wishlist-upload">
                       <span className="wishlist-upload__label">Photo</span>
@@ -1472,8 +1474,8 @@ const WishlistPage = () => {
                         }
                       >
                         <input ref={itemImageInputRef} type="file" accept="image/*" onChange={handleItemImageChange} />
-                        {itemDraft.imageUrl ? (
-                          <img src={itemDraft.imageUrl} alt={itemDraft.title || "Previsualisation de l'element"} />
+                                {itemDraft.imageUrl ? (
+                                  <img src={itemDraft.imageUrl} alt={itemDraft.title || "Prévisualisation de l'élément"} />
                         ) : (
                           <div className="wishlist-upload__placeholder">
                             <span>+</span>
@@ -1584,9 +1586,9 @@ const WishlistPage = () => {
 
               <div className="wishlist-modal__list">
                 {selectedCategoryState.items.length === 0 ? (
-                  <p className="wishlist-modal__empty">
-                    Aucun element encore. Clique sur + pour enregistrer tes envies dans cette categorie.
-                  </p>
+                    <p className="wishlist-modal__empty">
+                      Aucun élément encore. Clique sur + pour enregistrer tes envies dans cette catégorie.
+                    </p>
                 ) : (
                   groupedSelectedItems.map((group) => (
                     <div key={group.key} className="wishlist-modal__group">
@@ -1872,11 +1874,11 @@ const WishlistPage = () => {
                 </button>
                 {renameCoverName ? <span className="wishlist-cover-upload__name">{renameCoverName}</span> : null}
                 <div className="wishlist-rename__preview">
-                  {renameCoverPreview ? <img src={renameCoverPreview} alt={`Aperçu de ${renameDraft || "la carte"}`} /> : <span>Aucune image</span>}
+                  {renameCoverPreview ? <img src={renameCoverPreview} alt={`AperÃ§u de ${renameDraft || "la carte"}`} /> : <span>Aucune image</span>}
                 </div>
                 {renameCoverName ? (
                   <button type="button" className="wishlist-cover-upload__remove" onClick={handleResetRenameCover}>
-                    Revenir à la photo actuelle
+                    Revenir Ã  la photo actuelle
                   </button>
                 ) : null}
               </div>
@@ -1896,10 +1898,10 @@ const WishlistPage = () => {
           <div className="wishlist-move" onClick={(event) => event.stopPropagation()}>
             <h3>Deplacer vers une autre wishlist</h3>
             {moveTargetCategories.length === 0 ? (
-              <p>Cree une nouvelle carte pour pouvoir deplacer cet element.</p>
+              <p>Crée une nouvelle carte pour pouvoir déplacer cet élément.</p>
             ) : (
               <>
-                <p>Choisis la wishlist de destination puis selectionne la categorie dans laquelle ranger cet element.</p>
+                <p>Choisis la wishlist de destination puis sélectionne la catégorie dans laquelle ranger cet élément.</p>
                 <div className="wishlist-move__grid">
                   {moveTargetCategories.map((card) => (
                     <button

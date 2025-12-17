@@ -14,7 +14,7 @@ type ActivityStatus = 'a-faire' | 'planifie' | 'fait'
 type Activity = {
   id: string
   title: string
-  category: string
+  category?: string
   status: ActivityStatus
   idealDate?: string
   photo?: string
@@ -28,11 +28,10 @@ type ActivityDraft = {
   photo?: string
 }
 
-const statusLabels: Record<ActivityStatus, string> = {
-  'a-faire': 'Non planifiee',
-  planifie: 'Planifiee',
-  fait: 'Realisee',
-}
+const statusOptions: Array<{ value: ActivityStatus; label: string }> = [
+  { value: 'planifie', label: 'Planifiee' },
+  { value: 'fait', label: 'Realisee' },
+]
 
 const categoryPalette = ['#C7D2FE', '#FBCFE8', '#FDE68A', '#E9D5FF', '#BFDBFE']
 
@@ -66,7 +65,7 @@ const ActivitiesPage = () => {
   const [draft, setDraft] = useState<ActivityDraft>({
     title: '',
     category: '',
-    status: 'a-faire',
+    status: 'planifie',
     idealDate: '',
     photo: undefined,
   })
@@ -125,7 +124,7 @@ const ActivitiesPage = () => {
     const nextActivity: Activity = {
       id: `activity-${Date.now()}`,
       title: draft.title.trim(),
-      category: draft.category.trim().length > 0 ? draft.category.trim() : 'Inspiration',
+      category: draft.category.trim().length > 0 ? draft.category.trim() : undefined,
       status: draft.status,
       idealDate: draft.idealDate,
       photo: draft.photo,
@@ -235,7 +234,11 @@ const ActivitiesPage = () => {
                     <input type="file" accept="image/*" onChange={handlePhotoChange(activity.id)} />
                     Modifier la photo
                   </label>
-                  <button type="button" className="activity-card__menu-item" onClick={() => handleChangeDate(activity.id)}>
+                  <button
+                    type="button"
+                    className="activity-card__menu-item activity-card__menu-item--light"
+                    onClick={() => handleChangeDate(activity.id)}
+                  >
                     Changer la date
                   </button>
                   <button type="button" className="activity-card__menu-item activity-card__menu-item--danger" onClick={() => handleDelete(activity.id)}>
@@ -246,7 +249,7 @@ const ActivitiesPage = () => {
             </div>
           </div>
           <p className="activity-card__meta">
-            <span>{activity.category}</span>
+            {activity.category ? <span>{activity.category}</span> : null}
             {activity.idealDate ? <time dateTime={activity.idealDate}>{formatDate(activity.idealDate)}</time> : null}
           </p>
           <div className="activity-card__actions">
@@ -269,7 +272,7 @@ const ActivitiesPage = () => {
       
       <PageHero
         eyebrow="Inspiration"
-        title="Activites et sorties"
+        title="Activités et sorties"
         description="Un espace pour rassembler les idees d activites qui te font du bien et nourrissent ton energie."
         stats={activitiesStats}
         images={activitiesHeroImages}
@@ -313,7 +316,7 @@ const ActivitiesPage = () => {
                     setDraft((previous) => ({ ...previous, status: event.target.value as ActivityStatus }))
                   }
                 >
-                  {Object.entries(statusLabels).map(([value, label]) => (
+                  {statusOptions.map(({ value, label }) => (
                     <option key={value} value={value}>
                       {label}
                     </option>

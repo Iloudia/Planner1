@@ -1,4 +1,4 @@
-﻿﻿.diet-gymgirl-page {
+﻿.diet-gymgirl-page {
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -44,6 +44,27 @@
 
 .diet-blog p {
   margin: 0;
+}
+
+.diet-page-heading {
+  gap: 1rem;
+  padding-bottom: 0.4rem;
+}
+
+.diet-page-heading .sport-header__divider {
+  width: 120px;
+}
+
+.diet-heading__description {
+  margin: 0;
+  color: #4b5563;
+  max-width: 60ch;
+}
+
+.diet-toggle--heading {
+  margin-top: 1.5rem;
+  margin-bottom: 1.2rem;
+  justify-content: flex-start;
 }
 
 .diet-eyebrow {

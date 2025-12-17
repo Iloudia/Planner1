@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+﻿import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ChangeEvent } from 'react'
 import usePersistentState from '../../hooks/usePersistentState'
 import journalingIllustration from '../../assets/planner-09.jpg'
@@ -67,6 +67,62 @@ type JournalingPromptSection = {
   fields: PromptField[]
 }
 
+type CalendarDay = {
+  date: Date
+  iso: string
+  inCurrentMonth: boolean
+  hasEntries: boolean
+}
+
+const MONTH_NAMES = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+] as const
+
+const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const
+
+const formatISODate = (date: Date) => {
+  const year = date.getFullYear()
+  const month = `${date.getMonth() + 1}`.padStart(2, '0')
+  const day = `${date.getDate()}`.padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+const buildCalendarDays = (monthDate: Date, entriesMap: Map<string, JournalEntry[]>): CalendarDay[] => {
+  const year = monthDate.getFullYear()
+  const month = monthDate.getMonth()
+  const firstDay = new Date(year, month, 1)
+  const lastDay = new Date(year, month + 1, 0)
+  const daysInMonth = lastDay.getDate()
+  const firstWeekday = firstDay.getDay()
+  const totalCells = Math.ceil((firstWeekday + daysInMonth) / 7) * 7
+  const days: CalendarDay[] = []
+
+  for (let cell = 0; cell < totalCells; cell += 1) {
+    const dayNumber = cell - firstWeekday + 1
+    const cellDate = new Date(year, month, dayNumber)
+    const iso = formatISODate(cellDate)
+    days.push({
+      date: cellDate,
+      iso,
+      inCurrentMonth: cellDate.getMonth() === month,
+      hasEntries: entriesMap.has(iso),
+    })
+  }
+
+  return days
+}
+
 const getTodayISO = () => {
   const today = new Date()
   const year = today.getFullYear()
@@ -77,19 +133,36 @@ const getTodayISO = () => {
 
 const initialEntries: JournalEntry[] = []
 
+const normalizeEntries = (list: JournalEntry[]) => {
+  const seenDates = new Set<string>()
+  const normalized: JournalEntry[] = []
+  let changed = false
+
+  list.forEach((entry) => {
+    if (seenDates.has(entry.date)) {
+      changed = true
+      return
+    }
+    seenDates.add(entry.date)
+    normalized.push(entry)
+  })
+
+  return changed ? normalized : list
+}
+
 const moods = ['Sereine', 'Energisee', 'Equilibree', 'Fatiguee', 'Fiere']
 const feelings: Array<{ value: JournalFeeling; label: string; emoji: string }> = [
-  { value: 'joy', label: 'Joyeuse', emoji: '😊' },
-  { value: 'sad', label: 'Triste', emoji: '😢' },
-  { value: 'angry', label: 'En colere', emoji: '😡' },
-  { value: 'excited', label: 'Excitee', emoji: '🤩' },
-  { value: 'surprised', label: 'Surprise', emoji: '😲' },
-  { value: 'scared', label: 'Effrayee', emoji: '😱' },
-  { value: 'shy', label: 'Timide', emoji: '😳' },
-  { value: 'confused', label: 'Confuse', emoji: '😕' },
-  { value: 'embarrassed', label: 'Embarrassee', emoji: '😅' },
-  { value: 'calm', label: 'Calme', emoji: '😌' },
-  { value: 'depressed', label: 'Deprimee', emoji: '😞' },
+  { value: 'joy', label: 'Joyeuse', emoji: '' },
+  { value: 'sad', label: 'Triste', emoji: '' },
+  { value: 'angry', label: 'En colere', emoji: '' },
+  { value: 'excited', label: 'Excitee', emoji: '' },
+  { value: 'surprised', label: 'Surprise', emoji: '' },
+  { value: 'scared', label: 'Effrayee', emoji: '' },
+  { value: 'shy', label: 'Timide', emoji: '' },
+  { value: 'confused', label: 'Confuse', emoji: '' },
+  { value: 'embarrassed', label: 'Embarrassee', emoji: '' },
+  { value: 'calm', label: 'Calme', emoji: '' },
+  { value: 'depressed', label: 'Deprimee', emoji: '' },
 ]
 const DATE_PROMPT_FIELD_ID = 'prompt-date'
 
@@ -103,87 +176,87 @@ const journalingPromptSections: JournalingPromptSection[] = [
   {
     id: 'daily-state',
     icon: '#1',
-    title: '1. Etat du jour',
+    title: '1. État du jour',
     accent: '#ffe9f1',
     description: 'Concentre-toi sur ce que tu ressens ici et maintenant.',
     fields: [
       {
         id: DATE_PROMPT_FIELD_ID,
         type: 'textarea',
-        label: 'Quelle est la date d\'aujourdhui ?',
-        placeholder: 'Laisse ton coeur parler ici...',
+        label: "Quelle est la date d'aujourd'hui ?",
+        placeholder: 'Laisse ton cœur parler ici...',
       },
       {
         id: 'prompt-mood-now',
         type: 'textarea',
         label: 'Comment je me suis sentie ?',
-        placeholder: 'Sensations, emotions, mots qui montent.',
+        placeholder: 'Sensations, émotions...',
       },
       {
         id: 'prompt-mood-influence',
         type: 'textarea',
-        label: 'Qu est-ce qui a influence mon humeur aujourd hui ? (Evenements, pensees, personnes, energie, meteo...)',
-        placeholder: 'Note ce qui a change ton humeur ou ton energie.',
+        label: "Qu'est-ce qui a influencé mon humeur aujourd'hui ? (Événements, pensées, personnes, énergie, météo...)",
+        placeholder: 'Note ce qui a changé ton humeur ou ton énergie.',
       },
       {
         id: 'prompt-learning',
         type: 'textarea',
-        label: 'Qu\'ai-je appris ou compris sur moi-meme aujourdhui ?',
-        placeholder: 'Depose tes pensees...',
+        label: "Qu'ai-je appris ou compris sur moi-même aujourd'hui ?",
+        placeholder: 'Dépose tes pensées...',
       },
     ],
   },
   {
     id: 'daily-celebration',
     icon: '#2',
-    title: '2. Ma journee',
+    title: '2. Ma journée',
     accent: '#e0f2fe',
-    description: 'Revis les belles choses et celebre ce qui compte.',
+    description: 'Revis les belles choses et célèbre ce qui compte.',
     fields: [
       {
         id: 'prompt-highlights',
         type: 'textarea',
-        label: 'Qu\'est-ce qui s\'est bien passe aujourd\'hui ?',
-        placeholder: 'Liste tes victoires, meme minuscules.',
+        label: "Qu'est-ce qui s'est bien passé aujourd'hui ?",
+        placeholder: 'Liste tes victoires, même minuscules.',
       },
       {
         id: 'prompt-gratitude',
         type: 'textarea',
         label: 'De quoi suis-je reconnaissant(e) ?',
-        placeholder: 'Exprime ce qui remplit ton coeur.',
+        placeholder: 'Exprime ce qui remplit ton cœur.',
       },
       {
         id: 'prompt-replay',
         type: 'textarea',
-        label: 'Y a-t-il un moment que j\'aimerais revivre ?',
-        placeholder: 'Quel souvenir doux veux-tu garder precieusement ?',
+        label: "Y a-t-il un moment que j'aimerais revivre ?",
+        placeholder: 'Quel souvenir doux veux-tu garder précieusement ?',
       },
       {
         id: 'prompt-magic-wand',
         type: 'textarea',
-        label: 'Si j\'avais une baguette magique, qu\'est-ce que je changerais dans cette journee ?',
-        placeholder: 'Note ce qui te vient spontanement...',
+        label: "Si j'avais une baguette magique, qu'est-ce que je changerais dans cette journée ?",
+        placeholder: 'Note ce qui te vient spontanément...',
       },
     ],
   },
   {
     id: 'abundance-affirmations',
     icon: '#3',
-    title: '3. Affirmations pour attirer l\'argent et l\'abondance',
+    title: "3. Affirmations pour attirer l'argent et l'abondance",
     accent: '#f3efff',
-    description: 'Invite la prosperite dans ton esprit avec des mots qui vibrent pour toi.',
-    helper: 'Choisis-en 3 a 5 ou ecris les tiennes.',
+    description: 'Invite la prospérité dans ton esprit avec des mots qui vibrent pour toi.',
+    helper: 'Choisis-en 3 à 5 ou écris les tiennes.',
     fields: [
       {
         id: 'prompt-money-affirmations',
         type: 'checkboxes',
-        label: 'Ce que je souhaite repeter',
+        label: 'Ce que je souhaite rApAter',
         options: [
-          'L\'argent circule vers moi facilement et en abondance.',
-          'Je merite la richesse sous toutes ses formes.',
-          'Chaque jour, je deviens un aimant a opportunites financieres.',
-          'Je suis reconnaissant(e) pour tout l\'argent qui entre dans ma vie.',
-          'Mes actions attirent la prosperite naturellement.',
+          "L'argent circule vers moi facilement et en abondance.",
+          'Je mArite la richesse sous toutes ses formes.',
+          'Chaque jour, je deviens un aimant A opportunitAs financiAres.',
+          "Je suis reconnaissant(e) pour tout l'argent qui entre dans ma vie.",
+          'Mes actions attirent la prospAritA naturellement.',
         ],
       },
       {
@@ -200,25 +273,25 @@ const journalingPromptSections: JournalingPromptSection[] = [
     title: '4. Affirmations pour la confiance en soi',
     accent: '#fef3c7',
     description: 'Renforce ta confiance et ancre-toi dans ta valeur.',
-    helper: 'Choisis-en 3 a 5 ou ecris les tiennes.',
+    helper: 'Choisis-en 3 à 5 ou écris les tiennes.',
     fields: [
       {
         id: 'prompt-confidence-affirmations',
         type: 'checkboxes',
-        label: 'Ce que je me repete',
+        label: 'Ce que je me rApAte',
         options: [
-          'Je crois en mes capacites et je suis fier(fiere) de moi.',
-          'Je suis digne d\'amour, de succes et de respect.',
-          'Je suis en securite d\'etre moi-meme.',
-          'Chaque jour, je deviens plus sur(e) et plus fort(e).',
-          'Ma presence a de la valeur.',
+          'Je crois en mes capacitAs et je suis fier/fiAre de moi.',
+          "Je suis digne d'amour, de succAs et de respect.",
+          'Je suis en sAcuritA daAtre moi-mAme.',
+          'Chaque jour, je deviens plus sAr(e) et plus fort(e).',
+          'Ma prAsence a de la valeur.',
         ],
       },
       {
         id: 'prompt-confidence-custom',
         type: 'textarea',
-        label: 'Tes declarations personnelles',
-        placeholder: 'Ecris des mots doux qui te ressemblent.',
+        label: 'Tes dAclarations personnelles',
+        placeholder: 'Acris des mots doux qui te ressemblent.',
       },
     ],
   },
@@ -239,13 +312,13 @@ const journalingPromptSections: JournalingPromptSection[] = [
         id: 'prompt-feeling',
         type: 'textarea',
         label: 'Comment je veux me sentir demain ?',
-        placeholder: 'Imagine l ambiance emotionnelle que tu souhaites vivre.',
+        placeholder: "Imagine l'ambiance Amotionnelle que tu souhaites vivre.",
       },
       {
         id: 'prompt-self-version',
         type: 'textarea',
         label: 'Quelle version de moi suis-je en train de devenir ?',
-        placeholder: 'Decris la personne que tu nourris pas a pas.',
+        placeholder: 'DAcris la personne que tu nourris pas A pas.',
       },
     ],
   },
@@ -292,11 +365,25 @@ const JournalingPage = () => {
     people: '',
     intentions: '',
   }))
+  const [saveConfirmationVisible, setSaveConfirmationVisible] = useState(false)
+  const saveConfirmationTimeout = useRef<number | null>(null)
 
   useEffect(() => {
     document.body.classList.add('planner-page--white')
     return () => {
       document.body.classList.remove('planner-page--white')
+    }
+  }, [])
+
+  useEffect(() => {
+    setEntries((previous) => normalizeEntries(previous))
+  }, [setEntries])
+
+  useEffect(() => {
+    return () => {
+      if (saveConfirmationTimeout.current !== null) {
+        window.clearTimeout(saveConfirmationTimeout.current)
+      }
     }
   }, [])
 
@@ -336,6 +423,17 @@ const JournalingPage = () => {
         [fieldId]: next,
       }
     })
+  }
+
+  const showSaveConfirmation = () => {
+    setSaveConfirmationVisible(true)
+    if (saveConfirmationTimeout.current !== null) {
+      window.clearTimeout(saveConfirmationTimeout.current)
+    }
+    saveConfirmationTimeout.current = window.setTimeout(() => {
+      setSaveConfirmationVisible(false)
+      saveConfirmationTimeout.current = null
+    }, 2000)
   }
 
   const handleSubmit = () => {
@@ -411,7 +509,7 @@ const JournalingPage = () => {
       freeWriting: freeWriting.length > 0 ? freeWriting : undefined,
     }
 
-    setEntries((previous) => [newEntry, ...previous])
+    setEntries((previous) => [newEntry, ...previous.filter((entry) => entry.date !== newEntry.date)])
     setDraft((previous) => ({
       ...previous,
       content: '',
@@ -420,6 +518,7 @@ const JournalingPage = () => {
     }))
     setPromptResponses(createInitialPromptResponses())
     setPromptSelections(createInitialPromptSelections())
+    showSaveConfirmation()
   }
 
   const entriesByDate = useMemo(() => {
@@ -436,51 +535,54 @@ const JournalingPage = () => {
   const totalEntries = entries.length
   const activeDays = entriesByDate.length
   const latestEntry = entries[0]
-  const referenceFeelings =
-    latestEntry && latestEntry.feelings && latestEntry.feelings.length > 0
-      ? latestEntry.feelings
-      : latestEntry && latestEntry.feeling
-        ? [latestEntry.feeling]
-        : draft.feelings
-  const highlightedFeeling =
-    feelings.find((option) => referenceFeelings.includes(option.value)) ?? feelings[0]
-  const [collapsedDates, setCollapsedDates] = useState<Set<string>>(() => new Set(entries.map((entry) => entry.date)))
-
   const [archiveOpen, setArchiveOpen] = useState(false)
+  const [selectedYear, setSelectedYear] = useState<string | null>(null)
+  const [selectedDay, setSelectedDay] = useState<string | null>(null)
 
-  const toggleDateSection = (date: string) => {
-    setCollapsedDates((previous) => {
-      const next = new Set(previous)
-      if (next.has(date)) {
-        next.delete(date)
-      } else {
-        next.add(date)
-      }
-      return next
+  const entriesByYear = useMemo(() => {
+    const yearMap = new Map<string, { date: string; items: JournalEntry[] }[]>()
+    entriesByDate.forEach(([date, items]) => {
+      const year = new Date(date).getFullYear().toString()
+      const list = yearMap.get(year) ?? []
+      list.push({ date, items })
+      yearMap.set(year, list)
     })
-  }
+
+    return Array.from(yearMap.entries())
+      .map(([year, groups]) => ({
+        year,
+        totalEntries: groups.reduce((sum, group) => sum + group.items.length, 0),
+        dates: groups,
+      }))
+      .sort((a, b) => (a.year > b.year ? -1 : 1))
+  }, [entriesByDate])
+
+  const selectedYearGroup = useMemo(
+    () => entriesByYear.find((group) => group.year === selectedYear) ?? null,
+    [entriesByYear, selectedYear],
+  )
 
   useEffect(() => {
-    setCollapsedDates((previous) => {
-      const next = new Set(previous)
-      entriesByDate.forEach(([date]) => {
-        if (!next.has(date)) {
-          next.add(date)
-        }
-      })
-      return next
-    })
-  }, [entriesByDate])
+    setSelectedYear(null)
+  }, [archiveOpen])
+
+  useEffect(() => {
+    if (selectedYear && !entriesByYear.some((group) => group.year === selectedYear)) {
+      setSelectedYear(null)
+    }
+  }, [entriesByYear, selectedYear])
+
+  const activeDayGroup = useMemo(() => {
+    if (!selectedYearGroup || !selectedDay) {
+      return null
+    }
+
+    return selectedYearGroup.dates.find((group) => group.date === selectedDay) ?? null
+  }, [selectedYearGroup, selectedDay])
 
   const journalingStats = [
     { id: 'pages', label: 'Pages ecrites', value: totalEntries.toString() },
     { id: 'days', label: 'Jours actifs', value: activeDays.toString() },
-    {
-      id: 'feeling',
-      label: 'Humeur du moment',
-      value: latestEntry?.mood ?? draft.mood,
-      hint: highlightedFeeling.emoji,
-    },
   ]
   const dayStateIds = useMemo(() => new Set(['daily-state', 'daily-celebration']), [])
   const dayStateSections = journalingPromptSections.filter((section) => dayStateIds.has(section.id))
@@ -488,30 +590,30 @@ const JournalingPage = () => {
     {
       id: 'affirmations',
       title: 'Affirmations',
-      emoji: '✨',
-      placeholder: 'Ecris tes phrases positives, separees par des retours a la ligne.',
+      emoji: '',
+      placeholder: 'Écris tes phrases positives, séparées par des retours à la ligne.',
       description: 'Rappelle-toi qui tu deviens.',
     },
     {
       id: 'gratitude',
-      title: 'Ce dont je suis reconnaissante',
-      emoji: '🌷',
-      placeholder: 'Liste ce qui remplit ton coeur de douceur.',
-      description: 'Accueille l abondance actuelle.',
+      title: 'Ce dont je suis reconnaissant(e)',
+      emoji: '',
+      placeholder: 'Liste ce qui remplit ton cœur de douceur.',
+      description: "Accueille l'abondance actuelle.",
     },
     {
       id: 'people',
       title: 'Croyances limitantes',
-      emoji: '🫶',
-      placeholder: 'Note les phrases ou pensees que tu souhaites transformer.',
-      description: 'Identifie ce qui te retient pour mieux le libere.',
+      emoji: '',
+      placeholder: 'Note les phrases ou pensées que tu souhaites transformer.',
+      description: 'Identifie ce qui te retient pour mieux le libérer.',
     },
     {
       id: 'intentions',
       title: 'Visualisations',
-      emoji: '🌙',
-      placeholder: 'Imagine en details la vie que tu manifests.',
-      description: 'Projette-toi vers ta vision ideale.',
+      emoji: '',
+      placeholder: 'Imagine en détails la vie que tu manifestes.',
+      description: 'Projette-toi vers ta vision idéale.',
     },
   ] as const
 
@@ -521,25 +623,19 @@ const JournalingPage = () => {
       
       <PageHero
         eyebrow="Rituel du jour"
-        title="Mon journal pastel"
-        description="Prends un instant pour respirer, ecrire et manifester ta vie de reve."
+        title="Mon journal"
+        description="Prends un instant pour respirer, écrire et manifester ta vie de rêve."
         stats={journalingStats.map(({ id, label, value }) => ({ id, label, value }))}
         images={journalingMoodboard}
         tone="pink"
-      >
-        <div className="finance-hero__period">
-          <span className="finance-hero__badge">Journee du {draft.date}</span>
-        </div>
-      </PageHero>
+      />
       <div className="journaling-page__accent-bar" aria-hidden="true" />
       <PageHeading eyebrow="Reflet" title="Mon journal" />
 
       <section className="journaling-day-state">
         <header className="journaling-day-state__header">
           <div>
-            <p className="journaling-day-state__eyebrow">Bulle du jour</p>
             <h2>Etat du jour</h2>
-            <p>Une seule bulle toute en longueur pour repondre aux questions des sections 1 et 2.</p>
           </div>
         </header>
         <div className="journaling-day-state__content">
@@ -585,7 +681,7 @@ const JournalingPage = () => {
           <div>
             <p className="journaling-studio__eyebrow">Espace manifestation</p>
             <h2>Vibre avec tes mots</h2>
-            <p>Note tes affirmations, ta gratitude et les personnes qui t inspirent.</p>
+            <p>Note tes affirmations, ta gratitude et les personnes qui t'inspirent.</p>
           </div>
         </header>
         <div className="journaling-manifestation__grid">
@@ -629,6 +725,13 @@ const JournalingPage = () => {
         <button type="button" className="journaling-save__button" onClick={handleSubmit}>
           Ajouter cette page
         </button>
+        <div
+          className={`journaling-save__confirmation${saveConfirmationVisible ? ' is-visible' : ''}`}
+          aria-live="polite"
+        >
+          <span aria-hidden="true">✨</span>
+          <strong>Page ajoutée !</strong>
+        </div>
       </section>
 
       <section className="journaling-history">
@@ -644,26 +747,66 @@ const JournalingPage = () => {
           </button>
         </div>
         {archiveOpen ? (
-          <div className="journaling-history__list">
-            {entriesByDate.map(([date, items]) => (
-              <article key={date} className="journaling-history__group">
-                <header className="journaling-history__group-header">
-                  <div>
-                    <time>{date}</time>
-                    <span>{items.length} page(s)</span>
-                  </div>
+          entriesByYear.length > 0 ? (
+            <div className="journaling-history__years">
+              {entriesByYear.map((group) => (
+                <button
+                  key={group.year}
+                  type="button"
+                  className="journaling-history__year-card"
+                  onClick={() => {
+                    setSelectedYear(group.year)
+                    setSelectedDay(null)
+                  }}
+                >
+                  <span className="journaling-history__year">{group.year}</span>
+                  <span className="journaling-history__year-count">{group.totalEntries} page(s)</span>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <p className="journaling-history__empty">Aucune archive pour le moment.</p>
+          )
+        ) : null}
+      </section>
+      {selectedYearGroup ? (
+        <div className="journaling-history-modal" role="dialog" aria-modal="true">
+          <div className="journaling-history-modal__backdrop" onClick={() => setSelectedYear(null)} />
+          <div className="journaling-history-modal__content">
+            <header className="journaling-history-modal__header">
+              <div>
+                <p>Année</p>
+                <h3>{selectedYearGroup.year}</h3>
+                <span>{selectedYearGroup.totalEntries} page(s)</span>
+              </div>
+              <button type="button" onClick={() => setSelectedYear(null)}>
+                Fermer
+              </button>
+            </header>
+            <div className="journaling-history-modal__body">
+              <div className="journaling-history-modal__dates">
+                {selectedYearGroup.dates.map(({ date, items }) => (
                   <button
+                    key={date}
                     type="button"
-                    className="journaling-history__toggle"
-                    onClick={() => toggleDateSection(date)}
-                    aria-expanded={!collapsedDates.has(date)}
+                    className={`journaling-history__day-card${selectedDay === date ? ' is-active' : ''}`}
+                    onClick={() => setSelectedDay((previous) => (previous === date ? null : date))}
                   >
-                    {collapsedDates.has(date) ? 'Afficher' : 'Réduire'}
+                    <span>{date}</span>
+                    <strong>{items.length} page(s)</strong>
                   </button>
-                </header>
-                {!collapsedDates.has(date) ? (
+                ))}
+              </div>
+              {activeDayGroup ? (
+                <article className="journaling-history__group">
+                  <header className="journaling-history__group-header">
+                    <div>
+                      <time>{activeDayGroup.date}</time>
+                      <span>{activeDayGroup.items.length} page(s)</span>
+                    </div>
+                  </header>
                   <ul>
-                    {items.map((entry) => {
+                    {activeDayGroup.items.map((entry) => {
                       const entryFeelings =
                         entry.feelings && entry.feelings.length > 0
                           ? entry.feelings
@@ -681,7 +824,7 @@ const JournalingPage = () => {
                         <li key={entry.id}>
                           <div className="journaling-history__feeling">
                             <span aria-hidden="true" className="journaling-history__feeling-emoji">
-                              {feelingEmojis.length > 0 ? feelingEmojis.join(' ') : '🙂'}
+                              {feelingEmojis.length > 0 ? feelingEmojis.join(' ') : ''}
                             </span>
                             <div className="journaling-history__feeling-info">
                               <span className="journaling-history__feeling-label">
@@ -743,12 +886,14 @@ const JournalingPage = () => {
                       )
                     })}
                   </ul>
-                ) : null}
-              </article>
-            ))}
+                </article>
+              ) : (
+                <p className="journaling-history-modal__empty">Sélectionne un jour pour consulter tes pages.</p>
+              )}
+            </div>
           </div>
-        ) : null}
-      </section>
+        </div>
+      ) : null}
       <div className="journaling-page__footer-bar" aria-hidden="true" />
     </div>
     

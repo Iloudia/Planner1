@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+﻿import { useMemo, useState } from 'react'
 import type { FormEvent, KeyboardEvent } from 'react'
 import { getDateKey } from '../../data/sampleData'
 import type { ScheduledTask } from '../../data/sampleData'
@@ -16,6 +16,7 @@ type NewTaskFormState = {
   color: string
   repeatStart: string
   repeatEnd: string
+  category: 'Perso' | 'Professionnel'
 }
 
 const createNewTaskForm = (dateKey: string): NewTaskFormState => ({
@@ -25,6 +26,7 @@ const createNewTaskForm = (dateKey: string): NewTaskFormState => ({
   color: newTaskColors[0],
   repeatStart: dateKey,
   repeatEnd: dateKey,
+  category: 'Perso',
 })
 
 const humanDateFormatter = new Intl.DateTimeFormat('fr-FR', {
@@ -110,22 +112,7 @@ const CalendrierPage = () => {
     [tasks, year, month],
   )
 
-  const activeDays = useMemo(() => {
-    const uniqueDays = new Set<string>()
-    tasksThisMonth.forEach((task) => uniqueDays.add(task.date))
-    return uniqueDays.size
-  }, [tasksThisMonth])
-
-  const focusBlocks = useMemo(
-    () => tasksThisMonth.filter((task) => task.tag.toLowerCase().includes('focus')).length,
-    [tasksThisMonth],
-  )
-
-  const heroStats = [
-    { id: 'events', label: 'Evenements planifies', value: tasksThisMonth.length.toString() },
-    { id: 'activeDays', label: 'Jours actifs', value: activeDays.toString() },
-    { id: 'focus', label: 'Blocs focus', value: focusBlocks.toString() },
-  ]
+  const heroStats = [{ id: 'events', label: 'Événements planifiés', value: tasksThisMonth.length.toString() }]
 
   const nextTask = useMemo(() => {
     const now = new Date()
@@ -226,6 +213,7 @@ const CalendrierPage = () => {
     setNewTaskForm((previous) => ({
       ...createNewTaskForm(dateKey),
       color: previous.color,
+      category: previous.category,
     }))
     setNewTaskError(null)
   }
@@ -264,6 +252,13 @@ const CalendrierPage = () => {
     setNewTaskForm((previous) => ({
       ...previous,
       [field]: value,
+    }))
+  }
+
+  const handleNewTaskCategoryChange = (category: 'Perso' | 'Professionnel') => {
+    setNewTaskForm((previous) => ({
+      ...previous,
+      category,
     }))
   }
 
@@ -323,7 +318,7 @@ const CalendrierPage = () => {
         end: endTime,
         date: dateKey,
         color,
-        tag: 'Perso',
+        tag: newTaskForm.category,
       })
     })
 
@@ -370,8 +365,7 @@ const CalendrierPage = () => {
           <span className="calendar-hero__eyebrow">calendrier mensuel</span>
           <h1>Orchestre ton mois avec intention et douceur.</h1>
           <p>
-            Visualise d&apos;un coup d&apos;oeil tes rendez-vous strategiques, tes temps de respiration et tes moments de
-            creation. Chaque bloc que tu poses solidifie ton rythme ideal.
+            Visualise d'un coup d'œil tes rendez-vous stratégiques, tes temps de respiration et tes moments de création. 
           </p>
           <div className="calendar-hero__actions">
             <button
@@ -379,7 +373,7 @@ const CalendrierPage = () => {
               className="calendar-hero__cta calendar-hero__cta--primary"
               onClick={() => handlePlanForDate(getDateKey(today))}
             >
-              Programmer un focus aujourd&apos;hui
+              Planifier un évènement aujourd'hui
             </button>
             <button
               type="button"
@@ -390,7 +384,7 @@ const CalendrierPage = () => {
                 handlePlanForDate(getDateKey(tomorrow))
               }}
             >
-              Bloquer demain maintenant
+              Planifier un évènement demain
             </button>
           </div>
           
@@ -485,7 +479,7 @@ const CalendrierPage = () => {
                   ) : null}
                 </>
               ) : (
-                <span className="calendar-day__empty">Rien de prevu</span>
+                <span className="calendar-day__empty">Rien de prévu</span>
               )}
             </div>
           ),
@@ -502,8 +496,10 @@ const CalendrierPage = () => {
                 <h2 id="calendar-modal-title">{activeDateLabel}</h2>
                 <p>
                   {activeDateTasks.length > 0
-                    ? `${activeDateTasks.length} creneau${activeDateTasks.length > 1 ? 'x' : ''} places.`
-                    : "Aucun creneau pour l'instant, profite pour en poser un."}
+                    ? activeDateTasks.length === 1
+                      ? '1 créneau.'
+                      : `${activeDateTasks.length} creneaux.`
+                    : "Aucun créneau pour l'instant, profite pour en poser un."}
                 </p>
               </div>
               <button type="button" className="calendar-modal__close" onClick={handleCloseModal} aria-label="Fermer">
@@ -517,7 +513,7 @@ const CalendrierPage = () => {
                 className="calendar-hero__cta calendar-hero__cta--ghost"
                 onClick={handleResetDay}
               >
-                Reinitialiser la journee
+                Réinitialiser la journée
               </button>
             </div>
 
@@ -540,7 +536,7 @@ const CalendrierPage = () => {
                 </label>
                 <div className="calendar-task__form-row">
                   <label className="calendar-task__field">
-                    <span>Debut</span>
+                    <span>Début</span>
                     <input
                       type="time"
                       value={newTaskForm.start}
@@ -577,15 +573,36 @@ const CalendrierPage = () => {
                     />
                   </label>
                 </div>
-                <label className="calendar-task__field calendar-task__field--full calendar-task__field--color">
-                  <span>Couleur</span>
-                  <input
-                    type="color"
-                    value={newTaskForm.color}
-                    onChange={(event) => handleNewTaskFieldChange('color', event.target.value)}
-                    required
-                  />
-                </label>
+                <div className="calendar-task__form-row calendar-task__form-row--split">
+                  <label className="calendar-task__field calendar-task__field--full calendar-task__field--color">
+                    <span>Couleur</span>
+                    <input
+                      type="color"
+                      value={newTaskForm.color}
+                      onChange={(event) => handleNewTaskFieldChange('color', event.target.value)}
+                      required
+                    />
+                  </label>
+                  <div className="calendar-task__type-toggle">
+                    <span>Type</span>
+                    <div className="calendar-task__type-buttons">
+                      {(['Perso', 'Professionnel'] as const).map((option) => (
+                        <button
+                          key={option}
+                          type="button"
+                          className={
+                            newTaskForm.category === option
+                              ? 'calendar-task__type-button is-active'
+                              : 'calendar-task__type-button'
+                          }
+                          onClick={() => handleNewTaskCategoryChange(option)}
+                        >
+                          {option === 'Perso' ? 'Perso' : 'Professionnel'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
                 {newTaskError ? <p className="calendar-new-task__error">{newTaskError}</p> : null}
                 <button
                   type="submit"
@@ -604,7 +621,7 @@ const CalendrierPage = () => {
               </div>
               <div className="calendar-modal__list">
                 {activeDateTasks.length === 0 ? (
-                  <p className="calendar-modal__empty">Depose ton premier bloc pour cette journee.</p>
+                  <p className="calendar-modal__empty">Dépose ton premier bloc pour cette journée.</p>
                 ) : (
                   activeDateTasks.map((task) => (
                     <div
@@ -627,7 +644,7 @@ const CalendrierPage = () => {
                         <form className="calendar-task__form" onSubmit={(event) => handleSubmitEdit(event, task.id)}>
                           <div className="calendar-task__form-row">
                             <label className="calendar-task__field">
-                              <span>Debut</span>
+                              <span>Début</span>
                               <input
                                 type="time"
                                 value={editDraft.start}
@@ -717,4 +734,3 @@ const CalendrierPage = () => {
 }
 
 export default CalendrierPage
-

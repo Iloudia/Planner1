@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import type { FormEvent } from "react"
 import PageHeading from "../../components/PageHeading"
+import usePersistentState from "../../hooks/usePersistentState"
 import workoutBanner1 from "../../assets/planner-01.jpg"
 import workoutBanner2 from "../../assets/planner-02.jpg"
 import workoutBanner3 from "../../assets/planner-03.jpg"
@@ -80,48 +81,12 @@ const extractYoutubeId = (url: string) => {
 }
 
 const WorkoutPage = () => {
-  const [exercises, setExercises] = useState<ExerciseCard[]>(() => {
-    if (typeof window === "undefined") return DEFAULT_EXERCISES
-    try {
-      const stored = window.localStorage.getItem(STORAGE_KEYS.exercises)
-      if (!stored) return DEFAULT_EXERCISES
-      const parsed = JSON.parse(stored)
-      return Array.isArray(parsed) ? parsed : DEFAULT_EXERCISES
-    } catch (error) {
-      console.error("Impossible de restaurer les exercices", error)
-      return DEFAULT_EXERCISES
-    }
-  })
-  const [videos, setVideos] = useState<VideoCard[]>(() => {
-    if (typeof window === "undefined") return DEFAULT_VIDEOS
-    try {
-      const stored = window.localStorage.getItem(STORAGE_KEYS.videos)
-      if (!stored) return DEFAULT_VIDEOS
-      const parsed = JSON.parse(stored)
-      return Array.isArray(parsed) ? parsed : DEFAULT_VIDEOS
-    } catch (error) {
-      console.error("Impossible de restaurer les vidéos", error)
-      return DEFAULT_VIDEOS
-    }
-  })
+  const [exercises, setExercises] = usePersistentState<ExerciseCard[]>(STORAGE_KEYS.exercises, () => DEFAULT_EXERCISES)
+  const [videos, setVideos] = usePersistentState<VideoCard[]>(STORAGE_KEYS.videos, () => DEFAULT_VIDEOS)
   const [form, setForm] = useState({ title: "", muscle: "", category: "", image: "" })
   const [videoForm, setVideoForm] = useState({ title: "", url: "" })
   const [selectedExerciseId, setSelectedExerciseId] = useState<string | null>(null)
-  const [seriesByExercise, setSeriesByExercise] = useState<Record<string, SeriesItem[]>>(() => {
-    if (typeof window === "undefined") return {}
-    try {
-      const stored = window.localStorage.getItem(STORAGE_KEYS.series)
-      if (!stored) return {}
-      const parsed = JSON.parse(stored)
-      if (typeof parsed !== "object" || parsed === null) {
-        return {}
-      }
-      return parsed as Record<string, SeriesItem[]>
-    } catch (error) {
-      console.error("Impossible de restaurer les séries", error)
-      return {}
-    }
-  })
+  const [seriesByExercise, setSeriesByExercise] = usePersistentState<Record<string, SeriesItem[]>>(STORAGE_KEYS.series, () => ({}))
   const [seriesInput, setSeriesInput] = useState("")
 
   useEffect(() => {
@@ -130,36 +95,6 @@ const WorkoutPage = () => {
       document.body.classList.remove("planner-page--white")
     }
   }, [])
-
-  useEffect(() => {
-    try {
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem(STORAGE_KEYS.exercises, JSON.stringify(exercises))
-      }
-    } catch (error) {
-      console.error("Impossible de sauvegarder les exercices", error)
-    }
-  }, [exercises])
-
-  useEffect(() => {
-    try {
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem(STORAGE_KEYS.videos, JSON.stringify(videos))
-      }
-    } catch (error) {
-      console.error("Impossible de sauvegarder les vidéos", error)
-    }
-  }, [videos])
-
-  useEffect(() => {
-    try {
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem(STORAGE_KEYS.series, JSON.stringify(seriesByExercise))
-      }
-    } catch (error) {
-      console.error("Impossible de sauvegarder les séries", error)
-    }
-  }, [seriesByExercise])
 
   useEffect(() => {
     if (!selectedExerciseId) return

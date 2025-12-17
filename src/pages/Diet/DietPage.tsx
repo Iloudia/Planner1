@@ -369,6 +369,7 @@ const DietClassicPage = () => {
       <main className="diet-gymgirl-page">
         <article className="diet-blog">
           <PageHeading eyebrow={currentHeading.eyebrow} title={currentHeading.title} className="diet-page-heading" />
+          <p className="diet-heading__description">{currentHeading.description}</p>
           <div className="diet-toggle diet-toggle--heading">
             <button type="button" className={tab === "mass" ? "is-active" : ""} onClick={() => setTab("mass")}>
               Prise de masse
