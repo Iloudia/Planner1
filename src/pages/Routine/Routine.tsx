@@ -1,4 +1,4 @@
-﻿import type { FormEvent } from 'react'
+﻿﻿import type { FormEvent } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import type { RoutineItem } from '../../data/sampleData'
 import { eveningRoutine as defaultEveningRoutine, morningRoutine as defaultMorningRoutine } from '../../data/sampleData'
@@ -19,6 +19,9 @@ type RoutineDraft = {
 const COMPLETED_STORAGE_KEY = 'planner.routines.completed'
 const MORNING_ROUTINE_STORAGE_KEY = 'planner.routines.morning'
 const EVENING_ROUTINE_STORAGE_KEY = 'planner.routines.evening'
+
+const truncateText = (value: string, max = 67) =>
+  value.length > max ? `${value.slice(0, max - 3).trimEnd()}...` : value
 
 type RoutineChecklistProps = {
   items: RoutineItem[]
@@ -46,7 +49,7 @@ const RoutineChecklist = ({
               onChange={() => toggleRoutine(item.id)}
             />
             <span className="routine-note__text">
-              <span className="routine-note__item-title">{item.title}</span>
+              <span className="routine-note__item-title">{truncateText(item.title)}</span>
               {item.detail && <span className="routine-note__item-detail">{item.detail}</span>}
             </span>
           </label>
@@ -202,11 +205,6 @@ const RoutinePage = () => {
             <div className="routine-note__title-band">
               <h2>Routine du matin</h2>
             </div>
-            <img
-              className="routine-note__illustration"
-              src={morningIllustration}
-              alt="Illustration douce du lever de soleil"
-            />
           </div>
           <div className="routine-note__body">
             <div className="routine-note__pins">
@@ -225,7 +223,7 @@ const RoutinePage = () => {
               onSubmit={handleRoutineSubmit('morning')}
               buttonLabel="Ajouter à ma routine du matin"
               placeholderTitle="Ex : Boire un verre d’eau tiède citronné"
-              placeholderDetail="Détaille si besoin (durée, intention, mantra...)"
+              placeholderDetail="Détaille si besoin (durée, intention...)"
             />
           </div>
         </section>
@@ -235,7 +233,6 @@ const RoutinePage = () => {
             <div className="routine-note__title-band">
               <h2>Routine du soir</h2>
             </div>
-            <img className="routine-note__illustration" src={eveningIllustration} alt="Illustration apaisante de la nuit" />
           </div>
           <div className="routine-note__body">
             <div className="routine-note__pins">
@@ -254,7 +251,7 @@ const RoutinePage = () => {
               onSubmit={handleRoutineSubmit('evening')}
               buttonLabel="Ajouter à ma routine du soir"
               placeholderTitle="Ex : Préparer mes vêtements pour demain"
-              placeholderDetail="Note ce que tu veux te rappeler ou ressentir"
+              placeholderDetail="Détaille si besoin (durée, intention...)"
             />
           </div>
         </section>
