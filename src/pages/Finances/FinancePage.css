@@ -26,14 +26,14 @@
   padding: 0.35rem;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(99, 102, 241, 0.25);
-  box-shadow: 0 12px 28px rgba(79, 70, 229, 0.14);
+  border: 1px solid rgba(244, 114, 182, 0.25);
+  box-shadow: 0 12px 28px rgba(244, 114, 182, 0.18);
 }
 
 .finance-heading-row .calendar-month-nav button {
   border: none;
-  background: linear-gradient(120deg, #eef2ff 0%, #e0e7ff 100%);
-  color: #312e81;
+  background: linear-gradient(120deg, #fde2e7 0%, #fbcfe8 100%);
+  color: #9d174d;
   border-radius: 50%;
   width: 42px;
   height: 42px;
@@ -44,13 +44,13 @@
   letter-spacing: 0.05em;
   text-transform: uppercase;
   cursor: pointer;
-  box-shadow: 0 12px 26px rgba(99, 102, 241, 0.24);
+  box-shadow: 0 12px 26px rgba(244, 114, 182, 0.24);
   transition: transform 0.16s ease, box-shadow 0.16s ease, opacity 0.16s ease;
 }
 
 .finance-heading-row .calendar-month-nav button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 18px 34px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 18px 34px rgba(244, 114, 182, 0.3);
   opacity: 0.95;
 }
 
@@ -85,7 +85,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  color: #1e1b4b;
+  color: #9d174d;
 }
 .finance-hero h1 {
   margin: 0;
@@ -108,7 +108,7 @@
   background: rgba(255, 255, 255, 0.82);
   border-radius: 18px;
   padding: 1rem 1.2rem;
-  box-shadow: 0 24px 50px rgba(79, 70, 229, 0.12);
+  box-shadow: 0 24px 50px rgba(244, 114, 182, 0.16);
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
@@ -118,33 +118,13 @@
   font-size: 0.8rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(79, 70, 229, 0.68);
+  color: rgba(190, 24, 93, 0.72);
 }
 
 .finance-hero__stats strong {
   font-size: 1.3rem;
   font-weight: 700;
-  color: #1e1b4b;
-}
-
-.finance-hero__period {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.85rem;
-}
-
-.finance-hero__badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.45rem 0.95rem;
-  border-radius: 999px;
-  background: rgb(227, 74, 132);
-  color: #ffffff;
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  color: #9d174d;
 }
 
 .finance-hero__month-nav {
@@ -229,14 +209,14 @@
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-  color: #1e1b4b;
+  color: #9d174d;
 }
 
 .finance-section-header__eyebrow {
   font-size: 0.75rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgba(79, 70, 229, 0.8);
+  color: rgba(229, 70, 176, 0.8);
   font-weight: 600;
 }
 
@@ -281,7 +261,7 @@
 }
 
 .finance-summary__card {
-  border: 1px solid rgba(79, 70, 229, 0.12);
+  border: 1px solid rgba(244, 114, 182, 0.14);
   border-radius: 20px;
   padding: 1.2rem;
   display: flex;
@@ -305,12 +285,12 @@
 
 .finance-summary__value {
   font-size: 1.25rem;
-  color: #1e1b4b;
+  color: #9d174d;
 }
 
 .finance-tip.dashboard-panel {
   background: linear-gradient(135deg, rgba(254, 226, 226, 0.9) 0%, rgba(221, 214, 254, 0.9) 100%);
-  color: #1e1b4b;
+  color: #9d174d;
 }
 
 .finance-tip.dashboard-panel p {
@@ -455,7 +435,7 @@
 
 .finance-balance__stat strong {
   font-size: 1.25rem;
-  color: #1e1b4b;
+  color: #9d174d;
 }
 
 .finance-balance__stat small {
@@ -496,7 +476,7 @@
 .finance-balance__chart-card h3 {
   margin: 0;
   font-size: 1.15rem;
-  color: #1e1b4b;
+  color: #9d174d;
 }
 
 .finance-balance__empty {
@@ -561,7 +541,7 @@
 .finance-pie__value {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #1e1b4b;
+  color: #9d174d;
 }
 
 .finance-history.dashboard-panel {
@@ -585,7 +565,7 @@
   padding: 0.35rem 1rem;
   border-radius: 999px;
   background: rgba(15, 23, 42, 0.06);
-  color: #1e1b4b;
+  color: #9d174d;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -701,7 +681,7 @@
 .finance-history__label {
   font-size: 1.05rem;
   font-weight: 600;
-  color: #1e1b4b;
+  color: #9d174d;
 }
 
 .finance-history__amount {
@@ -841,7 +821,7 @@
 
 .finance-archives__year-nav strong {
   font-size: 1.2rem;
-  color: #1e1b4b;
+  color: #9d174d;
 }
 
 .finance-archives__year-nav button {
@@ -864,9 +844,9 @@
 }
 
 .finance-archives__year-nav button:not(:disabled):hover {
-  background: rgba(99, 102, 241, 0.12);
-  color: #312e81;
-  border-color: rgba(99, 102, 241, 0.35);
+  background: rgba(244, 114, 182, 0.12);
+  color: #9d174d;
+  border-color: rgba(244, 114, 182, 0.35);
 }
 
 .finance-archives__months {
@@ -922,7 +902,7 @@
 .finance-archive-card__month {
   font-size: 1.05rem;
   font-weight: 600;
-  color: #1e1b4b;
+  color: #9d174d;
 }
 
 .finance-archive-card__badge {
@@ -960,7 +940,7 @@
 
 .finance-archive-card__totals strong {
   font-size: 0.95rem;
-  color: #1e1b4b;
+  color: #9d174d;
 }
 
 .finance-archive-card__spark {

@@ -145,6 +145,7 @@ const historyDateFormatter = new Intl.DateTimeFormat('fr-FR', {
 })
 
 const FUTURE_MONTHS_TO_INCLUDE = 14
+const PAST_MONTHS_TO_INCLUDE = 12
 
 const formatDateToISO = (date: Date) => {
   const year = date.getFullYear()
@@ -191,6 +192,14 @@ const generateFutureMonths = (monthKey: string, monthsAhead: number) => {
   const keys: string[] = []
   for (let index = 1; index <= monthsAhead; index += 1) {
     keys.push(addMonthsToMonthKey(monthKey, index))
+  }
+  return keys
+}
+
+const generatePastMonths = (monthKey: string, monthsBack: number) => {
+  const keys: string[] = []
+  for (let index = 1; index <= monthsBack; index += 1) {
+    keys.push(addMonthsToMonthKey(monthKey, -index))
   }
   return keys
 }
@@ -387,6 +396,9 @@ const [isHistoryModalOpen, setHistoryModalOpen] = useState(false)
       }
     })
     keySet.add(currentMonthKey)
+    generatePastMonths(currentMonthKey, PAST_MONTHS_TO_INCLUDE).forEach((pastKey) => {
+      keySet.add(pastKey)
+    })
     generateFutureMonths(currentMonthKey, FUTURE_MONTHS_TO_INCLUDE).forEach((futureKey) => {
       keySet.add(futureKey)
     })
@@ -675,14 +687,10 @@ const hasAdditionalHistory = selectedMonthEntries.length > previewHistory.length
         stats={financeHeroStats}
         images={financeMoodboard}
         tone="blue"
-      >
-        <div className="finance-hero__period">
-          <span className="finance-hero__badge">{selectedMonthLabel}</span>
-        </div>
-      </PageHero>
+      />
       <div className="finance-page__accent-bar" aria-hidden="true" />
       <div className="finance-heading-row">
-        <PageHeading eyebrow="Finances" title="Tableau de bord budget" />
+        <PageHeading eyebrow="Finances" title={`Budget ${selectedMonthLabel}`} />
         <div className="calendar-month-nav finance-hero__month-nav">
           <button
             type="button"
@@ -739,7 +747,7 @@ const hasAdditionalHistory = selectedMonthEntries.length > previewHistory.length
           <section className="finance-form dashboard-panel">
             <header className="finance-section-header">
               <span className="finance-section-header__eyebrow">ajoute ton mouvement</span>
-              <p>Consigne instantanément dépenses et revenus du mois</p>
+              <p>Enregistre en un instant les dépenses et les revenus du mois.</p>
             </header>
             <form onSubmit={handleSubmit} className="finance-form__grid">
               <label className="finance-form__field">

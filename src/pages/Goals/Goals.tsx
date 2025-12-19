@@ -11,41 +11,6 @@ import "./Goals.css";
 
 const stripImages = [photo1, photo2, photo3, photo4, photo5, photo6];
 
-const sportGoals = [
-  {
-    id: "goal-strength",
-    title: "Strength cycle",
-    detail: "Full body + core 3x semaine",
-    metric: "6 semaines",
-    progress: 65,
-    image: photo1,
-  },
-  {
-    id: "goal-cardio",
-    title: "Cardio doux",
-    detail: "Zone 2 + une sortie longue",
-    metric: "4 sorties / sem",
-    progress: 45,
-    image: photo2,
-  },
-  {
-    id: "goal-mobility",
-    title: "Mobilite",
-    detail: "15 min apres chaque seance",
-    metric: "Quotidien",
-    progress: 30,
-    image: photo3,
-  },
-  {
-    id: "goal-technique",
-    title: "Technique squat",
-    detail: "Vidéo + feedback hebdo",
-    metric: "Progression charge",
-    progress: 55,
-    image: photo4,
-  },
-];
-
 const GoalsPage = () => {
   const [bodyGoals, setBodyGoals] = useState<Array<string | null>>([null, null, null, null]);
 
@@ -74,39 +39,15 @@ const GoalsPage = () => {
       <div className="content-page goals-page">
 
         
-        <p className="muted goals-page-heading__intro">Visualise tes priorites sportives et suis leur avancee.</p>
+        <p className="muted goals-page-heading__intro">Visualise tes priorités sportives et suis leur avancée.</p>
 
         <section className="goals-daily">
           <DailyGoalsTracker />
         </section>
-        
-        <section className="goals-grid" aria-label="Goals sport">
-          {sportGoals.map((goal) => (
-            <article key={goal.id} className="goal-card">
-              <div className="goal-card__media">
-                <img src={goal.image} alt={goal.title} />
-              </div>
-              <div className="goal-card__body">
-                <div className="goal-card__meta">
-                  <span className="goal-card__tag">{goal.metric}</span>
-                </div>
-                <h3>{goal.title}</h3>
-                <p>{goal.detail}</p>
-                <div className="goal-card__progress">
-                  <div className="goal-card__progress-bar" style={{ width: `${goal.progress}%` }} />
-                  <span className="goal-card__progress-value">{goal.progress}%</span>
-                </div>
-              </div>
-            </article>
-          ))}
-        </section>
-
-
-
         <section className="body-goals" aria-label="Body goals photos">
           <header className="body-goals__header">
             <h3>Body goals (photos)</h3>
-            <p className="muted">Ajoute des references visuelles pour tes objectifs corps.</p>
+            <p className="muted">Ajoute des références visuelles pour tes objectifs corps.</p>
           </header>
           <div className="body-goals__grid">
             {bodyGoals.map((image, index) => (
