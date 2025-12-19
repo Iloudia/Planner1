@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ChangeEvent, FormEvent } from 'react'
 import usePersistentState from '../../hooks/usePersistentState'
 import activitiesMood01 from '../../assets/planner-05.jpg'
@@ -29,8 +29,8 @@ type ActivityDraft = {
 }
 
 const statusOptions: Array<{ value: ActivityStatus; label: string }> = [
-  { value: 'planifie', label: 'Planifiee' },
-  { value: 'fait', label: 'Realisee' },
+  { value: 'planifie', label: 'Planifiée' },
+  { value: 'fait', label: 'Realisée' },
 ]
 
 const categoryPalette = ['#C7D2FE', '#FBCFE8', '#FDE68A', '#E9D5FF', '#BFDBFE']
@@ -92,9 +92,9 @@ const ActivitiesPage = () => {
     const scheduled = activities.filter((activity) => activity.status === 'planifie').length
     const completed = activities.filter((activity) => activity.status === 'fait').length
     return [
-      { id: 'ideas', label: 'Idees', value: inspirations.toString() },
-      { id: 'scheduled', label: 'Dates prevues', value: scheduled.toString() },
-      { id: 'done', label: 'Moments vecus', value: completed.toString() },
+      { id: 'ideas', label: 'Idées', value: inspirations.toString() },
+      { id: 'scheduled', label: 'Dates prévues', value: scheduled.toString() },
+      { id: 'done', label: 'Moments vécus', value: completed.toString() },
     ]
   }, [activities])
 
@@ -187,19 +187,47 @@ const ActivitiesPage = () => {
     )
   }
 
-  const handleChangeDate = (activityId: string) => {
-    const newDate = window.prompt('Nouvelle date (YYYY-MM-DD) :')
-    if (!newDate) {
+  const [editingDateId, setEditingDateId] = useState<string | null>(null)
+
+  const handleChangeDate =
+    (activityId: string) =>
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const newDate = event.target.value
+      setActivities((previous) =>
+        previous.map((activity) =>
+          activity.id === activityId ? { ...activity, idealDate: newDate.trim() } : activity,
+        ),
+      )
       setOpenMenuId(null)
-      return
+      setEditingDateId(null)
     }
-    setActivities((previous) =>
-      previous.map((activity) =>
-        activity.id === activityId ? { ...activity, idealDate: newDate.trim() } : activity,
-      ),
-    )
+
+  const dateInputRefs = useRef<Record<string, HTMLInputElement | null>>({})
+
+  const focusDateInput = (activityId: string) => {
+    setEditingDateId(activityId)
+    const target = dateInputRefs.current[activityId]
+    if (target) {
+      target.focus()
+    }
     setOpenMenuId(null)
   }
+
+  useEffect(() => {
+    if (!editingDateId) {
+      return
+    }
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement
+      if (!target.closest('.activity-card__date-field') && !target.closest('.activity-card__menu-panel')) {
+        setEditingDateId(null)
+      }
+    }
+    document.addEventListener('pointerdown', handleClickOutside)
+    return () => {
+      document.removeEventListener('pointerdown', handleClickOutside)
+    }
+  }, [editingDateId])
 
   const renderActivityCard = (activity: Activity, index: number) => {
     return (
@@ -237,7 +265,7 @@ const ActivitiesPage = () => {
                   <button
                     type="button"
                     className="activity-card__menu-item activity-card__menu-item--light"
-                    onClick={() => handleChangeDate(activity.id)}
+                    onClick={() => focusDateInput(activity.id)}
                   >
                     Changer la date
                   </button>
@@ -250,7 +278,39 @@ const ActivitiesPage = () => {
           </div>
           <p className="activity-card__meta">
             {activity.category ? <span>{activity.category}</span> : null}
-            {activity.idealDate ? <time dateTime={activity.idealDate}>{formatDate(activity.idealDate)}</time> : null}
+            <label className="activity-card__date-field">
+              {editingDateId === activity.id ? (
+                <time dateTime={activity.idealDate ?? ''}>
+                  <input
+                    type="date"
+                    className="activity-card__date-input"
+                    value={activity.idealDate ?? ''}
+                    ref={(node) => {
+                      dateInputRefs.current[activity.id] = node
+                    }}
+                    onChange={handleChangeDate(activity.id)}
+                    aria-label="Modifier la date"
+                  />
+                </time>
+              ) : activity.idealDate ? (
+                <time
+                  dateTime={activity.idealDate}
+                  onClick={() => focusDateInput(activity.id)}
+                  role="button"
+                  tabIndex={0}
+                >
+                  {formatDate(activity.idealDate)}
+                </time>
+              ) : (
+                <button
+                  type="button"
+                  className="activity-card__date-button"
+                  onClick={() => focusDateInput(activity.id)}
+                >
+                  Changer la date
+                </button>
+              )}
+            </label>
           </p>
           <div className="activity-card__actions">
             <button
@@ -259,7 +319,7 @@ const ActivitiesPage = () => {
               onClick={() => handleMarkDone(activity.id)}
               disabled={activity.status === 'fait'}
             >
-              {activity.status === 'fait' ? 'Activite realisee' : 'Marquer comme faite'}
+              {activity.status === 'fait' ? 'Activité réalisée' : 'Marquer comme faite'}
             </button>
           </div>
         </div>
@@ -273,12 +333,12 @@ const ActivitiesPage = () => {
       <PageHero
         eyebrow="Inspiration"
         title="Activités et sorties"
-        description="Un espace pour rassembler les idees d activites qui te font du bien et nourrissent ton energie."
+        description="Un espace pour rassembler les idées d’activités qui te font du bien et nourrissent ton énergie."
         stats={activitiesStats}
         images={activitiesHeroImages}
       />
       <div className="activities-page__accent-bar" aria-hidden="true" />
-      <PageHeading eyebrow="Activites" title="Planning d activites" />
+      <PageHeading eyebrow="Activités" title="Planning d'activités" />
       
 
       <section className="activities-dashboard">
@@ -300,7 +360,7 @@ const ActivitiesPage = () => {
                 />
               </label>
               <label>
-                <span>Categorie</span>
+                <span>Catégorie</span>
                 <input
                   type="text"
                   value={draft.category}
@@ -366,7 +426,7 @@ const ActivitiesPage = () => {
       <div className="activities-split">
         <article className="activities-group dashboard-panel">
           <header>
-            <h2>Planifié</h2>
+            <h2>Planifiée</h2>
             <span>{plannedActivities.length} activité(s)</span>
           </header>
           {plannedActivities.length === 0 ? (
@@ -381,7 +441,7 @@ const ActivitiesPage = () => {
         <article className="activities-group dashboard-panel">
           <header>
             <div>
-              <h2>Réalisé</h2>
+              <h2>Réalisée</h2>
             </div>
             <span>{completedActivities.length} activité(s)</span>
           </header>

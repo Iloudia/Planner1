@@ -67,7 +67,7 @@ type WishlistCategoryCard = {
   label: string
 }
 
-const WISHLIST_DEFINITION_VERSION = 4
+const WISHLIST_DEFINITION_VERSION = 6
 
 const CATEGORY_DEFINITIONS: CategoryDefinition[] = [
   { id: "hair", label: "Hair essentials", accent: "#f497c0", cover: wishlistHair, blurb: "Brushes, soins et petits accessoires pour une routine cheveux complète." },
@@ -79,7 +79,7 @@ const CATEGORY_DEFINITIONS: CategoryDefinition[] = [
   { id: "room", label: "Chambre", accent: "#d9c5ff", cover: wishlistRoom, blurb: "Déco, ambiance et petits objets cozy pour ta chambre." },
   { id: "travel", label: "Voyages", accent: "#f6b094", cover: wishlistTravel, blurb: "Destinations ou expériences à ajouter à ta bucket list." },
   { id: "jewelry", label: "Bijoux", accent: "#ffd4a8", cover: wishlistJewelry, blurb: "Bagues, colliers et accessoires brillants à collectionner." },
-  { id: "bag", label: "Sac", accent: "#f3b4c5", cover: wishlistBag, blurb: "Bagues, colliers et accessoires brillants à collectionner." },
+  { id: "bag", label: "Sac", accent: "#f3b4c5", cover: wishlistBag, blurb: "Sacs tendance et intemporels pour toutes les occasions." },
 ]
 
 const CUSTOM_ACCENTS = ["#f6a6c1", "#c3d9ff", "#ffe3a7", "#c6eed7", "#fbcfe8", "#d9c5ff"] as const
@@ -245,6 +245,21 @@ const WishlistPage = () => {
     }
   }, [])
 
+  const persistWishlist = useCallback(
+    (updater: (previous: WishlistState) => WishlistState) => {
+      setWishlist((previous) => {
+        const next = updater(previous)
+        try {
+          localStorage.setItem("planner.wishlist", JSON.stringify(next))
+        } catch {
+          // ignore write errors
+        }
+        return next
+      })
+    },
+    [setWishlist],
+  )
+
   useEffect(() => {
     setWishlist((previous) => {
       let changed = false
@@ -377,7 +392,7 @@ const WishlistPage = () => {
       .map(([id, entry]) => ({
         id,
         title: entry.title ?? "Nouvelle categorie",
-        label: "Collection perso",
+        label: entry.title ?? "Collection perso",
         accent: entry.accent ?? getAccentForId(id),
         cover: entry.cover ?? getCoverForId(id),
         blurb: entry.blurb ?? CUSTOM_BLURB,
@@ -956,7 +971,7 @@ const WishlistPage = () => {
       order: Date.now(),
     }
 
-    setWishlist((previous) => ({
+    persistWishlist((previous) => ({
       ...previous,
       [newId]: entry,
     }))
@@ -1259,7 +1274,7 @@ const WishlistPage = () => {
       <header className="wishlist-hero dashboard-panel">
         <div className="wishlist-hero__content">
           <h2>Imagine ta wishlist idéale, catégorie par catégorie.</h2>
-          <p>Organise tes inspirations shopping, déco ou voyages en un seul espace pastel.</p>
+          <p>Organise tes inspirations shopping, déco ou voyages en un seul espace.</p>
         </div>
       </header>
       <div className="page-accent-bar" aria-hidden="true" />
@@ -1358,8 +1373,10 @@ const WishlistPage = () => {
             <div className="wishlist-modal__body">
               <header className="wishlist-modal__header">
                 <div>
-                  <span className="wishlist-modal__eyebrow">{selectedCategoryCard.label}</span>
                   <h3>{selectedCategoryState.title}</h3>
+                  {selectedCategoryCard.blurb?.trim().length ? (
+                    <span className="wishlist-modal__eyebrow">{selectedCategoryCard.blurb}</span>
+                  ) : null}
                 </div>
                 <span className="wishlist-modal__badge">
                   {selectedCategoryState.items.length} {formatElementLabel(selectedCategoryState.items.length)}
@@ -1517,12 +1534,12 @@ const WishlistPage = () => {
                       type="url"
                       value={itemDraft.link}
                       onChange={(event) => setItemDraft((previous) => ({ ...previous, link: event.target.value }))}
-                      placeholder="Lien boutique ou reference"
+                      placeholder="Lien boutique ou référence"
                     />
                   </label>
                   <div className="wishlist-category-picker">
                     {itemDraft.subcategory.trim().length > 0 ? (
-                      <span className="wishlist-category-picker__current">Categorie actuelle : {itemDraft.subcategory}</span>
+                      <span className="wishlist-category-picker__current">Catégorie actuelle : {itemDraft.subcategory}</span>
                     ) : null}
                     <button
                       type="button"
@@ -1530,7 +1547,7 @@ const WishlistPage = () => {
                       onClick={() => setIsCategoryPickerOpen((previous) => !previous)}
                       aria-expanded={isCategoryPickerOpen}
                     >
-                      <span>+ Ajouter a la categorie</span>
+                      <span>+ Ajouter à la catégorie</span>
                       <svg
                         viewBox="0 0 24 24"
                         aria-hidden="true"
@@ -1542,17 +1559,17 @@ const WishlistPage = () => {
                     {isCategoryPickerOpen ? (
                       <div className="wishlist-category-picker__panel">
                         <label>
-                          <span>Nom de la categorie</span>
+                          <span>Nom de la catégorie</span>
                           <input
                             type="text"
                             value={itemDraft.subcategory}
                             onChange={(event) => setItemDraft((previous) => ({ ...previous, subcategory: event.target.value }))}
-                            placeholder="Ex: Accessoires, Noel, Lecture..."
+                            placeholder="Ex: Accessoires, Noël, Lecture..."
                           />
                         </label>
                         {subcategoryOptions.length > 0 ? (
                           <>
-                            <span className="wishlist-category-picker__hint">Suggestions deja utilisees</span>
+                            <span className="wishlist-category-picker__hint">Suggestions déjà utilisées</span>
                             <ul className="wishlist-category-picker__list">
                               {subcategoryOptions.map((option) => (
                                 <li key={option}>
@@ -1772,18 +1789,6 @@ const WishlistPage = () => {
                 placeholder="Ajoute un petit texte pour la carte"
               />
             </label>
-            <label>
-              <span>Couleur</span>
-              <div className="wishlist-color-picker">
-                <input
-                  type="color"
-                  className="wishlist-color-picker__input"
-                  value={categoryDraft.accent}
-                  onChange={(event) => setCategoryDraft((previous) => ({ ...previous, accent: event.target.value }))}
-                  aria-label="Choisir la couleur de la carte"
-                />
-              </div>
-            </label>
             <label className="wishlist-modal__file-field">
               <span>Image de couverture</span>
               <div className="wishlist-cover-upload">
@@ -1825,7 +1830,7 @@ const WishlistPage = () => {
               </div>
             </label>
             <div className="wishlist-create__actions">
-              <button type="submit">Creer</button>
+              <button type="submit">Créer</button>
               <button type="button" onClick={handleCancelCreateCategory}>
                 Annuler
               </button>
@@ -1837,14 +1842,14 @@ const WishlistPage = () => {
       {renamingCategoryId ? (
         <div className="wishlist-modal__backdrop" role="dialog" aria-modal="true" onClick={() => setRenamingCategoryId(null)}>
           <form className="wishlist-rename" onSubmit={handleRenameSubmit} onClick={(event) => event.stopPropagation()}>
-            <h3>Renommer la categorie</h3>
+            <h3>Modifier la catégorie</h3>
             <label>
               <span>Nouveau titre</span>
               <input
                 type="text"
                 value={renameDraft}
                 onChange={(event) => setRenameDraft(event.target.value)}
-                placeholder="Nom de la categorie"
+                placeholder="Nom de la catégorie"
                 required
               />
             </label>

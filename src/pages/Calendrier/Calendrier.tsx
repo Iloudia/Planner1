@@ -112,7 +112,7 @@ const CalendrierPage = () => {
     [tasks, year, month],
   )
 
-  const heroStats = [{ id: 'events', label: 'Événements planifiés', value: tasksThisMonth.length.toString() }]
+  const heroStats: Array<{ id: string; label: string; value: string }> = []
 
   const nextTask = useMemo(() => {
     const now = new Date()
@@ -362,10 +362,9 @@ const CalendrierPage = () => {
     <div className="calendar-page">
       <section className="calendar-hero">
         <div className="calendar-hero__content">
-          <span className="calendar-hero__eyebrow">calendrier mensuel</span>
           <h1>Orchestre ton mois avec intention et douceur.</h1>
           <p>
-            Visualise d'un coup d'œil tes rendez-vous stratégiques, tes temps de respiration et tes moments de création. 
+            Visualise en un coup d’œil tes rendez-vous clés, tes temps de pause et tes moments de création. 
           </p>
           <div className="calendar-hero__actions">
             <button
@@ -402,9 +401,9 @@ const CalendrierPage = () => {
         <div className="calendar-hero__panel">
           <div className="calendar-next">
             <span className="calendar-next__label">Prochain rendez-vous</span>
-            <strong>{nextTask ? nextTask.title : 'Aucun bloc prevu'}</strong>
+            <strong>{nextTask ? nextTask.title : 'Rien de planifié pour le moment.'}</strong>
             <p>
-              {nextTask ? `${nextTaskLabel} - ${nextTask.start} - ${nextTask.end}` : 'Ajoute un creneau pour rester alignee.'}
+              {nextTask ? `${nextTaskLabel} - ${nextTask.start} - ${nextTask.end}` : 'Ajoute un créneau.'}
             </p>
             {nextTask?.tag ? <span className="calendar-next__tag">{nextTask.tag}</span> : null}
           </div>
@@ -503,7 +502,9 @@ const CalendrierPage = () => {
                 </p>
               </div>
               <button type="button" className="calendar-modal__close" onClick={handleCloseModal} aria-label="Fermer">
-                X
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
               </button>
             </header>
 
@@ -608,7 +609,7 @@ const CalendrierPage = () => {
                   type="submit"
                   className="calendar-hero__cta calendar-hero__cta--primary calendar-new-task__submit"
                 >
-                  Programmer ce bloc
+                  Programmer
                 </button>
               </form>
             </section>
@@ -621,7 +622,7 @@ const CalendrierPage = () => {
               </div>
               <div className="calendar-modal__list">
                 {activeDateTasks.length === 0 ? (
-                  <p className="calendar-modal__empty">Dépose ton premier bloc pour cette journée.</p>
+                  <p className="calendar-modal__empty">Programme ton premier évènement de la journée.</p>
                 ) : (
                   activeDateTasks.map((task) => (
                     <div

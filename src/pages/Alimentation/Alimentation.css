@@ -70,11 +70,11 @@
   margin-bottom: 0.4rem;
 }
 
-.diet-week__range {
+.diet-week__header .diet-week__range {
   margin: 0;
   font-weight: 600;
-  color: #9d174d;
-  background: rgba(236, 72, 153, 0.12);
+  color: #c2185b;
+  background: rgba(194, 24, 91, 0.12);
   padding: 0.4rem 0.85rem;
   border-radius: 999px;
   white-space: nowrap;

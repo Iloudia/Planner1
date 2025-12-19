@@ -622,13 +622,13 @@ const SelfLovePage = () => {
   const getArchiveBadge = (letter: SelfLoveSavedLetter) => {
     if (letter.entryType === 'innerChild') {
       return {
-        label: "L'enfant interieur",
+        label: "L'enfant intérieur",
         className: 'self-love-saved-letters__badge',
       }
     }
     if (letter.entryType === 'bestFriend') {
       return {
-        label: 'Jeu des roles',
+        label: 'Jeu des rôles',
         className: 'self-love-saved-letters__badge self-love-saved-letters__badge--kitty',
       }
     }
@@ -729,13 +729,13 @@ const SelfLovePage = () => {
       </section>
       <section className="self-love-section self-love-section--thoughts">
         <div className="self-love-section__header">
-          <h2>Pensees negatives a oublier</h2>
-          <p>Clique sur une pensee pour la laisser s'envoler.</p>
+          <h2>Pensées negatives à oublier</h2>
+          <p>Clique sur une pensée pour la laisser s'envoler.</p>
         </div>
         <form className="self-love-form-row" onSubmit={handleAddThought}>
           <input
             type="text"
-            placeholder="Ex. Je dois etre parfait(e)."
+            placeholder="Ex. Je dois être parfait(e)."
             value={thoughtDraft}
             onChange={(event) => setThoughtDraft(event.target.value)}
           />
@@ -758,7 +758,7 @@ const SelfLovePage = () => {
           })}
           {safeState.thoughts.length === 0 ? (
             <div className="self-love-thought self-love-thought--empty">
-              <span>Plus aucune pensee limitante ici. Bravo !</span>
+              <span>Plus aucune pensée limitante ici. Bravo !</span>
             </div>
           ) : null}
         </div>
@@ -767,12 +767,12 @@ const SelfLovePage = () => {
       <section className="self-love-section self-love-exercises">
         <div className="self-love-section__header">
           <h2>Exercices guides pour t'aimer davantage</h2>
-          <p>Prends quelques instants pour ecrire et laisser ton coeur s'exprimer.</p>
+          <p>Prends quelques instants pour écrire et laisser ton coeur s'exprimer.</p>
         </div>
         <div className="self-love-exercise__grid">
           <article className="self-love-exercise__card">
-            <div className="self-love-exercise__eyebrow">L'enfant interieur</div>
-            <h3>Dialogue doux avec ton passe</h3>
+            <div className="self-love-exercise__eyebrow">L'enfant intérieur</div>
+            <h3>Dialogue doux avec ton passé</h3>
             <p>Imagine une situation difficile d'enfance et offre-toi aujourd'hui les mots qui avaient manque.</p>
             <label className="self-love-exercise__prompt">
               <span>Que souhaiterais-tu lui dire maintenant ?</span>
@@ -806,7 +806,7 @@ const SelfLovePage = () => {
             </button>
           </article>
           <article className="self-love-exercise__card">
-            <div className="self-love-exercise__eyebrow">Jeu des roles</div>
+            <div className="self-love-exercise__eyebrow">Jeu des rôles</div>
             <h3>Le meilleur ami comme boussole</h3>
             <p>Imagine qu'un ami cher vive exactement la meme situation que toi. Quelles paroles lui offrirais-tu ?</p>
             <label className="self-love-exercise__prompt">
@@ -827,7 +827,7 @@ const SelfLovePage = () => {
                 placeholder="Je remarque que..."
               />
             </label>
-            <p className="self-love-exercise__hint">Cet exercice casse l'auto-critique et rappelle que tu merites la meme douceur.</p>
+            <p className="self-love-exercise__hint">Cet exercice casse l'auto-critique et rappelle que tu mérites la même douceur.</p>
             <button type="button" className="self-love-exercise__save" onClick={handleSaveBestFriendExercise}>
               Ajouter aux archives
             </button>

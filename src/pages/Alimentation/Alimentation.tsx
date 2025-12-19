@@ -79,11 +79,10 @@ function DietPage() {
         <section className="page-section diet-week">
           <header className="diet-week__header">
             <div>
-              <span className="diet-week__eyebrow">Organisation</span>
               <h3>Planning des repas de la semaine</h3>
               <p>
-                Ajuste chaque creneau matin, midi et soir au fil des jours. Ton choix est enregistre automatiquement pour que tu retrouves
-                tes idees a chaque visite.
+                Ce planning a pour objectif d’organiser les repas de la semaine de manière simple et équilibrée. 
+                <br />Il permet de gagner du temps, de mieux gérer les courses et de varier les menus tout en respectant les envies et les besoins de chacun.
               </p>
             </div>
             <p className="diet-week__range">{weekRangeLabel}</p>
@@ -121,20 +120,20 @@ function DietPage() {
               className="diet-shopping__textarea"
               value={shoppingNotes}
               onChange={(event) => setShoppingNotes(event.target.value)}
-              placeholder="Ecris librement ta liste comme sur un carnet..."
+              placeholder="Écris ta liste comme dans un carnet..."
             />
           </div>
 
           <div className="diet-ideas">
-            <p className="diet-section__intro">Idees a garder sous la main</p>
+            <p className="diet-section__intro">Idées à garder sous la main</p>
             <div className="diet-ideas__tips">
               <article>
                 <h4>Batch cooking</h4>
-                <p>Choisis 2 bases (quinoa, riz) et 2 sources de proteines pour mixer toute la semaine.</p>
+                <p>Sélectionne deux bases (quinoa, riz) et deux sources de protéines afin de les combiner facilement tout au long de la semaine.</p>
               </article>
               <article>
-                <h4>Reutilise</h4>
-                <p>Les legumes rotis ou les sauces maison peuvent servir sur plusieurs repas.</p>
+                <h4>Réutilise les restes</h4>
+                <p>les légumes rôtis ou les sauces maison peuvent être utilisés sur plusieurs repas.</p>
               </article>
             </div>
           </div>

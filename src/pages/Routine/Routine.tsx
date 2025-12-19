@@ -1,4 +1,4 @@
-﻿﻿import type { FormEvent } from 'react'
+﻿import type { FormEvent } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import type { RoutineItem } from '../../data/sampleData'
 import { eveningRoutine as defaultEveningRoutine, morningRoutine as defaultMorningRoutine } from '../../data/sampleData'
@@ -16,11 +16,12 @@ type RoutineDraft = {
   detail: string
 }
 
+const ROUTINE_FIELD_MAX_LENGTH = 67
 const COMPLETED_STORAGE_KEY = 'planner.routines.completed'
 const MORNING_ROUTINE_STORAGE_KEY = 'planner.routines.morning'
 const EVENING_ROUTINE_STORAGE_KEY = 'planner.routines.evening'
 
-const truncateText = (value: string, max = 67) =>
+const truncateText = (value: string, max = ROUTINE_FIELD_MAX_LENGTH) =>
   value.length > max ? `${value.slice(0, max - 3).trimEnd()}...` : value
 
 type RoutineChecklistProps = {
@@ -94,19 +95,27 @@ const RoutineComposer = ({
       <input
         type="text"
         value={draft.title}
-        onChange={(event) => onDraftChange('title', event.target.value)}
+        onChange={(event) => onDraftChange('title', event.target.value.slice(0, ROUTINE_FIELD_MAX_LENGTH))}
         placeholder={placeholderTitle}
         required
+        maxLength={ROUTINE_FIELD_MAX_LENGTH}
       />
+      {draft.title.length >= ROUTINE_FIELD_MAX_LENGTH ? (
+        <span className="routine-note__composer-hint">Limite de 67 caractères atteinte.</span>
+      ) : null}
     </label>
     <label>
       <span>Détail (optionnel)</span>
       <textarea
         value={draft.detail}
-        onChange={(event) => onDraftChange('detail', event.target.value)}
+        onChange={(event) => onDraftChange('detail', event.target.value.slice(0, ROUTINE_FIELD_MAX_LENGTH))}
         placeholder={placeholderDetail}
         rows={2}
+        maxLength={ROUTINE_FIELD_MAX_LENGTH}
       />
+      {draft.detail.length >= ROUTINE_FIELD_MAX_LENGTH ? (
+        <span className="routine-note__composer-hint">Limite de 67 caractères atteinte.</span>
+      ) : null}
     </label>
     <button type="submit" className="routine-note__composer-submit">
       {buttonLabel}

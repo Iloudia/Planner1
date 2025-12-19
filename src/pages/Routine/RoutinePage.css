@@ -295,6 +295,12 @@
   min-height: 70px;
 }
 
+.routine-note__composer-hint {
+  font-size: 0.75rem;
+  color: rgba(15, 23, 42, 0.6);
+  margin-top: 0.1rem;
+}
+
 .routine-note__composer-submit {
   align-self: flex-start;
   border: none;
