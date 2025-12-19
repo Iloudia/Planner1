@@ -263,36 +263,38 @@ const WorkoutPage = () => {
           </header>
 
           <form className="workout-form" onSubmit={handleSubmit}>
-            <label>
-              <span>Titre</span>
-              <input
-                type="text"
-                value={form.title}
-                onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))}
-                placeholder="Ex : Deadlift"
-                required
-              />
-            </label>
-            <label>
-              <span>Muscle cible</span>
-              <input
-                type="text"
-                value={form.muscle}
-                onChange={(e) => setForm((prev) => ({ ...prev, muscle: e.target.value }))}
-                placeholder="Bras, fessiers, dos..."
-              />
-            </label>
-            <label>
-              <span>Type</span>
-              <input
-                type="text"
-                value={form.category}
-                onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value }))}
-                placeholder="HIIT, cardio, stretching..."
-              />
-            </label>
+            <div className="workout-form__fields">
+              <label>
+                <span>Nom</span>
+                <input
+                  type="text"
+                  value={form.title}
+                  onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))}
+                  placeholder="Ex : Deadlift"
+                  required
+                />
+              </label>
+              <label>
+                <span>Muscle cible</span>
+                <input
+                  type="text"
+                  value={form.muscle}
+                  onChange={(e) => setForm((prev) => ({ ...prev, muscle: e.target.value }))}
+                  placeholder="Ex : Bras, fessiers, dos..."
+                />
+              </label>
+              <label>
+                <span>Type</span>
+                <input
+                  type="text"
+                  value={form.category}
+                  onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value }))}
+                  placeholder="Ex : HIIT, cardio, stretching..."
+                />
+              </label>
+            </div>
             <div className="workout-form__photo-compact">
-              <span>Image</span>
+              <span>Ajoute une image depuis ton ordinateur.</span>
               <div className="workout-photo-compact__actions">
                 <label className="workout-photo-compact__button">
                   <input
@@ -303,10 +305,10 @@ const WorkoutPage = () => {
                       event.target.value = ""
                     }}
                   />
-                  Ajouter une image
+                  Choisir une photo
                 </label>
                 <small className="workout-photo-compact__hint">
-                  {form.image ? "Image importée" : "Photo par défaut"}
+                  {form.image ? "Image importée" : "Formats image acceptés (JPG, PNG, GIF)."}
                 </small>
               </div>
             </div>
@@ -314,47 +316,49 @@ const WorkoutPage = () => {
           </form>
         </section>
 
-        <section className="workout-library workout-section--full">
-          <div className="workout-cards">
-            {exercises.map((exercise) => (
-              <article
-                key={exercise.id}
-                className="workout-card"
-                role="button"
-                tabIndex={0}
-                onClick={() => handleOpenPlanner(exercise.id)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault()
-                    handleOpenPlanner(exercise.id)
-                  }
-                }}
-              >
-                <button
-                  type="button"
-                  className="workout-card__delete"
-                  aria-label={`Supprimer ${exercise.title}`}
-                  onClick={(event) => {
-                    event.stopPropagation()
-                    handleDeleteExercise(exercise.id)
+        {exercises.length > 0 ? (
+          <section className="workout-library workout-section--full">
+            <div className="workout-cards">
+              {exercises.map((exercise) => (
+                <article
+                  key={exercise.id}
+                  className="workout-card"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => handleOpenPlanner(exercise.id)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault()
+                      handleOpenPlanner(exercise.id)
+                    }
                   }}
                 >
-                  &times;
-                </button>
-                <div className="workout-card__media">
-                  <img src={exercise.image} alt={exercise.title} />
-                </div>
-                <div className="workout-card__body">
-                  <h3>{exercise.title}</h3>
-                  <p className="workout-card__meta">
-                    <span>{exercise.muscle}</span>
-                    <span>{exercise.category}</span>
-                  </p>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
+                  <button
+                    type="button"
+                    className="workout-card__delete"
+                    aria-label={`Supprimer ${exercise.title}`}
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      handleDeleteExercise(exercise.id)
+                    }}
+                  >
+                    &times;
+                  </button>
+                  <div className="workout-card__media">
+                    <img src={exercise.image} alt={exercise.title} />
+                  </div>
+                  <div className="workout-card__body">
+                    <h3>{exercise.title}</h3>
+                    <p className="workout-card__meta">
+                      <span>{exercise.muscle}</span>
+                      <span>{exercise.category}</span>
+                    </p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
 
         <section className="workout-videos workout-section--full">
           <form className="workout-video-form" onSubmit={handleVideoSubmit}>
@@ -364,7 +368,7 @@ const WorkoutPage = () => {
                 type="text"
                 value={videoForm.title}
                 onChange={(e) => setVideoForm((prev) => ({ ...prev, title: e.target.value }))}
-                placeholder="Nom de la video"
+                placeholder="Nom de la vidéo"
               />
             </label>
             <label>
