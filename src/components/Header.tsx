@@ -190,22 +190,22 @@ function Header() {
                 <ul className="header-menu__list">
                   <li>
                     <button type="button" className="header-menu__item" onClick={() => handleNavigate("/parametres")}>
-                      Parametres
+                      Paramètres
                     </button>
                   </li>
                   <li>
                     <button type="button" className="header-menu__item" onClick={() => closeMenus()}>
-                      Changer l apparence
+                      Changer l'apparence
                     </button>
                   </li>
                   <li>
                     <button type="button" className="header-menu__item" onClick={() => closeMenus()}>
-                      Signaler un probleme
+                      Signaler un problème
                     </button>
                   </li>
                   <li>
                     <button type="button" className="header-menu__item header-menu__item--danger" onClick={handleLogout}>
-                      Deconnexion
+                      Déconnexion
                     </button>
                   </li>
                 </ul>

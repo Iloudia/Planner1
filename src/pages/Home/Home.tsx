@@ -249,14 +249,14 @@ function HomePage() {
           <div className="notes">
             <div className="notes-header">
               <div>
-                <h3>Bloc notes</h3>
+                <h3>Bloc-notes</h3>
               </div>
             </div>
             <div className="todo-input">
-              <button type="button" className="todo-add" onClick={addTodo} aria-label="Ajouter une tache">
+              <button type="button" className="todo-add" onClick={addTodo} aria-label="Ajouter une tâche">
                 +
               </button>
-              <input type="text" value={todoInput} onChange={(e) => setTodoInput(e.target.value)} placeholder="Ajouter une tache" />
+              <input type="text" value={todoInput} onChange={(e) => setTodoInput(e.target.value)} placeholder="Ajouter une tâche" />
             </div>
             <ul className="todo-list">
               {todos.map((item) => (
@@ -265,7 +265,7 @@ function HomePage() {
                     <input type="checkbox" checked={item.done} onChange={() => toggleTodo(item.id)} />
                     <span>{item.text}</span>
                   </label>
-                  <button type="button" onClick={() => deleteTodo(item.id)} aria-label="Supprimer la tache">
+                  <button type="button" onClick={() => deleteTodo(item.id)} aria-label="Supprimer la tâche">
                     x
                   </button>
                 </li>
@@ -278,7 +278,7 @@ function HomePage() {
           <section className="home-hero-strip">
             <div>
               <p className="eyebrow">Planner Home</p>
-              <h1>Organise tes journees avec intention</h1>
+              <h1>Organise tes journées avec intention</h1>
             </div>
             <div className="today">{todayLabel()}</div>
           </section>
@@ -304,7 +304,7 @@ function HomePage() {
         </main>
 
         <aside className="aside-left">
-          <div className="aside-title">Prochaines taches</div>
+          <div className="aside-title">Prochaines tâches</div>
           <div className="task-window">
             <div className="task-list">
               {upcomingTasks.length > 0 ? (
@@ -325,8 +325,8 @@ function HomePage() {
                 ))
               ) : (
                 <article className="task-card">
-                  <p className="task-title">Aucune tache prevue</p>
-                  <p className="task-note">Ajoute une tache dans le calendrier.</p>
+                  <p className="task-title">Aucune tâche prévue</p>
+                  <p className="task-note">Ajoute une tâche dans le calendrier.</p>
                 </article>
               )}
             </div>
@@ -335,14 +335,14 @@ function HomePage() {
         <section className="home-moodboard">
           <div className="home-moodboard__top">
             <button type="button" className="home-moodboard__button" onClick={() => moodboardInputRef.current?.click()}>
-              Changer l image
+              Changer l'image
             </button>
             <input ref={moodboardInputRef} type="file" accept="image/*" className="home-moodboard__file-input" onChange={handleMoodboardInput} />
           </div>
           <div className="home-moodboard__preview">
             {isCustom ? (
               <button type="button" className="home-moodboard__reset" onClick={resetMoodboard}>
-                Reinitialiser
+                Réinitialiser
               </button>
             ) : null}
             <img src={moodboardSrc} alt="Moodboard personnalise" />
