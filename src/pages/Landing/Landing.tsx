@@ -8,22 +8,22 @@ import cardActivities from "../../assets/activities.jpeg"
 import cardEbony from "../../assets/ebony-forsyth-dupe.jpeg"
 import cardMedhanshi from "../../assets/medhanshi-mandawewala-dupe.jpeg"
 import cardSelflove from "../../assets/selflove.jpeg"
-import cardMadeline from "../../assets/madeline- edwards-dupe.jpeg"
 import cardLB from "../../assets/l-b-dupe.jpeg"
 import cardKatieMansfield from "../../assets/katie-mansfield-dupe.jpeg"
 import cardMallika from "../../assets/mallika-jain-dupe.jpeg"
 import cardKatieHuber from "../../assets/katie-huber-rhoades-dupe (1).jpeg"
+import cardSport from "../../assets/sport.jpeg"
 
 const carouselItems = [
-  { title: "Sport", text: "Bouge avec douceur et plaisir.", image: cardActivities },
-  { title: "Activites", text: "Planifie tes sorties et projets.", image: cardEbony },
-  { title: "Journaling", text: "Ecris, clarifie et te recentre.", image: cardMedhanshi },
+  { title: "Sport", text: "Bouge avec douceur et plaisir.", image: cardSport },
+  { title: "Activites", text: "Planifie tes sorties et projets.", image: cardActivities },
+  { title: "Journaling", text: "Ecris, clarifie et te recentre.", image: cardMallika },
   { title: "S'aimer soi-meme", text: "Instants self-love au quotidien.", image: cardSelflove },
-  { title: "Wishlist", text: "Garde tes envies au meme endroit.", image: cardMadeline },
-  { title: "Calendrier mensuel", text: "Une vue claire sur le mois.", image: cardLB },
-  { title: "Finances", text: "Budget et depenses sans stress.", image: cardKatieMansfield },
-  { title: "Routine", text: "Rituels matin et soir qui te ressemblent.", image: cardMallika },
-  { title: "Cuisine", text: "Idees repas pour libérer ta charge mentale.", image: cardKatieHuber },
+  { title: "Wishlist", text: "Garde tes envies au meme endroit.", image: cardMedhanshi },
+  { title: "Calendrier mensuel", text: "Une vue claire sur le mois.", image: cardKatieHuber },
+  { title: "Finances", text: "Budget et depenses sans stress.", image: cardEbony },
+  { title: "Routine", text: "Rituels matin et soir qui te ressemblent.", image: cardLB },
+  { title: "Cuisine", text: "Idees repas pour libérer ta charge mentale.", image: cardKatieMansfield },
 ]
 
 const differentiatorHighlights = [
@@ -78,7 +78,7 @@ const LandingPage = () => {
             L’espace qui transforme ton quotidien en une vie plus fluide, plus douce et plus alignée.
           </h1>
           <p className="landing-hero__accent">
-            Parce que tu merites une vie structuree sans pression, productive sans stress, et inspirante au quotidien.
+            Parce que tu mérites une vie structurée sans pression, productive sans stress, et inspirante au quotidien.
           </p>
           <div className="landing-hero__actions">
             <button type="button" className="landing-cta-button" onClick={() => navigate("/login")}>
@@ -106,7 +106,7 @@ const LandingPage = () => {
 
       <section className="landing-daily-hub" aria-labelledby="landing-daily-hub-title">
         <div className="landing-section-heading">
-          <h2 id="landing-daily-hub-title">Un espace unique pour organiser ta vie... et te sentir bien</h2>
+          <h2 id="landing-daily-hub-title">Sur ce site tu as accès à : </h2>
           <p>
             Fini les carnets eparpilles, les notes sur ton telephone et les applis dans tous les sens. Ici, tout est centralise pour
             simplifier ton quotidien et te liberer de la charge mentale.
@@ -146,7 +146,6 @@ const LandingPage = () => {
         <ul className="landing-differentiator__list">
           {differentiatorHighlights.map((highlight) => (
             <li key={highlight}>
-              <span aria-hidden="true">{"\u2728"}</span>
               {highlight}
             </li>
           ))}
