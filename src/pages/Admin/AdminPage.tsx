@@ -1,128 +1,93 @@
-import { FormEvent, useEffect, useMemo, useState } from "react"
-import usePersistentState from "../../hooks/usePersistentState"
-import { useAuth } from "../../context/AuthContext"
+import { useEffect, useMemo, useState, type KeyboardEvent } from "react"
+import { useAuth, type AdminUserRecord } from "../../context/AuthContext"
 import "./Admin.css"
 
-type AdminUser = {
-  id: string
-  fullName: string
-  email: string
-  role: "Utilisateur" | "Premium" | "Coach"
-  status: "actif" | "en-attente" | "suspendu"
-  lastLogin: string
-  joinedAt: string
-  note?: string
+type AlertState = { type: "success" | "error" | "info"; message: string } | null
+
+const formatDate = (value: string | null) => {
+  if (!value) return "Date inconnue"
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) {
+    return value
+  }
+  return date.toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })
 }
 
-const STORAGE_KEY = "planner.admin.users"
-
-const defaultUsers: AdminUser[] = [
-  {
-    id: "usr-001",
-    fullName: "Lila Moreau",
-    email: "lila@planner.fr",
-    role: "Premium",
-    status: "actif",
-    lastLogin: "03/12/2025 · 10:04",
-    joinedAt: "2024-08-01",
-    note: "Ambassadrice planner club",
-  },
-  {
-    id: "usr-002",
-    fullName: "Nora Jeannin",
-    email: "nora@planner.fr",
-    role: "Utilisateur",
-    status: "en-attente",
-    lastLogin: "02/12/2025 · 17:54",
-    joinedAt: "2024-09-12",
-    note: "Invite de la beta finance",
-  },
-  {
-    id: "usr-003",
-    fullName: "Alexis Bernard",
-    email: "alexis@planner.fr",
-    role: "Coach",
-    status: "actif",
-    lastLogin: "01/12/2025 · 08:12",
-    joinedAt: "2024-05-22",
-  },
-  {
-    id: "usr-004",
-    fullName: "Juliette Perez",
-    email: "juliette@planner.fr",
-    role: "Utilisateur",
-    status: "suspendu",
-    lastLogin: "29/11/2025 · 21:02",
-    joinedAt: "2023-11-18",
-    note: "Tentatives de connexion suspectes",
-  },
-]
-
 const AdminPage = () => {
-  const { userEmail } = useAuth()
-  const [users, setUsers] = usePersistentState<AdminUser[]>(STORAGE_KEY, () => defaultUsers)
+  const { userEmail, adminListUsers, adminUpdateStatus, adminDeleteUser } = useAuth()
+  const [users, setUsers] = useState<AdminUserRecord[]>(() => adminListUsers())
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedId, setSelectedId] = useState<string | null>(users[0]?.id ?? null)
-  const [alert, setAlert] = useState<{ type: "success" | "info"; message: string } | null>(null)
-
-  const selectedUser = users.find((user) => user.id === selectedId) ?? null
-  const [draft, setDraft] = useState<AdminUser | null>(selectedUser)
+  const [selectedEmail, setSelectedEmail] = useState<string | null>(users[0]?.email ?? null)
+  const [alert, setAlert] = useState<AlertState>(null)
 
   useEffect(() => {
-    setDraft(selectedUser ?? null)
-  }, [selectedUser])
+    setUsers(adminListUsers())
+  }, [])
+
+  useEffect(() => {
+    if (users.length === 0) {
+      setSelectedEmail(null)
+      return
+    }
+    if (!selectedEmail || !users.some((user) => user.email === selectedEmail)) {
+      setSelectedEmail(users[0].email)
+    }
+  }, [users, selectedEmail])
 
   const filteredUsers = useMemo(() => {
     const normalized = searchTerm.trim().toLowerCase()
-    if (normalized.length === 0) return users
-    return users.filter(
-      (user) =>
-        user.fullName.toLowerCase().includes(normalized) ||
-        user.email.toLowerCase().includes(normalized) ||
-        user.role.toLowerCase().includes(normalized),
-    )
+    if (!normalized) return users
+    return users.filter((user) => user.email.toLowerCase().includes(normalized))
   }, [users, searchTerm])
 
-  const stats = useMemo(() => {
-    return {
+  const stats = useMemo(
+    () => ({
       total: users.length,
       active: users.filter((user) => user.status === "actif").length,
-      pending: users.filter((user) => user.status === "en-attente").length,
+      disabled: users.filter((user) => user.status === "desactive").length,
+    }),
+    [users],
+  )
+
+  const selectedUser = selectedEmail ? users.find((user) => user.email === selectedEmail) ?? null : null
+
+  const refreshUsers = () => {
+    setUsers(adminListUsers())
+  }
+
+  const handleStatusToggle = (user: AdminUserRecord) => {
+    const nextStatus = user.status === "actif" ? "desactive" : "actif"
+    const result = adminUpdateStatus(user.email, nextStatus)
+    if (!result.success) {
+      setAlert({ type: "error", message: result.error ?? "Action impossible pour ce compte." })
+      return
     }
-  }, [users])
-
-  const handleSelectUser = (userId: string) => {
-    setSelectedId(userId)
-    setAlert(null)
+    setAlert({
+      type: nextStatus === "desactive" ? "info" : "success",
+      message: nextStatus === "desactive" ? "Compte desactive et sessions coupees." : "Compte reactive.",
+    })
+    refreshUsers()
   }
 
-  const handleDraftChange = (field: keyof AdminUser, value: string) => {
-    if (!draft) return
-    setDraft({ ...draft, [field]: value })
-  }
-
-  const handleSave = (event: FormEvent) => {
-    event.preventDefault()
-    if (!draft) return
-    setUsers((current) => current.map((user) => (user.id === draft.id ? draft : user)))
-    setAlert({ type: "success", message: "Profil utilisateur mis à jour." })
-  }
-
-  const handleDelete = (userId: string) => {
-    const target = users.find((user) => user.id === userId)
-    if (!target) return
+  const handleDelete = (email: string) => {
     const confirmed = window.confirm(
-      `Supprimer ${target.fullName} ? Cette action est definitive et deconnecte l'utilisateur.`,
+      `Supprimer le compte ${email} ? Cette action supprime les donnees locales associees et coupe toutes les sessions.`,
     )
     if (!confirmed) return
-    setUsers((current) => {
-      const next = current.filter((user) => user.id !== userId)
-      if (selectedId === userId) {
-        setSelectedId(next[0]?.id ?? null)
-      }
-      return next
-    })
-    setAlert({ type: "info", message: `Le compte ${target.fullName} a été supprimé.` })
+    const result = adminDeleteUser(email)
+    if (!result.success) {
+      setAlert({ type: "error", message: result.error ?? "Impossible de supprimer ce compte." })
+      return
+    }
+    setAlert({ type: "success", message: "Compte supprime et donnees nettoyees." })
+    refreshUsers()
+  }
+
+  const handleRowKeyDown = (event: KeyboardEvent<HTMLDivElement>, email: string) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault()
+      setSelectedEmail(email)
+    }
   }
 
   return (
@@ -130,9 +95,9 @@ const AdminPage = () => {
       <div className="admin-page__accent" aria-hidden="true" />
       <header className="admin-header">
         <div>
-          <p className="admin-eyebrow">Console admin</p>
-          <h1>Gestion des utilisateurs</h1>
-          <p>Connecté en tant que {userEmail ?? "admin"}. Les actions sont journalisées.</p>
+          <p className="admin-eyebrow">Back-office</p>
+          <h1>Administration des comptes</h1>
+          <p>Connecte en tant que {userEmail ?? "admin"}. Acces reserve aux administrateurs verifies.</p>
         </div>
         <div className="admin-hero">
           <article>
@@ -144,8 +109,8 @@ const AdminPage = () => {
             <strong>{stats.active}</strong>
           </article>
           <article>
-            <span>En attente</span>
-            <strong>{stats.pending}</strong>
+            <span>Desactives</span>
+            <strong>{stats.disabled}</strong>
           </article>
         </div>
       </header>
@@ -155,57 +120,53 @@ const AdminPage = () => {
           <header className="admin-panel__header">
             <div>
               <p className="admin-eyebrow">Utilisateurs</p>
-              <h2>Liste sécurisée</h2>
+              <h2>Comptes inscrits</h2>
             </div>
             <input
               type="search"
-              placeholder="Rechercher (nom, email, rôle)"
+              placeholder="Rechercher par e-mail"
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
             />
           </header>
-          <div className="admin-table" role="table" aria-label="Table des utilisateurs">
+          <div className="admin-table" role="table" aria-label="Utilisateurs inscrits">
             <div className="admin-table__row admin-table__row--head" role="row">
-              <div role="columnheader">Utilisateur</div>
-              <div role="columnheader">Rôle</div>
+              <div role="columnheader">E-mail</div>
+              <div role="columnheader">Inscription</div>
               <div role="columnheader">Statut</div>
-              <div role="columnheader">Dernière connexion</div>
-              <div role="columnheader" />
+              <div role="columnheader">Actions</div>
             </div>
             <div className="admin-table__body">
               {filteredUsers.length === 0 ? (
-                <p className="admin-table__empty">Aucun résultat ne correspond à la recherche.</p>
+                <p className="admin-table__empty">Aucun compte ne correspond a cette adresse e-mail.</p>
               ) : (
                 filteredUsers.map((user) => (
-                  <button
-                    type="button"
-                    key={user.id}
-                    className={user.id === selectedId ? "admin-table__row is-selected" : "admin-table__row"}
+                  <div
+                    key={user.email}
+                    className={user.email === selectedEmail ? "admin-table__row is-selected" : "admin-table__row"}
                     role="row"
-                    onClick={() => handleSelectUser(user.id)}
+                    tabIndex={0}
+                    onClick={() => setSelectedEmail(user.email)}
+                    onKeyDown={(event) => handleRowKeyDown(event, user.email)}
                   >
                     <div className="admin-table__cell">
-                      <strong>{user.fullName}</strong>
-                      <span>{user.email}</span>
+                      <strong>{user.email}</strong>
                     </div>
-                    <div className="admin-table__cell">{user.role}</div>
+                    <div className="admin-table__cell">{formatDate(user.createdAt)}</div>
                     <div className="admin-table__cell">
-                      <span className={`badge badge--${user.status}`}>{user.status.replace("-", " ")}</span>
+                      <span className={`badge badge--${user.status}`}>
+                        {user.status === "actif" ? "Actif" : "Desactive"}
+                      </span>
                     </div>
-                    <div className="admin-table__cell">{user.lastLogin}</div>
                     <div className="admin-table__cell admin-table__cell--actions">
-                      <button
-                        type="button"
-                        className="admin-delete"
-                        onClick={(event) => {
-                          event.stopPropagation()
-                          handleDelete(user.id)
-                        }}
-                      >
+                      <button type="button" className="admin-action" onClick={() => handleStatusToggle(user)}>
+                        {user.status === "actif" ? "Desactiver" : "Re-activer"}
+                      </button>
+                      <button type="button" className="admin-delete" onClick={() => handleDelete(user.email)}>
                         Supprimer
                       </button>
                     </div>
-                  </button>
+                  </div>
                 ))
               )}
             </div>
@@ -215,78 +176,62 @@ const AdminPage = () => {
         <section className="admin-panel admin-panel--form">
           <header className="admin-panel__header">
             <div>
-              <p className="admin-eyebrow">Modification</p>
-              <h2>Détails utilisateur</h2>
+              <p className="admin-eyebrow">Details</p>
+              <h2>Profil selectionne</h2>
             </div>
-            <p className="admin-helper">Seuls les administrateurs connectés peuvent modifier ces données.</p>
+            <p className="admin-helper">Recherche, selection, desactivation ou suppression en un clic.</p>
           </header>
 
           {alert ? <div className={`admin-alert admin-alert--${alert.type}`}>{alert.message}</div> : null}
 
-          {draft ? (
-            <form className="admin-form" onSubmit={handleSave}>
-              <label>
-                <span>Nom complet</span>
-                <input value={draft.fullName} onChange={(event) => handleDraftChange("fullName", event.target.value)} />
-              </label>
-
-              <label>
-                <span>Email</span>
-                <input
-                  type="email"
-                  value={draft.email}
-                  onChange={(event) => handleDraftChange("email", event.target.value)}
-                />
-              </label>
-
-              <label>
-                <span>Rôle</span>
-                <select value={draft.role} onChange={(event) => handleDraftChange("role", event.target.value)}>
-                  <option value="Utilisateur">Utilisateur</option>
-                  <option value="Premium">Premium</option>
-                  <option value="Coach">Coach</option>
-                </select>
-              </label>
-
-              <label>
-                <span>Statut</span>
-                <select value={draft.status} onChange={(event) => handleDraftChange("status", event.target.value)}>
-                  <option value="actif">Actif</option>
-                  <option value="en-attente">En attente</option>
-                  <option value="suspendu">Suspendu</option>
-                </select>
-              </label>
-
-              <label>
-                <span>Dernière connexion</span>
-                <input value={draft.lastLogin} onChange={(event) => handleDraftChange("lastLogin", event.target.value)} />
-              </label>
-
-              <label>
-                <span>Note interne</span>
-                <textarea
-                  rows={3}
-                  value={draft.note ?? ""}
-                  onChange={(event) => handleDraftChange("note", event.target.value)}
-                />
-              </label>
+          {selectedUser ? (
+            <div className="admin-detail">
+              <dl className="admin-detail__grid">
+                <div>
+                  <dt>E-mail</dt>
+                  <dd>{selectedUser.email}</dd>
+                </div>
+                <div>
+                  <dt>Date d inscription</dt>
+                  <dd>{formatDate(selectedUser.createdAt)}</dd>
+                </div>
+                <div>
+                  <dt>Statut</dt>
+                  <dd>
+                    <span className={`badge badge--${selectedUser.status}`}>
+                      {selectedUser.status === "actif" ? "Actif" : "Desactive"}
+                    </span>
+                  </dd>
+                </div>
+                {selectedUser.deletionPlannedAt ? (
+                  <div>
+                    <dt>Suppression programmee</dt>
+                    <dd>{formatDate(selectedUser.deletionPlannedAt)}</dd>
+                  </div>
+                ) : null}
+              </dl>
 
               <div className="admin-form__actions">
-                <button type="submit">Enregistrer</button>
+                <button type="button" onClick={() => handleStatusToggle(selectedUser)}>
+                  {selectedUser.status === "actif" ? "Desactiver le compte" : "Re-activer le compte"}
+                </button>
+                <button type="button" className="admin-delete admin-delete--wide" onClick={() => handleDelete(selectedUser.email)}>
+                  Supprimer definitivement
+                </button>
               </div>
-            </form>
+            </div>
           ) : (
-            <p className="admin-empty-state">Sélectionne un utilisateur dans la liste pour afficher ses informations.</p>
+            <p className="admin-empty-state">Aucun utilisateur a afficher pour le moment.</p>
           )}
         </section>
       </div>
 
       <section className="admin-safe">
-        <h2>Protection des accès</h2>
+        <h2>Conformite et securite</h2>
         <ul>
-          <li>Cette console n est rendue visible que si vous êtes connecté en tant qu administrateur.</li>
-          <li>Les tentatives d ouverture directe via l URL sont automatiquement redirigées.</li>
-          <li>Chaque suppression nécessite une confirmation et les actions sont consignées dans le navigateur.</li>
+          <li>Acces limite aux administrateurs authentifies via une route protege.</li>
+          <li>Les desactivations coupent les sessions actives et empechent les nouvelles connexions.</li>
+          <li>Les suppressions nettoient les donnees locales (identifiants, metadonnees) afin de respecter le droit a l effacement.</li>
         </ul>
       </section>
     </div>

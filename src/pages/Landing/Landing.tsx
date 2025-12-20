@@ -1,58 +1,37 @@
-﻿import { useEffect, useMemo } from "react"
+﻿import { useEffect, useMemo, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../../context/AuthContext"
 import { useMoodboard } from "../../context/MoodboardContext"
 import "./Landing.css"
 
-const dailyFeatures = [
-  {
-    title: "Planification de tes journees",
-    description: "Organise tes journees avec clarte, intention et douceur pour faire avancer ce qui compte sans pression.",
-  },
-  {
-    title: "Planification des repas",
-    description: "Prepare tes repas et debarasse-toi du fameux \"On mange quoi ce soir ?\" grace a des menus anticipes.",
-  },
-  {
-    title: "Activites et projets futurs",
-    description: "Note les voyages, sorties, projets perso et moments pour toi afin de nourrir tes reves au quotidien.",
-  },
-  {
-    title: "Journaling et ecriture positive",
-    description: "Depose tes pensees, gratitudes et emotions dans un safe place mental pour retrouver ta clarte.",
-  },
-  {
-    title: "Wishlist inspiration",
-    description: "Regroupe tous les objets, experiences ou idees que tu veux explorer pour liberer ta tete.",
-  },
-  {
-    title: "Routines matin et soir",
-    description: "Cree des rituels qui te ressemblent pour des matins plus doux et des soirees apaisantes.",
-  },
-  {
-    title: "Finances en toute simplicite",
-    description: "Suis budget, depenses et objectifs financiers avec une approche feminine et sans culpabilite.",
-  },
-  {
-    title: "Sport et mouvement",
-    description: "Planifie ton mouvement et ton energie pour te sentir bien dans ton corps, loin de la performance.",
-  },
+import cardActivities from "../../assets/activities.jpeg"
+import cardEbony from "../../assets/ebony-forsyth-dupe.jpeg"
+import cardMedhanshi from "../../assets/medhanshi-mandawewala-dupe.jpeg"
+import cardSelflove from "../../assets/selflove.jpeg"
+import cardMadeline from "../../assets/madeline- edwards-dupe.jpeg"
+import cardLB from "../../assets/l-b-dupe.jpeg"
+import cardKatieMansfield from "../../assets/katie-mansfield-dupe.jpeg"
+import cardMallika from "../../assets/mallika-jain-dupe.jpeg"
+import cardKatieHuber from "../../assets/katie-huber-rhoades-dupe (1).jpeg"
+
+const carouselItems = [
+  { title: "Sport", text: "Bouge avec douceur et plaisir.", image: cardActivities },
+  { title: "Activites", text: "Planifie tes sorties et projets.", image: cardEbony },
+  { title: "Journaling", text: "Ecris, clarifie et te recentre.", image: cardMedhanshi },
+  { title: "S'aimer soi-meme", text: "Instants self-love au quotidien.", image: cardSelflove },
+  { title: "Wishlist", text: "Garde tes envies au meme endroit.", image: cardMadeline },
+  { title: "Calendrier mensuel", text: "Une vue claire sur le mois.", image: cardLB },
+  { title: "Finances", text: "Budget et depenses sans stress.", image: cardKatieMansfield },
+  { title: "Routine", text: "Rituels matin et soir qui te ressemblent.", image: cardMallika },
+  { title: "Cuisine", text: "Idees repas pour libérer ta charge mentale.", image: cardKatieHuber },
 ]
 
 const differentiatorHighlights = [
-  "alleger ta charge mentale",
-  "t'aider a te sentir plus serenne",
-  "reprendre le controle de ton temps",
-  "creer une vie qui te ressemble",
-  "te reconnecter a toi-meme",
-]
-
-const reasonsToLove = [
-  "100 % positif et bienveillant",
-  "Cree specialement pour les femmes",
-  "Tout ton quotidien au meme endroit",
-  "Clair, simple et agreable a utiliser",
-  "Pense pour ton bien-etre mental",
+  "Alléger ta charge mentale",
+  "T’aider à te sentir plus serein·e",
+  "Reprendre le contrôle de ton temps",
+  "Créer une vie qui te ressemble",
+  "Te reconnecter à toi-même",
 ]
 
 const LandingPage = () => {
@@ -60,6 +39,24 @@ const LandingPage = () => {
   const location = useLocation()
   const { isAuthenticated, userEmail, logout } = useAuth()
   const { moodboardSrc } = useMoodboard()
+  const [carouselIndex, setCarouselIndex] = useState(0)
+
+  const visibleCards = useMemo(
+    () =>
+      Array.from({ length: 4 }, (_, offset) => {
+        const total = carouselItems.length
+        return carouselItems[(carouselIndex + offset + total) % total]
+      }),
+    [carouselIndex],
+  )
+
+  const handleCarouselPrev = () => {
+    setCarouselIndex((prev) => (prev - 1 + carouselItems.length) % carouselItems.length)
+  }
+
+  const handleCarouselNext = () => {
+    setCarouselIndex((prev) => (prev + 1) % carouselItems.length)
+  }
 
   const destinationPath = useMemo(() => {
     const fromRoute = location.state as { from?: { pathname: string } } | undefined
@@ -77,14 +74,9 @@ const LandingPage = () => {
       <div className="page-accent-bar" aria-hidden="true" />
       <section className="landing-hero">
         <div className="landing-hero__content">
-          <span className="landing-hero__tagline">Organisation positive feminine</span>
           <h1>
-            {"\u2728"} Le site qui transforme ton quotidien en une vie plus organisee, plus douce et plus alignee {"\u2728"}
+            L’espace qui transforme ton quotidien en une vie plus fluide, plus douce et plus alignée.
           </h1>
-          <p className="landing-hero__subtitle">
-            Un espace cree pour les femmes, ou tout ce dont tu as besoin pour t'organiser, rever, planifier et prendre soin de ton
-            mental se trouve au meme endroit.
-          </p>
           <p className="landing-hero__accent">
             Parce que tu merites une vie structuree sans pression, productive sans stress, et inspirante au quotidien.
           </p>
@@ -112,57 +104,44 @@ const LandingPage = () => {
         </div>
       </section>
 
-      <section className="landing-identification" aria-labelledby="landing-identification-title">
-        <div className="landing-identification__intro">
-          <span className="landing-section-label">A qui s'adresse ce site ?</span>
-          <h2 id="landing-identification-title">{"\u2764"} Pense par une femme, pour les femmes</h2>
-          <p>
-            Si tu es une femme qui veut mieux s'organiser sans s'epuiser, visualiser ses reves et prendre soin de son bien-etre
-            mental, cet espace a ete pense pour toi.
-          </p>
-        </div>
-        <div className="landing-identification__panel">
-          <p className="landing-identification__subtitle">Si tu es une femme qui :</p>
-          <ul className="landing-identification__list">
-            <li>a mille idees en tete</li>
-            <li>veut mieux s'organiser sans s'epuiser</li>
-            <li>reve d'une vie plus alignee, plus serenne</li>
-            <li>aime planifier, ecrire, visualiser, rever</li>
-            <li>veut prendre soin de son bien-etre mental</li>
-          </ul>
-          <p className="landing-identification__note">
-            Ici, on ne parle pas de productivite toxique. On parle d'organisation bienveillante, de clarte mentale et du plaisir a
-            planifier sa vie.
-          </p>
-        </div>
-      </section>
-
       <section className="landing-daily-hub" aria-labelledby="landing-daily-hub-title">
         <div className="landing-section-heading">
-          <h2 id="landing-daily-hub-title">{"\u{1F338}"} Un espace unique pour organiser ta vie... et te sentir bien</h2>
+          <h2 id="landing-daily-hub-title">Un espace unique pour organiser ta vie... et te sentir bien</h2>
           <p>
             Fini les carnets eparpilles, les notes sur ton telephone et les applis dans tous les sens. Ici, tout est centralise pour
             simplifier ton quotidien et te liberer de la charge mentale.
           </p>
         </div>
-        <ul className="landing-daily-list">
-          {dailyFeatures.map((feature) => (
-            <li key={feature.title}>
-              <strong>{feature.title}</strong>
-              <span>{feature.description}</span>
-            </li>
-          ))}
-        </ul>
+        <div className="landing-carousel">
+          <button type="button" className="landing-carousel__arrow landing-carousel__arrow--left" aria-label="Cartes precedentes" onClick={handleCarouselPrev}>
+            <span aria-hidden="true">‹</span>
+          </button>
+          <div className="landing-carousel__grid">
+            {visibleCards.map((card) => (
+              <article key={card.title} className="landing-carousel__card">
+                <div className="landing-carousel__image">
+                  <img src={card.image} alt={card.title} />
+                </div>
+                <div className="landing-carousel__body">
+                  <h3>{card.title}</h3>
+                  <p>{card.text}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+          <button type="button" className="landing-carousel__arrow landing-carousel__arrow--right" aria-label="Cartes suivantes" onClick={handleCarouselNext}>
+            <span aria-hidden="true">›</span>
+          </button>
+        </div>
       </section>
 
       <section className="landing-differentiator" aria-labelledby="landing-differentiator-title">
         <div className="landing-section-heading">
-          <h2 id="landing-differentiator-title">{"\u{1F337}"} Bien plus qu'un outil d'organisation</h2>
+          <h2 id="landing-differentiator-title">Bien plus qu'un outil d'organisation</h2>
           <p>
-            Ce site n'est pas qu'un planner digital. C'est un veritable cocon positif concu pour te rappeler que tu peux avancer a
-            ton rythme, en restant douce avec toi-meme.
+            Ce site n’est pas seulement un planner digital. C’est un véritable cocon positif, conçu pour te rappeler que tu peux avancer à ton rythme, avec bienveillance envers toi-même.
           </p>
-          <p>Tout est pense pour que tu te sentes bien, inspiree et alignee.</p>
+          <p>Tout est pensé pour que tu te sentes bien, inspiré·e et en accord avec toi.</p>
         </div>
         <ul className="landing-differentiator__list">
           {differentiatorHighlights.map((highlight) => (
@@ -174,20 +153,10 @@ const LandingPage = () => {
         </ul>
       </section>
 
-      <section className="landing-reasons" aria-labelledby="landing-reasons-title">
-        <h2 id="landing-reasons-title">Pourquoi tu vas l'adorer {"\u{1F497}"}</h2>
-        <ul className="landing-reasons__list">
-          {reasonsToLove.map((reason) => (
-            <li key={reason}>{reason}</li>
-          ))}
-        </ul>
-      </section>
-
       <section className="landing-final-cta" aria-labelledby="landing-final-cta-title">
-        <h2 id="landing-final-cta-title">{"\u{1F497}"} Et si tu t'offrais enfin une organisation qui te fait du bien ?</h2>
+        <h2 id="landing-final-cta-title">Et si tu t'offrais enfin une organisation qui te fait du bien ?</h2>
         <p>
-          Tu n'as pas besoin d'en faire plus. Tu as besoin d'un espace qui t'aide a respirer, structurer et t'epanouir. Rejoins un
-          univers cree pour les femmes qui veulent une vie plus organisee sans oublier leur bien-etre.
+          Tu n’as pas besoin d’en faire davantage. Tu as besoin d’un espace qui te laisse respirer, te guide et soutienne ton épanouissement.
         </p>
         <button type="button" className="landing-cta-button" onClick={() => navigate("/login")}>
           Je commence mon organisation positive des maintenant

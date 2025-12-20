@@ -5,6 +5,7 @@ const ADMIN_PASSWORD = "Admin!2025#Planner"
 const SESSION_ID_KEY = "planner.auth.sessionId"
 const SESSION_MAP_KEY = "planner.auth.sessions"
 const ACCOUNT_DEACTIVATION_KEY = "planner.account.deactivation"
+const ACCOUNT_STATUS_KEY = "planner.account.status"
 
 type ChangePasswordResult = {
   success: boolean
@@ -15,6 +16,15 @@ type AccountActionResult = {
   success: boolean
   error?: string
   deleteAt?: string
+}
+
+export type AccountStatus = "actif" | "desactive"
+
+export type AdminUserRecord = {
+  email: string
+  createdAt: string | null
+  status: AccountStatus
+  deletionPlannedAt: string | null
 }
 
 export type AuthContextValue = {
@@ -31,6 +41,9 @@ export type AuthContextValue = {
   deactivateAccount: () => AccountActionResult
   deleteAccount: () => AccountActionResult
   scheduledDeletionDate: string | null
+  adminListUsers: () => AdminUserRecord[]
+  adminUpdateStatus: (email: string, status: AccountStatus) => AccountActionResult
+  adminDeleteUser: (email: string) => AccountActionResult
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
@@ -58,6 +71,7 @@ type DeactivationRecord = {
   deleteAt: string
 }
 type DeactivationMap = Record<string, DeactivationRecord>
+type AccountStatusMap = Record<string, AccountStatus>
 
 const THIRTY_DAYS_MS = 1000 * 60 * 60 * 24 * 30
 
@@ -134,6 +148,54 @@ const clearDeactivationForEmail = (email: string) => {
   if (map[normalized]) {
     delete map[normalized]
     writeDeactivationMap(map)
+  }
+}
+
+const readAccountStatusMap = (): AccountStatusMap => {
+  if (typeof window === "undefined") return {}
+  try {
+    const raw = window.localStorage.getItem(ACCOUNT_STATUS_KEY)
+    if (!raw) {
+      return {}
+    }
+    const parsed = JSON.parse(raw)
+    if (parsed && typeof parsed === "object") {
+      return parsed as AccountStatusMap
+    }
+  } catch (error) {
+    console.error("Account status map read failed", error)
+  }
+  return {}
+}
+
+const writeAccountStatusMap = (map: AccountStatusMap) => {
+  if (typeof window === "undefined") return
+  try {
+    window.localStorage.setItem(ACCOUNT_STATUS_KEY, JSON.stringify(map))
+  } catch (error) {
+    console.error("Account status map write failed", error)
+  }
+}
+
+const getAccountStatus = (email: string): AccountStatus => {
+  const normalized = normalizeEmail(email)
+  const map = readAccountStatusMap()
+  return map[normalized] ?? "actif"
+}
+
+const setAccountStatus = (email: string, status: AccountStatus) => {
+  const normalized = normalizeEmail(email)
+  const map = readAccountStatusMap()
+  map[normalized] = status
+  writeAccountStatusMap(map)
+}
+
+const clearAccountStatus = (email: string) => {
+  const normalized = normalizeEmail(email)
+  const map = readAccountStatusMap()
+  if (map[normalized]) {
+    delete map[normalized]
+    writeAccountStatusMap(map)
   }
 }
 
@@ -247,12 +309,18 @@ const writeAccountMetaMap = (map: Record<string, AccountMeta>) => {
 }
 
 const ensureAccountMeta = (email: string): AccountMeta => {
+  const normalized = normalizeEmail(email)
   const map = readAccountMetaMap()
-  if (!map[email]) {
-    map[email] = { createdAt: new Date().toISOString() }
+  if (!map[normalized]) {
+    if (map[email]) {
+      map[normalized] = map[email]
+      delete map[email]
+    } else {
+      map[normalized] = { createdAt: new Date().toISOString() }
+    }
     writeAccountMetaMap(map)
   }
-  return map[email]
+  return map[normalized]
 }
 
 const readRegisteredUsers = (): RegisteredUser[] => {
@@ -280,7 +348,7 @@ const writeRegisteredUsers = (users: RegisteredUser[]) => {
 }
 
 const upsertRegisteredUser = (email: string, password: string) => {
-  const normalizedEmail = email.trim()
+  const normalizedEmail = normalizeEmail(email)
   const users = readRegisteredUsers()
   const index = users.findIndex((user) => user.email.toLowerCase() === normalizedEmail.toLowerCase())
   if (index >= 0) {
@@ -298,7 +366,7 @@ const removeRegisteredUserEntry = (email: string) => {
 }
 
 const findRegisteredUser = (email: string) => {
-  const normalizedEmail = email.trim().toLowerCase()
+  const normalizedEmail = normalizeEmail(email)
   return readRegisteredUsers().find((user) => user.email.toLowerCase() === normalizedEmail)
 }
 
@@ -315,6 +383,8 @@ const purgeAccountData = (email: string) => {
   removeRegisteredUserEntry(email)
   deleteAccountMetaEntry(email)
   clearDeactivationForEmail(email)
+  clearAccountStatus(email)
+  replaceSessionsForEmail(email, [])
 }
 
 const evaluateDeactivationStatus = (email: string) => {
@@ -328,6 +398,35 @@ const evaluateDeactivationStatus = (email: string) => {
     return { allowed: false, deleteAt: null as string | null }
   }
   return { allowed: true, deleteAt: entry.deleteAt }
+}
+
+const listRegisteredUserRecords = (): AdminUserRecord[] => {
+  const registeredUsers = readRegisteredUsers()
+  const metaMap = readAccountMetaMap()
+  const statusMap = readAccountStatusMap()
+  const deactivationMap = readDeactivationMap()
+  return registeredUsers.map((user) => {
+    const normalized = normalizeEmail(user.email)
+    const meta = metaMap[normalized]
+    const status = statusMap[normalized] ?? "actif"
+    const deletionPlannedAt = deactivationMap[normalized]?.deleteAt ?? null
+    return {
+      email: user.email,
+      createdAt: meta?.createdAt ?? null,
+      status,
+      deletionPlannedAt,
+    }
+  })
+}
+
+const evaluateAccountAccess = (email: string) => {
+  const status = getAccountStatus(email)
+  if (status === "desactive") {
+    replaceSessionsForEmail(email, [])
+    return { allowed: false, deleteAt: null, status }
+  }
+  const deactivation = evaluateDeactivationStatus(email)
+  return { allowed: deactivation.allowed, deleteAt: deactivation.deleteAt, status }
 }
 
 type AuthProviderProps = {
@@ -345,8 +444,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     if (!candidate?.email || !candidate?.password) {
       return false
     }
-    const normalizedEmail = candidate.email.trim()
-    if (normalizedEmail.toLowerCase() === ADMIN_EMAIL && candidate.password === ADMIN_PASSWORD) {
+    const normalizedEmail = normalizeEmail(candidate.email)
+    if (normalizedEmail === ADMIN_EMAIL && candidate.password === ADMIN_PASSWORD) {
       return true
     }
     const registered = findRegisteredUser(normalizedEmail)
@@ -368,7 +467,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setSessionId(null)
         return
       }
-      const status = evaluateDeactivationStatus(parsed.email)
+      const status = evaluateAccountAccess(parsed.email)
       if (!status.allowed) {
         localStorage.removeItem(STORAGE_KEY)
         persistSessionIdentifier(null, false)
@@ -388,6 +487,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       } else {
         ensureSessionRegistered(parsed.email, storedSession, true)
       }
+      ensureAccountMeta(parsed.email)
+      setAccountStatus(parsed.email, "actif")
       setUser(parsed)
       setRememberChoice(true)
       setScheduledDeletionDate(status.deleteAt ?? null)
@@ -410,7 +511,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setScheduledDeletionDate(null)
       return
     }
-    const status = evaluateDeactivationStatus(user.email)
+    const status = evaluateAccountAccess(user.email)
     if (!status.allowed) {
       endSession(user.email)
       persistUser(null)
@@ -422,7 +523,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   useEffect(() => {
     if (typeof window === "undefined") return
     const handleStorage = () => {
-      if (user?.email && sessionId && !isSessionAllowedForEmail(user.email, sessionId)) {
+      if (!user?.email) return
+      const status = getAccountStatus(user.email)
+      if (status === "desactive") {
+        replaceSessionsForEmail(user.email, [])
+        persistUser(null)
+        setSessionId(null)
+        persistSessionIdentifier(null, false)
+        return
+      }
+      if (sessionId && !isSessionAllowedForEmail(user.email, sessionId)) {
         removeSessionForEmail(user.email, sessionId)
         persistUser(null)
         setSessionId(null)
@@ -476,14 +586,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = (credentials: { email: string; password: string; remember?: boolean }) => {
     const { email, password, remember = false } = credentials
     if (!email || !password) return false
-    const normalizedEmail = email.trim()
-    const status = evaluateDeactivationStatus(normalizedEmail)
+    const normalizedEmail = normalizeEmail(email)
+    const status = evaluateAccountAccess(normalizedEmail)
     if (!status.allowed) {
       return false
     }
 
-    if (normalizedEmail.toLowerCase() === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+    if (normalizedEmail === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
       ensureAccountMeta(normalizedEmail)
+      setAccountStatus(normalizedEmail, "actif")
       persistUser({ email: normalizedEmail, password }, remember)
       beginSession(normalizedEmail, remember)
       upsertRegisteredUser(normalizedEmail, password)
@@ -497,6 +608,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
 
     ensureAccountMeta(registeredUser.email)
+    setAccountStatus(registeredUser.email, "actif")
     persistUser({ email: registeredUser.email, password: registeredUser.password }, remember)
     beginSession(registeredUser.email, remember)
     setScheduledDeletionDate(status.deleteAt ?? null)
@@ -506,9 +618,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const register = (credentials: { email: string; password: string; remember?: boolean }) => {
     const { email, password, remember = false } = credentials
     if (!email || !password) return false
-    const normalizedEmail = email.trim()
+    const normalizedEmail = normalizeEmail(email)
     upsertRegisteredUser(normalizedEmail, password)
     ensureAccountMeta(normalizedEmail)
+    setAccountStatus(normalizedEmail, "actif")
     persistUser({ email: normalizedEmail, password }, remember)
     beginSession(normalizedEmail, remember)
     setScheduledDeletionDate(null)
@@ -529,10 +642,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (!parsed.email) {
         return false
       }
-      ensureAccountMeta(parsed.email)
-      upsertRegisteredUser(parsed.email, "__google__")
-      persistUser({ email: parsed.email, password: "__google__" }, true)
-      beginSession(parsed.email, true)
+      const normalizedEmail = normalizeEmail(parsed.email)
+      ensureAccountMeta(normalizedEmail)
+      upsertRegisteredUser(normalizedEmail, "__google__")
+      setAccountStatus(normalizedEmail, "actif")
+      persistUser({ email: normalizedEmail, password: "__google__" }, true)
+      beginSession(normalizedEmail, true)
       return true
     } catch (error) {
       console.error("Invalid Google credential", error)
@@ -599,6 +714,48 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return { success: true }
   }
 
+  const adminListUsers = () => listRegisteredUserRecords()
+
+  const adminUpdateStatus = (email: string, status: AccountStatus): AccountActionResult => {
+    if (!email) {
+      return { success: false, error: "Email requis pour mettre a jour le statut." }
+    }
+    const normalizedEmail = normalizeEmail(email)
+    const target = findRegisteredUser(normalizedEmail)
+    if (!target) {
+      return { success: false, error: "Utilisateur introuvable." }
+    }
+    if (status === "actif") {
+      clearAccountStatus(normalizedEmail)
+      clearDeactivationForEmail(normalizedEmail)
+      return { success: true }
+    }
+    setAccountStatus(normalizedEmail, status)
+    replaceSessionsForEmail(normalizedEmail, [])
+    if (user?.email && normalizeEmail(user.email) === normalizedEmail) {
+      endSession(user.email)
+      persistUser(null)
+    }
+    return { success: true }
+  }
+
+  const adminDeleteUser = (email: string): AccountActionResult => {
+    if (!email) {
+      return { success: false, error: "Email requis pour supprimer le compte." }
+    }
+    const normalizedEmail = normalizeEmail(email)
+    const target = findRegisteredUser(normalizedEmail)
+    if (!target) {
+      return { success: false, error: "Utilisateur introuvable." }
+    }
+    purgeAccountData(normalizedEmail)
+    if (user?.email && normalizeEmail(user.email) === normalizedEmail) {
+      endSession(user.email)
+      persistUser(null)
+    }
+    return { success: true }
+  }
+
   const value = useMemo<AuthContextValue>(() => {
     const email = user?.email ?? null
     const isAdmin = email?.toLowerCase() === ADMIN_EMAIL && user?.password === ADMIN_PASSWORD
@@ -616,8 +773,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       deactivateAccount,
       deleteAccount,
       scheduledDeletionDate,
+      adminListUsers,
+      adminUpdateStatus,
+      adminDeleteUser,
     }
-  }, [user, accountCreatedAt, scheduledDeletionDate])
+  }, [user, accountCreatedAt, scheduledDeletionDate, adminDeleteUser, adminListUsers, adminUpdateStatus])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

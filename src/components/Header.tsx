@@ -3,7 +3,7 @@ import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react"
 import { useAuth } from "../context/AuthContext"
 
 function Header() {
-  const { isAuthenticated, logout } = useAuth()
+  const { isAuthenticated, isAdmin, logout } = useAuth()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
@@ -158,6 +158,12 @@ function Header() {
               </ul>
             ) : null}
           </div>
+
+          {isAuthenticated && isAdmin ? (
+            <button className="admin-button" onClick={() => navigate("/admin")}>
+              Back-office
+            </button>
+          ) : null}
 
           <div className="header-auth">
             {!isAuthenticated ? (
