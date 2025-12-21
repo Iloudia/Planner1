@@ -267,22 +267,27 @@ function HomePage() {
             </div>
           </div>
 
-          <div className="notes">
-            <div className="notes-header">
-              <div>
-                <h3>Bloc-notes</h3>
+            <div className="notes">
+              <div className="notes-header">
+                <div>
+                  <h3>Bloc-notes</h3>
+                </div>
               </div>
-            </div>
-            <div className="todo-input">
-              <button type="button" className="todo-add" onClick={addTodo} aria-label="Ajouter une tâche">
-                +
-              </button>
-              <input type="text" value={todoInput} onChange={(e) => setTodoInput(e.target.value)} placeholder="Ajouter une tâche" />
-            </div>
-            <ul className="todo-list">
-              {todos.map((item) => (
-                <li key={item.id} className={item.done ? "todo-item is-done" : "todo-item"}>
-                  <label>
+              <div className="todo-input">
+                <input
+                  type="text"
+                  value={todoInput}
+                  onChange={(e) => setTodoInput(e.target.value)}
+                  placeholder="Ajouter une tâche"
+                />
+                <button type="button" className="todo-add" onClick={addTodo} aria-label="Ajouter une tâche">
+                  +
+                </button>
+              </div>
+              <ul className="todo-list">
+                {todos.map((item) => (
+                  <li key={item.id} className={item.done ? "todo-item is-done" : "todo-item"}>
+                    <label>
                     <input type="checkbox" checked={item.done} onChange={() => toggleTodo(item.id)} />
                     <span>{item.text}</span>
                   </label>

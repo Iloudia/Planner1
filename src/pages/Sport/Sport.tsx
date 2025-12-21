@@ -195,7 +195,7 @@ const SportPage = () => {
                       maxLength={40}
                     />
                     <button type="button" className="sport-chip sport-chip--remove" onClick={() => removeQuickItem(item.id)}>
-                      ×
+                      -
                     </button>
                   </div>
                 ))}
@@ -264,7 +264,7 @@ const SportPage = () => {
                     <time dateTime={day.dateISO}>{formatBoardDate(day.dateISO)}</time>
                   </div>
                   <span className={`sport-board-card__status${day.done ? " is-done" : ""}`}>
-                    {day.done ? "Fait" : "· planifier"}
+                    {day.done ? "Fait" : "À planifier"}
                   </span>
                 </header>
                 <label className="sport-board-card__field">

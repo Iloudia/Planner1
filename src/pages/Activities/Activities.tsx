@@ -30,19 +30,19 @@ type ActivityDraft = {
 
 const statusOptions: Array<{ value: ActivityStatus; label: string }> = [
   { value: 'planifie', label: 'Planifiée' },
-  { value: 'fait', label: 'Realisée' },
+  { value: 'fait', label: 'Réalisée' },
 ]
 
 const categoryPalette = ['#C7D2FE', '#FBCFE8', '#FDE68A', '#E9D5FF', '#BFDBFE']
 
 const defaultActivities: Activity[] = [
-  { id: 'act-1', title: 'Cours de poterie', category: 'Creativite', status: 'planifie', idealDate: '', photo: undefined },
-  { id: 'act-2', title: 'Randonnee au lever du soleil', category: 'Nature', status: 'a-faire', idealDate: '', photo: undefined },
-  { id: 'act-3', title: 'Atelier photo', category: 'Creativite', status: 'fait', idealDate: '', photo: undefined },
+  { id: 'act-1', title: 'Cours de poterie', category: 'Créativité', status: 'planifie', idealDate: '', photo: undefined },
+  { id: 'act-2', title: 'Randonnée au lever du soleil', category: 'Nature', status: 'a-faire', idealDate: '', photo: undefined },
+  { id: 'act-3', title: 'Atelier photo', category: 'Créativité', status: 'fait', idealDate: '', photo: undefined },
 ]
 
 const activitiesHeroImages = [
-  { src: activitiesMood01, alt: 'Moment creatif en couleur pastel' },
+  { src: activitiesMood01, alt: 'Moment créatif en couleur pastel' },
   { src: activitiesMood02, alt: 'Carnet ouvert sur une table claire' },
   { src: activitiesMood03, alt: 'Palette et couleurs douces' },
 ]
@@ -252,9 +252,9 @@ const ActivitiesPage = () => {
                 className="activity-card__menu-trigger"
                 onClick={() => setOpenMenuId(openMenuId === activity.id ? null : activity.id)}
                 aria-expanded={openMenuId === activity.id}
-                aria-label="Ouvrir le menu de l'activite"
+                aria-label="Ouvrir le menu de l'activité"
               >
-                ⋯
+                ⋮
               </button>
               {openMenuId === activity.id ? (
                 <div className="activity-card__menu-panel">
@@ -269,7 +269,11 @@ const ActivitiesPage = () => {
                   >
                     Changer la date
                   </button>
-                  <button type="button" className="activity-card__menu-item activity-card__menu-item--danger" onClick={() => handleDelete(activity.id)}>
+                  <button
+                    type="button"
+                    className="activity-card__menu-item activity-card__menu-item--danger"
+                    onClick={() => handleDelete(activity.id)}
+                  >
                     Supprimer l'activité
                   </button>
                 </div>
@@ -329,17 +333,15 @@ const ActivitiesPage = () => {
 
   return (
     <div className="activities-page aesthetic-page">
-      
       <PageHero
         eyebrow="Inspiration"
         title="Activités et sorties"
-        description="Un espace pour rassembler les idées d’activités qui te font du bien et nourrissent ton énergie."
+        description="Un espace pour rassembler les idées d'activités qui te font du bien et nourrissent ton énergie."
         stats={activitiesStats}
         images={activitiesHeroImages}
       />
       <div className="activities-page__accent-bar" aria-hidden="true" />
       <PageHeading eyebrow="Activités" title="Planning d'activités" />
-      
 
       <section className="activities-dashboard">
         <div className="activities-form">
@@ -365,7 +367,7 @@ const ActivitiesPage = () => {
                   type="text"
                   value={draft.category}
                   onChange={(event) => setDraft((previous) => ({ ...previous, category: event.target.value }))}
-                  placeholder="Ex : Bien-etre"
+                  placeholder="Ex : Bien-être"
                 />
               </label>
               <label className="activities-form__select">
@@ -396,7 +398,7 @@ const ActivitiesPage = () => {
                   className={`activities-form__photo-preview${draft.photo ? ' activities-form__photo-preview--has-image' : ''}`}
                 >
                   {draft.photo ? (
-                    <img className="activities-form__photo-img" src={draft.photo} alt="Apercu de la photo selectionnee" />
+                    <img className="activities-form__photo-img" src={draft.photo} alt="Aperçu de la photo sélectionnée" />
                   ) : (
                     <p>Ajoute une photo souvenir depuis ton ordinateur.</p>
                   )}
@@ -420,7 +422,6 @@ const ActivitiesPage = () => {
             </form>
           </div>
         </div>
-
       </section>
 
       <div className="activities-split">

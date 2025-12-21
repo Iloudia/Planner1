@@ -78,6 +78,10 @@ body {
     var(--bg);
 }
 
+input[type="text"]::placeholder {
+  font-family: var(--font-body);
+}
+
 h1,
 .h1 {
   font-family: var(--font-display);

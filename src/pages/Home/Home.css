@@ -63,8 +63,7 @@
   color: #fff;
   cursor: pointer;
   font-size: 0.9rem;
-  margin: 0;
-  margin-left: auto;
+  margin: 0 0 0.5rem auto;
 }
 
 .home-moodboard__preview {
@@ -232,10 +231,9 @@
 }
 
 .todo-input {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.6rem;
+  display: flex;
   align-items: center;
+  gap: 0.6rem;
 }
 
 .todo-add {
@@ -251,6 +249,7 @@
 }
 
 .todo-input input {
+  flex: 1;
   border: 1px solid rgba(148, 163, 184, 0.35);
   border-radius: 12px;
   padding: 0.7rem 0.9rem;
