@@ -1,31 +1,57 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react"
+import { useAuth } from "../context/AuthContext"
+import { buildUserScopedKey } from "../utils/userScopedKey"
 
 function resolveInitial<T>(value: T | (() => T)): T {
-  return typeof value === "function" ? (value as () => T)() : value;
+  return typeof value === "function" ? (value as () => T)() : value
 }
 
 function usePersistentState<T>(key: string, initialState: T | (() => T)) {
+  const { userEmail } = useAuth()
+  const storageKey = useMemo(() => buildUserScopedKey(userEmail, key), [key, userEmail])
+  const initialRef = useRef<T | null>(null)
+
+  const getInitial = () => {
+    if (initialRef.current === null) {
+      initialRef.current = resolveInitial(initialState)
+    }
+    return initialRef.current
+  }
+
   const [state, setState] = useState<T>(() => {
     try {
-      const stored = localStorage.getItem(key);
+      const stored = localStorage.getItem(storageKey)
       if (stored !== null) {
-        return JSON.parse(stored) as T;
+        return JSON.parse(stored) as T
       }
     } catch {
       // ignore read errors
     }
-    return resolveInitial(initialState);
-  });
+    return getInitial()
+  })
 
   useEffect(() => {
     try {
-      localStorage.setItem(key, JSON.stringify(state));
+      const stored = localStorage.getItem(storageKey)
+      if (stored !== null) {
+        setState(JSON.parse(stored) as T)
+        return
+      }
+    } catch {
+      // ignore read errors
+    }
+    setState(getInitial())
+  }, [storageKey])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(state))
     } catch {
       // ignore write errors (storage full or disabled)
     }
-  }, [key, state]);
+  }, [storageKey, state])
 
-  return [state, setState] as const;
+  return [state, setState] as const
 }
 
-export default usePersistentState;
+export default usePersistentState

@@ -1,4 +1,6 @@
 import { FormEvent, useEffect, useMemo, useState } from "react"
+import { useAuth } from "../../context/AuthContext"
+import { buildUserScopedKey } from "../../utils/userScopedKey"
 
 const LANGUAGE_STORAGE_KEY = "planner.language.preference"
 
@@ -25,13 +27,15 @@ const languageOptions: LanguageOption[] = [
 ]
 
 const SettingsLanguages = () => {
+  const { userEmail } = useAuth()
+  const storageKey = useMemo(() => buildUserScopedKey(userEmail, LANGUAGE_STORAGE_KEY), [userEmail])
   const [savedLanguage, setSavedLanguage] = useState<string>("fr-FR")
   const [selectedLanguage, setSelectedLanguage] = useState<string>("fr-FR")
   const [searchTerm, setSearchTerm] = useState<string>("")
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(LANGUAGE_STORAGE_KEY)
+      const saved = localStorage.getItem(storageKey)
       if (saved) {
         setSavedLanguage(saved)
         setSelectedLanguage(saved)
@@ -39,7 +43,7 @@ const SettingsLanguages = () => {
     } catch {
       // ignore storage read errors
     }
-  }, [])
+  }, [storageKey])
 
   const filteredLanguages = useMemo(() => {
     const term = searchTerm.trim().toLowerCase()
@@ -54,7 +58,7 @@ const SettingsLanguages = () => {
     }
     setSavedLanguage(selectedLanguage)
     try {
-      localStorage.setItem(LANGUAGE_STORAGE_KEY, selectedLanguage)
+      localStorage.setItem(storageKey, selectedLanguage)
     } catch {
       // ignore storage errors
     }

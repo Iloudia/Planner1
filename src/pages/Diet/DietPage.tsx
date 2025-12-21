@@ -1,4 +1,7 @@
 ﻿import { useEffect, useState } from "react"
+import { useAuth } from "../../context/AuthContext"
+import { buildUserScopedKey } from "../../utils/userScopedKey"
+import { useMemo } from "react"
 import recipeImg1 from "../../assets/planner-01.jpg"
 import recipeImg2 from "../../assets/planner-02.jpg"
 import recipeImg3 from "../../assets/planner-03.jpg"
@@ -328,11 +331,13 @@ const DIET_HEADINGS = {
 const RECIPE_FAVORITES_KEY = "planner.diet.recipeFavorites"
 
 const DietClassicPage = () => {
+  const { userEmail } = useAuth()
+  const favoritesKey = useMemo(() => buildUserScopedKey(userEmail, RECIPE_FAVORITES_KEY), [userEmail])
   const [tab, setTab] = useState<"mass" | "healthy">("mass")
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(() => {
     if (typeof window === "undefined") return new Set()
     try {
-      const stored = window.localStorage.getItem(RECIPE_FAVORITES_KEY)
+      const stored = window.localStorage.getItem(favoritesKey)
       return stored ? new Set(JSON.parse(stored)) : new Set()
     } catch {
       return new Set()
@@ -345,11 +350,11 @@ const DietClassicPage = () => {
   useEffect(() => {
     if (typeof window === "undefined") return
     try {
-      window.localStorage.setItem(RECIPE_FAVORITES_KEY, JSON.stringify(Array.from(favoriteIds)))
+      window.localStorage.setItem(favoritesKey, JSON.stringify(Array.from(favoriteIds)))
     } catch {
       // ignore
     }
-  }, [favoriteIds])
+  }, [favoriteIds, favoritesKey])
 
   const toggleFavorite = (recipeId: string) => {
     setFavoriteIds((previous) => {

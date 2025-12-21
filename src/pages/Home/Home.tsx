@@ -1,6 +1,8 @@
-import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react"
+import { useEffect, useMemo, useRef, useState, useCallback, type ChangeEvent } from "react"
 import { useNavigate } from "react-router-dom"
 import { useTasks } from "../../context/TasksContext"
+import { useAuth } from "../../context/AuthContext"
+import { buildUserScopedKey } from "../../utils/userScopedKey"
 import planner01 from "../../assets/sport.jpeg"
 import planner02 from "../../assets/activities.jpeg"
 import planner03 from "../../assets/mallika-jain-dupe.jpeg"
@@ -10,8 +12,10 @@ import planner06 from "../../assets/katie-huber-rhoades-dupe (1).jpeg"
 import planner07 from "../../assets/ebony-forsyth-dupe.jpeg"
 import planner08 from "../../assets/l-b-dupe.jpeg"
 import planner09 from "../../assets/katie-mansfield-dupe.jpeg"
-import { useMoodboard } from "../../context/MoodboardContext"
 import "./Home.css"
+
+const HOME_MOODBOARD_KEY = "planner.home.moodboard"
+const DEFAULT_HOME_MOODBOARD = planner02
 
 type CardItem = {
   image: string
@@ -31,7 +35,7 @@ type TaskDisplay = {
 
 const cards: CardItem[] = [
   { image: planner01, alt: "Sport", kicker: "Energie", title: "Sport", path: "/sport" },
-  { image: planner02, alt: "Activites", kicker: "Fun", title: "Activites", path: "/activites" },
+  { image: planner02, alt: "Activités", kicker: "Fun", title: "Activités", path: "/activites" },
   { image: planner03, alt: "Journaling", kicker: "Reflet", title: "Journaling", path: "/journaling" },
   { image: planner04, alt: "Self-love", kicker: "Care", title: "S'aimer soi-meme", path: "/self-love" },
   { image: planner05, alt: "Wishlist", kicker: "Envie", title: "Wishlist", path: "/wishlist" },
@@ -74,15 +78,17 @@ const computeProgress = () => {
 function HomePage() {
   const navigate = useNavigate()
   const { tasks } = useTasks()
+  const { userEmail } = useAuth()
   const [now, setNow] = useState(() => new Date())
   const [profileSrc, setProfileSrc] = useState<string>(planner02)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const moodboardInputRef = useRef<HTMLInputElement | null>(null)
   const [todoInput, setTodoInput] = useState("")
+  const scopedKey = useCallback((suffix: string) => buildUserScopedKey(userEmail, suffix), [userEmail])
   const [todos, setTodos] = useState<{ id: string; text: string; done: boolean }[]>(() => {
-    const saved = localStorage.getItem("planner-todos")
-    if (!saved) return []
     try {
+      const saved = localStorage.getItem(scopedKey("todos"))
+      if (!saved) return []
       const parsed = JSON.parse(saved)
       return Array.isArray(parsed) ? parsed : []
     } catch {
@@ -91,16 +97,29 @@ function HomePage() {
   })
   const [progress, setProgress] = useState(() => computeProgress())
   const userInfo = { pseudo: "Planner lover", birthday: "12 mars", sign: "Poissons" }
-  const { moodboardSrc, updateMoodboard, resetMoodboard, isCustom } = useMoodboard()
+  const defaultMoodboardRef = useRef<string>(DEFAULT_HOME_MOODBOARD)
+  const [homeMoodboardSrc, setHomeMoodboardSrc] = useState<string>(() => {
+    const stored = localStorage.getItem(scopedKey(HOME_MOODBOARD_KEY))
+    return stored ?? DEFAULT_HOME_MOODBOARD
+  })
+  const [isHomeCustom, setIsHomeCustom] = useState<boolean>(() => Boolean(localStorage.getItem(scopedKey(HOME_MOODBOARD_KEY))))
 
   useEffect(() => {
-    const savedProfile = localStorage.getItem("planner-profile-photo")
+    const savedProfile = localStorage.getItem(scopedKey("profile-photo"))
     if (savedProfile) setProfileSrc(savedProfile)
-  }, [])
+    const storedHomeMoodboard = localStorage.getItem(scopedKey(HOME_MOODBOARD_KEY))
+    if (storedHomeMoodboard) {
+      setHomeMoodboardSrc(storedHomeMoodboard)
+      setIsHomeCustom(true)
+    } else {
+      setHomeMoodboardSrc(DEFAULT_HOME_MOODBOARD)
+      setIsHomeCustom(false)
+    }
+  }, [scopedKey])
 
   useEffect(() => {
-    localStorage.setItem("planner-todos", JSON.stringify(todos))
-  }, [todos])
+    localStorage.setItem(scopedKey("todos"), JSON.stringify(todos))
+  }, [scopedKey, todos])
 
   useEffect(() => {
     const id = setInterval(() => setNow(new Date()), 60000)
@@ -136,7 +155,9 @@ function HomePage() {
     reader.onload = () => {
       const result = typeof reader.result === "string" ? reader.result : null
       if (result) {
-        updateMoodboard(result)
+        setHomeMoodboardSrc(result)
+        setIsHomeCustom(true)
+        localStorage.setItem(scopedKey(HOME_MOODBOARD_KEY), result)
       }
     }
     reader.readAsDataURL(file)
@@ -193,7 +214,7 @@ function HomePage() {
                     const result = typeof reader.result === "string" ? reader.result : null
                     if (!result) return
                     setProfileSrc(result)
-                    localStorage.setItem("planner-profile-photo", result)
+                    localStorage.setItem(scopedKey("profile-photo"), result)
                   }
                   reader.readAsDataURL(file)
                 }}
@@ -219,7 +240,7 @@ function HomePage() {
           <div className="progress-panel">
             <div className="progress-row">
               <div className="progress-label">
-                <span>Annee</span>
+                <span>Année</span>
                 <span>{progress.year.toFixed(1)}%</span>
               </div>
               <div className="progress-bar">
@@ -237,7 +258,7 @@ function HomePage() {
             </div>
             <div className="progress-row">
               <div className="progress-label">
-                <span>Journee</span>
+                <span>Journée</span>
                 <span>{progress.day.toFixed(1)}%</span>
               </div>
               <div className="progress-bar">
@@ -340,12 +361,20 @@ function HomePage() {
             <input ref={moodboardInputRef} type="file" accept="image/*" className="home-moodboard__file-input" onChange={handleMoodboardInput} />
           </div>
           <div className="home-moodboard__preview">
-            {isCustom ? (
-              <button type="button" className="home-moodboard__reset" onClick={resetMoodboard}>
+            {isHomeCustom ? (
+              <button
+                type="button"
+                className="home-moodboard__reset"
+                onClick={() => {
+                  setHomeMoodboardSrc(defaultMoodboardRef.current)
+                  setIsHomeCustom(false)
+                  localStorage.removeItem(scopedKey(HOME_MOODBOARD_KEY))
+                }}
+              >
                 Réinitialiser
               </button>
             ) : null}
-            <img src={moodboardSrc} alt="Moodboard personnalise" />
+            <img src={homeMoodboardSrc} alt="Moodboard personnalise" />
           </div>
         </section>
         <div className="home-footer-bar" aria-hidden="true" />

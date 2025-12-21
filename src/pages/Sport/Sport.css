@@ -193,6 +193,54 @@
   gap: 0.6rem;
 }
 
+.sport-chip__inline-editor {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.sport-chip__inline-editor input {
+  border: 1px solid rgba(236, 72, 153, 0.25);
+  border-radius: 12px;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.95rem;
+  background: #fff;
+  width: 100%;
+}
+
+.sport-chip--add {
+  justify-self: start;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 1.2rem;
+}
+
+.sport-chip--remove {
+  border: 1px solid rgba(236, 72, 153, 0.25);
+  border-radius: 12px;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: #fff;
+  font-weight: 700;
+  color: #dc2626;
+  cursor: pointer;
+}
+
+.sport-chip__add-row {
+  display: flex;
+  justify-content: flex-start;
+}
+
 .sport-chip {
   display: inline-flex;
   align-self: flex-start;
@@ -361,5 +409,3 @@
     grid-template-columns: 1fr;
   }
 }
-
-

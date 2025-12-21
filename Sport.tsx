@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState, type ChangeEvent } from "react"
+import { useEffect, useMemo } from "react"
+import type { ChangeEvent } from "react"
 import { Link } from "react-router-dom"
 import PageHeading from "../../components/PageHeading"
 import usePersistentState from "../../hooks/usePersistentState"
@@ -19,7 +20,6 @@ type SportBoardDay = {
 }
 
 const SPORT_BOARD_STORAGE_KEY = "planner.sportBoard.v2"
-const SPORT_QUICK_STORAGE_KEY = "planner.sport.quickchips.v1"
 
 const DAY_LABELS = [
   { id: "mon", label: "Lundi" },
@@ -31,14 +31,14 @@ const DAY_LABELS = [
   { id: "sun", label: "Dimanche" },
 ] as const
 
-const DEFAULT_BOARD_ACTIVITIES: SportBoardActivity[] = ["", "", "", "", "", "", ""]
-const QUICK_DEFAULTS = [
-  "+ Nouvel Ã©vÃ©nement",
-  "+ Nouvel exercice",
-  "+ Routine du jour",
-  "+ Nouvelle nourriture",
-  "+ Daily meal",
-  "+ Nouvel objectif",
+const DEFAULT_BOARD_ACTIVITIES: SportBoardActivity[] = [
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
 ]
 
 const formatBoardDate = (isoDate: string) =>
@@ -79,12 +79,12 @@ const computeWeekRange = (board: SportBoardDay[]) => {
   return `${first} - ${last}`
 }
 
-const legacyDefaults = new Set(["Cardio", "Renforcement", "Yoga", "Fitness", "Mobility", "Pilates", "Repos actif"])
-
 const SportPage = () => {
   const [board, setBoard] = usePersistentState<SportBoardDay[]>(SPORT_BOARD_STORAGE_KEY, createDefaultBoard)
-  const [quickItems, setQuickItems] = usePersistentState<{ id: string; text: string }[]>(SPORT_QUICK_STORAGE_KEY, () => [])
-  const [isEditingQuick, setIsEditingQuick] = useState(() => quickItems.length > 0)
+  const legacyDefaults = useMemo(
+    () => new Set(["Cardio", "Renforcement", "Yoga", "Fitness", "Mobility", "Pilates", "Repos actif"]),
+    [],
+  )
   const lifeCards = useMemo(
     () => [
       { id: "life-workout", label: "Workout", image: planner01 },
@@ -107,22 +107,17 @@ const SportPage = () => {
       return
     }
     let needsCleanup = false
-    const cleaned = board.map((day, index) => {
-      const activity = day.activity ?? DEFAULT_BOARD_ACTIVITIES[index % DEFAULT_BOARD_ACTIVITIES.length]
-      if (legacyDefaults.has(activity)) {
+    const cleaned = board.map((day) => {
+      if (legacyDefaults.has(day.activity)) {
         needsCleanup = true
         return { ...day, activity: "" }
-      }
-      if (activity !== day.activity) {
-        needsCleanup = true
-        return { ...day, activity }
       }
       return day
     })
     if (needsCleanup) {
       setBoard(cleaned)
     }
-  }, [board, setBoard])
+  }, [board, legacyDefaults, setBoard])
 
   const weekRange = useMemo(() => computeWeekRange(board), [board])
 
@@ -135,38 +130,6 @@ const SportPage = () => {
     const { checked } = event.target
     setBoard((previous) => previous.map((day) => (day.id === dayId ? { ...day, done: checked } : day)))
   }
-
-  const addQuickItem = (text: string) => {
-    setQuickItems((prev) => [...prev, { id: `chip-${Date.now()}`, text }])
-    setIsEditingQuick(true)
-  }
-
-  const updateQuickItem = (id: string, text: string) => {
-    setQuickItems((prev) => prev.map((item) => (item.id === id ? { ...item, text } : item)))
-  }
-
-  const startEditingQuickFromLabel = () => {
-    setQuickItems([{ id: `chip-${Date.now()}`, text: "" }])
-    setIsEditingQuick(true)
-  }
-
-  const removeQuickItem = (id: string) => {
-    setQuickItems((prev) => {
-      const next = prev.filter((item) => item.id !== id)
-      if (next.length === 0) {
-        setIsEditingQuick(false)
-      }
-      return next
-    })
-  }
-
-  useEffect(() => {
-    if (quickItems.length === 0) {
-      setIsEditingQuick(false)
-    } else {
-      setIsEditingQuick(true)
-    }
-  }, [quickItems.length])
 
   return (
     <div className="sport-page">
@@ -183,35 +146,18 @@ const SportPage = () => {
           </div>
           <div className="sport-quick-panel__divider" />
           <div className="sport-quick-panel__chips">
-            {isEditingQuick && quickItems.length > 0 ? (
-              <>
-                {quickItems.map((item) => (
-                  <div key={item.id} className="sport-chip__inline-editor">
-                    <input
-                      type="text"
-                      value={item.text}
-                      onChange={(event) => updateQuickItem(item.id, event.target.value)}
-                      placeholder="Ajoute ton idÃ©e de sÃ©ance"
-                      maxLength={40}
-                    />
-                    <button type="button" className="sport-chip sport-chip--remove" onClick={() => removeQuickItem(item.id)}>
-                      Ã—
-                    </button>
-                  </div>
-                ))}
-                <div className="sport-chip__add-row">
-                  <button type="button" className="sport-chip sport-chip--add" onClick={() => addQuickItem("")}>
-                    +
-                  </button>
-                </div>
-              </>
-            ) : (
-              QUICK_DEFAULTS.map((label) => (
-                <button key={label} type="button" className="sport-chip" onClick={() => startEditingQuickFromLabel()}>
-                  {label}
-                </button>
-              ))
-            )}
+            {[
+              "+ Nouvel événement",
+              "+ Nouvel exercice",
+              "+ Routine du jour",
+              "+ Nouvelle nourriture",
+              "+ Daily meal",
+              "+ Nouvel objectif",
+            ].map((label) => (
+              <button key={label} type="button" className="sport-chip">
+                {label}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -222,20 +168,20 @@ const SportPage = () => {
           <div className="sport-quick-panel__divider" />
           <div className="sport-quick-panel__cards">
             {lifeCards.map((card) => (
-              <Link
-                key={card.id}
-                className="sport-life-card"
-                to={
-                  card.id === "life-workout"
-                    ? "/sport/workout"
+                <Link
+                  key={card.id}
+                  className="sport-life-card"
+                  to={
+                    card.id === "life-workout"
+                      ? "/sport/workout"
                     : card.id === "life-diet"
                       ? "/diet"
                       : card.id === "life-goals"
                         ? "/goals"
                         : "#"
-                }
-                aria-label={`Ouvrir ${card.label}`}
-              >
+                  }
+                  aria-label={`Ouvrir ${card.label}`}
+                >
                 <div className="sport-life-card__media">
                   <img src={card.image} alt={card.label} />
                 </div>
@@ -264,21 +210,16 @@ const SportPage = () => {
                     <time dateTime={day.dateISO}>{formatBoardDate(day.dateISO)}</time>
                   </div>
                   <span className={`sport-board-card__status${day.done ? " is-done" : ""}`}>
-                    {day.done ? "Fait" : "Â· planifier"}
+                    {day.done ? "Fait" : "À planifier"}
                   </span>
                 </header>
                 <label className="sport-board-card__field">
-                  <span>SÃ©ance</span>
-                  <input
-                    type="text"
-                    value={day.activity}
-                    onChange={handleActivityChange(day.id)}
-                    placeholder="Ã‰cris le sport prÃ©vu"
-                  />
+                  <span>Séance</span>
+                  <input type="text" value={day.activity} onChange={handleActivityChange(day.id)} placeholder="Écris le sport prévu" />
                 </label>
                 <label className="sport-board-card__checkbox">
                   <input type="checkbox" checked={day.done} onChange={handleDoneToggle(day.id)} />
-                  <span>SÃ©ance effectuÃ©e</span>
+                  <span>Séance effectuée</span>
                 </label>
               </article>
             ))}

@@ -7,7 +7,7 @@
 .admin-page__accent {
   height: 0.45rem;
   border-radius: 999px;
-  background: linear-gradient(90deg, #c7d2fe, #fbcfe8, #f472b6);
+  background: linear-gradient(90deg, #fce7f3 0%, #f472b6 50%, #f9a8d4 100%);
   box-shadow: 0 14px 40px rgba(99, 102, 241, 0.25);
 }
 

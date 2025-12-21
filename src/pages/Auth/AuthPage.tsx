@@ -1,6 +1,7 @@
-﻿import { useState, useMemo, useEffect, useRef, type FormEvent } from "react"
+import { useState, useMemo, useEffect, useRef, useCallback, type FormEvent } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../../context/AuthContext"
+import { buildUserScopedKey, normalizeUserEmail } from "../../utils/userScopedKey"
 import { useMoodboard } from "../../context/MoodboardContext"
 import "./Auth.css"
 
@@ -64,6 +65,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
   const location = useLocation()
   const { isAuthenticated, login, register, userEmail, loginWithGoogle } = useAuth()
   const { moodboardSrc } = useMoodboard()
+
   const [email, setEmail] = useState("")
   const [emailHistory, setEmailHistory] = useState<string[]>(() => {
     if (typeof window === "undefined") {
@@ -91,6 +93,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
   const [birthday, setBirthday] = useState("")
   const [gender, setGender] = useState("")
   const [acceptTerms, setAcceptTerms] = useState(false)
+  const [registerStep, setRegisterStep] = useState(0)
   const [isGoogleReady, setIsGoogleReady] = useState(false)
   const googleButtonRef = useRef<HTMLDivElement | null>(null)
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
@@ -164,6 +167,16 @@ const AuthPage = ({ mode }: AuthFormProps) => {
     }
   }, [emailHistory])
 
+  useEffect(() => {
+    setRegisterStep(0)
+    setError("")
+  }, [mode])
+
+  const profileKeyFor = useCallback(
+    (emailValue: string) => buildUserScopedKey(normalizeUserEmail(emailValue), PROFILE_STORAGE_KEY),
+    [],
+  )
+
   const rememberEmail = (emailValue: string) => {
     const normalized = emailValue.trim()
     if (!normalized) return
@@ -176,7 +189,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
 
   const persistProfileData = (emailValue: string) => {
     try {
-      const existing = localStorage.getItem(PROFILE_STORAGE_KEY)
+      const existing = localStorage.getItem(profileKeyFor(emailValue))
       let payload = existing ? JSON.parse(existing) : {}
       payload = {
         ...payload,
@@ -193,7 +206,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
           gender,
         },
       }
-      localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(payload))
+      localStorage.setItem(profileKeyFor(emailValue), JSON.stringify(payload))
     } catch {
       // ignore
     }
@@ -205,13 +218,44 @@ const AuthPage = ({ mode }: AuthFormProps) => {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    if (mode === "register" && !acceptTerms) {
-      setError("Merci d accepter les conditions generales.")
-      return
+    setError("")
+
+    if (mode === "register") {
+      const hasMinLength = password.trim().length >= 6
+      const hasUpper = /[A-Z]/.test(password)
+      const hasLower = /[a-z]/.test(password)
+      const hasDigit = /\d/.test(password)
+      const hasSpecial = /[!@#$%^&*\-_?]/.test(password)
+
+      if (registerStep === 0) {
+        if (!email.trim()) {
+          setError("Merci de renseigner un email.")
+          return
+        }
+        setRegisterStep(1)
+        return
+      }
+      if (registerStep === 1) {
+        if (!firstName.trim() || !lastName.trim() || !username.trim()) {
+          setError("Merci de renseigner prenom, nom et pseudo.")
+          return
+        }
+        setRegisterStep(2)
+        return
+      }
+      if (!password.trim() || !hasMinLength || !hasUpper || !hasLower || !hasDigit || !hasSpecial) {
+        setError("Le mot de passe doit avoir au moins 6 caracteres, 1 majuscule, 1 minuscule, 1 chiffre et 1 caractere special.")
+        return
+      }
+      if (!acceptTerms) {
+        setError("Merci d accepter les conditions generales.")
+        return
+      }
     }
+
     const success = mode === "login" ? login({ email, password, remember }) : register({ email, password, remember })
     if (!success) {
-      setError("Merci de renseigner un email et un mot de passe valides.")
+      setError(mode === "register" ? "Un compte existe déjà avec cet email." : "Merci de renseigner un email et un mot de passe valides.")
       return
     }
     if (mode === "register") {
@@ -231,10 +275,12 @@ const AuthPage = ({ mode }: AuthFormProps) => {
     window.alert("Un lien de reinitialisation a ete envoye a " + email + ".")
   }
 
-  const heading = mode === "login" ? "Connexion" : "Creation de compte"
-  const ctaLabel = mode === "login" ? "Se connecter" : "Creer mon compte"
-  const switchLabel = mode === "login" ? "Pas encore de compte ?" : "Deja un compte ?"
+  const heading = mode === "login" ? "Connexion" : "Création de compte"
+  const switchLabel = mode === "login" ? "Pas encore de compte ?" : "Déjà un compte ?"
   const switchTo = mode === "login" ? "/register" : "/login"
+  const isRegister = mode === "register"
+  const registerSteps = ["Email", "Identité", "Sécurité"]
+  const ctaLabel = mode === "login" ? "Se connecter" : registerStep >= registerSteps.length - 1 ? "Créer mon compte" : "Continuer"
 
   return (
     <div className="auth-page">
@@ -245,9 +291,10 @@ const AuthPage = ({ mode }: AuthFormProps) => {
         </div>
         <div className="auth-panel">
           <h1 className="auth-title">{heading}</h1>
-          <p className="auth-lead">
-            Accede a ton espace Planner : routines, journal, finances et plus encore. Connecte-toi ou cree un compte en quelques secondes.
-          </p>
+          <div className="auth-switch">
+            <span>{switchLabel}</span>
+            <Link to={switchTo}>{mode === "login" ? "Créer un compte" : "Se connecter"}</Link>
+          </div>
 
           {isAuthenticated ? (
             <p className="auth-status">
@@ -256,108 +303,184 @@ const AuthPage = ({ mode }: AuthFormProps) => {
           ) : null}
 
           <form className="auth-form" onSubmit={handleSubmit}>
-            {mode === "register" && (
-              <div className="auth-form__row">
-                <label>
-                  Prenom
-                  <input type="text" value={firstName} onChange={(event) => setFirstName(event.target.value)} placeholder="Prenom" required />
-                </label>
-                <label>
-                  Nom
-                  <input type="text" value={lastName} onChange={(event) => setLastName(event.target.value)} placeholder="Nom" required />
-                </label>
-              </div>
-            )}
-            {mode === "register" && (
-              <label>
-                Pseudo
-                <input type="text" value={username} onChange={(event) => setUsername(event.target.value)} placeholder="Ton pseudo" required />
-              </label>
-            )}
-            <label>
-              Email
-              <input
-                type="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                onBlur={handleEmailBlur}
-                placeholder="toi@exemple.com"
-                required
-                autoComplete="email"
-                list="auth-email-history"
-              />
-            </label>
-            {emailHistory.length > 0 ? (
-              <datalist id="auth-email-history">
-                {emailHistory.map((savedEmail) => (
-                  <option key={savedEmail} value={savedEmail} />
+            {isRegister ? (
+              <div className="auth-steps" aria-label="Progression de creation de compte">
+                {registerSteps.map((label, index) => (
+                  <div key={label} className={`auth-step${registerStep === index ? " is-active" : registerStep > index ? " is-done" : ""}`}>
+                    <span className="auth-step__index">{index + 1}</span>
+                    <span className="auth-step__label">{label}</span>
+                  </div>
                 ))}
-              </datalist>
+              </div>
             ) : null}
-            <label>
-              Mot de passe
-              <div className="auth-password-field">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  placeholder="********"
-                  minLength={6}
-                  required
-                />
-                <button
-                  type="button"
-                  className="auth-password-toggle"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
-                  aria-pressed={showPassword}
-                >
-                  <EyeIcon crossed={!showPassword} />
+
+            {mode === "register" ? (
+              <>
+                {registerStep === 0 ? (
+                  <label>
+                    Email
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(event) => setEmail(event.target.value)}
+                      onBlur={handleEmailBlur}
+                      placeholder="toi@exemple.com"
+                      required
+                      autoComplete="email"
+                      list="auth-email-history"
+                    />
+                    {emailHistory.length > 0 ? (
+                      <datalist id="auth-email-history">
+                        {emailHistory.map((savedEmail) => (
+                          <option key={savedEmail} value={savedEmail} />
+                        ))}
+                      </datalist>
+                    ) : null}
+                  </label>
+                ) : null}
+
+                {registerStep === 1 ? (
+                  <>
+                    <div className="auth-form__row">
+                      <label>
+                        Prénom
+                        <input type="text" value={firstName} onChange={(event) => setFirstName(event.target.value)} placeholder="Prénom" required />
+                      </label>
+                      <label>
+                        Nom
+                        <input type="text" value={lastName} onChange={(event) => setLastName(event.target.value)} placeholder="Nom" required />
+                      </label>
+                    </div>
+                    <label>
+                      Pseudo
+                      <input type="text" value={username} onChange={(event) => setUsername(event.target.value)} placeholder="Ton pseudo" required />
+                    </label>
+                  </>
+                ) : null}
+
+                {registerStep === 2 ? (
+                  <>
+                    <label>
+                      Mot de passe
+                      <div className="auth-password-field">
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          value={password}
+                          onChange={(event) => setPassword(event.target.value)}
+                          placeholder="********"
+                          minLength={6}
+                          required
+                        />
+                        <button
+                          type="button"
+                          className="auth-password-toggle"
+                          onClick={() => setShowPassword((prev) => !prev)}
+                          aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                          aria-pressed={showPassword}
+                        >
+                          <EyeIcon crossed={!showPassword} />
+                        </button>
+                      </div>
+                      <p className="auth-password-hint">
+                        6 caractères minimum, avec 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial.
+                      </p>
+                    </label>
+                    <div className="auth-form__row">
+                      <label>
+                        Anniversaire
+                        <input type="date" value={birthday} onChange={(event) => setBirthday(event.target.value)} required />
+                      </label>
+                      <label>
+                        Genre
+                        <select value={gender} onChange={(event) => setGender(event.target.value)}>
+                          <option value="">Ne pas préciser</option>
+                          <option value="femme">Femme</option>
+                          <option value="homme">Homme</option>
+                        </select>
+                      </label>
+                    </div>
+                    <label className="auth-terms">
+                      <input type="checkbox" checked={acceptTerms} onChange={(event) => setAcceptTerms(event.target.checked)} required />
+                      J’accepte les conditions générales.
+                    </label>
+                  </>
+                ) : null}
+              </>
+            ) : (
+              <>
+                <label>
+                  Email
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    onBlur={handleEmailBlur}
+                    placeholder="toi@exemple.com"
+                    required
+                    autoComplete="email"
+                    list="auth-email-history"
+                  />
+                </label>
+                {emailHistory.length > 0 ? (
+                  <datalist id="auth-email-history">
+                    {emailHistory.map((savedEmail) => (
+                      <option key={savedEmail} value={savedEmail} />
+                    ))}
+                  </datalist>
+                ) : null}
+                <label>
+                  Mot de passe
+                  <div className="auth-password-field">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(event) => setPassword(event.target.value)}
+                      placeholder="********"
+                      minLength={6}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="auth-password-toggle"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                      aria-pressed={showPassword}
+                    >
+                      <EyeIcon crossed={!showPassword} />
+                    </button>
+                  </div>
+                </label>
+              </>
+            )}
+
+            {error ? <p className="auth-error">{error}</p> : null}
+
+            {mode === "login" ? (
+              <>
+                <label className="auth-remember">
+                  <input type="checkbox" checked={remember} onChange={(event) => setRemember(event.target.checked)} />
+                  Se souvenir de moi
+                </label>
+                <button type="submit" className="auth-submit">
+                  {ctaLabel}
+                </button>
+                <button type="button" className="auth-forgot" onClick={handleForgot}>
+                  Mot de passe oublié ?
+                </button>
+              </>
+            ) : (
+              <div className="auth-step-actions">
+                {registerStep > 0 ? (
+                  <button type="button" className="auth-secondary" onClick={() => setRegisterStep((prev) => Math.max(prev - 1, 0))}>
+                    Retour
+                  </button>
+                ) : null}
+                <button type="submit" className="auth-submit">
+                  {ctaLabel}
                 </button>
               </div>
-            </label>
-            {mode === "register" && (
-              <div className="auth-form__row">
-                <label>
-                  Anniversaire
-                  <input type="date" value={birthday} onChange={(event) => setBirthday(event.target.value)} required />
-                </label>
-                <label>
-                  Genre
-                  <select value={gender} onChange={(event) => setGender(event.target.value)}>
-                    <option value="">Ne pas preciser</option>
-                    <option value="femme">Femme</option>
-                    <option value="homme">Homme</option>
-                  </select>
-                </label>
-              </div>
             )}
-            {error ? <p className="auth-error">{error}</p> : null}
-            {mode === "register" ? (
-              <label className="auth-terms">
-                <input type="checkbox" checked={acceptTerms} onChange={(event) => setAcceptTerms(event.target.checked)} required />
-                J accepte les conditions generales
-              </label>
-            ) : (
-              <label className="auth-remember">
-                <input type="checkbox" checked={remember} onChange={(event) => setRemember(event.target.checked)} />
-                Se souvenir de moi
-              </label>
-            )}
-            {mode === "login" ? (
-              <button type="button" className="auth-forgot" onClick={handleForgot}>
-                Mot de passe oublie ?
-              </button>
-            ) : null}
-            <button type="submit" className="auth-submit">
-              {ctaLabel}
-            </button>
           </form>
-
-          <div className="auth-switch">
-            <span>{switchLabel}</span>
-            <Link to={switchTo}>{mode === "login" ? "Creer un compte" : "Se connecter"}</Link>
-          </div>
 
           <div className="auth-google">
             <div ref={googleButtonRef} />

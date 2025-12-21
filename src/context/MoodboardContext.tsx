@@ -1,4 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react"
+import { useAuth } from "./AuthContext"
+import { buildUserScopedKey } from "../utils/userScopedKey"
 import defaultMoodboard from "../assets/MoodBoard.png"
 
 const STORAGE_KEY = "planner.custom.moodboard"
@@ -13,32 +15,40 @@ type MoodboardContextValue = {
 const MoodboardContext = createContext<MoodboardContextValue | undefined>(undefined)
 
 export function MoodboardProvider({ children }: { children: ReactNode }) {
+  const { userEmail } = useAuth()
+  const storageKey = useMemo(() => buildUserScopedKey(userEmail, STORAGE_KEY), [userEmail])
   const [moodboardSrc, setMoodboardSrc] = useState<string>(defaultMoodboard)
   const [isCustom, setIsCustom] = useState(false)
 
   useEffect(() => {
     try {
-      const stored = window.localStorage.getItem(STORAGE_KEY)
+      const stored = window.localStorage.getItem(storageKey)
       if (stored) {
         setMoodboardSrc(stored)
         setIsCustom(true)
+        return
       }
+      setMoodboardSrc(defaultMoodboard)
+      setIsCustom(false)
     } catch {
       // ignore storage errors
     }
-  }, [])
+  }, [storageKey])
 
-  const persist = useCallback((value: string | null) => {
-    try {
-      if (value) {
-        window.localStorage.setItem(STORAGE_KEY, value)
-      } else {
-        window.localStorage.removeItem(STORAGE_KEY)
+  const persist = useCallback(
+    (value: string | null) => {
+      try {
+        if (value) {
+          window.localStorage.setItem(storageKey, value)
+        } else {
+          window.localStorage.removeItem(storageKey)
+        }
+      } catch {
+        // ignore storage errors
       }
-    } catch {
-      // ignore storage errors
-    }
-  }, [])
+    },
+    [storageKey],
+  )
 
   const updateMoodboard = useCallback(
     (dataUrl: string) => {

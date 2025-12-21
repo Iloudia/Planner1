@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react"
+import { useAuth } from "../../context/AuthContext"
+import { buildUserScopedKey } from "../../utils/userScopedKey"
 
 const DISPLAY_STORAGE_KEY = "planner.display.preferences"
 
@@ -23,6 +25,8 @@ const BACKGROUND_OPTIONS: { id: BackgroundTone; label: string; description: stri
 ]
 
 const SettingsDisplay = () => {
+  const { userEmail } = useAuth()
+  const storageKey = useMemo(() => buildUserScopedKey(userEmail, DISPLAY_STORAGE_KEY), [userEmail])
   const [preferences, setPreferences] = useState<DisplayPreferences>(() => ({
     fontScale: 1,
     backgroundTone: "light",
@@ -30,7 +34,7 @@ const SettingsDisplay = () => {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(DISPLAY_STORAGE_KEY)
+      const saved = localStorage.getItem(storageKey)
       if (!saved) return
       const parsed = JSON.parse(saved) as Partial<DisplayPreferences>
       setPreferences((prev) => ({
@@ -40,15 +44,15 @@ const SettingsDisplay = () => {
     } catch {
       // ignore malformed storage
     }
-  }, [])
+  }, [storageKey])
 
   useEffect(() => {
     try {
-      localStorage.setItem(DISPLAY_STORAGE_KEY, JSON.stringify(preferences))
+      localStorage.setItem(storageKey, JSON.stringify(preferences))
     } catch {
       // ignore quota errors
     }
-  }, [preferences])
+  }, [preferences, storageKey])
 
   useEffect(() => {
     document.documentElement.style.setProperty("--user-font-scale", preferences.fontScale.toString())

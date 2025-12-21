@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useMemo, useState } from "react"
 import { useAuth } from "../../context/AuthContext"
+import { buildUserScopedKey } from "../../utils/userScopedKey"
 
 const PROFILE_STORAGE_KEY = "planner.profile.preferences.v1"
 
@@ -104,6 +105,7 @@ const computeAge = (birthday?: string) => {
 
 const SettingsAccount = () => {
   const { userEmail, createdAt, verifyPassword, changePassword, deactivateAccount, deleteAccount, scheduledDeletionDate } = useAuth()
+  const profileStorageKey = useMemo(() => buildUserScopedKey(userEmail, PROFILE_STORAGE_KEY), [userEmail])
   const [step, setStep] = useState<"list" | "password" | "details" | "change-password" | "deactivate">("list")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
@@ -123,14 +125,14 @@ const SettingsAccount = () => {
 
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(PROFILE_STORAGE_KEY)
+      const raw = localStorage.getItem(profileStorageKey)
       if (!raw) return
       const parsed = JSON.parse(raw)
       setProfileData({ personal: parsed.personalInfo ?? {}, identity: parsed.identityInfo ?? {} })
     } catch {
       setProfileData({})
     }
-  }, [])
+  }, [profileStorageKey])
 
   const personal = profileData.personal ?? {}
   const identity = profileData.identity ?? {}

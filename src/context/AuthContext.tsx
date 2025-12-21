@@ -619,6 +619,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const { email, password, remember = false } = credentials
     if (!email || !password) return false
     const normalizedEmail = normalizeEmail(email)
+    if (findRegisteredUser(normalizedEmail)) {
+      return false
+    }
     upsertRegisteredUser(normalizedEmail, password)
     ensureAccountMeta(normalizedEmail)
     setAccountStatus(normalizedEmail, "actif")

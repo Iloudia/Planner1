@@ -79,7 +79,7 @@ const AdminPage = () => {
       setAlert({ type: "error", message: result.error ?? "Impossible de supprimer ce compte." })
       return
     }
-    setAlert({ type: "success", message: "Compte supprime et donnees nettoyees." })
+    setAlert({ type: "success", message: "Compte supprimé et données nettoyées." })
     refreshUsers()
   }
 
@@ -97,7 +97,8 @@ const AdminPage = () => {
         <div>
           <p className="admin-eyebrow">Back-office</p>
           <h1>Administration des comptes</h1>
-          <p>Connecte en tant que {userEmail ?? "admin"}. Acces reserve aux administrateurs verifies.</p>
+          <p>Connectez-vous en tant qu’admin@planner.local.</p>
+          <p>Accès réservé aux administrateurs vérifiés.</p>
         </div>
         <div className="admin-hero">
           <article>
@@ -109,7 +110,7 @@ const AdminPage = () => {
             <strong>{stats.active}</strong>
           </article>
           <article>
-            <span>Desactives</span>
+            <span>Désactivés</span>
             <strong>{stats.disabled}</strong>
           </article>
         </div>
@@ -177,9 +178,9 @@ const AdminPage = () => {
           <header className="admin-panel__header">
             <div>
               <p className="admin-eyebrow">Details</p>
-              <h2>Profil selectionne</h2>
+              <h2>Profil sélectionné</h2>
             </div>
-            <p className="admin-helper">Recherche, selection, desactivation ou suppression en un clic.</p>
+            <p className="admin-helper">Recherche, sélection, désactivation ou suppression en un clic.</p>
           </header>
 
           {alert ? <div className={`admin-alert admin-alert--${alert.type}`}>{alert.message}</div> : null}
@@ -213,10 +214,10 @@ const AdminPage = () => {
 
               <div className="admin-form__actions">
                 <button type="button" onClick={() => handleStatusToggle(selectedUser)}>
-                  {selectedUser.status === "actif" ? "Desactiver le compte" : "Re-activer le compte"}
+                  {selectedUser.status === "actif" ? "Désactiver le compte" : "Re-activer le compte"}
                 </button>
                 <button type="button" className="admin-delete admin-delete--wide" onClick={() => handleDelete(selectedUser.email)}>
-                  Supprimer definitivement
+                  Supprimer définitivement
                 </button>
               </div>
             </div>
@@ -227,13 +228,14 @@ const AdminPage = () => {
       </div>
 
       <section className="admin-safe">
-        <h2>Conformite et securite</h2>
+        <h2>Conformité et sécurité</h2>
         <ul>
-          <li>Acces limite aux administrateurs authentifies via une route protege.</li>
-          <li>Les desactivations coupent les sessions actives et empechent les nouvelles connexions.</li>
-          <li>Les suppressions nettoient les donnees locales (identifiants, metadonnees) afin de respecter le droit a l effacement.</li>
+          <li>Accès limité aux administrateurs authentifiés via une route protégée.</li>
+          <li>Les désactivations coupent les sessions actives et empêchent les nouvelles connexions.</li>
+          <li>Les suppressions nettoient les données locales (identifiants, métadonnées) afin de respecter le droit à l’effacement.</li>
         </ul>
       </section>
+      <div className="home-footer-bar" aria-hidden="true" />
     </div>
   )
 }
