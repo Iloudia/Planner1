@@ -5,7 +5,7 @@ import usePersistentState from "../../hooks/usePersistentState"
 import planner01 from "../../assets/planner-01.jpg"
 import planner02 from "../../assets/planner-02.jpg"
 import planner03 from "../../assets/planner-03.jpg"
-import planner06 from "../../assets/planner-06.jpg"
+import planner06 from "../../assets/tina-ghazi-dupe.jpeg"
 import "./Sport.css"
 
 type SportBoardActivity = string
@@ -44,6 +44,13 @@ const QUICK_DEFAULTS = [
 const formatBoardDate = (isoDate: string) =>
   new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "short" }).format(new Date(isoDate))
 
+const formatLocalISODate = (date: Date) => {
+  const year = date.getFullYear()
+  const month = `${date.getMonth() + 1}`.padStart(2, "0")
+  const day = `${date.getDate()}`.padStart(2, "0")
+  return `${year}-${month}-${day}`
+}
+
 const getMonday = (reference: Date) => {
   const date = new Date(reference)
   const day = date.getDay()
@@ -61,7 +68,7 @@ const createDefaultBoard = (): SportBoardDay[] => {
     return {
       id: `sport-board-${index}`,
       label,
-      dateISO: current.toISOString().split("T")[0],
+      dateISO: formatLocalISODate(current),
       activity: DEFAULT_BOARD_ACTIVITIES[index % DEFAULT_BOARD_ACTIVITIES.length],
       done: false,
     }
@@ -85,6 +92,7 @@ const SportPage = () => {
   const [board, setBoard] = usePersistentState<SportBoardDay[]>(SPORT_BOARD_STORAGE_KEY, createDefaultBoard)
   const [quickItems, setQuickItems] = usePersistentState<{ id: string; text: string }[]>(SPORT_QUICK_STORAGE_KEY, () => [])
   const [isEditingQuick, setIsEditingQuick] = useState(() => quickItems.length > 0)
+  const [openLifeMenuId, setOpenLifeMenuId] = useState<string | null>(null)
   const lifeCards = useMemo(
     () => [
       { id: "life-workout", label: "Workout", image: planner01 },
@@ -106,6 +114,15 @@ const SportPage = () => {
       setBoard(createDefaultBoard())
       return
     }
+
+    const currentWeekMonday = formatLocalISODate(getMonday(new Date()))
+    const boardWeekMonday = board[0]?.dateISO
+
+    if (boardWeekMonday !== currentWeekMonday) {
+      setBoard(createDefaultBoard())
+      return
+    }
+
     let needsCleanup = false
     const cleaned = board.map((day, index) => {
       const activity = day.activity ?? DEFAULT_BOARD_ACTIVITIES[index % DEFAULT_BOARD_ACTIVITIES.length]
@@ -167,6 +184,17 @@ const SportPage = () => {
       setIsEditingQuick(true)
     }
   }, [quickItems.length])
+
+  useEffect(() => {
+    if (!openLifeMenuId) return
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement
+      if (target.closest(".sport-life-card__menu") || target.closest(".sport-life-card__menu-popover")) return
+      setOpenLifeMenuId(null)
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [openLifeMenuId])
 
   return (
     <div className="sport-page">
@@ -236,6 +264,27 @@ const SportPage = () => {
                 }
                 aria-label={`Ouvrir ${card.label}`}
               >
+                <div className="sport-life-card__menu-wrapper">
+                  <button
+                    type="button"
+                    className="sport-life-card__menu"
+                    aria-label={`Modifier ${card.label}`}
+                    onClick={(event) => {
+                      event.preventDefault()
+                      event.stopPropagation()
+                      setOpenLifeMenuId(openLifeMenuId === card.id ? null : card.id)
+                    }}
+                  >
+                    <span aria-hidden="true">...</span>
+                  </button>
+                  {openLifeMenuId === card.id ? (
+                    <div className="sport-life-card__menu-popover" role="menu" onClick={(event) => event.stopPropagation()}>
+                      <button type="button" className="sport-life-card__menu-item">
+                        Modifier la photo
+                      </button>
+                    </div>
+                  ) : null}
+                </div>
                 <div className="sport-life-card__media">
                   <img src={card.image} alt={card.label} />
                 </div>
