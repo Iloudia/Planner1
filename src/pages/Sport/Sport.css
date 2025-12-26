@@ -8,7 +8,7 @@
   width: 100%;
   overflow: hidden;
   border-radius: 18px;
-  max-height: 260px;
+  height: var(--hero-visual-height);
   box-shadow: 0 16px 36px rgba(236, 72, 153, 0.15);
 }
 
@@ -294,6 +294,86 @@
 
 .sport-life-card:hover::after {
   opacity: 1;
+}
+
+.sport-life-card__menu {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(255, 255, 255, 0.9);
+  color: #0f172a;
+  font-weight: 700;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+  z-index: 2;
+  transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+  
+}
+
+.sport-life-card__menu span {
+  display: block;
+  line-height: 1;
+  position: relative;
+  top: -4px;
+}
+
+
+
+.sport-life-card__menu:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.12);
+  border-color: rgba(236, 72, 153, 0.35);
+}
+
+.sport-life-card__menu:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+}
+
+.sport-life-card__menu-wrapper {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 3;
+}
+
+.sport-life-card__menu-popover {
+  position: absolute;
+  top: 46px;
+  right: 0;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 0.4rem;
+  display: flex;
+  flex-direction: column;
+  min-width: 150px;
+  box-shadow: 0 26px 70px rgba(15, 23, 42, 0.22);
+  z-index: 4;
+}
+
+.sport-life-card__menu-item {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 0.55rem 0.85rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  color: rgba(15, 23, 42, 0.82);
+  cursor: pointer;
+}
+
+.sport-life-card__menu-item:hover {
+  background: rgba(236, 72, 153, 0.08);
+  color: #be185d;
 }
 
 .sport-life-card__media {

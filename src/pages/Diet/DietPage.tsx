@@ -8,6 +8,7 @@ import recipeImg3 from "../../assets/planner-03.jpg"
 import recipeImg4 from "../../assets/planner-04.jpg"
 import recipeImg5 from "../../assets/planner-05.jpg"
 import recipeImg6 from "../../assets/planner-06.jpg"
+import dietHero from "../../assets/food.jpeg"
 import PageHeading from "../../components/PageHeading"
 import "./DietPage.css"
 
@@ -370,6 +371,9 @@ const DietClassicPage = () => {
 
   return (
     <>
+      <div className="diet-hero-image" aria-hidden="true">
+        <img src={dietHero} alt="Ambiance diet" />
+      </div>
       <div className="page-accent-bar" aria-hidden="true" />
       <main className="diet-gymgirl-page">
         <article className="diet-blog">

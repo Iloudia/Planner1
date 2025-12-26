@@ -22,19 +22,16 @@
   margin: 0.25rem 0 0;
 }
 
-.page-photo-strip {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 0;
+.goals-hero-image {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 18px;
+  height: var(--hero-visual-height);
+  box-shadow: 0 16px 36px rgba(236, 72, 153, 0.15);
   margin-bottom: 1.2rem;
 }
 
-.page-photo-strip__item {
-  aspect-ratio: 1 / 1;
-  overflow: hidden;
-}
-
-.page-photo-strip__item img {
+.goals-hero-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;

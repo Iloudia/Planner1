@@ -1,10 +1,26 @@
-﻿.diet-gymgirl-page {
+
+.diet-gymgirl-page {
   display: flex;
   flex-direction: column;
   gap: 2rem;
   padding: 2rem clamp(1rem, 4vw, 3rem);
 }
 
+.diet-hero-image {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 18px;
+  height: var(--hero-visual-height);
+  box-shadow: 0 16px 36px rgba(236, 72, 153, 0.15);
+  margin-bottom: 1.2rem;
+}
+
+.diet-hero-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 .diet-toggle {
   display: flex;
   gap: 0.75rem;
@@ -329,11 +345,23 @@
 }
 
 @media (max-width: 640px) {
-  .diet-gymgirl-page {
-    padding: 1.5rem 1rem;
-  }
+  
+.diet-hero-image {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 18px;
+  height: var(--hero-visual-height);
+  box-shadow: 0 16px 36px rgba(236, 72, 153, 0.15);
+  margin-bottom: 1.2rem;
+}
 
-  .diet-block header {
+.diet-hero-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.diet-block header {
     flex-direction: column;
     align-items: flex-start;
   }

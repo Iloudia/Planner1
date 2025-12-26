@@ -336,7 +336,7 @@
   width: 100%;
   border-radius: 32px;
   overflow: hidden;
-  max-height: 420px;
+  height: var(--hero-visual-height);
 }
 
 .routine-hero-image img {

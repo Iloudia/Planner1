@@ -67,17 +67,9 @@
   gap: 2.5rem;
   padding: 2.75rem;
   border-radius: 32px;
-  background: linear-gradient(90deg, #fce7f3 0%, #f472b6 50%, #f9a8d4 100%);
+  background: url("../../assets/heidi-østergaad-dupe.jpeg") center/cover no-repeat;
   position: relative;
   overflow: hidden;
-}
-
-.finance-hero::after {
-  content: '';
-  position: absolute;
-  inset: 18% -40% -20% 45%;
-  transform: rotate(-8deg);
-  pointer-events: none;
 }
 
 .finance-hero__content {
@@ -137,39 +129,7 @@
 }
 
 .finance-hero__gallery {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem;
-}
-
-.finance-hero__photo {
-  position: relative;
-  overflow: hidden;
-  border-radius: 22px;
-  height: 140px;
-  background: rgba(255, 255, 255, 0.78);
-  box-shadow: 0 26px 60px rgba(15, 23, 42, 0.18);
-}
-
-.finance-hero__photo--1,
-.finance-hero__photo--2 {
-  height: 150px;
-}
-
-.finance-hero__photo--2 {
-  transform: none;
-}
-
-.finance-hero__photo--3 {
-  grid-column: span 2;
-  height: 170px;
-}
-
-.finance-hero__photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  display: none;
 }
 
 .finance-dashboard {

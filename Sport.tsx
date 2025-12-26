@@ -147,7 +147,7 @@ const SportPage = () => {
           <div className="sport-quick-panel__divider" />
           <div className="sport-quick-panel__chips">
             {[
-              "+ Nouvel événement",
+              "+ Nouvel ï¿½vï¿½nement",
               "+ Nouvel exercice",
               "+ Routine du jour",
               "+ Nouvelle nourriture",
@@ -210,16 +210,16 @@ const SportPage = () => {
                     <time dateTime={day.dateISO}>{formatBoardDate(day.dateISO)}</time>
                   </div>
                   <span className={`sport-board-card__status${day.done ? " is-done" : ""}`}>
-                    {day.done ? "Fait" : "À planifier"}
+                    {day.done ? "Fait" : "ï¿½ planifier"}
                   </span>
                 </header>
                 <label className="sport-board-card__field">
-                  <span>Séance</span>
-                  <input type="text" value={day.activity} onChange={handleActivityChange(day.id)} placeholder="Écris le sport prévu" />
+                  <span>Sï¿½ance</span>
+                  <input type="text" value={day.activity} onChange={handleActivityChange(day.id)} placeholder="ï¿½cris le sport prï¿½vu" />
                 </label>
                 <label className="sport-board-card__checkbox">
                   <input type="checkbox" checked={day.done} onChange={handleDoneToggle(day.id)} />
-                  <span>Séance effectuée</span>
+                  <span>Sï¿½ance effectuï¿½e</span>
                 </label>
               </article>
             ))}

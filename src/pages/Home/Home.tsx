@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { useTasks } from "../../context/TasksContext"
 import { useAuth } from "../../context/AuthContext"
 import { buildUserScopedKey } from "../../utils/userScopedKey"
+
 import planner01 from "../../assets/sport.jpeg"
 import planner02 from "../../assets/activities.jpeg"
 import planner03 from "../../assets/mallika-jain-dupe.jpeg"
@@ -12,10 +13,14 @@ import planner06 from "../../assets/katie-huber-rhoades-dupe (1).jpeg"
 import planner07 from "../../assets/ebony-forsyth-dupe.jpeg"
 import planner08 from "../../assets/l-b-dupe.jpeg"
 import planner09 from "../../assets/katie-mansfield-dupe.jpeg"
+
 import "./Home.css"
 
-const HOME_MOODBOARD_KEY = "planner.home.moodboard"
+const HOME_MOODBOARD_SUFFIX = "planner.home.moodboard"
 const DEFAULT_HOME_MOODBOARD = planner02
+
+const PROFILE_PHOTO_SUFFIX = "profile-photo"
+const DEFAULT_PROFILE_PHOTO = planner06
 
 type CardItem = {
   image: string
@@ -47,7 +52,8 @@ const cards: CardItem[] = [
 
 const clamp = (value: number) => Math.min(100, Math.max(0, value))
 
-const formatDate = (dateStr: string) => new Date(dateStr).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })
+const formatDate = (dateStr: string) =>
+  new Date(dateStr).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })
 
 const todayLabel = () =>
   new Date().toLocaleDateString("fr-FR", {
@@ -66,7 +72,8 @@ const computeProgress = () => {
   const startDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
   const endDay = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1)
 
-  const progress = (start: Date, end: Date) => clamp(((now.getTime() - start.getTime()) / (end.getTime() - start.getTime())) * 100)
+  const progress = (start: Date, end: Date) =>
+    clamp(((now.getTime() - start.getTime()) / (end.getTime() - start.getTime())) * 100)
 
   return {
     year: progress(startYear, endYear),
@@ -75,19 +82,157 @@ const computeProgress = () => {
   }
 }
 
+/** --- Storage helpers (gère legacy JSON.stringify) --- */
+function safeReadStorage(key: string): string | null {
+  try {
+    const raw = localStorage.getItem(key)
+    if (!raw) return null
+    try {
+      const parsed = JSON.parse(raw)
+      return typeof parsed === "string" ? parsed : raw
+    } catch {
+      return raw
+    }
+  } catch {
+    return null
+  }
+}
+
+function safeWriteStorage(key: string, value: string) {
+  localStorage.setItem(key, value)
+}
+
+function safeRemoveStorage(key: string) {
+  try {
+    localStorage.removeItem(key)
+  } catch {
+    // ignore
+  }
+}
+
+/** --- Compression profil : crop carré (petit) --- */
+async function fileToCompressedSquareDataUrl(
+  file: File,
+  opts?: { size?: number; quality?: number }
+): Promise<string> {
+  const size = opts?.size ?? 320
+  const quality = opts?.quality ?? 0.82
+
+  const dataUrl = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onerror = () => reject(new Error("Lecture du fichier impossible."))
+    reader.onload = () => {
+      const result = typeof reader.result === "string" ? reader.result : null
+      if (!result) reject(new Error("Fichier invalide."))
+      else resolve(result)
+    }
+    reader.readAsDataURL(file)
+  })
+
+  const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+    const i = new Image()
+    i.onload = () => resolve(i)
+    i.onerror = () => reject(new Error("Image non valide."))
+    i.src = dataUrl
+  })
+
+  const canvas = document.createElement("canvas")
+  canvas.width = size
+  canvas.height = size
+  const ctx = canvas.getContext("2d")
+  if (!ctx) throw new Error("Canvas indisponible.")
+
+  const sw = img.width
+  const sh = img.height
+  const s = Math.min(sw, sh)
+  const sx = Math.floor((sw - s) / 2)
+  const sy = Math.floor((sh - s) / 2)
+
+  ctx.drawImage(img, sx, sy, s, s, 0, 0, size, size)
+
+  const tryWebp = canvas.toDataURL("image/webp", quality)
+  const isWebp = tryWebp.startsWith("data:image/webp")
+  return isWebp ? tryWebp : canvas.toDataURL("image/jpeg", quality)
+}
+
+/** --- Compression moodboard : conserve le ratio, limite grande dimension --- */
+async function fileToCompressedFitDataUrl(
+  file: File,
+  opts?: { maxSide?: number; quality?: number }
+): Promise<string> {
+  const maxSide = opts?.maxSide ?? 1600
+  const quality = opts?.quality ?? 0.78
+
+  const dataUrl = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onerror = () => reject(new Error("Lecture du fichier impossible."))
+    reader.onload = () => {
+      const result = typeof reader.result === "string" ? reader.result : null
+      if (!result) reject(new Error("Fichier invalide."))
+      else resolve(result)
+    }
+    reader.readAsDataURL(file)
+  })
+
+  const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+    const i = new Image()
+    i.onload = () => resolve(i)
+    i.onerror = () => reject(new Error("Image non valide."))
+    i.src = dataUrl
+  })
+
+  const w = img.width
+  const h = img.height
+  if (!w || !h) throw new Error("Image invalide.")
+
+  // resize en gardant ratio : la plus grande dimension = maxSide
+  const scale = Math.min(1, maxSide / Math.max(w, h))
+  const outW = Math.round(w * scale)
+  const outH = Math.round(h * scale)
+
+  const canvas = document.createElement("canvas")
+  canvas.width = outW
+  canvas.height = outH
+
+  const ctx = canvas.getContext("2d")
+  if (!ctx) throw new Error("Canvas indisponible.")
+
+  ctx.drawImage(img, 0, 0, outW, outH)
+
+  const tryWebp = canvas.toDataURL("image/webp", quality)
+  const isWebp = tryWebp.startsWith("data:image/webp")
+  return isWebp ? tryWebp : canvas.toDataURL("image/jpeg", quality)
+}
+
 function HomePage() {
   const navigate = useNavigate()
   const { tasks } = useTasks()
   const { userEmail } = useAuth()
+
+  const safeEmail = userEmail ?? "anonymous"
+  const scopedKey = useCallback((suffix: string) => buildUserScopedKey(safeEmail, suffix), [safeEmail])
+
+  const profileStorageKey = useMemo(() => scopedKey(PROFILE_PHOTO_SUFFIX), [scopedKey])
+  const homeMoodboardKey = useMemo(() => scopedKey(HOME_MOODBOARD_SUFFIX), [scopedKey])
+  const todosKey = useMemo(() => scopedKey("todos"), [scopedKey])
+
+  const [openCardMenu, setOpenCardMenu] = useState<string | null>(null)
   const [now, setNow] = useState(() => new Date())
-  const [profileSrc, setProfileSrc] = useState<string>(planner02)
+
+  /** ✅ Profil (persisté + compressé) */
+  const [profileSrc, setProfileSrc] = useState<string>(() => safeReadStorage(profileStorageKey) ?? DEFAULT_PROFILE_PHOTO)
+  const [profileError, setProfileError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
+
+  /** ✅ Moodboard (persisté + compressé) */
+  const [homeMoodboardSrc, setHomeMoodboardSrc] = useState<string>(() => safeReadStorage(homeMoodboardKey) ?? DEFAULT_HOME_MOODBOARD)
+  const [moodboardError, setMoodboardError] = useState<string | null>(null)
   const moodboardInputRef = useRef<HTMLInputElement | null>(null)
+
   const [todoInput, setTodoInput] = useState("")
-  const scopedKey = useCallback((suffix: string) => buildUserScopedKey(userEmail, suffix), [userEmail])
   const [todos, setTodos] = useState<{ id: string; text: string; done: boolean }[]>(() => {
     try {
-      const saved = localStorage.getItem(scopedKey("todos"))
+      const saved = localStorage.getItem(todosKey)
       if (!saved) return []
       const parsed = JSON.parse(saved)
       return Array.isArray(parsed) ? parsed : []
@@ -95,31 +240,78 @@ function HomePage() {
       return []
     }
   })
+
   const [progress, setProgress] = useState(() => computeProgress())
   const userInfo = { pseudo: "Planner lover", birthday: "12 mars", sign: "Poissons" }
-  const defaultMoodboardRef = useRef<string>(DEFAULT_HOME_MOODBOARD)
-  const [homeMoodboardSrc, setHomeMoodboardSrc] = useState<string>(() => {
-    const stored = localStorage.getItem(scopedKey(HOME_MOODBOARD_KEY))
-    return stored ?? DEFAULT_HOME_MOODBOARD
-  })
-  const [isHomeCustom, setIsHomeCustom] = useState<boolean>(() => Boolean(localStorage.getItem(scopedKey(HOME_MOODBOARD_KEY))))
 
+  const isHomeCustom = homeMoodboardSrc !== DEFAULT_HOME_MOODBOARD
+
+  /** --- Migration legacy profil --- */
   useEffect(() => {
-    const savedProfile = localStorage.getItem(scopedKey("profile-photo"))
-    if (savedProfile) setProfileSrc(savedProfile)
-    const storedHomeMoodboard = localStorage.getItem(scopedKey(HOME_MOODBOARD_KEY))
-    if (storedHomeMoodboard) {
-      setHomeMoodboardSrc(storedHomeMoodboard)
-      setIsHomeCustom(true)
-    } else {
-      setHomeMoodboardSrc(DEFAULT_HOME_MOODBOARD)
-      setIsHomeCustom(false)
+    const current = safeReadStorage(profileStorageKey)
+    if (current) {
+      setProfileSrc(current)
+      return
     }
-  }, [scopedKey])
+
+    const legacy = safeReadStorage("profile-photo")
+    if (legacy) {
+      setProfileSrc(legacy)
+      try {
+        safeWriteStorage(profileStorageKey, legacy)
+      } catch {
+        // ignore
+      }
+      return
+    }
+
+    setProfileSrc(DEFAULT_PROFILE_PHOTO)
+  }, [profileStorageKey])
+
+  /** --- Persistance profil --- */
+  useEffect(() => {
+    try {
+      safeWriteStorage(profileStorageKey, profileSrc)
+    } catch {
+      setProfileError("Impossible d’enregistrer la photo (stockage plein). Choisis une image plus légère.")
+    }
+  }, [profileStorageKey, profileSrc])
+
+  /** --- Migration legacy moodboard --- */
+  useEffect(() => {
+    const current = safeReadStorage(homeMoodboardKey)
+    if (current) {
+      setHomeMoodboardSrc(current)
+      return
+    }
+
+    // anciennes clés possibles
+    const legacy1 = safeReadStorage("planner.home.moodboard")
+    if (legacy1) {
+      setHomeMoodboardSrc(legacy1)
+      try {
+        safeWriteStorage(homeMoodboardKey, legacy1)
+      } catch {
+        // ignore
+      }
+      return
+    }
+
+    setHomeMoodboardSrc(DEFAULT_HOME_MOODBOARD)
+  }, [homeMoodboardKey])
+
+  /** --- Persistance moodboard --- */
+  useEffect(() => {
+    try {
+      safeWriteStorage(homeMoodboardKey, homeMoodboardSrc)
+    } catch {
+      setMoodboardError("Impossible d’enregistrer le moodboard (stockage plein). Choisis une image plus légère.")
+    }
+  }, [homeMoodboardKey, homeMoodboardSrc])
 
   useEffect(() => {
-    localStorage.setItem(scopedKey("todos"), JSON.stringify(todos))
-  }, [scopedKey, todos])
+    localStorage.setItem(todosKey, JSON.stringify(todos))
+  }, [todosKey, todos])
 
   useEffect(() => {
     const id = setInterval(() => setNow(new Date()), 60000)
@@ -132,6 +324,17 @@ function HomePage() {
     const id = setInterval(update, 60000)
     return () => clearInterval(id)
   }, [])
+
+  useEffect(() => {
+    if (!openCardMenu) return
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement
+      if (target.closest(".card-menu") || target.closest(".card-menu-popover")) return
+      setOpenCardMenu(null)
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [openCardMenu])
 
   const addTodo = () => {
     const text = todoInput.trim()
@@ -148,20 +351,61 @@ function HomePage() {
     setTodos((prev) => prev.filter((item) => item.id !== id))
   }
 
-  const handleMoodboardInput = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleProfileInput = async (event: ChangeEvent<HTMLInputElement>) => {
+    setProfileError(null)
     const file = event.target.files?.[0]
     if (!file) return
-    const reader = new FileReader()
-    reader.onload = () => {
-      const result = typeof reader.result === "string" ? reader.result : null
-      if (result) {
-        setHomeMoodboardSrc(result)
-        setIsHomeCustom(true)
-        localStorage.setItem(scopedKey(HOME_MOODBOARD_KEY), result)
-      }
+
+    if (!file.type.startsWith("image/")) {
+      setProfileError("Format non supporté. Choisis une image.")
+      event.target.value = ""
+      return
     }
-    reader.readAsDataURL(file)
-    event.target.value = ""
+
+    try {
+      const compressed = await fileToCompressedSquareDataUrl(file, { size: 320, quality: 0.82 })
+      setProfileSrc(compressed)
+    } catch (e) {
+      setProfileError(e instanceof Error ? e.message : "Erreur lors du traitement de l’image.")
+    } finally {
+      event.target.value = ""
+    }
+  }
+
+  const resetProfilePhoto = () => {
+    setProfileError(null)
+    setProfileSrc(DEFAULT_PROFILE_PHOTO)
+    safeRemoveStorage(profileStorageKey)
+    safeRemoveStorage("profile-photo")
+  }
+
+  const handleMoodboardInput = async (event: ChangeEvent<HTMLInputElement>) => {
+    setMoodboardError(null)
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    if (!file.type.startsWith("image/")) {
+      setMoodboardError("Format non supporté. Choisis une image.")
+      event.target.value = ""
+      return
+    }
+
+    try {
+      // moodboard = grande image => compress + resize ratio
+      const compressed = await fileToCompressedFitDataUrl(file, { maxSide: 1600, quality: 0.78 })
+      setHomeMoodboardSrc(compressed)
+    } catch (e) {
+      setMoodboardError(e instanceof Error ? e.message : "Erreur lors du traitement de l’image.")
+    } finally {
+      event.target.value = ""
+    }
+  }
+
+  const resetMoodboard = () => {
+    setMoodboardError(null)
+    setHomeMoodboardSrc(DEFAULT_HOME_MOODBOARD)
+    safeRemoveStorage(homeMoodboardKey)
+    safeRemoveStorage("planner.home.moodboard")
   }
 
   const upcomingTasks = useMemo(() => {
@@ -201,24 +445,11 @@ function HomePage() {
               <button className="profile-menu" aria-label="Modifier la photo" type="button" onClick={() => fileInputRef.current?.click()}>
                 <span aria-hidden="true">...</span>
               </button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                className="profile-file-input"
-                onChange={(event) => {
-                  const file = event.target.files?.[0]
-                  if (!file) return
-                  const reader = new FileReader()
-                  reader.onload = () => {
-                    const result = typeof reader.result === "string" ? reader.result : null
-                    if (!result) return
-                    setProfileSrc(result)
-                    localStorage.setItem(scopedKey("profile-photo"), result)
-                  }
-                  reader.readAsDataURL(file)
-                }}
-              />
+              <input ref={fileInputRef} type="file" accept="image/*" className="profile-file-input" onChange={handleProfileInput} />
+            </div>
+
+            <div className="profile-actions">
+              {profileError ? <p className="profile-error">{profileError}</p> : null}
             </div>
           </div>
 
@@ -267,27 +498,24 @@ function HomePage() {
             </div>
           </div>
 
-            <div className="notes">
-              <div className="notes-header">
-                <div>
-                  <h3>Bloc-notes</h3>
-                </div>
+          <div className="notes">
+            <div className="notes-header">
+              <div>
+                <h3>Bloc-notes</h3>
               </div>
-              <div className="todo-input">
-                <input
-                  type="text"
-                  value={todoInput}
-                  onChange={(e) => setTodoInput(e.target.value)}
-                  placeholder="Ajouter une tâche"
-                />
-                <button type="button" className="todo-add" onClick={addTodo} aria-label="Ajouter une tâche">
-                  +
-                </button>
-              </div>
-              <ul className="todo-list">
-                {todos.map((item) => (
-                  <li key={item.id} className={item.done ? "todo-item is-done" : "todo-item"}>
-                    <label>
+            </div>
+
+            <div className="todo-input">
+              <input type="text" value={todoInput} onChange={(e) => setTodoInput(e.target.value)} placeholder="Ajouter une tâche" />
+              <button type="button" className="todo-add" onClick={addTodo} aria-label="Ajouter une tâche">
+                +
+              </button>
+            </div>
+
+            <ul className="todo-list">
+              {todos.map((item) => (
+                <li key={item.id} className={item.done ? "todo-item is-done" : "todo-item"}>
+                  <label>
                     <input type="checkbox" checked={item.done} onChange={() => toggleTodo(item.id)} />
                     <span>{item.text}</span>
                   </label>
@@ -302,12 +530,13 @@ function HomePage() {
 
         <main className="board">
           <section className="home-hero-strip">
-            <div>
+            <div className="home-hero-strip__center">
               <p className="eyebrow">Planner Home</p>
+              <div className="today">{todayLabel()}</div>
               <h1>Organise tes journées avec intention</h1>
             </div>
-            <div className="today">{todayLabel()}</div>
           </section>
+
           <section className="card-grid">
             {cards.map((card) => (
               <article
@@ -320,6 +549,28 @@ function HomePage() {
                   if (event.key === "Enter") navigate(card.path)
                 }}
               >
+                <div className="card-menu-wrapper">
+                  <button
+                    type="button"
+                    className="card-menu"
+                    aria-label={`Modifier ${card.title}`}
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      setOpenCardMenu(openCardMenu === card.title ? null : card.title)
+                    }}
+                  >
+                    <span aria-hidden="true">...</span>
+                  </button>
+
+                  {openCardMenu === card.title ? (
+                    <div className="card-menu-popover" role="menu" onClick={(event) => event.stopPropagation()}>
+                      <button type="button" className="card-menu-popover__item">
+                        Modifier la photo
+                      </button>
+                    </div>
+                  ) : null}
+                </div>
+
                 <img src={card.image} alt={card.alt} />
                 <div className="card-body">
                   <h3>{card.title}</h3>
@@ -358,30 +609,37 @@ function HomePage() {
             </div>
           </div>
         </aside>
+
+        {/* ✅ Moodboard (fix) */}
         <section className="home-moodboard">
           <div className="home-moodboard__top">
-            <button type="button" className="home-moodboard__button" onClick={() => moodboardInputRef.current?.click()}>
-              Changer l'image
-            </button>
-            <input ref={moodboardInputRef} type="file" accept="image/*" className="home-moodboard__file-input" onChange={handleMoodboardInput} />
-          </div>
-          <div className="home-moodboard__preview">
-            {isHomeCustom ? (
-              <button
-                type="button"
-                className="home-moodboard__reset"
-                onClick={() => {
-                  setHomeMoodboardSrc(defaultMoodboardRef.current)
-                  setIsHomeCustom(false)
-                  localStorage.removeItem(scopedKey(HOME_MOODBOARD_KEY))
-                }}
-              >
-                Réinitialiser
+            <div className="home-moodboard__top-actions">
+              <button type="button" className="home-moodboard__button" onClick={() => moodboardInputRef.current?.click()}>
+                Changer l'image
               </button>
-            ) : null}
-            <img src={homeMoodboardSrc} alt="Moodboard personnalise" />
+              {isHomeCustom ? (
+                <button type="button" className="home-moodboard__reset" onClick={resetMoodboard}>
+                  Réinitialiser
+                </button>
+              ) : null}
+            </div>
+
+            <input
+              ref={moodboardInputRef}
+              type="file"
+              accept="image/*"
+              className="home-moodboard__file-input"
+              onChange={handleMoodboardInput}
+            />
+          </div>
+
+          {moodboardError ? <p className="home-moodboard__error">{moodboardError}</p> : null}
+
+          <div className="home-moodboard__preview">
+            <img src={homeMoodboardSrc} alt="Moodboard personnalisé" />
           </div>
         </section>
+
         <div className="home-footer-bar" aria-hidden="true" />
       </div>
     </>

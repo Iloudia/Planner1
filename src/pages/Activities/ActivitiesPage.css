@@ -462,8 +462,9 @@
 
 .activity-card__menu {
   position: absolute;
-  top: 0.3rem;
+  top: 50%;
   right: 0.3rem;
+  transform: translateY(-50%);
 }
 
 .activity-card__menu-trigger { 
@@ -480,7 +481,6 @@
   cursor: pointer;
   color: #db2777;
   transition: background 0.2s ease, border-color 0.2s ease;
-  transform: rotate(90deg);
 }
 
 

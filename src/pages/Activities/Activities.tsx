@@ -254,7 +254,7 @@ const ActivitiesPage = () => {
                 aria-expanded={openMenuId === activity.id}
                 aria-label="Ouvrir le menu de l'activité"
               >
-                ⋮
+                ...
               </button>
               {openMenuId === activity.id ? (
                 <div className="activity-card__menu-panel">
@@ -431,7 +431,7 @@ const ActivitiesPage = () => {
             <span>{plannedActivities.length} activité(s)</span>
           </header>
           {plannedActivities.length === 0 ? (
-            <p className="activities-group__empty">Ajoute une idée ou une sortie pour la préparer ici.</p>
+            <p className="activities-group__empty">Ajoute une idée de sortie ici pour la préparer.</p>
           ) : (
             <ul className="activities-group__list">
               {plannedActivities.map((activity, index) => renderActivityCard(activity, index))}
@@ -447,7 +447,7 @@ const ActivitiesPage = () => {
             <span>{completedActivities.length} activité(s)</span>
           </header>
           {completedActivities.length === 0 ? (
-            <p className="activities-group__empty">Capture les souvenirs de tes activités déjà vécues.</p>
+            <p className="activities-group__empty">Garde une trace de tes activités passées.</p>
           ) : (
             <ul className="activities-group__list">
               {completedActivities.map((activity, index) => renderActivityCard(activity, index))}

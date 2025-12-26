@@ -4,6 +4,21 @@
   gap: 1.9rem;
 }
 
+.workout-hero-image {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 18px;
+  height: var(--hero-visual-height);
+  box-shadow: 0 16px 36px rgba(236, 72, 153, 0.15);
+}
+
+.workout-hero-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .workout-page__accent-bar {
   height: 0.55rem;
   border-radius: 999px;
@@ -66,13 +81,11 @@
 }
 
 .workout-form {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
   margin-top: 1.2rem;
-  align-items: end;
-  justify-items: center;
-  text-align: center;
+  align-items: center;
 }
 
 .workout-form__fields {
@@ -87,6 +100,15 @@
   margin-right: auto;
 }
 
+.workout-form__fields > label {
+  flex: 1 1 280px;
+  min-width: 240px;
+  max-width: 320px;
+  width: auto;
+  align-items: flex-start;
+  text-align: left;
+}
+
 .workout-form label {
   display: flex;
   flex-direction: column;
@@ -94,10 +116,9 @@
   font-size: 1rem;
   font-weight: 700;
   color: rgba(91, 33, 182, 0.6);
-  min-width: 220px;
-  flex: 1 1 240px;
-  width: auto;
-  max-width: none;
+  min-width: 0;
+  width: 100%;
+  max-width: 360px;
   align-items: flex-start;
   text-align: left;
 }
@@ -109,7 +130,6 @@
   font-size: 1rem;
   font-weight: 700;
   color: rgba(91, 33, 182, 0.6);
-  grid-column: 1 / -1;
   align-items: center;
   width: 100%;
   background: #fff;
@@ -137,7 +157,7 @@
   color: #db2777;
   border-radius: 999px;
   border: 1px dashed rgba(219, 39, 119, 0.4);
-  padding: 0.6rem 0.1rem;
+  padding: 0.6rem 1.2rem;
   cursor: pointer;
   font-weight: 600;
   transition: background 0.3s ease, border-color 0.3s ease;
@@ -146,6 +166,9 @@
   justify-content: center;
   white-space: nowrap;
   min-width: 0;
+  text-align: center;
+  align-self: center;
+  min-width: 180px;
 }
 
 .workout-photo-compact__button input {
@@ -175,8 +198,7 @@
 }
 
 .workout-form button {
-  grid-column: 1 / -1;
-    align-self: center;
+  align-self: center;
   width: min(100%, 240px);
   text-align: center;
   background: #f472b6;
@@ -401,28 +423,6 @@
 .workout-video-card__body span {
   color: #6b7280;
   font-size: 0.9rem;
-}
-
-.workout-banner-strip {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 0;
-  margin-bottom: 1.2rem;
-  border-radius: 14px;
-  overflow: hidden;
-}
-
-.workout-banner-strip__item {
-  aspect-ratio: 1 / 1;
-  overflow: hidden;
-  background: #f9a8d4;
-}
-
-.workout-banner-strip__item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
 }
 
 .workout-modal {

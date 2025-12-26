@@ -2,12 +2,7 @@ import { useEffect, useMemo, useState } from "react"
 import type { FormEvent } from "react"
 import PageHeading from "../../components/PageHeading"
 import usePersistentState from "../../hooks/usePersistentState"
-import workoutBanner1 from "../../assets/planner-01.jpg"
-import workoutBanner2 from "../../assets/planner-02.jpg"
-import workoutBanner3 from "../../assets/planner-03.jpg"
-import workoutBanner4 from "../../assets/planner-04.jpg"
-import workoutBanner5 from "../../assets/planner-05.jpg"
-import workoutBanner6 from "../../assets/planner-06.jpg"
+import workoutHero from "../../assets/tuany-kohler-dupe.jpeg"
 import "./Workout.css"
 
 type ExerciseCard = {
@@ -242,14 +237,8 @@ const WorkoutPage = () => {
 
   return (
     <div className="workout-page">
-      <div className="workout-banner-strip" aria-hidden="true">
-        {[workoutBanner1, workoutBanner2, workoutBanner3, workoutBanner4, workoutBanner5, workoutBanner6].map(
-          (src, index) => (
-            <div key={index} className="workout-banner-strip__item">
-              <img src={src} alt={`Inspiration ${index + 1}`} />
-            </div>
-          ),
-        )}
+      <div className="workout-hero-image">
+        <img src={workoutHero} alt="Ambiance workout" />
       </div>
       <div className="workout-page__accent-bar" aria-hidden="true" />
       <PageHeading eyebrow="Routine active" title="Workout board" />

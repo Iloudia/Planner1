@@ -26,13 +26,6 @@ const PageHero = ({ eyebrow, title, description, stats, images, children }: Page
         </div>
         {children}
       </div>
-      <div className="finance-hero__gallery" aria-hidden="true">
-        {images.slice(0, 3).map((image, index) => (
-          <div key={image.src} className={`finance-hero__photo finance-hero__photo--${index + 1}`}>
-            <img src={image.src} alt={image.alt} />
-          </div>
-        ))}
-      </div>
     </section>
   )
 }

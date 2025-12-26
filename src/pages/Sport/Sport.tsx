@@ -2,10 +2,10 @@ import { useEffect, useMemo, useState, type ChangeEvent } from "react"
 import { Link } from "react-router-dom"
 import PageHeading from "../../components/PageHeading"
 import usePersistentState from "../../hooks/usePersistentState"
-import planner01 from "../../assets/planner-01.jpg"
-import planner02 from "../../assets/planner-02.jpg"
-import planner03 from "../../assets/planner-03.jpg"
 import planner06 from "../../assets/tina-ghazi-dupe.jpeg"
+import heroWorkout from "../../assets/tuany-kohler-dupe.jpeg"
+import heroDiet from "../../assets/thayna-queiroz-dupe.jpeg"
+import heroGoals from "../../assets/sport-1.jpg"
 import "./Sport.css"
 
 type SportBoardActivity = string
@@ -95,19 +95,12 @@ const SportPage = () => {
   const [openLifeMenuId, setOpenLifeMenuId] = useState<string | null>(null)
   const lifeCards = useMemo(
     () => [
-      { id: "life-workout", label: "Workout", image: planner01 },
-      { id: "life-diet", label: "Diet", image: planner02 },
-      { id: "life-goals", label: "Goals", image: planner03 },
+      { id: "life-workout", label: "Workout", image: heroWorkout },
+      { id: "life-diet", label: "Diet", image: heroDiet },
+      { id: "life-goals", label: "Goals", image: heroGoals },
     ],
     [],
   )
-
-  useEffect(() => {
-    document.body.classList.add("planner-page--white")
-    return () => {
-      document.body.classList.remove("planner-page--white")
-    }
-  }, [])
 
   useEffect(() => {
     if (!Array.isArray(board) || board.length !== DAY_LABELS.length) {

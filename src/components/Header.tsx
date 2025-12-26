@@ -111,7 +111,7 @@ function Header() {
     <header className="site-header">
       <div className="site-header__inner">
         <Link to="/" className="brand">
-          Planner
+          Me&rituals
         </Link>
 
         <div className="header-cta">

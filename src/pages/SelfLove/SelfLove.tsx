@@ -884,6 +884,14 @@ const SelfLovePage = () => {
         </div>
       </section>
       <section className="self-love-section self-love-letter">
+        <div className="self-love-section__header">
+          <h2>Une lettre pour te guérir</h2>
+          <p>
+            exemple de 6 lettres d'amour à écrire à toi même pour guérir : <br/> Une lettre de pardon à ton passé, Une lettre
+            pour ton toi actuel, une lettre d'encouragement pour tes rêves, une lettre pour ton corps, une lettre pour
+            ton enfants interieur, Une lettre pour ton futur.
+          </p>
+        </div>
         <div className="self-love-letter__tabs">
           <button
             type="button"
