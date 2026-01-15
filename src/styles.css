@@ -73,6 +73,15 @@ body {
   padding: 0;
 }
 
+.google-translate-element {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
 :root[data-background-tone="dark"] body {
   background: radial-gradient(circle at 20% 10%, rgba(79, 70, 229, 0.35), transparent 32%),
     radial-gradient(circle at 75% 15%, rgba(15, 118, 110, 0.35), transparent 35%),

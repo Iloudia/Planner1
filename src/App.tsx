@@ -1,4 +1,5 @@
-ï»¿import { Link, Route, Routes } from "react-router-dom"
+import { useEffect } from "react"
+import { Link, Route, Routes } from "react-router-dom"
 import Header from "./components/Header"
 import Footer from "./components/Footer"
 import ProtectedRoute from "./components/ProtectedRoute"
@@ -44,10 +45,10 @@ function NotFound() {
       <div className="page-hero">
         <div className="hero-chip">Oups</div>
         <h1>Page introuvable</h1>
-        <p className="muted">Le lien est cassÃ© ou la page a Ã©tÃ© dÃ©placÃ©e.</p>
+        <p className="muted">Le lien est cassé ou la page a été déplacée.</p>
         <div className="hero-actions">
           <Link to="/" className="pill">
-            Retour Ã  l'accueil
+            Retour à l'accueil
           </Link>
         </div>
       </div>
@@ -57,8 +58,32 @@ function NotFound() {
 }
 
 function App() {
+  useEffect(() => {
+    const scriptId = "google-translate-script"
+    if (document.getElementById(scriptId)) {
+      return
+    }
+    ;(window as any).googleTranslateElementInit = () => {
+      const containerId = "google_translate_element"
+      if (!document.getElementById(containerId)) {
+        const container = document.createElement("div")
+        container.id = containerId
+        container.className = "google-translate-element"
+        document.body.appendChild(container)
+      }
+      const google = (window as any).google
+      if (google?.translate?.TranslateElement) {
+        new google.translate.TranslateElement({ pageLanguage: "fr", autoDisplay: false }, containerId)
+      }
+    }
+    const script = document.createElement("script")
+    script.id = scriptId
+    script.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+    document.body.appendChild(script)
+  }, [])
   return (
     <div className="app-shell">
+      <div id="google_translate_element" className="google-translate-element" aria-hidden="true" />
       <Header />
       <main className="main-area">
         <Routes>

@@ -271,17 +271,7 @@
   flex-wrap: wrap;
 }
 
-.language-actions__secondary {
-  border: 1px solid rgba(15, 23, 42, 0.12);
-  border-radius: 14px;
-  padding: 0.6rem 1rem;
-  background: transparent;
-  color: var(--text);
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.language-actions__primary {
+.language-actions__confirm {
   border: none;
   border-radius: 14px;
   padding: 0.65rem 1.2rem;
@@ -291,7 +281,7 @@
   cursor: pointer;
 }
 
-.language-actions__primary:disabled {
+.language-actions__confirm:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }

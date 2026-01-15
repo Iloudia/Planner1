@@ -3,6 +3,31 @@ import { useAuth } from "../../context/AuthContext"
 import { buildUserScopedKey } from "../../utils/userScopedKey"
 
 const LANGUAGE_STORAGE_KEY = "planner.language.preference"
+const GOOGLE_TRANSLATE_COOKIE = "googtrans"
+const GOOGLE_TRANSLATE_SCRIPT_ID = "google-translate-script"
+
+declare global {
+  interface Window {
+    googleTranslateElementInit?: () => void
+    google?: any
+  }
+}
+
+const languageCodeMap: Record<string, string> = {
+  "fr-FR": "fr",
+  "en-US": "en",
+  "en-GB": "en",
+  "es-ES": "es",
+  "de-DE": "de",
+  "it-IT": "it",
+  "pt-BR": "pt",
+  "nl-NL": "nl",
+  "sv-SE": "sv",
+  "hi-IN": "hi",
+  "ja-JP": "ja",
+  "zh-CN": "zh-CN",
+  "ar-SA": "ar",
+}
 
 type LanguageOption = {
   code: string
@@ -51,6 +76,39 @@ const SettingsLanguages = () => {
     return languageOptions.filter((lang) => lang.label.toLowerCase().startsWith(term) || lang.native.toLowerCase().startsWith(term))
   }, [searchTerm])
 
+  const ensureGoogleTranslate = () => {
+    if (document.getElementById(GOOGLE_TRANSLATE_SCRIPT_ID)) {
+      return
+    }
+    if (!window.googleTranslateElementInit) {
+      window.googleTranslateElementInit = () => {
+        if (!document.getElementById("google_translate_element")) {
+          const container = document.createElement("div")
+          container.id = "google_translate_element"
+          container.className = "google-translate-element"
+          document.body.appendChild(container)
+        }
+        if (window.google?.translate?.TranslateElement) {
+          new window.google.translate.TranslateElement({ pageLanguage: "fr", autoDisplay: false }, "google_translate_element")
+        }
+      }
+    }
+    const script = document.createElement("script")
+    script.id = GOOGLE_TRANSLATE_SCRIPT_ID
+    script.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+    document.body.appendChild(script)
+  }
+
+  const setGoogleTranslateCookie = (language: string) => {
+    const target = languageCodeMap[language] ?? language.split("-")[0]?.toLowerCase() ?? "fr"
+    const value = `/fr/${target}`
+    document.cookie = `${GOOGLE_TRANSLATE_COOKIE}=${value}; path=/;`
+  }
+
+  const clearGoogleTranslateCookie = () => {
+    document.cookie = `${GOOGLE_TRANSLATE_COOKIE}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`
+  }
+
   const handleSave = (event: FormEvent) => {
     event.preventDefault()
     if (!selectedLanguage) {
@@ -62,11 +120,14 @@ const SettingsLanguages = () => {
     } catch {
       // ignore storage errors
     }
-  }
-
-  const handleCancel = () => {
-    setSelectedLanguage(savedLanguage)
-    setSearchTerm("")
+    if (selectedLanguage !== "fr-FR") {
+      ensureGoogleTranslate()
+      setGoogleTranslateCookie(selectedLanguage)
+      window.location.reload()
+      return
+    }
+    clearGoogleTranslateCookie()
+    window.location.reload()
   }
 
   return (
@@ -116,11 +177,8 @@ const SettingsLanguages = () => {
         </div>
 
         <div className="language-actions">
-          <button type="button" className="language-actions__secondary" onClick={handleCancel}>
-            Annuler
-          </button>
-          <button type="submit" className="language-actions__primary" disabled={!selectedLanguage || selectedLanguage === savedLanguage}>
-            Suivant
+          <button type="submit" className="language-actions__confirm" disabled={!selectedLanguage || selectedLanguage === savedLanguage}>
+            Confirmer
           </button>
         </div>
       </form>
