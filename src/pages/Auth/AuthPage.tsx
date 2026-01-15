@@ -97,6 +97,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
   const [isGoogleReady, setIsGoogleReady] = useState(false)
   const googleButtonRef = useRef<HTMLDivElement | null>(null)
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
+  const skipAutoRedirectRef = useRef(false)
 
   const destinationPath = useMemo(() => {
     const fromRoute = location.state as { from?: { pathname: string } } | undefined
@@ -105,9 +106,12 @@ const AuthPage = ({ mode }: AuthFormProps) => {
 
   useEffect(() => {
     if (isAuthenticated) {
+      if (mode === "register" && skipAutoRedirectRef.current) {
+        return
+      }
       navigate(destinationPath, { replace: true })
     }
-  }, [destinationPath, isAuthenticated, navigate])
+  }, [destinationPath, isAuthenticated, mode, navigate])
 
   useEffect(() => {
     const scriptId = "google-client-script"
@@ -253,8 +257,12 @@ const AuthPage = ({ mode }: AuthFormProps) => {
       }
     }
 
+    if (mode === "register") {
+      skipAutoRedirectRef.current = true
+    }
     const success = mode === "login" ? login({ email, password, remember }) : register({ email, password, remember })
     if (!success) {
+      skipAutoRedirectRef.current = false
       setError(mode === "register" ? "Un compte existe déjà avec cet email." : "Merci de renseigner un email et un mot de passe valides.")
       return
     }
@@ -263,6 +271,10 @@ const AuthPage = ({ mode }: AuthFormProps) => {
     }
     rememberEmail(email)
     setError("")
+    if (mode === "register") {
+      navigate("/bienvenue", { replace: true, state: { from: destinationPath } })
+      return
+    }
     navigate(destinationPath, { replace: true })
   }
 

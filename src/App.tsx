@@ -3,6 +3,7 @@ import Header from "./components/Header"
 import Footer from "./components/Footer"
 import ProtectedRoute from "./components/ProtectedRoute"
 import AuthPage from "./pages/Auth/AuthPage"
+import OnboardingPage from "./pages/Onboarding/Onboarding"
 import LandingPage from "./pages/Landing/Landing"
 import HomePage from "./pages/Home/Home"
 import SportPage from "./pages/Sport/Sport"
@@ -30,7 +31,6 @@ import AdminPage from "./pages/Admin/AdminPage"
 import AdminRoute from "./components/AdminRoute"
 import SettingsLayout from "./pages/Settings/SettingsLayout"
 import SettingsAccount from "./pages/Settings/SettingsAccount"
-import SettingsNotifications from "./pages/Settings/SettingsNotifications"
 import SettingsAccessibility from "./pages/Settings/SettingsAccessibility"
 import SettingsDisplay from "./pages/Settings/SettingsDisplay"
 import SettingsLanguages from "./pages/Settings/SettingsLanguages"
@@ -73,6 +73,7 @@ function App() {
           <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
 
           <Route element={<ProtectedRoute />}>
+            <Route path="/bienvenue" element={<OnboardingPage />} />
             <Route path="/home" element={<HomePage />} />
             <Route path="/sport" element={<SportPage />} />
             <Route path="/sport/workout/*" element={<SportWorkoutPage />} />
@@ -90,7 +91,6 @@ function App() {
             <Route path="/voyage" element={<VoyagePage />} />
             <Route path="/parametres" element={<SettingsLayout />}>
               <Route index element={<SettingsAccount />} />
-              <Route path="notifications" element={<SettingsNotifications />} />
               <Route path="accessibilite" element={<SettingsAccessibility />} />
               <Route path="affichage" element={<SettingsDisplay />} />
               <Route path="langues" element={<SettingsLanguages />} />

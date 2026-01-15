@@ -21,7 +21,6 @@ const settingsSections = [
       },
     ],
   },
-  { id: "notifications", title: "Notifications", description: "Choisir comment recevoir les alertes." },
   { id: "accessibility", title: "Accessibilite", description: "Adapter l experience a tes besoins." },
   { id: "display", title: "Affichage", description: "Modifier la taille de la police et l ambiance visuelle." },
   { id: "languages", title: "Langues", description: "Choisir la langue principale de l interface." },

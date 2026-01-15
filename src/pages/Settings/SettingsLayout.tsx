@@ -4,7 +4,6 @@ import "./SettingsPage.css"
 
 const settingsLinks = [
   { id: "account", label: "Votre compte", path: "/parametres" },
-  { id: "notifications", label: "Notifications", path: "/parametres/notifications" },
   { id: "accessibility", label: "Accessibilite", path: "/parametres/accessibilite" },
   { id: "display", label: "Affichage", path: "/parametres/affichage" },
   { id: "languages", label: "Langues", path: "/parametres/langues" },
