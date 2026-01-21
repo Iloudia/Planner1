@@ -2,7 +2,7 @@
 import { useNavigate } from "react-router-dom"
 import { useTasks } from "../../context/TasksContext"
 import { useAuth } from "../../context/AuthContext"
-import { buildUserScopedKey } from "../../utils/userScopedKey"
+import { buildUserScopedKey, normalizeUserEmail } from "../../utils/userScopedKey"
 
 import planner01 from "../../assets/sport.jpeg"
 import planner02 from "../../assets/activities.jpeg"
@@ -18,6 +18,7 @@ import "./Home.css"
 
 const HOME_MOODBOARD_SUFFIX = "planner.home.moodboard"
 const DEFAULT_HOME_MOODBOARD = planner02
+const PROFILE_STORAGE_KEY = "planner.profile.preferences.v1"
 
 const PROFILE_PHOTO_SUFFIX = "profile-photo"
 const DEFAULT_PROFILE_PHOTO = planner06
@@ -82,7 +83,18 @@ const computeProgress = () => {
   }
 }
 
-/** --- Storage helpers (gÃ¨re legacy JSON.stringify) --- */
+const readProfileUsername = (key: string) => {
+  try {
+    const raw = localStorage.getItem(key)
+    if (!raw) return ""
+    const parsed = JSON.parse(raw) as { identityInfo?: { username?: string } }
+    return parsed?.identityInfo?.username ?? ""
+  } catch {
+    return ""
+  }
+}
+
+/** --- Storage helpers (gere legacy JSON.stringify) --- */
 function safeReadStorage(key: string): string | null {
   try {
     const raw = localStorage.getItem(key)
@@ -213,6 +225,7 @@ function HomePage() {
   const scopedKey = useCallback((suffix: string) => buildUserScopedKey(safeEmail, suffix), [safeEmail])
 
   const profileStorageKey = useMemo(() => scopedKey(PROFILE_PHOTO_SUFFIX), [scopedKey])
+  const profileDataKey = useMemo(() => buildUserScopedKey(normalizeUserEmail(safeEmail), PROFILE_STORAGE_KEY), [safeEmail])
   const homeMoodboardKey = useMemo(() => scopedKey(HOME_MOODBOARD_SUFFIX), [scopedKey])
   const todosKey = useMemo(() => scopedKey("todos"), [scopedKey])
 
@@ -242,7 +255,7 @@ function HomePage() {
   })
 
   const [progress, setProgress] = useState(() => computeProgress())
-  const userInfo = { pseudo: "Planner lover", birthday: "12 mars", sign: "Poissons" }
+  const profileUsername = useMemo(() => readProfileUsername(profileDataKey), [profileDataKey])
 
   const isHomeCustom = homeMoodboardSrc !== DEFAULT_HOME_MOODBOARD
 
@@ -453,20 +466,9 @@ function HomePage() {
             </div>
           </div>
 
-          <div className="profile-info">
-            <div>
-              <p className="eyebrow">Pseudo</p>
-              <strong>{userInfo.pseudo}</strong>
-            </div>
-            <div>
-              <p className="eyebrow">Anniversaire</p>
-              <strong>{userInfo.birthday}</strong>
-            </div>
-            <div>
-              <p className="eyebrow">Signe</p>
-              <strong>{userInfo.sign}</strong>
-            </div>
-          </div>
+          <p className="profile-welcome">
+            {`C'est un plaisir de te revoir${profileUsername ? `, ${profileUsername}` : ""}.`}
+          </p>
 
           <div className="progress-panel">
             <div className="progress-row">

@@ -380,6 +380,13 @@
   color: #0f172a;
 }
 
+.profile-welcome {
+  margin: 0.8rem 0 0;
+  text-align: center;
+  font-weight: 600;
+  color: #0f172a;
+}
+
 .notes {
   display: flex;
   flex-direction: column;
