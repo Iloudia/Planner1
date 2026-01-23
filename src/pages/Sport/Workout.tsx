@@ -429,21 +429,22 @@ const WorkoutPage = () => {
             >
               &times;
             </button>
-            <header className="workout-modal__header">
-              <div className="workout-modal__cover">
-                <img src={selectedExercise.image} alt={selectedExercise.title} />
-              </div>
-              <div>
-                <p className="workout-modal__eyebrow">Planifier cette session</p>
-                <h3 id="workout-modal-title">{selectedExercise.title}</h3>
-                <p className="workout-modal__meta">
-                  <span>{selectedExercise.muscle}</span>
-                  <span>{selectedExercise.category}</span>
-                </p>
-              </div>
-            </header>
+            <div className="workout-modal__cover">
+              <img src={selectedExercise.image} alt={selectedExercise.title} />
+            </div>
             <div className="workout-modal__body">
-              <form
+              <header className="workout-modal__header">
+                <div>
+                  <p className="workout-modal__eyebrow">Ajoute tes exercices pour cette session.</p>
+                  <h3 id="workout-modal-title">{selectedExercise.title}</h3>
+                  <p className="workout-modal__meta">
+                    <span>{selectedExercise.muscle}</span>
+                    <span>{selectedExercise.category}</span>
+                  </p>
+                </div>
+              </header>
+              <div className="workout-modal__content">
+                <form
                 className="workout-modal__series-form"
                 onSubmit={(event) => {
                   event.preventDefault()
@@ -461,7 +462,9 @@ const WorkoutPage = () => {
                 <button type="submit">Ajouter une série</button>
               </form>
               {selectedSeries.length === 0 ? (
-                <p className="workout-modal__empty">Ajoute tes exercices personnalisés pour cette session.</p>
+                <p className="workout-modal__empty">
+                  Aucun élément encore. Clique sur "Ajouter une série" pour enregistrer tes envies dans cette catégorie.
+                </p>
               ) : (
                 <ul className="workout-modal__series-list">
                   {selectedSeries.map((serie) => (
@@ -486,6 +489,7 @@ const WorkoutPage = () => {
                 </ul>
               )}
             </div>
+            </div>
             <footer className="workout-modal__footer">
               <div className="workout-modal__summary">
                 {completedSeriesCount}/{selectedSeries.length} séries cochées
@@ -499,3 +503,5 @@ const WorkoutPage = () => {
 }
 
 export default WorkoutPage
+
+

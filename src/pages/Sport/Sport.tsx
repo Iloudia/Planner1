@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState, type ChangeEvent } from "react"
 import { Link } from "react-router-dom"
 import PageHeading from "../../components/PageHeading"
+import { useAuth } from "../../context/AuthContext"
 import usePersistentState from "../../hooks/usePersistentState"
+import { buildUserScopedKey } from "../../utils/userScopedKey"
 import planner06 from "../../assets/tina-ghazi-dupe.jpeg"
 import heroWorkout from "../../assets/tuany-kohler-dupe.jpeg"
 import heroDiet from "../../assets/thayna-queiroz-dupe.jpeg"
@@ -89,10 +91,12 @@ const computeWeekRange = (board: SportBoardDay[]) => {
 const legacyDefaults = new Set(["Cardio", "Renforcement", "Yoga", "Fitness", "Mobility", "Pilates", "Repos actif"])
 
 const SportPage = () => {
+  const { userEmail } = useAuth()
   const [board, setBoard] = usePersistentState<SportBoardDay[]>(SPORT_BOARD_STORAGE_KEY, createDefaultBoard)
   const [quickItems, setQuickItems] = usePersistentState<{ id: string; text: string }[]>(SPORT_QUICK_STORAGE_KEY, () => [])
   const [isEditingQuick, setIsEditingQuick] = useState(() => quickItems.length > 0)
   const [openLifeMenuId, setOpenLifeMenuId] = useState<string | null>(null)
+  const quickStorageKey = useMemo(() => buildUserScopedKey(userEmail, SPORT_QUICK_STORAGE_KEY), [userEmail])
   const lifeCards = useMemo(
     () => [
       { id: "life-workout", label: "Workout", image: heroWorkout },
@@ -177,6 +181,47 @@ const SportPage = () => {
       setIsEditingQuick(true)
     }
   }, [quickItems.length])
+
+  useEffect(() => {
+    if (!isEditingQuick) return
+    const handleClickOutsideQuick = (event: MouseEvent) => {
+      if (!quickItems.every((item) => item.text.trim().length === 0)) {
+        return
+      }
+      const target = event.target as HTMLElement
+      if (
+        target.closest(".sport-chip__inline-editor") ||
+        target.closest(".sport-chip--add") ||
+        target.closest(".sport-chip--remove")
+      ) {
+        return
+      }
+      setQuickItems([])
+      setIsEditingQuick(false)
+    }
+    document.addEventListener("mousedown", handleClickOutsideQuick)
+    return () => document.removeEventListener("mousedown", handleClickOutsideQuick)
+  }, [isEditingQuick, quickItems, setQuickItems])
+
+  useEffect(() => {
+    const handlePageExit = () => {
+      const hasQuickText = quickItems.some((item) => item.text.trim().length > 0)
+      if (quickItems.length > 0 && !hasQuickText) {
+        try {
+          localStorage.removeItem(quickStorageKey)
+        } catch {
+          // ignore storage errors
+        }
+      }
+    }
+    window.addEventListener("beforeunload", handlePageExit)
+    window.addEventListener("pagehide", handlePageExit)
+    return () => {
+      window.removeEventListener("beforeunload", handlePageExit)
+      window.removeEventListener("pagehide", handlePageExit)
+      handlePageExit()
+    }
+  }, [quickItems, quickStorageKey])
 
   useEffect(() => {
     if (!openLifeMenuId) return
