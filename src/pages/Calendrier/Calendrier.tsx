@@ -1,4 +1,4 @@
-ï»¿import { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import type { FormEvent, KeyboardEvent } from 'react'
 import { getDateKey } from '../../data/sampleData'
 import type { ScheduledTask } from '../../data/sampleData'
@@ -364,7 +364,7 @@ const CalendrierPage = () => {
         <div className="calendar-hero__content">
           <h1>Orchestre ton mois avec intention et douceur.</h1>
           <p>
-            Visualise en un coup dâ€™Å“il tes rendez-vous clÃ©s, tes temps de pause et tes moments de crÃ©ation. 
+            Visualise en un coup d’œil tes rendez-vous clés, tes temps de pause et tes moments de création. 
           </p>
           <div className="calendar-hero__actions">
             <button
@@ -372,7 +372,7 @@ const CalendrierPage = () => {
               className="calendar-hero__cta calendar-hero__cta--primary"
               onClick={() => handlePlanForDate(getDateKey(today))}
             >
-              Planifier un Ã©vÃ¨nement aujourd'hui
+              Planifier un évènement aujourd'hui
             </button>
             <button
               type="button"
@@ -383,7 +383,7 @@ const CalendrierPage = () => {
                 handlePlanForDate(getDateKey(tomorrow))
               }}
             >
-              Planifier un Ã©vÃ¨nement demain
+              Planifier un évènement demain
             </button>
           </div>
           
@@ -401,9 +401,9 @@ const CalendrierPage = () => {
         <div className="calendar-hero__panel">
           <div className="calendar-next">
             <span className="calendar-next__label">Prochain rendez-vous</span>
-            <strong>{nextTask ? nextTask.title : 'Rien de planifiÃ© pour le moment.'}</strong>
+            <strong>{nextTask ? nextTask.title : 'Rien de planifié pour le moment.'}</strong>
             <p>
-              {nextTask ? `${nextTaskLabel} - ${nextTask.start} - ${nextTask.end}` : 'Ajoute un crÃ©neau.'}
+              {nextTask ? `${nextTaskLabel} - ${nextTask.start} - ${nextTask.end}` : 'Ajoute un créneau.'}
             </p>
             {nextTask?.tag ? <span className="calendar-next__tag">{nextTask.tag}</span> : null}
           </div>
@@ -478,7 +478,7 @@ const CalendrierPage = () => {
                   ) : null}
                 </>
               ) : (
-                <span className="calendar-day__empty">Rien de prÃ©vu</span>
+                <span className="calendar-day__empty">Rien de prévu</span>
               )}
             </div>
           ),
@@ -496,12 +496,12 @@ const CalendrierPage = () => {
                 <p>
                   {activeDateTasks.length > 0
                     ? activeDateTasks.length === 1
-                      ? '1 crÃ©neau.'
+                      ? '1 créneau.'
                       : `${activeDateTasks.length} creneaux.`
-                    : "Aucun crÃ©neau pour l'instant, profite pour en poser un."}
+                    : "Aucun créneau pour l'instant, profite pour en poser un."}
                 </p>
               </div>
-              <button type="button" className="calendar-modal__close" onClick={handleCloseModal} aria-label="Fermer">
+              <button type="button" className="modal__close" onClick={handleCloseModal} aria-label="Fermer">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                 </svg>
@@ -514,7 +514,7 @@ const CalendrierPage = () => {
                 className="calendar-hero__cta calendar-hero__cta--ghost"
                 onClick={handleResetDay}
               >
-                RÃ©initialiser la journÃ©e
+                Réinitialiser la journée
               </button>
             </div>
 
@@ -536,7 +536,7 @@ const CalendrierPage = () => {
                 </label>
                 <div className="calendar-task__form-row">
                   <label className="calendar-task__field">
-                    <span>DÃ©but</span>
+                    <span>Début</span>
                     <input
                       type="time"
                       value={newTaskForm.start}
@@ -620,7 +620,7 @@ const CalendrierPage = () => {
               </div>
               <div className="calendar-modal__list">
                 {activeDateTasks.length === 0 ? (
-                  <p className="calendar-modal__empty">Programme ton premier Ã©vÃ¨nement de la journÃ©e.</p>
+                  <p className="calendar-modal__empty">Programme ton premier évènement de la journée.</p>
                 ) : (
                   activeDateTasks.map((task) => (
                     <div
@@ -643,7 +643,7 @@ const CalendrierPage = () => {
                         <form className="calendar-task__form" onSubmit={(event) => handleSubmitEdit(event, task.id)}>
                           <div className="calendar-task__form-row">
                             <label className="calendar-task__field">
-                              <span>DÃ©but</span>
+                              <span>Début</span>
                               <input
                                 type="time"
                                 value={editDraft.start}
@@ -733,3 +733,4 @@ const CalendrierPage = () => {
 }
 
 export default CalendrierPage
+

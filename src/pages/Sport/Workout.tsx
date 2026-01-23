@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import type { FormEvent } from "react"
 import PageHeading from "../../components/PageHeading"
 import usePersistentState from "../../hooks/usePersistentState"
@@ -58,6 +58,28 @@ const DEFAULT_VIDEOS: VideoCard[] = [
   },
 ]
 
+const MUSCLE_OPTIONS = [
+  "Jambes",
+  "Quadriceps",
+  "Ischios",
+  "Fessiers",
+  "Mollets",
+  "Dos",
+  "Lombaires",
+  "Abdos",
+  "Obliques",
+  "Pectoraux",
+  "Ç%paules",
+  "Bras",
+  "Biceps",
+  "Triceps",
+  "Avant-bras",
+  "Tout le corps",
+]
+
+const MUSCLE_PLACEHOLDER = "SÇ¸lectionner un muscle"
+
+
 const extractYoutubeId = (url: string) => {
   try {
     const parsed = new URL(url)
@@ -83,6 +105,8 @@ const WorkoutPage = () => {
   const [selectedExerciseId, setSelectedExerciseId] = useState<string | null>(null)
   const [seriesByExercise, setSeriesByExercise] = usePersistentState<Record<string, SeriesItem[]>>(STORAGE_KEYS.series, () => ({}))
   const [seriesInput, setSeriesInput] = useState("")
+  const [isMuscleMenuOpen, setIsMuscleMenuOpen] = useState(false)
+  const muscleMenuRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     document.body.classList.add("planner-page--white")
@@ -105,6 +129,27 @@ const WorkoutPage = () => {
   useEffect(() => {
     setSeriesInput("")
   }, [selectedExerciseId])
+
+  useEffect(() => {
+    if (!isMuscleMenuOpen) return
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!muscleMenuRef.current) return
+      if (muscleMenuRef.current.contains(event.target as Node)) return
+      setIsMuscleMenuOpen(false)
+    }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsMuscleMenuOpen(false)
+      }
+    }
+    window.addEventListener("mousedown", handleClickOutside)
+    window.addEventListener("keydown", handleKeyDown)
+    return () => {
+      window.removeEventListener("mousedown", handleClickOutside)
+      window.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [isMuscleMenuOpen])
+
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -264,13 +309,40 @@ const WorkoutPage = () => {
                 />
               </label>
               <label>
-                <span>Muscle cible</span>
-                <input
-                  type="text"
-                  value={form.muscle}
-                  onChange={(e) => setForm((prev) => ({ ...prev, muscle: e.target.value }))}
-                  placeholder="Ex : Bras, fessiers, dos..."
-                />
+                <span>Muscle ciblé</span>
+                <div className="workout-form__select" ref={muscleMenuRef}>
+                  <button
+                    type="button"
+                    className={form.muscle ? "workout-form__select-trigger" : "workout-form__select-trigger is-placeholder"}
+                    aria-haspopup="listbox"
+                    aria-expanded={isMuscleMenuOpen}
+                    onClick={() => setIsMuscleMenuOpen((prev) => !prev)}
+                  >
+                    <span>{form.muscle || MUSCLE_PLACEHOLDER}</span>
+                    <svg className="workout-form__select-chevron" viewBox="0 0 20 20" aria-hidden="true">
+                      <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                  {isMuscleMenuOpen ? (
+                    <div className="workout-form__select-menu" role="listbox">
+                      {MUSCLE_OPTIONS.map((option) => (
+                        <button
+                          key={option}
+                          type="button"
+                          role="option"
+                          aria-selected={form.muscle === option}
+                          className={form.muscle === option ? "is-selected" : undefined}
+                          onClick={() => {
+                            setForm((prev) => ({ ...prev, muscle: option }))
+                            setIsMuscleMenuOpen(false)
+                          }}
+                        >
+                          {option}
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
               </label>
               <label>
                 <span>Type</span>
@@ -283,22 +355,35 @@ const WorkoutPage = () => {
               </label>
             </div>
             <div className="workout-form__photo-compact">
-              <span>Ajoute une image depuis ton ordinateur.</span>
-            <div className="activities-form__photo-actions">
-              <label>
-                <input
-                  type="file"
-                  accept="image/*"
-                    onChange={(event) => {
-                      handleImageChange(event.target.files?.[0])
-                      event.target.value = ""
-                    }}
-                  />
-                  Choisir une photo
-                </label>
-                <small className="workout-photo-compact__hint">
-                  {form.image ? "Image importée" : "Formats image acceptés (JPG, PNG, GIF)."}
-                </small>
+              <div
+                className={`workout-form__photo-preview${form.image ? " workout-form__photo-preview--has-image" : ""}`}
+              >
+                {form.image ? (
+                  <img className="workout-form__photo-img" src={form.image} alt="Apercu de la photo selectionnee" />
+                ) : (
+                  <p>Ajoute une image depuis ton ordinateur.</p>
+                )}
+                <div className="workout-form__photo-actions">
+                  {!form.image ? (
+                    <label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(event) => {
+                          handleImageChange(event.target.files?.[0])
+                          event.target.value = ""
+                        }}
+                      />
+                      Choisir une photo
+                    </label>
+                  ) : null}
+                  {form.image ? (
+                    <button type="button" onClick={() => setForm((prev) => ({ ...prev, image: "" }))}>
+                      Retirer
+                    </button>
+                  ) : null}
+                </div>
+                <span className="workout-form__photo-hint">Formats image acceptes (JPG, PNG, GIF).</span>
               </div>
             </div>
             <button type="submit">Ajouter la carte</button>
@@ -324,14 +409,16 @@ const WorkoutPage = () => {
                 >
                   <button
                     type="button"
-                    className="workout-card__delete"
+                    className="modal__close"
                     aria-label={`Supprimer ${exercise.title}`}
                     onClick={(event) => {
                       event.stopPropagation()
                       handleDeleteExercise(exercise.id)
                     }}
                   >
-                    &times;
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                    </svg>
                   </button>
                   <div className="workout-card__media">
                     <img src={exercise.image} alt={exercise.title} />
@@ -389,14 +476,16 @@ const WorkoutPage = () => {
               >
                 <button
                   type="button"
-                  className="workout-card__delete"
+                  className="modal__close"
                   aria-label={`Supprimer ${video.title}`}
                   onClick={(event) => {
                     event.stopPropagation()
                     handleDeleteVideo(video.id)
                   }}
                 >
-                  &times;
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                  </svg>
                 </button>
                 <div className="workout-video-thumb">
                   <img src={video.thumbnail} alt={video.title} />
@@ -421,13 +510,15 @@ const WorkoutPage = () => {
           onClick={handleClosePlanner}
         >
           <div className="workout-modal__panel" onClick={(event) => event.stopPropagation()}>
-            <button
+                        <button
               type="button"
-              className="workout-modal__close"
+              className="modal__close"
               onClick={handleClosePlanner}
-              aria-label="Fermer le plan d'entraînement"
+              aria-label="Fermer le plan d'entraknement"
             >
-              &times;
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
             </button>
             <div className="workout-modal__cover">
               <img src={selectedExercise.image} alt={selectedExercise.title} />
@@ -503,5 +594,7 @@ const WorkoutPage = () => {
 }
 
 export default WorkoutPage
+
+
 
 

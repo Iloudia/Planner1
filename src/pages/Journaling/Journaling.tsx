@@ -581,7 +581,7 @@ const JournalingPage = () => {
   }, [selectedYearGroup, selectedDay])
 
   const journalingStats = [
-    { id: 'pages', label: 'Pages ecrites', value: totalEntries.toString() },
+    { id: 'pages', label: 'Pages écrites', value: totalEntries.toString() },
     { id: 'days', label: 'Jours actifs', value: activeDays.toString() },
   ]
   const dayStateIds = useMemo(() => new Set(['daily-state', 'daily-celebration']), [])
@@ -679,8 +679,7 @@ const JournalingPage = () => {
       <section className="journaling-manifestation">
         <header>
           <div>
-            <p className="journaling-studio__eyebrow">Espace manifestation</p>
-            <h2>Vibre avec tes mots</h2>
+            <h2>Espace manifestation</h2>
             <p>Note tes affirmations, ta gratitude et les personnes qui t'inspirent.</p>
           </div>
         </header>

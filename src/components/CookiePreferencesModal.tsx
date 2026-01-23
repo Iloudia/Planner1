@@ -43,7 +43,7 @@ const CookiePreferencesModal = () => {
             <h2 id="cookie-modal-title">Choisis les cookies que tu acceptes</h2>
             <p>Les cookies essentiels sont toujours actifs pour des raisons de securite.</p>
           </div>
-          <button type="button" className="cookie-modal__close" aria-label="Fermer" onClick={closePreferences}>
+          <button type="button" className="modal__close" aria-label="Fermer" onClick={closePreferences}>
             ×
           </button>
         </header>
@@ -113,3 +113,4 @@ const CookiePreferencesModal = () => {
 }
 
 export default CookiePreferencesModal
+

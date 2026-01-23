@@ -27,6 +27,14 @@
   box-shadow: 0 28px 90px rgba(236, 72, 153, 0.22);
 }
 
+.journaling-page .finance-hero__content {
+  color: #000000;
+}
+
+.journaling-page .finance-hero__content p {
+  color: #000000;
+}
+
 
 .journaling-prompts {
   display: flex;
@@ -917,16 +925,6 @@
   display: flex;
   gap: 0.8rem;
   align-items: center;
-}
-
-.journaling-manifestation__card-heading span {
-  width: 42px;
-  height: 42px;
-  border-radius: 14px;
-  background: rgba(236, 72, 153, 0.12);
-  display: grid;
-  place-items: center;
-  font-size: 1.2rem;
 }
 
 .journaling-manifestation__card-heading h3 {

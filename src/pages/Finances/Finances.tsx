@@ -1,5 +1,5 @@
 import type { FormEvent } from 'react'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { AxisLabelsFormatterContextObject, Options, TooltipFormatterContextObject } from 'highcharts'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
@@ -361,7 +361,11 @@ const FinancePage = () => {
     date: getTodayISO(),
     direction: 'out',
   }))
-const [isHistoryModalOpen, setHistoryModalOpen] = useState(false)
+  const [isDirectionMenuOpen, setIsDirectionMenuOpen] = useState(false)
+  const directionMenuRef = useRef<HTMLDivElement | null>(null)
+  const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false)
+  const categoryMenuRef = useRef<HTMLDivElement | null>(null)
+  const [isHistoryModalOpen, setHistoryModalOpen] = useState(false)
 
   useEffect(() => {
     document.body.classList.add('planner-page--white')
@@ -369,6 +373,52 @@ const [isHistoryModalOpen, setHistoryModalOpen] = useState(false)
       document.body.classList.remove('planner-page--white')
     }
   }, [])
+
+  useEffect(() => {
+    if (!isCategoryMenuOpen) return
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!categoryMenuRef.current) return
+      if (categoryMenuRef.current.contains(event.target as Node)) return
+      setIsCategoryMenuOpen(false)
+    }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsCategoryMenuOpen(false)
+      }
+    }
+    window.addEventListener('mousedown', handleClickOutside)
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('mousedown', handleClickOutside)
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isCategoryMenuOpen])
+
+  useEffect(() => {
+    if (!isDirectionMenuOpen) return
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!directionMenuRef.current) return
+      if (directionMenuRef.current.contains(event.target as Node)) return
+      setIsDirectionMenuOpen(false)
+    }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsDirectionMenuOpen(false)
+      }
+    }
+    window.addEventListener('mousedown', handleClickOutside)
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('mousedown', handleClickOutside)
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isDirectionMenuOpen])
+
+  useEffect(() => {
+    if (draft.direction !== 'out') {
+      setIsCategoryMenuOpen(false)
+    }
+  }, [draft.direction])
 
   const entries = useMemo<FinanceEntry[]>(
     () =>
@@ -381,6 +431,16 @@ const [isHistoryModalOpen, setHistoryModalOpen] = useState(false)
 
   const currentDate = useMemo(() => new Date(), [])
   const currentMonthKey = useMemo(() => getMonthKeyFromDate(currentDate), [currentDate])
+  const selectedDirectionLabel = useMemo(() => {
+    return draft.direction === 'in' ? 'Revenus' : 'DǸpense'
+  }, [draft.direction])
+  const selectedCategoryLabel = useMemo(() => {
+    if (draft.direction !== 'out') {
+      return 'Categorie'
+    }
+    const definition = draft.category ? categoryDefinitions[draft.category] : undefined
+    return definition?.label ?? 'Categorie'
+  }, [draft.category, draft.direction])
 
   const monthOptions = useMemo(() => {
     const keySet = new Set<string>()
@@ -771,27 +831,85 @@ const hasAdditionalHistory = selectedMonthEntries.length > previewHistory.length
               </label>
               <label className="finance-form__field">
                 <span>Type</span>
-                <select
-                  value={draft.direction}
-                  onChange={(event) => handleDraftChange('direction', event.target.value as FlowDirection)}
-                >
-                  <option value="out">Dépense</option>
-                  <option value="in">Revenus</option>
-                </select>
+                <div className="finance-form__select-field" ref={directionMenuRef}>
+                  <button
+                    type="button"
+                    className="finance-form__select-trigger"
+                    aria-haspopup="listbox"
+                    aria-expanded={isDirectionMenuOpen}
+                    onClick={() => setIsDirectionMenuOpen((previous) => !previous)}
+                  >
+                    <span>{selectedDirectionLabel}</span>
+                    <svg className="finance-form__select-chevron" viewBox="0 0 20 20" aria-hidden="true">
+                      <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                  {isDirectionMenuOpen ? (
+                    <div className="finance-form__select-menu" role="listbox">
+                      <button
+                        type="button"
+                        role="option"
+                        aria-selected={draft.direction === 'out'}
+                        className={draft.direction === 'out' ? 'is-selected' : undefined}
+                        onClick={() => {
+                          handleDraftChange('direction', 'out')
+                          setIsDirectionMenuOpen(false)
+                        }}
+                      >
+                        DǸpense
+                      </button>
+                      <button
+                        type="button"
+                        role="option"
+                        aria-selected={draft.direction === 'in'}
+                        className={draft.direction === 'in' ? 'is-selected' : undefined}
+                        onClick={() => {
+                          handleDraftChange('direction', 'in')
+                          setIsDirectionMenuOpen(false)
+                        }}
+                      >
+                        Revenus
+                      </button>
+                    </div>
+                  ) : null}
+                </div>
               </label>
               {draft.direction === 'out' && (
                 <label className="finance-form__field">
                   <span>Categorie</span>
-                  <select
-                    value={draft.category}
-                    onChange={(event) => handleDraftChange('category', event.target.value as ExpenseCategory)}
-                  >
-                    {Object.entries(categoryDefinitions).map(([value, definition]) => (
-                      <option key={value} value={value}>
-                        {definition.label}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="finance-form__select-field" ref={categoryMenuRef}>
+                    <button
+                      type="button"
+                      className="finance-form__select-trigger"
+                      aria-haspopup="listbox"
+                      aria-expanded={isCategoryMenuOpen}
+                      onClick={() => setIsCategoryMenuOpen((previous) => !previous)}
+                    >
+                      <span>{selectedCategoryLabel}</span>
+                      <svg className="finance-form__select-chevron" viewBox="0 0 20 20" aria-hidden="true">
+                        <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
+                    {isCategoryMenuOpen ? (
+                      <div className="finance-form__select-menu" role="listbox">
+                        {Object.entries(categoryDefinitions).map(([value, definition]) => (
+                          <button
+                            key={value}
+                            type="button"
+                            role="option"
+                            aria-selected={draft.category === value}
+                            className={draft.category === value ? 'is-selected' : undefined}
+                            onClick={() => {
+                              handleDraftChange('category', value as ExpenseCategory)
+                              setIsCategoryMenuOpen(false)
+                            }}
+                          >
+                            {definition.label}
+                          </button>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
                 </label>
               )}
               <label className="finance-form__field">
@@ -985,7 +1103,7 @@ const hasAdditionalHistory = selectedMonthEntries.length > previewHistory.length
               </div>
               <button
                 type="button"
-                className="finance-history-modal__close"
+                className="modal__close"
                 onClick={() => setHistoryModalOpen(false)}
                 aria-label="Fermer l'historique"
               >
@@ -1206,3 +1324,4 @@ const FinanceTrendChart = ({ series }: FinanceTrendChartProps) => {
     </div>
   )
 }
+

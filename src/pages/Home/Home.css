@@ -216,7 +216,7 @@
 }
 
 .card-grid .card:nth-child(-n+3) img {
-  height: 180px;
+  height: 190px;
 }
 
 .card-body {
@@ -232,7 +232,7 @@
 }
 
 .card-grid .card:nth-child(-n+3) .card-body {
-  padding: 16px 16px 18px;
+  padding: 20px 20px 22px;
   background: #fbcfe8;
 }
 
@@ -316,10 +316,10 @@
   right: 0;
   background: #ffffff;
   border-radius: 16px;
-  padding: 0.4rem;
+  padding: 0.6rem;
   display: flex;
   flex-direction: column;
-  min-width: 150px;
+  min-width: 220px;
   box-shadow: 0 26px 70px rgba(15, 23, 42, 0.22);
   z-index: 4;
 }
@@ -330,8 +330,8 @@
   text-align: left;
   padding: 0.55rem 0.85rem;
   border-radius: 12px;
-  font-size: 0.9rem;
-  color: rgba(15, 23, 42, 0.82);
+  font-size: 1rem;
+  color: #000000;
   cursor: pointer;
 }
 

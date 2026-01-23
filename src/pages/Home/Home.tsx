@@ -1,4 +1,4 @@
-ï»¿import { useEffect, useMemo, useRef, useState, useCallback, type ChangeEvent } from "react"
+import { useEffect, useMemo, useRef, useState, useCallback, type ChangeEvent } from "react"
 import { useNavigate } from "react-router-dom"
 import { useTasks } from "../../context/TasksContext"
 import { useAuth } from "../../context/AuthContext"
@@ -42,12 +42,12 @@ type TaskDisplay = {
 }
 
 const cards: CardItem[] = [
-  { image: planner01, alt: "Sport", kicker: "Ã‰nergie", title: "Sport", path: "/sport" },
+  { image: planner01, alt: "Sport", kicker: "Énergie", title: "Sport", path: "/sport" },
   { image: planner06, alt: "Calendrier", kicker: "Vue globale", title: "Calendrier mensuel", path: "/calendrier" },
   { image: planner05, alt: "Wishlist", kicker: "Envie", title: "Wishlist", path: "/wishlist" },
-  { image: planner02, alt: "ActivitÃ©s", kicker: "Fun", title: "ActivitÃ©s", path: "/activites" },
+  { image: planner02, alt: "Activités", kicker: "Fun", title: "Activités", path: "/activites" },
   { image: planner03, alt: "Journaling", kicker: "Reflet", title: "Journaling", path: "/journaling" },
-  { image: planner04, alt: "Self-love", kicker: "Care", title: "S'aimer soi-mÃªme", path: "/self-love" },
+  { image: planner04, alt: "Self-love", kicker: "Care", title: "S'aimer soi-même", path: "/self-love" },
   { image: planner07, alt: "Finances", kicker: "Budget", title: "Finances", path: "/finances" },
   { image: planner08, alt: "Routine", kicker: "Rythme", title: "Routine", path: "/routine" },
   { image: planner09, alt: "Cuisine", kicker: "Saveurs", title: "Cuisine", path: "/alimentation" },
@@ -98,7 +98,7 @@ const readProfileUsername = (key: string) => {
   }
 }
 
-/** --- Storage helpers (gÃ¨re legacy JSON.stringify) --- */
+/** --- Storage helpers (gère legacy JSON.stringify) --- */
 function safeReadStorage(key: string): string | null {
   try {
     const raw = localStorage.getItem(key)
@@ -126,7 +126,7 @@ function safeRemoveStorage(key: string) {
   }
 }
 
-/** --- Compression profil : crop carrÃ© (petit) --- */
+/** --- Compression profil : crop carré (petit) --- */
 async function fileToCompressedSquareDataUrl(
   file: File,
   opts?: { size?: number; quality?: number }
@@ -241,12 +241,12 @@ function HomePage() {
   const [now, setNow] = useState(() => new Date())
   const cardFileInputsRef = useRef<Record<string, HTMLInputElement | null>>({})
 
-  /** âœ… Profil (persistÃ© + compressÃ©) */
+  /** ? Profil (persisté + compressé) */
   const [profileSrc, setProfileSrc] = useState<string>(() => safeReadStorage(profileStorageKey) ?? DEFAULT_PROFILE_PHOTO)
   const [profileError, setProfileError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
-  /** âœ… Moodboard (persistÃ© + compressÃ©) */
+  /** ? Moodboard (persisté + compressé) */
   const [homeMoodboardSrc, setHomeMoodboardSrc] = useState<string>(() => safeReadStorage(homeMoodboardKey) ?? DEFAULT_HOME_MOODBOARD)
   const [moodboardError, setMoodboardError] = useState<string | null>(null)
   const moodboardInputRef = useRef<HTMLInputElement | null>(null)
@@ -316,7 +316,7 @@ function HomePage() {
     try {
       safeWriteStorage(profileStorageKey, profileSrc)
     } catch {
-      setProfileError("Impossible dâ€™enregistrer la photo (stockage plein). Choisis une image plus lÃ©gÃ¨re.")
+      setProfileError("Impossible d’enregistrer la photo (stockage plein). Choisis une image plus légère.")
     }
   }, [profileStorageKey, profileSrc])
 
@@ -328,7 +328,7 @@ function HomePage() {
       return
     }
 
-    // anciennes clÃ©s possibles
+    // anciennes clés possibles
     const legacy1 = safeReadStorage("planner.home.moodboard")
     if (legacy1) {
       setHomeMoodboardSrc(legacy1)
@@ -348,7 +348,7 @@ useEffect(() => {
   try {
     safeWriteStorage(homeMoodboardKey, homeMoodboardSrc)
   } catch {
-    setMoodboardError("Impossible dâ€™enregistrer le moodboard (stockage plein). Choisis une image plus lÃ©gÃ¨re.")
+    setMoodboardError("Impossible d’enregistrer le moodboard (stockage plein). Choisis une image plus légère.")
   }
 }, [homeMoodboardKey, homeMoodboardSrc])
 
@@ -380,7 +380,7 @@ useEffect(() => {
   if (!openCardMenu) return
   const handleClickOutside = (event: MouseEvent) => {
     const target = event.target as HTMLElement
-    if (target.closest(".card-menu") || target.closest(".card-menu-popover")) return
+    if (target.closest(".profile-menu") || target.closest(".card-menu-popover")) return
     setOpenCardMenu(null)
   }
   document.addEventListener("mousedown", handleClickOutside)
@@ -408,7 +408,7 @@ const handleProfileInput = async (event: ChangeEvent<HTMLInputElement>) => {
   if (!file) return
 
   if (!file.type.startsWith("image/")) {
-    setProfileError("Format non supportÃ©. Choisis une image.")
+    setProfileError("Format non supporté. Choisis une image.")
     event.target.value = ""
     return
   }
@@ -417,7 +417,7 @@ const handleProfileInput = async (event: ChangeEvent<HTMLInputElement>) => {
     const compressed = await fileToCompressedSquareDataUrl(file, { size: 320, quality: 0.82 })
     setProfileSrc(compressed)
   } catch (e) {
-    setProfileError(e instanceof Error ? e.message : "Erreur lors du traitement de lâ€™image.")
+    setProfileError(e instanceof Error ? e.message : "Erreur lors du traitement de l’image.")
   } finally {
     event.target.value = ""
   }
@@ -436,7 +436,7 @@ const handleMoodboardInput = async (event: ChangeEvent<HTMLInputElement>) => {
   if (!file) return
 
   if (!file.type.startsWith("image/")) {
-    setMoodboardError("Format non supportÃ©. Choisis une image.")
+    setMoodboardError("Format non supporté. Choisis une image.")
     event.target.value = ""
     return
   }
@@ -446,7 +446,7 @@ const handleMoodboardInput = async (event: ChangeEvent<HTMLInputElement>) => {
     const compressed = await fileToCompressedFitDataUrl(file, { maxSide: 1600, quality: 0.78 })
     setHomeMoodboardSrc(compressed)
   } catch (e) {
-    setMoodboardError(e instanceof Error ? e.message : "Erreur lors du traitement de lâ€™image.")
+    setMoodboardError(e instanceof Error ? e.message : "Erreur lors du traitement de l’image.")
   } finally {
     event.target.value = ""
   }
@@ -561,7 +561,7 @@ return (
         <div className="progress-panel">
           <div className="progress-row">
             <div className="progress-label">
-              <span>AnnÃ©e</span>
+              <span>Année</span>
               <span>{progress.year.toFixed(1)}%</span>
             </div>
             <div className="progress-bar">
@@ -579,7 +579,7 @@ return (
           </div>
           <div className="progress-row">
             <div className="progress-label">
-              <span>JournÃ©e</span>
+              <span>Journée</span>
               <span>{progress.day.toFixed(1)}%</span>
             </div>
             <div className="progress-bar">
@@ -596,8 +596,8 @@ return (
           </div>
 
           <div className="todo-input">
-            <input type="text" value={todoInput} onChange={(e) => setTodoInput(e.target.value)} placeholder="Ajouter une tÃ¢che" />
-            <button type="button" className="todo-add" onClick={addTodo} aria-label="Ajouter une tÃ¢che">
+            <input type="text" value={todoInput} onChange={(e) => setTodoInput(e.target.value)} placeholder="Ajouter une tâche" />
+            <button type="button" className="todo-add" onClick={addTodo} aria-label="Ajouter une tâche">
               +
             </button>
           </div>
@@ -609,7 +609,7 @@ return (
                   <input type="checkbox" checked={item.done} onChange={() => toggleTodo(item.id)} />
                   <span>{item.text}</span>
                 </label>
-                <button type="button" onClick={() => deleteTodo(item.id)} aria-label="Supprimer la tÃ¢che">
+                <button type="button" onClick={() => deleteTodo(item.id)} aria-label="Supprimer la tâche">
                   x
                 </button>
               </li>
@@ -623,7 +623,7 @@ return (
           <div className="home-hero-strip__center">
             <p className="eyebrow">Planner Home</p>
             <div className="today">{todayLabel()}</div>
-            <h1>Organise tes journÃ©es avec intention</h1>
+            <h1>Organise tes journées avec intention</h1>
           </div>
         </section>
 
@@ -645,7 +645,7 @@ return (
               <div className="card-menu-wrapper">
                 <button
                   type="button"
-                  className="card-menu"
+                  className="profile-menu"
                   aria-label={`Modifier ${card.title}`}
                   onClick={(event) => {
                     event.stopPropagation()
@@ -724,7 +724,7 @@ return (
       </main>
 
         <aside className="aside-left">
-  <div className="aside-title">Prochaines tÃ¢ches</div>
+  <div className="aside-title">Prochaines tâches</div>
   <div className="task-window">
     <div className="task-list">
       {upcomingTasks.length > 0 ? (
@@ -745,15 +745,15 @@ return (
         ))
       ) : (
         <article className="task-card">
-          <p className="task-title">Aucune tÃ¢che prÃ©vue</p>
-          <p className="task-note">Ajoute une tÃ¢che dans le calendrier.</p>
+          <p className="task-title">Aucune tâche prévue</p>
+          <p className="task-note">Ajoute une tâche dans le calendrier.</p>
         </article>
       )}
     </div>
   </div>
 </aside>
 
-{/* âœ… Moodboard (fix) */}
+{/* ? Moodboard (fix) */}
 <section className="home-moodboard">
   <div className="home-moodboard__top">
     <div className="home-moodboard__top-actions">
@@ -762,7 +762,7 @@ return (
       </button>
       {isHomeCustom ? (
         <button type="button" className="home-moodboard__reset" onClick={resetMoodboard}>
-          RÃ©initialiser
+          Réinitialiser
         </button>
       ) : null}
     </div>
@@ -779,7 +779,7 @@ return (
   {moodboardError ? <p className="home-moodboard__error">{moodboardError}</p> : null}
 
   <div className="home-moodboard__preview">
-    <img src={homeMoodboardSrc} alt="Moodboard personnalisÃ©" />
+    <img src={homeMoodboardSrc} alt="Moodboard personnalisé" />
   </div>
 </section>
 
@@ -790,3 +790,5 @@ return (
 }
 
 export default HomePage
+
+

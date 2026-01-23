@@ -17,17 +17,17 @@ const MentionsLegalesPage = () => (
       <section className="legal-section">
         <h2 className="legal-section__title">Éditeur du site</h2>
         <p className="legal-section__text">
-          Nom : [Ton nom et prénom]
+          Nom : Vasseur Iloudia
           <br />
-          Statut : [Particulier / Auto-entrepreneur / Société]
+          Statut : Auto-entrepreneur
           <br />
-          Email : [adresse email]
+          Email : cantact@meandrituals.com
         </p>
       </section>
 
       <section className="legal-section">
         <h2 className="legal-section__title">Directeur de la publication</h2>
-        <p className="legal-section__text">[Ton nom et prénom]</p>
+        <p className="legal-section__text">Vasseur Iloudia</p>
       </section>
 
       <section className="legal-section">

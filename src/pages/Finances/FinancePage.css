@@ -291,6 +291,77 @@
   box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
 }
 
+.finance-form__select-field {
+  position: relative;
+  width: 100%;
+}
+
+.finance-form__select-trigger {
+  padding: 0.8rem 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  font-size: 1rem;
+  background: rgba(248, 250, 252, 0.95);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  color: #111827;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.finance-form__select-trigger:focus-visible {
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
+}
+
+.finance-form__select-chevron {
+  width: 18px;
+  height: 18px;
+  color: rgba(15, 23, 42, 0.6);
+  flex: 0 0 auto;
+}
+
+.finance-form__select-menu {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 0.4rem;
+  display: flex;
+  flex-direction: column;
+  min-width: 150px;
+  box-shadow: 0 26px 70px rgba(15, 23, 42, 0.22);
+  z-index: 5;
+}
+
+.finance-form__select-menu button {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 0.55rem 0.85rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  color: #000000;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.finance-form__select-menu button:hover,
+.finance-form__select-menu button:focus-visible,
+.finance-form__select-menu button.is-selected {
+  background: rgba(236, 72, 153, 0.08);
+  color: #be185d;
+  outline: none;
+}
+
 .finance-form__submit {
   padding: 0.9rem 1.6rem;
   border-radius: 16px;
@@ -753,17 +824,6 @@
   margin: 0.2rem 0 0;
   font-size: 1.4rem;
   color: #111827;
-}
-
-.finance-history-modal__close {
-  border: none;
-  background: rgba(15, 23, 42, 0.08);
-  color: #111827;
-  border-radius: 999px;
-  width: 40px;
-  height: 40px;
-  font-size: 1.2rem;
-  cursor: pointer;
 }
 
 .finance-history-modal__content {

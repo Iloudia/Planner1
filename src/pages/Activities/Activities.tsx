@@ -69,6 +69,8 @@ const ActivitiesPage = () => {
     idealDate: '',
     photo: undefined,
   })
+  const [isStatusMenuOpen, setIsStatusMenuOpen] = useState(false)
+  const statusMenuRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     document.body.classList.add('planner-page--white')
@@ -76,6 +78,31 @@ const ActivitiesPage = () => {
       document.body.classList.remove('planner-page--white')
     }
   }, [])
+
+  useEffect(() => {
+    if (!isStatusMenuOpen) return
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!statusMenuRef.current) return
+      if (statusMenuRef.current.contains(event.target as Node)) return
+      setIsStatusMenuOpen(false)
+    }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsStatusMenuOpen(false)
+      }
+    }
+    window.addEventListener('mousedown', handleClickOutside)
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('mousedown', handleClickOutside)
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isStatusMenuOpen])
+
+  const selectedStatusLabel = useMemo(
+    () => statusOptions.find((option) => option.value === draft.status)?.label ?? 'Statut',
+    [draft.status],
+  )
 
   const plannedActivities = useMemo(
     () => activities.filter((activity) => activity.status === 'planifie' || activity.status === 'a-faire'),
@@ -88,11 +115,9 @@ const ActivitiesPage = () => {
   )
 
   const activitiesStats = useMemo(() => {
-    const inspirations = activities.filter((activity) => activity.status === 'a-faire').length
     const scheduled = activities.filter((activity) => activity.status === 'planifie').length
     const completed = activities.filter((activity) => activity.status === 'fait').length
     return [
-      { id: 'ideas', label: 'Idées', value: inspirations.toString() },
       { id: 'scheduled', label: 'Dates prévues', value: scheduled.toString() },
       { id: 'done', label: 'Moments vécus', value: completed.toString() },
     ]
@@ -249,12 +274,12 @@ const ActivitiesPage = () => {
             <div className="activity-card__menu">
               <button
                 type="button"
-                className="activity-card__menu-trigger"
+                className="profile-menu"
                 onClick={() => setOpenMenuId(openMenuId === activity.id ? null : activity.id)}
                 aria-expanded={openMenuId === activity.id}
                 aria-label="Ouvrir le menu de l'activité"
               >
-                <span className="activity-card__menu-trigger-label">...</span>
+                <span aria-hidden="true">...</span>
               </button>
               {openMenuId === activity.id ? (
                 <div className="activity-card__menu-panel">
@@ -371,18 +396,39 @@ const ActivitiesPage = () => {
               </label>
               <label className="activities-form__select">
                 <span>Statut</span>
-                <select
-                  value={draft.status}
-                  onChange={(event) =>
-                    setDraft((previous) => ({ ...previous, status: event.target.value as ActivityStatus }))
-                  }
-                >
-                  {statusOptions.map(({ value, label }) => (
-                    <option key={value} value={value}>
-                      {label}
-                    </option>
-                  ))}
-                </select>
+                <div className="activities-form__select-field" ref={statusMenuRef}>
+                  <button
+                    type="button"
+                    className="activities-form__select-trigger"
+                    aria-haspopup="listbox"
+                    aria-expanded={isStatusMenuOpen}
+                    onClick={() => setIsStatusMenuOpen((previous) => !previous)}
+                  >
+                    <span>{selectedStatusLabel}</span>
+                    <svg className="activities-form__select-chevron" viewBox="0 0 20 20" aria-hidden="true">
+                      <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                  {isStatusMenuOpen ? (
+                    <div className="activities-form__select-menu" role="listbox">
+                      {statusOptions.map(({ value, label }) => (
+                        <button
+                          key={value}
+                          type="button"
+                          role="option"
+                          aria-selected={draft.status === value}
+                          className={draft.status === value ? 'is-selected' : undefined}
+                          onClick={() => {
+                            setDraft((previous) => ({ ...previous, status: value }))
+                            setIsStatusMenuOpen(false)
+                          }}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
               </label>
               <label>
                 <span>Date idéale</span>
@@ -403,10 +449,12 @@ const ActivitiesPage = () => {
                     <p>Ajoute une photo souvenir depuis ton ordinateur.</p>
                   )}
                   <div className="activities-form__photo-actions">
-                    <label>
-                      <input type="file" accept="image/*" onChange={handleDraftPhotoChange} />
-                      Choisir une photo
-                    </label>
+                    {!draft.photo ? (
+                      <label>
+                        <input type="file" accept="image/*" onChange={handleDraftPhotoChange} />
+                        Choisir une photo
+                      </label>
+                    ) : null}
                     {draft.photo ? (
                       <button type="button" onClick={handleClearDraftPhoto}>
                         Retirer
@@ -462,3 +510,5 @@ const ActivitiesPage = () => {
 }
 
 export default ActivitiesPage
+
+
