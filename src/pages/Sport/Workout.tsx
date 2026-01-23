@@ -284,11 +284,11 @@ const WorkoutPage = () => {
             </div>
             <div className="workout-form__photo-compact">
               <span>Ajoute une image depuis ton ordinateur.</span>
-              <div className="workout-photo-compact__actions">
-                <label className="workout-photo-compact__button">
-                  <input
-                    type="file"
-                    accept="image/*"
+            <div className="activities-form__photo-actions">
+              <label>
+                <input
+                  type="file"
+                  accept="image/*"
                     onChange={(event) => {
                       handleImageChange(event.target.files?.[0])
                       event.target.value = ""

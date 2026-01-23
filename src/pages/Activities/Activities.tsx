@@ -254,7 +254,7 @@ const ActivitiesPage = () => {
                 aria-expanded={openMenuId === activity.id}
                 aria-label="Ouvrir le menu de l'activité"
               >
-                ...
+                <span className="activity-card__menu-trigger-label">...</span>
               </button>
               {openMenuId === activity.id ? (
                 <div className="activity-card__menu-panel">
@@ -347,7 +347,6 @@ const ActivitiesPage = () => {
         <div className="activities-form">
           <div className="activities-form__panel dashboard-panel">
             <header className="activities-section-header">
-              <span className="activities-section-header__eyebrow">Nouvelle idée</span>
               <h2>Ajouter une activité</h2>
             </header>
             <form onSubmit={handleSubmit}>
@@ -389,6 +388,7 @@ const ActivitiesPage = () => {
                 <span>Date idéale</span>
                 <input
                   type="date"
+                  className={`activities-form__date${draft.idealDate ? ' activities-form__date--filled' : ''}`}
                   value={draft.idealDate}
                   onChange={(event) => setDraft((previous) => ({ ...previous, idealDate: event.target.value }))}
                 />
