@@ -157,7 +157,7 @@ const LandingPage = () => {
         <p>
           Tu n’as pas besoin d’en faire davantage. Tu as besoin d’un espace qui te laisse respirer, te guide et soutienne ton épanouissement.
         </p>
-        <button type="button" className="landing-cta-button" onClick={() => navigate("/login")}>
+        <button type="button" className="landing-cta-button" onClick={() => navigate("/register")}>
           Je commence mon organisation positive des maintenant
         </button>
       </section>

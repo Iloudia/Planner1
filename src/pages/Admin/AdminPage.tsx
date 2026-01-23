@@ -1,8 +1,25 @@
 import { useEffect, useMemo, useState, type KeyboardEvent } from "react"
 import { useAuth, type AdminUserRecord } from "../../context/AuthContext"
+import { buildUserScopedKey } from "../../utils/userScopedKey"
 import "./Admin.css"
 
 type AlertState = { type: "success" | "error" | "info"; message: string } | null
+
+const PROFILE_STORAGE_KEY = "planner.profile.preferences.v1"
+const ONBOARDING_STORAGE_KEY = "planner.onboarding.answers.v1"
+
+type ProfileData = {
+  identityInfo?: {
+    gender?: string
+  }
+}
+
+type OnboardingAnswers = {
+  source?: string
+  reasons?: string[]
+  categories?: string[]
+  priority?: string[]
+}
 
 const formatDate = (value: string | null) => {
   if (!value) return "Date inconnue"
@@ -13,12 +30,102 @@ const formatDate = (value: string | null) => {
   return date.toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })
 }
 
+const safeReadJson = <T,>(key: string): T | null => {
+  try {
+    const raw = localStorage.getItem(key)
+    if (!raw) return null
+    return JSON.parse(raw) as T
+  } catch {
+    return null
+  }
+}
+
+const bumpCount = (bucket: Record<string, number>, label: string) => {
+  const key = label.trim() || "non renseigne"
+  bucket[key] = (bucket[key] ?? 0) + 1
+}
+
+const normalizeGender = (value: string) => {
+  const lower = value.trim().toLowerCase()
+  if (lower === "homme" || lower === "h") return "homme"
+  if (lower === "femme" || lower === "f") return "femme"
+  if (lower === "non precise" || lower === "non specifie") return "non precise"
+  return "non precise"
+}
+
+const toSortedEntries = (bucket: Record<string, number>) =>
+  Object.entries(bucket).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+
+const pieColors = ["#fbcfe8", "#bfdbfe", "#bbf7d0", "#fde68a", "#ddd6fe", "#fed7aa", "#fecaca", "#bae6fd"]
+
+const polarToCartesian = (cx: number, cy: number, radius: number, angle: number) => ({
+  x: cx + radius * Math.cos(angle - Math.PI / 2),
+  y: cy + radius * Math.sin(angle - Math.PI / 2),
+})
+
+const describeArc = (cx: number, cy: number, radius: number, startAngle: number, endAngle: number) => {
+  const start = polarToCartesian(cx, cy, radius, endAngle)
+  const end = polarToCartesian(cx, cy, radius, startAngle)
+  const largeArc = endAngle - startAngle <= Math.PI ? "0" : "1"
+  return `M ${cx} ${cy} L ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArc} 0 ${end.x} ${end.y} Z`
+}
+
+const PieChart = ({ entries }: { entries: [string, number][] }) => {
+  const total = entries.reduce((sum, [, count]) => sum + count, 0)
+  if (total <= 0) {
+    return <p className="admin-stat-empty">Aucune donnee.</p>
+  }
+
+  if (entries.length === 1) {
+    const [label, count] = entries[0]
+    return (
+      <div className="admin-stat-chart">
+        <svg viewBox="0 0 120 120" role="img" aria-label="Statistiques">
+          <circle cx="60" cy="60" r="50" fill={pieColors[0]} />
+          <title>{`${label}: ${count}`}</title>
+        </svg>
+      </div>
+    )
+  }
+
+  let startAngle = 0
+  const slices = entries.map(([label, count], index) => {
+    const value = count / total
+    const endAngle = startAngle + value * Math.PI * 2
+    const path = describeArc(60, 60, 50, startAngle, endAngle)
+    const color = pieColors[index % pieColors.length]
+    startAngle = endAngle
+    return { label, count, path, color }
+  })
+
+  return (
+    <div className="admin-stat-chart">
+      <svg viewBox="0 0 120 120" role="img" aria-label="Statistiques">
+        {slices.map((slice) => (
+          <path key={slice.label} d={slice.path} fill={slice.color}>
+            <title>{`${slice.label}: ${slice.count}`}</title>
+          </path>
+        ))}
+      </svg>
+      <ul className="admin-stat-legend">
+        {slices.map((slice) => (
+          <li key={slice.label}>
+            <span className="admin-stat-dot" style={{ background: slice.color }} />
+            <span>{slice.label}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
 const AdminPage = () => {
   const { userEmail, adminListUsers, adminUpdateStatus, adminDeleteUser } = useAuth()
   const [users, setUsers] = useState<AdminUserRecord[]>(() => adminListUsers())
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedEmail, setSelectedEmail] = useState<string | null>(users[0]?.email ?? null)
   const [alert, setAlert] = useState<AlertState>(null)
+  const [showAllUsers, setShowAllUsers] = useState(false)
 
   useEffect(() => {
     setUsers(adminListUsers())
@@ -48,6 +155,56 @@ const AdminPage = () => {
     }),
     [users],
   )
+
+  const surveyStats = useMemo(() => {
+    const genderCounts: Record<string, number> = {}
+    const sourceCounts: Record<string, number> = {}
+    const reasonsCounts: Record<string, number> = {}
+    const categoryCounts: Record<string, number> = {}
+    const priorityCounts: Record<string, number> = {}
+
+    users.forEach((user) => {
+      const profileKey = buildUserScopedKey(user.email, PROFILE_STORAGE_KEY)
+      const profile = safeReadJson<ProfileData>(profileKey)
+      const gender = normalizeGender(profile?.identityInfo?.gender ?? "")
+      bumpCount(genderCounts, gender)
+
+      const onboardingKey = buildUserScopedKey(user.email, ONBOARDING_STORAGE_KEY)
+      const onboarding = safeReadJson<OnboardingAnswers>(onboardingKey)
+
+      const source = onboarding?.source?.trim() || "non renseigne"
+      bumpCount(sourceCounts, source)
+
+      const reasons = onboarding?.reasons ?? []
+      if (reasons.length === 0) {
+        bumpCount(reasonsCounts, "non renseigne")
+      } else {
+        reasons.forEach((reason) => bumpCount(reasonsCounts, reason))
+      }
+
+      const categories = onboarding?.categories ?? []
+      if (categories.length === 0) {
+        bumpCount(categoryCounts, "non renseigne")
+      } else {
+        categories.forEach((category) => bumpCount(categoryCounts, category))
+      }
+
+      const priority = onboarding?.priority ?? []
+      if (priority.length === 0) {
+        bumpCount(priorityCounts, "non renseigne")
+      } else {
+        priority.forEach((item) => bumpCount(priorityCounts, item))
+      }
+    })
+
+    return {
+      gender: toSortedEntries(genderCounts),
+      source: toSortedEntries(sourceCounts),
+      reasons: toSortedEntries(reasonsCounts),
+      categories: toSortedEntries(categoryCounts),
+      priority: toSortedEntries(priorityCounts),
+    }
+  }, [users])
 
   const selectedUser = selectedEmail ? users.find((user) => user.email === selectedEmail) ?? null : null
 
@@ -123,12 +280,17 @@ const AdminPage = () => {
               <p className="admin-eyebrow">Utilisateurs</p>
               <h2>Comptes inscrits</h2>
             </div>
-            <input
-              type="search"
-              placeholder="Rechercher par e-mail"
-              value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
-            />
+            <div className="admin-panel__controls">
+              <input
+                type="search"
+                placeholder="Rechercher par e-mail"
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+              />
+              <button type="button" className="admin-action" onClick={() => setShowAllUsers(true)}>
+                Voir tous
+              </button>
+            </div>
           </header>
           <div className="admin-table" role="table" aria-label="Utilisateurs inscrits">
             <div className="admin-table__row admin-table__row--head" role="row">
@@ -137,7 +299,7 @@ const AdminPage = () => {
               <div role="columnheader">Statut</div>
               <div role="columnheader">Actions</div>
             </div>
-            <div className="admin-table__body">
+            <div className="admin-table__body admin-table__body--scroll">
               {filteredUsers.length === 0 ? (
                 <p className="admin-table__empty">Aucun compte ne correspond a cette adresse e-mail.</p>
               ) : (
@@ -227,6 +389,37 @@ const AdminPage = () => {
         </section>
       </div>
 
+      <section className="admin-panel admin-panel--stats">
+        <header className="admin-panel__header">
+          <div>
+            <p className="admin-eyebrow">Statistiques</p>
+            <h2>Questions d inscription</h2>
+          </div>
+          <p className="admin-helper">Synthese des reponses collectees lors de l inscription.</p>
+        </header>
+        <div className="admin-stats-grid">
+          <article className="admin-stat-card">
+            <h3>Genre</h3>
+            <PieChart entries={surveyStats.gender} />
+          </article>
+          <article className="admin-stat-card">
+            <h3>Source</h3>
+            <PieChart entries={surveyStats.source} />
+          </article>
+          <article className="admin-stat-card">
+            <h3>Raisons</h3>
+            <PieChart entries={surveyStats.reasons} />
+          </article>
+          <article className="admin-stat-card">
+            <h3>Categories</h3>
+            <PieChart entries={surveyStats.categories} />
+          </article>
+          <article className="admin-stat-card">
+            <h3>Priorite</h3>
+            <PieChart entries={surveyStats.priority} />
+          </article>
+        </div>
+      </section>
       <section className="admin-safe">
         <h2>Conformité et sécurité</h2>
         <ul>
@@ -235,6 +428,29 @@ const AdminPage = () => {
           <li>Les suppressions nettoient les données locales (identifiants, métadonnées) afin de respecter le droit à l’effacement.</li>
         </ul>
       </section>
+      {showAllUsers ? (
+        <div className="admin-modal" role="dialog" aria-modal="true">
+          <div className="admin-modal__card">
+            <header className="admin-modal__header">
+              <h3>Tous les e-mails</h3>
+              <button type="button" className="admin-delete" onClick={() => setShowAllUsers(false)}>
+                Fermer
+              </button>
+            </header>
+            <div className="admin-modal__body">
+              {users.length === 0 ? (
+                <p className="admin-table__empty">Aucun compte a afficher.</p>
+              ) : (
+                <ul className="admin-modal__list">
+                  {users.map((user) => (
+                    <li key={user.email}>{user.email}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : null}
       <div className="home-footer-bar" aria-hidden="true" />
     </div>
   )

@@ -15,7 +15,7 @@
   box-shadow: 0 32px 90px rgba(236, 72, 153, 0.18);
   overflow: hidden;
   animation: onboarding-rise 320ms ease-out;
-  margin: 0 clamp(2rem, 6vw, 6rem);
+  margin: 0 clamp(2rem, 9vw, 12rem);
 }
 
 .onboarding-panel::before {
@@ -79,7 +79,7 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 0.7rem;
-  max-width: 540px;
+  max-width: 1200px;
 }
 
 .onboarding-options--grid {

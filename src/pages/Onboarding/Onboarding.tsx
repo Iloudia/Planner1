@@ -12,18 +12,18 @@ const SOURCE_OPTIONS = [
   "Pinterest",
   "Recherche Google",
   "Recommandation d'un proche",
-  "Publicite en ligne",
+  "Publicité en ligne",
   "Etsy",
   "Autre",
 ]
 
 const REASON_OPTIONS = [
-  "Decouvrir du contenu inspirant",
+  "Découvrir du contenu inspirant",
   "Organiser mon quotidien",
-  "Ameliorer mon bien-etre",
-  "Mieux gerer mes projets / objectifs",
+  "Améliorer mon bien-être",
+  "Mieux gérer mes projets / objectifs",
   "Trouver des outils pratiques",
-  "Suivre les nouveautes",
+  "Suivre les nouveautés",
   "Autre raison",
 ]
 
@@ -54,7 +54,7 @@ type OnboardingAnswers = {
   reasons: string[]
   reasonsOther: string
   categories: string[]
-  priority: string
+  priority: string[]
 }
 
 const initialAnswers: OnboardingAnswers = {
@@ -63,7 +63,7 @@ const initialAnswers: OnboardingAnswers = {
   reasons: [],
   reasonsOther: "",
   categories: [],
-  priority: "",
+  priority: [],
 }
 
 const OnboardingPage = () => {
@@ -124,7 +124,7 @@ const OnboardingPage = () => {
       return answers.categories.length > 0
     }
     if (step === 3) {
-      return Boolean(answers.priority)
+      return answers.priority.length > 0
     }
     return false
   }, [answers, step])
@@ -155,7 +155,7 @@ const OnboardingPage = () => {
     setStep((prev) => Math.max(prev - 1, 0))
   }
 
-  const toggleMulti = (key: "reasons" | "categories", value: string) => {
+  const toggleMulti = (key: "reasons" | "categories" | "priority", value: string) => {
     setAnswers((prev) => {
       const current = prev[key]
       const next = current.includes(value) ? current.filter((item) => item !== value) : [...current, value]
@@ -179,15 +179,6 @@ const OnboardingPage = () => {
     }
   }
 
-  const handlePrioritySelect = (value: string) => {
-    const next = {
-      ...answers,
-      priority: value,
-    }
-    setAnswers(next)
-    completeOnboarding(next)
-  }
-
   return (
     <>
       <div className="page-accent-bar" aria-hidden="true" />
@@ -205,19 +196,19 @@ const OnboardingPage = () => {
 
           {step === 0 ? (
             <>
-              <h2 className="onboarding-question">Comment avez-vous connu notre site ?</h2>
-              <p className="onboarding-hint">Choix unique</p>
+              <h2 className="onboarding-question">Comment avez-vous connu ce site ?</h2>
+              <p className="onboarding-hint">Plusieurs reponses possibles</p>
               <div className="onboarding-options">
                 {SOURCE_OPTIONS.map((option) => (
                   <label key={option} className={`onboarding-option${answers.source === option ? " is-selected" : ""}`}>
                     <input
-                      type="radio"
+                      type="checkbox"
                       name="onboarding-source"
                       value={option}
                       checked={answers.source === option}
                       onChange={() => handleSourceSelect(option)}
                     />
-                    <span className="onboarding-option__label">{option === "Autre" ? "Autre (a preciser)" : option}</span>
+                    <span className="onboarding-option__label">{option === "Autre" ? "Autre (à préciser)" : option}</span>
                     <span className="onboarding-option__control" aria-hidden="true" />
                   </label>
                 ))}
@@ -238,8 +229,8 @@ const OnboardingPage = () => {
 
           {step === 1 ? (
             <>
-              <h2 className="onboarding-question">Qu'est-ce qui vous a donne envie de creer un compte ?</h2>
-              <p className="onboarding-hint">Choix multiple possible</p>
+              <h2 className="onboarding-question">Qu'est-ce qui vous a donné envie de créer un compte ?</h2>
+              <p className="onboarding-hint">Plusieurs réponses possibles</p>
               <div className="onboarding-options">
                 {REASON_OPTIONS.map((option) => (
                   <label key={option} className={`onboarding-option${answers.reasons.includes(option) ? " is-selected" : ""}`}>
@@ -270,8 +261,8 @@ const OnboardingPage = () => {
 
           {step === 2 ? (
             <>
-              <h2 className="onboarding-question">Quelles categories vous interessent le plus ?</h2>
-              <p className="onboarding-hint">Plusieurs reponses possibles</p>
+              <h2 className="onboarding-question">Quelles catégories vous intéressent le plus ?</h2>
+              <p className="onboarding-hint">Plusieurs réponses possibles</p>
               <div className="onboarding-options onboarding-options--grid">
                 {CATEGORY_OPTIONS.map((option) => (
                   <label key={option.label} className={`onboarding-option${answers.categories.includes(option.label) ? " is-selected" : ""}`}>
@@ -294,17 +285,17 @@ const OnboardingPage = () => {
 
           {step === 3 ? (
             <>
-              <h2 className="onboarding-question">Quelle est votre priorite actuelle ?</h2>
-              <p className="onboarding-hint">Choix unique</p>
+              <h2 className="onboarding-question">Quelle est votre priorité actuelle ?</h2>
+              <p className="onboarding-hint">Plusieurs réponses possibles</p>
               <div className="onboarding-options">
                 {PRIORITY_OPTIONS.map((option) => (
-                  <label key={option} className={`onboarding-option${answers.priority === option ? " is-selected" : ""}`}>
+                  <label key={option} className={`onboarding-option${answers.priority.includes(option) ? " is-selected" : ""}`}>
                     <input
-                      type="radio"
-                      name="onboarding-priority"
+                      type="checkbox"
+                      
                       value={option}
-                      checked={answers.priority === option}
-                      onChange={() => handlePrioritySelect(option)}
+                      checked={answers.priority.includes(option)}
+                      onChange={() => toggleMulti("priority", option)}
                     />
                     <span className="onboarding-option__label">{option}</span>
                     <span className="onboarding-option__control" aria-hidden="true" />

@@ -171,6 +171,19 @@
   gap: 0.6rem;
 }
 
+.admin-table__body--scroll {
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.admin-panel__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
 .admin-table__empty {
   margin: 0;
   padding: 1rem;
@@ -351,6 +364,133 @@
   background: rgba(15, 23, 42, 0.03);
   border-radius: 18px;
   border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.admin-panel--stats {
+  gap: 1.2rem;
+}
+
+.admin-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.admin-stat-card {
+  border-radius: 18px;
+  padding: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: rgba(248, 250, 252, 0.85);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.admin-stat-card h3 {
+  margin: 0;
+}
+
+.admin-stat-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.admin-stat-chart svg {
+  width: 120px;
+  height: 120px;
+}
+
+.admin-stat-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  width: 100%;
+}
+
+.admin-stat-legend li {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.8rem;
+  font-size: 0.92rem;
+}
+
+.admin-stat-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.admin-stat-empty {
+  margin: 0;
+  color: rgba(15, 23, 42, 0.6);
+}
+
+.admin-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 80;
+}
+
+.admin-modal__card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 1rem 1.2rem;
+  width: min(560px, 100%);
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.2);
+}
+
+.admin-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.admin-modal__header h3 {
+  margin: 0;
+}
+
+.admin-modal__body {
+  overflow-y: auto;
+}
+
+.admin-modal__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+@media (max-width: 1024px) {
+  .admin-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-stats-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .admin-safe h2 {

@@ -12,11 +12,6 @@ const accountOptions = [
   },
   { id: "password", label: "Changez votre mot de passe", description: "Changez votre mot de passe a tout moment." },
   {
-    id: "archive",
-    label: "Telechargez une archive de vos donnees",
-    description: "Decouvrez le type d informations stockees pour votre compte.",
-  },
-  {
     id: "deactivate",
     label: "Desactiver ou supprimer le compte",
     description: "Planifiez une desactivation de 30 jours ou supprimez-le immediatement.",

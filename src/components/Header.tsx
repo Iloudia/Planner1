@@ -1,7 +1,21 @@
-import { Link, useNavigate } from "react-router-dom"
+﻿import { Link, useNavigate } from "react-router-dom"
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react"
 import { useAuth } from "../context/AuthContext"
+import { buildUserScopedKey, normalizeUserEmail } from "../utils/userScopedKey"
 import defaultProfilePhoto from "../assets/katie-huber-rhoades-dupe (1).jpeg"
+
+const PROFILE_STORAGE_KEY = "planner.profile.preferences.v1"
+
+const readProfileUsername = (key: string) => {
+  try {
+    const raw = localStorage.getItem(key)
+    if (!raw) return ""
+    const parsed = JSON.parse(raw) as { identityInfo?: { username?: string } }
+    return parsed?.identityInfo?.username ?? ""
+  } catch {
+    return ""
+  }
+}
 
 function Header() {
   const { isAuthenticated, isAdmin, logout, userEmail } = useAuth()
@@ -12,7 +26,9 @@ function Header() {
   const [profileSrc, setProfileSrc] = useState(() => localStorage.getItem("profile-photo") ?? defaultProfilePhoto)
   const menuRef = useRef<HTMLDivElement | null>(null)
   const searchRef = useRef<HTMLDivElement | null>(null)
-  const displayName = userEmail ? userEmail.split("@")[0] : "Utilisateur"
+  const profileDataKey = useMemo(() => buildUserScopedKey(normalizeUserEmail(userEmail), PROFILE_STORAGE_KEY), [userEmail])
+  const profileUsername = useMemo(() => readProfileUsername(profileDataKey), [profileDataKey])
+  const displayName = profileUsername || (userEmail ? userEmail.split("@")[0] : "Utilisateur")
 
   const searchTargets = useMemo(
     () => [
@@ -185,62 +201,69 @@ function Header() {
             ) : null}
           </div>
 
-          <div className="header-menu" ref={menuRef}>
-            <button
-              type="button"
-              className={menuOpen ? "header-menu__profile is-open" : "header-menu__profile"}
-              aria-haspopup="true"
-              aria-expanded={menuOpen}
-              onClick={() => setMenuOpen((previous) => !previous)}
-            >
-              <span className="header-menu__avatar">
-                <img src={profileSrc} alt="Profil" />
-              </span>
-              <span className="header-menu__name">{displayName}</span>
-              <span className="header-menu__caret" aria-hidden="true">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </span>
-            </button>
-            <button
-              type="button"
-              className={menuOpen ? "header-menu__toggle is-open" : "header-menu__toggle"}
-              aria-haspopup="true"
-              aria-expanded={menuOpen}
-              onClick={() => setMenuOpen((previous) => !previous)}
-            >
-              <span />
-              <span />
-              <span />
-            </button>
-            {menuOpen ? (
-              <div className="header-menu__panel" role="menu">
-                <ul className="header-menu__list">
-                  <li>
-                    <button type="button" className="header-menu__item" onClick={() => handleNavigate("/parametres")}>
-                      Paramètres
-                    </button>
-                  </li>
-                  <li>
-                    <button type="button" className="header-menu__item" onClick={() => closeMenus()}>
-                      Changer l'apparence
-                    </button>
-                  </li>
-                  <li>
-                    <button type="button" className="header-menu__item" onClick={() => closeMenus()}>
-                      Signaler un problème
-                    </button>
-                  </li>
-                  <li>
-                    <button type="button" className="header-menu__item header-menu__item--danger" onClick={handleLogout}>
-                      Déconnexion
-                    </button>
-                  </li>
-                </ul>
-              </div>
-            ) : null}
-          </div>
+          {isAuthenticated ? (
+            <div className="header-menu" ref={menuRef}>
+              <button
+                type="button"
+                className={menuOpen ? "header-menu__profile is-open" : "header-menu__profile"}
+                aria-haspopup="true"
+                aria-expanded={menuOpen}
+                onClick={() => setMenuOpen((previous) => !previous)}
+              >
+                <span className="header-menu__avatar">
+                  <img src={profileSrc} alt="Profil" />
+                </span>
+                <span className="header-menu__name">{displayName}</span>
+                <span className="header-menu__caret" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </span>
+              </button>
+              <button
+                type="button"
+                className={menuOpen ? "header-menu__toggle is-open" : "header-menu__toggle"}
+                aria-haspopup="true"
+                aria-expanded={menuOpen}
+                onClick={() => setMenuOpen((previous) => !previous)}
+              >
+                <span />
+                <span />
+                <span />
+              </button>
+              {menuOpen ? (
+                <div className="header-menu__panel" role="menu">
+                  <ul className="header-menu__list">
+                    <li>
+                      <button type="button" className="header-menu__item" onClick={() => handleNavigate("/profil")}>
+                        Voir mon profil
+                      </button>
+                    </li>
+                    <li>
+                      <button type="button" className="header-menu__item" onClick={() => handleNavigate("/parametres")}>
+                        Paramètres
+                      </button>
+                    </li>
+                    <li>
+                      <button type="button" className="header-menu__item" onClick={() => closeMenus()}>
+                        Changer l'apparence
+                      </button>
+                    </li>
+                    <li>
+                      <button type="button" className="header-menu__item" onClick={() => closeMenus()}>
+                        Signaler un problème
+                      </button>
+                    </li>
+                    <li>
+                      <button type="button" className="header-menu__item header-menu__item--danger" onClick={handleLogout}>
+                        Déconnexion
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
         </div>
       </div>
     </header>

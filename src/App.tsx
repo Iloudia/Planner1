@@ -37,6 +37,7 @@ import SettingsDisplay from "./pages/Settings/SettingsDisplay"
 import SettingsLanguages from "./pages/Settings/SettingsLanguages"
 import SettingsCookies from "./pages/Settings/SettingsCookies"
 import AboutPage from "./pages/About/AboutPage"
+import ProfilePage from "./pages/Profile/Profile"
 
 function NotFound() {
   return (
@@ -114,6 +115,7 @@ function App() {
             <Route path="/diet" element={<DietClassicPage />} />
             <Route path="/alimentation" element={<CuisinePage />} />
             <Route path="/voyage" element={<VoyagePage />} />
+            <Route path="/profil" element={<ProfilePage />} />
             <Route path="/parametres" element={<SettingsLayout />}>
               <Route index element={<SettingsAccount />} />
               <Route path="accessibilite" element={<SettingsAccessibility />} />
