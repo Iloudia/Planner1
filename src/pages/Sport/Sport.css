@@ -177,22 +177,16 @@
 }
 
 .sport-quick-panel__title {
-  padding: 0.4rem 0.9rem;
+  padding: 0.35rem 0;
   display: block;
   width: 100%;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  font-size: 1rem;
+  letter-spacing: 0.02em;
+  font-size: 1.2rem;
+  text-transform: none;
+  color: #0f172a;
 }
 
-.sport-quick-panel__divider {
-  height: 2px;
-  width: 100%;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #f472b6 0%, #fb7185 100%);
-  opacity: 0.6;
-}
 
 .sport-quick-panel__chips {
   display: flex;

@@ -15,7 +15,6 @@ const ContactPage = () => (
       </p>
 
       <section className="legal-section contact-form">
-        <h2 className="legal-section__title">Envoyer un message</h2>
         <form
           className="contact-form__body"
           onSubmit={(event) => {

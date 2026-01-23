@@ -236,6 +236,10 @@
   background: #fbcfe8;
 }
 
+.card-grid .card:nth-child(-n+3) h3 {
+  font-size: 22px;
+}
+
 .card h3 {
   margin: 0 0 6px;
   font-size: 18px;

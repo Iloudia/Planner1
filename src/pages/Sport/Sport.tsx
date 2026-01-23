@@ -248,14 +248,13 @@ const SportPage = () => {
         <img src={planner06} alt="Ambiance sport" />
       </div>
       <div className="sport-page__accent-bar" aria-hidden="true" />
-      <PageHeading eyebrow="Routine active" title="Programme de sport" />
+      <PageHeading eyebrow="Routine active" title="Sport" />
 
       <section className="sport-quick-panels">
         <div className="sport-quick-panel">
           <div className="sport-quick-panel__header">
             <span className="sport-quick-panel__title">Ajouts rapides</span>
           </div>
-          <div className="sport-quick-panel__divider" />
           <div className="sport-quick-panel__chips">
             {isEditingQuick && quickItems.length > 0 ? (
               <>
@@ -293,7 +292,6 @@ const SportPage = () => {
           <div className="sport-quick-panel__header">
             <span className="sport-quick-panel__title">My Life</span>
           </div>
-          <div className="sport-quick-panel__divider" />
           <div className="sport-quick-panel__cards">
             {lifeCards.map((card) => (
               <Link

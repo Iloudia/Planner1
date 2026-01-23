@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom"
+﻿import { Link, useNavigate } from "react-router-dom"
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react"
 import { useAuth } from "../context/AuthContext"
 import { buildUserScopedKey, normalizeUserEmail } from "../utils/userScopedKey"
@@ -246,16 +246,6 @@ function Header() {
                     <li>
                       <button type="button" className="header-menu__item" onClick={() => handleNavigate("/parametres")}>
                         Paramètres
-                      </button>
-                    </li>
-                    <li>
-                      <button type="button" className="header-menu__item" onClick={() => closeMenus()}>
-                        Changer l'apparence
-                      </button>
-                    </li>
-                    <li>
-                      <button type="button" className="header-menu__item" onClick={() => closeMenus()}>
-                        Signaler un problème
                       </button>
                     </li>
                     <li>

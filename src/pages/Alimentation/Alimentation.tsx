@@ -74,7 +74,7 @@ function DietPage() {
         <img src={stripImages[0]} alt="" />
       </div>
       <div className="page-accent-bar" aria-hidden="true" />
-      <PageHeading eyebrow="Alimentation" title="Planifier ses repas avec douceur" />
+      <PageHeading eyebrow="Alimentation" title="Cuisine" />
       <main className="content-page diet-page">
         <section className="page-section diet-week">
           <header className="diet-week__header">

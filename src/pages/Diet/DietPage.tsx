@@ -1104,7 +1104,7 @@ const DietClassicPage = () => {
           <>
             <PageHeading
               eyebrow={currentHeading.eyebrow}
-              title={currentHeading.title}
+              title="Ma Diet"
               className="diet-page-heading"
             />
             <p className="diet-heading__description">{currentHeading.description}</p>
@@ -1113,7 +1113,7 @@ const DietClassicPage = () => {
           <>
             <PageHeading
               eyebrow="Favoris"
-              title="Recettes enregistrées"
+              title="Ma Diet"
               className="diet-page-heading"
             />
             <p className="diet-heading__description">

@@ -1,4 +1,4 @@
-ï»¿import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ChangeEvent } from 'react'
 import usePersistentState from '../../hooks/usePersistentState'
 import journalingIllustration from '../../assets/planner-09.jpg'
@@ -176,7 +176,7 @@ const journalingPromptSections: JournalingPromptSection[] = [
   {
     id: 'daily-state',
     icon: '#1',
-    title: '1. Ã‰tat du jour',
+    title: '1. État du jour',
     accent: '#ffe9f1',
     description: 'Concentre-toi sur ce que tu ressens ici et maintenant.',
     fields: [
@@ -184,58 +184,58 @@ const journalingPromptSections: JournalingPromptSection[] = [
         id: DATE_PROMPT_FIELD_ID,
         type: 'textarea',
         label: "Quelle est la date d'aujourd'hui ?",
-        placeholder: 'Laisse ton cÅ“ur parler ici...',
+        placeholder: 'Laisse ton cœur parler ici...',
       },
       {
         id: 'prompt-mood-now',
         type: 'textarea',
         label: 'Comment je me suis sentie ?',
-        placeholder: 'Sensations, Ã©motions...',
+        placeholder: 'Sensations, émotions...',
       },
       {
         id: 'prompt-mood-influence',
         type: 'textarea',
-        label: "Qu'est-ce qui a influencÃ© mon humeur aujourd'hui ? (Ã‰vÃ©nements, pensÃ©es, personnes, Ã©nergie, mÃ©tÃ©o...)",
-        placeholder: 'Note ce qui a changÃ© ton humeur ou ton Ã©nergie.',
+        label: "Qu'est-ce qui a influencé mon humeur aujourd'hui ? (Événements, pensées, personnes, énergie, météo...)",
+        placeholder: 'Note ce qui a changé ton humeur ou ton énergie.',
       },
       {
         id: 'prompt-learning',
         type: 'textarea',
-        label: "Qu'ai-je appris ou compris sur moi-mÃªme aujourd'hui ?",
-        placeholder: 'DÃ©pose tes pensÃ©es...',
+        label: "Qu'ai-je appris ou compris sur moi-même aujourd'hui ?",
+        placeholder: 'Dépose tes pensées...',
       },
     ],
   },
   {
     id: 'daily-celebration',
     icon: '#2',
-    title: '2. Ma journÃ©e',
+    title: '2. Ma journée',
     accent: '#e0f2fe',
-    description: 'Revis les belles choses et cÃ©lÃ¨bre ce qui compte.',
+    description: 'Revis les belles choses et célèbre ce qui compte.',
     fields: [
       {
         id: 'prompt-highlights',
         type: 'textarea',
-        label: "Qu'est-ce qui s'est bien passÃ© aujourd'hui ?",
-        placeholder: 'Liste tes victoires, mÃªme minuscules.',
+        label: "Qu'est-ce qui s'est bien passé aujourd'hui ?",
+        placeholder: 'Liste tes victoires, même minuscules.',
       },
       {
         id: 'prompt-gratitude',
         type: 'textarea',
         label: 'De quoi suis-je reconnaissant(e) ?',
-        placeholder: 'Exprime ce qui remplit ton cÅ“ur.',
+        placeholder: 'Exprime ce qui remplit ton cœur.',
       },
       {
         id: 'prompt-replay',
         type: 'textarea',
         label: "Y a-t-il un moment que j'aimerais revivre ?",
-        placeholder: 'Quel souvenir doux veux-tu garder prÃ©cieusement ?',
+        placeholder: 'Quel souvenir doux veux-tu garder précieusement ?',
       },
       {
         id: 'prompt-magic-wand',
         type: 'textarea',
-        label: "Si j'avais une baguette magique, qu'est-ce que je changerais dans cette journÃ©e ?",
-        placeholder: 'Note ce qui te vient spontanÃ©ment...',
+        label: "Si j'avais une baguette magique, qu'est-ce que je changerais dans cette journée ?",
+        placeholder: 'Note ce qui te vient spontanément...',
       },
     ],
   },
@@ -244,8 +244,8 @@ const journalingPromptSections: JournalingPromptSection[] = [
     icon: '#3',
     title: "3. Affirmations pour attirer l'argent et l'abondance",
     accent: '#f3efff',
-    description: 'Invite la prospÃ©ritÃ© dans ton esprit avec des mots qui vibrent pour toi.',
-    helper: 'Choisis-en 3 Ã  5 ou Ã©cris les tiennes.',
+    description: 'Invite la prospérité dans ton esprit avec des mots qui vibrent pour toi.',
+    helper: 'Choisis-en 3 à 5 ou écris les tiennes.',
     fields: [
       {
         id: 'prompt-money-affirmations',
@@ -273,7 +273,7 @@ const journalingPromptSections: JournalingPromptSection[] = [
     title: '4. Affirmations pour la confiance en soi',
     accent: '#fef3c7',
     description: 'Renforce ta confiance et ancre-toi dans ta valeur.',
-    helper: 'Choisis-en 3 Ã  5 ou Ã©cris les tiennes.',
+    helper: 'Choisis-en 3 à 5 ou écris les tiennes.',
     fields: [
       {
         id: 'prompt-confidence-affirmations',
@@ -581,7 +581,7 @@ const JournalingPage = () => {
   }, [selectedYearGroup, selectedDay])
 
   const journalingStats = [
-    { id: 'pages', label: 'Pages Ã©crites', value: totalEntries.toString() },
+    { id: 'pages', label: 'Pages écrites', value: totalEntries.toString() },
     { id: 'days', label: 'Jours actifs', value: activeDays.toString() },
   ]
   const dayStateIds = useMemo(() => new Set(['daily-state', 'daily-celebration']), [])
@@ -591,29 +591,29 @@ const JournalingPage = () => {
       id: 'affirmations',
       title: 'Affirmations',
       emoji: '',
-      placeholder: 'Ã‰cris tes phrases positives, sÃ©parÃ©es par des retours Ã  la ligne.',
+      placeholder: 'Écris tes phrases positives, séparées par des retours à la ligne.',
       description: 'Rappelle-toi qui tu deviens.',
     },
     {
       id: 'gratitude',
       title: 'Ce dont je suis reconnaissant(e)',
       emoji: '',
-      placeholder: 'Liste ce qui remplit ton cÅ“ur de douceur.',
+      placeholder: 'Liste ce qui remplit ton cœur de douceur.',
       description: "Accueille l'abondance actuelle.",
     },
     {
       id: 'people',
       title: 'Croyances limitantes',
       emoji: '',
-      placeholder: 'Note les phrases ou pensÃ©es que tu souhaites transformer.',
-      description: 'Identifie ce qui te retient pour mieux le libÃ©rer.',
+      placeholder: 'Note les phrases ou pensées que tu souhaites transformer.',
+      description: 'Identifie ce qui te retient pour mieux le libérer.',
     },
     {
       id: 'intentions',
       title: 'Visualisations',
       emoji: '',
-      placeholder: 'Imagine en dÃ©tails la vie que tu manifestes.',
-      description: 'Projette-toi vers ta vision idÃ©ale.',
+      placeholder: 'Imagine en détails la vie que tu manifestes.',
+      description: 'Projette-toi vers ta vision idéale.',
     },
   ] as const
 
@@ -623,19 +623,19 @@ const JournalingPage = () => {
       
       <PageHero
         eyebrow="Rituel du jour"
-        title="Mon journal"
-        description="Prends un instant pour respirer, Ã©crire et manifester ta vie de rÃªve."
+        title="Journaling"
+        description="Prends un instant pour respirer, écrire et manifester ta vie de rêve."
         stats={journalingStats.map(({ id, label, value }) => ({ id, label, value }))}
         images={journalingMoodboard}
         tone="pink"
       />
       <div className="journaling-page__accent-bar" aria-hidden="true" />
-      <PageHeading eyebrow="Reflet" title="Mon journal" />
+      <PageHeading eyebrow="Reflet" title="Journaling" />
 
       <section className="journaling-day-state">
         <header className="journaling-day-state__header">
           <div>
-            <h2>Etat du jour</h2>
+            <h2>Bilan de la journée</h2>
           </div>
         </header>
         <div className="journaling-day-state__content">
@@ -728,8 +728,8 @@ const JournalingPage = () => {
           className={`journaling-save__confirmation${saveConfirmationVisible ? ' is-visible' : ''}`}
           aria-live="polite"
         >
-          <span aria-hidden="true">âœ¨</span>
-          <strong>Page ajoutÃ©e !</strong>
+          <span aria-hidden="true">?</span>
+          <strong>Page ajoutée !</strong>
         </div>
       </section>
 
@@ -742,7 +742,7 @@ const JournalingPage = () => {
             onClick={() => setArchiveOpen((v) => !v)}
             aria-expanded={archiveOpen}
           >
-            {archiveOpen ? 'RÃ©duire les archives' : 'Afficher les archives'}
+            {archiveOpen ? 'Réduire les archives' : 'Afficher les archives'}
           </button>
         </div>
         {archiveOpen ? (
@@ -774,7 +774,7 @@ const JournalingPage = () => {
           <div className="journaling-history-modal__content">
             <header className="journaling-history-modal__header">
               <div>
-                <p>AnnÃ©e</p>
+                <p>Année</p>
                 <h3>{selectedYearGroup.year}</h3>
                 <span>{selectedYearGroup.totalEntries} page(s)</span>
               </div>
@@ -887,7 +887,7 @@ const JournalingPage = () => {
                   </ul>
                 </article>
               ) : (
-                <p className="journaling-history-modal__empty">SÃ©lectionne un jour pour consulter tes pages.</p>
+                <p className="journaling-history-modal__empty">Sélectionne un jour pour consulter tes pages.</p>
               )}
             </div>
           </div>

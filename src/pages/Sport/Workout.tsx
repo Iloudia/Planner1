@@ -286,7 +286,7 @@ const WorkoutPage = () => {
         <img src={workoutHero} alt="Ambiance workout" />
       </div>
       <div className="workout-page__accent-bar" aria-hidden="true" />
-      <PageHeading eyebrow="Routine active" title="Workout board" />
+      <PageHeading eyebrow="Routine active" title="Workout" />
 
       <div className="workout-layout">
         <section className="workout-exercises">

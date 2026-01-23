@@ -724,6 +724,8 @@
   padding: 1.4rem;
   border-radius: 18px;
   background: rgba(248, 250, 252, 0.86);
+  font-style: italic;
+  font-weight: 400;
   color: #6b7280;
   text-align: center;
 }

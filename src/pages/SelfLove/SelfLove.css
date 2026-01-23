@@ -294,7 +294,8 @@
   border-radius: 18px;
   border: 1px solid rgba(244, 114, 182, 0.3);
   padding: 0.8rem 1rem;
-  font-family: 'Handlee', 'Caveat', cursive;
+  font-family: inherit;
+  font-size: 1rem;
   min-height: 90px;
   resize: vertical;
   background: rgba(255, 255, 255, 0.85);

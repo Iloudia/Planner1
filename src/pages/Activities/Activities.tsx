@@ -360,13 +360,13 @@ const ActivitiesPage = () => {
     <div className="activities-page aesthetic-page">
       <PageHero
         eyebrow="Inspiration"
-        title="Activités et sorties"
+        title="Mes Activit�es"
         description="Un espace pour rassembler les idées d'activités qui te font du bien et nourrissent ton énergie."
         stats={activitiesStats}
         images={activitiesHeroImages}
       />
       <div className="activities-page__accent-bar" aria-hidden="true" />
-      <PageHeading eyebrow="Activités" title="Planning d'activités" />
+      <PageHeading eyebrow="Activités" title="Mes Activit�es" />
 
       <section className="activities-dashboard">
         <div className="activities-form">

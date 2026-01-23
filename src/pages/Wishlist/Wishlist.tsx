@@ -1279,7 +1279,7 @@ const WishlistPage = () => {
       </header>
       <div className="page-accent-bar" aria-hidden="true" />
       <div className="wishlist-heading-row">
-        <PageHeading eyebrow="Envies" title="Wishlist idéale" />
+        <PageHeading eyebrow="Envies" title="Ma Wishlist" />
         <button
           type="button"
           className="wishlist-heading-row__button"

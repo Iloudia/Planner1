@@ -742,7 +742,7 @@ const hasAdditionalHistory = selectedMonthEntries.length > previewHistory.length
 
       <PageHero
         eyebrow="Équilibre pastel"
-        title="Pilote ton budget tout en douceur"
+        title="Mes Finances"
         description="Visualise tes entrées et tes sorties pour mieux organiser ton mois."
         stats={financeHeroStats}
         images={financeMoodboard}
@@ -750,7 +750,7 @@ const hasAdditionalHistory = selectedMonthEntries.length > previewHistory.length
       />
       <div className="finance-page__accent-bar" aria-hidden="true" />
       <div className="finance-heading-row">
-        <PageHeading eyebrow="Finances" title={`Budget ${selectedMonthLabel}`} />
+        <PageHeading eyebrow="Finances" title="Mes Finances" />
         <div className="calendar-month-nav finance-hero__month-nav">
           <button
             type="button"

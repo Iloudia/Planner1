@@ -24,7 +24,7 @@ const GoalsPage = () => {
         <img src={goalsHero} alt="Ambiance objectifs" />
       </div>
       <div className="page-accent-bar" aria-hidden="true" />
-      <PageHeading eyebrow="Goals" title="Sport goals" className="goals-page-heading" />
+      <PageHeading eyebrow="Goals" title="Mes Goals" className="goals-page-heading" />
       <div className="content-page goals-page">
 
         <p className="muted goals-page-heading__intro" aria-hidden="true"></p>
