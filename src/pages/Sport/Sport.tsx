@@ -94,7 +94,9 @@ const SportPage = () => {
   const { userEmail } = useAuth()
   const [board, setBoard] = usePersistentState<SportBoardDay[]>(SPORT_BOARD_STORAGE_KEY, createDefaultBoard)
   const [quickItems, setQuickItems] = usePersistentState<{ id: string; text: string }[]>(SPORT_QUICK_STORAGE_KEY, () => [])
-  const [isEditingQuick, setIsEditingQuick] = useState(() => quickItems.length > 0)
+  const [isEditingQuick, setIsEditingQuick] = useState(() =>
+    quickItems.some((item) => item.text.trim().length > 0),
+  )
   const [openLifeMenuId, setOpenLifeMenuId] = useState<string | null>(null)
   const quickStorageKey = useMemo(() => buildUserScopedKey(userEmail, SPORT_QUICK_STORAGE_KEY), [userEmail])
   const lifeCards = useMemo(
@@ -160,7 +162,7 @@ const SportPage = () => {
   }
 
   const startEditingQuickFromLabel = () => {
-    setQuickItems([{ id: `chip-${Date.now()}`, text: "" }])
+    setQuickItems((prev) => (prev.length > 0 ? prev : [{ id: `chip-${Date.now()}`, text: "" }]))
     setIsEditingQuick(true)
   }
 
@@ -177,17 +179,16 @@ const SportPage = () => {
   useEffect(() => {
     if (quickItems.length === 0) {
       setIsEditingQuick(false)
-    } else {
+      return
+    }
+    if (quickItems.some((item) => item.text.trim().length > 0)) {
       setIsEditingQuick(true)
     }
-  }, [quickItems.length])
+  }, [quickItems])
 
   useEffect(() => {
     if (!isEditingQuick) return
     const handleClickOutsideQuick = (event: MouseEvent) => {
-      if (!quickItems.every((item) => item.text.trim().length === 0)) {
-        return
-      }
       const target = event.target as HTMLElement
       if (
         target.closest(".sport-chip__inline-editor") ||
@@ -196,8 +197,15 @@ const SportPage = () => {
       ) {
         return
       }
-      setQuickItems([])
-      setIsEditingQuick(false)
+      const trimmedItems = quickItems
+        .map((item) => ({ ...item, text: item.text.trim() }))
+        .filter((item) => item.text.length > 0)
+      if (trimmedItems.length === 0) {
+        setQuickItems([])
+        setIsEditingQuick(false)
+        return
+      }
+      setQuickItems(trimmedItems)
     }
     document.addEventListener("mousedown", handleClickOutsideQuick)
     return () => document.removeEventListener("mousedown", handleClickOutsideQuick)

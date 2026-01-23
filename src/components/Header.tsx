@@ -1,4 +1,4 @@
-﻿import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react"
 import { useAuth } from "../context/AuthContext"
 import { buildUserScopedKey, normalizeUserEmail } from "../utils/userScopedKey"
@@ -29,24 +29,28 @@ function Header() {
   const profileDataKey = useMemo(() => buildUserScopedKey(normalizeUserEmail(userEmail), PROFILE_STORAGE_KEY), [userEmail])
   const profileUsername = useMemo(() => readProfileUsername(profileDataKey), [profileDataKey])
   const displayName = profileUsername || (userEmail ? userEmail.split("@")[0] : "Utilisateur")
-
   const searchTargets = useMemo(
     () => [
-      { label: "À propos", path: "/a-propos" },
+      { label: "A propos de moi", path: "/a-propos" },
       { label: "Accueil", path: "/home" },
+      { label: "Mentions legales", path: "/mentions-legales" },
+      { label: "Politique de confidentialite", path: "/confidentialite" },
       { label: "Contact", path: "/contact" },
       { label: "Finances", path: "/finances" },
       { label: "Cuisine", path: "/alimentation" },
       { label: "Calendrier mensuel", path: "/calendrier" },
       { label: "Wishlist", path: "/wishlist" },
       { label: "Sport", path: "/sport" },
+      { label: "Workout", path: "/sport/workout" },
+      { label: "Diet", path: "/diet" },
+      { label: "Goals", path: "/goals" },
+      { label: "S'aimer soi-meme", path: "/self-love" },
       { label: "FAQ", path: "/faq" },
       { label: "Cookies", path: "/cookies" },
       { label: "Parametres", path: "/parametres" },
     ],
     [],
   )
-
   const filteredSuggestions = useMemo(() => {
     const query = searchTerm.trim().toLowerCase()
     if (!query) {
