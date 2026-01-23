@@ -948,6 +948,12 @@
   background: #fffafc;
 }
 
+.journaling-manifestation__card textarea:focus {
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
+}
+
 .journaling-manifestation__chips {
   display: flex;
   flex-wrap: wrap;

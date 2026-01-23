@@ -232,7 +232,7 @@ const RoutinePage = () => {
               onSubmit={handleRoutineSubmit('morning')}
               buttonLabel="Ajouter à ma routine du matin"
               placeholderTitle="Ex : Boire un verre d’eau tiède citronné"
-              placeholderDetail="Détaille si besoin (durée, intention...)"
+              placeholderDetail="Ex : Durée, intention..."
             />
           </div>
         </section>
@@ -260,7 +260,7 @@ const RoutinePage = () => {
               onSubmit={handleRoutineSubmit('evening')}
               buttonLabel="Ajouter à ma routine du soir"
               placeholderTitle="Ex : Préparer mes vêtements pour demain"
-              placeholderDetail="Détaille si besoin (durée, intention...)"
+              placeholderDetail="Ex : Durée, intention..."
             />
           </div>
         </section>

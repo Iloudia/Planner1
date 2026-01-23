@@ -22,6 +22,8 @@ const PROFILE_STORAGE_KEY = "planner.profile.preferences.v1"
 
 const PROFILE_PHOTO_SUFFIX = "profile-photo"
 const DEFAULT_PROFILE_PHOTO = planner06
+const CARD_TITLES_SUFFIX = "home.card-titles"
+const CARD_IMAGES_SUFFIX = "home.card-images"
 
 type CardItem = {
   image: string
@@ -50,6 +52,8 @@ const cards: CardItem[] = [
   { image: planner08, alt: "Routine", kicker: "Rythme", title: "Routine", path: "/routine" },
   { image: planner09, alt: "Cuisine", kicker: "Saveurs", title: "Cuisine", path: "/alimentation" },
 ]
+
+const defaultCardTitle = (path: string) => cards.find((card) => card.path === path)?.title ?? ""
 
 const clamp = (value: number) => Math.min(100, Math.max(0, value))
 
@@ -228,9 +232,14 @@ function HomePage() {
   const profileDataKey = useMemo(() => buildUserScopedKey(normalizeUserEmail(safeEmail), PROFILE_STORAGE_KEY), [safeEmail])
   const homeMoodboardKey = useMemo(() => scopedKey(HOME_MOODBOARD_SUFFIX), [scopedKey])
   const todosKey = useMemo(() => scopedKey("todos"), [scopedKey])
+  const cardTitlesKey = useMemo(() => scopedKey(CARD_TITLES_SUFFIX), [scopedKey])
+  const cardImagesKey = useMemo(() => scopedKey(CARD_IMAGES_SUFFIX), [scopedKey])
 
   const [openCardMenu, setOpenCardMenu] = useState<string | null>(null)
+  const [editingCardPath, setEditingCardPath] = useState<string | null>(null)
+  const [cardTitleDrafts, setCardTitleDrafts] = useState<Record<string, string>>({})
   const [now, setNow] = useState(() => new Date())
+  const cardFileInputsRef = useRef<Record<string, HTMLInputElement | null>>({})
 
   /** ✅ Profil (persisté + compressé) */
   const [profileSrc, setProfileSrc] = useState<string>(() => safeReadStorage(profileStorageKey) ?? DEFAULT_PROFILE_PHOTO)
@@ -258,6 +267,27 @@ function HomePage() {
   const profileUsername = useMemo(() => readProfileUsername(profileDataKey), [profileDataKey])
 
   const isHomeCustom = homeMoodboardSrc !== DEFAULT_HOME_MOODBOARD
+
+  const [cardTitleOverrides, setCardTitleOverrides] = useState<Record<string, string>>(() => {
+    const saved = safeReadStorage(cardTitlesKey)
+    if (!saved) return {}
+    try {
+      const parsed = JSON.parse(saved)
+      return parsed && typeof parsed === "object" ? (parsed as Record<string, string>) : {}
+    } catch {
+      return {}
+    }
+  })
+  const [cardImageOverrides, setCardImageOverrides] = useState<Record<string, string>>(() => {
+    const saved = safeReadStorage(cardImagesKey)
+    if (!saved) return {}
+    try {
+      const parsed = JSON.parse(saved)
+      return parsed && typeof parsed === "object" ? (parsed as Record<string, string>) : {}
+    } catch {
+      return {}
+    }
+  })
 
   /** --- Migration legacy profil --- */
   useEffect(() => {
@@ -325,6 +355,14 @@ useEffect(() => {
 useEffect(() => {
   localStorage.setItem(todosKey, JSON.stringify(todos))
 }, [todosKey, todos])
+
+useEffect(() => {
+  safeWriteStorage(cardTitlesKey, JSON.stringify(cardTitleOverrides))
+}, [cardTitlesKey, cardTitleOverrides])
+
+useEffect(() => {
+  safeWriteStorage(cardImagesKey, JSON.stringify(cardImageOverrides))
+}, [cardImagesKey, cardImageOverrides])
 
 useEffect(() => {
   const id = setInterval(() => setNow(new Date()), 60000)
@@ -419,6 +457,56 @@ const resetMoodboard = () => {
   setHomeMoodboardSrc(DEFAULT_HOME_MOODBOARD)
   safeRemoveStorage(homeMoodboardKey)
   safeRemoveStorage("planner.home.moodboard")
+}
+
+const getCardTitle = useCallback(
+  (card: CardItem) => cardTitleOverrides[card.path] ?? card.title,
+  [cardTitleOverrides]
+)
+
+const getCardImage = useCallback(
+  (card: CardItem) => cardImageOverrides[card.path] ?? card.image,
+  [cardImageOverrides]
+)
+
+const startEditCardTitle = (card: CardItem) => {
+  setOpenCardMenu(null)
+  setEditingCardPath(card.path)
+  setCardTitleDrafts((prev) => ({ ...prev, [card.path]: getCardTitle(card) }))
+}
+
+const triggerCardImagePicker = (card: CardItem) => {
+  setOpenCardMenu(null)
+  cardFileInputsRef.current[card.path]?.click()
+}
+
+const handleCardImageChange = async (card: CardItem, file?: File) => {
+  if (!file) return
+  if (!file.type.startsWith("image/")) {
+    return
+  }
+
+  try {
+    const compressed = await fileToCompressedFitDataUrl(file, { maxSide: 1200, quality: 0.8 })
+    setCardImageOverrides((prev) => ({ ...prev, [card.path]: compressed }))
+  } catch {
+    // ignore errors silently to avoid UI noise
+  }
+}
+
+const commitCardTitle = (path: string) => {
+  const nextValue = (cardTitleDrafts[path] ?? "").trim()
+  const defaultTitle = defaultCardTitle(path)
+  setCardTitleOverrides((prev) => {
+    const next = { ...prev }
+    if (nextValue.length === 0 || nextValue === defaultTitle) {
+      delete next[path]
+    } else {
+      next[path] = nextValue
+    }
+    return next
+  })
+  setEditingCardPath(null)
 }
 
 const upcomingTasks = useMemo(() => {
@@ -546,9 +634,12 @@ return (
               className="card"
               role="button"
               tabIndex={0}
-              onClick={() => navigate(card.path)}
+              onClick={() => {
+                if (editingCardPath) return
+                navigate(card.path)
+              }}
               onKeyDown={(event) => {
-                if (event.key === "Enter") navigate(card.path)
+                if (event.key === "Enter" && !editingCardPath) navigate(card.path)
               }}
             >
               <div className="card-menu-wrapper">
@@ -566,16 +657,66 @@ return (
 
                 {openCardMenu === card.title ? (
                   <div className="card-menu-popover" role="menu" onClick={(event) => event.stopPropagation()}>
-                    <button type="button" className="card-menu-popover__item">
+                    <button
+                      type="button"
+                      className="card-menu-popover__item"
+                      onClick={() => startEditCardTitle(card)}
+                    >
+                      Modifier le texte
+                    </button>
+                    <button
+                      type="button"
+                      className="card-menu-popover__item"
+                      onClick={() => triggerCardImagePicker(card)}
+                    >
                       Modifier la photo
                     </button>
                   </div>
                 ) : null}
               </div>
 
-              <img src={card.image} alt={card.alt} />
+              <img src={getCardImage(card)} alt={card.alt} />
+              <input
+                ref={(node) => {
+                  cardFileInputsRef.current[card.path] = node
+                }}
+                type="file"
+                accept="image/*"
+                className="card-file-input"
+                onClick={(event) => event.stopPropagation()}
+                onChange={(event) => {
+                  void handleCardImageChange(card, event.target.files?.[0])
+                  event.target.value = ""
+                }}
+              />
               <div className="card-body">
-                <h3>{card.title}</h3>
+                {editingCardPath === card.path ? (
+                  <input
+                    type="text"
+                    className="card-title-input"
+                    value={cardTitleDrafts[card.path] ?? getCardTitle(card)}
+                    onChange={(event) =>
+                      setCardTitleDrafts((prev) => ({ ...prev, [card.path]: event.target.value }))
+                    }
+                    onClick={(event) => event.stopPropagation()}
+                    onKeyDown={(event) => {
+                      event.stopPropagation()
+                      if (event.key === "Enter") {
+                        event.preventDefault()
+                        commitCardTitle(card.path)
+                      }
+                      if (event.key === "Escape") {
+                        event.preventDefault()
+                        setCardTitleDrafts((prev) => ({ ...prev, [card.path]: getCardTitle(card) }))
+                        setEditingCardPath(null)
+                      }
+                    }}
+                    onBlur={() => commitCardTitle(card.path)}
+                    autoFocus
+                  />
+                ) : (
+                  <h3>{getCardTitle(card)}</h3>
+                )}
               </div>
             </article>
           ))}

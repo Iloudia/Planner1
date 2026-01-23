@@ -563,7 +563,7 @@
   border: none;
   border-radius: 12px;
   padding: 0.6rem 1.1rem;
-  background: #0f172a;
+  background: #f472b6;
   color: #fff;
   font-weight: 700;
   cursor: pointer;
@@ -619,10 +619,10 @@
 }
 
 .workout-modal__empty {
-  color: #374151;
+  color: #db2777;
   font-weight: 600;
-  background: #f3f4f6;
-  border: 1px dashed #d1d5db;
+  background: rgba(244, 114, 182, 0.2);
+  border: 1px dashed rgba(219, 39, 119, 0.4);
   padding: 0.75rem 0.8rem;
   border-radius: 12px;
 }

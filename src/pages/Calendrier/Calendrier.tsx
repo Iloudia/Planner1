@@ -522,7 +522,6 @@ const CalendrierPage = () => {
             <section className="calendar-modal__section">
               <div className="calendar-modal__section-header">
                 <h3>Programmer un bloc</h3>
-                <span>{newTaskRangeLabel || 'Choisis tes dates'}</span>
               </div>
               <form className="calendar-new-task" onSubmit={handleSubmitNewTask}>
                 <label className="calendar-task__field calendar-task__field--full">
@@ -618,7 +617,6 @@ const CalendrierPage = () => {
             <section className="calendar-modal__section">
               <div className="calendar-modal__section-header">
                 <h3>Agenda du jour</h3>
-                <span>{activeDateLabel || 'Selectionne un jour'}</span>
               </div>
               <div className="calendar-modal__list">
                 {activeDateTasks.length === 0 ? (

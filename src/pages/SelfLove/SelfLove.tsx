@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import stampLove from '../../assets/Timbre-1.png'
 import stampKey from '../../assets/Timbre-2.png'
-import heroImage from '../../assets/planner-05.jpg'
+import heroImage from '../../assets/Self-love-image.jpeg'
 import PageHeading from '../../components/PageHeading'
 import usePersistentState from '../../hooks/usePersistentState'
 import './SelfLove.css'

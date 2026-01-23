@@ -1365,6 +1365,12 @@
   box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
 }
 
+.self-love-form-row input:focus {
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
+}
+
 .self-love-form-row button {
   border: none;
   border-radius: 16px;

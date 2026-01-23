@@ -182,6 +182,8 @@
   border-radius: 18px;
   overflow: hidden;
   position: relative;
+  display: flex;
+  flex-direction: column;
   box-shadow: none;
   transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
   cursor: pointer;
@@ -221,6 +223,7 @@
   position: relative;
   padding: 12px 12px 14px;
   z-index: 1;
+  flex: 1;
 }
 
 .card-grid .card:nth-child(-n+3) {
@@ -236,6 +239,22 @@
 .card h3 {
   margin: 0 0 6px;
   font-size: 18px;
+}
+
+.card-title-input {
+  width: 100%;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 12px;
+  padding: 0.5rem 0.65rem;
+  font-size: 16px;
+  font-weight: 600;
+  background: #ffffff;
+}
+
+.card-title-input:focus {
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
 }
 
 .card p {
@@ -319,6 +338,10 @@
 .card-menu-popover__item:hover {
   background: rgba(236, 72, 153, 0.08);
   color: #be185d;
+}
+
+.card-file-input {
+  display: none;
 }
 
 .profile-photo {
@@ -417,6 +440,12 @@
   border-radius: 12px;
   padding: 0.7rem 0.9rem;
   font-size: 0.95rem;
+}
+
+.todo-input input:focus {
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
 }
 
 .todo-list {

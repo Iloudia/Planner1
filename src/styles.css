@@ -291,6 +291,11 @@ p {
   position: relative;
 }
 
+.nav-search:focus-within {
+  border-color: #ec4899;
+  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
+}
+
 .nav-search--center {
   justify-self: start;
 }
@@ -512,6 +517,10 @@ p {
   text-align: center;
   font-size: 0.85rem;
   color: rgba(236, 72, 153, 0.7);
+}
+
+.site-footer__bottom span {
+  display: block;
 }
 
 
