@@ -962,7 +962,9 @@ p {
 }
 
 .notes textarea:focus {
-  outline: 1px solid rgba(236, 72, 153, 0.35);
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
 }
 
 .content-page {

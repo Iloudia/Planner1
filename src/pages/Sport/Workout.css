@@ -207,9 +207,9 @@
 }
 
 .workout-form input:focus {
-  outline: 3px solid rgba(244, 114, 182, 0.35);
-  border-color: #f472b6;
-  box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.25), 0 10px 24px rgba(236, 72, 153, 0.18);
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
 }
 
 .workout-form button {
@@ -370,9 +370,9 @@
 }
 
 .workout-video-form input:focus {
-  outline: 3px solid rgba(244, 114, 182, 0.35);
-  border-color: #f472b6;
-  box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.25), 0 10px 24px rgba(236, 72, 153, 0.18);
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
 }
 
 .workout-video-form button {

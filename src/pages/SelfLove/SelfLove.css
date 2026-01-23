@@ -157,7 +157,8 @@
 
 .self-love-letter__addresses input:focus {
   outline: none;
-  border-bottom-color: #f43f5e;
+  border-color: #ec4899;
+  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
 }
 
 .self-love-letter__stamps {
@@ -210,6 +211,8 @@
 
 .self-love-letter__body textarea:focus {
   outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
 }
 
 .self-love-letter__footer {
@@ -299,7 +302,9 @@
 }
 
 .self-love-exercise__textarea:focus {
-  outline: 2px solid rgba(244, 114, 182, 0.5);
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
 }
 
 .self-love-exercise__hint {
@@ -361,7 +366,9 @@
 }
 
 .self-love-affirmations__textarea:focus {
-  outline: 2px solid rgba(244, 114, 182, 0.4);
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
 }
 
 .self-love-saved-letters__list {
@@ -944,7 +951,9 @@
 }
 
 .self-love-kitty-letter__textarea:focus {
-  outline: 2px solid rgba(244, 114, 182, 0.5);
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
 }
 
 .self-love-kitty-letter__footer {

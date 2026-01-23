@@ -284,6 +284,13 @@
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
 }
 
+.finance-form__field input:focus,
+.finance-form__field select:focus {
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
+}
+
 .finance-form__submit {
   padding: 0.9rem 1.6rem;
   border-radius: 16px;
@@ -345,6 +352,12 @@
   background: rgba(248, 250, 252, 0.95);
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
   font-size: 1rem;
+}
+
+.finance-balance__field input:focus {
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
 }
 
 .finance-balance__action {

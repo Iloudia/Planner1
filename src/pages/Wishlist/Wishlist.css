@@ -345,6 +345,15 @@
   box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
 }
 
+.wishlist-modal__note textarea:focus,
+.wishlist-modal__form input:focus,
+.wishlist-modal__form select:focus,
+.wishlist-modal__form textarea:focus {
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
+}
+
 .wishlist-modal__note-actions,
 .wishlist-modal__form-actions {
   display: flex;

@@ -147,8 +147,8 @@
 
 .journaling-prompts__field textarea:focus {
   outline: none;
-  border-color: rgba(99, 102, 241, 0.6);
-  box-shadow: 0 22px 50px rgba(99, 102, 241, 0.22);
+  border-color: #ec4899;
+  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
 }
 
 .journaling-prompts__field textarea[rows='2'] {
@@ -872,8 +872,8 @@
 
 .journaling-day-state__fields textarea:focus {
   outline: none;
-  border-color: rgba(236, 72, 153, 0.6);
-  box-shadow: 0 22px 50px rgba(236, 72, 153, 0.25);
+  border-color: #ec4899;
+  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
 }
 
 .journaling-manifestation {

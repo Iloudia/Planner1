@@ -463,6 +463,14 @@
   background-color: rgba(255, 255, 255, 0.9);
 }
 
+.calendar-task__field input:focus,
+.calendar-task__field select:focus,
+.calendar-task__field textarea:focus {
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
+}
+
 .calendar-task__field--color {
   align-items: flex-start;
 }

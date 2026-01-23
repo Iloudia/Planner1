@@ -133,6 +133,13 @@
   box-shadow: 0 10px 24px rgba(236, 72, 153, 0.12);
 }
 
+.sport-board-card__field select:focus,
+.sport-board-card__field input:focus {
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
+}
+
 .sport-board-card__checkbox {
   display: flex;
   align-items: center;
@@ -207,6 +214,12 @@
   font-size: 0.95rem;
   background: #fff;
   width: 100%;
+}
+
+.sport-chip__inline-editor input:focus {
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
 }
 
 .sport-chip--add {

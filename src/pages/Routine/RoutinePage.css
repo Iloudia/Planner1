@@ -291,6 +291,13 @@
   resize: vertical;
 }
 
+.routine-note__composer input:focus,
+.routine-note__composer textarea:focus {
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
+}
+
 .routine-note__composer textarea {
   min-height: 70px;
 }
