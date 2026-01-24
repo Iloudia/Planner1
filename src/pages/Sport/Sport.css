@@ -107,6 +107,7 @@
   color: #9d174d;
   font-weight: 700;
   font-size: 0.85rem;
+  white-space: nowrap;
 }
 
 .sport-board-card__status.is-done {
@@ -487,12 +488,34 @@
   text-transform: lowercase;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 767px) {
   .sport-board__columns {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .sport-habits {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1023px) {
+  .sport-quick-panels {
+    grid-template-columns: 1fr;
+  }
+
+  .sport-quick-panels .sport-quick-panel:first-child {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .sport-board__columns {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 501px) {
+  .sport-board__columns {
     grid-template-columns: 1fr;
   }
 }

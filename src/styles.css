@@ -553,6 +553,18 @@ p {
 
 }
 
+@media (max-width: 591px) {
+  .site-footer__sections {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .site-footer__section {
+    align-items: center;
+  }
+}
+
 .page {
   display: grid;
   grid-template-columns: 340px 1fr 300px;
@@ -1096,9 +1108,9 @@ p {
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 767px) {
   body {
-    padding: 18px;
+    padding: 0;
   }
   .main-area {
     padding: 20px 18px 36px;
@@ -1120,16 +1132,95 @@ p {
 
   .site-header,
   .site-footer {
-    grid-template-columns: 1fr;
-    justify-items: flex-start;
-    width: calc(100% + 36px);
-    margin-left: -18px;
-    margin-right: -18px;
+    width: 100%;
+    margin: 0;
     border-radius: 0;
+  }
+
+  .site-header__inner {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "brand actions"
+      "search search";
+    row-gap: 0.75rem;
+  }
+
+  .site-header__inner .brand {
+    grid-area: brand;
+  }
+
+  .nav-search {
+    grid-area: search;
+    justify-self: stretch;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .header-cta {
+    grid-area: actions;
+    justify-self: end;
+  }
+
+  .nav-search__input {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .header-cta {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.6rem;
+    min-width: 0;
+  }
+
+  .header-menu__profile {
+    min-width: 0;
   }
 
   .nav-links {
     justify-content: flex-start;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .main-area {
+    padding: 28px 32px 42px;
+  }
+
+  .site-header__inner {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .nav-search--center {
+    justify-self: stretch;
+  }
+
+  .nav-search {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .nav-search__input {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .header-cta {
+    min-width: 0;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    gap: 0.6rem;
+  }
+
+  .header-menu__profile {
+    min-width: 0;
+    padding-right: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .main-area {
+    padding: 32px clamp(1.5rem, 4vw, 4rem) 48px;
   }
 }
 
@@ -1376,7 +1467,7 @@ p {
   justify-content: flex-end;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 767px) {
   .cookie-banner {
     inset: auto 1rem 1rem 1rem;
   }
@@ -1557,7 +1648,7 @@ p {
   padding-left: 0.3rem;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 767px) {
   .header-menu__toggle {
     display: flex;
   }
@@ -1567,7 +1658,7 @@ p {
   }
 }
 
-@media (min-width: 721px) {
+@media (min-width: 768px) {
   .header-menu__toggle {
     display: none;
   }

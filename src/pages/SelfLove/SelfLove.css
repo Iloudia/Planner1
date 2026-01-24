@@ -1394,7 +1394,7 @@
   gap: clamp(1rem, 3vw, 2rem);
 }
 
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .self-love-sections-row {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: stretch;
@@ -1845,7 +1845,7 @@
   cursor: pointer;
 }
 
-@media (max-width: 960px) {
+@media (min-width: 768px) and (max-width: 1023px) {
   .self-love-page {
     gap: 2.6rem;
   }
@@ -1855,9 +1855,7 @@
   }
 
   .self-love-profile {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+    grid-template-columns: 1fr;
   }
 
   .self-love-profile__info {
@@ -1877,21 +1875,38 @@
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
 
+  .self-love-archive__years {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .self-love-certificate__controls {
     flex-direction: column;
   }
 }
 
-@media (max-width: 680px) {
+@media (max-width: 767px) {
+  .self-love-page {
+    gap: 2.2rem;
+    padding-bottom: 3rem;
+  }
+
+  .self-love-duo {
+    flex-direction: column;
+  }
+
   .self-love-section--photos,
   .self-love-section--qualities,
   .self-love-section--thoughts,
   .self-love-section--extras {
-    padding: 1.8rem;
+    padding: 1.6rem;
   }
 
   .self-love-profile {
-    padding: 1.9rem;
+    grid-template-columns: 1fr;
+  }
+
+  .self-love-profile__card {
+    padding: 1.6rem;
   }
 
   .self-love-profile__avatar {
@@ -1900,7 +1915,11 @@
   }
 
   .self-love-photos {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+
+  .self-love-photos-frame {
+    padding: 1.2rem;
   }
 
   .self-love-likes {
@@ -1912,71 +1931,118 @@
     align-items: stretch;
   }
 
-  .self-love-form-row input {
-    width: 100%;
-  }
-
+  .self-love-form-row input,
   .self-love-form-row button {
     width: 100%;
   }
 
-  .self-love-thoughts {
+  .self-love-letter__tabs {
+    align-self: stretch;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .self-love-letter__addresses {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .self-love-letter__stamps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .self-love-letter__footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+
+  .self-love-letter__save {
+    margin-left: 0;
+    align-self: stretch;
+    text-align: center;
+  }
+
+  .self-love-exercise__grid {
     grid-template-columns: 1fr;
   }
 
-    .self-love-card--journal button {
-      align-self: stretch;
-    }
-
-    .self-love-certificate {
-      padding: 2rem;
-    }
-
-@keyframes self-love-thought-burst {
-  0% {
-    transform: scale(0.9);
-    opacity: 0.6;
-    filter: blur(0px);
-  }
-  50% {
-    transform: scale(1.3);
-    opacity: 0.4;
-    filter: blur(4px);
-  }
-  100% {
-    transform: scale(1.7);
-    opacity: 0;
-    filter: blur(8px);
-  }
-}
-
-@keyframes self-love-thought-drift {
-  0% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-}
-
-  .self-love-photos-frame {
-    padding: 1.4rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .self-love-photos {
+  .self-love-affirmations__list {
     grid-template-columns: 1fr;
   }
 
-  .self-love-profile {
-    padding: 1.6rem;
+  .self-love-extras {
+    grid-template-columns: 1fr;
   }
 
-  .self-love-profile__avatar {
-    width: 108px;
-    height: 108px;
+  .self-love-card--journal button {
+    align-self: stretch;
+  }
+
+  .self-love-certificate {
+    padding: 2rem;
+  }
+
+  .self-love-certificate__controls {
+    flex-direction: column;
+  }
+
+  .self-love-saved-letters__list li {
+    flex-direction: column;
+  }
+
+  .self-love-archive__years {
+    grid-template-columns: 1fr;
+  }
+
+  .self-love-archive-modal__content {
+    padding: 1.2rem;
+  }
+
+  .self-love-archive-modal__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .self-love-archive-modal__dates {
+    grid-template-columns: 1fr;
+  }
+
+  .self-love-archive__letter-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .self-love-archive__letter-actions {
+    justify-content: flex-start;
+  }
+
+  @keyframes self-love-thought-burst {
+    0% {
+      transform: scale(0.9);
+      opacity: 0.6;
+      filter: blur(0px);
+    }
+    50% {
+      transform: scale(1.3);
+      opacity: 0.4;
+      filter: blur(4px);
+    }
+    100% {
+      transform: scale(1.7);
+      opacity: 0;
+      filter: blur(8px);
+    }
+  }
+
+  @keyframes self-love-thought-drift {
+    0% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
   }
 }

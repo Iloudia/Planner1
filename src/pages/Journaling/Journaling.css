@@ -761,19 +761,150 @@
   line-height: 1.6;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 767px) {
+  .journaling-page {
+    gap: 2rem;
+  }
+
   .journaling-prompts__header {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.85rem;
+    padding: 1.3rem 1.4rem;
   }
 
   .journaling-prompts__grid {
     grid-template-columns: 1fr;
   }
 
+  .journaling-prompts__card {
+    padding: 1.4rem 1.5rem;
+  }
+
+  .journaling-editor,
+  .journaling-history,
+  .journaling-custom-affirmations,
+  .journaling-day-state,
+  .journaling-manifestation {
+    padding: 1.4rem;
+    border-radius: 20px;
+  }
+
   .journaling-editor__form {
     grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+
+  .journaling-editor__feelings-options {
+    grid-template-columns: 1fr;
+  }
+
+  .journaling-editor__submit {
+    justify-self: stretch;
+    width: 100%;
+  }
+
+  .journaling-history__years {
+    grid-template-columns: 1fr;
+  }
+
+  .journaling-history__group header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .journaling-history-modal__content {
+    padding: 1.2rem;
+  }
+
+  .journaling-history-modal__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .journaling-history-modal__dates {
+    grid-template-columns: 1fr;
+  }
+
+  .journaling-day-state__group-heading {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .journaling-day-state__number {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    font-size: 1.8rem;
+  }
+
+  .journaling-custom-affirmations__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .journaling-custom-affirmations__form {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .journaling-custom-affirmations__form button {
+    width: 100%;
+  }
+
+  .journaling-custom-affirmations__item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .journaling-manifestation__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .journaling-save {
+    align-items: stretch;
+  }
+
+  .journaling-save__button {
+    width: 100%;
+  }
+
+  .journaling-lace {
+    height: 90px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .journaling-page {
+    gap: 2.4rem;
+  }
+
+  .journaling-prompts__header {
+    padding: 1.6rem 1.8rem;
+  }
+
+  .journaling-prompts__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .journaling-editor__form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .journaling-editor__feelings-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .journaling-history__years {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .journaling-manifestation__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .journaling-custom-affirmations__form {
+    flex: 1 1 100%;
   }
 }
 

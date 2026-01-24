@@ -769,20 +769,50 @@
   box-shadow: inset 0 0 0 1px rgba(79, 70, 229, 0.08);
 }
 /* RESPONSIVE */
-@media (max-width: 1080px) {
+@media (max-width: 767px) {
+  .activities-page {
+    gap: 2rem;
+  }
+
   .activities-hero {
     grid-template-columns: 1fr;
+    padding: 1.6rem;
+    gap: 1.4rem;
+    border-radius: 22px;
   }
-}
 
-@media (max-width: 720px) {
-  .activities-hero {
-    padding: 2.1rem 1.6rem;
+  .activities-hero__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem;
+  }
+
+  .activities-hero__gallery {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+
+  .activities-hero__photo {
+    height: 160px;
+  }
+
+  .activities-hero__photo--3 {
+    grid-column: auto;
+    height: 170px;
+  }
+
+  .activities-form {
+    padding: 1.6rem 1.2rem;
+    gap: 1.6rem;
+  }
+
+  .activities-form header {
+    margin-bottom: 0;
   }
 
   .activities-form form {
     flex-direction: column;
     align-items: stretch;
+    gap: 1rem;
   }
 
   .activities-form label {
@@ -790,15 +820,97 @@
     flex-basis: auto;
   }
 
+  .activities-form__photo-preview {
+    min-height: 180px;
+  }
+
+  .activities-form__photo-img {
+    max-width: 110px;
+  }
+
+  .activities-form__submit {
+    width: 100%;
+  }
+
   .activity-card {
     grid-template-columns: 1fr;
+    height: auto;
+    gap: 0.9rem;
+  }
+
+  .activity-card__media {
+    min-height: 170px;
+  }
+
+  .activity-card__actions {
+    flex-wrap: wrap;
+  }
+
+  .activities-dual-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
   .activities-split {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
   }
 
   .activities-split__divider {
-    display: none;
+    display: block;
+    order: 2;
+    width: 100%;
+    height: 6px;
+  }
+
+  .activities-split .activities-group:first-of-type {
+    order: 1;
+  }
+
+  .activities-split .activities-group:last-of-type {
+    order: 3;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .activities-page {
+    gap: 2.3rem;
+  }
+
+  .activities-hero {
+    grid-template-columns: 1fr;
+    padding: 2.2rem;
+    gap: 2rem;
+  }
+
+  .activities-hero__gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .activities-form {
+    padding: 2.2rem 1.6rem;
+  }
+
+  .activities-form form {
+    gap: 1.2rem;
+  }
+
+  .activities-form label {
+    max-width: 320px;
+    flex: 1 1 260px;
+  }
+
+  .activity-card {
+    height: auto;
+  }
+
+  .activities-dual-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  .activities-split {
+    grid-template-columns: 1fr 6px 1fr;
+    gap: 1.2rem;
   }
 }
