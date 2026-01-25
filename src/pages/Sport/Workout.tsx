@@ -42,7 +42,7 @@ const DEFAULT_EXERCISES: ExerciseCard[] = [
   },
   {
     id: "ex-2",
-    title: "Sprint Hiit",
+    title: "Sprint HIIT",
     muscle: "Cardio",
     category: "HIIT",
     image: "https://images.unsplash.com/photo-1518611012118-4fb9fa2b9555?auto=format&fit=crop&w=800&q=80",
@@ -52,7 +52,7 @@ const DEFAULT_EXERCISES: ExerciseCard[] = [
 const DEFAULT_VIDEOS: VideoCard[] = [
   {
     id: "vid-1",
-    title: "Full body mobilite",
+    title: "Full body mobilité",
     url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
   },
@@ -69,7 +69,7 @@ const MUSCLE_OPTIONS = [
   "Abdos",
   "Obliques",
   "Pectoraux",
-  "Ç%paules",
+  "Épaules",
   "Bras",
   "Biceps",
   "Triceps",
@@ -77,7 +77,7 @@ const MUSCLE_OPTIONS = [
   "Tout le corps",
 ]
 
-const MUSCLE_PLACEHOLDER = "SÇ¸lectionner un muscle"
+const MUSCLE_PLACEHOLDER = "Sélectionner un muscle"
 
 
 const extractYoutubeId = (url: string) => {
@@ -106,6 +106,9 @@ const WorkoutPage = () => {
   const [seriesByExercise, setSeriesByExercise] = usePersistentState<Record<string, SeriesItem[]>>(STORAGE_KEYS.series, () => ({}))
   const [seriesInput, setSeriesInput] = useState("")
   const [isMuscleMenuOpen, setIsMuscleMenuOpen] = useState(false)
+  const [openExerciseMenuId, setOpenExerciseMenuId] = useState<string | null>(null)
+  const [openVideoMenuId, setOpenVideoMenuId] = useState<string | null>(null)
+  const [isModalMenuOpen, setIsModalMenuOpen] = useState(false)
   const muscleMenuRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -170,7 +173,7 @@ const WorkoutPage = () => {
 
   const handleVideoSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const title = videoForm.title.trim() || "Session video"
+    const title = videoForm.title.trim() || "Session vidéo"
     const id = extractYoutubeId(videoForm.url.trim())
     if (!id) return
     const nextVideo: VideoCard = {
@@ -206,10 +209,14 @@ const WorkoutPage = () => {
 
   const handleOpenPlanner = (exerciseId: string) => {
     setSelectedExerciseId(exerciseId)
+    setOpenExerciseMenuId(null)
+    setOpenVideoMenuId(null)
+    setIsModalMenuOpen(false)
   }
 
   const handleClosePlanner = () => {
     setSelectedExerciseId(null)
+    setIsModalMenuOpen(false)
   }
 
   const handleAddSeries = (exerciseId: string) => {
@@ -218,7 +225,7 @@ const WorkoutPage = () => {
     setSeriesByExercise((previous) => {
       const current = previous[exerciseId] ?? []
       const nextItem: SeriesItem = {
-        id: `serie-${Date.now()}`,
+        id: `série-${Date.now()}`,
         label,
         completed: false,
       }
@@ -261,6 +268,32 @@ const WorkoutPage = () => {
     reader.onload = () => {
       const result = typeof reader.result === "string" ? reader.result : ""
       setForm((prev) => ({ ...prev, image: result }))
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const updateExerciseImage = (exerciseId: string, file: File | undefined | null) => {
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      const result = typeof reader.result === "string" ? reader.result : ""
+      if (!result) return
+      setExercises((previous) =>
+        previous.map((item) => (item.id === exerciseId ? { ...item, image: result } : item)),
+      )
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const updateVideoThumbnail = (videoId: string, file: File | undefined | null) => {
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      const result = typeof reader.result === "string" ? reader.result : ""
+      if (!result) return
+      setVideos((previous) =>
+        previous.map((item) => (item.id === videoId ? { ...item, thumbnail: result } : item)),
+      )
     }
     reader.readAsDataURL(file)
   }
@@ -359,7 +392,7 @@ const WorkoutPage = () => {
                 className={`workout-form__photo-preview${form.image ? " workout-form__photo-preview--has-image" : ""}`}
               >
                 {form.image ? (
-                  <img className="workout-form__photo-img" src={form.image} alt="Apercu de la photo selectionnee" />
+                  <img className="workout-form__photo-img" src={form.image} alt="Aperçu de la photo sélectionnée" />
                 ) : (
                   <p>Ajoute une image depuis ton ordinateur.</p>
                 )}
@@ -383,7 +416,7 @@ const WorkoutPage = () => {
                     </button>
                   ) : null}
                 </div>
-                <span className="workout-form__photo-hint">Formats image acceptes (JPG, PNG, GIF).</span>
+                <span className="workout-form__photo-hint">Formats image acceptés (JPG, PNG, GIF).</span>
               </div>
             </div>
             <button type="submit">Ajouter la carte</button>
@@ -407,19 +440,47 @@ const WorkoutPage = () => {
                     }
                   }}
                 >
-                  <button
-                    type="button"
-                    className="modal__close"
-                    aria-label={`Supprimer ${exercise.title}`}
-                    onClick={(event) => {
-                      event.stopPropagation()
-                      handleDeleteExercise(exercise.id)
-                    }}
-                  >
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                    </svg>
-                  </button>
+                  <div className="workout-card__menu">
+                    <button
+                      type="button"
+                      className="profile-menu"
+                      aria-label={`Options pour ${exercise.title}`}
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        setOpenExerciseMenuId((previous) => (previous === exercise.id ? null : exercise.id))
+                        setOpenVideoMenuId(null)
+                      }}
+                    >
+                      <span aria-hidden="true">...</span>
+                    </button>
+                    {openExerciseMenuId === exercise.id ? (
+                      <div className="workout-card__menu-panel" role="menu" onClick={(event) => event.stopPropagation()}>
+                        <label className="workout-card__menu-item">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(event) => {
+                              updateExerciseImage(exercise.id, event.target.files?.[0])
+                              event.target.value = ""
+                              setOpenExerciseMenuId(null)
+                            }}
+                          />
+                          Modifier la photo
+                        </label>
+                        <button
+                          type="button"
+                          className="workout-card__menu-item workout-card__menu-item--danger"
+                          onClick={(event) => {
+                            event.stopPropagation()
+                            handleDeleteExercise(exercise.id)
+                            setOpenExerciseMenuId(null)
+                          }}
+                        >
+                          Supprimer
+                        </button>
+                      </div>
+                    ) : null}
+                  </div>
                   <div className="workout-card__media">
                     <img src={exercise.image} alt={exercise.title} />
                   </div>
@@ -457,7 +518,7 @@ const WorkoutPage = () => {
                 required
               />
             </label>
-            <button type="submit">Ajouter la video</button>
+            <button type="submit">Ajouter la vidéo</button>
           </form>
           <div className="workout-video-grid">
             {videos.map((video) => (
@@ -474,19 +535,47 @@ const WorkoutPage = () => {
                   }
                 }}
               >
-                <button
-                  type="button"
-                  className="modal__close"
-                  aria-label={`Supprimer ${video.title}`}
-                  onClick={(event) => {
-                    event.stopPropagation()
-                    handleDeleteVideo(video.id)
-                  }}
-                >
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
-                </button>
+                <div className="workout-card__menu">
+                  <button
+                    type="button"
+                    className="profile-menu"
+                    aria-label={`Options pour ${video.title}`}
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      setOpenVideoMenuId((previous) => (previous === video.id ? null : video.id))
+                      setOpenExerciseMenuId(null)
+                    }}
+                  >
+                    <span aria-hidden="true">...</span>
+                  </button>
+                  {openVideoMenuId === video.id ? (
+                    <div className="workout-card__menu-panel" role="menu" onClick={(event) => event.stopPropagation()}>
+                      <label className="workout-card__menu-item">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(event) => {
+                            updateVideoThumbnail(video.id, event.target.files?.[0])
+                            event.target.value = ""
+                            setOpenVideoMenuId(null)
+                          }}
+                        />
+                        Modifier la photo
+                      </label>
+                      <button
+                        type="button"
+                        className="workout-card__menu-item workout-card__menu-item--danger"
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          handleDeleteVideo(video.id)
+                          setOpenVideoMenuId(null)
+                        }}
+                      >
+                        Supprimer
+                      </button>
+                    </div>
+                  ) : null}
+                </div>
                 <div className="workout-video-thumb">
                   <img src={video.thumbnail} alt={video.title} />
                 </div>
@@ -510,16 +599,46 @@ const WorkoutPage = () => {
           onClick={handleClosePlanner}
         >
           <div className="workout-modal__panel" onClick={(event) => event.stopPropagation()}>
-                        <button
-              type="button"
-              className="modal__close"
-              onClick={handleClosePlanner}
-              aria-label="Fermer le plan d'entraknement"
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              </svg>
-            </button>
+            <div className="workout-modal__menu">
+              <button
+                type="button"
+                className="profile-menu"
+                aria-label="Options pour cette session"
+                onClick={() => {
+                  setIsModalMenuOpen((previous) => !previous)
+                  setOpenExerciseMenuId(null)
+                  setOpenVideoMenuId(null)
+                }}
+              >
+                <span aria-hidden="true">...</span>
+              </button>
+              {isModalMenuOpen && selectedExerciseId ? (
+                <div className="workout-card__menu-panel" role="menu">
+                  <label className="workout-card__menu-item">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(event) => {
+                        updateExerciseImage(selectedExerciseId, event.target.files?.[0])
+                        event.target.value = ""
+                        setIsModalMenuOpen(false)
+                      }}
+                    />
+                    Modifier la photo
+                  </label>
+                  <button
+                    type="button"
+                    className="workout-card__menu-item workout-card__menu-item--danger"
+                    onClick={() => {
+                      handleDeleteExercise(selectedExerciseId)
+                      setIsModalMenuOpen(false)
+                    }}
+                  >
+                    Supprimer
+                  </button>
+                </div>
+              ) : null}
+            </div>
             <div className="workout-modal__cover">
               <img src={selectedExercise.image} alt={selectedExercise.title} />
             </div>
@@ -536,50 +655,50 @@ const WorkoutPage = () => {
               </header>
               <div className="workout-modal__content">
                 <form
-                className="workout-modal__series-form"
-                onSubmit={(event) => {
-                  event.preventDefault()
-                  if (selectedExerciseId) {
-                    handleAddSeries(selectedExerciseId)
-                  }
-                }}
-              >
-                <input
-                  type="text"
-                  value={seriesInput}
-                  onChange={(event) => setSeriesInput(event.target.value)}
-                  placeholder="Ex : 4 x 12 squats, 10 min rameur..."
-                />
-                <button type="submit">Ajouter une série</button>
-              </form>
-              {selectedSeries.length === 0 ? (
-                <p className="workout-modal__empty">
-                  Aucun élément encore. Clique sur "Ajouter une série" pour enregistrer tes envies dans cette catégorie.
-                </p>
-              ) : (
-                <ul className="workout-modal__series-list">
-                  {selectedSeries.map((serie) => (
-                    <li key={serie.id}>
-                      <label>
-                        <input
-                          type="checkbox"
-                          checked={serie.completed}
-                          onChange={() => selectedExerciseId && toggleSeriesItem(selectedExerciseId, serie.id)}
-                        />
-                        <span>{serie.label}</span>
-                      </label>
-                      <button
-                        type="button"
-                        aria-label={`Supprimer ${serie.label}`}
-                        onClick={() => selectedExerciseId && handleDeleteSeries(selectedExerciseId, serie.id)}
-                      >
-                        &times;
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
+                  className="workout-modal__series-form"
+                  onSubmit={(event) => {
+                    event.preventDefault()
+                    if (selectedExerciseId) {
+                      handleAddSeries(selectedExerciseId)
+                    }
+                  }}
+                >
+                  <input
+                    type="text"
+                    value={seriesInput}
+                    onChange={(event) => setSeriesInput(event.target.value)}
+                    placeholder="Ex : 4 x 12 squats, 10 min rameur..."
+                  />
+                  <button type="submit">Ajouter une série</button>
+                </form>
+                {selectedSeries.length === 0 ? (
+                  <p className="workout-modal__empty">
+                    Aucun élément encore. Clique sur "Ajouter une série" pour enregistrer tes envies dans cette catégorie.
+                  </p>
+                ) : (
+                  <ul className="workout-modal__series-list">
+                    {selectedSeries.map((serie) => (
+                      <li key={serie.id}>
+                        <label>
+                          <input
+                            type="checkbox"
+                            checked={serie.completed}
+                            onChange={() => selectedExerciseId && toggleSeriesItem(selectedExerciseId, serie.id)}
+                          />
+                          <span>{serie.label}</span>
+                        </label>
+                        <button
+                          type="button"
+                          aria-label={`Supprimer ${serie.label}`}
+                          onClick={() => selectedExerciseId && handleDeleteSeries(selectedExerciseId, serie.id)}
+                        >
+                          &times;
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </div>
             <footer className="workout-modal__footer">
               <div className="workout-modal__summary">
@@ -594,7 +713,3 @@ const WorkoutPage = () => {
 }
 
 export default WorkoutPage
-
-
-
-

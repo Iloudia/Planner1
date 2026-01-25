@@ -96,6 +96,7 @@
   border: 1px solid rgba(148, 163, 184, 0.4);
   padding: 0.6rem 0.9rem;
   font-size: 0.95rem;
+  min-width: 0;
 }
 
 .admin-table {
@@ -109,7 +110,7 @@
   border: 1px solid rgba(148, 163, 184, 0.3);
   padding: 0.9rem 1rem;
   display: grid;
-  grid-template-columns: 2.4fr 1.3fr 0.9fr 1.2fr;
+  grid-template-columns: minmax(0, 2.4fr) minmax(0, 1.3fr) minmax(0, 0.9fr) minmax(0, 1.2fr);
   gap: 0.8rem;
   background: #ffffff;
   text-align: left;
@@ -150,6 +151,11 @@
   flex-direction: column;
   gap: 0.25rem;
   color: #0f172a;
+  min-width: 0;
+}
+
+.admin-table__cell strong {
+  overflow-wrap: anywhere;
 }
 
 .admin-table__cell span {
@@ -397,9 +403,29 @@
   align-items: center;
 }
 
-.admin-stat-chart svg {
-  width: 120px;
-  height: 120px;
+.admin-stat-figure {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 12px rgba(255, 255, 255, 0.92);
+}
+
+.admin-stat-figure::after {
+  content: "";
+  position: absolute;
+  inset: 28%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  pointer-events: none;
+}
+
+.admin-stat-figure svg {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .admin-stat-legend {

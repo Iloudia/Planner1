@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, useCallback, type ChangeEvent } from "react"
+Ôªøimport { useEffect, useMemo, useRef, useState, useCallback, type ChangeEvent } from "react"
 import { useNavigate } from "react-router-dom"
 import { useTasks } from "../../context/TasksContext"
 import { useAuth } from "../../context/AuthContext"
@@ -42,12 +42,12 @@ type TaskDisplay = {
 }
 
 const cards: CardItem[] = [
-  { image: planner01, alt: "Sport", kicker: "…nergie", title: "Sport", path: "/sport" },
+  { image: planner01, alt: "Sport", kicker: "√ânergie", title: "Sport", path: "/sport" },
   { image: planner06, alt: "Calendrier", kicker: "Vue globale", title: "Calendrier mensuel", path: "/calendrier" },
   { image: planner05, alt: "Wishlist", kicker: "Envie", title: "Wishlist", path: "/wishlist" },
-  { image: planner02, alt: "ActivitÈs", kicker: "Fun", title: "ActivitÈs", path: "/activites" },
+  { image: planner02, alt: "Activit√©s", kicker: "Fun", title: "Activit√©s", path: "/activites" },
   { image: planner03, alt: "Journaling", kicker: "Reflet", title: "Journaling", path: "/journaling" },
-  { image: planner04, alt: "Self-love", kicker: "Care", title: "S'aimer soi-mÍme", path: "/self-love" },
+  { image: planner04, alt: "Self-love", kicker: "Care", title: "S'aimer soi-m√™me", path: "/self-love" },
   { image: planner07, alt: "Finances", kicker: "Budget", title: "Finances", path: "/finances" },
   { image: planner08, alt: "Routine", kicker: "Rythme", title: "Routine", path: "/routine" },
   { image: planner09, alt: "Cuisine", kicker: "Saveurs", title: "Cuisine", path: "/alimentation" },
@@ -98,7 +98,7 @@ const readProfileUsername = (key: string) => {
   }
 }
 
-/** --- Storage helpers (gËre legacy JSON.stringify) --- */
+/** --- Storage helpers (g√®re legacy JSON.stringify) --- */
 function safeReadStorage(key: string): string | null {
   try {
     const raw = localStorage.getItem(key)
@@ -126,7 +126,7 @@ function safeRemoveStorage(key: string) {
   }
 }
 
-/** --- Compression profil : crop carrÈ (petit) --- */
+/** --- Compression profil : crop carr√© (petit) --- */
 async function fileToCompressedSquareDataUrl(
   file: File,
   opts?: { size?: number; quality?: number }
@@ -241,12 +241,12 @@ function HomePage() {
   const [now, setNow] = useState(() => new Date())
   const cardFileInputsRef = useRef<Record<string, HTMLInputElement | null>>({})
 
-  /** ? Profil (persistÈ + compressÈ) */
+  /** ? Profil (persist√© + compress√©) */
   const [profileSrc, setProfileSrc] = useState<string>(() => safeReadStorage(profileStorageKey) ?? DEFAULT_PROFILE_PHOTO)
   const [profileError, setProfileError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
-  /** ? Moodboard (persistÈ + compressÈ) */
+  /** ? Moodboard (persist√© + compress√©) */
   const [homeMoodboardSrc, setHomeMoodboardSrc] = useState<string>(() => safeReadStorage(homeMoodboardKey) ?? DEFAULT_HOME_MOODBOARD)
   const [moodboardError, setMoodboardError] = useState<string | null>(null)
   const moodboardInputRef = useRef<HTMLInputElement | null>(null)
@@ -316,7 +316,7 @@ function HomePage() {
     try {
       safeWriteStorage(profileStorageKey, profileSrc)
     } catch {
-      setProfileError("Impossible díenregistrer la photo (stockage plein). Choisis une image plus lÈgËre.")
+      setProfileError("Impossible d‚Äôenregistrer la photo (stockage plein). Choisis une image plus l√©g√®re.")
     }
   }, [profileStorageKey, profileSrc])
 
@@ -328,7 +328,7 @@ function HomePage() {
       return
     }
 
-    // anciennes clÈs possibles
+    // anciennes cl√©s possibles
     const legacy1 = safeReadStorage("planner.home.moodboard")
     if (legacy1) {
       setHomeMoodboardSrc(legacy1)
@@ -341,86 +341,87 @@ function HomePage() {
     }
 
     setHomeMoodboardSrc(DEFAULT_HOME_MOODBOARD)
-}, [homeMoodboardKey])
+  }, [homeMoodboardKey])
 
-/** --- Persistance moodboard --- */
-useEffect(() => {
-  try {
-    safeWriteStorage(homeMoodboardKey, homeMoodboardSrc)
-  } catch {
-    setMoodboardError("Impossible díenregistrer le moodboard (stockage plein). Choisis une image plus lÈgËre.")
+  /** --- Persistance moodboard --- */
+  useEffect(() => {
+    try {
+      safeWriteStorage(homeMoodboardKey, homeMoodboardSrc)
+    } catch {
+      setMoodboardError("Impossible d‚Äôenregistrer le moodboard (stockage plein). Choisis une image plus l√©g√®re.")
+    }
+  }, [homeMoodboardKey, homeMoodboardSrc])
+
+  useEffect(() => {
+    localStorage.setItem(todosKey, JSON.stringify(todos))
+  }, [todosKey, todos])
+
+  useEffect(() => {
+    safeWriteStorage(cardTitlesKey, JSON.stringify(cardTitleOverrides))
+  }, [cardTitlesKey, cardTitleOverrides])
+
+  useEffect(() => {
+    safeWriteStorage(cardImagesKey, JSON.stringify(cardImageOverrides))
+  }, [cardImagesKey, cardImageOverrides])
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 60000)
+    return () => clearInterval(id)
+  }, [])
+
+  useEffect(() => {
+    const update = () => setProgress(computeProgress())
+    update()
+    const id = setInterval(update, 60000)
+    return () => clearInterval(id)
+  }, [])
+
+  useEffect(() => {
+    if (!openCardMenu) return
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement
+      if (target.closest(".profile-menu") || target.closest(".card-menu-popover")) return
+      setOpenCardMenu(null)
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [openCardMenu])
+
+  const addTodo = () => {
+    const text = todoInput.trim()
+    if (!text) return
+    setTodos((prev) => [{ id: `todo-${Date.now()}`, text, done: false }, ...prev])
+    setTodoInput("")
   }
-}, [homeMoodboardKey, homeMoodboardSrc])
 
-useEffect(() => {
-  localStorage.setItem(todosKey, JSON.stringify(todos))
-}, [todosKey, todos])
-
-useEffect(() => {
-  safeWriteStorage(cardTitlesKey, JSON.stringify(cardTitleOverrides))
-}, [cardTitlesKey, cardTitleOverrides])
-
-useEffect(() => {
-  safeWriteStorage(cardImagesKey, JSON.stringify(cardImageOverrides))
-}, [cardImagesKey, cardImageOverrides])
-
-useEffect(() => {
-  const id = setInterval(() => setNow(new Date()), 60000)
-  return () => clearInterval(id)
-}, [])
-
-useEffect(() => {
-  const update = () => setProgress(computeProgress())
-  update()
-  const id = setInterval(update, 60000)
-  return () => clearInterval(id)
-}, [])
-
-useEffect(() => {
-  if (!openCardMenu) return
-  const handleClickOutside = (event: MouseEvent) => {
-    const target = event.target as HTMLElement
-    if (target.closest(".profile-menu") || target.closest(".card-menu-popover")) return
-    setOpenCardMenu(null)
+  const toggleTodo = (id: string) => {
+    setTodos((prev) => prev.map((item) => (item.id === id ? { ...item, done: !item.done } : item)))
   }
-  document.addEventListener("mousedown", handleClickOutside)
-  return () => document.removeEventListener("mousedown", handleClickOutside)
-}, [openCardMenu])
 
-const addTodo = () => {
-  const text = todoInput.trim()
-  if (!text) return
-  setTodos((prev) => [{ id: `todo-${Date.now()}`, text, done: false }, ...prev])
-  setTodoInput("")
+  const deleteTodo = (id: string) => {
+    setTodos((prev) => prev.filter((item) => item.id !== id))
+  }
+
+  const handleProfileInput = async (event: ChangeEvent<HTMLInputElement>) => {
+    setProfileError(null)
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    if (!file.type.startsWith("image/")) {
+      setProfileError("Format non support√©. Choisis une image.")
+      event.target.value = ""
+      return
+    }
+
+
+ try {
+  const compressed = await fileToCompressedSquareDataUrl(file, { size: 320, quality: 0.82 })
+  setProfileSrc(compressed)
+} catch (e) {
+  setProfileError(e instanceof Error ? e.message : "Erreur lors du traitement de l‚Äôimage.")
+} finally {
+  event.target.value = ""
 }
-
-const toggleTodo = (id: string) => {
-  setTodos((prev) => prev.map((item) => (item.id === id ? { ...item, done: !item.done } : item)))
-}
-
-const deleteTodo = (id: string) => {
-  setTodos((prev) => prev.filter((item) => item.id !== id))
-}
-
-const handleProfileInput = async (event: ChangeEvent<HTMLInputElement>) => {
-  setProfileError(null)
-  const file = event.target.files?.[0]
-  if (!file) return
-
-  if (!file.type.startsWith("image/")) {
-    setProfileError("Format non supportÈ. Choisis une image.")
-    event.target.value = ""
-    return
-  }
-
-  try {
-    const compressed = await fileToCompressedSquareDataUrl(file, { size: 320, quality: 0.82 })
-    setProfileSrc(compressed)
-  } catch (e) {
-    setProfileError(e instanceof Error ? e.message : "Erreur lors du traitement de líimage.")
-  } finally {
-    event.target.value = ""
-  }
 }
 
 const resetProfilePhoto = () => {
@@ -436,7 +437,7 @@ const handleMoodboardInput = async (event: ChangeEvent<HTMLInputElement>) => {
   if (!file) return
 
   if (!file.type.startsWith("image/")) {
-    setMoodboardError("Format non supportÈ. Choisis une image.")
+    setMoodboardError("Format non support√©. Choisis une image.")
     event.target.value = ""
     return
   }
@@ -446,7 +447,7 @@ const handleMoodboardInput = async (event: ChangeEvent<HTMLInputElement>) => {
     const compressed = await fileToCompressedFitDataUrl(file, { maxSide: 1600, quality: 0.78 })
     setHomeMoodboardSrc(compressed)
   } catch (e) {
-    setMoodboardError(e instanceof Error ? e.message : "Erreur lors du traitement de líimage.")
+    setMoodboardError(e instanceof Error ? e.message : "Erreur lors du traitement de l‚Äôimage.")
   } finally {
     event.target.value = ""
   }
@@ -561,7 +562,7 @@ return (
         <div className="progress-panel">
           <div className="progress-row">
             <div className="progress-label">
-              <span>AnnÈe</span>
+              <span>Ann√©e</span>
               <span>{progress.year.toFixed(1)}%</span>
             </div>
             <div className="progress-bar">
@@ -579,7 +580,7 @@ return (
           </div>
           <div className="progress-row">
             <div className="progress-label">
-              <span>JournÈe</span>
+              <span>Journ√©e</span>
               <span>{progress.day.toFixed(1)}%</span>
             </div>
             <div className="progress-bar">
@@ -596,8 +597,8 @@ return (
           </div>
 
           <div className="todo-input">
-            <input type="text" value={todoInput} onChange={(e) => setTodoInput(e.target.value)} placeholder="Ajouter une t‚che" />
-            <button type="button" className="todo-add" onClick={addTodo} aria-label="Ajouter une t‚che">
+            <input type="text" value={todoInput} onChange={(e) => setTodoInput(e.target.value)} placeholder="Ajouter une t√¢che" />
+            <button type="button" className="todo-add" onClick={addTodo} aria-label="Ajouter une t√¢che">
               +
             </button>
           </div>
@@ -609,7 +610,7 @@ return (
                   <input type="checkbox" checked={item.done} onChange={() => toggleTodo(item.id)} />
                   <span>{item.text}</span>
                 </label>
-                <button type="button" onClick={() => deleteTodo(item.id)} aria-label="Supprimer la t‚che">
+                <button type="button" onClick={() => deleteTodo(item.id)} aria-label="Supprimer la t√¢che">
                   x
                 </button>
               </li>
@@ -622,7 +623,7 @@ return (
         <section className="home-hero-strip">
           <div className="home-hero-strip__center">
             <div className="today">{todayLabel()}</div>
-            <h1>Organise tes journÈes avec intention</h1>
+            <h1>Organise tes journ√©es avec intention</h1>
           </div>
         </section>
 
@@ -722,69 +723,69 @@ return (
         </section>
       </main>
 
-        <aside className="aside-left">
-  <div className="aside-title">Prochaines t‚ches</div>
-  <div className="task-window">
-    <div className="task-list">
-      {upcomingTasks.length > 0 ? (
-        upcomingTasks.map((task) => (
-          <article key={`${task.title}-${task.date}`} className="task-card">
-            <div className="task-card__header">
-              <p className="task-date">{formatDate(task.date)}</p>
-            </div>
-            <h4 className="task-title">{task.title}</h4>
-            {task.start || task.end ? (
-              <div className="task-meta">
-                <span className="task-time-chip">
-                  {task.start ?? ""} {task.end ? `- ${task.end}` : ""}
-                </span>
-              </div>
+      <aside className="aside-left">
+        <div className="aside-title">Prochaines t√¢ches</div>
+        <div className="task-window">
+          <div className="task-list">
+            {upcomingTasks.length > 0 ? (
+              upcomingTasks.map((task) => (
+                <article key={`${task.title}-${task.date}`} className="task-card">
+                  <div className="task-card__header">
+                    <p className="task-date">{formatDate(task.date)}</p>
+                  </div>
+                  <h4 className="task-title">{task.title}</h4>
+                  {task.start || task.end ? (
+                    <div className="task-meta">
+                      <span className="task-time-chip">
+                        {task.start ?? ""} {task.end ? `- ${task.end}` : ""}
+                      </span>
+                    </div>
+                  ) : null}
+                </article>
+              ))
+            ) : (
+              <article className="task-card">
+                <p className="task-title">Aucune t√¢che pr√©vue</p>
+                <p className="task-note">Ajoute une t√¢che dans le calendrier.</p>
+              </article>
+            )}
+          </div>
+        </div>
+      </aside>
+
+      {/* ? Moodboard (fix) */}
+      <section className="home-moodboard">
+        <div className="home-moodboard__top">
+          <div className="home-moodboard__top-actions">
+            <button type="button" className="home-moodboard__button" onClick={() => moodboardInputRef.current?.click()}>
+              Changer l'image
+            </button>
+            {isHomeCustom ? (
+              <button type="button" className="home-moodboard__reset" onClick={resetMoodboard}>
+                R√©initialiser
+              </button>
             ) : null}
-          </article>
-        ))
-      ) : (
-        <article className="task-card">
-          <p className="task-title">Aucune t‚che prÈvue</p>
-          <p className="task-note">Ajoute une t‚che dans le calendrier.</p>
-        </article>
-      )}
+          </div>
+
+          <input
+            ref={moodboardInputRef}
+            type="file"
+            accept="image/*"
+            className="home-moodboard__file-input"
+            onChange={handleMoodboardInput}
+          />
+        </div>
+
+        {moodboardError ? <p className="home-moodboard__error">{moodboardError}</p> : null}
+
+        <div className="home-moodboard__preview">
+          <img src={homeMoodboardSrc} alt="Moodboard personnalis√©" />
+        </div>
+      </section>
+
+      <div className="home-footer-bar" aria-hidden="true" />
     </div>
-  </div>
-</aside>
-
-{/* ? Moodboard (fix) */}
-<section className="home-moodboard">
-  <div className="home-moodboard__top">
-    <div className="home-moodboard__top-actions">
-      <button type="button" className="home-moodboard__button" onClick={() => moodboardInputRef.current?.click()}>
-        Changer l'image
-      </button>
-      {isHomeCustom ? (
-        <button type="button" className="home-moodboard__reset" onClick={resetMoodboard}>
-          RÈinitialiser
-        </button>
-      ) : null}
-    </div>
-
-    <input
-      ref={moodboardInputRef}
-      type="file"
-      accept="image/*"
-      className="home-moodboard__file-input"
-      onChange={handleMoodboardInput}
-    />
-  </div>
-
-  {moodboardError ? <p className="home-moodboard__error">{moodboardError}</p> : null}
-
-  <div className="home-moodboard__preview">
-    <img src={homeMoodboardSrc} alt="Moodboard personnalisÈ" />
-  </div>
-</section>
-
-<div className="home-footer-bar" aria-hidden="true" />
-</div>
-</>
+  </>
 )
 }
 

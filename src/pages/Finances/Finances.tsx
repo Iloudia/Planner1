@@ -432,7 +432,7 @@ const FinancePage = () => {
   const currentDate = useMemo(() => new Date(), [])
   const currentMonthKey = useMemo(() => getMonthKeyFromDate(currentDate), [currentDate])
   const selectedDirectionLabel = useMemo(() => {
-    return draft.direction === 'in' ? 'Revenus' : 'DǸpense'
+    return draft.direction === 'in' ? 'Revenus' : 'Dépense'
   }, [draft.direction])
   const selectedCategoryLabel = useMemo(() => {
     if (draft.direction !== 'out') {
@@ -774,227 +774,160 @@ const hasAdditionalHistory = selectedMonthEntries.length > previewHistory.length
 
       <section className="finance-dashboard">
         <div className="finance-dashboard__main">
-          <div className="finance-section-chip">
+          <section className="finance-summary dashboard-panel">
+            <div className="finance-section-chip">
             <span className="finance-section-chip__title">Répartition par catégorie</span>
             <div className="finance-section-chip__divider" aria-hidden="true" />
-          </div>
-          <section className="finance-summary dashboard-panel">
+            </div>
             <header className="finance-section-header">
-              <span className="finance-section-header__eyebrow">Vue d’ensemble</span>
-              <p>Repère rapidement les catégories qui te coûtent le plus</p>
+            <span className="finance-section-header__eyebrow">Vue d’ensemble</span>
+            <p>Repère rapidement les catégories qui te coûtent le plus</p>
             </header>
             <div className="finance-summary__grid">
-              {Object.entries(totals).map(([categoryKey, amount]) => {
-                const definition = categoryDefinitions[categoryKey as ExpenseCategory]
-                return (
-                  <article
-                    key={categoryKey}
-                    className="finance-summary__card"
-                    style={{ borderColor: definition.color, boxShadow: `0 32px 60px ${definition.color}33` }}
-                  >
-                    <span className="finance-summary__label">{definition.label}</span>
-                    <strong className="finance-summary__value">{euroFormatter.format(amount)}</strong>
-                  </article>
-                )
-              })}
+            {Object.entries(totals).map(([categoryKey, amount]) => {
+            const definition = categoryDefinitions[categoryKey as ExpenseCategory]
+            return (
+            <article
+            key={categoryKey}
+            className="finance-summary__card"
+            style={{ borderColor: definition.color, boxShadow: `0 32px 60px ${definition.color}33` }}
+            >
+            <span className="finance-summary__label">{definition.label}</span>
+            <strong className="finance-summary__value">{euroFormatter.format(amount)}</strong>
+            </article>
+            )
+            })}
             </div>
-          </section>
+            </section>
 
-          <div className="finance-section-chip">
+          <section className="finance-form dashboard-panel">
+            <div className="finance-section-chip">
             <span className="finance-section-chip__title">Ajouter une dépense</span>
             <div className="finance-section-chip__divider" aria-hidden="true" />
-          </div>
-          <section className="finance-form dashboard-panel">
+            </div>
             <header className="finance-section-header">
-              <span className="finance-section-header__eyebrow">ajoute ton mouvement</span>
-              <p>Enregistre en un instant les dépenses et les revenus du mois.</p>
+            <span className="finance-section-header__eyebrow">ajoute ton mouvement</span>
+            <p>Enregistre en un instant les dépenses et les revenus du mois.</p>
             </header>
             <form onSubmit={handleSubmit} className="finance-form__grid">
-              <label className="finance-form__field">
-                <span>Intitule</span>
-                <input
-                  type="text"
-                  value={draft.label}
-                  onChange={(event) => handleDraftChange('label', event.target.value)}
-                  placeholder="Ex: Courses semaine"
-                />
-              </label>
-              <label className="finance-form__field">
-                <span>Montant</span>
-                <input
-                  type="text"
-                  value={draft.amount}
-                  onChange={(event) => handleDraftChange('amount', event.target.value)}
-                  placeholder="Ex: 45.90"
-                  required
-                />
-              </label>
-              <label className="finance-form__field">
-                <span>Type</span>
-                <div className="finance-form__select-field" ref={directionMenuRef}>
-                  <button
-                    type="button"
-                    className="finance-form__select-trigger"
-                    aria-haspopup="listbox"
-                    aria-expanded={isDirectionMenuOpen}
-                    onClick={() => setIsDirectionMenuOpen((previous) => !previous)}
-                  >
-                    <span>{selectedDirectionLabel}</span>
-                    <svg className="finance-form__select-chevron" viewBox="0 0 20 20" aria-hidden="true">
-                      <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </button>
-                  {isDirectionMenuOpen ? (
-                    <div className="finance-form__select-menu" role="listbox">
-                      <button
-                        type="button"
-                        role="option"
-                        aria-selected={draft.direction === 'out'}
-                        className={draft.direction === 'out' ? 'is-selected' : undefined}
-                        onClick={() => {
-                          handleDraftChange('direction', 'out')
-                          setIsDirectionMenuOpen(false)
-                        }}
-                      >
-                        DǸpense
-                      </button>
-                      <button
-                        type="button"
-                        role="option"
-                        aria-selected={draft.direction === 'in'}
-                        className={draft.direction === 'in' ? 'is-selected' : undefined}
-                        onClick={() => {
-                          handleDraftChange('direction', 'in')
-                          setIsDirectionMenuOpen(false)
-                        }}
-                      >
-                        Revenus
-                      </button>
-                    </div>
-                  ) : null}
-                </div>
-              </label>
-              {draft.direction === 'out' && (
-                <label className="finance-form__field">
-                  <span>Categorie</span>
-                  <div className="finance-form__select-field" ref={categoryMenuRef}>
-                    <button
-                      type="button"
-                      className="finance-form__select-trigger"
-                      aria-haspopup="listbox"
-                      aria-expanded={isCategoryMenuOpen}
-                      onClick={() => setIsCategoryMenuOpen((previous) => !previous)}
-                    >
-                      <span>{selectedCategoryLabel}</span>
-                      <svg className="finance-form__select-chevron" viewBox="0 0 20 20" aria-hidden="true">
-                        <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </button>
-                    {isCategoryMenuOpen ? (
-                      <div className="finance-form__select-menu" role="listbox">
-                        {Object.entries(categoryDefinitions).map(([value, definition]) => (
-                          <button
-                            key={value}
-                            type="button"
-                            role="option"
-                            aria-selected={draft.category === value}
-                            className={draft.category === value ? 'is-selected' : undefined}
-                            onClick={() => {
-                              handleDraftChange('category', value as ExpenseCategory)
-                              setIsCategoryMenuOpen(false)
-                            }}
-                          >
-                            {definition.label}
-                          </button>
-                        ))}
-                      </div>
-                    ) : null}
-                  </div>
-                </label>
-              )}
-              <label className="finance-form__field">
-                <span>Date</span>
-                <input
-                  type="date"
-                  value={draft.date}
-                  onChange={(event) => handleDraftChange('date', event.target.value)}
-                  required
-                />
-              </label>
-              <button type="submit" className="finance-form__submit">
-                Ajouter
-              </button>
-            </form>
-          </section>
-
-          <section className="finance-inspiration dashboard-panel">
-            <img src={financeInspirationImage.src} alt={financeInspirationImage.alt} />
-          </section>
-        </div>
-
-        <aside className="finance-dashboard__aside">
-          <div className="finance-section-chip">
-            <span className="finance-section-chip__title">Balance du mois</span>
-            <div className="finance-section-chip__divider" aria-hidden="true" />
-          </div>
-          <section className="finance-balance dashboard-panel">
-            <header className="finance-section-header finance-section-header--vertical">
-              <span className="finance-section-header__eyebrow">suivi du mois</span>
-              <p>Définis ton solde de départ pour un suivi précis</p>
-            </header>
-            <form className="finance-balance__form" onSubmit={handleStartingAmountSubmit}>
-              <label className="finance-balance__field">
-                <span>Argent au début du mois</span>
-                <input
-                  type="text"
-                  value={startingAmountDraft}
-                  onChange={(event) => setStartingAmountDraft(event.target.value)}
-                  placeholder="Ex: 1200"
-                />
-              </label>
-              <button type="submit" className="finance-balance__action">
-                Enregistrer
-              </button>
-            </form>
-            <div className="finance-balance__stats">
-              <article className="finance-balance__stat">
-                <span>Argent au début</span>
-                <strong>{euroFormatter.format(startingAmountValue)}</strong>
-              </article>
-              <article className="finance-balance__stat">
-                <span>Revenus</span>
-                <strong>{formatSignedCurrency(totalIncome)}</strong>
-              </article>
-              <article className="finance-balance__stat">
-                <span>Dépenses</span>
-                <strong>{formatSignedCurrency(-totalSpent)}</strong>
-              </article>
-              <article className="finance-balance__stat">
-                <span>Argent à la fin</span>
-                <strong>{euroFormatter.format(endingAmount)}</strong>
-              </article>
+            <label className="finance-form__field">
+            <span>Intitule</span>
+            <input
+            type="text"
+            value={draft.label}
+            onChange={(event) => handleDraftChange('label', event.target.value)}
+            placeholder="Ex: Courses semaine"
+            />
+            </label>
+            <label className="finance-form__field">
+            <span>Montant</span>
+            <input
+            type="text"
+            value={draft.amount}
+            onChange={(event) => handleDraftChange('amount', event.target.value)}
+            placeholder="Ex: 45.90"
+            required
+            />
+            </label>
+            <label className="finance-form__field">
+            <span>Type</span>
+            <div className="finance-form__select-field" ref={directionMenuRef}>
+            <button
+            type="button"
+            className="finance-form__select-trigger"
+            aria-haspopup="listbox"
+            aria-expanded={isDirectionMenuOpen}
+            onClick={() => setIsDirectionMenuOpen((previous) => !previous)}
+            >
+            <span>{selectedDirectionLabel}</span>
+            <svg className="finance-form__select-chevron" viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            </button>
+            {isDirectionMenuOpen ? (
+            <div className="finance-form__select-menu" role="listbox">
+            <button
+            type="button"
+            role="option"
+            aria-selected={draft.direction === 'out'}
+            className={draft.direction === 'out' ? 'is-selected' : undefined}
+            onClick={() => {
+            handleDraftChange('direction', 'out')
+            setIsDirectionMenuOpen(false)
+            }}
+            >
+            Dépense
+            </button>
+            <button
+            type="button"
+            role="option"
+            aria-selected={draft.direction === 'in'}
+            className={draft.direction === 'in' ? 'is-selected' : undefined}
+            onClick={() => {
+            handleDraftChange('direction', 'in')
+            setIsDirectionMenuOpen(false)
+            }}
+            >
+            Revenus
+            </button>
             </div>
-            <div className="finance-balance__chart-card">
-                <h3>Diagramme en fromage</h3>
-                {hasPieData ? (
-                  <div className="finance-pie">
-                    <div className="finance-pie__figure" style={{ backgroundImage: pieBackground }} />
-                    <ul className="finance-pie__legend">
-                      {pieSegments.map((segment) => (
-                        <li key={segment.label}>
-                          <span className="finance-pie__swatch" style={{ backgroundColor: segment.color }} />
-                          <span className="finance-pie__label">{segment.label}</span>
-                          <span className="finance-pie__value">{euroFormatter.format(segment.value)}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : (
-                  <p className="finance-balance__empty">Ajoute une dépense pour visualiser la répartition.</p>
-                )}
+            ) : null}
             </div>
-          </section>
-          <section className="finance-history dashboard-panel">
+            </label>
+            {draft.direction === 'out' && (
+            <label className="finance-form__field">
+            <span>Categorie</span>
+            <div className="finance-form__select-field" ref={categoryMenuRef}>
+            <button
+            type="button"
+            className="finance-form__select-trigger"
+            aria-haspopup="listbox"
+            aria-expanded={isCategoryMenuOpen}
+            onClick={() => setIsCategoryMenuOpen((previous) => !previous)}
+            >
+            <span>{selectedCategoryLabel}</span>
+            <svg className="finance-form__select-chevron" viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            </button>
+            {isCategoryMenuOpen ? (
+            <div className="finance-form__select-menu" role="listbox">
+            {Object.entries(categoryDefinitions).map(([value, definition]) => (
+            <button
+            key={value}
+            type="button"
+            role="option"
+            aria-selected={draft.category === value}
+            className={draft.category === value ? 'is-selected' : undefined}
+            onClick={() => {
+            handleDraftChange('category', value as ExpenseCategory)
+            setIsCategoryMenuOpen(false)
+            }}
+            >
+            {definition.label}
+            </button>
+            ))}
+            </div>
+            ) : null}
+            </div>
+            </label>
+            )}
+            <label className="finance-form__field">
+            <span>Date</span>
+            <input
+            type="date"
+            value={draft.date}
+            onChange={(event) => handleDraftChange('date', event.target.value)}
+            required
+            />
+            </label>
+            <button type="submit" className="finance-form__submit">
+            Ajouter
+            </button>
+            </form>
+            </section>
+
+<section className="finance-history dashboard-panel">
             <header className="finance-section-header">
           <div className="finance-history__header">
             <div className="finance-history__title">
@@ -1065,6 +998,72 @@ const hasAdditionalHistory = selectedMonthEntries.length > previewHistory.length
               </div>
             )}
           </section>
+            
+            </div>
+            
+            <aside className="finance-dashboard__aside">
+          <section className="finance-balance dashboard-panel">
+            <div className="finance-section-chip">
+            <span className="finance-section-chip__title">Balance du mois</span>
+            <div className="finance-section-chip__divider" aria-hidden="true" />
+            </div>
+            <header className="finance-section-header finance-section-header--vertical">
+              <span className="finance-section-header__eyebrow">suivi du mois</span>
+              <p>Définis ton solde de départ pour un suivi précis</p>
+            </header>
+            <form className="finance-balance__form" onSubmit={handleStartingAmountSubmit}>
+              <label className="finance-balance__field">
+                <span>Argent au début du mois</span>
+                <input
+                  type="text"
+                  value={startingAmountDraft}
+                  onChange={(event) => setStartingAmountDraft(event.target.value)}
+                  placeholder="Ex: 1200"
+                />
+              </label>
+              <button type="submit" className="finance-balance__action">
+                Enregistrer
+              </button>
+            </form>
+            <div className="finance-balance__stats">
+              <article className="finance-balance__stat">
+                <span>Argent au début</span>
+                <strong>{euroFormatter.format(startingAmountValue)}</strong>
+              </article>
+              <article className="finance-balance__stat">
+                <span>Revenus</span>
+                <strong>{formatSignedCurrency(totalIncome)}</strong>
+              </article>
+              <article className="finance-balance__stat">
+                <span>Dépenses</span>
+                <strong>{formatSignedCurrency(-totalSpent)}</strong>
+              </article>
+              <article className="finance-balance__stat">
+                <span>Argent à la fin</span>
+                <strong>{euroFormatter.format(endingAmount)}</strong>
+              </article>
+            </div>
+            <div className="finance-balance__chart-card">
+                <h3>Diagramme en fromage</h3>
+                {hasPieData ? (
+                  <div className="finance-pie">
+                    <div className="finance-pie__figure" style={{ backgroundImage: pieBackground }} />
+                    <ul className="finance-pie__legend">
+                      {pieSegments.map((segment) => (
+                        <li key={segment.label}>
+                          <span className="finance-pie__swatch" style={{ backgroundColor: segment.color }} />
+                          <span className="finance-pie__label">{segment.label}</span>
+                          <span className="finance-pie__value">{euroFormatter.format(segment.value)}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : (
+                  <p className="finance-balance__empty">Ajoute une dépense pour visualiser la répartition.</p>
+                )}
+            </div>
+          </section>
+          
         </aside>
       </section>
 

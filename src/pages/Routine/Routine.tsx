@@ -62,7 +62,7 @@ const RoutineChecklist = ({
                 onClick={() => onRemoveItem(item.id)}
                 aria-label={`Supprimer ${item.title}`}
               >
-                ×
+                Ã—
               </button>
             </div>
           ) : null}
@@ -101,11 +101,11 @@ const RoutineComposer = ({
         maxLength={ROUTINE_FIELD_MAX_LENGTH}
       />
       {draft.title.length >= ROUTINE_FIELD_MAX_LENGTH ? (
-        <span className="routine-note__composer-hint">Limite de 67 caractères atteinte.</span>
+        <span className="routine-note__composer-hint">Limite de 67 caractÃ¨res atteinte.</span>
       ) : null}
     </label>
     <label>
-      <span>Détail (optionnel)</span>
+      <span>DÃ©tail (optionnel)</span>
       <textarea
         value={draft.detail}
         onChange={(event) => onDraftChange('detail', event.target.value.slice(0, ROUTINE_FIELD_MAX_LENGTH))}
@@ -114,7 +114,7 @@ const RoutineComposer = ({
         maxLength={ROUTINE_FIELD_MAX_LENGTH}
       />
       {draft.detail.length >= ROUTINE_FIELD_MAX_LENGTH ? (
-        <span className="routine-note__composer-hint">Limite de 67 caractères atteinte.</span>
+        <span className="routine-note__composer-hint">Limite de 67 caractÃ¨res atteinte.</span>
       ) : null}
     </label>
     <button type="submit" className="routine-note__composer-submit">
@@ -230,9 +230,9 @@ const RoutinePage = () => {
               draft={routineDrafts.morning}
               onDraftChange={(field, value) => handleRoutineDraftChange('morning', field, value)}
               onSubmit={handleRoutineSubmit('morning')}
-              buttonLabel="Ajouter à ma routine du matin"
-              placeholderTitle="Ex : Boire un verre d’eau tiède citronné"
-              placeholderDetail="Ex : Durée, intention..."
+              buttonLabel="Ajouter Ã  ma routine du matin"
+              placeholderTitle="Ex : Boire un verre dâ€™eau tiÃ¨de citronnÃ©"
+              placeholderDetail="Ex : DurÃ©e, intention..."
             />
           </div>
         </section>
@@ -258,9 +258,9 @@ const RoutinePage = () => {
               draft={routineDrafts.evening}
               onDraftChange={(field, value) => handleRoutineDraftChange('evening', field, value)}
               onSubmit={handleRoutineSubmit('evening')}
-              buttonLabel="Ajouter à ma routine du soir"
-              placeholderTitle="Ex : Préparer mes vêtements pour demain"
-              placeholderDetail="Ex : Durée, intention..."
+              buttonLabel="Ajouter Ã  ma routine du soir"
+              placeholderTitle="Ex : PrÃ©parer mes vÃªtements pour demain"
+              placeholderDetail="Ex : DurÃ©e, intention..."
             />
           </div>
         </section>

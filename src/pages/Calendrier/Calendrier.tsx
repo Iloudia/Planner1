@@ -278,419 +278,419 @@ const CalendrierPage = () => {
     })
   }
 
-  const handleSubmitNewTask = (event: FormEvent<HTMLFormElement>) => {
+ const handleSubmitNewTask = (event: FormEvent<HTMLFormElement>) => {
+  event.preventDefault()
+  setNewTaskError(null)
+  const title = newTaskForm.title.trim()
+  if (!title) {
+    setNewTaskError("Ajoute un titre Ã  ton bloc.")
+    return
+  }
+  if (!newTaskForm.repeatStart || !newTaskForm.repeatEnd) {
+    setNewTaskError("SÃ©lectionne une pÃ©riode valide.")
+    return
+  }
+  const startDate = parseDateKey(newTaskForm.repeatStart)
+  const endDate = parseDateKey(newTaskForm.repeatEnd)
+  if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+    setNewTaskError("Impossible de comprendre ces dates.")
+    return
+  }
+  if (startDate.getTime() > endDate.getTime()) {
+    setNewTaskError("La date de fin doit Ãªtre postÃ©rieure Ã  la date de dÃ©but.")
+    return
+  }
+
+  const dateKeys: string[] = []
+  for (let cursor = new Date(startDate); cursor.getTime() <= endDate.getTime(); cursor.setDate(cursor.getDate() + 1)) {
+    dateKeys.push(getDateKey(cursor))
+  }
+
+  const startTime = newTaskForm.start.trim().length > 0 ? newTaskForm.start : "09:00"
+  const endTime = newTaskForm.end.trim().length > 0 ? newTaskForm.end : "10:00"
+  const color = newTaskForm.color || newTaskColors[0]
+
+  dateKeys.forEach((dateKey) => {
+    addTask({
+      id: `task-${dateKey}-${Math.random().toString(36).slice(2, 8)}`,
+      title,
+      start: startTime,
+      end: endTime,
+      date: dateKey,
+      color,
+      tag: newTaskForm.category,
+    })
+  })
+
+  setNewTaskForm((previous) => ({
+    ...previous,
+    title: "",
+  }))
+  setNewTaskError(null)
+}
+
+const handleDayKeyDown = (event: KeyboardEvent<HTMLDivElement>, dateKey: string) => {
+  if (event.key === "Enter" || event.key === " ") {
     event.preventDefault()
-    setNewTaskError(null)
-    const title = newTaskForm.title.trim()
-    if (!title) {
-      setNewTaskError('Ajoute un titre a ton bloc.')
-      return
-    }
-    if (!newTaskForm.repeatStart || !newTaskForm.repeatEnd) {
-      setNewTaskError('Selectionne une periode valide.')
-      return
-    }
-    const startDate = parseDateKey(newTaskForm.repeatStart)
-    const endDate = parseDateKey(newTaskForm.repeatEnd)
-    if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
-      setNewTaskError('Impossible de comprendre ces dates.')
-      return
-    }
-    if (startDate.getTime() > endDate.getTime()) {
-      setNewTaskError('La date de fin doit etre posterieure a la date de debut.')
-      return
-    }
-
-    const dateKeys: string[] = []
-    for (let cursor = new Date(startDate); cursor.getTime() <= endDate.getTime(); cursor.setDate(cursor.getDate() + 1)) {
-      dateKeys.push(getDateKey(cursor))
-    }
-
-    const startTime = newTaskForm.start.trim().length > 0 ? newTaskForm.start : '09:00'
-    const endTime = newTaskForm.end.trim().length > 0 ? newTaskForm.end : '10:00'
-    const color = newTaskForm.color || newTaskColors[0]
-
-    dateKeys.forEach((dateKey) => {
-      addTask({
-        id: `task-${dateKey}-${Math.random().toString(36).slice(2, 8)}`,
-        title,
-        start: startTime,
-        end: endTime,
-        date: dateKey,
-        color,
-        tag: newTaskForm.category,
-      })
-    })
-
-    setNewTaskForm((previous) => ({
-      ...previous,
-      title: '',
-    }))
-    setNewTaskError(null)
+    handleDaySelect(dateKey)
   }
+}
 
-  const handleDayKeyDown = (event: KeyboardEvent<HTMLDivElement>, dateKey: string) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault()
-      handleDaySelect(dateKey)
+const cells = useMemo(() => {
+  return Array.from({ length: totalCells }, (_, index) => {
+    const dayNumber = index - offset + 1
+    if (dayNumber < 1 || dayNumber > daysInMonth) {
+      return { key: `empty-${index}`, day: null as number | null, dateKey: null, tasks: [], isToday: false }
     }
-  }
 
-  const cells = useMemo(() => {
-    return Array.from({ length: totalCells }, (_, index) => {
-      const dayNumber = index - offset + 1
-      if (dayNumber < 1 || dayNumber > daysInMonth) {
-        return { key: `empty-${index}`, day: null as number | null, dateKey: null, tasks: [], isToday: false }
-      }
+    const currentDate = new Date(year, month, dayNumber)
+    const dateKey = getDateKey(currentDate)
+    return {
+      key: dateKey,
+      dateKey,
+      day: dayNumber,
+      tasks: tasksByDate.get(dateKey) ?? [],
+      isToday:
+        dayNumber === today.getDate() && month === today.getMonth() && year === today.getFullYear(),
+    }
+  })
+}, [daysInMonth, month, offset, tasksByDate, today, totalCells, year])
 
-      const currentDate = new Date(year, month, dayNumber)
-      const dateKey = getDateKey(currentDate)
-      return {
-        key: dateKey,
-        dateKey,
-        day: dayNumber,
-        tasks: tasksByDate.get(dateKey) ?? [],
-        isToday:
-          dayNumber === today.getDate() && month === today.getMonth() && year === today.getFullYear(),
-      }
-    })
-  }, [daysInMonth, month, offset, tasksByDate, today, totalCells, year])
+const totalScheduled = tasks.length
 
-  const totalScheduled = tasks.length
+return (
+  <div className="calendar-page">
+    <section className="calendar-hero">
+      <div className="calendar-hero__content">
+        <h1>Orchestre ton mois avec intention et douceur.</h1>
+        <p>
+          Visualise en un coup dâ€™Å“il tes rendez-vous clÃ©s, tes temps de pause et tes moments de crÃ©ation.
+        </p>
+        <div className="calendar-hero__actions">
+          <button
+            type="button"
+            className="calendar-hero__cta calendar-hero__cta--primary"
+            onClick={() => handlePlanForDate(getDateKey(today))}
+          >
+            Planifier un Ã©vÃ©nement aujourd'hui
+          </button>
+          <button
+            type="button"
+            className="calendar-hero__cta calendar-hero__cta--ghost"
+            onClick={() => {
+              const tomorrow = new Date(today)
+              tomorrow.setDate(tomorrow.getDate() + 1)
+              handlePlanForDate(getDateKey(tomorrow))
+            }}
+          >
+            Planifier un Ã©vÃ©nement demain
+          </button>
+        </div>
+        
 
-  return (
-    <div className="calendar-page">
-      <section className="calendar-hero">
-        <div className="calendar-hero__content">
-          <h1>Orchestre ton mois avec intention et douceur.</h1>
+        <div className="calendar-hero__stats">
+          {heroStats.map((stat) => (
+            <article key={stat.id}>
+              <span>{stat.label}</span>
+              <strong>{stat.value}</strong>
+            </article>
+          ))}
+        </div>
+      </div>
+      
+      <div className="calendar-hero__panel">
+        <div className="calendar-next">
+          <span className="calendar-next__label">Prochain rendez-vous</span>
+          <strong>{nextTask ? nextTask.title : "Rien de planifiÃ© pour le moment."}</strong>
           <p>
-            Visualise en un coup d’œil tes rendez-vous clés, tes temps de pause et tes moments de création. 
+            {nextTask ? `${nextTaskLabel} - ${nextTask.start} - ${nextTask.end}` : "Ajoute un crÃ©neau."}
           </p>
-          <div className="calendar-hero__actions">
-            <button
-              type="button"
-              className="calendar-hero__cta calendar-hero__cta--primary"
-              onClick={() => handlePlanForDate(getDateKey(today))}
-            >
-              Planifier un évènement aujourd'hui
+          {nextTask?.tag ? <span className="calendar-next__tag">{nextTask.tag}</span> : null}
+        </div>
+      </div>
+    </section>
+    <div className="page-accent-bar" aria-hidden="true" />
+
+    <header className="calendar-header">
+      <PageHeading eyebrow="calendrier mensuel" title="Calendrier Mensuel" />
+      <div className="calendar-month-nav">
+        <button type="button" onClick={() => handleMonthChange(-1)} aria-label="Mois prÃ©cÃ©dent">
+          &lt;
+        </button>
+        <button type="button" onClick={() => handleMonthChange(1)} aria-label="Mois suivant">
+          &gt;
+        </button>
+      </div>
+    </header>
+
+    <div className="calendar-grid">
+      {weekDays.map((label) => (
+        <div key={label} className="calendar-grid__weekday">
+          {label}
+        </div>
+      ))}
+
+      {cells.map((cell) =>
+        cell.day === null || cell.dateKey === null ? (
+          <div key={cell.key} className="calendar-day calendar-day--empty" />
+        ) : (
+          <div
+            key={cell.key}
+            className={`calendar-day${cell.isToday ? " calendar-day--today" : ""}`}
+            onClick={() => handleDaySelect(cell.dateKey!)}
+            onKeyDown={(event) => handleDayKeyDown(event, cell.dateKey!)}
+            role="button"
+            tabIndex={0}
+            aria-label={`Voir la journÃ©e du ${cell.dateKey}`}
+          >
+            <div className="calendar-day__header">
+              <span className="calendar-day__number">{cell.day}</span>
+              <button
+                type="button"
+                className="calendar-day__add"
+                onClick={(event) => {
+                  event.stopPropagation()
+                  handlePlanForDate(cell.dateKey!)
+                }}
+                aria-label={`Ajouter une tÃ¢che le ${cell.dateKey}`}
+              >
+                +
+              </button>
+            </div>
+            {cell.tasks[0] ? (
+              <>
+                <div
+                  className="calendar-day__preview"
+                  style={{
+                    background: `linear-gradient(135deg, ${withAlpha(cell.tasks[0].color, 0.12)} 0%, ${withAlpha(
+                      cell.tasks[0].color,
+                      0.32,
+                    )} 100%)`,
+                  }}
+                >
+                  <span className="calendar-day__preview-time">
+                    {cell.tasks[0].start} - {cell.tasks[0].end}
+                  </span>
+                  <span className="calendar-day__preview-title">{cell.tasks[0].title}</span>
+                </div>
+                {cell.tasks.length > 1 ? (
+                  <span className="calendar-day__more">+ {cell.tasks.length - 1} autres moments</span>
+                ) : null}
+              </>
+            ) : (
+              <span className="calendar-day__empty">Rien de prÃ©vu</span>
+            )}
+          </div>
+        ),
+      )}
+    </div>
+
+    {isDayModalOpen && activeDateKey ? (
+      <div className="calendar-modal" role="dialog" aria-modal="true" aria-labelledby="calendar-modal-title">
+        <div className="calendar-modal__backdrop" onClick={handleCloseModal} aria-hidden="true" />
+        <div className="calendar-modal__panel">
+          <header className="calendar-modal__header">
+            <div>
+              <span className="calendar-modal__eyebrow">sÃ©ance du jour</span>
+              <h2 id="calendar-modal-title">{activeDateLabel}</h2>
+              <p>
+                {activeDateTasks.length > 0
+                  ? activeDateTasks.length === 1
+                    ? "1 crÃ©neau."
+                    : `${activeDateTasks.length} crÃ©neaux.`
+                  : "Aucun crÃ©neau pour l'instant, profite pour en poser un."}
+              </p>
+            </div>
+            <button type="button" className="modal__close" onClick={handleCloseModal} aria-label="Fermer">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
             </button>
+          </header>
+
+          <div className="calendar-modal__actions">
             <button
               type="button"
               className="calendar-hero__cta calendar-hero__cta--ghost"
-              onClick={() => {
-                const tomorrow = new Date(today)
-                tomorrow.setDate(tomorrow.getDate() + 1)
-                handlePlanForDate(getDateKey(tomorrow))
-              }}
+              onClick={handleResetDay}
             >
-              Planifier un évènement demain
+              RÃ©initialiser la journÃ©e
             </button>
           </div>
-          
 
-          <div className="calendar-hero__stats">
-            {heroStats.map((stat) => (
-              <article key={stat.id}>
-                <span>{stat.label}</span>
-                <strong>{stat.value}</strong>
-              </article>
-            ))}
-          </div>
-        </div>
-        
-        <div className="calendar-hero__panel">
-          <div className="calendar-next">
-            <span className="calendar-next__label">Prochain rendez-vous</span>
-            <strong>{nextTask ? nextTask.title : 'Rien de planifié pour le moment.'}</strong>
-            <p>
-              {nextTask ? `${nextTaskLabel} - ${nextTask.start} - ${nextTask.end}` : 'Ajoute un créneau.'}
-            </p>
-            {nextTask?.tag ? <span className="calendar-next__tag">{nextTask.tag}</span> : null}
-          </div>
-        </div>
-      </section>
-      <div className="page-accent-bar" aria-hidden="true" />
-
-      <header className="calendar-header">
-        <PageHeading eyebrow="calendrier mensuel" title="Calendrier Mensuel" />
-        <div className="calendar-month-nav">
-          <button type="button" onClick={() => handleMonthChange(-1)} aria-label="Mois precedent">
-            &lt;
-          </button>
-          <button type="button" onClick={() => handleMonthChange(1)} aria-label="Mois suivant">
-            &gt;
-          </button>
-        </div>
-      </header>
-
-      <div className="calendar-grid">
-        {weekDays.map((label) => (
-          <div key={label} className="calendar-grid__weekday">
-            {label}
-          </div>
-        ))}
-
-        {cells.map((cell) =>
-          cell.day === null || cell.dateKey === null ? (
-            <div key={cell.key} className="calendar-day calendar-day--empty" />
-          ) : (
-            <div
-              key={cell.key}
-              className={`calendar-day${cell.isToday ? ' calendar-day--today' : ''}`}
-              onClick={() => handleDaySelect(cell.dateKey!)}
-              onKeyDown={(event) => handleDayKeyDown(event, cell.dateKey!)}
-              role="button"
-              tabIndex={0}
-              aria-label={`Voir la journee du ${cell.dateKey}`}
-            >
-              <div className="calendar-day__header">
-                <span className="calendar-day__number">{cell.day}</span>
-                <button
-                  type="button"
-                  className="calendar-day__add"
-                  onClick={(event) => {
-                    event.stopPropagation()
-                    handlePlanForDate(cell.dateKey!)
-                  }}
-                  aria-label={`Ajouter une tache le ${cell.dateKey}`}
-                >
-                  +
-                </button>
-              </div>
-              {cell.tasks[0] ? (
-                <>
-                  <div
-                    className="calendar-day__preview"
-                    style={{
-                      background: `linear-gradient(135deg, ${withAlpha(cell.tasks[0].color, 0.12)} 0%, ${withAlpha(
-                        cell.tasks[0].color,
-                        0.32,
-                      )} 100%)`,
-                    }}
-                  >
-                    <span className="calendar-day__preview-time">
-                      {cell.tasks[0].start} - {cell.tasks[0].end}
-                    </span>
-                    <span className="calendar-day__preview-title">{cell.tasks[0].title}</span>
-                  </div>
-                  {cell.tasks.length > 1 ? (
-                    <span className="calendar-day__more">+ {cell.tasks.length - 1} autres moments</span>
-                  ) : null}
-                </>
-              ) : (
-                <span className="calendar-day__empty">Rien de prévu</span>
-              )}
+          <div className="calendar-modal__columns">
+          <section className="calendar-modal__section">
+            <div className="calendar-modal__section-header">
+              <h3>Programmer un bloc</h3>
             </div>
-          ),
-        )}
-      </div>
-
-      {isDayModalOpen && activeDateKey ? (
-        <div className="calendar-modal" role="dialog" aria-modal="true" aria-labelledby="calendar-modal-title">
-          <div className="calendar-modal__backdrop" onClick={handleCloseModal} aria-hidden="true" />
-          <div className="calendar-modal__panel">
-            <header className="calendar-modal__header">
-              <div>
-                <span className="calendar-modal__eyebrow">seance du jour</span>
-                <h2 id="calendar-modal-title">{activeDateLabel}</h2>
-                <p>
-                  {activeDateTasks.length > 0
-                    ? activeDateTasks.length === 1
-                      ? '1 créneau.'
-                      : `${activeDateTasks.length} creneaux.`
-                    : "Aucun créneau pour l'instant, profite pour en poser un."}
-                </p>
-              </div>
-              <button type="button" className="modal__close" onClick={handleCloseModal} aria-label="Fermer">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                </svg>
-              </button>
-            </header>
-
-            <div className="calendar-modal__actions">
-              <button
-                type="button"
-                className="calendar-hero__cta calendar-hero__cta--ghost"
-                onClick={handleResetDay}
-              >
-                Réinitialiser la journée
-              </button>
-            </div>
-
-            <div className="calendar-modal__columns">
-            <section className="calendar-modal__section">
-              <div className="calendar-modal__section-header">
-                <h3>Programmer un bloc</h3>
-              </div>
-              <form className="calendar-new-task" onSubmit={handleSubmitNewTask}>
-                <label className="calendar-task__field calendar-task__field--full">
-                  <span>Titre</span>
+            <form className="calendar-new-task" onSubmit={handleSubmitNewTask}>
+              <label className="calendar-task__field calendar-task__field--full">
+                <span>Titre</span>
+                <input
+                  type="text"
+                  value={newTaskForm.title}
+                  onChange={(event) => handleNewTaskFieldChange("title", event.target.value)}
+                  placeholder="Bloc deep work, rendez-vous, self-care..."
+                  required
+                />
+              </label>
+              <div className="calendar-task__form-row">
+                <label className="calendar-task__field">
+                  <span>DÃ©but</span>
                   <input
-                    type="text"
-                    value={newTaskForm.title}
-                    onChange={(event) => handleNewTaskFieldChange('title', event.target.value)}
-                    placeholder="Bloc deep work, rendez-vous, self-care..."
+                    type="time"
+                    value={newTaskForm.start}
+                    onChange={(event) => handleNewTaskFieldChange("start", event.target.value)}
                     required
                   />
                 </label>
-                <div className="calendar-task__form-row">
-                  <label className="calendar-task__field">
-                    <span>Début</span>
-                    <input
-                      type="time"
-                      value={newTaskForm.start}
-                      onChange={(event) => handleNewTaskFieldChange('start', event.target.value)}
-                      required
-                    />
-                  </label>
-                  <label className="calendar-task__field">
-                    <span>Fin</span>
-                    <input
-                      type="time"
-                      value={newTaskForm.end}
-                      onChange={(event) => handleNewTaskFieldChange('end', event.target.value)}
-                      required
-                    />
-                  </label>
-                </div>
-                <div className="calendar-task__form-row">
-                  <label className="calendar-task__field">
-                    <span>Du</span>
-                    <input
-                      type="date"
-                      value={newTaskForm.repeatStart}
-                      onChange={(event) => handleNewTaskFieldChange('repeatStart', event.target.value)}
-                    />
-                  </label>
-                  <label className="calendar-task__field">
-                    <span>Au</span>
-                    <input
-                      type="date"
-                      value={newTaskForm.repeatEnd}
-                      min={newTaskForm.repeatStart}
-                      onChange={(event) => handleNewTaskFieldChange('repeatEnd', event.target.value)}
-                    />
-                  </label>
-                </div>
-                <div className="calendar-task__form-row calendar-task__form-row--split">
-                  <label className="calendar-task__field calendar-task__field--full calendar-task__field--color">
-                    <span>Couleur</span>
-                    <input
-                      type="color"
-                      value={newTaskForm.color}
-                      onChange={(event) => handleNewTaskFieldChange('color', event.target.value)}
-                      required
-                    />
-                  </label>
-                  <div className="calendar-task__type-toggle">
-                    <span>Type</span>
-                    <div className="calendar-task__type-buttons">
-                      {(['Perso', 'Professionnel'] as const).map((option) => (
-                        <button
-                          key={option}
-                          type="button"
-                          className={
-                            newTaskForm.category === option
-                              ? 'calendar-task__type-button is-active'
-                              : 'calendar-task__type-button'
-                          }
-                          onClick={() => handleNewTaskCategoryChange(option)}
-                        >
-                          {option === 'Perso' ? 'Perso' : 'Professionnel'}
-                        </button>
-                      ))}
-                    </div>
+                <label className="calendar-task__field">
+                  <span>Fin</span>
+                  <input
+                    type="time"
+                    value={newTaskForm.end}
+                    onChange={(event) => handleNewTaskFieldChange("end", event.target.value)}
+                    required
+                  />
+                </label>
+              </div>
+              <div className="calendar-task__form-row">
+                <label className="calendar-task__field">
+                  <span>Du</span>
+                  <input
+                    type="date"
+                    value={newTaskForm.repeatStart}
+                    onChange={(event) => handleNewTaskFieldChange("repeatStart", event.target.value)}
+                  />
+                </label>
+                <label className="calendar-task__field">
+                  <span>Au</span>
+                  <input
+                    type="date"
+                    value={newTaskForm.repeatEnd}
+                    min={newTaskForm.repeatStart}
+                    onChange={(event) => handleNewTaskFieldChange("repeatEnd", event.target.value)}
+                  />
+                </label>
+              </div>
+              <div className="calendar-task__form-row calendar-task__form-row--split">
+                <label className="calendar-task__field calendar-task__field--full calendar-task__field--color">
+                  <span>Couleur</span>
+                  <input
+                    type="color"
+                    value={newTaskForm.color}
+                    onChange={(event) => handleNewTaskFieldChange("color", event.target.value)}
+                    required
+                  />
+                </label>
+                <div className="calendar-task__type-toggle">
+                  <span>Type</span>
+                  <div className="calendar-task__type-buttons">
+                    {(["Perso", "Professionnel"] as const).map((option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        className={
+                          newTaskForm.category === option
+                            ? "calendar-task__type-button is-active"
+                            : "calendar-task__type-button"
+                        }
+                        onClick={() => handleNewTaskCategoryChange(option)}
+                      >
+                        {option === "Perso" ? "Perso" : "Professionnel"}
+                      </button>
+                    ))}
                   </div>
                 </div>
-                {newTaskError ? <p className="calendar-new-task__error">{newTaskError}</p> : null}
-                <button
-                  type="submit"
-                  className="calendar-hero__cta calendar-hero__cta--primary calendar-new-task__submit"
-                >
-                  Programmer
-                </button>
-              </form>
-            </section>
-            <div className="calendar-modal__divider" aria-hidden="true" />
-
-            <section className="calendar-modal__section">
-              <div className="calendar-modal__section-header">
-                <h3>Agenda du jour</h3>
               </div>
-              <div className="calendar-modal__list">
-                {activeDateTasks.length === 0 ? (
-                  <p className="calendar-modal__empty">Programme ton premier évènement de la journée.</p>
-                ) : (
-                  activeDateTasks.map((task) => (
-                    <div
-                      key={task.id}
-                      className={`calendar-task${editingTaskId === task.id ? ' calendar-task--editing' : ''}`}
-                      style={{
-                        background: `linear-gradient(135deg, ${withAlpha(task.color, 0.12)} 0%, ${withAlpha(
-                          task.color,
-                          0.32,
-                        )} 100%)`,
-                      }}
-                      onClick={() => {
-                        if (editingTaskId === task.id) {
-                          return
-                        }
-                        handleEditClick(task.id)
-                      }}
-                    >
-                      {editingTaskId === task.id ? (
-                        <form className="calendar-task__form" onSubmit={(event) => handleSubmitEdit(event, task.id)}>
-                          <div className="calendar-task__form-row">
-                            <label className="calendar-task__field">
-                              <span>Début</span>
-                              <input
-                                type="time"
-                                value={editDraft.start}
-                                onChange={(event) => handleDraftChange('start', event.target.value)}
-                                required
-                              />
-                            </label>
-                            <label className="calendar-task__field">
-                              <span>Fin</span>
-                              <input
-                                type="time"
-                                value={editDraft.end}
-                                onChange={(event) => handleDraftChange('end', event.target.value)}
-                                required
-                              />
-                            </label>
-                          </div>
-                          <label className="calendar-task__field calendar-task__field--full calendar-task__field--color">
-                            <span>Couleur</span>
+              {newTaskError ? <p className="calendar-new-task__error">{newTaskError}</p> : null}
+              <button
+                type="submit"
+                className="calendar-hero__cta calendar-hero__cta--primary calendar-new-task__submit"
+              >
+                Programmer
+              </button>
+            </form>
+          </section>
+          <div className="calendar-modal__divider" aria-hidden="true" />
+
+          <section className="calendar-modal__section">
+            <div className="calendar-modal__section-header">
+              <h3>Agenda du jour</h3>
+            </div>
+            <div className="calendar-modal__list">
+              {activeDateTasks.length === 0 ? (
+                <p className="calendar-modal__empty">Programme ton premier Ã©vÃ©nement de la journÃ©e.</p>
+              ) : (
+                activeDateTasks.map((task) => (
+                  <div
+                    key={task.id}
+                    className={`calendar-task${editingTaskId === task.id ? " calendar-task--editing" : ""}`}
+                    style={{
+                      background: `linear-gradient(135deg, ${withAlpha(task.color, 0.12)} 0%, ${withAlpha(
+                        task.color,
+                        0.32,
+                      )} 100%)`,
+                    }}
+                    onClick={() => {
+                      if (editingTaskId === task.id) {
+                        return
+                      }
+                      handleEditClick(task.id)
+                    }}
+                  >
+                    {editingTaskId === task.id ? (
+                      <form className="calendar-task__form" onSubmit={(event) => handleSubmitEdit(event, task.id)}>
+                        <div className="calendar-task__form-row">
+                          <label className="calendar-task__field">
+                            <span>DÃ©but</span>
                             <input
-                              type="color"
-                              value={editDraft.color}
-                              onChange={(event) => handleDraftChange('color', event.target.value)}
+                              type="time"
+                              value={editDraft.start}
+                              onChange={(event) => handleDraftChange("start", event.target.value)}
                               required
                             />
                           </label>
-                          <div className="calendar-task__actions">
-                            <button
-                              type="button"
-                              className="calendar-task__button calendar-task__button--ghost"
-                              onClick={handleCancelEdit}
-                            >
-                              Annuler
-                            </button>
-                            <button
-                              type="button"
-                              className="calendar-task__button calendar-task__button--ghost"
-                              onClick={() => handleDeleteTask(task.id)}
-                            >
-                              Supprimer
-                            </button>
-                            <button type="submit" className="calendar-task__button calendar-task__button--primary">
-                              Sauvegarder
-                            </button>
-                          </div>
-                        </form>
-                      ) : (
+                          <label className="calendar-task__field">
+                            <span>Fin</span>
+                            <input
+                              type="time"
+                              value={editDraft.end}
+                              onChange={(event) => handleDraftChange("end", event.target.value)}
+                              required
+                            />
+                          </label>
+                        </div>
+                        <label className="calendar-task__field calendar-task__field--full calendar-task__field--color">
+                          <span>Couleur</span>
+                          <input
+                            type="color"
+                            value={editDraft.color}
+                            onChange={(event) => handleDraftChange("color", event.target.value)}
+                            required
+                          />
+                        </label>
+                        <div className="calendar-task__actions">
+                          <button
+                            type="button"
+                            className="calendar-task__button calendar-task__button--ghost"
+                            onClick={handleCancelEdit}
+                          >
+                            Annuler
+                          </button>
+                          <button
+                            type="button"
+                            className="calendar-task__button calendar-task__button--ghost"
+                            onClick={() => handleDeleteTask(task.id)}
+                          >
+                            Supprimer
+                          </button>
+                          <button type="submit" className="calendar-task__button calendar-task__button--primary">
+                            Sauvegarder
+                          </button>
+                        </div>
+                      </form>
+                    ) : (
                         <>
                           <div className="calendar-task__header">
                             <span className="calendar-task__time">

@@ -75,7 +75,7 @@ type AccountStatusMap = Record<string, AccountStatus>
 
 const THIRTY_DAYS_MS = 1000 * 60 * 60 * 24 * 30
 
-const normalizeEmail = (value: string) => value.trim().toLowerCase()
+const normalizeEmail = (value: string) => String(value ?? "").trim().toLowerCase()
 
 const readSessionMap = (): SessionMap => {
   if (typeof window === "undefined") return {}

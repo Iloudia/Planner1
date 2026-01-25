@@ -154,29 +154,29 @@ const moods = ['Sereine', 'Energisee', 'Equilibree', 'Fatiguee', 'Fiere']
 const feelings: Array<{ value: JournalFeeling; label: string; emoji: string }> = [
   { value: 'joy', label: 'Joyeuse', emoji: '' },
   { value: 'sad', label: 'Triste', emoji: '' },
-  { value: 'angry', label: 'En colere', emoji: '' },
-  { value: 'excited', label: 'Excitee', emoji: '' },
+  { value: 'angry', label: 'En colÃ¨re', emoji: '' },
+  { value: 'excited', label: 'ExcitÃ©e', emoji: '' },
   { value: 'surprised', label: 'Surprise', emoji: '' },
-  { value: 'scared', label: 'Effrayee', emoji: '' },
+  { value: 'scared', label: 'EffrayÃ©e', emoji: '' },
   { value: 'shy', label: 'Timide', emoji: '' },
   { value: 'confused', label: 'Confuse', emoji: '' },
-  { value: 'embarrassed', label: 'Embarrassee', emoji: '' },
+  { value: 'embarrassed', label: 'EmbarrassÃ©e', emoji: '' },
   { value: 'calm', label: 'Calme', emoji: '' },
-  { value: 'depressed', label: 'Deprimee', emoji: '' },
+  { value: 'depressed', label: 'DÃ©primÃ©e', emoji: '' },
 ]
 const DATE_PROMPT_FIELD_ID = 'prompt-date'
 
 const journalingMoodboard = [
-  { src: journalingIllustration, alt: 'Carnet pastel accompagne de fleurs sechees' },
-  { src: journalingMoodSecondary, alt: 'Pause ecriture et tasse de the' },
-  { src: journalingMoodTertiary, alt: 'Planche inspirante pour journaling' },
+  { src: journalingIllustration, alt: 'Carnet pastel accompagnÃ© de fleurs sÃ©chÃ©es' },
+  { src: journalingMoodSecondary, alt: "Pause d'Ã©criture et tasse de thÃ©" },
+  { src: journalingMoodTertiary, alt: 'Planche inspirante pour le journaling' },
 ] as const
 
 const journalingPromptSections: JournalingPromptSection[] = [
   {
     id: 'daily-state',
     icon: '#1',
-    title: '1. État du jour',
+    title: '1. Ã‰tat du jour',
     accent: '#ffe9f1',
     description: 'Concentre-toi sur ce que tu ressens ici et maintenant.',
     fields: [
@@ -184,58 +184,58 @@ const journalingPromptSections: JournalingPromptSection[] = [
         id: DATE_PROMPT_FIELD_ID,
         type: 'textarea',
         label: "Quelle est la date d'aujourd'hui ?",
-        placeholder: 'Laisse ton cœur parler ici...',
+        placeholder: 'Laisse ton cÅ“ur parler ici...',
       },
       {
         id: 'prompt-mood-now',
         type: 'textarea',
         label: 'Comment je me suis sentie ?',
-        placeholder: 'Sensations, émotions...',
+        placeholder: 'Sensations, Ã©motions...',
       },
       {
         id: 'prompt-mood-influence',
         type: 'textarea',
-        label: "Qu'est-ce qui a influencé mon humeur aujourd'hui ? (Événements, pensées, personnes, énergie, météo...)",
-        placeholder: 'Note ce qui a changé ton humeur ou ton énergie.',
+        label: "Qu'est-ce qui a influencÃ© mon humeur aujourd'hui ? (Ã©vÃ©nements, pensÃ©es, personnes, Ã©nergie, mÃ©tÃ©o...)",
+        placeholder: 'Note ce qui a changÃ© ton humeur ou ton Ã©nergie.',
       },
       {
         id: 'prompt-learning',
         type: 'textarea',
-        label: "Qu'ai-je appris ou compris sur moi-même aujourd'hui ?",
-        placeholder: 'Dépose tes pensées...',
+        label: "Qu'ai-je appris ou compris sur moi-mÃªme aujourd'hui ?",
+        placeholder: 'DÃ©pose tes pensÃ©es...',
       },
     ],
   },
   {
     id: 'daily-celebration',
     icon: '#2',
-    title: '2. Ma journée',
+    title: '2. Ma journÃ©e',
     accent: '#e0f2fe',
-    description: 'Revis les belles choses et célèbre ce qui compte.',
+    description: 'Revis les belles choses et cÃ©lÃ¨bre ce qui compte.',
     fields: [
       {
         id: 'prompt-highlights',
         type: 'textarea',
-        label: "Qu'est-ce qui s'est bien passé aujourd'hui ?",
-        placeholder: 'Liste tes victoires, même minuscules.',
+        label: "Qu'est-ce qui s'est bien passÃ© aujourd'hui ?",
+        placeholder: 'Liste tes victoires, mÃªme minuscules.',
       },
       {
         id: 'prompt-gratitude',
         type: 'textarea',
         label: 'De quoi suis-je reconnaissant(e) ?',
-        placeholder: 'Exprime ce qui remplit ton cœur.',
+        placeholder: 'Exprime ce qui remplit ton cÅ“ur.',
       },
       {
         id: 'prompt-replay',
         type: 'textarea',
         label: "Y a-t-il un moment que j'aimerais revivre ?",
-        placeholder: 'Quel souvenir doux veux-tu garder précieusement ?',
+        placeholder: 'Quel souvenir doux veux-tu garder prÃ©cieusement ?',
       },
       {
         id: 'prompt-magic-wand',
         type: 'textarea',
-        label: "Si j'avais une baguette magique, qu'est-ce que je changerais dans cette journée ?",
-        placeholder: 'Note ce qui te vient spontanément...',
+        label: "Si j'avais une baguette magique, qu'est-ce que je changerais dans cette journÃ©e ?",
+        placeholder: 'Note ce qui te vient spontanÃ©ment...',
       },
     ],
   },
@@ -244,19 +244,19 @@ const journalingPromptSections: JournalingPromptSection[] = [
     icon: '#3',
     title: "3. Affirmations pour attirer l'argent et l'abondance",
     accent: '#f3efff',
-    description: 'Invite la prospérité dans ton esprit avec des mots qui vibrent pour toi.',
-    helper: 'Choisis-en 3 à 5 ou écris les tiennes.',
+    description: "Invite la prospÃ©ritÃ© dans ton esprit avec des mots qui vibrent pour toi.",
+    helper: 'Choisis-en 3 Ã  5 ou Ã©cris les tiennes.',
     fields: [
       {
         id: 'prompt-money-affirmations',
         type: 'checkboxes',
-        label: 'Ce que je souhaite rApAter',
+        label: 'Ce que je souhaite rÃ©pÃ©ter',
         options: [
           "L'argent circule vers moi facilement et en abondance.",
-          'Je mArite la richesse sous toutes ses formes.',
-          'Chaque jour, je deviens un aimant A opportunitAs financiAres.',
+          'Je mÃ©rite la richesse sous toutes ses formes.',
+          "Chaque jour, je deviens un aimant Ã  opportunitÃ©s financiÃ¨res.",
           "Je suis reconnaissant(e) pour tout l'argent qui entre dans ma vie.",
-          'Mes actions attirent la prospAritA naturellement.',
+          'Mes actions attirent la prospÃ©ritÃ© naturellement.',
         ],
       },
       {
@@ -272,26 +272,26 @@ const journalingPromptSections: JournalingPromptSection[] = [
     icon: '#4',
     title: '4. Affirmations pour la confiance en soi',
     accent: '#fef3c7',
-    description: 'Renforce ta confiance et ancre-toi dans ta valeur.',
-    helper: 'Choisis-en 3 à 5 ou écris les tiennes.',
+    description: "Renforce ta confiance et ancre-toi dans ta valeur.",
+    helper: 'Choisis-en 3 Ã  5 ou Ã©cris les tiennes.',
     fields: [
       {
         id: 'prompt-confidence-affirmations',
         type: 'checkboxes',
-        label: 'Ce que je me rApAte',
+        label: 'Ce que je me rÃ©pÃ¨te',
         options: [
-          'Je crois en mes capacitAs et je suis fier/fiAre de moi.',
-          "Je suis digne d'amour, de succAs et de respect.",
-          'Je suis en sAcuritA daAtre moi-mAme.',
-          'Chaque jour, je deviens plus sAr(e) et plus fort(e).',
-          'Ma prAsence a de la valeur.',
+          'Je crois en mes capacitÃ©s et je suis fier/fiÃ¨re de moi.',
+          "Je suis digne d'amour, de succÃ¨s et de respect.",
+          "Je suis en sÃ©curitÃ© d'Ãªtre moi-mÃªme.",
+          'Chaque jour, je deviens plus sÃ»r(e) et plus fort(e).',
+          'Ma prÃ©sence a de la valeur.',
         ],
       },
       {
         id: 'prompt-confidence-custom',
         type: 'textarea',
-        label: 'Tes dAclarations personnelles',
-        placeholder: 'Acris des mots doux qui te ressemblent.',
+        label: 'Tes dÃ©clarations personnelles',
+        placeholder: 'Ã‰cris des mots doux qui te ressemblent.',
       },
     ],
   },
@@ -312,13 +312,13 @@ const journalingPromptSections: JournalingPromptSection[] = [
         id: 'prompt-feeling',
         type: 'textarea',
         label: 'Comment je veux me sentir demain ?',
-        placeholder: "Imagine l'ambiance Amotionnelle que tu souhaites vivre.",
+        placeholder: "Imagine l'ambiance Ã©motionnelle que tu souhaites vivre.",
       },
       {
         id: 'prompt-self-version',
         type: 'textarea',
         label: 'Quelle version de moi suis-je en train de devenir ?',
-        placeholder: 'DAcris la personne que tu nourris pas A pas.',
+        placeholder: 'DÃ©cris la personne que tu nourris pas Ã  pas.',
       },
     ],
   },
@@ -495,7 +495,8 @@ const JournalingPage = () => {
 
     const combinedContent = [promptSummaryText, freeWriting].filter((value) => value.length > 0).join('\n\n')
 
-    const normalizedFeelings = draft.feelings.length > 0 ? [...draft.feelings] : (feelings.length > 0 ? [feelings[0].value] : [])
+    const normalizedFeelings =
+      draft.feelings.length > 0 ? [...draft.feelings] : (feelings.length > 0 ? [feelings[0].value] : [])
 
     const newEntry: JournalEntry = {
       id: `entry-${Date.now()}`,
@@ -581,7 +582,7 @@ const JournalingPage = () => {
   }, [selectedYearGroup, selectedDay])
 
   const journalingStats = [
-    { id: 'pages', label: 'Pages écrites', value: totalEntries.toString() },
+    { id: 'pages', label: 'Pages Ã©crites', value: totalEntries.toString() },
     { id: 'days', label: 'Jours actifs', value: activeDays.toString() },
   ]
   const dayStateIds = useMemo(() => new Set(['daily-state', 'daily-celebration']), [])
@@ -591,29 +592,29 @@ const JournalingPage = () => {
       id: 'affirmations',
       title: 'Affirmations',
       emoji: '',
-      placeholder: 'Écris tes phrases positives, séparées par des retours à la ligne.',
+      placeholder: 'Ã‰cris tes phrases positives, sÃ©parÃ©es par des retours Ã  la ligne.',
       description: 'Rappelle-toi qui tu deviens.',
     },
     {
       id: 'gratitude',
       title: 'Ce dont je suis reconnaissant(e)',
       emoji: '',
-      placeholder: 'Liste ce qui remplit ton cœur de douceur.',
+      placeholder: 'Liste ce qui remplit ton cÅ“ur de douceur.',
       description: "Accueille l'abondance actuelle.",
     },
     {
       id: 'people',
       title: 'Croyances limitantes',
       emoji: '',
-      placeholder: 'Note les phrases ou pensées que tu souhaites transformer.',
-      description: 'Identifie ce qui te retient pour mieux le libérer.',
+      placeholder: 'Note les phrases ou pensÃ©es que tu souhaites transformer.',
+      description: 'Identifie ce qui te retient pour mieux le libÃ©rer.',
     },
     {
       id: 'intentions',
       title: 'Visualisations',
       emoji: '',
-      placeholder: 'Imagine en détails la vie que tu manifestes.',
-      description: 'Projette-toi vers ta vision idéale.',
+      placeholder: 'Imagine en dÃ©tails la vie que tu manifestes.',
+      description: 'Projette-toi vers ta vision idÃ©ale.',
     },
   ] as const
 
@@ -624,7 +625,7 @@ const JournalingPage = () => {
       <PageHero
         eyebrow="Rituel du jour"
         title="Journaling"
-        description="Prends un instant pour respirer, écrire et manifester ta vie de rêve."
+        description="Prends un instant pour respirer, Ã©crire et manifester ta vie de rÃªve."
         stats={journalingStats.map(({ id, label, value }) => ({ id, label, value }))}
         images={journalingMoodboard}
         tone="pink"
@@ -635,7 +636,7 @@ const JournalingPage = () => {
       <section className="journaling-day-state">
         <header className="journaling-day-state__header">
           <div>
-            <h2>Bilan de la journée</h2>
+            <h2>Bilan de la journÃ©e</h2>
           </div>
         </header>
         <div className="journaling-day-state__content">
@@ -728,177 +729,177 @@ const JournalingPage = () => {
           className={`journaling-save__confirmation${saveConfirmationVisible ? ' is-visible' : ''}`}
           aria-live="polite"
         >
-          <span aria-hidden="true">?</span>
-          <strong>Page ajoutée !</strong>
+          <span aria-hidden="true">âœ…</span>
+          <strong>Page ajoutÃ©e !</strong>
         </div>
       </section>
 
-      <section className="journaling-history">
-        <div className="journaling-history__header">
-          <h2>Archives</h2>
+     <section className="journaling-history">
+  <div className="journaling-history__header">
+    <h2>Archives</h2>
+    <button
+      type="button"
+      className="journaling-history__toggle"
+      onClick={() => setArchiveOpen((v) => !v)}
+      aria-expanded={archiveOpen}
+    >
+      {archiveOpen ? 'RÃ©duire les archives' : 'Afficher les archives'}
+    </button>
+  </div>
+  {archiveOpen ? (
+    entriesByYear.length > 0 ? (
+      <div className="journaling-history__years">
+        {entriesByYear.map((group) => (
           <button
+            key={group.year}
             type="button"
-            className="journaling-history__toggle"
-            onClick={() => setArchiveOpen((v) => !v)}
-            aria-expanded={archiveOpen}
+            className="journaling-history__year-card"
+            onClick={() => {
+              setSelectedYear(group.year)
+              setSelectedDay(null)
+            }}
           >
-            {archiveOpen ? 'Réduire les archives' : 'Afficher les archives'}
+            <span className="journaling-history__year">{group.year}</span>
+            <span className="journaling-history__year-count">{group.totalEntries} page(s)</span>
           </button>
+        ))}
+      </div>
+    ) : (
+      <p className="journaling-history__empty">Aucune archive pour le moment.</p>
+    )
+  ) : null}
+</section>
+{selectedYearGroup ? (
+  <div className="journaling-history-modal" role="dialog" aria-modal="true">
+    <div className="journaling-history-modal__backdrop" onClick={() => setSelectedYear(null)} />
+    <div className="journaling-history-modal__content">
+      <header className="journaling-history-modal__header">
+        <div>
+          <p>AnnÃ©e</p>
+          <h3>{selectedYearGroup.year}</h3>
+          <span>{selectedYearGroup.totalEntries} page(s)</span>
         </div>
-        {archiveOpen ? (
-          entriesByYear.length > 0 ? (
-            <div className="journaling-history__years">
-              {entriesByYear.map((group) => (
-                <button
-                  key={group.year}
-                  type="button"
-                  className="journaling-history__year-card"
-                  onClick={() => {
-                    setSelectedYear(group.year)
-                    setSelectedDay(null)
-                  }}
-                >
-                  <span className="journaling-history__year">{group.year}</span>
-                  <span className="journaling-history__year-count">{group.totalEntries} page(s)</span>
-                </button>
-              ))}
-            </div>
-          ) : (
-            <p className="journaling-history__empty">Aucune archive pour le moment.</p>
-          )
-        ) : null}
-      </section>
-      {selectedYearGroup ? (
-        <div className="journaling-history-modal" role="dialog" aria-modal="true">
-          <div className="journaling-history-modal__backdrop" onClick={() => setSelectedYear(null)} />
-          <div className="journaling-history-modal__content">
-            <header className="journaling-history-modal__header">
+        <button type="button" onClick={() => setSelectedYear(null)}>
+          Fermer
+        </button>
+      </header>
+      <div className="journaling-history-modal__body">
+        <div className="journaling-history-modal__dates">
+          {selectedYearGroup.dates.map(({ date, items }) => (
+            <button
+              key={date}
+              type="button"
+              className={`journaling-history__day-card${selectedDay === date ? ' is-active' : ''}`}
+              onClick={() => setSelectedDay((previous) => (previous === date ? null : date))}
+            >
+              <span>{date}</span>
+              <strong>{items.length} page(s)</strong>
+            </button>
+          ))}
+        </div>
+        {activeDayGroup ? (
+          <article className="journaling-history__group">
+            <header className="journaling-history__group-header">
               <div>
-                <p>Année</p>
-                <h3>{selectedYearGroup.year}</h3>
-                <span>{selectedYearGroup.totalEntries} page(s)</span>
+                <time>{activeDayGroup.date}</time>
+                <span>{activeDayGroup.items.length} page(s)</span>
               </div>
-              <button type="button" onClick={() => setSelectedYear(null)}>
-                Fermer
-              </button>
             </header>
-            <div className="journaling-history-modal__body">
-              <div className="journaling-history-modal__dates">
-                {selectedYearGroup.dates.map(({ date, items }) => (
-                  <button
-                    key={date}
-                    type="button"
-                    className={`journaling-history__day-card${selectedDay === date ? ' is-active' : ''}`}
-                    onClick={() => setSelectedDay((previous) => (previous === date ? null : date))}
-                  >
-                    <span>{date}</span>
-                    <strong>{items.length} page(s)</strong>
-                  </button>
-                ))}
-              </div>
-              {activeDayGroup ? (
-                <article className="journaling-history__group">
-                  <header className="journaling-history__group-header">
-                    <div>
-                      <time>{activeDayGroup.date}</time>
-                      <span>{activeDayGroup.items.length} page(s)</span>
+            <ul>
+              {activeDayGroup.items.map((entry) => {
+                const entryFeelings =
+                  entry.feelings && entry.feelings.length > 0
+                    ? entry.feelings
+                    : entry.feeling
+                      ? [entry.feeling]
+                      : []
+                const feelingEmojis = entryFeelings
+                  .map((value) => feelings.find((option) => option.value === value)?.emoji)
+                  .filter((emoji): emoji is string => Boolean(emoji))
+                const freeWritingText =
+                  entry.freeWriting ??
+                  (entry.prompts && entry.prompts.length > 0 ? '' : entry.content)
+
+                return (
+                  <li key={entry.id}>
+                    <div className="journaling-history__feeling">
+                      <span aria-hidden="true" className="journaling-history__feeling-emoji">
+                        {feelingEmojis.length > 0 ? feelingEmojis.join(' ') : ''}
+                      </span>
+                      <div className="journaling-history__feeling-info">
+                        <span className="journaling-history__feeling-label">
+                          {entryFeelings.length > 0
+                            ? entryFeelings
+                                .map((value) => feelings.find((option) => option.value === value)?.label ?? value)
+                                .join(', ')
+                            : 'Humeur'}
+                        </span>
+                        <span className="journaling-history__mood">{entry.mood}</span>
+                      </div>
                     </div>
-                  </header>
-                  <ul>
-                    {activeDayGroup.items.map((entry) => {
-                      const entryFeelings =
-                        entry.feelings && entry.feelings.length > 0
-                          ? entry.feelings
-                          : entry.feeling
-                            ? [entry.feeling]
-                            : []
-                      const feelingEmojis = entryFeelings
-                        .map((value) => feelings.find((option) => option.value === value)?.emoji)
-                        .filter((emoji): emoji is string => Boolean(emoji))
-                      const freeWritingText =
-                        entry.freeWriting ??
-                        (entry.prompts && entry.prompts.length > 0 ? '' : entry.content)
+                    {entry.feelingReason.length > 0 && (
+                      <p className="journaling-history__why">
+                        <strong>Pourquoi :</strong> {entry.feelingReason}
+                      </p>
+                    )}
+                    {entry.prompts && entry.prompts.length > 0 && (
+                      <div className="journaling-history__prompts">
+                        {entry.prompts.map((section) => (
+                          <div key={section.id} className="journaling-history__prompt-section">
+                            <h4>{section.title}</h4>
+                            <ul>
+                              {section.answers.map((answer) => {
+                                if (answer.type === 'list') {
+                                  return (
+                                    <li key={`${section.id}-${answer.label}`}>
+                                      <strong>{answer.label}</strong>
+                                      <ul>
+                                        {answer.items.map((item) => (
+                                          <li key={item}>{item}</li>
+                                        ))}
+                                      </ul>
+                                    </li>
+                                  )
+                                }
 
-                      return (
-                        <li key={entry.id}>
-                          <div className="journaling-history__feeling">
-                            <span aria-hidden="true" className="journaling-history__feeling-emoji">
-                              {feelingEmojis.length > 0 ? feelingEmojis.join(' ') : ''}
-                            </span>
-                            <div className="journaling-history__feeling-info">
-                              <span className="journaling-history__feeling-label">
-                                {entryFeelings.length > 0
-                                  ? entryFeelings
-                                      .map((value) => feelings.find((option) => option.value === value)?.label ?? value)
-                                      .join(', ')
-                                  : 'Humeur'}
-                              </span>
-                              <span className="journaling-history__mood">{entry.mood}</span>
-                            </div>
+                                return (
+                                  <li key={`${section.id}-${answer.label}`}>
+                                    <strong>{answer.label}</strong>
+                                    <p>{answer.value}</p>
+                                  </li>
+                                )
+                              })}
+                            </ul>
                           </div>
-                          {entry.feelingReason.length > 0 && (
-                            <p className="journaling-history__why">
-                              <strong>Pourquoi :</strong> {entry.feelingReason}
-                            </p>
-                          )}
-                          {entry.prompts && entry.prompts.length > 0 && (
-                            <div className="journaling-history__prompts">
-                              {entry.prompts.map((section) => (
-                                <div key={section.id} className="journaling-history__prompt-section">
-                                  <h4>{section.title}</h4>
-                                  <ul>
-                                    {section.answers.map((answer) => {
-                                      if (answer.type === 'list') {
-                                        return (
-                                          <li key={`${section.id}-${answer.label}`}>
-                                            <strong>{answer.label}</strong>
-                                            <ul>
-                                              {answer.items.map((item) => (
-                                                <li key={item}>{item}</li>
-                                              ))}
-                                            </ul>
-                                          </li>
-                                        )
-                                      }
-
-                                      return (
-                                        <li key={`${section.id}-${answer.label}`}>
-                                          <strong>{answer.label}</strong>
-                                          <p>{answer.value}</p>
-                                        </li>
-                                      )
-                                    })}
-                                  </ul>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                          {freeWritingText.length > 0 && (
-                            <div className="journaling-history__freewrite">
-                              <h4>Texte libre</h4>
-                              {freeWritingText.split(/\n+/).map((paragraph, index) => (
-                                <p key={`${entry.id}-paragraph-${index}`}>{paragraph}</p>
-                              ))}
-                            </div>
-                          )}
-                        </li>
-                      )
-                    })}
-                  </ul>
-                </article>
-              ) : (
-                <p className="journaling-history-modal__empty">Sélectionne un jour pour consulter tes pages.</p>
-              )}
-            </div>
-          </div>
-        </div>
-      ) : null}
-      <div className="journaling-page__footer-bar" aria-hidden="true" />
+                        ))}
+                      </div>
+                    )}
+                    {freeWritingText.length > 0 && (
+                      <div className="journaling-history__freewrite">
+                        <h4>Texte libre</h4>
+                        {freeWritingText.split(/\n+/).map((paragraph, index) => (
+                          <p key={`${entry.id}-paragraph-${index}`}>{paragraph}</p>
+                        ))}
+                      </div>
+                    )}
+                  </li>
+                )
+              })}
+            </ul>
+          </article>
+        ) : (
+          <p className="journaling-history-modal__empty">SÃ©lectionne un jour pour consulter tes pages.</p>
+        )}
+      </div>
     </div>
-    
-  )
+  </div>
+) : null}
+<div className="journaling-page__footer-bar" aria-hidden="true" />
+</div>
+
+)
   
 }
 
-
 export default JournalingPage
+

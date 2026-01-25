@@ -40,13 +40,24 @@ const safeReadJson = <T,>(key: string): T | null => {
   }
 }
 
-const bumpCount = (bucket: Record<string, number>, label: string) => {
-  const key = label.trim() || "non renseigne"
+const cleanString = (value: unknown) => {
+  if (typeof value === "string") return value.trim()
+  if (value === null || value === undefined) return ""
+  return String(value).trim()
+}
+
+const toStringList = (value: unknown) => {
+  if (!Array.isArray(value)) return []
+  return value.map((item) => cleanString(item)).filter(Boolean)
+}
+
+const bumpCount = (bucket: Record<string, number>, label: unknown) => {
+  const key = cleanString(label) || "non renseigne"
   bucket[key] = (bucket[key] ?? 0) + 1
 }
 
-const normalizeGender = (value: string) => {
-  const lower = value.trim().toLowerCase()
+const normalizeGender = (value: unknown) => {
+  const lower = cleanString(value).toLowerCase()
   if (lower === "homme" || lower === "h") return "homme"
   if (lower === "femme" || lower === "f") return "femme"
   if (lower === "non precise" || lower === "non specifie") return "non precise"
@@ -80,10 +91,12 @@ const PieChart = ({ entries }: { entries: [string, number][] }) => {
     const [label, count] = entries[0]
     return (
       <div className="admin-stat-chart">
-        <svg viewBox="0 0 120 120" role="img" aria-label="Statistiques">
-          <circle cx="60" cy="60" r="50" fill={pieColors[0]} />
-          <title>{`${label}: ${count}`}</title>
-        </svg>
+        <div className="admin-stat-figure">
+          <svg viewBox="0 0 120 120" role="img" aria-label="Statistiques">
+            <circle cx="60" cy="60" r="50" fill={pieColors[0]} />
+            <title>{`${label}: ${count}`}</title>
+          </svg>
+        </div>
       </div>
     )
   }
@@ -100,13 +113,15 @@ const PieChart = ({ entries }: { entries: [string, number][] }) => {
 
   return (
     <div className="admin-stat-chart">
-      <svg viewBox="0 0 120 120" role="img" aria-label="Statistiques">
-        {slices.map((slice) => (
-          <path key={slice.label} d={slice.path} fill={slice.color}>
-            <title>{`${slice.label}: ${slice.count}`}</title>
-          </path>
-        ))}
-      </svg>
+      <div className="admin-stat-figure">
+        <svg viewBox="0 0 120 120" role="img" aria-label="Statistiques">
+          {slices.map((slice) => (
+            <path key={slice.label} d={slice.path} fill={slice.color}>
+              <title>{`${slice.label}: ${slice.count}`}</title>
+            </path>
+          ))}
+        </svg>
+      </div>
       <ul className="admin-stat-legend">
         {slices.map((slice) => (
           <li key={slice.label}>
@@ -121,15 +136,21 @@ const PieChart = ({ entries }: { entries: [string, number][] }) => {
 
 const AdminPage = () => {
   const { userEmail, adminListUsers, adminUpdateStatus, adminDeleteUser } = useAuth()
-  const [users, setUsers] = useState<AdminUserRecord[]>(() => adminListUsers())
+  const [users, setUsers] = useState<AdminUserRecord[]>([])
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedEmail, setSelectedEmail] = useState<string | null>(users[0]?.email ?? null)
+  const [selectedEmail, setSelectedEmail] = useState<string | null>(null)
   const [alert, setAlert] = useState<AlertState>(null)
   const [showAllUsers, setShowAllUsers] = useState(false)
 
   useEffect(() => {
-    setUsers(adminListUsers())
-  }, [])
+    try {
+      const nextUsers = adminListUsers()
+      setUsers(Array.isArray(nextUsers) ? nextUsers : [])
+    } catch (error) {
+      console.error("Admin users load failed", error)
+      setUsers([])
+    }
+  }, [adminListUsers])
 
   useEffect(() => {
     if (users.length === 0) {
@@ -172,24 +193,24 @@ const AdminPage = () => {
       const onboardingKey = buildUserScopedKey(user.email, ONBOARDING_STORAGE_KEY)
       const onboarding = safeReadJson<OnboardingAnswers>(onboardingKey)
 
-      const source = onboarding?.source?.trim() || "non renseigne"
+      const source = cleanString(onboarding?.source) || "non renseigne"
       bumpCount(sourceCounts, source)
 
-      const reasons = onboarding?.reasons ?? []
+      const reasons = toStringList(onboarding?.reasons)
       if (reasons.length === 0) {
         bumpCount(reasonsCounts, "non renseigne")
       } else {
         reasons.forEach((reason) => bumpCount(reasonsCounts, reason))
       }
 
-      const categories = onboarding?.categories ?? []
+      const categories = toStringList(onboarding?.categories)
       if (categories.length === 0) {
         bumpCount(categoryCounts, "non renseigne")
       } else {
         categories.forEach((category) => bumpCount(categoryCounts, category))
       }
 
-      const priority = onboarding?.priority ?? []
+      const priority = toStringList(onboarding?.priority)
       if (priority.length === 0) {
         bumpCount(priorityCounts, "non renseigne")
       } else {
@@ -209,7 +230,13 @@ const AdminPage = () => {
   const selectedUser = selectedEmail ? users.find((user) => user.email === selectedEmail) ?? null : null
 
   const refreshUsers = () => {
-    setUsers(adminListUsers())
+    try {
+      const nextUsers = adminListUsers()
+      setUsers(Array.isArray(nextUsers) ? nextUsers : [])
+    } catch (error) {
+      console.error("Admin users refresh failed", error)
+      setUsers([])
+    }
   }
 
   const handleStatusToggle = (user: AdminUserRecord) => {
