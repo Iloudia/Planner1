@@ -52,6 +52,31 @@
   line-height: 1.6;
 }
 
+.diet-crosslink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.08), rgba(253, 242, 248, 0.9));
+  border: 1px solid rgba(236, 72, 153, 0.18);
+}
+
+.diet-crosslink__label {
+  margin: 0 0 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+  color: #be185d;
+  font-weight: 700;
+}
+
+.diet-crosslink__text {
+  margin: 0;
+  color: #475569;
+  max-width: 52ch;
+}
+
 .diet-week__header {
   display: flex;
   justify-content: space-between;
@@ -333,5 +358,9 @@
 @media (max-width: 900px) {
   .diet-shopping {
     grid-template-columns: 1fr;
+  }
+
+  .diet-crosslink {
+    align-items: flex-start;
   }
 }

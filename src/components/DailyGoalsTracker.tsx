@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react"
+﻿import { useEffect, useRef, useState } from "react"
 import usePersistentState from "../hooks/usePersistentState"
 import "./DailyGoalsTracker.css"
 
@@ -12,7 +12,8 @@ const HABIT_ROWS_DEFAULT = [
   "8 Hours of Sleep",
 ]
 
-const HABIT_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+const HABIT_DAYS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"]
+const HABIT_DAYS_FULL = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"]
 const HABIT_ROWS_STORAGE_KEY = "planner.sportHabits.rows.v1"
 const HABIT_CHECKS_STORAGE_KEY = "planner.sportHabits.checks.v1"
 
@@ -33,6 +34,11 @@ const getMonday = (reference: Date) => {
 const createEmptyHabitMatrix = (rowsCount: number) => Array.from({ length: rowsCount }, () => HABIT_DAYS.map(() => false))
 
 const getWeekKey = (reference: Date) => getMonday(reference).toISOString().split("T")[0]
+
+const getDayIndex = (reference: Date) => {
+  const day = reference.getDay()
+  return (day + 6) % 7
+}
 
 const formatWeekRangeFromKey = (weekKey: string) => {
   if (!weekKey) return ""
@@ -55,6 +61,9 @@ const DailyGoalsTracker = () => {
   const [currentWeekKey, setCurrentWeekKey] = useState(() => getWeekKey(new Date()))
   const habitChecks = habitData.checks
   const habitWeekRange = formatWeekRangeFromKey(currentWeekKey)
+  const completedDays = HABIT_DAYS.map((_, dayIndex) =>
+    habitRows.length > 0 && habitChecks.every((row) => row[dayIndex]),
+  )
 
   useEffect(() => {
     if (typeof window === "undefined") return
@@ -86,6 +95,25 @@ const DailyGoalsTracker = () => {
       return { weekKey: nextWeekKey, checks: nextChecks }
     })
   }, [currentWeekKey, habitRows, setHabitData])
+
+  const [rewardDay, setRewardDay] = useState<number | null>(null)
+  const [showReward, setShowReward] = useState(false)
+  const previousCompleted = useRef<boolean[]>(completedDays)
+
+  useEffect(() => {
+    const nextCompleted = completedDays
+    let newlyCompleted: number | null = null
+    nextCompleted.forEach((isDone, index) => {
+      if (isDone && !previousCompleted.current[index]) {
+        newlyCompleted = index
+      }
+    })
+    previousCompleted.current = nextCompleted
+    if (newlyCompleted !== null) {
+      setRewardDay(newlyCompleted)
+      setShowReward(true)
+    }
+  }, [completedDays])
 
   const toggleHabit = (rowIndex: number, dayIndex: number) => {
     setHabitData((previous) => ({
@@ -226,8 +254,35 @@ const DailyGoalsTracker = () => {
           </button>
         </div>
       ) : null}
+      {showReward && typeof rewardDay === "number" ? (
+        <div
+          className="sport-habits__reward-overlay"
+          role="status"
+          aria-live="polite"
+          onClick={() => setShowReward(false)}
+        >
+          <div className="sport-habits__reward-card" onClick={(event) => event.stopPropagation()}>
+            <button
+              type="button"
+              className="modal__close sport-habits__reward-close"
+              aria-label="Fermer"
+              onClick={() => setShowReward(false)}
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </button>
+            <h4>Jour validé ✨</h4>
+            <p>Bravo, tu as tout coché pour {HABIT_DAYS_FULL[rewardDay]}.</p>
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }
 
 export default DailyGoalsTracker
+
+
+
+

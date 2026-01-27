@@ -454,7 +454,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY)
+      const raw = sessionStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(STORAGE_KEY)
       if (!raw) {
         persistSessionIdentifier(null, false)
         setSessionId(null)
@@ -550,9 +550,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setScheduledDeletionDate(null)
     }
     try {
-      if (nextUser && remember) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(nextUser))
+      if (nextUser) {
+        sessionStorage.setItem(STORAGE_KEY, JSON.stringify(nextUser))
+        if (remember) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(nextUser))
+        } else {
+          localStorage.removeItem(STORAGE_KEY)
+        }
       } else {
+        sessionStorage.removeItem(STORAGE_KEY)
         localStorage.removeItem(STORAGE_KEY)
       }
     } catch (error) {

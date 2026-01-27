@@ -197,7 +197,7 @@ const OnboardingPage = () => {
           {step === 0 ? (
             <>
               <h2 className="onboarding-question">Comment avez-vous connu ce site ?</h2>
-              <p className="onboarding-hint">Plusieurs reponses possibles</p>
+              <p className="onboarding-hint">Choix unique</p>
               <div className="onboarding-options">
                 {SOURCE_OPTIONS.map((option) => (
                   <label key={option} className={`onboarding-option${answers.source === option ? " is-selected" : ""}`}>

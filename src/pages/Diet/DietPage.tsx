@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react"
+﻿import { useEffect, useState } from "react"
+import { Link } from "react-router-dom"
 import { useAuth } from "../../context/AuthContext"
 import { buildUserScopedKey } from "../../utils/userScopedKey"
 import { useMemo } from "react"
@@ -55,82 +56,82 @@ type Recipe = {
 const massRecipes: Recipe[] = [
   {
   id: "mass-pancakes",
-  title: "Pancake protéiné",
+  title: "Pancake protÃ©inÃ©",
   flavor: "sucre",
-  prepTime: "10 à 15 min",
+  prepTime: "10 Ã  15 min",
   servings: "1 pers",
   image: pancakesProteineImg,
   ingredients: [
-    "1 œuf",
+    "1 Å“uf",
     "25 ml de lait",
     "35 g de farine",
     "30 g de fromage blanc",
     "20 g de whey",
-    "1 cuillère à soupe de levure chimique",
-    "Quelques gouttes d'arôme vanille",
+    "1 cuillÃ¨re Ã  soupe de levure chimique",
+    "Quelques gouttes d'arÃ´me vanille",
   ],
   steps: [
-    "Dans un bol, casse l'œuf et fouette-le légèrement.",
-    "Ajoute le lait et le fromage blanc, puis mélange jusqu'à obtenir une texture lisse.",
+    "Dans un bol, casse l'Å“uf et fouette-le lÃ©gÃ¨rement.",
+    "Ajoute le lait et le fromage blanc, puis mÃ©lange jusqu'Ã  obtenir une texture lisse.",
     "Incorpore la farine, la whey et la levure chimique.",
-    "Mélange soigneusement pour éviter les grumeaux.",
-    "Ajoute les gouttes de vanille et mélange une dernière fois. La pâte doit être épaisse mais fluide.",
-    "Fais chauffer une poêle antiadhésive à feu moyen (légèrement graissée si nécessaire).",
-    "Verse de petites portions de pâte pour former les pancakes.",
-    "Laisse cuire 1 à 2 minutes, jusqu'à ce que des bulles apparaissent, puis retourne.",
-    "Poursuis la cuisson 1 minute de l'autre côté.",
+    "MÃ©lange soigneusement pour Ã©viter les grumeaux.",
+    "Ajoute les gouttes de vanille et mÃ©lange une derniÃ¨re fois. La pÃ¢te doit Ãªtre Ã©paisse mais fluide.",
+    "Fais chauffer une poÃªle antiadhÃ©sive Ã  feu moyen (lÃ©gÃ¨rement graissÃ©e si nÃ©cessaire).",
+    "Verse de petites portions de pÃ¢te pour former les pancakes.",
+    "Laisse cuire 1 Ã  2 minutes, jusqu'Ã  ce que des bulles apparaissent, puis retourne.",
+    "Poursuis la cuisson 1 minute de l'autre cÃ´tÃ©.",
   ],
   toppings: [
     "Fruits rouges",
-    "Beurre de cacahuète",
+    "Beurre de cacahuÃ¨te",
     "Skyr ou fromage blanc",
     "Chocolat noir fondu",
-    "Sirop d'érable (léger)",
+    "Sirop d'Ã©rable (lÃ©ger)",
   ],
   tips: [
-    "Astuce : Si la pâte est trop épaisse, ajoute quelques gouttes de lait. Si elle est trop liquide, ajoute un peu de farine.",
+    "Astuce : Si la pÃ¢te est trop Ã©paisse, ajoute quelques gouttes de lait. Si elle est trop liquide, ajoute un peu de farine.",
   ],
 },
 {
   id: "mass-bowl-saumon",
-  title: "Saumon mariné sriracha & riz",
+  title: "Saumon marinÃ© sriracha & riz",
   flavor: "sale",
-  prepTime: "35 à 50 min",
+  prepTime: "35 Ã  50 min",
   servings: "1 pers",
   image: saumonBowlImg,
   ingredients: [
-    "Pour le saumon mariné",
+    "Pour le saumon marinÃ©",
     "500 g de saumon sans peau",
     "1/4 de tasse de sauce soja",
-    "1 cuillère à soupe de vinaigre de riz",
-    "1 cuillère à café d’huile de sésame",
-    "1 cuillère à café de miel",
-    "2 gousses d’ail hachées",
-    "1 cuillère à soupe de pâte de gingembre",
-    "2 cuillères à soupe de sriracha",
+    "1 cuillÃ¨re Ã  soupe de vinaigre de riz",
+    "1 cuillÃ¨re Ã  cafÃ© dâ€™huile de sÃ©same",
+    "1 cuillÃ¨re Ã  cafÃ© de miel",
+    "2 gousses dâ€™ail hachÃ©es",
+    "1 cuillÃ¨re Ã  soupe de pÃ¢te de gingembre",
+    "2 cuillÃ¨res Ã  soupe de sriracha",
     "Pour la sauce",
-    "2 cuillères à soupe de yaourt grec",
-    "2 cuillères à café de sriracha",
-    "2 cuillères à café de vinaigre de riz",
+    "2 cuillÃ¨res Ã  soupe de yaourt grec",
+    "2 cuillÃ¨res Ã  cafÃ© de sriracha",
+    "2 cuillÃ¨res Ã  cafÃ© de vinaigre de riz",
     "Pour les accompagnements",
     "70 g de riz cru",
     "1 mini concombre",
-    "Carottes râpées (quantité selon préférence)",
+    "Carottes rÃ¢pÃ©es (quantitÃ© selon prÃ©fÃ©rence)",
     "1/2 avocat",
   ],
   steps: [
-    "Préparer la marinade",
-    "Dans un bol, mélange la sauce soja, le vinaigre de riz, l'huile de sésame, le miel, l'ail haché, la pâte de gingembre et la sriracha jusqu'à obtenir une marinade homogène.",
+    "PrÃ©parer la marinade",
+    "Dans un bol, mÃ©lange la sauce soja, le vinaigre de riz, l'huile de sÃ©same, le miel, l'ail hachÃ©, la pÃ¢te de gingembre et la sriracha jusqu'Ã  obtenir une marinade homogÃ¨ne.",
     "Mariner le saumon",
-    "Coupe le saumon en pavés ou en cubes. Dépose-le dans un plat, verse la marinade, mélange délicatement pour bien enrober le poisson. Couvre et laisse mariner 15 à 30 minutes au réfrigérateur.",
-    "Préparer les accompagnements",
-    "Lave le mini concombre et coupe-le en fines rondelles ou demi-lunes. Râpe les carottes. Coupe le demi-avocat en tranches ou en dés. Réserve au frais.",
-    "Préparer la sauce",
-    "Dans un petit bol, mélange le yaourt grec, la sriracha et le vinaigre de riz jusqu'à obtenir une sauce lisse. Réserve au frais.",
+    "Coupe le saumon en pavÃ©s ou en cubes. DÃ©pose-le dans un plat, verse la marinade, mÃ©lange dÃ©licatement pour bien enrober le poisson. Couvre et laisse mariner 15 Ã  30 minutes au rÃ©frigÃ©rateur.",
+    "PrÃ©parer les accompagnements",
+    "Lave le mini concombre et coupe-le en fines rondelles ou demi-lunes. RÃ¢pe les carottes. Coupe le demi-avocat en tranches ou en dÃ©s. RÃ©serve au frais.",
+    "PrÃ©parer la sauce",
+    "Dans un petit bol, mÃ©lange le yaourt grec, la sriracha et le vinaigre de riz jusqu'Ã  obtenir une sauce lisse. RÃ©serve au frais.",
     "Cuire le saumon",
-    "Fais chauffer une poêle à feu moyen. Dépose le saumon avec un peu de marinade et fais-le cuire 2 à 3 minutes par face, jusqu'à ce qu'il soit bien doré et cuit à cœur.",
+    "Fais chauffer une poÃªle Ã  feu moyen. DÃ©pose le saumon avec un peu de marinade et fais-le cuire 2 Ã  3 minutes par face, jusqu'Ã  ce qu'il soit bien dorÃ© et cuit Ã  cÅ“ur.",
     "Dressage",
-    "Dispose le saumon dans l'assiette ou le bol, ajoute les carottes râpées, le concombre et l'avocat, puis nappe ou accompagne avec la sauce au yaourt épicée.",
+    "Dispose le saumon dans l'assiette ou le bol, ajoute les carottes rÃ¢pÃ©es, le concombre et l'avocat, puis nappe ou accompagne avec la sauce au yaourt Ã©picÃ©e.",
   ],
 },
 
@@ -138,173 +139,173 @@ const massRecipes: Recipe[] = [
   id: "mass-wrap-poulet",
   title: "Wrap poulet croquant",
   flavor: "sale",
-  prepTime: "30 à 45 min",
+  prepTime: "30 Ã  45 min",
   servings: "1 pers",
   image: wrapPouletImg,
   ingredients: [
     "Pour le poulet",
-    "600 g de blanc de poulet coupé en lanières",
-    "3 gousses d’ail",
-    "1 cuillère à soupe d’origan",
-    "1 cuillère à soupe de paprika",
-    "1 cuillère à café de poudre d’oignon",
-    "1 cuillère à café de flocons de piment",
-    "1 cuillère à café de sel et poivre",
-    "Jus de citron (selon goût)",
+    "600 g de blanc de poulet coupÃ© en laniÃ¨res",
+    "3 gousses dâ€™ail",
+    "1 cuillÃ¨re Ã  soupe dâ€™origan",
+    "1 cuillÃ¨re Ã  soupe de paprika",
+    "1 cuillÃ¨re Ã  cafÃ© de poudre dâ€™oignon",
+    "1 cuillÃ¨re Ã  cafÃ© de flocons de piment",
+    "1 cuillÃ¨re Ã  cafÃ© de sel et poivre",
+    "Jus de citron (selon goÃ»t)",
     "Pour la sauce",
-    "100 g de yaourt écrémé",
+    "100 g de yaourt Ã©crÃ©mÃ©",
     "20 g de sriracha",
-    "1 gousse d’ail émincée",
-    "Persil (selon goût)",
+    "1 gousse dâ€™ail Ã©mincÃ©e",
+    "Persil (selon goÃ»t)",
     "Sel et poivre",
     "Pour le montage des wraps",
     "Tortillas faibles en calories",
     "Laitue",
     "Oignons rouges",
-    "Tomates coupées en dés",
+    "Tomates coupÃ©es en dÃ©s",
   ],
   steps: [
-    "  Préparer la marinade du poulet",
-    "Dans un grand bol, mélange : l’ail haché, l’origan, le paprika, la poudre d’oignon, les flocons de piment, le sel et poivre. Ajoute le jus de citron, puis mélange. Incorpore les lanières de poulet et mélange bien pour les enrober. Laisse mariner au minimum 15 minutes (idéalement 30 minutes).",
-    "Préparer la sauce",
-    "Dans un bol, mélange : le yaourt écrémé, la sriracha, l’ail émincé, le persil, le sel et poivre. Ajoute un peu de jus de citron selon ton goût. Mélange jusqu'à obtenir une sauce homogène. Réserve au frais.",
-    "Préparer les garnitures",
-    "Lave et coupe la laitue. Émince finement l’oignon rouge. Coupe les tomates en petits dés. Réserve l’ensemble.",
+    "  PrÃ©parer la marinade du poulet",
+    "Dans un grand bol, mÃ©lange : lâ€™ail hachÃ©, lâ€™origan, le paprika, la poudre dâ€™oignon, les flocons de piment, le sel et poivre. Ajoute le jus de citron, puis mÃ©lange. Incorpore les laniÃ¨res de poulet et mÃ©lange bien pour les enrober. Laisse mariner au minimum 15 minutes (idÃ©alement 30 minutes).",
+    "PrÃ©parer la sauce",
+    "Dans un bol, mÃ©lange : le yaourt Ã©crÃ©mÃ©, la sriracha, lâ€™ail Ã©mincÃ©, le persil, le sel et poivre. Ajoute un peu de jus de citron selon ton goÃ»t. MÃ©lange jusqu'Ã  obtenir une sauce homogÃ¨ne. RÃ©serve au frais.",
+    "PrÃ©parer les garnitures",
+    "Lave et coupe la laitue. Ã‰mince finement lâ€™oignon rouge. Coupe les tomates en petits dÃ©s. RÃ©serve lâ€™ensemble.",
     "Cuire le poulet",
-    "Fais chauffer une poêle à feu moyen. Ajoute le poulet mariné (sans ajouter de matière grasse si la poêle est antiadhésive). Fais cuire 5 à 7 minutes, en remuant régulièrement, jusqu'à ce que le poulet soit bien doré et cuit à cœur.",
+    "Fais chauffer une poÃªle Ã  feu moyen. Ajoute le poulet marinÃ© (sans ajouter de matiÃ¨re grasse si la poÃªle est antiadhÃ©sive). Fais cuire 5 Ã  7 minutes, en remuant rÃ©guliÃ¨rement, jusqu'Ã  ce que le poulet soit bien dorÃ© et cuit Ã  cÅ“ur.",
     "Monter les wraps",
-    "Fais légèrement chauffer les tortillas. Dépose : de la laitue, du poulet chaud, des tomates, de l’oignon rouge. Ajoute la sauce selon ton goût. Roule les wraps bien serrés.",
+    "Fais lÃ©gÃ¨rement chauffer les tortillas. DÃ©pose : de la laitue, du poulet chaud, des tomates, de lâ€™oignon rouge. Ajoute la sauce selon ton goÃ»t. Roule les wraps bien serrÃ©s.",
   ],
 },
 {
   id: "mass-omelette-power",
-  title: "Omelette power à la feta",
+  title: "Omelette power Ã  la feta",
   flavor: "sale",
-  prepTime: "15 à 20 min",
+  prepTime: "15 Ã  20 min",
   servings: "1 pers",
   image: omeletteFetaImg,
   ingredients: [
-    "3 œufs",
-    "50 g de feta émiettée",
-    "100 g d’épinards frais",
-    "Huile d’olive",
-    "1 gousse d’ail",
+    "3 Å“ufs",
+    "50 g de feta Ã©miettÃ©e",
+    "100 g dâ€™Ã©pinards frais",
+    "Huile dâ€™olive",
+    "1 gousse dâ€™ail",
     "1 petit oignon",
     "Sel et poivre",
   ],
   steps: [
-    "  Préparer les ingrédients",
-    "Épluche et émince finement l’oignon. Épluche et hache l’ail. Lave les épinards et égoutte-les.",
-    "Cuire les légumes",
-    "Fais chauffer un filet d’huile d’olive dans une poêle à feu moyen. Ajoute l’oignon et fais-le revenir 2 à 3 minutes jusqu'à ce qu’il soit translucide. Ajoute l’ail et fais revenir encore 30 secondes. Incorpore les épinards et laisse-les tomber 1 à 2 minutes, jusqu'à réduction.",
-    "Préparer les œufs",
-    "Dans un bol, bats les œufs avec le sel et le poivre.",
-    "Cuire l’omelette",
-    "Verse les œufs battus dans la poêle sur les légumes. Laisse cuire à feu doux quelques minutes, jusqu'à ce que les bords commencent à prendre.",
+    "  PrÃ©parer les ingrÃ©dients",
+    "Ã‰pluche et Ã©mince finement lâ€™oignon. Ã‰pluche et hache lâ€™ail. Lave les Ã©pinards et Ã©goutte-les.",
+    "Cuire les lÃ©gumes",
+    "Fais chauffer un filet dâ€™huile dâ€™olive dans une poÃªle Ã  feu moyen. Ajoute lâ€™oignon et fais-le revenir 2 Ã  3 minutes jusqu'Ã  ce quâ€™il soit translucide. Ajoute lâ€™ail et fais revenir encore 30 secondes. Incorpore les Ã©pinards et laisse-les tomber 1 Ã  2 minutes, jusqu'Ã  rÃ©duction.",
+    "PrÃ©parer les Å“ufs",
+    "Dans un bol, bats les Å“ufs avec le sel et le poivre.",
+    "Cuire lâ€™omelette",
+    "Verse les Å“ufs battus dans la poÃªle sur les lÃ©gumes. Laisse cuire Ã  feu doux quelques minutes, jusqu'Ã  ce que les bords commencent Ã  prendre.",
     "Ajouter la feta",
-    "Répartis la feta émiettée sur l’omelette. Poursuis la cuisson doucement jusqu'à ce que l’omelette soit cuite à ton goût.",
+    "RÃ©partis la feta Ã©miettÃ©e sur lâ€™omelette. Poursuis la cuisson doucement jusqu'Ã  ce que lâ€™omelette soit cuite Ã  ton goÃ»t.",
     "Servir",
-    "Plie l’omelette en deux et sers immédiatement.",
+    "Plie lâ€™omelette en deux et sers immÃ©diatement.",
   ],
 },
 {
   id: "mass-smoothie-gain",
-  title: "Smoothie banane beurre de cacahuète",
+  title: "Smoothie banane beurre de cacahuÃ¨te",
   flavor: "sucre",
   prepTime: "5 min",
   servings: "1 pers",
   image: smoothieBananeImg,
   ingredients: [
     "1 banane",
-    "300 ml de lait végétal",
-    "80 g de flocons d’avoine",
-    "1 scoop de protéine whey",
-    "1 cuillère à soupe de beurre de cacahuète",
-    "1 cuillère à soupe de sirop d’érable",
+    "300 ml de lait vÃ©gÃ©tal",
+    "80 g de flocons dâ€™avoine",
+    "1 scoop de protÃ©ine whey",
+    "1 cuillÃ¨re Ã  soupe de beurre de cacahuÃ¨te",
+    "1 cuillÃ¨re Ã  soupe de sirop dâ€™Ã©rable",
     "Cannelle (facultatif)",
   ],
   steps: [
-    "Épluche la banane et coupe-la en morceaux.",
-    "Verse le lait végétal dans un blender.",
-    "Ajoute les flocons d’avoine, la banane, la whey, le beurre de cacahuète et le sirop d’érable.",
+    "Ã‰pluche la banane et coupe-la en morceaux.",
+    "Verse le lait vÃ©gÃ©tal dans un blender.",
+    "Ajoute les flocons dâ€™avoine, la banane, la whey, le beurre de cacahuÃ¨te et le sirop dâ€™Ã©rable.",
     "Ajoute la cannelle si tu le souhaites.",
-    "Mixe pendant 30 à 60 secondes, jusqu'à obtenir une texture lisse et homogène.",
-    "Ajuste la texture : Ajoute un peu de lait si le smoothie est trop épais. Mixe davantage si nécessaire.",
-    "Verse dans un verre et consomme immédiatement.",
+    "Mixe pendant 30 Ã  60 secondes, jusqu'Ã  obtenir une texture lisse et homogÃ¨ne.",
+    "Ajuste la texture : Ajoute un peu de lait si le smoothie est trop Ã©pais. Mixe davantage si nÃ©cessaire.",
+    "Verse dans un verre et consomme immÃ©diatement.",
   ],
 },
 {
   id: "mass-pates-cremeuses",
-  title: "Alfredo pasta protéiné",
+  title: "Alfredo pasta protÃ©inÃ©",
   flavor: "sale",
-  prepTime: "25 à 30 min",
+  prepTime: "25 Ã  30 min",
   servings: "1 pers",
   image: alfredoPastaImg,
   ingredients: [
     "150 g de blanc de poulet",
-    "80 g de pâtes (crues, au choix)",
+    "80 g de pÃ¢tes (crues, au choix)",
     "150 g de champignons (Paris ou autres)",
     "100 g de fromage blanc ou yaourt grec nature",
-    "30 g de parmesan râpé",
-    "1 gousse d’ail",
-    "1 cuillère à café d’huile d’olive",
+    "30 g de parmesan rÃ¢pÃ©",
+    "1 gousse dâ€™ail",
+    "1 cuillÃ¨re Ã  cafÃ© dâ€™huile dâ€™olive",
     "Sel et poivre",
     "Optionnel :",
-    "Persil ou herbes séchées",
+    "Persil ou herbes sÃ©chÃ©es",
   ],
   steps: [
-    "  Cuire les pâtes",
-    "Fais cuire les pâtes dans une grande casserole d’eau bouillante salée selon le temps indiqué. Égoutte-les en conservant un peu d’eau de cuisson.",
-    "Préparer le poulet",
-    "Coupe le poulet en morceaux ou en lanières. Fais chauffer l’huile d’olive dans une poêle à feu moyen. Ajoute le poulet, sale, poivre et fais cuire 5 à 7 minutes jusqu'à ce qu’il soit bien doré et cuit à cœur. Réserve.",
+    "  Cuire les pÃ¢tes",
+    "Fais cuire les pÃ¢tes dans une grande casserole dâ€™eau bouillante salÃ©e selon le temps indiquÃ©. Ã‰goutte-les en conservant un peu dâ€™eau de cuisson.",
+    "PrÃ©parer le poulet",
+    "Coupe le poulet en morceaux ou en laniÃ¨res. Fais chauffer lâ€™huile dâ€™olive dans une poÃªle Ã  feu moyen. Ajoute le poulet, sale, poivre et fais cuire 5 Ã  7 minutes jusqu'Ã  ce quâ€™il soit bien dorÃ© et cuit Ã  cÅ“ur. RÃ©serve.",
     "Cuire les champignons",
-    "Dans la même poêle, ajoute l’ail haché et fais revenir 30 secondes. Ajoute les champignons émincés et fais-les cuire 5 minutes, jusqu'à ce qu’ils rendent leur eau et dorent légèrement.",
-    "Préparer la sauce Alfredo protéinée",
-    "Baisse le feu. Ajoute le fromage blanc (ou yaourt grec) et mélange doucement. Incorpore le parmesan et mélange jusqu'à obtenir une sauce crémeuse. Ajoute un peu d’eau de cuisson des pâtes si nécessaire pour détendre la sauce.",
+    "Dans la mÃªme poÃªle, ajoute lâ€™ail hachÃ© et fais revenir 30 secondes. Ajoute les champignons Ã©mincÃ©s et fais-les cuire 5 minutes, jusqu'Ã  ce quâ€™ils rendent leur eau et dorent lÃ©gÃ¨rement.",
+    "PrÃ©parer la sauce Alfredo protÃ©inÃ©e",
+    "Baisse le feu. Ajoute le fromage blanc (ou yaourt grec) et mÃ©lange doucement. Incorpore le parmesan et mÃ©lange jusqu'Ã  obtenir une sauce crÃ©meuse. Ajoute un peu dâ€™eau de cuisson des pÃ¢tes si nÃ©cessaire pour dÃ©tendre la sauce.",
     "Assembler",
-    "Ajoute les pâtes égouttées dans la poêle. Incorpore le poulet. Mélange bien pour enrober les pâtes de sauce.",
+    "Ajoute les pÃ¢tes Ã©gouttÃ©es dans la poÃªle. Incorpore le poulet. MÃ©lange bien pour enrober les pÃ¢tes de sauce.",
     "Ajuster et servir",
-    "Rectifie l’assaisonnement (sel, poivre). Ajoute des herbes si souhaité et sers immédiatement.",
+    "Rectifie lâ€™assaisonnement (sel, poivre). Ajoute des herbes si souhaitÃ© et sers immÃ©diatement.",
   ],
 },
 {
   id: "mass-quinoa-bowl",
-  title: "Butter chicken protéiné, riz et brocolis",
+  title: "Butter chicken protÃ©inÃ©, riz et brocolis",
   flavor: "sale",
-  prepTime: "30 à 35 min",
+  prepTime: "30 Ã  35 min",
   servings: "1 pers",
   image: butterChickenImg,
   ingredients: [
     "Pour le poulet",
     "150 g de blanc de poulet",
-    "1 cuillère à café d’huile d’olive",
+    "1 cuillÃ¨re Ã  cafÃ© dâ€™huile dâ€™olive",
     "Sel et poivre",
     "Pour la sauce butter chicken",
     "100 g de yaourt grec nature",
-    "1 cuillère à soupe de concentré de tomate",
-    "1 cuillère à café de garam masala",
-    "1/2 cuillère à café de paprika",
-    "1/2 cuillère à café de curry",
-    "1 gousse d’ail",
-    "1/2 cuillère à café de gingembre (pâte ou moulu)",
+    "1 cuillÃ¨re Ã  soupe de concentrÃ© de tomate",
+    "1 cuillÃ¨re Ã  cafÃ© de garam masala",
+    "1/2 cuillÃ¨re Ã  cafÃ© de paprika",
+    "1/2 cuillÃ¨re Ã  cafÃ© de curry",
+    "1 gousse dâ€™ail",
+    "1/2 cuillÃ¨re Ã  cafÃ© de gingembre (pÃ¢te ou moulu)",
     "Sel et poivre",
-    "Pour l’accompagnement",
+    "Pour lâ€™accompagnement",
     "60 g de riz cru",
     "150 g de brocolis",
   ],
   steps: [
     "  Cuire le riz",
-    "Fais cuire le riz dans une casserole d’eau bouillante salée selon le temps indiqué. Égoutte et réserve.",
+    "Fais cuire le riz dans une casserole dâ€™eau bouillante salÃ©e selon le temps indiquÃ©. Ã‰goutte et rÃ©serve.",
     "Cuire les brocolis",
-    "Fais cuire les brocolis à la vapeur ou dans de l’eau bouillante salée pendant 5 à 7 minutes, jusqu'à ce qu’ils soient tendres mais encore verts. Égoutte et réserve.",
-    "Préparer le poulet",
-    "Coupe le poulet en morceaux. Fais chauffer l’huile d’olive dans une poêle à feu moyen. Ajoute le poulet, sale, poivre et fais cuire 5 à 6 minutes jusqu'à ce qu’il soit bien doré et cuit à cœur. Réserve.",
-    "Préparer la sauce",
-    "Dans un bol, mélange : le yaourt grec, le concentré de tomate, l’ail haché, le gingembre, le garam masala, le paprika, le curry, le sel et poivre.",
+    "Fais cuire les brocolis Ã  la vapeur ou dans de lâ€™eau bouillante salÃ©e pendant 5 Ã  7 minutes, jusqu'Ã  ce quâ€™ils soient tendres mais encore verts. Ã‰goutte et rÃ©serve.",
+    "PrÃ©parer le poulet",
+    "Coupe le poulet en morceaux. Fais chauffer lâ€™huile dâ€™olive dans une poÃªle Ã  feu moyen. Ajoute le poulet, sale, poivre et fais cuire 5 Ã  6 minutes jusqu'Ã  ce quâ€™il soit bien dorÃ© et cuit Ã  cÅ“ur. RÃ©serve.",
+    "PrÃ©parer la sauce",
+    "Dans un bol, mÃ©lange : le yaourt grec, le concentrÃ© de tomate, lâ€™ail hachÃ©, le gingembre, le garam masala, le paprika, le curry, le sel et poivre.",
     "Assembler le butter chicken",
-    "Baisse le feu. Remets le poulet dans la poêle. Ajoute la sauce et mélange délicatement. Laisse mijoter 3 à 5 minutes à feu doux, sans faire bouillir, jusqu'à obtenir une sauce crémeuse.",
+    "Baisse le feu. Remets le poulet dans la poÃªle. Ajoute la sauce et mÃ©lange dÃ©licatement. Laisse mijoter 3 Ã  5 minutes Ã  feu doux, sans faire bouillir, jusqu'Ã  obtenir une sauce crÃ©meuse.",
     "Servir",
-    "Dispose le riz dans l’assiette. Ajoute le butter chicken crémeux. Accompagne de brocolis.",
+    "Dispose le riz dans lâ€™assiette. Ajoute le butter chicken crÃ©meux. Accompagne de brocolis.",
   ],
 },
 
@@ -312,93 +313,93 @@ const massRecipes: Recipe[] = [
   id: "mass-patate-bowl",
   title: "Avocado toast",
   flavor: "sale",
-  prepTime: "10 à 12 min",
+  prepTime: "10 Ã  12 min",
   servings: "1 pers",
   image: avocadoToastImg,
   ingredients: [
     "1 ou 2 tranches de pain (complet ou au choix)",
-    "1 avocat mûr",
-    "1 œuf",
+    "1 avocat mÃ»r",
+    "1 Å“uf",
     "Sel et poivre",
-    "Un filet d’huile d’olive",
+    "Un filet dâ€™huile dâ€™olive",
     "Jus de citron (facultatif)",
-    "Une pincée de flocons de piment ou paprika",
+    "Une pincÃ©e de flocons de piment ou paprika",
   ],
   steps: [
-    "  Préparer l’avocat",
-    "Coupe l’avocat en deux, retire le noyau et récupère la chair. Écrase-la à la fourchette dans un bol. Assaisonne avec le sel, le poivre et un filet de jus de citron si souhaité.",
+    "  PrÃ©parer lâ€™avocat",
+    "Coupe lâ€™avocat en deux, retire le noyau et rÃ©cupÃ¨re la chair. Ã‰crase-la Ã  la fourchette dans un bol. Assaisonne avec le sel, le poivre et un filet de jus de citron si souhaitÃ©.",
     "Griller le pain",
-    "Fais griller les tranches de pain jusqu'à ce qu’elles soient bien dorées et croustillantes.",
-    "Cuire l’œuf",
-    "Fais chauffer une petite poêle avec un filet d’huile d’olive. Casse l’œuf et fais-le cuire selon ta préférence : œuf au plat (jaune coulant) ou œuf mollet / poché. Sale et poivre légèrement.",
-    "Monter l’avocado toast",
-    "Étale l’avocat écrasé sur les tranches de pain chaud. Dépose l’œuf par-dessus.",
+    "Fais griller les tranches de pain jusqu'Ã  ce quâ€™elles soient bien dorÃ©es et croustillantes.",
+    "Cuire lâ€™Å“uf",
+    "Fais chauffer une petite poÃªle avec un filet dâ€™huile dâ€™olive. Casse lâ€™Å“uf et fais-le cuire selon ta prÃ©fÃ©rence : Å“uf au plat (jaune coulant) ou Å“uf mollet / pochÃ©. Sale et poivre lÃ©gÃ¨rement.",
+    "Monter lâ€™avocado toast",
+    "Ã‰tale lâ€™avocat Ã©crasÃ© sur les tranches de pain chaud. DÃ©pose lâ€™Å“uf par-dessus.",
     "Finaliser",
-    "Ajoute un peu de poivre, des flocons de piment ou du paprika si souhaité. Sers immédiatement.",
+    "Ajoute un peu de poivre, des flocons de piment ou du paprika si souhaitÃ©. Sers immÃ©diatement.",
   ],
 },
 {
   id: "mass-chili-boost",
-  title: "Bowl prise de masse au steak haché",
+  title: "Bowl prise de masse au steak hachÃ©",
   flavor: "sale",
-  prepTime: "25 à 30 min",
+  prepTime: "25 Ã  30 min",
   servings: "1 pers",
   image: wrapPouletImg,
   ingredients: [
-    "200 g de steak haché (5 à 10 % MG selon objectif)",
+    "200 g de steak hachÃ© (5 Ã  10 % MG selon objectif)",
     "80 g de riz cru",
     "1/2 avocat",
-    "1 œuf",
-    "1 cuillère à café d’huile d’olive",
+    "1 Å“uf",
+    "1 cuillÃ¨re Ã  cafÃ© dâ€™huile dâ€™olive",
     "1 petit oignon",
     "Sel et poivre",
     "Optionnel :",
-    "Épices (paprika, ail en poudre, cumin)",
+    "Ã‰pices (paprika, ail en poudre, cumin)",
   ],
   steps: [
     "  Cuire le riz",
-    "Fais cuire le riz dans une casserole d’eau bouillante salée selon le temps indiqué. Égoutte et réserve.",
-    "Cuire le steak haché",
-    "Fais chauffer l’huile d’olive dans une poêle à feu moyen. Ajoute l’oignon émincé et fais-le revenir 2 minutes. Ajoute le steak haché, sale, poivre et émiette-le à la spatule. Fais cuire 4 à 6 minutes, jusqu'à cuisson souhaitée.",
-    "Cuire l’œuf",
-    "Dans une petite poêle, fais cuire l’œuf au plat ou mollet selon préférence.",
-    "Préparer l’avocat",
-    "Coupe le demi-avocat en tranches ou en dés.",
+    "Fais cuire le riz dans une casserole dâ€™eau bouillante salÃ©e selon le temps indiquÃ©. Ã‰goutte et rÃ©serve.",
+    "Cuire le steak hachÃ©",
+    "Fais chauffer lâ€™huile dâ€™olive dans une poÃªle Ã  feu moyen. Ajoute lâ€™oignon Ã©mincÃ© et fais-le revenir 2 minutes. Ajoute le steak hachÃ©, sale, poivre et Ã©miette-le Ã  la spatule. Fais cuire 4 Ã  6 minutes, jusqu'Ã  cuisson souhaitÃ©e.",
+    "Cuire lâ€™Å“uf",
+    "Dans une petite poÃªle, fais cuire lâ€™Å“uf au plat ou mollet selon prÃ©fÃ©rence.",
+    "PrÃ©parer lâ€™avocat",
+    "Coupe le demi-avocat en tranches ou en dÃ©s.",
     "Assembler le bowl",
-    "Dans un bol ou une assiette : Dépose le riz. Ajoute le steak haché chaud. Ajoute l’œuf. Termine par l’avocat.",
+    "Dans un bol ou une assiette : DÃ©pose le riz. Ajoute le steak hachÃ© chaud. Ajoute lâ€™Å“uf. Termine par lâ€™avocat.",
   ],
 },
 {
   id: "mass-curry-coco",
   title: "Curry coco pois chiches",
   flavor: "sale",
-  prepTime: "25 à 30 min",
+  prepTime: "25 Ã  30 min",
   servings: "1 pers",
   image: curryPoischicheImg,
   ingredients: [
-    "150 g de pois chiches cuits (égouttés)",
+    "150 g de pois chiches cuits (Ã©gouttÃ©s)",
     "100 ml de lait de coco",
     "1/2 oignon",
-    "1 gousse d’ail",
-    "1 cuillère à soupe de concentré de tomate",
-    "1 cuillère à café de curry en poudre",
-    "1/2 cuillère à café de paprika",
+    "1 gousse dâ€™ail",
+    "1 cuillÃ¨re Ã  soupe de concentrÃ© de tomate",
+    "1 cuillÃ¨re Ã  cafÃ© de curry en poudre",
+    "1/2 cuillÃ¨re Ã  cafÃ© de paprika",
     "Sel et poivre",
     "Persil frais",
-    "Pour l’accompagnement",
+    "Pour lâ€™accompagnement",
     "60 g de riz cru",
   ],
   steps: [
     "  Cuire le riz",
-    "Fais cuire le riz dans une casserole d’eau bouillante salée selon le temps indiqué. Égoutte et réserve.",
-    "Préparer la base du curry",
-    "Émince l’oignon et hache l’ail. Fais chauffer une poêle ou une casserole à feu moyen. Ajoute l’oignon et fais-le revenir 2 à 3 minutes jusqu'à ce qu’il soit translucide. Ajoute l’ail et fais revenir 30 secondes.",
-    "Ajouter les épices et le concentré de tomate",
-    "Ajoute le curry, le paprika et le concentré de tomate. Mélange et laisse cuire 1 minute pour développer les arômes.",
+    "Fais cuire le riz dans une casserole dâ€™eau bouillante salÃ©e selon le temps indiquÃ©. Ã‰goutte et rÃ©serve.",
+    "PrÃ©parer la base du curry",
+    "Ã‰mince lâ€™oignon et hache lâ€™ail. Fais chauffer une poÃªle ou une casserole Ã  feu moyen. Ajoute lâ€™oignon et fais-le revenir 2 Ã  3 minutes jusqu'Ã  ce quâ€™il soit translucide. Ajoute lâ€™ail et fais revenir 30 secondes.",
+    "Ajouter les Ã©pices et le concentrÃ© de tomate",
+    "Ajoute le curry, le paprika et le concentrÃ© de tomate. MÃ©lange et laisse cuire 1 minute pour dÃ©velopper les arÃ´mes.",
     "Ajouter les pois chiches et le lait de coco",
-    "Ajoute les pois chiches égouttés et mélange. Verse le lait de coco, sale et poivre. Laisse mijoter 10 minutes à feu doux, en remuant de temps en temps.",
+    "Ajoute les pois chiches Ã©gouttÃ©s et mÃ©lange. Verse le lait de coco, sale et poivre. Laisse mijoter 10 minutes Ã  feu doux, en remuant de temps en temps.",
     "Finaliser",
-    "Goûte et rectifie l’assaisonnement. Ajoute le persil ciselé hors du feu.",
+    "GoÃ»te et rectifie lâ€™assaisonnement. Ajoute le persil ciselÃ© hors du feu.",
     "Servir",
     "Sers le curry coco bien chaud avec le riz.",
   ],
@@ -407,111 +408,111 @@ const massRecipes: Recipe[] = [
   id: "mass-riz-cajou",
   title: "Steak, pommes de terre & haricots verts",
   flavor: "sale",
-  prepTime: "30 à 35 min",
+  prepTime: "30 Ã  35 min",
   servings: "1 pers",
   image: steackPommeDeTerreImg,
   ingredients: [
-    "1 steak haché (150 à 200 g, selon besoin calorique)",
+    "1 steak hachÃ© (150 Ã  200 g, selon besoin calorique)",
     "300 g de pommes de terre",
     "150 g de haricots verts",
-    "1 cuillère à soupe d’huile d’olive",
-    "1 gousse d’ail (optionnel)",
+    "1 cuillÃ¨re Ã  soupe dâ€™huile dâ€™olive",
+    "1 gousse dâ€™ail (optionnel)",
     "Sel et poivre",
     "Optionnel :",
     "Persil ou herbes de Provence",
   ],
   steps: [
-    "  Préparer les pommes de terre",
-    "Épluche les pommes de terre et coupe-les en morceaux. Fais-les cuire dans une casserole d’eau bouillante salée pendant 15 à 20 minutes, jusqu'à ce qu’elles soient tendres. Égoutte et réserve.",
+    "  PrÃ©parer les pommes de terre",
+    "Ã‰pluche les pommes de terre et coupe-les en morceaux. Fais-les cuire dans une casserole dâ€™eau bouillante salÃ©e pendant 15 Ã  20 minutes, jusqu'Ã  ce quâ€™elles soient tendres. Ã‰goutte et rÃ©serve.",
     "Cuire les haricots verts",
-    "Fais cuire les haricots verts dans de l’eau bouillante salée ou à la vapeur pendant 8 à 10 minutes. Égoutte et réserve.",
-    "Cuire le steak haché",
-    "Fais chauffer l’huile d’olive dans une poêle à feu moyen. Ajoute l’ail haché si utilisé, puis le steak haché. Sale et poivre. Fais cuire 3 à 5 minutes par face selon la cuisson souhaitée.",
-    "Assembler l’assiette",
-    "Dispose les pommes de terre dans l’assiette. Ajoute le steak haché et les haricots verts. Parseme de persil ou d’herbes si souhaité.",
+    "Fais cuire les haricots verts dans de lâ€™eau bouillante salÃ©e ou Ã  la vapeur pendant 8 Ã  10 minutes. Ã‰goutte et rÃ©serve.",
+    "Cuire le steak hachÃ©",
+    "Fais chauffer lâ€™huile dâ€™olive dans une poÃªle Ã  feu moyen. Ajoute lâ€™ail hachÃ© si utilisÃ©, puis le steak hachÃ©. Sale et poivre. Fais cuire 3 Ã  5 minutes par face selon la cuisson souhaitÃ©e.",
+    "Assembler lâ€™assiette",
+    "Dispose les pommes de terre dans lâ€™assiette. Ajoute le steak hachÃ© et les haricots verts. Parseme de persil ou dâ€™herbes si souhaitÃ©.",
   ],
 },
 
  {
   id: "mass-overnight-prot",
-  title: "Overnight oats protéines",
+  title: "Overnight oats protÃ©ines",
   flavor: "sucre",
-  prepTime: "5 à 7 min",
+  prepTime: "5 Ã  7 min",
   servings: "1 pers",
   image: overnightOatsImg,
   ingredients: [
-    "50 g de flocons d’avoine",
-    "1 cuillère à soupe de graines de chia",
-    "1 scoop de protéine whey",
+    "50 g de flocons dâ€™avoine",
+    "1 cuillÃ¨re Ã  soupe de graines de chia",
+    "1 scoop de protÃ©ine whey",
     "120 g de yaourt (nature)",
-    "120 ml de lait d’amande",
+    "120 ml de lait dâ€™amande",
     "50 g de framboises",
-    "1 cuillère à soupe de pâte à tartiner Biscoff (sur le dessus)",
+    "1 cuillÃ¨re Ã  soupe de pÃ¢te Ã  tartiner Biscoff (sur le dessus)",
   ],
   steps: [
-    "  Préparer la whey",
-    "Dans un bol ou un shaker, mélange la whey avec le lait d’amande jusqu'à obtenir une texture bien lisse, sans grumeaux.",
-    "Préparer la base",
-    "Dans un bocal ou un bol, ajoute : les flocons d’avoine, les graines de chia, le yaourt. Mélange légèrement.",
+    "  PrÃ©parer la whey",
+    "Dans un bol ou un shaker, mÃ©lange la whey avec le lait dâ€™amande jusqu'Ã  obtenir une texture bien lisse, sans grumeaux.",
+    "PrÃ©parer la base",
+    "Dans un bocal ou un bol, ajoute : les flocons dâ€™avoine, les graines de chia, le yaourt. MÃ©lange lÃ©gÃ¨rement.",
     "Ajouter la whey",
-    "Verse le mélange whey + lait d’amande dans le bocal. Mélange bien pour que tous les ingrédients soient homogènes.",
+    "Verse le mÃ©lange whey + lait dâ€™amande dans le bocal. MÃ©lange bien pour que tous les ingrÃ©dients soient homogÃ¨nes.",
     "Ajouter les fruits",
-    "Ajoute les framboises et mélange délicatement ou laisse-les sur le dessus selon ta préférence.",
+    "Ajoute les framboises et mÃ©lange dÃ©licatement ou laisse-les sur le dessus selon ta prÃ©fÃ©rence.",
     "Repos",
-    "Couvre et place au réfrigérateur pendant au minimum 4 heures, idéalement toute la nuit.",
+    "Couvre et place au rÃ©frigÃ©rateur pendant au minimum 4 heures, idÃ©alement toute la nuit.",
     "Finaliser",
-    "Au moment de servir, ajoute la pâte à tartiner Biscoff sur le dessus.",
+    "Au moment de servir, ajoute la pÃ¢te Ã  tartiner Biscoff sur le dessus.",
   ],
 },
 {
   id: "mass-brownie-beans",
-  title: "Brownie protéiné",
+  title: "Brownie protÃ©inÃ©",
   flavor: "sucre",
-  prepTime: "30 à 35 min",
+  prepTime: "30 Ã  35 min",
   servings: "1 pers",
   image: brownieProteineImg,
   ingredients: [
-    "60 g de whey protéine isolate OVERSTIM.s",
+    "60 g de whey protÃ©ine isolate OVERSTIM.s",
     "200 g de compote de pomme bio",
-    "2 blancs d’œufs",
-    "1 œuf entier",
-    "100 g de farine de blé T65 ou T80",
+    "2 blancs dâ€™Å“ufs",
+    "1 Å“uf entier",
+    "100 g de farine de blÃ© T65 ou T80",
     "Sel",
-    "4 cuillères à soupe de sucre roux ou de sucre de fleur de coco",
-    "4 cuillères à soupe de chocolat en poudre ou cacao en poudre ou 50 g de chocolat noir à pâtisser (70 à 85% de cacao)",
-    "1 cuillère à soupe de levure chimique",
+    "4 cuillÃ¨res Ã  soupe de sucre roux ou de sucre de fleur de coco",
+    "4 cuillÃ¨res Ã  soupe de chocolat en poudre ou cacao en poudre ou 50 g de chocolat noir Ã  pÃ¢tisser (70 Ã  85% de cacao)",
+    "1 cuillÃ¨re Ã  soupe de levure chimique",
   ],
   steps: [
-    "Préchauffer votre four à 180°C.",
-    "Dans un saladier, monter les blancs de deux œufs en neige.",
-    "Dans un autre saladier, verser la farine, la protéine, le cacao en poudre (ou le chocolat préalablement fondu), le sucre, la compote et 1 œuf entier. Mélanger pour obtenir une pâte bien lisse et homogène. Ajouter 1 pincée de sel.",
+    "PrÃ©chauffer votre four Ã  180Â°C.",
+    "Dans un saladier, monter les blancs de deux Å“ufs en neige.",
+    "Dans un autre saladier, verser la farine, la protÃ©ine, le cacao en poudre (ou le chocolat prÃ©alablement fondu), le sucre, la compote et 1 Å“uf entier. MÃ©langer pour obtenir une pÃ¢te bien lisse et homogÃ¨ne. Ajouter 1 pincÃ©e de sel.",
     "Incorporer les blancs en neige avec une spatule sans les casser.",
-    "Verser la préparation dans un moule rectangulaire à brownie et faire cuire 20 minutes à 180°C.",
+    "Verser la prÃ©paration dans un moule rectangulaire Ã  brownie et faire cuire 20 minutes Ã  180Â°C.",
   ],
 },
 {
   id: "mass-salade-pates",
-  title: "Bowl sucré fruits rouges & granola",
-  flavor: "sale",
-  prepTime: "5 à 7 min",
+  title: "Bowl sucrÃ© fruits rouges & granola",
+  flavor: "sucre",
+  prepTime: "5 Ã  7 min",
   servings: "1 pers",
   image: fruitsRougesGranolaImg,
   ingredients: [
-    "150 à 200 g de fromage blanc ou yaourt grec",
+    "150 Ã  200 g de fromage blanc ou yaourt grec",
     "50 g de myrtilles",
-    "3 à 4 fraises",
+    "3 Ã  4 fraises",
     "30 g de granola",
-    "1 cuillère à soupe de sirop d’érable",
+    "1 cuillÃ¨re Ã  soupe de sirop dâ€™Ã©rable",
   ],
   steps: [
-    "  Préparer les fruits",
-    "Lave les fraises et coupe-les en morceaux. Rince les myrtilles si nécessaire.",
-    "Préparer la base",
-    "Verse le fromage blanc ou le yaourt grec dans un bol. Lisse légèrement à la cuillère.",
+    "  PrÃ©parer les fruits",
+    "Lave les fraises et coupe-les en morceaux. Rince les myrtilles si nÃ©cessaire.",
+    "PrÃ©parer la base",
+    "Verse le fromage blanc ou le yaourt grec dans un bol. Lisse lÃ©gÃ¨rement Ã  la cuillÃ¨re.",
     "Ajouter les toppings",
     "Ajoute les myrtilles et les fraises sur le yaourt. Parseme le granola par-dessus.",
     "Finaliser",
-    "Verse le sirop d’érable sur l’ensemble.",
+    "Verse le sirop dâ€™Ã©rable sur lâ€™ensemble.",
   ],
 },
 ]
@@ -520,263 +521,263 @@ const healthyRecipes: Recipe[] = [
 {
   id: "healthy-parfait",
   title: "Burrito bowl healthy",
-  flavor: "sucre",
-  prepTime: "35 à 40 min",
+  flavor: "sale",
+  prepTime: "35 Ã  40 min",
   servings: "1 pers",
   image: bowlPouletImg,
   ingredients: [
-    "Base & protéines",
+    "Base & protÃ©ines",
     "120 g de blanc de poulet",
     "200 g de patate douce",
-    "Légumes",
-    "1/4 d’oignon rouge",
+    "LÃ©gumes",
+    "1/4 dâ€™oignon rouge",
     "80 g de tomates cerises",
     "1/4 de poivron rouge",
     "1/4 de poivron jaune",
     "1/2 avocat",
     "Sauce & assaisonnement",
-    "30 g de crème fraîche légère",
-    "1 cuillère à café d’huile d’olive",
-    "Jus d’1/2 citron vert",
-    "Persil frais (selon goût)",
-    "1/2 cuillère à café de paprika",
-    "1/2 cuillère à café de poudre d’ail",
-    "1/2 cuillère à café d’épices cajun",
+    "30 g de crÃ¨me fraÃ®che lÃ©gÃ¨re",
+    "1 cuillÃ¨re Ã  cafÃ© dâ€™huile dâ€™olive",
+    "Jus dâ€™1/2 citron vert",
+    "Persil frais (selon goÃ»t)",
+    "1/2 cuillÃ¨re Ã  cafÃ© de paprika",
+    "1/2 cuillÃ¨re Ã  cafÃ© de poudre dâ€™ail",
+    "1/2 cuillÃ¨re Ã  cafÃ© dâ€™Ã©pices cajun",
     "Sel et poivre",
   ],
   steps: [
     "  Cuire la patate douce",
-    "Préchauffe le four à 200°C. Épluche la patate douce et coupe-la en dés. Dépose-la sur une plaque, ajoute la moitié de l’huile d’olive, le paprika, la poudre d’ail, un peu de sel et poivre. Mélange et enfourne pour 25 à 30 minutes, jusqu'à ce qu’elle soit tendre et dorée.",
+    "PrÃ©chauffe le four Ã  200Â°C. Ã‰pluche la patate douce et coupe-la en dÃ©s. DÃ©pose-la sur une plaque, ajoute la moitiÃ© de lâ€™huile dâ€™olive, le paprika, la poudre dâ€™ail, un peu de sel et poivre. MÃ©lange et enfourne pour 25 Ã  30 minutes, jusqu'Ã  ce quâ€™elle soit tendre et dorÃ©e.",
     "Cuire le poulet",
-    "Coupe le poulet en morceaux. Fais chauffer une poêle à feu moyen avec le reste de l’huile d’olive. Ajoute le poulet, les épices cajun, sale et poivre. Fais cuire 5 à 7 minutes jusqu'à ce qu’il soit bien doré et cuit à cœur.",
-    "Préparer les légumes frais",
-    "Émince finement l’oignon rouge. Coupe les tomates cerises en deux. Coupe les poivrons en fines lanières. Coupe l’avocat en tranches.",
-    "Préparer la sauce",
-    "Dans un petit bol, mélange la crème fraîche légère avec le jus de citron vert, du sel et du poivre.",
+    "Coupe le poulet en morceaux. Fais chauffer une poÃªle Ã  feu moyen avec le reste de lâ€™huile dâ€™olive. Ajoute le poulet, les Ã©pices cajun, sale et poivre. Fais cuire 5 Ã  7 minutes jusqu'Ã  ce quâ€™il soit bien dorÃ© et cuit Ã  cÅ“ur.",
+    "PrÃ©parer les lÃ©gumes frais",
+    "Ã‰mince finement lâ€™oignon rouge. Coupe les tomates cerises en deux. Coupe les poivrons en fines laniÃ¨res. Coupe lâ€™avocat en tranches.",
+    "PrÃ©parer la sauce",
+    "Dans un petit bol, mÃ©lange la crÃ¨me fraÃ®che lÃ©gÃ¨re avec le jus de citron vert, du sel et du poivre.",
     "Assembler le burrito bowl",
-    "Dans un bol : Dépose la patate douce rôtie. Ajoute le poulet. Dispose les poivrons, tomates cerises et l’oignon rouge. Ajoute l’avocat.",
+    "Dans un bol : DÃ©pose la patate douce rÃ´tie. Ajoute le poulet. Dispose les poivrons, tomates cerises et lâ€™oignon rouge. Ajoute lâ€™avocat.",
     "Finaliser",
-    "Ajoute la sauce. Parseme de persil frais ciselé. Ajoute un filet de jus de citron vert si souhaité.",
+    "Ajoute la sauce. Parseme de persil frais ciselÃ©. Ajoute un filet de jus de citron vert si souhaitÃ©.",
   ],
 },
 {
   id: "healthy-granola",
   title: "Granola croustillant maison",
   flavor: "sucre",
-  prepTime: "35 à 45 min",
+  prepTime: "35 Ã  45 min",
   servings: "1 pers",
   image: granolaMaisonImg,
   ingredients: [
-    "250 g de flocons d’avoine",
-    "60 g d’amandes",
+    "250 g de flocons dâ€™avoine",
+    "60 g dâ€™amandes",
     "60 g de noisettes",
     "60 g de noix",
-    "3 cuillères à soupe de miel",
-    "1 cuillère à café de cannelle",
-    "1 pincée de sel",
+    "3 cuillÃ¨res Ã  soupe de miel",
+    "1 cuillÃ¨re Ã  cafÃ© de cannelle",
+    "1 pincÃ©e de sel",
   ],
   steps: [
-    "  Préchauffer le four",
-    "Préchauffe le four à 170°C.",
-    "Préparer les fruits secs",
-    "Concasse grossièrement les amandes, noisettes et noix.",
-    "Mélanger les ingrédients secs",
-    "Dans un grand saladier, mélange : les flocons d’avoine, les fruits secs concassés, la cannelle, la pincée de sel.",
+    "  PrÃ©chauffer le four",
+    "PrÃ©chauffe le four Ã  170Â°C.",
+    "PrÃ©parer les fruits secs",
+    "Concasse grossiÃ¨rement les amandes, noisettes et noix.",
+    "MÃ©langer les ingrÃ©dients secs",
+    "Dans un grand saladier, mÃ©lange : les flocons dâ€™avoine, les fruits secs concassÃ©s, la cannelle, la pincÃ©e de sel.",
     "Ajouter le miel",
-    "Ajoute le miel et mélange bien pour enrober l’ensemble des ingrédients.",
+    "Ajoute le miel et mÃ©lange bien pour enrober lâ€™ensemble des ingrÃ©dients.",
     "Enfourner",
-    "Étale le mélange en une couche uniforme sur une plaque recouverte de papier cuisson.",
+    "Ã‰tale le mÃ©lange en une couche uniforme sur une plaque recouverte de papier cuisson.",
     "Cuisson",
-    "Enfourne pour 20 à 25 minutes. Remue le granola toutes les 8 à 10 minutes pour une cuisson homogène.",
+    "Enfourne pour 20 Ã  25 minutes. Remue le granola toutes les 8 Ã  10 minutes pour une cuisson homogÃ¨ne.",
     "Refroidissement",
-    "Sors le granola du four et laisse-le refroidir complètement : il deviendra croustillant en refroidissant.",
+    "Sors le granola du four et laisse-le refroidir complÃ¨tement : il deviendra croustillant en refroidissant.",
     "Conservation",
-    "Conserve le granola dans un bocal hermétique à température ambiante.",
+    "Conserve le granola dans un bocal hermÃ©tique Ã  tempÃ©rature ambiante.",
   ],
 },
 {
   id: "healthy-tartine-avocat",
   title: "Bowl au thon",
   flavor: "sale",
-  prepTime: "20 à 25 min",
+  prepTime: "20 Ã  25 min",
   servings: "1 pers",
   image: bowlThonImg,
   ingredients: [
-    "120 g de thon au naturel (égoutté)",
+    "120 g de thon au naturel (Ã©gouttÃ©)",
     "60 g de riz cru",
     "1/2 avocat",
     "1/2 concombre",
     "1 petite tomate",
-    "1 œuf",
-    "1 cuillère à café de graines de sésame",
+    "1 Å“uf",
+    "1 cuillÃ¨re Ã  cafÃ© de graines de sÃ©same",
     "Pour la vinaigrette",
-    "1 cuillère à café d’huile d’olive",
-    "1 cuillère à café de vinaigre (ou jus de citron)",
+    "1 cuillÃ¨re Ã  cafÃ© dâ€™huile dâ€™olive",
+    "1 cuillÃ¨re Ã  cafÃ© de vinaigre (ou jus de citron)",
     "Sel et poivre",
   ],
   steps: [
     "  Cuire le riz",
-    "Fais cuire le riz dans une casserole d’eau bouillante salée selon le temps indiqué. Égoutte et laisse tiédir.",
-    "Cuire l’œuf",
-    "Plonge l’œuf dans de l’eau bouillante et fais-le cuire 9 à 10 minutes pour un œuf dur. Refroidis-le sous l’eau froide, écaille-le et coupe-le en quartiers.",
-    "Préparer les légumes",
-    "Coupe l’avocat en tranches ou en dés. Coupe le concombre en rondelles ou en dés. Coupe la tomate en morceaux.",
-    "Préparer la vinaigrette",
-    "Dans un petit bol, mélange l’huile d’olive, le vinaigre (ou jus de citron), le sel et le poivre.",
+    "Fais cuire le riz dans une casserole dâ€™eau bouillante salÃ©e selon le temps indiquÃ©. Ã‰goutte et laisse tiÃ©dir.",
+    "Cuire lâ€™Å“uf",
+    "Plonge lâ€™Å“uf dans de lâ€™eau bouillante et fais-le cuire 9 Ã  10 minutes pour un Å“uf dur. Refroidis-le sous lâ€™eau froide, Ã©caille-le et coupe-le en quartiers.",
+    "PrÃ©parer les lÃ©gumes",
+    "Coupe lâ€™avocat en tranches ou en dÃ©s. Coupe le concombre en rondelles ou en dÃ©s. Coupe la tomate en morceaux.",
+    "PrÃ©parer la vinaigrette",
+    "Dans un petit bol, mÃ©lange lâ€™huile dâ€™olive, le vinaigre (ou jus de citron), le sel et le poivre.",
     "Assembler le bowl",
-    "Dans un bol : Dépose le riz. Ajoute le thon émietté. Dispose l’avocat, le concombre et la tomate. Ajoute l’œuf dur.",
+    "Dans un bol : DÃ©pose le riz. Ajoute le thon Ã©miettÃ©. Dispose lâ€™avocat, le concombre et la tomate. Ajoute lâ€™Å“uf dur.",
     "Finaliser",
-    "Verse la vinaigrette sur le bowl. Parseme de graines de sésame.",
+    "Verse la vinaigrette sur le bowl. Parseme de graines de sÃ©same.",
   ],
 },
 {
   id: "healthy-bowl-mediterraneen",
-  title: "Bowl méditerranéen",
+  title: "Bowl mÃ©diterranÃ©en",
   flavor: "sale",
-  prepTime: "20 à 25 min",
+  prepTime: "20 Ã  25 min",
   servings: "1 pers",
   image: bowlMediteraneenImg,
   ingredients: [
     "Base",
     "60 g de quinoa ou riz cru",
-    "100 g de pois chiches cuits (égouttés)",
-    "Légumes & garnitures",
+    "100 g de pois chiches cuits (Ã©gouttÃ©s)",
+    "LÃ©gumes & garnitures",
     "1/2 concombre",
     "1 tomate",
-    "1/4 d’oignon rouge",
-    "50 g de feta émiettée",
+    "1/4 dâ€™oignon rouge",
+    "50 g de feta Ã©miettÃ©e",
     "Olives noires (quelques-unes)",
     "Persil ou basilic frais",
     "Assaisonnement",
-    "1 cuillère à soupe d’huile d’olive",
-    "1 cuillère à café de jus de citron",
+    "1 cuillÃ¨re Ã  soupe dâ€™huile dâ€™olive",
+    "1 cuillÃ¨re Ã  cafÃ© de jus de citron",
     "Sel et poivre",
   ],
   steps: [
     "  Cuire la base",
-    "Fais cuire le quinoa ou le riz dans une casserole d’eau bouillante salée selon le temps indiqué. Égoutte et laisse tiédir.",
-    "Préparer les légumes",
-    "Coupe le concombre en dés. Coupe la tomate en morceaux. Émince finement l’oignon rouge.",
-    "Préparer les pois chiches",
-    "Rince et égoutte les pois chiches. Tu peux les utiliser tels quels ou les faire revenir rapidement à la poêle avec un peu de sel.",
-    "Préparer l’assaisonnement",
-    "Dans un petit bol, mélange l’huile d’olive, le jus de citron, le sel et le poivre.",
+    "Fais cuire le quinoa ou le riz dans une casserole dâ€™eau bouillante salÃ©e selon le temps indiquÃ©. Ã‰goutte et laisse tiÃ©dir.",
+    "PrÃ©parer les lÃ©gumes",
+    "Coupe le concombre en dÃ©s. Coupe la tomate en morceaux. Ã‰mince finement lâ€™oignon rouge.",
+    "PrÃ©parer les pois chiches",
+    "Rince et Ã©goutte les pois chiches. Tu peux les utiliser tels quels ou les faire revenir rapidement Ã  la poÃªle avec un peu de sel.",
+    "PrÃ©parer lâ€™assaisonnement",
+    "Dans un petit bol, mÃ©lange lâ€™huile dâ€™olive, le jus de citron, le sel et le poivre.",
     "Assembler le bowl",
-    "Dans un bol : Dépose la base (quinoa ou riz). Ajoute les pois chiches. Dispose les légumes. Ajoute la feta et les olives.",
+    "Dans un bol : DÃ©pose la base (quinoa ou riz). Ajoute les pois chiches. Dispose les lÃ©gumes. Ajoute la feta et les olives.",
     "Finaliser",
-    "Verse l’assaisonnement. Ajoute les herbes fraîches.",
+    "Verse lâ€™assaisonnement. Ajoute les herbes fraÃ®ches.",
   ],
 },
 {
   id: "healthy-soupe-verte",
   title: "Soupe verte detox",
   flavor: "sale",
-  prepTime: "20 à 25 min",
+  prepTime: "20 Ã  25 min",
   servings: "1 pers",
   image: soupeDetoxImg,
   ingredients: [
     "150 g de brocoli",
     "1 petite courgette",
-    "50 g d’épinards frais",
-    "500 ml de bouillon de légumes",
+    "50 g dâ€™Ã©pinards frais",
+    "500 ml de bouillon de lÃ©gumes",
   ],
   steps: [
-    "  Préparer les légumes",
-    "Lave le brocoli et coupe-le en petits bouquets. Lave la courgette et coupe-la en rondelles. Rince les épinards.",
+    "  PrÃ©parer les lÃ©gumes",
+    "Lave le brocoli et coupe-le en petits bouquets. Lave la courgette et coupe-la en rondelles. Rince les Ã©pinards.",
     "Cuisson",
-    "Verse le bouillon de légumes dans une casserole. Ajoute le brocoli et la courgette. Porte à ébullition puis laisse cuire 10 à 12 minutes, jusqu'à ce que les légumes soient tendres.",
-    "Ajouter les épinards",
-    "Ajoute les épinards dans la casserole et laisse cuire 1 à 2 minutes, juste le temps qu’ils tombent.",
+    "Verse le bouillon de lÃ©gumes dans une casserole. Ajoute le brocoli et la courgette. Porte Ã  Ã©bullition puis laisse cuire 10 Ã  12 minutes, jusqu'Ã  ce que les lÃ©gumes soient tendres.",
+    "Ajouter les Ã©pinards",
+    "Ajoute les Ã©pinards dans la casserole et laisse cuire 1 Ã  2 minutes, juste le temps quâ€™ils tombent.",
     "Mixer",
-    "Mixe la soupe jusqu'à obtenir une texture lisse et homogène.",
+    "Mixe la soupe jusqu'Ã  obtenir une texture lisse et homogÃ¨ne.",
     "Servir",
-    "Goûte et ajuste l’assaisonnement si nécessaire.",
+    "GoÃ»te et ajuste lâ€™assaisonnement si nÃ©cessaire.",
   ],
 },
 
  {
   id: "healthy-salade-pates",
   title: "Banana bread",
-  flavor: "sale",
-  prepTime: "55 à 65 min",
+  flavor: "sucre",
+  prepTime: "55 Ã  65 min",
   servings: "1 pers",
   image: bananaBreadImg,
   ingredients: [
-    "3 bananes mûres (dont 1 pour la décoration)",
-    "2 œufs ou 100 g de compote",
+    "3 bananes mÃ»res (dont 1 pour la dÃ©coration)",
+    "2 Å“ufs ou 100 g de compote",
     "150 g de farine",
-    "50 g de poudre d’amande",
+    "50 g de poudre dâ€™amande",
     "80 g de sucre roux",
-    "50 g d’huile végétale (cacahuète, coco ou tournesol)",
-    "100 ml de lait d’amande ou de coco",
+    "50 g dâ€™huile vÃ©gÃ©tale (cacahuÃ¨te, coco ou tournesol)",
+    "100 ml de lait dâ€™amande ou de coco",
     "1/2 sachet de levure chimique",
-    "1 cuillère à café de bicarbonate",
-    "1 pincée de sel",
-    "1 sachet de sucre vanillé",
-    "1 cuillère à café de cannelle",
+    "1 cuillÃ¨re Ã  cafÃ© de bicarbonate",
+    "1 pincÃ©e de sel",
+    "1 sachet de sucre vanillÃ©",
+    "1 cuillÃ¨re Ã  cafÃ© de cannelle",
   ],
   steps: [
-    "  Préchauffer le four",
-    "Préchauffe le four à 180°C.",
-    "Préparer les bananes",
-    "Épluche et mixe 2 bananes jusqu'à obtenir une purée lisse. Réserve la 3ᵉ banane pour la décoration.",
-    "Préparer l’appareil",
-    "Dans un grand saladier : Bats les œufs avec le sucre roux et le sucre vanillé. Ajoute la cannelle et mélange. Incorpore l’huile végétale. Ajoute la purée de bananes. Verse le lait végétal. Mélange jusqu'à obtenir une préparation homogène.",
-    "Ajouter les ingrédients secs",
-    "Ajoute : la farine, la levure chimique, le bicarbonate, le sel, la poudre d’amande. Mélange délicatement jusqu'à obtenir une pâte lisse.",
+    "  PrÃ©chauffer le four",
+    "PrÃ©chauffe le four Ã  180Â°C.",
+    "PrÃ©parer les bananes",
+    "Ã‰pluche et mixe 2 bananes jusqu'Ã  obtenir une purÃ©e lisse. RÃ©serve la 3áµ‰ banane pour la dÃ©coration.",
+    "PrÃ©parer lâ€™appareil",
+    "Dans un grand saladier : Bats les Å“ufs avec le sucre roux et le sucre vanillÃ©. Ajoute la cannelle et mÃ©lange. Incorpore lâ€™huile vÃ©gÃ©tale. Ajoute la purÃ©e de bananes. Verse le lait vÃ©gÃ©tal. MÃ©lange jusqu'Ã  obtenir une prÃ©paration homogÃ¨ne.",
+    "Ajouter les ingrÃ©dients secs",
+    "Ajoute : la farine, la levure chimique, le bicarbonate, le sel, la poudre dâ€™amande. MÃ©lange dÃ©licatement jusqu'Ã  obtenir une pÃ¢te lisse.",
     "Mise en moule",
-    "Huile légèrement un moule. Verse la préparation dans le moule. Coupe la banane réservée en deux dans la longueur et dépose-la sur le dessus.",
+    "Huile lÃ©gÃ¨rement un moule. Verse la prÃ©paration dans le moule. Coupe la banane rÃ©servÃ©e en deux dans la longueur et dÃ©pose-la sur le dessus.",
     "Cuisson",
-    "Enfourne à 180°C pendant 40 à 45 minutes. Vérifie la cuisson avec la pointe d’un couteau : elle doit ressortir sèche.",
+    "Enfourne Ã  180Â°C pendant 40 Ã  45 minutes. VÃ©rifie la cuisson avec la pointe dâ€™un couteau : elle doit ressortir sÃ¨che.",
     "Refroidissement",
-    "Laisse tiédir avant de démouler et de découper.",
+    "Laisse tiÃ©dir avant de dÃ©mouler et de dÃ©couper.",
   ],
 },
 {
   id: "healthy-overnight-oats",
-  title: "Brochettes de poulet, salade fraîche & boulghour à la tomate",
-  flavor: "sucre",
-  prepTime: "30 à 35 min",
+  title: "Brochettes de poulet, salade fraÃ®che & boulghour Ã  la tomate",
+  flavor: "sale",
+  prepTime: "30 Ã  35 min",
   servings: "1 pers",
   image: brochettesImg,
   ingredients: [
     "Pour les brochettes",
     "150 g de blanc de poulet",
-    "1/4 d’oignon rouge",
-    "1 cuillère à café d’huile d’olive",
+    "1/4 dâ€™oignon rouge",
+    "1 cuillÃ¨re Ã  cafÃ© dâ€™huile dâ€™olive",
     "Sel et poivre",
     "Paprika ou herbes de Provence (optionnel)",
     "Pour la salade",
     "1/2 concombre",
     "1 tomate",
-    "Herbes fraîches (persil, menthe ou coriandre)",
+    "Herbes fraÃ®ches (persil, menthe ou coriandre)",
     "Sel et poivre",
-    "Pour le boulghour à la tomate",
+    "Pour le boulghour Ã  la tomate",
     "60 g de boulghour cru",
-    "1 cuillère à soupe de concentré de tomate",
-    "1 cuillère à café d’huile d’olive",
+    "1 cuillÃ¨re Ã  soupe de concentrÃ© de tomate",
+    "1 cuillÃ¨re Ã  cafÃ© dâ€™huile dâ€™olive",
     "Sel et poivre",
-    "Pour la sauce à la grecque",
+    "Pour la sauce Ã  la grecque",
     "100 g de yaourt grec",
-    "1/4 de concombre râpé",
-    "1 petite gousse d’ail",
-    "1 cuillère à café de jus de citron",
+    "1/4 de concombre rÃ¢pÃ©",
+    "1 petite gousse dâ€™ail",
+    "1 cuillÃ¨re Ã  cafÃ© de jus de citron",
     "Sel et poivre",
-    "Herbes fraîches (aneth ou menthe, optionnel)",
+    "Herbes fraÃ®ches (aneth ou menthe, optionnel)",
   ],
   steps: [
-    "  Préparer la sauce à la grecque",
-    "Râpe le concombre et presse-le pour enlever l’excès d’eau. Dans un bol, mélange le yaourt grec, le concombre râpé, l’ail finement haché, le jus de citron, le sel, le poivre et les herbes si utilisées. Réserve au frais.",
-    "Préparer le boulghour à la tomate",
-    "Fais cuire le boulghour dans de l’eau bouillante salée selon le temps indiqué. Égoutte, ajoute le concentré de tomate, l’huile d’olive, le sel et le poivre. Mélange et réserve.",
-    "Préparer les brochettes",
-    "Coupe le poulet en cubes et l’oignon rouge en morceaux. Enfile-les sur les brochettes. Badigeonne d’huile d’olive, sale, poivre et ajoute les épices si souhaité.",
+    "  PrÃ©parer la sauce Ã  la grecque",
+    "RÃ¢pe le concombre et presse-le pour enlever lâ€™excÃ¨s dâ€™eau. Dans un bol, mÃ©lange le yaourt grec, le concombre rÃ¢pÃ©, lâ€™ail finement hachÃ©, le jus de citron, le sel, le poivre et les herbes si utilisÃ©es. RÃ©serve au frais.",
+    "PrÃ©parer le boulghour Ã  la tomate",
+    "Fais cuire le boulghour dans de lâ€™eau bouillante salÃ©e selon le temps indiquÃ©. Ã‰goutte, ajoute le concentrÃ© de tomate, lâ€™huile dâ€™olive, le sel et le poivre. MÃ©lange et rÃ©serve.",
+    "PrÃ©parer les brochettes",
+    "Coupe le poulet en cubes et lâ€™oignon rouge en morceaux. Enfile-les sur les brochettes. Badigeonne dâ€™huile dâ€™olive, sale, poivre et ajoute les Ã©pices si souhaitÃ©.",
     "Cuire les brochettes",
-    "Fais cuire les brochettes dans une poêle-grill ou sur un grill bien chaud pendant 8 à 10 minutes, en les retournant régulièrement, jusqu'à cuisson complète.",
-    "Préparer la salade",
-    "Coupe le concombre et la tomate en morceaux. Mélange avec les herbes, le sel et le poivre.",
+    "Fais cuire les brochettes dans une poÃªle-grill ou sur un grill bien chaud pendant 8 Ã  10 minutes, en les retournant rÃ©guliÃ¨rement, jusqu'Ã  cuisson complÃ¨te.",
+    "PrÃ©parer la salade",
+    "Coupe le concombre et la tomate en morceaux. MÃ©lange avec les herbes, le sel et le poivre.",
     "Servir",
-    "Dispose le boulghour à la tomate dans l’assiette. Ajoute les brochettes de poulet. Ajoute la salade fraîche. Accompagne avec la sauce à la grecque.",
+    "Dispose le boulghour Ã  la tomate dans lâ€™assiette. Ajoute les brochettes de poulet. Ajoute la salade fraÃ®che. Accompagne avec la sauce Ã  la grecque.",
   ],
 },
 {
@@ -787,84 +788,84 @@ const healthyRecipes: Recipe[] = [
   servings: "1 pers",
   image: smoothieMangueImg,
   ingredients: [
-    "150 g de mangue (fraîche ou surgelée)",
+    "150 g de mangue (fraÃ®che ou surgelÃ©e)",
     "1 fruit de la passion",
-    "200 ml de lait végétal (amande, coco léger ou avoine)",
-    "100 g de yaourt nature ou yaourt grec allégé",
-    "1 cuillère à café de jus de citron (optionnel)",
-    "Quelques glaçons (optionnel)",
+    "200 ml de lait vÃ©gÃ©tal (amande, coco lÃ©ger ou avoine)",
+    "100 g de yaourt nature ou yaourt grec allÃ©gÃ©",
+    "1 cuillÃ¨re Ã  cafÃ© de jus de citron (optionnel)",
+    "Quelques glaÃ§ons (optionnel)",
   ],
   steps: [
-    "Coupe la mangue en morceaux si elle est fraîche.",
-    "Récupère la pulpe du fruit de la passion à l’aide d’une cuillère.",
-    "Verse le lait végétal dans le blender.",
+    "Coupe la mangue en morceaux si elle est fraÃ®che.",
+    "RÃ©cupÃ¨re la pulpe du fruit de la passion Ã  lâ€™aide dâ€™une cuillÃ¨re.",
+    "Verse le lait vÃ©gÃ©tal dans le blender.",
     "Ajoute la mangue, la pulpe de passion et le yaourt.",
-    "Ajoute le jus de citron et les glaçons si souhaité.",
-    "Mixe pendant 30 à 60 secondes, jusqu'à obtenir une texture lisse et onctueuse.",
-    "Verse dans un verre et consomme immédiatement.",
+    "Ajoute le jus de citron et les glaÃ§ons si souhaitÃ©.",
+    "Mixe pendant 30 Ã  60 secondes, jusqu'Ã  obtenir une texture lisse et onctueuse.",
+    "Verse dans un verre et consomme immÃ©diatement.",
   ],
 },
 {
   id: "healthy-wrap-legumes",
-  title: "Brownie salé au brocoli, feta & lardons",
+  title: "Brownie salÃ© au brocoli, feta & lardons",
   flavor: "sale",
-  prepTime: "60 à 65 min",
+  prepTime: "60 Ã  65 min",
   servings: "1 pers",
   image: brownieSaleImg,
   ingredients: [
     "1 brocoli",
-    "2 œufs",
+    "2 Å“ufs",
     "160 g de farine",
     "1/2 feta",
     "Lardons",
     "250 ml de lait",
-    "Comté râpé",
-    "Huile d’olive",
+    "ComtÃ© rÃ¢pÃ©",
+    "Huile dâ€™olive",
     "Sel",
     "Poivre",
     "Ail en poudre",
   ],
   steps: [
-    "  Préparer le brocoli",
-    "Détaille le brocoli en petits bouquets. Fais-le cuire dans de l’eau bouillante salée pendant 5 à 7 minutes, jusqu'à ce qu’il soit tendre. Égoutte bien et coupe-le grossièrement. Réserve.",
+    "  PrÃ©parer le brocoli",
+    "DÃ©taille le brocoli en petits bouquets. Fais-le cuire dans de lâ€™eau bouillante salÃ©e pendant 5 Ã  7 minutes, jusqu'Ã  ce quâ€™il soit tendre. Ã‰goutte bien et coupe-le grossiÃ¨rement. RÃ©serve.",
     "Cuire les lardons",
-    "Fais revenir les lardons dans une poêle chaude sans ajout de matière grasse jusqu'à ce qu’ils soient dorés. Égoutte-les sur du papier absorbant et réserve.",
-    "Préchauffer le four",
-    "Préchauffe le four à 180°C.",
-    "Préparer l’appareil",
-    "Dans un grand saladier : Bats les œufs. Ajoute le lait et mélange. Incorpore la farine progressivement en fouettant pour éviter les grumeaux. Assaisonne avec le sel, le poivre et l’ail en poudre.",
+    "Fais revenir les lardons dans une poÃªle chaude sans ajout de matiÃ¨re grasse jusqu'Ã  ce quâ€™ils soient dorÃ©s. Ã‰goutte-les sur du papier absorbant et rÃ©serve.",
+    "PrÃ©chauffer le four",
+    "PrÃ©chauffe le four Ã  180Â°C.",
+    "PrÃ©parer lâ€™appareil",
+    "Dans un grand saladier : Bats les Å“ufs. Ajoute le lait et mÃ©lange. Incorpore la farine progressivement en fouettant pour Ã©viter les grumeaux. Assaisonne avec le sel, le poivre et lâ€™ail en poudre.",
     "Ajouter les garnitures",
-    "Ajoute à la préparation : le brocoli, la feta émiettée, les lardons, une poignée de comté râpé. Mélange délicatement pour bien répartir les ingrédients.",
+    "Ajoute Ã  la prÃ©paration : le brocoli, la feta Ã©miettÃ©e, les lardons, une poignÃ©e de comtÃ© rÃ¢pÃ©. MÃ©lange dÃ©licatement pour bien rÃ©partir les ingrÃ©dients.",
     "Enfourner",
-    "Huile légèrement un moule avec de l’huile d’olive. Verse la préparation et lisse la surface. Ajoute un peu de comté râpé sur le dessus. Enfourne pour 35 à 40 minutes, jusqu'à ce que le brownie soit bien doré et pris à cœur.",
-    "Repos et découpe",
-    "Laisse tiédir quelques minutes avant de découper en parts.",
+    "Huile lÃ©gÃ¨rement un moule avec de lâ€™huile dâ€™olive. Verse la prÃ©paration et lisse la surface. Ajoute un peu de comtÃ© rÃ¢pÃ© sur le dessus. Enfourne pour 35 Ã  40 minutes, jusqu'Ã  ce que le brownie soit bien dorÃ© et pris Ã  cÅ“ur.",
+    "Repos et dÃ©coupe",
+    "Laisse tiÃ©dir quelques minutes avant de dÃ©couper en parts.",
   ],
 },
 {
   id: "healthy-tofu-bowl",
   title: "Biscuits croustillants avoine & chocolat",
-  flavor: "sale",
-  prepTime: "25 à 30 min",
+  flavor: "sucre",
+  prepTime: "25 Ã  30 min",
   servings: "1 pers",
   image: biscuitsAvoineImg,
   ingredients: [
-    "1 banane mûre écrasée",
-    "100 g de flocons d’avoine",
-    "50 g de chocolat noir (en morceaux ou pépites)",
-    "8 à 10 noisettes entières",
+    "1 banane mÃ»re Ã©crasÃ©e",
+    "100 g de flocons dâ€™avoine",
+    "50 g de chocolat noir (en morceaux ou pÃ©pites)",
+    "8 Ã  10 noisettes entiÃ¨res",
   ],
   steps: [
-    "  Préchauffer le four",
-    "Préchauffe le four à 180°C.",
-    "Préparer la pâte",
-    "Dans un bol, écrase la banane à la fourchette jusqu'à obtenir une purée lisse. Ajoute les flocons d’avoine et mélange jusqu'à obtenir une pâte homogène.",
+    "  PrÃ©chauffer le four",
+    "PrÃ©chauffe le four Ã  180Â°C.",
+    "PrÃ©parer la pÃ¢te",
+    "Dans un bol, Ã©crase la banane Ã  la fourchette jusqu'Ã  obtenir une purÃ©e lisse. Ajoute les flocons dâ€™avoine et mÃ©lange jusqu'Ã  obtenir une pÃ¢te homogÃ¨ne.",
     "Former les biscuits",
-    "Recouvre une plaque de papier cuisson. Dépose des petits tas de pâte et aplatis-les légèrement pour former des biscuits.",
+    "Recouvre une plaque de papier cuisson. DÃ©pose des petits tas de pÃ¢te et aplatis-les lÃ©gÃ¨rement pour former des biscuits.",
     "Ajouter le chocolat et la noisette",
-    "Dépose quelques morceaux de chocolat sur chaque biscuit. Ajoute une noisette entière au centre de chaque biscuit.",
+    "DÃ©pose quelques morceaux de chocolat sur chaque biscuit. Ajoute une noisette entiÃ¨re au centre de chaque biscuit.",
     "Cuisson",
-    "Enfourne pour 15 à 18 minutes, jusqu'à ce que les biscuits soient bien dorés et croustillants sur les bords.",
+    "Enfourne pour 15 Ã  18 minutes, jusqu'Ã  ce que les biscuits soient bien dorÃ©s et croustillants sur les bords.",
     "Refroidissement",
     "Laisse refroidir sur une grille : ils deviendront plus croustillants en refroidissant.",
   ],
@@ -873,149 +874,142 @@ const healthyRecipes: Recipe[] = [
   id: "healthy-saumon-tray",
   title: "Saumon au four citron",
   flavor: "sale",
-  prepTime: "25 à 30 min",
+  prepTime: "25 Ã  30 min",
   servings: "1 pers",
   image: saumonCitronImg,
   ingredients: [
     "120 g de saumon frais",
     "60 g de riz cru",
-    "150 g d’asperges vertes",
-    "1 gousse d’ail",
+    "150 g dâ€™asperges vertes",
+    "1 gousse dâ€™ail",
     "5 g de beurre",
-    "1 cuillère à café d’huile d’olive",
-    "Persil frais (selon goût)",
+    "1 cuillÃ¨re Ã  cafÃ© dâ€™huile dâ€™olive",
+    "Persil frais (selon goÃ»t)",
     "Sel et poivre",
   ],
   steps: [
     "  Cuire le riz",
-    "Fais cuire le riz dans une casserole d’eau bouillante salée selon le temps indiqué. Égoutte et réserve.",
-    "Préparer les asperges",
-    "Lave les asperges et coupe les extrémités dures. Fais-les cuire à la vapeur ou dans de l’eau bouillante salée pendant 5 à 7 minutes, jusqu'à ce qu’elles soient tendres mais encore légèrement croquantes. Égoutte et réserve.",
+    "Fais cuire le riz dans une casserole dâ€™eau bouillante salÃ©e selon le temps indiquÃ©. Ã‰goutte et rÃ©serve.",
+    "PrÃ©parer les asperges",
+    "Lave les asperges et coupe les extrÃ©mitÃ©s dures. Fais-les cuire Ã  la vapeur ou dans de lâ€™eau bouillante salÃ©e pendant 5 Ã  7 minutes, jusqu'Ã  ce quâ€™elles soient tendres mais encore lÃ©gÃ¨rement croquantes. Ã‰goutte et rÃ©serve.",
     "Cuire le saumon",
-    "Sale et poivre le saumon. Fais chauffer l’huile d’olive dans une poêle à feu moyen. Dépose le saumon côté peau (ou côté présentation) et fais cuire 3 à 4 minutes. Retourne le saumon et poursuis la cuisson 2 à 3 minutes.",
-    "Préparer la sauce citron-ail",
-    "Baisse le feu. Ajoute le beurre et l’ail haché dans la poêle. Laisse fondre doucement en arrosant le saumon pendant 30 à 60 secondes, sans faire brûler l’ail.",
+    "Sale et poivre le saumon. Fais chauffer lâ€™huile dâ€™olive dans une poÃªle Ã  feu moyen. DÃ©pose le saumon cÃ´tÃ© peau (ou cÃ´tÃ© prÃ©sentation) et fais cuire 3 Ã  4 minutes. Retourne le saumon et poursuis la cuisson 2 Ã  3 minutes.",
+    "PrÃ©parer la sauce citron-ail",
+    "Baisse le feu. Ajoute le beurre et lâ€™ail hachÃ© dans la poÃªle. Laisse fondre doucement en arrosant le saumon pendant 30 Ã  60 secondes, sans faire brÃ»ler lâ€™ail.",
     "Finaliser",
-    "Retire la poêle du feu. Ajoute le persil ciselé et un peu de jus de citron si souhaité. Rectifie l’assaisonnement.",
+    "Retire la poÃªle du feu. Ajoute le persil ciselÃ© et un peu de jus de citron si souhaitÃ©. Rectifie lâ€™assaisonnement.",
     "Servir",
-    "Dispose le riz dans l’assiette. Ajoute le saumon au citron et les asperges.",
+    "Dispose le riz dans lâ€™assiette. Ajoute le saumon au citron et les asperges.",
   ],
 },
 
  {
   id: "healthy-potage-lentilles",
   title: "Pudding de chia coco & fraises",
-  flavor: "sale",
-  prepTime: "5 à 7 min",
+  flavor: "sucre",
+  prepTime: "5 Ã  7 min",
   servings: "1 pers",
   image: puddingChiaImg,
   ingredients: [
-    "250 ml de lait végétal",
-    "3 cuillères à soupe de graines de chia",
-    "1 cuillère à soupe de miel",
-    "100 g de yaourt à la noix de coco",
+    "250 ml de lait vÃ©gÃ©tal",
+    "3 cuillÃ¨res Ã  soupe de graines de chia",
+    "1 cuillÃ¨re Ã  soupe de miel",
+    "100 g de yaourt Ã  la noix de coco",
     "30 g de granola",
-    "4 à 5 fraises",
+    "4 Ã  5 fraises",
   ],
   steps: [
     "  Faire gonfler les graines de chia",
-    "Dans un bol ou un bocal, verse le lait végétal. Ajoute les graines de chia et mélange bien. Laisse reposer 10 minutes, puis remue à nouveau pour éviter les grumeaux.",
+    "Dans un bol ou un bocal, verse le lait vÃ©gÃ©tal. Ajoute les graines de chia et mÃ©lange bien. Laisse reposer 10 minutes, puis remue Ã  nouveau pour Ã©viter les grumeaux.",
     "Repos",
-    "Couvre et place au réfrigérateur pendant au moins 2 heures, idéalement toute la nuit, jusqu'à ce que le pudding épaississe.",
+    "Couvre et place au rÃ©frigÃ©rateur pendant au moins 2 heures, idÃ©alement toute la nuit, jusqu'Ã  ce que le pudding Ã©paississe.",
     "Ajouter le miel",
-    "Une fois le pudding bien pris, ajoute le miel et mélange.",
-    "Préparer les fraises",
+    "Une fois le pudding bien pris, ajoute le miel et mÃ©lange.",
+    "PrÃ©parer les fraises",
     "Lave les fraises et coupe-les en morceaux.",
     "Monter le pudding",
-    "Ajoute le yaourt à la noix de coco sur le pudding de chia. Ajoute les fraises. Parseme de granola sur le dessus.",
+    "Ajoute le yaourt Ã  la noix de coco sur le pudding de chia. Ajoute les fraises. Parseme de granola sur le dessus.",
     "Servir",
-    "Consomme immédiatement pour garder le granola croustillant.",
+    "Consomme immÃ©diatement pour garder le granola croustillant.",
   ],
 },
 {
   id: "healthy-quinoa-menthe",
-  title: "Salade César healthy",
+  title: "Salade CÃ©sar healthy",
   flavor: "sale",
-  prepTime: "20 à 25 min",
+  prepTime: "20 Ã  25 min",
   servings: "1 pers",
   image: saladeCesarImg,
   ingredients: [
     "Pour la salade",
     "100 g de blanc de poulet",
-    "1 œuf",
+    "1 Å“uf",
     "80 g de salade (romaine ou autre)",
     "1 petite tomate",
     "20 g de parmesan en copeaux",
-    "20 g de croûtons de pain",
-    "Pour la sauce César maison (healthy)",
+    "20 g de croÃ»tons de pain",
+    "Pour la sauce CÃ©sar maison (healthy)",
     "40 g de yaourt grec nature",
-    "1 cuillère à café de moutarde",
-    "1 cuillère à café de jus de citron",
-    "1 cuillère à café d’huile d’olive",
+    "1 cuillÃ¨re Ã  cafÃ© de moutarde",
+    "1 cuillÃ¨re Ã  cafÃ© de jus de citron",
+    "1 cuillÃ¨re Ã  cafÃ© dâ€™huile dâ€™olive",
     "Sel et poivre",
   ],
   steps: [
-    "  Cuire l’œuf",
-    "Plonge l’œuf dans de l’eau bouillante et fais-le cuire 9 minutes pour un œuf dur. Refroidis-le, écaille-le et coupe-le en quartiers.",
+    "  Cuire lâ€™Å“uf",
+    "Plonge lâ€™Å“uf dans de lâ€™eau bouillante et fais-le cuire 9 minutes pour un Å“uf dur. Refroidis-le, Ã©caille-le et coupe-le en quartiers.",
     "Cuire le poulet",
-    "Fais chauffer une poêle à feu moyen. Fais cuire le poulet 5 à 7 minutes, en le retournant, jusqu'à ce qu’il soit bien doré et cuit à cœur. Sale, poivre et coupe-le en tranches.",
-    "Préparer la sauce César",
-    "Dans un bol, mélange le yaourt grec, la moutarde, le jus de citron, l’huile d’olive, le sel et le poivre jusqu'à obtenir une sauce lisse.",
-    "Préparer les légumes",
+    "Fais chauffer une poÃªle Ã  feu moyen. Fais cuire le poulet 5 Ã  7 minutes, en le retournant, jusqu'Ã  ce quâ€™il soit bien dorÃ© et cuit Ã  cÅ“ur. Sale, poivre et coupe-le en tranches.",
+    "PrÃ©parer la sauce CÃ©sar",
+    "Dans un bol, mÃ©lange le yaourt grec, la moutarde, le jus de citron, lâ€™huile dâ€™olive, le sel et le poivre jusqu'Ã  obtenir une sauce lisse.",
+    "PrÃ©parer les lÃ©gumes",
     "Lave et essore la salade. Coupe la tomate en quartiers.",
     "Assembler la salade",
-    "Dans un grand bol ou une assiette : Dépose la salade. Ajoute le poulet. Ajoute l’œuf dur. Ajoute la tomate. Ajoute les croûtons.",
+    "Dans un grand bol ou une assiette : DÃ©pose la salade. Ajoute le poulet. Ajoute lâ€™Å“uf dur. Ajoute la tomate. Ajoute les croÃ»tons.",
     "Finaliser",
-    "Verse la sauce César maison sur la salade. Ajoute les copeaux de parmesan et mélange légèrement.",
+    "Verse la sauce CÃ©sar maison sur la salade. Ajoute les copeaux de parmesan et mÃ©lange lÃ©gÃ¨rement.",
   ],
 },
 {
   id: "healthy-snack-energetique",
-  title: "Salade de fruits fraîche à la menthe & citron",
+  title: "Salade de fruits fraÃ®che Ã  la menthe & citron",
   flavor: "sucre",
-  prepTime: "8 à 10 min",
+  prepTime: "8 Ã  10 min",
   servings: "1 pers",
   image: saladeDeFruitImg,
   ingredients: [
     "80 g de myrtilles",
-    "4 à 5 fraises",
+    "4 Ã  5 fraises",
     "1 kiwi",
     "100 g de mangue",
-    "Quelques feuilles de menthe fraîche",
-    "Jus d’1/2 citron",
+    "Quelques feuilles de menthe fraÃ®che",
+    "Jus dâ€™1/2 citron",
   ],
   steps: [
-    "  Préparer les fruits",
-    "Rince les myrtilles. Lave, équeute et coupe les fraises en morceaux. Épluche le kiwi et coupe-le en dés. Épluche la mangue et coupe-la en morceaux.",
+    "  PrÃ©parer les fruits",
+    "Rince les myrtilles. Lave, Ã©queute et coupe les fraises en morceaux. Ã‰pluche le kiwi et coupe-le en dÃ©s. Ã‰pluche la mangue et coupe-la en morceaux.",
     "Ciseler la menthe",
     "Lave et cisele finement les feuilles de menthe.",
     "Assembler la salade",
-    "Dépose tous les fruits dans un saladier ou un bol. Ajoute la menthe ciselée.",
+    "DÃ©pose tous les fruits dans un saladier ou un bol. Ajoute la menthe ciselÃ©e.",
     "Assaisonner",
-    "Verse le jus de citron sur les fruits. Mélange délicatement pour ne pas écraser les fruits.",
+    "Verse le jus de citron sur les fruits. MÃ©lange dÃ©licatement pour ne pas Ã©craser les fruits.",
     "Servir",
-    "Place au frais quelques minutes avant de servir si souhaité.",
+    "Place au frais quelques minutes avant de servir si souhaitÃ©.",
   ],
 },
 ]
 
-const recipeCollections = {
-  mass: massRecipes,
-  healthy: healthyRecipes,
-} as const
-
 const DIET_HEADINGS = {
-  mass: {
-    eyebrow: "Prise de masse",
-    title: "4 repas pour une prise de masse",
-    description:
-      "Ici tu boostes ton corps sans malbouffe ni pression. Les repas restent chaleureux, les collations restent gourmandes et chaque bouchée nourrit réellement tes entraînements.",
+  sweet: {
+    eyebrow: "SucrÃ©",
+    title: "Ma Diet",
+    description: "Toutes les idÃ©es sucrÃ©es du moment.",
   },
-  healthy: {
-    eyebrow: "Healthy lifestyle",
-    title: "Manger sain sans se priver",
-    description:
-      "Manger healthy, c'est choisir des assiettes qui respectent ton énergie et ton rythme. Pas de restriction : juste des idées claires pour rester légère, concentrée et inspirée.",
+  savory: {
+    eyebrow: "SalÃ©",
+    title: "Ma Diet",
+    description: "Toutes les idÃ©es salÃ©es du moment.",
   },
 } as const
 
@@ -1024,7 +1018,7 @@ const RECIPE_FAVORITES_KEY = "planner.diet.recipeFavorites"
 const DietClassicPage = () => {
   const { userEmail } = useAuth()
   const favoritesKey = useMemo(() => buildUserScopedKey(userEmail, RECIPE_FAVORITES_KEY), [userEmail])
-  const [tab, setTab] = useState<"mass" | "healthy" | "favorites">("mass")
+  const [tab, setTab] = useState<"sweet" | "savory" | "favorites">("sweet")
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(() => {
     if (typeof window === "undefined") return new Set()
     try {
@@ -1036,19 +1030,13 @@ const DietClassicPage = () => {
   })
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
   const allRecipes = useMemo(() => [...massRecipes, ...healthyRecipes], [])
-  const activeRecipes = tab === "favorites" ? allRecipes : recipeCollections[tab]
   const currentHeading = tab === "favorites" ? null : DIET_HEADINGS[tab]
   const favoriteRecipes = useMemo(() => allRecipes.filter((recipe) => favoriteIds.has(recipe.id)), [allRecipes, favoriteIds])
-  const groupedMassRecipes = useMemo(() => {
-    const sweet = massRecipes.filter((recipe) => recipe.flavor === "sucre")
-    const savory = massRecipes.filter((recipe) => recipe.flavor === "sale")
-    return { sweet, savory }
-  }, [])
-  const groupedHealthyRecipes = useMemo(() => {
-    const sweet = healthyRecipes.filter((recipe) => recipe.flavor === "sucre")
-    const savory = healthyRecipes.filter((recipe) => recipe.flavor === "sale")
-    return { sweet, savory }
-  }, [])
+  const filteredRecipes = useMemo(() => {
+    if (tab === "favorites") return favoriteRecipes
+    const flavor = tab === "sweet" ? "sucre" : "sale"
+    return allRecipes.filter((recipe) => recipe.flavor === flavor)
+  }, [allRecipes, favoriteRecipes, tab])
 
   useEffect(() => {
     if (typeof window === "undefined") return
@@ -1117,24 +1105,35 @@ const DietClassicPage = () => {
               className="diet-page-heading"
             />
             <p className="diet-heading__description">
-              Retrouve ici toutes les recettes que tu as aimées.
+              Retrouve ici toutes les recettes que tu as aimÃ©es.
             </p>
           </>
         )}
+        <div className="diet-crosslink">
+          <div>
+            <p className="diet-crosslink__label">Planifier ta semaine</p>
+            <p className="diet-crosslink__text">
+              Passe sur la page Alimentation pour organiser tes repas et ta liste de courses.
+            </p>
+          </div>
+          <Link to="/alimentation" className="pill">
+            Planifier les repas
+          </Link>
+        </div>
         <div className="diet-toggle diet-toggle--heading">
           <button
             type="button"
-            className={tab === "mass" ? "is-active" : ""}
-            onClick={() => setTab("mass")}
+            className={tab === "sweet" ? "is-active" : ""}
+            onClick={() => setTab("sweet")}
           >
-            Prise de masse
+            SucrÃ©
           </button>
           <button
             type="button"
-            className={tab === "healthy" ? "is-active" : ""}
-            onClick={() => setTab("healthy")}
+            className={tab === "savory" ? "is-active" : ""}
+            onClick={() => setTab("savory")}
           >
-            Healthy
+            SalÃ©
           </button>
           <button
             type="button"
@@ -1180,7 +1179,7 @@ const DietClassicPage = () => {
                       <h3>{recipe.title}</h3>
                       <div className="diet-recipe-meta">
                         <span className="diet-info-pill">
-                          {recipe.flavor === "sucre" ? "Sucré" : "Salé"}
+                          {recipe.flavor === "sucre" ? "SucrÃ©" : "SalÃ©"}
                         </span>
                         <span className="diet-info-pill">
                           {recipe.prepTime}
@@ -1199,205 +1198,75 @@ const DietClassicPage = () => {
               Ajoute des recettes en favoris pour les retrouver ici.
             </p>
           )
-         ) : tab === "mass" ? (
-  <>
-    <h2>Recettes salées</h2>
-    <div className="diet-recipe-grid">
-      {groupedMassRecipes.savory.map((recipe) => (
-        <article
-          key={recipe.id}
-          className="diet-recipe-card"
-          style={{ backgroundImage: `url(${recipe.image})` }}
-          onClick={() => setSelectedRecipe(recipe)}
-        >
-          <div className="diet-recipe-card__overlay" />
-          <div className="diet-recipe-card__content">
-            <div className="diet-recipe-card__header">
-              <button
-                type="button"
-                className={favoriteIds.has(recipe.id) ? "diet-favorite is-active" : "diet-favorite"}
-                onClick={(event) => {
-                  event.stopPropagation()
-                  toggleFavorite(recipe.id)
-                }}
-                aria-label="Ajouter en favoris"
+        ) : (
+          <div className="diet-recipe-grid">
+            {filteredRecipes.map((recipe) => (
+              <article
+                key={recipe.id}
+                className="diet-recipe-card"
+                style={{ backgroundImage: `url(${recipe.image})` }}
+                onClick={() => setSelectedRecipe(recipe)}
               >
-                {renderHeartIcon(favoriteIds.has(recipe.id))}
-              </button>
-            </div>
-            <div className="diet-recipe-card__body">
-              <h3>{recipe.title}</h3>
-              <div className="diet-recipe-meta">
-                <span className="diet-info-pill">
-                  {recipe.flavor === "sucre" ? "Sucré" : "Salé"}
-                </span>
-                <span className="diet-info-pill">
-                  {recipe.prepTime}
-                </span>
-                <span className="diet-info-pill">
-                  {recipe.servings}
-                </span>
-              </div>
-            </div>
+                <div className="diet-recipe-card__overlay" />
+                <div className="diet-recipe-card__content">
+                  <div className="diet-recipe-card__header">
+                    <button
+                      type="button"
+                      className={favoriteIds.has(recipe.id) ? "diet-favorite is-active" : "diet-favorite"}
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        toggleFavorite(recipe.id)
+                      }}
+                      aria-label="Ajouter en favoris"
+                    >
+                      {renderHeartIcon(favoriteIds.has(recipe.id))}
+                    </button>
+                  </div>
+                  <div className="diet-recipe-card__body">
+                    <h3>{recipe.title}</h3>
+                    <div className="diet-recipe-meta">
+                      <span className="diet-info-pill">
+                        {recipe.flavor === "sucre" ? "SucrÃ©" : "SalÃ©"}
+                      </span>
+                      <span className="diet-info-pill">
+                        {recipe.prepTime}
+                      </span>
+                      <span className="diet-info-pill">
+                        {recipe.servings}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            ))}
           </div>
-        </article>
-      ))}
-    </div>
-    <h2>Recettes sucrées</h2>
-    <div className="diet-recipe-grid">
-      {groupedMassRecipes.sweet.map((recipe) => (
-        <article
-          key={recipe.id}
-          className="diet-recipe-card"
-          style={{ backgroundImage: `url(${recipe.image})` }}
-          onClick={() => setSelectedRecipe(recipe)}
-        >
-          <div className="diet-recipe-card__overlay" />
-          <div className="diet-recipe-card__content">
-            <div className="diet-recipe-card__header">
-              <button
-                type="button"
-                className={favoriteIds.has(recipe.id) ? "diet-favorite is-active" : "diet-favorite"}
-                onClick={(event) => {
-                  event.stopPropagation()
-                  toggleFavorite(recipe.id)
-                }}
-                aria-label="Ajouter en favoris"
-              >
-                {renderHeartIcon(favoriteIds.has(recipe.id))}
-              </button>
-            </div>
-            <div className="diet-recipe-card__body">
-              <h3>{recipe.title}</h3>
-              <div className="diet-recipe-meta">
-                <span className="diet-info-pill">
-                  {recipe.flavor === "sucre" ? "Sucré" : "Salé"}
-                </span>
-                <span className="diet-info-pill">
-                  {recipe.prepTime}
-                </span>
-                <span className="diet-info-pill">
-                  {recipe.servings}
-                </span>
-              </div>
-            </div>
-          </div>
-        </article>
-      ))}
-    </div>
-  </>
-) : (
-  <>
-    <h2>Recettes salées</h2>
-    <div className="diet-recipe-grid">
-      {groupedHealthyRecipes.savory.map((recipe) => (
-        <article
-          key={recipe.id}
-          className="diet-recipe-card"
-          style={{ backgroundImage: `url(${recipe.image})` }}
-          onClick={() => setSelectedRecipe(recipe)}
-        >
-          <div className="diet-recipe-card__overlay" />
-          <div className="diet-recipe-card__content">
-            <div className="diet-recipe-card__header">
-              <button
-                type="button"
-                className={favoriteIds.has(recipe.id) ? "diet-favorite is-active" : "diet-favorite"}
-                onClick={(event) => {
-                  event.stopPropagation()
-                  toggleFavorite(recipe.id)
-                }}
-                aria-label="Ajouter en favoris"
-              >
-                {renderHeartIcon(favoriteIds.has(recipe.id))}
-              </button>
-            </div>
-            <div className="diet-recipe-card__body">
-              <h3>{recipe.title}</h3>
-              <div className="diet-recipe-meta">
-                <span className="diet-info-pill">
-                  {recipe.flavor === "sucre" ? "Sucré" : "Salé"}
-                </span>
-                <span className="diet-info-pill">
-                  {recipe.prepTime}
-                </span>
-                <span className="diet-info-pill">
-                  {recipe.servings}
-                </span>
-              </div>
-            </div>
-          </div>
-        </article>
-      ))}
-    </div>
-    <h2>Recettes sucrées</h2>
-    <div className="diet-recipe-grid">
-      {groupedHealthyRecipes.sweet.map((recipe) => (
-        <article
-          key={recipe.id}
-          className="diet-recipe-card"
-          style={{ backgroundImage: `url(${recipe.image})` }}
-          onClick={() => setSelectedRecipe(recipe)}
-        >
-          <div className="diet-recipe-card__overlay" />
-          <div className="diet-recipe-card__content">
-            <div className="diet-recipe-card__header">
-              <button
-                type="button"
-                className={favoriteIds.has(recipe.id) ? "diet-favorite is-active" : "diet-favorite"}
-                onClick={(event) => {
-                  event.stopPropagation()
-                  toggleFavorite(recipe.id)
-                }}
-                aria-label="Ajouter en favoris"
-              >
-                {renderHeartIcon(favoriteIds.has(recipe.id))}
-              </button>
-            </div>
-            <div className="diet-recipe-card__body">
-              <h3>{recipe.title}</h3>
-              <div className="diet-recipe-meta">
-                <span className="diet-info-pill">
-                  {recipe.flavor === "sucre" ? "Sucré" : "Salé"}
-                </span>
-                <span className="diet-info-pill">
-                  {recipe.prepTime}
-                </span>
-                <span className="diet-info-pill">
-                  {recipe.servings}
-                </span>
-              </div>
-            </div>
-          </div>
-        </article>
-      ))}
-    </div>
-  </>
-)}
+        )}
 </section>
 
         {selectedRecipe ? (
   <div className="diet-recipe-modal" role="dialog" aria-label={`Recette ${selectedRecipe.title}`}>
     <div className="diet-recipe-modal__backdrop" onClick={() => setSelectedRecipe(null)} />
-    <div className="diet-recipe-modal__panel">
+  <div className="diet-recipe-modal__panel">
+    <div className="diet-recipe-modal__cover">
       <img src={selectedRecipe.image} alt={selectedRecipe.title} className="diet-recipe-modal__image" />
-      <div className="diet-recipe-modal__content">
-        <header className="diet-recipe-modal__header">
-          <div>
-            <h3>{selectedRecipe.title}</h3>
-          </div>
-          <button
-            type="button"
-            className="diet-recipe-close-icon"
-            onClick={() => setSelectedRecipe(null)}
-            aria-label="Fermer"
-          >
-            <span aria-hidden="true" />
-          </button>
-        </header>
-        <div className="diet-recipe-modal__body">
+      <button
+        type="button"
+        className="diet-recipe-close-icon diet-recipe-close-icon--cover"
+        onClick={() => setSelectedRecipe(null)}
+        aria-label="Fermer"
+      >
+        <span aria-hidden="true" />
+      </button>
+    </div>
+    <div className="diet-recipe-modal__content">
+      <header className="diet-recipe-modal__header">
+        <div>
+          <h3>{selectedRecipe.title}</h3>
+        </div>
+      </header>
+      <div className="diet-recipe-modal__body">
           <section>
-            <h4>Ingrédients</h4>
+            <h4>IngrÃ©dients</h4>
             <ul>
               {selectedRecipe.ingredients.map((item) => (
                 <li key={item}>{item}</li>
@@ -1405,7 +1274,7 @@ const DietClassicPage = () => {
             </ul>
           </section>
           <section>
-            <h4>Étapes</h4>
+            <h4>Ã‰tapes</h4>
             <ol>
               {selectedRecipe.steps.map((step) => (
                 <li key={step}>{step}</li>
@@ -1414,7 +1283,7 @@ const DietClassicPage = () => {
           </section>
           {selectedRecipe.toppings ? (
             <section>
-              <h4>{"Idées de toppings (optionnel)"}</h4>
+              <h4>{"IdÃ©es de toppings (optionnel)"}</h4>
               <ul>
                 {selectedRecipe.toppings.map((item) => (
                   <li key={item}>{item}</li>
@@ -1424,7 +1293,7 @@ const DietClassicPage = () => {
           ) : null}
           {selectedRecipe.tips ? (
             <section>
-              <h4>{"💡 Astuce"}</h4>
+              <h4>{"ðŸ’¡ Astuce"}</h4>
               <ul>
                 {selectedRecipe.tips.map((item) => (
                   <li key={item}>{item}</li>
@@ -1435,6 +1304,11 @@ const DietClassicPage = () => {
         </div>
       </div>
     </div>
+    <footer className="diet-recipe-modal__actions">
+      <button type="button" onClick={() => setSelectedRecipe(null)}>
+        Fermer
+      </button>
+    </footer>
   </div>
 ) : null}
 </main>
@@ -1444,4 +1318,8 @@ const DietClassicPage = () => {
 }
 
 export default DietClassicPage
+
+
+
+
 

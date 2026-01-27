@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+﻿import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ChangeEvent } from 'react'
 import usePersistentState from '../../hooks/usePersistentState'
 import journalingIllustration from '../../assets/planner-09.jpg'
@@ -8,120 +8,90 @@ import PageHeading from '../../components/PageHeading'
 import PageHero from '../../components/PageHero'
 import './Journaling.css'
 
-type JournalFeeling =
-  | 'joy'
-  | 'sad'
-  | 'angry'
-  | 'excited'
-  | 'surprised'
-  | 'scared'
-  | 'shy'
-  | 'confused'
-  | 'embarrassed'
-  | 'calm'
-  | 'depressed'
-
-type PromptAnswer =
-  | { label: string; type: 'text'; value: string }
-  | { label: string; type: 'list'; items: string[] }
-
-type PromptEntrySection = {
-  id: string
-  title: string
-  answers: PromptAnswer[]
-}
+type MoodValue = 'bright' | 'good' | 'neutral' | 'low' | 'overwhelmed'
+type EnergyLevel = 'low' | 'medium' | 'high'
+type PostFeeling = 'better' | 'same' | 'clearer' | 'tiredRelieved'
+type AnchorType = 'gratitude' | 'victory'
 
 type JournalEntry = {
   id: string
   date: string
-  mood: string
-  content: string
-  feelings?: JournalFeeling[]
-  feeling?: JournalFeeling
-  feelingReason: string
-  prompts?: PromptEntrySection[]
-  freeWriting?: string
+  mood?: MoodValue | string
+  energy?: EnergyLevel
+  keyword?: string
+  question?: string
+  questionAnswer?: string
+  content?: string
+  postFeeling?: PostFeeling
+  positiveAnchor?: string
+  positiveAnchorType?: AnchorType
+  createdAt?: number
 }
 
-type PromptField =
-  | {
-      id: string
-      type: 'textarea'
-      label: string
-      placeholder?: string
-    }
-  | {
-      id: string
-      type: 'checkboxes'
-      label: string
-      options: string[]
-    }
-
-type JournalingPromptSection = {
-  id: string
-  icon: string
-  title: string
-  accent: string
-  description?: string
-  helper?: string
-  fields: PromptField[]
-}
-
-type CalendarDay = {
-  date: Date
-  iso: string
-  inCurrentMonth: boolean
-  hasEntries: boolean
-}
-
-const MONTH_NAMES = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
+const moodOptions = [
+  { value: 'bright', label: 'Légère', emoji: '😄' },
+  { value: 'good', label: 'Stable', emoji: '🙂' },
+  { value: 'neutral', label: 'Neutre', emoji: '😐' },
+  { value: 'low', label: 'Lourde', emoji: '😔' },
+  { value: 'overwhelmed', label: 'Saturée', emoji: '😣' },
 ] as const
 
-const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const
+const energyOptions = [
+  { value: 'low', label: 'Faible' },
+  { value: 'medium', label: 'Moyenne' },
+  { value: 'high', label: 'Haute' },
+] as const
 
-const formatISODate = (date: Date) => {
-  const year = date.getFullYear()
-  const month = `${date.getMonth() + 1}`.padStart(2, '0')
-  const day = `${date.getDate()}`.padStart(2, '0')
-  return `${year}-${month}-${day}`
+const postFeelingOptions = [
+  { value: 'better', label: 'Un peu mieux' },
+  { value: 'same', label: 'Pareil' },
+  { value: 'clearer', label: 'Plus clair' },
+  { value: 'tiredRelieved', label: 'Fatigué mais soulagé' },
+] as const
+
+const anchorOptions = [
+  { value: 'gratitude', label: "Une chose pour laquelle je suis reconnaissant aujourd'hui" },
+  { value: 'victory', label: 'Une petite victoire du jour' },
+] as const
+
+const guidedQuestionsByMood: Record<MoodValue, string[]> = {
+  bright: [
+    "Qu'est-ce qui t'a fait du bien aujourd'hui, même un peu ?",
+    'Quelle petite chose nourrit ta joie en ce moment ?',
+    "Qu'est-ce que tu veux garder précieusement de cette journée ?",
+    "De quoi as-tu envie de te remercier aujourd'hui ?",
+  ],
+  good: [
+    "Qu'est-ce qui te stabilise en ce moment ?",
+    "Quelle partie de ta journée t'a donné un peu d'élan ?",
+    "Qu'est-ce que tu aimerais continuer demain ?",
+    "Qu'est-ce qui te rassure aujourd'hui ?",
+  ],
+  neutral: [
+    'Que veux-tu déposer ici, sans filtre ?',
+    "De quoi aurais-tu besoin là, maintenant ?",
+    "Qu'est-ce que tu évites en ce moment ?",
+    "Qu'est-ce que tu veux clarifier doucement ?",
+  ],
+  low: [
+    "Qu'est-ce qui te pèse le plus aujourd'hui ?",
+    "Quel petit geste pourrait te soulager aujourd'hui ?",
+    "Qu'est-ce qui te manque en ce moment ?",
+    "Qu'est-ce que tu aimerais qu'on comprenne de toi ?",
+  ],
+  overwhelmed: [
+    "Qu'est-ce qui te prend trop de place aujourd'hui ?",
+    "De quoi pourrais-tu te délester, même un peu ?",
+    "Quelle limite douce pourrais-tu poser ?",
+    "Qu'est-ce que tu veux laisser pour plus tard ?",
+  ],
 }
 
-const buildCalendarDays = (monthDate: Date, entriesMap: Map<string, JournalEntry[]>): CalendarDay[] => {
-  const year = monthDate.getFullYear()
-  const month = monthDate.getMonth()
-  const firstDay = new Date(year, month, 1)
-  const lastDay = new Date(year, month + 1, 0)
-  const daysInMonth = lastDay.getDate()
-  const firstWeekday = firstDay.getDay()
-  const totalCells = Math.ceil((firstWeekday + daysInMonth) / 7) * 7
-  const days: CalendarDay[] = []
-
-  for (let cell = 0; cell < totalCells; cell += 1) {
-    const dayNumber = cell - firstWeekday + 1
-    const cellDate = new Date(year, month, dayNumber)
-    const iso = formatISODate(cellDate)
-    days.push({
-      date: cellDate,
-      iso,
-      inCurrentMonth: cellDate.getMonth() === month,
-      hasEntries: entriesMap.has(iso),
-    })
-  }
-
-  return days
-}
+const journalingMoodboard = [
+  { src: journalingIllustration, alt: 'Carnet pastel accompagné de fleurs séchées' },
+  { src: journalingMoodSecondary, alt: "Pause d'écriture et tasse de thé" },
+  { src: journalingMoodTertiary, alt: 'Planche inspirante pour le journaling' },
+] as const
 
 const getTodayISO = () => {
   const today = new Date()
@@ -131,253 +101,95 @@ const getTodayISO = () => {
   return `${year}-${month}-${day}`
 }
 
-const initialEntries: JournalEntry[] = []
-
-const normalizeEntries = (list: JournalEntry[]) => {
-  const seenDates = new Set<string>()
-  const normalized: JournalEntry[] = []
-  let changed = false
-
-  list.forEach((entry) => {
-    if (seenDates.has(entry.date)) {
-      changed = true
-      return
-    }
-    seenDates.add(entry.date)
-    normalized.push(entry)
-  })
-
-  return changed ? normalized : list
+const parseEntryDate = (dateISO: string) => {
+  const [year, month, day] = dateISO.split('-').map(Number)
+  if (!year || !month || !day) {
+    return null
+  }
+  return new Date(year, month - 1, day)
 }
 
-const moods = ['Sereine', 'Energisee', 'Equilibree', 'Fatiguee', 'Fiere']
-const feelings: Array<{ value: JournalFeeling; label: string; emoji: string }> = [
-  { value: 'joy', label: 'Joyeuse', emoji: '' },
-  { value: 'sad', label: 'Triste', emoji: '' },
-  { value: 'angry', label: 'En colère', emoji: '' },
-  { value: 'excited', label: 'Excitée', emoji: '' },
-  { value: 'surprised', label: 'Surprise', emoji: '' },
-  { value: 'scared', label: 'Effrayée', emoji: '' },
-  { value: 'shy', label: 'Timide', emoji: '' },
-  { value: 'confused', label: 'Confuse', emoji: '' },
-  { value: 'embarrassed', label: 'Embarrassée', emoji: '' },
-  { value: 'calm', label: 'Calme', emoji: '' },
-  { value: 'depressed', label: 'Déprimée', emoji: '' },
-]
-const DATE_PROMPT_FIELD_ID = 'prompt-date'
+const getDayOfYear = (date: Date) => {
+  const start = new Date(date.getFullYear(), 0, 0)
+  const diff = date.getTime() - start.getTime()
+  return Math.floor(diff / 86400000)
+}
 
-const journalingMoodboard = [
-  { src: journalingIllustration, alt: 'Carnet pastel accompagné de fleurs séchées' },
-  { src: journalingMoodSecondary, alt: "Pause d'écriture et tasse de thé" },
-  { src: journalingMoodTertiary, alt: 'Planche inspirante pour le journaling' },
+const getDailyQuestion = (dateISO: string, mood: MoodValue) => {
+  const parsed = parseEntryDate(dateISO)
+  const dayIndex = parsed ? getDayOfYear(parsed) : 0
+  const questions = guidedQuestionsByMood[mood] ?? guidedQuestionsByMood.neutral
+  return questions[dayIndex % questions.length]
+}
+
+const formatEntryDate = (dateISO: string) => {
+  const parsed = parseEntryDate(dateISO)
+  if (!parsed) {
+    return dateISO
+  }
+  const formatted = parsed.toLocaleDateString('fr-FR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  })
+  return formatted.charAt(0).toUpperCase() + formatted.slice(1)
+}
+
+const formatMonthLabel = (dateISO: string) => {
+  const parsed = parseEntryDate(dateISO)
+  if (!parsed) {
+    return dateISO.slice(0, 7).toUpperCase()
+  }
+  return parsed.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }).toUpperCase()
+}
+
+const formatEntryLineDate = (dateISO: string) => {
+  const parsed = parseEntryDate(dateISO)
+  if (!parsed) {
+    return dateISO
+  }
+  const formatted = parsed.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric' })
+  return formatted.charAt(0).toUpperCase() + formatted.slice(1)
+}
+
+const limitKeywordWords = (value: string) => {
+  const cleaned = value.replace(/\s+/g, ' ').trimStart()
+  const words = cleaned.trim().split(' ').filter(Boolean)
+  if (words.length <= 3) {
+    return cleaned
+  }
+  return words.slice(0, 3).join(' ')
+}
+
+const toneSignals = {
+  heavy: ['fatigu', 'stress', 'pression', 'lourd', 'trist', 'peur', 'anx', 'trop', 'vide', 'epuis'],
+  light: ['calm', 'apais', 'douce', 'repos', 'leger', 'joie', 'merci', 'serein', 'clair', 'soulag'],
+}
+
+const actionSignals = [
+  { label: 'le mouvement', words: ['sport', 'marche', 'yoga', 'danse'] },
+  { label: 'le repos', words: ['repos', 'pause', 'sieste'] },
+  { label: 'les routines simples', words: ['routine', 'rituel', 'simple', 'lent'] },
 ] as const
 
-const journalingPromptSections: JournalingPromptSection[] = [
-  {
-    id: 'daily-state',
-    icon: '#1',
-    title: '1. État du jour',
-    accent: '#ffe9f1',
-    description: 'Concentre-toi sur ce que tu ressens ici et maintenant.',
-    fields: [
-      {
-        id: DATE_PROMPT_FIELD_ID,
-        type: 'textarea',
-        label: "Quelle est la date d'aujourd'hui ?",
-        placeholder: 'Laisse ton cœur parler ici...',
-      },
-      {
-        id: 'prompt-mood-now',
-        type: 'textarea',
-        label: 'Comment je me suis sentie ?',
-        placeholder: 'Sensations, émotions...',
-      },
-      {
-        id: 'prompt-mood-influence',
-        type: 'textarea',
-        label: "Qu'est-ce qui a influencé mon humeur aujourd'hui ? (événements, pensées, personnes, énergie, météo...)",
-        placeholder: 'Note ce qui a changé ton humeur ou ton énergie.',
-      },
-      {
-        id: 'prompt-learning',
-        type: 'textarea',
-        label: "Qu'ai-je appris ou compris sur moi-même aujourd'hui ?",
-        placeholder: 'Dépose tes pensées...',
-      },
-    ],
-  },
-  {
-    id: 'daily-celebration',
-    icon: '#2',
-    title: '2. Ma journée',
-    accent: '#e0f2fe',
-    description: 'Revis les belles choses et célèbre ce qui compte.',
-    fields: [
-      {
-        id: 'prompt-highlights',
-        type: 'textarea',
-        label: "Qu'est-ce qui s'est bien passé aujourd'hui ?",
-        placeholder: 'Liste tes victoires, même minuscules.',
-      },
-      {
-        id: 'prompt-gratitude',
-        type: 'textarea',
-        label: 'De quoi suis-je reconnaissant(e) ?',
-        placeholder: 'Exprime ce qui remplit ton cœur.',
-      },
-      {
-        id: 'prompt-replay',
-        type: 'textarea',
-        label: "Y a-t-il un moment que j'aimerais revivre ?",
-        placeholder: 'Quel souvenir doux veux-tu garder précieusement ?',
-      },
-      {
-        id: 'prompt-magic-wand',
-        type: 'textarea',
-        label: "Si j'avais une baguette magique, qu'est-ce que je changerais dans cette journée ?",
-        placeholder: 'Note ce qui te vient spontanément...',
-      },
-    ],
-  },
-  {
-    id: 'abundance-affirmations',
-    icon: '#3',
-    title: "3. Affirmations pour attirer l'argent et l'abondance",
-    accent: '#f3efff',
-    description: "Invite la prospérité dans ton esprit avec des mots qui vibrent pour toi.",
-    helper: 'Choisis-en 3 à 5 ou écris les tiennes.',
-    fields: [
-      {
-        id: 'prompt-money-affirmations',
-        type: 'checkboxes',
-        label: 'Ce que je souhaite répéter',
-        options: [
-          "L'argent circule vers moi facilement et en abondance.",
-          'Je mérite la richesse sous toutes ses formes.',
-          "Chaque jour, je deviens un aimant à opportunités financières.",
-          "Je suis reconnaissant(e) pour tout l'argent qui entre dans ma vie.",
-          'Mes actions attirent la prospérité naturellement.',
-        ],
-      },
-      {
-        id: 'prompt-money-custom',
-        type: 'textarea',
-        label: 'Tes mots magiques',
-        placeholder: 'Compose tes propres affirmations lumineuses.',
-      },
-    ],
-  },
-  {
-    id: 'confidence-affirmations',
-    icon: '#4',
-    title: '4. Affirmations pour la confiance en soi',
-    accent: '#fef3c7',
-    description: "Renforce ta confiance et ancre-toi dans ta valeur.",
-    helper: 'Choisis-en 3 à 5 ou écris les tiennes.',
-    fields: [
-      {
-        id: 'prompt-confidence-affirmations',
-        type: 'checkboxes',
-        label: 'Ce que je me répète',
-        options: [
-          'Je crois en mes capacités et je suis fier/fière de moi.',
-          "Je suis digne d'amour, de succès et de respect.",
-          "Je suis en sécurité d'être moi-même.",
-          'Chaque jour, je deviens plus sûr(e) et plus fort(e).',
-          'Ma présence a de la valeur.',
-        ],
-      },
-      {
-        id: 'prompt-confidence-custom',
-        type: 'textarea',
-        label: 'Tes déclarations personnelles',
-        placeholder: 'Écris des mots doux qui te ressemblent.',
-      },
-    ],
-  },
-  {
-    id: 'visualisation',
-    icon: '#5',
-    title: '5. Visualisation / Intention',
-    accent: '#e9f7f3',
-    description: 'Projette-toi avec douceur vers demain.',
-    fields: [
-      {
-        id: 'prompt-intention',
-        type: 'textarea',
-        label: 'Quelle est mon intention pour demain ?',
-        placeholder: 'Pose ton intention la plus douce pour la suite.',
-      },
-      {
-        id: 'prompt-feeling',
-        type: 'textarea',
-        label: 'Comment je veux me sentir demain ?',
-        placeholder: "Imagine l'ambiance émotionnelle que tu souhaites vivre.",
-      },
-      {
-        id: 'prompt-self-version',
-        type: 'textarea',
-        label: 'Quelle version de moi suis-je en train de devenir ?',
-        placeholder: 'Décris la personne que tu nourris pas à pas.',
-      },
-    ],
-  },
-]
-
-const createInitialPromptResponses = () => {
-  const initial: Record<string, string> = {}
-  journalingPromptSections.forEach((section) => {
-    section.fields.forEach((field) => {
-      if (field.type === 'textarea') {
-        initial[field.id] = ''
-      }
-    })
-  })
-  return initial
-}
-
-const createInitialPromptSelections = () => {
-  const initial: Record<string, string[]> = {}
-  journalingPromptSections.forEach((section) => {
-    section.fields.forEach((field) => {
-      if (field.type === 'checkboxes') {
-        initial[field.id] = []
-      }
-    })
-  })
-  return initial
-}
-
 const JournalingPage = () => {
-  const [entries, setEntries] = usePersistentState<JournalEntry[]>('planner.journal.entries', () => initialEntries)
+  const [entries, setEntries] = usePersistentState<JournalEntry[]>('planner.journal.entries', () => [])
+  const [premiumEnabled, setPremiumEnabled] = usePersistentState('planner.journal.premiumEnabled', () => false)
   const [draft, setDraft] = useState({
     date: getTodayISO(),
-    mood: 'Equilibree',
+    mood: 'neutral' as MoodValue,
+    energy: 'medium' as EnergyLevel,
+    keyword: '',
     content: '',
-    feelings: feelings.length > 0 ? [feelings[0].value] : [],
-    feelingReason: '',
+    questionAnswer: '',
+    postFeeling: '' as PostFeeling | '',
+    positiveAnchor: '',
+    positiveAnchorType: 'gratitude' as AnchorType,
   })
-  const [promptResponses, setPromptResponses] = useState<Record<string, string>>(() => createInitialPromptResponses())
-  const [promptSelections, setPromptSelections] = useState<Record<string, string[]>>(() => createInitialPromptSelections())
-  const [manifestationBoard, setManifestationBoard] = usePersistentState('planner.journal.manifestation', () => ({
-    affirmations: '',
-    gratitude: '',
-    people: '',
-    intentions: '',
-  }))
+  const [archiveOpen, setArchiveOpen] = useState(false)
+  const [activeEntryId, setActiveEntryId] = useState<string | null>(null)
   const [saveConfirmationVisible, setSaveConfirmationVisible] = useState(false)
   const saveConfirmationTimeout = useRef<number | null>(null)
-
-  useEffect(() => {
-    document.body.classList.add('planner-page--white')
-    return () => {
-      document.body.classList.remove('planner-page--white')
-    }
-  }, [])
-
-  useEffect(() => {
-    setEntries((previous) => normalizeEntries(previous))
-  }, [setEntries])
 
   useEffect(() => {
     return () => {
@@ -387,45 +199,232 @@ const JournalingPage = () => {
     }
   }, [])
 
-  useEffect(() => {
-    setPromptResponses((previous) => {
-      if (previous[DATE_PROMPT_FIELD_ID] === draft.date) {
-        return previous
+  const dailyQuestion = useMemo(() => getDailyQuestion(draft.date, draft.mood), [draft.date, draft.mood])
+  const displayDate = useMemo(() => formatEntryDate(draft.date), [draft.date])
+
+  const entriesSorted = useMemo(
+    () => [...entries].sort((a, b) => (a.date > b.date ? -1 : 1)),
+    [entries],
+  )
+
+  const entriesByMonth = useMemo(() => {
+    const map = new Map<string, { key: string; label: string; entries: JournalEntry[] }>()
+    entriesSorted.forEach((entry) => {
+      if (!entry.date) {
+        return
       }
+      const parsed = parseEntryDate(entry.date)
+      const year = parsed ? parsed.getFullYear() : Number(entry.date.slice(0, 4))
+      const month = parsed ? parsed.getMonth() + 1 : Number(entry.date.slice(5, 7))
+      const key = `${year}-${String(month).padStart(2, '0')}`
+      const group = map.get(key) ?? { key, label: formatMonthLabel(entry.date), entries: [] }
+      group.entries.push(entry)
+      map.set(key, group)
+    })
+    return Array.from(map.values()).sort((a, b) => (a.key > b.key ? -1 : 1))
+  }, [entriesSorted])
+
+  const activeEntry = useMemo(
+    () => entries.find((entry) => entry.id === activeEntryId) ?? null,
+    [entries, activeEntryId],
+  )
+
+  useEffect(() => {
+    document.body.classList.toggle('journaling-modal-open', Boolean(activeEntry))
+    return () => {
+      document.body.classList.remove('journaling-modal-open')
+    }
+  }, [activeEntry])
+
+  useEffect(() => {
+    if (!archiveOpen) {
+      setActiveEntryId(null)
+    }
+  }, [archiveOpen])
+
+  const lastWeekEntries = useMemo(() => {
+    const today = new Date()
+    const start = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 6)
+    return entriesSorted.filter((entry) => {
+      if (!entry.date) {
+        return false
+      }
+      const parsed = parseEntryDate(entry.date)
+      if (!parsed) {
+        return false
+      }
+      return parsed >= start && parsed <= today
+    })
+  }, [entriesSorted])
+
+  const weeklyInsights = useMemo(() => {
+    if (lastWeekEntries.length === 0) {
       return {
-        ...previous,
-        [DATE_PROMPT_FIELD_ID]: draft.date,
+        summary: ['Pas encore assez de pages cette semaine pour dessiner une synthèse.'],
+        patterns: ['Les tendances apparaîtront doucement avec le temps.'],
+        suggestions: ["Tu peux écrire peu, même quelques mots si c'est juste."],
+      }
+    }
+
+    const keywordCounts = new Map<string, number>()
+    const moodCounts = new Map<string, number>()
+    const dayCounts = new Map<number, { heavy: number; total: number }>()
+    const actionCounts = new Map<string, number>()
+    let energyTotal = 0
+    let energyCount = 0
+    let toneScore = 0
+
+    const heavyMoods = new Set(['low', 'overwhelmed'])
+    const positivePostFeelings = new Set<PostFeeling>(['better', 'clearer', 'tiredRelieved'])
+
+    lastWeekEntries.forEach((entry) => {
+      const keyword = entry.keyword?.trim().toLowerCase()
+      if (keyword) {
+        keywordCounts.set(keyword, (keywordCounts.get(keyword) ?? 0) + 1)
+      }
+
+      if (entry.mood) {
+        moodCounts.set(entry.mood, (moodCounts.get(entry.mood) ?? 0) + 1)
+      }
+
+      if (entry.energy) {
+        const score = entry.energy === 'low' ? 1 : entry.energy === 'medium' ? 2 : 3
+        energyTotal += score
+        energyCount += 1
+      }
+
+      if (entry.date) {
+        const parsed = parseEntryDate(entry.date)
+        if (parsed) {
+          const weekday = parsed.getDay()
+          const current = dayCounts.get(weekday) ?? { heavy: 0, total: 0 }
+          current.total += 1
+          if (entry.mood && heavyMoods.has(entry.mood)) {
+            current.heavy += 1
+          }
+          dayCounts.set(weekday, current)
+        }
+      }
+
+      const textBlob = [entry.keyword, entry.questionAnswer, entry.content, entry.positiveAnchor].join(' ').toLowerCase()
+      toneSignals.heavy.forEach((signal) => {
+        if (textBlob.includes(signal)) {
+          toneScore -= 1
+        }
+      })
+      toneSignals.light.forEach((signal) => {
+        if (textBlob.includes(signal)) {
+          toneScore += 1
+        }
+      })
+
+      if (entry.content && entry.postFeeling && positivePostFeelings.has(entry.postFeeling)) {
+        const content = entry.content.toLowerCase()
+        actionSignals.forEach((action) => {
+          if (action.words.some((word) => content.includes(word))) {
+            actionCounts.set(action.label, (actionCounts.get(action.label) ?? 0) + 1)
+          }
+        })
       }
     })
-  }, [draft.date])
 
-  const handleDraftChange = <Field extends keyof typeof draft>(field: Field, value: typeof draft[Field]) => {
+    const topKeyword = [...keywordCounts.entries()].sort((a, b) => b[1] - a[1])[0]
+    const topMood = [...moodCounts.entries()].sort((a, b) => b[1] - a[1])[0]
+    const energyAverage = energyCount > 0 ? energyTotal / energyCount : null
+
+    const moodLabel = (value?: string) =>
+      moodOptions.find((option) => option.value === value)?.label ?? (value ?? 'Neutre')
+
+    const summary: string[] = []
+    if (topKeyword && topKeyword[1] > 1) {
+      summary.push(`Cette semaine, un mot revient souvent : "${topKeyword[0]}".`)
+    }
+    if (topMood) {
+      summary.push(`L'humeur dominante se situe plutôt sur ${moodLabel(topMood[0]).toLowerCase()}.`)
+    }
+    if (energyAverage !== null) {
+      const energyLabel = energyAverage < 1.6 ? 'plutôt basse' : energyAverage < 2.4 ? 'plutôt moyenne' : 'plutôt haute'
+      summary.push(`Ton énergie moyenne semble ${energyLabel}.`)
+    }
+    if (toneScore !== 0) {
+      const toneLabel = toneScore > 0 ? 'plutôt apaisé' : 'plus chargé'
+      summary.push(`Le ton général est ${toneLabel}.`)
+    }
+    if (summary.length === 0) {
+      summary.push('Cette semaine se dessine sans tendance marquée, en douceur.')
+    }
+
+    const patterns: string[] = []
+    if (topKeyword && topKeyword[1] > 1) {
+      patterns.push(`Le thème "${topKeyword[0]}" revient plusieurs fois.`)
+    }
+
+    const dayLabels = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi']
+    const heavyDay = [...dayCounts.entries()]
+      .map(([day, data]) => ({ day, ratio: data.total > 0 ? data.heavy / data.total : 0, total: data.total }))
+      .sort((a, b) => b.ratio - a.ratio)[0]
+    if (heavyDay && heavyDay.total >= 2 && heavyDay.ratio >= 0.6) {
+      patterns.push(`Les ${dayLabels[heavyDay.day]}s semblent un peu plus denses.`)
+    }
+
+    const topAction = [...actionCounts.entries()].sort((a, b) => b[1] - a[1])[0]
+    if (topAction && topAction[1] >= 2) {
+      patterns.push(`Après ${topAction[0]}, tes notes sont souvent plus claires.`)
+    }
+
+    if (patterns.length === 0) {
+      patterns.push("Les schémas restent discrets pour le moment, et c'est ok.")
+    }
+
+    const suggestions: string[] = []
+    if (toneScore < 0) {
+      suggestions.push("Veux-tu essayer un rituel pour apaiser l'esprit ?")
+    }
+    if (energyAverage !== null && energyAverage < 1.7) {
+      suggestions.push("Aujourd'hui pourrait être une journée plus douce.")
+    }
+    if (lastWeekEntries.length < 3) {
+      suggestions.push('Tu peux écrire moins, même un mot suffit parfois.')
+    }
+    if (suggestions.length === 0) {
+      suggestions.push('Garde un geste simple qui te fait du bien.')
+    }
+
+    return {
+      summary: summary.slice(0, 3),
+      patterns: patterns.slice(0, 3),
+      suggestions: suggestions.slice(0, 3),
+    }
+  }, [lastWeekEntries])
+
+  const handleSubmit = () => {
+    const newEntry: JournalEntry = {
+      id: `entry-${Date.now()}`,
+      date: draft.date,
+      mood: draft.mood,
+      energy: draft.energy,
+      keyword: draft.keyword.trim() || undefined,
+      question: dailyQuestion,
+      questionAnswer: draft.questionAnswer.trim() || undefined,
+      content: draft.content.trim() || undefined,
+      postFeeling: draft.postFeeling || undefined,
+      positiveAnchor: draft.positiveAnchor.trim() || undefined,
+      positiveAnchorType: draft.positiveAnchorType,
+      createdAt: Date.now(),
+    }
+
+    setEntries((previous) => [newEntry, ...previous])
     setDraft((previous) => ({
       ...previous,
-      [field]: value,
+      date: getTodayISO(),
+      keyword: '',
+      content: '',
+      questionAnswer: '',
+      postFeeling: '' as PostFeeling | '',
+      positiveAnchor: '',
+      positiveAnchorType: 'gratitude',
     }))
-  }
 
-  const handlePromptResponseChange = (fieldId: string, value: string) => {
-    setPromptResponses((previous) => ({
-      ...previous,
-      [fieldId]: value,
-    }))
-  }
-
-  const handlePromptSelectionToggle = (fieldId: string, option: string) => {
-    setPromptSelections((previous) => {
-      const current = previous[fieldId] ?? []
-      const exists = current.includes(option)
-      const next = exists ? current.filter((item) => item !== option) : [...current, option]
-      return {
-        ...previous,
-        [fieldId]: next,
-      }
-    })
-  }
-
-  const showSaveConfirmation = () => {
     setSaveConfirmationVisible(true)
     if (saveConfirmationTimeout.current !== null) {
       window.clearTimeout(saveConfirmationTimeout.current)
@@ -436,470 +435,390 @@ const JournalingPage = () => {
     }, 2000)
   }
 
-  const handleSubmit = () => {
-    const promptSectionsForEntry = journalingPromptSections
-      .map<PromptEntrySection | null>((section) => {
-        const answers: PromptAnswer[] = []
-
-        section.fields.forEach((field) => {
-          if (field.type === 'textarea') {
-            const value = (promptResponses[field.id] ?? '').trim()
-            if (value.length > 0) {
-              answers.push({
-                label: field.label,
-                type: 'text',
-                value,
-              })
-            }
-          } else if (field.type === 'checkboxes') {
-            const selected = promptSelections[field.id] ?? []
-            if (selected.length > 0) {
-              answers.push({
-                label: field.label,
-                type: 'list',
-                items: selected,
-              })
-            }
-          }
-        })
-
-        if (answers.length === 0) {
-          return null
-        }
-
-        return {
-          id: section.id,
-          title: section.title,
-          answers,
-        }
-      })
-      .filter((section): section is PromptEntrySection => section !== null)
-
-    const freeWriting = draft.content.trim()
-
-    if (promptSectionsForEntry.length === 0 && freeWriting.length === 0) {
-      return
-    }
-
-    const promptSummaryText = promptSectionsForEntry
-      .map((section) => {
-        const parts = section.answers.map((answer) => {
-          if (answer.type === 'list') {
-            return `${answer.label}\n${answer.items.map((item) => `- ${item}`).join('\n')}`
-          }
-          return `${answer.label}\n${answer.value}`
-        })
-        return `${section.title}\n${parts.join('\n\n')}`
-      })
-      .join('\n\n')
-
-    const combinedContent = [promptSummaryText, freeWriting].filter((value) => value.length > 0).join('\n\n')
-
-    const normalizedFeelings =
-      draft.feelings.length > 0 ? [...draft.feelings] : (feelings.length > 0 ? [feelings[0].value] : [])
-
-    const newEntry: JournalEntry = {
-      id: `entry-${Date.now()}`,
-      date: draft.date,
-      mood: draft.mood,
-      content: combinedContent,
-      feelings: normalizedFeelings,
-      feeling: normalizedFeelings[0],
-      feelingReason: draft.feelingReason.trim(),
-      prompts: promptSectionsForEntry.length > 0 ? promptSectionsForEntry : undefined,
-      freeWriting: freeWriting.length > 0 ? freeWriting : undefined,
-    }
-
-    setEntries((previous) => [newEntry, ...previous.filter((entry) => entry.date !== newEntry.date)])
-    setDraft((previous) => ({
-      ...previous,
-      content: '',
-      feelingReason: '',
-      feelings: feelings.length > 0 ? [feelings[0].value] : [],
-    }))
-    setPromptResponses(createInitialPromptResponses())
-    setPromptSelections(createInitialPromptSelections())
-    showSaveConfirmation()
-  }
-
-  const entriesByDate = useMemo(() => {
-    const map = new Map<string, JournalEntry[]>()
-    entries.forEach((entry) => {
-      const list = map.get(entry.date) ?? []
-      list.push(entry)
-      map.set(entry.date, list)
-    })
-
-    return Array.from(map.entries()).sort((a, b) => (a[0] > b[0] ? -1 : 1))
-  }, [entries])
-
-  const totalEntries = entries.length
-  const activeDays = entriesByDate.length
-  const latestEntry = entries[0]
-  const [archiveOpen, setArchiveOpen] = useState(false)
-  const [selectedYear, setSelectedYear] = useState<string | null>(null)
-  const [selectedDay, setSelectedDay] = useState<string | null>(null)
-
-  const entriesByYear = useMemo(() => {
-    const yearMap = new Map<string, { date: string; items: JournalEntry[] }[]>()
-    entriesByDate.forEach(([date, items]) => {
-      const year = new Date(date).getFullYear().toString()
-      const list = yearMap.get(year) ?? []
-      list.push({ date, items })
-      yearMap.set(year, list)
-    })
-
-    return Array.from(yearMap.entries())
-      .map(([year, groups]) => ({
-        year,
-        totalEntries: groups.reduce((sum, group) => sum + group.items.length, 0),
-        dates: groups,
-      }))
-      .sort((a, b) => (a.year > b.year ? -1 : 1))
-  }, [entriesByDate])
-
-  const selectedYearGroup = useMemo(
-    () => entriesByYear.find((group) => group.year === selectedYear) ?? null,
-    [entriesByYear, selectedYear],
-  )
-
-  useEffect(() => {
-    setSelectedYear(null)
-  }, [archiveOpen])
-
-  useEffect(() => {
-    if (selectedYear && !entriesByYear.some((group) => group.year === selectedYear)) {
-      setSelectedYear(null)
-    }
-  }, [entriesByYear, selectedYear])
-
-  const activeDayGroup = useMemo(() => {
-    if (!selectedYearGroup || !selectedDay) {
-      return null
-    }
-
-    return selectedYearGroup.dates.find((group) => group.date === selectedDay) ?? null
-  }, [selectedYearGroup, selectedDay])
-
-  const journalingStats = [
-    { id: 'pages', label: 'Pages écrites', value: totalEntries.toString() },
-    { id: 'days', label: 'Jours actifs', value: activeDays.toString() },
-  ]
-  const dayStateIds = useMemo(() => new Set(['daily-state', 'daily-celebration']), [])
-  const dayStateSections = journalingPromptSections.filter((section) => dayStateIds.has(section.id))
-  const manifestationBlocks = [
-    {
-      id: 'affirmations',
-      title: 'Affirmations',
-      emoji: '',
-      placeholder: 'Écris tes phrases positives, séparées par des retours à la ligne.',
-      description: 'Rappelle-toi qui tu deviens.',
-    },
-    {
-      id: 'gratitude',
-      title: 'Ce dont je suis reconnaissant(e)',
-      emoji: '',
-      placeholder: 'Liste ce qui remplit ton cœur de douceur.',
-      description: "Accueille l'abondance actuelle.",
-    },
-    {
-      id: 'people',
-      title: 'Croyances limitantes',
-      emoji: '',
-      placeholder: 'Note les phrases ou pensées que tu souhaites transformer.',
-      description: 'Identifie ce qui te retient pour mieux le libérer.',
-    },
-    {
-      id: 'intentions',
-      title: 'Visualisations',
-      emoji: '',
-      placeholder: 'Imagine en détails la vie que tu manifestes.',
-      description: 'Projette-toi vers ta vision idéale.',
-    },
-  ] as const
-
   return (
     <div className="journaling-page aesthetic-page">
-      
-      
       <PageHero
-        eyebrow="Rituel du jour"
+        eyebrow="Rituel doux"
         title="Journaling"
-        description="Prends un instant pour respirer, écrire et manifester ta vie de rêve."
-        stats={journalingStats.map(({ id, label, value }) => ({ id, label, value }))}
+        description="Un espace sûr pour déposer ce que tu vis, sans obligation ni comparaison. Tu peux venir quand tu veux, même pour un mot."
+        stats={[]}
         images={journalingMoodboard}
-        tone="pink"
       />
       <div className="journaling-page__accent-bar" aria-hidden="true" />
       <PageHeading eyebrow="Reflet" title="Journaling" />
 
-      <section className="journaling-day-state">
-        <header className="journaling-day-state__header">
+      <section className="journaling-section journaling-checkin journaling-section--delay-1">
+        <header className="journaling-section__header">
           <div>
-            <h2>Bilan de la journée</h2>
+            <span className="journaling-tag">Gratuit</span>
+            <h2>Check-in émotionnel</h2>
+            <p>Commence par un point rapide. C'est juste pour toi.</p>
           </div>
+          <div className="journaling-checkin__date">{displayDate}</div>
         </header>
-        <div className="journaling-day-state__content">
-          {dayStateSections.map((section, index) => {
-            const [rawNumber, ...titleParts] = section.title.split('.')
-            const displayNumber = rawNumber?.trim().replace(/\D+/g, '') || `${index + 1}`
-            const cleanTitle = titleParts.length > 0 ? titleParts.join('.').trim() : section.title
-
-            return (
-              <div key={section.id} className="journaling-day-state__group">
-                <div className="journaling-day-state__group-heading">
-                  <span aria-hidden="true" className="journaling-day-state__number">
-                    {displayNumber}
+        <div className="journaling-checkin__grid">
+          <div className="journaling-checkin__block">
+            <span className="journaling-checkin__label">Humeur du jour</span>
+            <div className="journaling-mood__options">
+              {moodOptions.map((option) => (
+                <label key={option.value} className="journaling-choice">
+                  <input
+                    type="radio"
+                    name="mood"
+                    value={option.value}
+                    checked={draft.mood === option.value}
+                    onChange={() => setDraft((previous) => ({ ...previous, mood: option.value }))}
+                  />
+                  <span className="journaling-choice__content">
+                    <span className="journaling-choice__emoji" aria-hidden="true">
+                      {option.emoji}
+                    </span>
+                    <span>{option.label}</span>
                   </span>
-                  <div>
-                    <h3>{cleanTitle}</h3>
-                    {section.description && <p>{section.description}</p>}
-                  </div>
-                </div>
-                <div className="journaling-day-state__fields">
-                  {section.fields.map((field) => (
-                    <label key={field.id}>
-                      <span>{field.label}</span>
-                      <textarea
-                        value={promptResponses[field.id] ?? ''}
-                        onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
-                          handlePromptResponseChange(field.id, event.target.value)
-                        }
-                        placeholder={field.placeholder}
-                        rows={field.id === DATE_PROMPT_FIELD_ID ? 2 : 3}
-                      />
-                    </label>
-                  ))}
-                </div>
-              </div>
-            )
-          })}
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="journaling-checkin__block">
+            <span className="journaling-checkin__label">Niveau d'énergie</span>
+            <div className="journaling-energy__options">
+              {energyOptions.map((option) => (
+                <label key={option.value} className="journaling-choice journaling-choice--pill">
+                  <input
+                    type="radio"
+                    name="energy"
+                    value={option.value}
+                    checked={draft.energy === option.value}
+                    onChange={() => setDraft((previous) => ({ ...previous, energy: option.value }))}
+                  />
+                  <span className="journaling-choice__content">
+                    <span className="journaling-choice__dot" aria-hidden="true" />
+                    <span>{option.label}</span>
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="journaling-checkin__block">
+            <span className="journaling-checkin__label">Mot-clé du jour</span>
+            <input
+              className="journaling-input"
+              type="text"
+              value={draft.keyword}
+              onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                setDraft((previous) => ({
+                  ...previous,
+                  keyword: limitKeywordWords(event.target.value),
+                }))
+              }
+              placeholder="1 à 3 mots"
+            />
+            <p className="journaling-helper">Libre, simple, sans pression.</p>
+          </div>
         </div>
       </section>
 
-      <section className="journaling-manifestation">
-        <header>
+      <section className="journaling-section journaling-question journaling-section--delay-2">
+        <header className="journaling-section__header">
           <div>
-            <h2>Espace manifestation</h2>
-            <p>Note tes affirmations, ta gratitude et les personnes qui t'inspirent.</p>
+            <span className="journaling-tag">Gratuit</span>
+            <h2>Question guidée du jour</h2>
+            <p>Une seule question, pour ouvrir une porte sans t'enfermer.</p>
           </div>
         </header>
-        <div className="journaling-manifestation__grid">
-          {manifestationBlocks.map((block) => (
-            <article key={block.id} className="journaling-manifestation__card">
-              <div className="journaling-manifestation__card-heading">
-                <span aria-hidden="true">{block.emoji}</span>
-                <div>
-                  <h3>{block.title}</h3>
-                  <p>{block.description}</p>
-                </div>
-              </div>
-              <textarea
-                value={manifestationBoard[block.id] ?? ''}
-                onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
-                  setManifestationBoard((previous) => ({ ...previous, [block.id]: event.target.value }))
-                }
-                placeholder={block.placeholder}
-                rows={block.id === 'people' ? 4 : 5}
-              />
-              {manifestationBoard[block.id]?.trim().length > 0 ? (
-                <div className="journaling-manifestation__chips">
-                  {manifestationBoard[block.id]
-                    .split('\n')
-                    .map((line) => line.trim())
-                    .filter((line) => line.length > 0)
-                    .slice(0, 4)
-                    .map((line) => (
-                      <span key={`${block.id}-${line}`} className="journaling-manifestation__chip">
-                        {line}
-                      </span>
-                    ))}
-                </div>
-              ) : null}
-            </article>
-          ))}
+        <div className="journaling-question__card">
+          <p className="journaling-question__prompt">{dailyQuestion}</p>
+          <div className="journaling-question__answer">
+            <span>Ta réponse</span>
+            <textarea
+              value={draft.questionAnswer}
+              onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
+                setDraft((previous) => ({ ...previous, questionAnswer: event.target.value }))
+              }
+              placeholder="Écris ce qui vient, même en quelques mots."
+              rows={4}
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="journaling-section journaling-write journaling-section--delay-3">
+        <header className="journaling-section__header">
+          <div>
+            <span className="journaling-tag">Gratuit</span>
+            <h2>Zone d'écriture principale</h2>
+            <p>Écris librement. Personne ne te lira. Tu peux t'arrêter quand tu veux.</p>
+          </div>
+        </header>
+        <textarea
+          value={draft.content}
+          onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
+            setDraft((previous) => ({ ...previous, content: event.target.value }))
+          }
+          placeholder="Écris librement. Personne ne te lira. Tu peux t'arrêter quand tu veux."
+          rows={10}
+        />
+      </section>
+
+      <section className="journaling-section journaling-closure journaling-section--delay-4">
+        <header className="journaling-section__header">
+          <div>
+            <span className="journaling-tag">Gratuit</span>
+            <h2>Clôture émotionnelle</h2>
+            <p>Un petit retour sur ce que l'écriture vient de bouger.</p>
+          </div>
+        </header>
+        <div className="journaling-closure__grid">
+          <div className="journaling-closure__block">
+            <span className="journaling-checkin__label">Comment te sens-tu maintenant ?</span>
+            <div className="journaling-post__options">
+              {postFeelingOptions.map((option) => (
+                <label key={option.value} className="journaling-choice journaling-choice--wide">
+                  <input
+                    type="radio"
+                    name="postFeeling"
+                    value={option.value}
+                    checked={draft.postFeeling === option.value}
+                    onChange={() => setDraft((previous) => ({ ...previous, postFeeling: option.value }))}
+                  />
+                  <span className="journaling-choice__content">{option.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+          <div className="journaling-closure__block">
+            <span className="journaling-checkin__label">Ancrage positif optionnel</span>
+            <div className="journaling-anchor__options">
+              {anchorOptions.map((option) => (
+                <label key={option.value} className="journaling-toggle">
+                  <input
+                    type="radio"
+                    name="anchorType"
+                    value={option.value}
+                    checked={draft.positiveAnchorType === option.value}
+                    onChange={() => setDraft((previous) => ({ ...previous, positiveAnchorType: option.value }))}
+                  />
+                  <span className="journaling-toggle__label">{option.label}</span>
+                </label>
+              ))}
+            </div>
+            <textarea
+              value={draft.positiveAnchor}
+              onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
+                setDraft((previous) => ({ ...previous, positiveAnchor: event.target.value }))
+              }
+              placeholder="Facultatif, sans obligation."
+              rows={4}
+            />
+          </div>
         </div>
       </section>
 
       <section className="journaling-save">
         <button type="button" className="journaling-save__button" onClick={handleSubmit}>
-          Ajouter cette page
+          Sauvegarder cette page
         </button>
         <div
           className={`journaling-save__confirmation${saveConfirmationVisible ? ' is-visible' : ''}`}
           aria-live="polite"
         >
-          <span aria-hidden="true">✅</span>
-          <strong>Page ajoutée !</strong>
+          <span aria-hidden="true">✓</span>
+          <strong>Page enregistrée</strong>
         </div>
       </section>
 
-     <section className="journaling-history">
-  <div className="journaling-history__header">
-    <h2>Archives</h2>
-    <button
-      type="button"
-      className="journaling-history__toggle"
-      onClick={() => setArchiveOpen((v) => !v)}
-      aria-expanded={archiveOpen}
-    >
-      {archiveOpen ? 'Réduire les archives' : 'Afficher les archives'}
-    </button>
-  </div>
-  {archiveOpen ? (
-    entriesByYear.length > 0 ? (
-      <div className="journaling-history__years">
-        {entriesByYear.map((group) => (
-          <button
-            key={group.year}
-            type="button"
-            className="journaling-history__year-card"
-            onClick={() => {
-              setSelectedYear(group.year)
-              setSelectedDay(null)
-            }}
-          >
-            <span className="journaling-history__year">{group.year}</span>
-            <span className="journaling-history__year-count">{group.totalEntries} page(s)</span>
-          </button>
-        ))}
-      </div>
-    ) : (
-      <p className="journaling-history__empty">Aucune archive pour le moment.</p>
-    )
-  ) : null}
-</section>
-{selectedYearGroup ? (
-  <div className="journaling-history-modal" role="dialog" aria-modal="true">
-    <div className="journaling-history-modal__backdrop" onClick={() => setSelectedYear(null)} />
-    <div className="journaling-history-modal__content">
-      <header className="journaling-history-modal__header">
-        <div>
-          <p>Année</p>
-          <h3>{selectedYearGroup.year}</h3>
-          <span>{selectedYearGroup.totalEntries} page(s)</span>
-        </div>
-        <button type="button" onClick={() => setSelectedYear(null)}>
-          Fermer
-        </button>
-      </header>
-      <div className="journaling-history-modal__body">
-        <div className="journaling-history-modal__dates">
-          {selectedYearGroup.dates.map(({ date, items }) => (
-            <button
-              key={date}
-              type="button"
-              className={`journaling-history__day-card${selectedDay === date ? ' is-active' : ''}`}
-              onClick={() => setSelectedDay((previous) => (previous === date ? null : date))}
-            >
-              <span>{date}</span>
-              <strong>{items.length} page(s)</strong>
-            </button>
-          ))}
-        </div>
-        {activeDayGroup ? (
-          <article className="journaling-history__group">
-            <header className="journaling-history__group-header">
-              <div>
-                <time>{activeDayGroup.date}</time>
-                <span>{activeDayGroup.items.length} page(s)</span>
-              </div>
-            </header>
-            <ul>
-              {activeDayGroup.items.map((entry) => {
-                const entryFeelings =
-                  entry.feelings && entry.feelings.length > 0
-                    ? entry.feelings
-                    : entry.feeling
-                      ? [entry.feeling]
-                      : []
-                const feelingEmojis = entryFeelings
-                  .map((value) => feelings.find((option) => option.value === value)?.emoji)
-                  .filter((emoji): emoji is string => Boolean(emoji))
-                const freeWritingText =
-                  entry.freeWriting ??
-                  (entry.prompts && entry.prompts.length > 0 ? '' : entry.content)
-
-                return (
-                  <li key={entry.id}>
-                    <div className="journaling-history__feeling">
-                      <span aria-hidden="true" className="journaling-history__feeling-emoji">
-                        {feelingEmojis.length > 0 ? feelingEmojis.join(' ') : ''}
-                      </span>
-                      <div className="journaling-history__feeling-info">
-                        <span className="journaling-history__feeling-label">
-                          {entryFeelings.length > 0
-                            ? entryFeelings
-                                .map((value) => feelings.find((option) => option.value === value)?.label ?? value)
-                                .join(', ')
-                            : 'Humeur'}
-                        </span>
-                        <span className="journaling-history__mood">{entry.mood}</span>
-                      </div>
-                    </div>
-                    {entry.feelingReason.length > 0 && (
-                      <p className="journaling-history__why">
-                        <strong>Pourquoi :</strong> {entry.feelingReason}
-                      </p>
-                    )}
-                    {entry.prompts && entry.prompts.length > 0 && (
-                      <div className="journaling-history__prompts">
-                        {entry.prompts.map((section) => (
-                          <div key={section.id} className="journaling-history__prompt-section">
-                            <h4>{section.title}</h4>
-                            <ul>
-                              {section.answers.map((answer) => {
-                                if (answer.type === 'list') {
-                                  return (
-                                    <li key={`${section.id}-${answer.label}`}>
-                                      <strong>{answer.label}</strong>
-                                      <ul>
-                                        {answer.items.map((item) => (
-                                          <li key={item}>{item}</li>
-                                        ))}
-                                      </ul>
-                                    </li>
-                                  )
-                                }
-
-                                return (
-                                  <li key={`${section.id}-${answer.label}`}>
-                                    <strong>{answer.label}</strong>
-                                    <p>{answer.value}</p>
-                                  </li>
-                                )
-                              })}
-                            </ul>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    {freeWritingText.length > 0 && (
-                      <div className="journaling-history__freewrite">
-                        <h4>Texte libre</h4>
-                        {freeWritingText.split(/\n+/).map((paragraph, index) => (
-                          <p key={`${entry.id}-paragraph-${index}`}>{paragraph}</p>
-                        ))}
-                      </div>
-                    )}
-                  </li>
-                )
-              })}
-            </ul>
-          </article>
+      <section
+        className={`journaling-section journaling-premium journaling-section--delay-5${
+          premiumEnabled ? '' : ' is-locked'
+        }`}
+      >
+        <header className="journaling-section__header">
+          <div>
+            <span className="journaling-tag journaling-tag--premium">Premium</span>
+            <h2>Lecture douce de ta semaine</h2>
+            <p>Des reflets bienveillants, sans jugement ni diagnostic.</p>
+          </div>
+          <label className="journaling-premium__toggle">
+            <span>Mode premium (demo)</span>
+            <input
+              type="checkbox"
+              checked={premiumEnabled}
+              onChange={(event) => setPremiumEnabled(event.target.checked)}
+              aria-label="Activer le mode premium"
+            />
+          </label>
+        </header>
+        {premiumEnabled ? (
+          <div className="journaling-premium__grid">
+            <article className="journaling-premium__card">
+              <h3>Synthèse hebdomadaire</h3>
+              <ul>
+                {weeklyInsights.summary.map((line) => (
+                  <li key={line}>{line}</li>
+                ))}
+              </ul>
+            </article>
+            <article className="journaling-premium__card">
+              <h3>Schémas émotionnels</h3>
+              <ul>
+                {weeklyInsights.patterns.map((line) => (
+                  <li key={line}>{line}</li>
+                ))}
+              </ul>
+            </article>
+            <article className="journaling-premium__card">
+              <h3>Suggestions douces</h3>
+              <ul>
+                {weeklyInsights.suggestions.map((line) => (
+                  <li key={line}>{line}</li>
+                ))}
+              </ul>
+            </article>
+          </div>
         ) : (
-          <p className="journaling-history-modal__empty">Sélectionne un jour pour consulter tes pages.</p>
+          <div className="journaling-premium__locked">
+            <p>Ces repères deviennent disponibles avec Premium, quand tu veux.</p>
+            <div className="journaling-premium__grid">
+              <article className="journaling-premium__card is-muted">
+                <h3>Synthèse hebdomadaire</h3>
+                <p>Un résumé neutre basé sur l'humeur, les mots-clés et le ton.</p>
+              </article>
+              <article className="journaling-premium__card is-muted">
+                <h3>Schémas émotionnels</h3>
+                <p>Des patterns simples, jamais culpabilisants.</p>
+              </article>
+              <article className="journaling-premium__card is-muted">
+                <h3>Suggestions douces</h3>
+                <p>Des gestes légers pour prendre soin de toi.</p>
+              </article>
+            </div>
+          </div>
         )}
-      </div>
-    </div>
-  </div>
-) : null}
-<div className="journaling-page__footer-bar" aria-hidden="true" />
-</div>
+      </section>
 
-)
-  
+      <section className="journaling-section journaling-archive journaling-section--delay-6">
+        <header className="journaling-section__header">
+          <div>
+            <span className="journaling-tag">Gratuit</span>
+            <h2>Mes pages</h2>
+            <p>Revenir lire, quand tu en as envie. Rien n'est obligatoire.</p>
+          </div>
+          <button
+            type="button"
+            className="journaling-archive__toggle"
+            onClick={() => setArchiveOpen((previous) => !previous)}
+            aria-expanded={archiveOpen}
+          >
+            {archiveOpen ? 'Masquer' : 'Afficher'}
+          </button>
+        </header>
+        {archiveOpen ? (
+          entriesByMonth.length > 0 ? (
+            <div className="journaling-archive__list">
+              {entriesByMonth.map((group) => (
+                <div key={group.key} className="journaling-month">
+                  <h3 className="journaling-month__title">{group.label}</h3>
+                  <div className="journaling-month__list">
+                    {group.entries.map((entry) => {
+                      const moodOption = moodOptions.find((option) => option.value === entry.mood)
+                      const energyLabel = energyOptions.find((option) => option.value === entry.energy)?.label
+                      const metaParts = [
+                        moodOption?.label ?? (entry.mood ? String(entry.mood) : 'Humeur'),
+                        energyLabel ? `Énergie ${energyLabel.toLowerCase()}` : null,
+                        entry.keyword ? `Mot-clé: ${entry.keyword}` : null,
+                      ].filter(Boolean)
+
+                      return (
+                        <button
+                          key={entry.id}
+                          type="button"
+                          className="journaling-entry"
+                          onClick={() => setActiveEntryId(entry.id)}
+                        >
+                          <span className="journaling-entry__date">{formatEntryLineDate(entry.date)}</span>
+                          <span className="journaling-entry__meta">{metaParts.join(' · ')}</span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="journaling-empty">Tu n'as pas encore écrit ici. Tu peux commencer quand tu veux.</p>
+          )
+        ) : (
+          <p className="journaling-helper">Tes pages restent là, discrètes et prêtes à te retrouver.</p>
+        )}
+      </section>
+
+      {activeEntry ? (
+        <div className="journaling-modal" role="dialog" aria-modal="true">
+          <button
+            type="button"
+            className="journaling-modal__backdrop"
+            onClick={() => setActiveEntryId(null)}
+            aria-label="Fermer le récapitulatif"
+          />
+          <div className="journaling-modal__panel">
+            <div className="journaling-modal__body">
+              <header className="journaling-modal__header">
+              <div>
+                <h3>{formatEntryDate(activeEntry.date)}</h3>
+                <p>
+                  {moodOptions.find((option) => option.value === activeEntry.mood)?.label ?? 'Humeur'} ·{' '}
+                  {energyOptions.find((option) => option.value === activeEntry.energy)?.label
+                    ? `Énergie ${energyOptions.find((option) => option.value === activeEntry.energy)?.label?.toLowerCase()}`
+                    : 'Énergie'}
+                </p>
+              </div>
+              <button type="button" className="journaling-modal__close" onClick={() => setActiveEntryId(null)}>
+                Fermer
+              </button>
+              </header>
+              {activeEntry.question ? (
+                <div className="journaling-modal__block">
+                  <span>Question du jour</span>
+                  <p>{activeEntry.question}</p>
+                </div>
+              ) : null}
+              {activeEntry.questionAnswer ? (
+                <div className="journaling-modal__block">
+                  <span>Réponse</span>
+                  <p>{activeEntry.questionAnswer}</p>
+                </div>
+              ) : null}
+              {activeEntry.content ? (
+                <div className="journaling-modal__block">
+                  <span>Journal</span>
+                  {activeEntry.content.split(/\n+/).map((paragraph, index) => (
+                    <p key={`${activeEntry.id}-modal-${index}`}>{paragraph}</p>
+                  ))}
+                </div>
+              ) : (
+                <p className="journaling-modal__empty">Cette page est surtout un check-in.</p>
+              )}
+              {activeEntry.positiveAnchor ? (
+                <div className="journaling-modal__block">
+                  <span>{anchorOptions.find((option) => option.value === activeEntry.positiveAnchorType)?.label ?? 'Ancrage'}</span>
+                  <p>{activeEntry.positiveAnchor}</p>
+                </div>
+              ) : null}
+            </div>
+            {activeEntry.postFeeling ? (
+              <div className="journaling-modal__footer">
+                Après l'écriture : {postFeelingOptions.find((option) => option.value === activeEntry.postFeeling)?.label ?? ''}
+              </div>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
+
+      <div className="journaling-page__footer-bar" aria-hidden="true" />
+    </div>
+  )
 }
 
 export default JournalingPage
-

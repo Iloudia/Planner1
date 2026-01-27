@@ -1,4 +1,5 @@
 import { useMemo } from "react"
+import { Link } from "react-router-dom"
 import usePersistentState from "../../hooks/usePersistentState"
 import PageHeading from "../../components/PageHeading"
 import photo1 from "../../assets/planner-01.jpg"
@@ -76,6 +77,17 @@ function DietPage() {
       <div className="page-accent-bar" aria-hidden="true" />
       <PageHeading eyebrow="Alimentation" title="Cuisine" />
       <main className="content-page diet-page">
+        <section className="page-section diet-crosslink">
+          <div>
+            <p className="diet-crosslink__label">Besoin d'idées ?</p>
+            <p className="diet-crosslink__text">
+              Va sur la page Diet pour découvrir des recettes et les utiliser dans ton planning.
+            </p>
+          </div>
+          <Link to="/diet" className="pill">
+            Voir les recettes
+          </Link>
+        </section>
         <section className="page-section diet-week">
           <header className="diet-week__header">
             <div>

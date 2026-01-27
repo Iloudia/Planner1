@@ -412,7 +412,7 @@ return (
     <div className="page-accent-bar" aria-hidden="true" />
 
     <header className="calendar-header">
-      <PageHeading eyebrow="calendrier mensuel" title="Calendrier Mensuel" />
+      <PageHeading eyebrow="calendrier mensuel" title={formatMonthTitle(currentMonthDate)} />
       <div className="calendar-month-nav">
         <button type="button" onClick={() => handleMonthChange(-1)} aria-label="Mois précédent">
           &lt;

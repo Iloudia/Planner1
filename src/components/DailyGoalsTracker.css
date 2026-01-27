@@ -41,6 +41,57 @@
   font-weight: 600;
 }
 
+.sport-habits__reward {
+  margin: 0.2rem 0 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(236, 72, 153, 0.15);
+  color: #9d174d;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.sport-habits__reward-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(6px);
+  z-index: 120;
+}
+
+.sport-habits__reward-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 1.6rem 2rem;
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.25);
+  text-align: center;
+  max-width: 320px;
+}
+
+.sport-habits__reward-card h4 {
+  margin: 0 0 0.4rem;
+  font-size: 1.2rem;
+  color: #9d174d;
+}
+
+.sport-habits__reward-card p {
+  margin: 0;
+  color: #475569;
+}
+
+.sport-habits__reward-close {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+}
+
 .sport-habits__actions {
   display: flex;
   align-items: center;
