@@ -1,12 +1,15 @@
-import { useMemo, useState } from 'react'
-import type { FormEvent, KeyboardEvent } from 'react'
+﻿import { useMemo, useState } from 'react'
+import type { CSSProperties, FormEvent, KeyboardEvent } from 'react'
 import { getDateKey } from '../../data/sampleData'
 import type { ScheduledTask } from '../../data/sampleData'
 import { useTasks } from '../../context/TasksContext'
+import usePersistentState from '../../hooks/usePersistentState'
 import PageHeading from '../../components/PageHeading'
 import './CalendarPage.css'
 
 const weekDays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
+const hours = Array.from({ length: 17 }, (_, index) => index + 7)
+const hourHeight = 56
 const newTaskColors = ['#A5B4FC', '#7DD3FC', '#FBCFE8', '#BBF7D0', '#FDE68A']
 
 type NewTaskFormState = {
@@ -16,7 +19,7 @@ type NewTaskFormState = {
   color: string
   repeatStart: string
   repeatEnd: string
-  category: 'Perso' | 'Professionnel'
+  category: 'Travail' | 'Sport' | 'Perso' | 'Rendez-vous' | 'Repos'
 }
 
 const createNewTaskForm = (dateKey: string): NewTaskFormState => ({
@@ -52,6 +55,22 @@ const formatMonthTitle = (date: Date) => {
   return label.charAt(0).toUpperCase() + label.slice(1)
 }
 
+const formatWeekRange = (start: Date) => {
+  const end = new Date(start)
+  end.setDate(start.getDate() + 6)
+  const formatter = new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: 'short' })
+  return `${formatter.format(start)} - ${formatter.format(end)}`
+}
+
+const getWeekStart = (reference: Date) => {
+  const date = new Date(reference)
+  const day = date.getDay()
+  const diff = day === 0 ? -6 : 1 - day
+  date.setDate(date.getDate() + diff)
+  date.setHours(0, 0, 0, 0)
+  return date
+}
+
 const withAlpha = (hexColor: string, alpha: number) => {
   const parsed = hexColor.replace('#', '')
   const bigint = parseInt(parsed, 16)
@@ -78,6 +97,11 @@ const getTaskDateTime = (task: ScheduledTask) => {
   return date
 }
 
+const parseTimeToMinutes = (value: string) => {
+  const [hoursValue, minutesValue] = value.split(':').map(Number)
+  return (hoursValue ?? 0) * 60 + (minutesValue ?? 0)
+}
+
 const CalendrierPage = () => {
   const { tasks, addTask, updateTask, removeTask } = useTasks()
   const today = new Date()
@@ -85,6 +109,7 @@ const CalendrierPage = () => {
     const base = new Date()
     return new Date(base.getFullYear(), base.getMonth(), 1)
   })
+  const [weekAnchorDate, setWeekAnchorDate] = useState(() => new Date())
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
   const [activeDateKey, setActiveDateKey] = useState<string | null>(null)
   const [isDayModalOpen, setDayModalOpen] = useState(false)
@@ -95,6 +120,13 @@ const CalendrierPage = () => {
   })
   const [newTaskForm, setNewTaskForm] = useState<NewTaskFormState>(() => createNewTaskForm(getDateKey(today)))
   const [newTaskError, setNewTaskError] = useState<string | null>(null)
+  const [legendColors, setLegendColors] = usePersistentState('planner.calendar.legend.colors.v1', () => ({
+    Travail: '#f8c4cf',
+    Sport: '#f971b3',
+    Perso: '#fff6d6',
+    'Rendez-vous': '#cdebbd',
+    Repos: '#425e40',
+  }))
 
   const year = currentMonthDate.getFullYear()
   const month = currentMonthDate.getMonth()
@@ -124,6 +156,14 @@ const CalendrierPage = () => {
   }, [tasksThisMonth])
 
   const nextTaskLabel = useMemo(() => formatDateLabel(nextTask?.date ?? null), [nextTask])
+
+  const weekStartDate = getWeekStart(weekAnchorDate)
+  const weekDates = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(weekStartDate)
+    date.setDate(weekStartDate.getDate() + index)
+    return date
+  })
+  const weekRangeLabel = formatWeekRange(weekStartDate)
 
   const tasksByDate = useMemo(() => {
     const map = new Map<string, ScheduledTask[]>()
@@ -255,7 +295,7 @@ const CalendrierPage = () => {
     }))
   }
 
-  const handleNewTaskCategoryChange = (category: 'Perso' | 'Professionnel') => {
+  const handleNewTaskCategoryChange = (category: NewTaskFormState['category']) => {
     setNewTaskForm((previous) => ({
       ...previous,
       category,
@@ -264,6 +304,10 @@ const CalendrierPage = () => {
 
   const handleResetDay = () => {
     if (!activeDateKey) {
+      return
+    }
+    const confirmation = window.confirm("Supprimer tous les événements de cette journée ?")
+    if (!confirmation) {
       return
     }
     const tasksForDay = tasksByDate.get(activeDateKey) ?? []
@@ -283,11 +327,11 @@ const CalendrierPage = () => {
   setNewTaskError(null)
   const title = newTaskForm.title.trim()
   if (!title) {
-    setNewTaskError("Ajoute un titre à ton bloc.")
+    setNewTaskError("Ajoute un titre Ã  ton bloc.")
     return
   }
   if (!newTaskForm.repeatStart || !newTaskForm.repeatEnd) {
-    setNewTaskError("Sélectionne une période valide.")
+    setNewTaskError("SÃ©lectionne une pÃ©riode valide.")
     return
   }
   const startDate = parseDateKey(newTaskForm.repeatStart)
@@ -297,7 +341,7 @@ const CalendrierPage = () => {
     return
   }
   if (startDate.getTime() > endDate.getTime()) {
-    setNewTaskError("La date de fin doit être postérieure à la date de début.")
+    setNewTaskError("La date de fin doit Ãªtre postÃ©rieure Ã  la date de dÃ©but.")
     return
   }
 
@@ -364,7 +408,7 @@ return (
       <div className="calendar-hero__content">
         <h1>Orchestre ton mois avec intention et douceur.</h1>
         <p>
-          Visualise en un coup d’œil tes rendez-vous clés, tes temps de pause et tes moments de création.
+          Visualise en un coup dâ€™Å“il tes rendez-vous clÃ©s, tes temps de pause et tes moments de crÃ©ation.
         </p>
         <div className="calendar-hero__actions">
           <button
@@ -372,7 +416,7 @@ return (
             className="calendar-hero__cta calendar-hero__cta--primary"
             onClick={() => handlePlanForDate(getDateKey(today))}
           >
-            Planifier un événement aujourd'hui
+            Planifier un Ã©vÃ©nement aujourd'hui
           </button>
           <button
             type="button"
@@ -383,7 +427,7 @@ return (
               handlePlanForDate(getDateKey(tomorrow))
             }}
           >
-            Planifier un événement demain
+            Planifier un Ã©vÃ©nement demain
           </button>
         </div>
         
@@ -401,9 +445,9 @@ return (
       <div className="calendar-hero__panel">
         <div className="calendar-next">
           <span className="calendar-next__label">Prochain rendez-vous</span>
-          <strong>{nextTask ? nextTask.title : "Rien de planifié pour le moment."}</strong>
+          <strong>{nextTask ? nextTask.title : "Rien de planifiÃ© pour le moment."}</strong>
           <p>
-            {nextTask ? `${nextTaskLabel} - ${nextTask.start} - ${nextTask.end}` : "Ajoute un créneau."}
+            {nextTask ? `${nextTaskLabel} - ${nextTask.start} - ${nextTask.end}` : "Ajoute un crÃ©neau."}
           </p>
           {nextTask?.tag ? <span className="calendar-next__tag">{nextTask.tag}</span> : null}
         </div>
@@ -411,79 +455,241 @@ return (
     </section>
     <div className="page-accent-bar" aria-hidden="true" />
 
-    <header className="calendar-header">
-      <PageHeading eyebrow="calendrier mensuel" title={formatMonthTitle(currentMonthDate)} />
-      <div className="calendar-month-nav">
-        <button type="button" onClick={() => handleMonthChange(-1)} aria-label="Mois précédent">
-          &lt;
-        </button>
-        <button type="button" onClick={() => handleMonthChange(1)} aria-label="Mois suivant">
-          &gt;
-        </button>
-      </div>
-    </header>
-
-    <div className="calendar-grid">
-      {weekDays.map((label) => (
-        <div key={label} className="calendar-grid__weekday">
-          {label}
-        </div>
-      ))}
-
-      {cells.map((cell) =>
-        cell.day === null || cell.dateKey === null ? (
-          <div key={cell.key} className="calendar-day calendar-day--empty" />
-        ) : (
-          <div
-            key={cell.key}
-            className={`calendar-day${cell.isToday ? " calendar-day--today" : ""}`}
-            onClick={() => handleDaySelect(cell.dateKey!)}
-            onKeyDown={(event) => handleDayKeyDown(event, cell.dateKey!)}
-            role="button"
-            tabIndex={0}
-            aria-label={`Voir la journée du ${cell.dateKey}`}
+    <section className="calendar-weekly">
+      <header className="calendar-weekly__header">
+        <PageHeading eyebrow="calendrier hebdomadaire" title={`Semaine du ${weekRangeLabel}`} />
+      </header>
+      <div className="calendar-weekly__layout">
+        <div className="calendar-weekly__side">
+          <button
+            type="button"
+            className="calendar-weekly__create"
+            onClick={() => handlePlanForDate(getDateKey(today))}
           >
-            <div className="calendar-day__header">
-              <span className="calendar-day__number">{cell.day}</span>
-              <button
-                type="button"
-                className="calendar-day__add"
-                onClick={(event) => {
-                  event.stopPropagation()
-                  handlePlanForDate(cell.dateKey!)
-                }}
-                aria-label={`Ajouter une tâche le ${cell.dateKey}`}
-              >
-                +
+            <span className="calendar-weekly__create-plus">+</span>
+            Créer un évènement
+          </button>
+          <aside className="calendar-weekly__mini">
+          <header className="calendar-weekly__mini-header">
+            <span className="calendar-weekly__mini-title">{formatMonthTitle(currentMonthDate)}</span>
+            <div className="calendar-month-nav">
+              <button type="button" onClick={() => handleMonthChange(-1)} aria-label="Mois prÃ©cÃ©dent">
+                &lt;
+              </button>
+              <button type="button" onClick={() => handleMonthChange(1)} aria-label="Mois suivant">
+                &gt;
               </button>
             </div>
-            {cell.tasks[0] ? (
-              <>
-                <div
-                  className="calendar-day__preview"
-                  style={{
-                    background: `linear-gradient(135deg, ${withAlpha(cell.tasks[0].color, 0.12)} 0%, ${withAlpha(
-                      cell.tasks[0].color,
-                      0.32,
-                    )} 100%)`,
+          </header>
+          <div className="calendar-grid calendar-grid--mini">
+            {weekDays.map((label) => (
+              <div key={label} className="calendar-grid__weekday">
+                {label}
+              </div>
+            ))}
+            {cells.map((cell) =>
+              cell.day === null || cell.dateKey === null ? (
+                <div key={cell.key} className="calendar-day calendar-day--empty" />
+              ) : (
+                <button
+                  key={cell.key}
+                  type="button"
+                  className={`calendar-day calendar-day--mini${cell.isToday ? " calendar-day--today" : ""}`}
+                  onClick={() => {
+                    const [yearValue, monthValue, dayValue] = cell.dateKey!.split("-").map(Number)
+                    const nextDate = new Date(yearValue, (monthValue ?? 1) - 1, dayValue ?? 1)
+                    setWeekAnchorDate(nextDate)
                   }}
+                  aria-label={`Voir la semaine du ${cell.dateKey}`}
                 >
-                  <span className="calendar-day__preview-time">
-                    {cell.tasks[0].start} - {cell.tasks[0].end}
-                  </span>
-                  <span className="calendar-day__preview-title">{cell.tasks[0].title}</span>
-                </div>
-                {cell.tasks.length > 1 ? (
-                  <span className="calendar-day__more">+ {cell.tasks.length - 1} autres moments</span>
-                ) : null}
-              </>
-            ) : (
-              <span className="calendar-day__empty">Rien de prévu</span>
+                  <span className="calendar-day__number">{cell.day}</span>
+                </button>
+              ),
             )}
           </div>
-        ),
-      )}
-    </div>
+        </aside>
+
+        <div className="calendar-legend">
+          <h4>Légende des couleurs</h4>
+          <div className="calendar-legend__items">
+            {Object.entries(legendColors).map(([label, color]) => (
+              <label key={label} className="calendar-legend__item">
+                <input
+                  type="color"
+                  value={color}
+                  onChange={(event) =>
+                    setLegendColors((previous) => ({
+                      ...previous,
+                      [label]: event.target.value,
+                    }))
+                  }
+                  aria-label={`Couleur ${label}`}
+                />
+                <span className="calendar-legend__label">{label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+        </div>
+
+        <div
+          className="calendar-weekly__grid"
+          style={{
+            "--hour-height": `${hourHeight}px`,
+            "--hour-count": hours.length,
+          } as CSSProperties}
+        >
+          <div className="calendar-weekly__corner" aria-hidden="true" />
+          {weekDates.map((date, index) => {
+            const dateKey = getDateKey(date)
+            const isToday = date.toDateString() === today.toDateString()
+            return (
+              <button
+                key={dateKey}
+                type="button"
+                className={`calendar-weekly__day-header${isToday ? " is-today" : ""}`}
+                onClick={() => handleDaySelect(dateKey)}
+              >
+                <span className="calendar-weekly__day-name">{weekDays[index]}</span>
+                <span className="calendar-weekly__day-date">{date.getDate()}</span>
+              </button>
+            )
+          })}
+          <div className="calendar-weekly__time-column">
+            {hours.map((hour) => (
+              <div key={hour} className="calendar-weekly__time">
+                {String(hour).padStart(2, "0")}:00
+              </div>
+            ))}
+          </div>
+          {weekDates.map((date) => {
+            const dateKey = getDateKey(date)
+            const dayTasks = tasksByDate.get(dateKey) ?? []
+            return (
+              <div
+                key={dateKey}
+                className="calendar-weekly__day-column"
+                role="button"
+                tabIndex={0}
+                onClick={() => handleDaySelect(dateKey)}
+                onKeyDown={(event) => handleDayKeyDown(event, dateKey)}
+                aria-label={`Voir la journÃ©e du ${dateKey}`}
+              >
+                <div className="calendar-weekly__day-grid">
+                  {hours.map((hour) => (
+                    <div key={`${dateKey}-${hour}`} className="calendar-weekly__hour-cell" />
+                  ))}
+                  {dayTasks.map((task) => {
+                    const startMinutes = parseTimeToMinutes(task.start)
+                    const endMinutes = parseTimeToMinutes(task.end)
+                    const durationMinutes = Math.max(30, endMinutes - startMinutes || 30)
+                    const top = (Math.max(0, startMinutes - 7 * 60) / 60) * hourHeight
+                    const height = (durationMinutes / 60) * hourHeight
+                    return (
+                      <button
+                        key={task.id}
+                        type="button"
+                        className="calendar-weekly__task"
+                        style={{
+                          top: `${top}px`,
+                          height: `${height}px`,
+                          background: withAlpha(task.color, 0.25),
+                        }}
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          handleDaySelect(dateKey)
+                        }}
+                      >
+                        <span className="calendar-weekly__task-title">{task.title}</span>
+                        <span className="calendar-weekly__task-time">
+                          {task.start} - {task.end}
+                        </span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </section>
+
+    <section className="calendar-monthly-preview">
+      <header className="calendar-header calendar-header--compact">
+        <PageHeading eyebrow="aperçu mensuel" title={formatMonthTitle(currentMonthDate)} />
+        <div className="calendar-month-nav">
+          <button type="button" onClick={() => handleMonthChange(-1)} aria-label="Mois prÃ©cÃ©dent">
+            &lt;
+          </button>
+          <button type="button" onClick={() => handleMonthChange(1)} aria-label="Mois suivant">
+            &gt;
+          </button>
+        </div>
+      </header>
+
+      <div className="calendar-grid calendar-grid--preview">
+        {weekDays.map((label) => (
+          <div key={label} className="calendar-grid__weekday">
+            {label}
+          </div>
+        ))}
+
+        {cells.map((cell) =>
+          cell.day === null || cell.dateKey === null ? (
+            <div key={cell.key} className="calendar-day calendar-day--empty" />
+          ) : (
+            <div
+              key={cell.key}
+              className={`calendar-day${cell.isToday ? " calendar-day--today" : ""}`}
+              onClick={() => handleDaySelect(cell.dateKey!)}
+              onKeyDown={(event) => handleDayKeyDown(event, cell.dateKey!)}
+              role="button"
+              tabIndex={0}
+              aria-label={`Voir la journÃ©e du ${cell.dateKey}`}
+            >
+              <div className="calendar-day__header">
+                <span className="calendar-day__number">{cell.day}</span>
+                <button
+                  type="button"
+                  className="calendar-day__add"
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    handlePlanForDate(cell.dateKey!)
+                  }}
+                  aria-label={`Ajouter une tÃ¢che le ${cell.dateKey}`}
+                >
+                  +
+                </button>
+              </div>
+              {cell.tasks[0] ? (
+                <>
+                  <div
+                    className="calendar-day__preview"
+                    style={{
+                      background: `linear-gradient(135deg, ${withAlpha(cell.tasks[0].color, 0.12)} 0%, ${withAlpha(
+                        cell.tasks[0].color,
+                        0.32,
+                      )} 100%)`,
+                    }}
+                  >
+                    <span className="calendar-day__preview-time">
+                      {cell.tasks[0].start} - {cell.tasks[0].end}
+                    </span>
+                    <span className="calendar-day__preview-title">{cell.tasks[0].title}</span>
+                  </div>
+                  {cell.tasks.length > 1 ? (
+                    <span className="calendar-day__more">+ {cell.tasks.length - 1} autres moments</span>
+                  ) : null}
+                </>
+              ) : (
+                <span className="calendar-day__empty">Rien de prÃ©vu</span>
+              )}
+            </div>
+          ),
+        )}
+      </div>
+    </section>
 
     {isDayModalOpen && activeDateKey ? (
       <div className="calendar-modal" role="dialog" aria-modal="true" aria-labelledby="calendar-modal-title">
@@ -491,14 +697,14 @@ return (
         <div className="calendar-modal__panel">
           <header className="calendar-modal__header">
             <div>
-              <span className="calendar-modal__eyebrow">séance du jour</span>
+              <span className="calendar-modal__eyebrow">sÃ©ance du jour</span>
               <h2 id="calendar-modal-title">{activeDateLabel}</h2>
               <p>
                 {activeDateTasks.length > 0
                   ? activeDateTasks.length === 1
-                    ? "1 créneau."
-                    : `${activeDateTasks.length} créneaux.`
-                  : "Aucun créneau pour l'instant, profite pour en poser un."}
+                    ? "1 crÃ©neau."
+                    : `${activeDateTasks.length} crÃ©neaux.`
+                  : "Aucun crÃ©neau pour l'instant, profite pour en poser un."}
               </p>
             </div>
             <button type="button" className="modal__close" onClick={handleCloseModal} aria-label="Fermer">
@@ -514,7 +720,7 @@ return (
               className="calendar-hero__cta calendar-hero__cta--ghost"
               onClick={handleResetDay}
             >
-              Réinitialiser la journée
+              RÃ©initialiser la journÃ©e
             </button>
           </div>
 
@@ -536,7 +742,7 @@ return (
               </label>
               <div className="calendar-task__form-row">
                 <label className="calendar-task__field">
-                  <span>Début</span>
+                  <span>DÃ©but</span>
                   <input
                     type="time"
                     value={newTaskForm.start}
@@ -574,34 +780,21 @@ return (
                 </label>
               </div>
               <div className="calendar-task__form-row calendar-task__form-row--split">
-                <label className="calendar-task__field calendar-task__field--full calendar-task__field--color">
-                  <span>Couleur</span>
-                  <input
-                    type="color"
-                    value={newTaskForm.color}
-                    onChange={(event) => handleNewTaskFieldChange("color", event.target.value)}
-                    required
-                  />
-                </label>
-                <div className="calendar-task__type-toggle">
+                <label className="calendar-task__field calendar-task__field--full">
                   <span>Type</span>
-                  <div className="calendar-task__type-buttons">
-                    {(["Perso", "Professionnel"] as const).map((option) => (
-                      <button
-                        key={option}
-                        type="button"
-                        className={
-                          newTaskForm.category === option
-                            ? "calendar-task__type-button is-active"
-                            : "calendar-task__type-button"
-                        }
-                        onClick={() => handleNewTaskCategoryChange(option)}
-                      >
-                        {option === "Perso" ? "Perso" : "Professionnel"}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                  <select
+                    value={newTaskForm.category}
+                    onChange={(event) =>
+                      handleNewTaskCategoryChange(event.target.value as NewTaskFormState['category'])
+                    }
+                  >
+                    <option value="Travail">Travail</option>
+                    <option value="Sport">Sport</option>
+                    <option value="Perso">Perso</option>
+                    <option value="Rendez-vous">Rendez-vous</option>
+                    <option value="Repos">Repos</option>
+                  </select>
+                </label>
               </div>
               {newTaskError ? <p className="calendar-new-task__error">{newTaskError}</p> : null}
               <button
@@ -620,7 +813,7 @@ return (
             </div>
             <div className="calendar-modal__list">
               {activeDateTasks.length === 0 ? (
-                <p className="calendar-modal__empty">Programme ton premier événement de la journée.</p>
+                <p className="calendar-modal__empty">Programme ton premier Ã©vÃ©nement de la journÃ©e.</p>
               ) : (
                 activeDateTasks.map((task) => (
                   <div
@@ -643,7 +836,7 @@ return (
                       <form className="calendar-task__form" onSubmit={(event) => handleSubmitEdit(event, task.id)}>
                         <div className="calendar-task__form-row">
                           <label className="calendar-task__field">
-                            <span>Début</span>
+                            <span>DÃ©but</span>
                             <input
                               type="time"
                               value={editDraft.start}
@@ -661,15 +854,6 @@ return (
                             />
                           </label>
                         </div>
-                        <label className="calendar-task__field calendar-task__field--full calendar-task__field--color">
-                          <span>Couleur</span>
-                          <input
-                            type="color"
-                            value={editDraft.color}
-                            onChange={(event) => handleDraftChange("color", event.target.value)}
-                            required
-                          />
-                        </label>
                         <div className="calendar-task__actions">
                           <button
                             type="button"
@@ -733,4 +917,13 @@ return (
 }
 
 export default CalendrierPage
+
+
+
+
+
+
+
+
+
 
