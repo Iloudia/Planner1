@@ -8,7 +8,6 @@ import OnboardingPage from "./pages/Onboarding/Onboarding"
 import LandingPage from "./pages/Landing/Landing"
 import HomePage from "./pages/Home/Home"
 import SportPage from "./pages/Sport/Sport"
-import ActivitiesPage from "./pages/Activities/Activities"
 import JournalingPage from "./pages/Journaling/Journaling"
 import SelfLovePage from "./pages/SelfLove/SelfLove"
 import WishlistPage from "./pages/Wishlist/Wishlist"
@@ -103,7 +102,6 @@ function App() {
             <Route path="/home" element={<HomePage />} />
             <Route path="/sport" element={<SportPage />} />
             <Route path="/sport/workout/*" element={<SportWorkoutPage />} />
-            <Route path="/activites" element={<ActivitiesPage />} />
             <Route path="/journaling" element={<JournalingPage />} />
             <Route path="/self-love" element={<SelfLovePage />} />
             <Route path="/wishlist" element={<WishlistPage />} />

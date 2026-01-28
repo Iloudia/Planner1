@@ -29,7 +29,6 @@ const REASON_OPTIONS = [
 
 const CATEGORY_OPTIONS = [
   { label: "Sport", icon: "🏃" },
-  { label: "Activites", icon: "🎨" },
   { label: "Journaling", icon: "📓" },
   { label: "Self-love", icon: "💖" },
   { label: "Finances", icon: "💰" },

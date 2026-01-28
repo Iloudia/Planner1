@@ -4,7 +4,6 @@ import { useAuth } from "../../context/AuthContext"
 import { useMoodboard } from "../../context/MoodboardContext"
 import "./Landing.css"
 
-import cardActivities from "../../assets/activities.jpeg"
 import cardEbony from "../../assets/ebony-forsyth-dupe.jpeg"
 import cardMedhanshi from "../../assets/medhanshi-mandawewala-dupe.jpeg"
 import cardSelflove from "../../assets/selflove.jpeg"
@@ -16,7 +15,6 @@ import cardSport from "../../assets/sport.jpeg"
 
 const carouselItems = [
   { title: "Sport", text: "Bouge avec douceur et plaisir.", image: cardSport },
-  { title: "Activites", text: "Planifie tes sorties et projets.", image: cardActivities },
   { title: "Journaling", text: "Ecris, clarifie et te recentre.", image: cardMallika },
   { title: "S'aimer soi-meme", text: "Instants self-love au quotidien.", image: cardSelflove },
   { title: "Wishlist", text: "Garde tes envies au meme endroit.", image: cardMedhanshi },

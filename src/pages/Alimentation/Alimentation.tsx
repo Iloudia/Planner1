@@ -84,7 +84,7 @@ function DietPage() {
               Va sur la page Diet pour découvrir des recettes et les utiliser dans ton planning.
             </p>
           </div>
-          <Link to="/diet" className="pill">
+          <Link to="/diet" className="pill pill--diet">
             Voir les recettes
           </Link>
         </section>

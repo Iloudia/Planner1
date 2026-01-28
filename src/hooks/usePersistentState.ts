@@ -27,6 +27,7 @@ function usePersistentState<T>(key: string, initialState: T | (() => T)) {
   const { userEmail } = useAuth()
   const storageKey = useMemo(() => buildUserScopedKey(userEmail, key), [key, userEmail])
   const initialRef = useRef<T | null>(null)
+  const skipWriteRef = useRef(true)
 
   const getInitial = () => {
     if (initialRef.current === null) {
@@ -38,11 +39,16 @@ function usePersistentState<T>(key: string, initialState: T | (() => T)) {
   const [state, setState] = useState<T>(() => readFromStorage<T>(storageKey, getInitial))
 
   useEffect(() => {
+    skipWriteRef.current = true
     setState((previous) => readFromStorage<T>(storageKey, () => previous ?? getInitial()))
   }, [storageKey])
 
   useEffect(() => {
     try {
+      if (skipWriteRef.current) {
+        skipWriteRef.current = false
+        return
+      }
       localStorage.setItem(storageKey, JSON.stringify(state))
     } catch {
       // ignore write errors (storage full or disabled)

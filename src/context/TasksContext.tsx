@@ -6,7 +6,7 @@ import type { ScheduledTask } from '../data/sampleData'
 type TasksContextValue = {
   tasks: ScheduledTask[]
   addTask: (task: ScheduledTask) => void
-  updateTask: (taskId: string, updates: Partial<Pick<ScheduledTask, 'start' | 'end' | 'color'>>) => void
+  updateTask: (taskId: string, updates: Partial<Pick<ScheduledTask, 'start' | 'end' | 'color' | 'date'>>) => void
   removeTask: (taskId: string) => void
 }
 

@@ -24,6 +24,7 @@ const PROFILE_PHOTO_SUFFIX = "profile-photo"
 const DEFAULT_PROFILE_PHOTO = planner06
 const CARD_TITLES_SUFFIX = "home.card-titles"
 const CARD_IMAGES_SUFFIX = "home.card-images"
+const CARD_USAGE_SUFFIX = "home.card-usage"
 
 type CardItem = {
   image: string
@@ -45,7 +46,6 @@ const cards: CardItem[] = [
   { image: planner01, alt: "Sport", kicker: "Énergie", title: "Sport", path: "/sport" },
   { image: planner06, alt: "Calendrier", kicker: "Vue globale", title: "Calendrier mensuel", path: "/calendrier" },
   { image: planner05, alt: "Wishlist", kicker: "Envie", title: "Wishlist", path: "/wishlist" },
-  { image: planner02, alt: "Activités", kicker: "Fun", title: "Activités", path: "/activites" },
   { image: planner03, alt: "Journaling", kicker: "Reflet", title: "Journaling", path: "/journaling" },
   { image: planner04, alt: "Self-love", kicker: "Care", title: "S'aimer soi-même", path: "/self-love" },
   { image: planner07, alt: "Finances", kicker: "Budget", title: "Finances", path: "/finances" },
@@ -234,6 +234,7 @@ function HomePage() {
   const todosKey = useMemo(() => scopedKey("todos"), [scopedKey])
   const cardTitlesKey = useMemo(() => scopedKey(CARD_TITLES_SUFFIX), [scopedKey])
   const cardImagesKey = useMemo(() => scopedKey(CARD_IMAGES_SUFFIX), [scopedKey])
+  const cardUsageKey = useMemo(() => scopedKey(CARD_USAGE_SUFFIX), [scopedKey])
 
   const [openCardMenu, setOpenCardMenu] = useState<string | null>(null)
   const [editingCardPath, setEditingCardPath] = useState<string | null>(null)
@@ -288,6 +289,28 @@ function HomePage() {
       return {}
     }
   })
+
+  const [cardUsage, setCardUsage] = useState<Record<string, number>>(() => {
+    const saved = safeReadStorage(cardUsageKey)
+    if (!saved) return {}
+    try {
+      const parsed = JSON.parse(saved)
+      return parsed && typeof parsed === "object" ? (parsed as Record<string, number>) : {}
+    } catch {
+      return {}
+    }
+  })
+
+  const orderedCards = useMemo(() => {
+  const base = cards.map((card, index) => {
+    const usage = cardUsage[card.path] ?? 0
+    const score = Math.floor(usage / 3)
+    return { card, index, score, usage }
+  })
+  return base
+    .sort((a, b) => (b.score - a.score) || (b.usage - a.usage) || (a.index - b.index))
+    .map((item) => item.card)
+}, [cardUsage])
 
   /** --- Migration legacy profil --- */
   useEffect(() => {
@@ -363,6 +386,10 @@ function HomePage() {
   useEffect(() => {
     safeWriteStorage(cardImagesKey, JSON.stringify(cardImageOverrides))
   }, [cardImagesKey, cardImageOverrides])
+
+  useEffect(() => {
+    safeWriteStorage(cardUsageKey, JSON.stringify(cardUsage))
+  }, [cardUsageKey, cardUsage])
 
   useEffect(() => {
     const id = setInterval(() => setNow(new Date()), 60000)
@@ -470,6 +497,26 @@ const getCardImage = useCallback(
   [cardImageOverrides]
 )
 
+const bumpCardUsage = useCallback(
+  (path: string) => {
+    const stored = safeReadStorage(cardUsageKey)
+    let base: Record<string, number> = {}
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored)
+        if (parsed && typeof parsed === "object") {
+          base = parsed as Record<string, number>
+        }
+      } catch {
+        base = {}
+      }
+    }
+    const next = { ...base, [path]: (base[path] ?? 0) + 1 }
+    safeWriteStorage(cardUsageKey, JSON.stringify(next))
+    setCardUsage(next)
+  },
+  [cardUsageKey],
+)
 const startEditCardTitle = (card: CardItem) => {
   setOpenCardMenu(null)
   setEditingCardPath(card.path)
@@ -510,32 +557,34 @@ const commitCardTitle = (path: string) => {
   setEditingCardPath(null)
 }
 
-const upcomingTasks = useMemo(() => {
-  const nowTs = now.getTime()
-  const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
-  const baseTasks = tasks
+  const upcomingTasks = useMemo(() => {
+    const nowTs = now.getTime()
+    const baseTasks = tasks
 
-  const normalized = baseTasks
-    .map((task) => {
-      const dateTs = new Date(`${task.date}T00:00`).getTime()
-      const startDate = new Date(`${task.date}T${task.start ?? "00:00"}`)
-      const startTs = Number.isFinite(startDate.getTime()) ? startDate.getTime() : dateTs
-      return {
-        id: task.id,
-        title: task.title,
-        date: task.date,
-        start: task.start,
-        end: task.end,
-        dateTs: Number.isFinite(dateTs) ? dateTs : 0,
-        startTs,
-      }
-    })
-    .filter((task) => task.startTs >= nowTs || task.dateTs >= todayMidnight)
-    .sort((a, b) => a.startTs - b.startTs)
-    .slice(0, 2)
+    const normalized = baseTasks
+      .map((task) => {
+        const dateTs = new Date(`${task.date}T00:00`).getTime()
+        const startDate = new Date(`${task.date}T${task.start ?? "00:00"}`)
+        const endDate = new Date(`${task.date}T${task.end ?? task.start ?? "23:59"}`)
+        const startTs = Number.isFinite(startDate.getTime()) ? startDate.getTime() : dateTs
+        const endTs = Number.isFinite(endDate.getTime()) ? endDate.getTime() : startTs
+        return {
+          id: task.id,
+          title: task.title,
+          date: task.date,
+          start: task.start,
+          end: task.end,
+          dateTs: Number.isFinite(dateTs) ? dateTs : 0,
+          startTs,
+          endTs,
+        }
+      })
+      .filter((task) => task.endTs > nowTs)
+      .sort((a, b) => a.startTs - b.startTs)
+      .slice(0, 2)
 
-  return normalized.map(({ dateTs: _dateTs, startTs: _startTs, ...task }) => task)
-}, [now, tasks])
+    return normalized.map(({ dateTs: _dateTs, startTs: _startTs, endTs: _endTs, ...task }) => task)
+  }, [now, tasks])
 
 return (
   <>
@@ -628,7 +677,7 @@ return (
         </section>
 
         <section className="card-grid">
-          {cards.map((card) => (
+          {orderedCards.map((card) => (
             <article
               key={card.title}
               className="card"
@@ -636,10 +685,14 @@ return (
               tabIndex={0}
               onClick={() => {
                 if (editingCardPath) return
+                bumpCardUsage(card.path)
                 navigate(card.path)
               }}
               onKeyDown={(event) => {
-                if (event.key === "Enter" && !editingCardPath) navigate(card.path)
+                if (event.key === "Enter" && !editingCardPath) {
+                  bumpCardUsage(card.path)
+                  navigate(card.path)
+                }
               }}
             >
               <div className="card-menu-wrapper">
