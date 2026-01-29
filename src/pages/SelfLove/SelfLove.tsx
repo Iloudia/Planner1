@@ -63,8 +63,8 @@ type SelfLoveState = {
 }
 const PHOTO_SLOT_COUNT = 6
 const DEFAULT_CUSTOM_AFFIRMATIONS = [
-  "J'apprends à me traiter avec douceur.",
-  "Je mérite l'attention que je me donne.",
+  "J'apprends Ã  me traiter avec douceur.",
+  "Je mÃ©rite l'attention que je me donne.",
   'Je prends soin de moi un peu plus chaque jour.',
 ]
 const createDefaultState = (): SelfLoveState => ({
@@ -76,19 +76,19 @@ const createDefaultState = (): SelfLoveState => ({
   qualities: [
     { id: 'quality-1', text: 'Mon sourire illumine les gens.' },
     { id: 'quality-2', text: "J'ai une force tranquille." },
-    { id: 'quality-3', text: 'Je sais écouter avec le cour.' },
+    { id: 'quality-3', text: 'Je sais Ã©couter avec le cÅ“ur.' },
   ],
   thoughts: [
-    { id: 'thought-1', text: 'Je ne suis pas assez.' },
-    { id: 'thought-2', text: 'Je dois tout contrôler.' },
-    { id: 'thought-3', text: "Je ne mérite pas ce que j'ai." },
+    { id: 'thought-1', text: "Je ne suis pas assez." },
+    { id: 'thought-2', text: 'Je dois tout contrÃ´ler.' },
+    { id: 'thought-3', text: "Je ne mÃ©rite pas ce que j'ai." },
   ],
   journal: [],
   letterTo: 'Moi du futur',
-  letterFrom: 'Moi du présent',
-  letterBody: 'Cher moi, merci de continuer à te choisir chaque jour...',
+  letterFrom: 'Moi du prÃ©sent',
+  letterBody: 'Cher moi, merci de continuer Ã  te choisir chaque jour...',
   kittyLetterBody:
-    "Je suis si fière de toi. Merci de te relever, de rire, de pleurer et de croire en toi-même quand c'est compliqué. Tu es doux, douce, courageux, courageuse et tellement lumineux, lumineuse.",
+    "Je suis si fier/fiÃ¨re de toi. Merci de te relever, de rire, de pleurer et de croire en toi-mÃªme quand c'est compliquÃ©. Tu es doux/douce, courageux/courageuse et tellement lumineux/lumineuse.",
   innerChildMessage: '',
   innerChildReassurance: '',
   innerChildNeededWords: '',
@@ -98,19 +98,19 @@ const createDefaultState = (): SelfLoveState => ({
   savedLetters: [],
 })
 const affirmations = [
-  "Je m'offre la même douceur que je donne aux autres.",
-  'Je suis déjà assez et je le reste à chaque souffle.',
-  'Ma présence est un cadeau pour ce monde.',
+  "Je m'offre la mÃªme douceur que je donne aux autres.",
+  'Je suis dÃ©jÃ  assez et je le reste Ã  chaque souffle.',
+  'Ma prÃ©sence est un cadeau pour ce monde.',
   "Je choisis de me regarder avec de l'amour aujourd'hui.",
-  'Je laisse ma lumière briller sans me cacher.',
+  'Je laisse ma lumiÃ¨re briller sans me cacher.',
   'Je suis digne de tendresse, de joie et de paix.',
 ]
 const inspiringQuotes = [
-  "\"S'aimer soi-même est le début d'une histoire d'amour qui dure toute la vie.\" - Oscar Wilde",
-  "\"Tu es ton propre refuge. Tu es ton propre soleil.\"",
-  "\"Tu es le résultat de l'amour de toutes les femmes qui t'ont précédée.\"",
-  "\"N'oublie pas de t'émerveiller de ta force douce.\"",
-  "\"Tu es une ouvre en mouvement, magnifique à chaque étape.\"",
+  "\"S'aimer soi-mÃªme est le dÃ©but d'une histoire d'amour qui dure toute la vie.\" - Oscar Wilde",
+  '"Tu es ton propre refuge. Tu es ton propre soleil."',
+  '"Tu es le rÃ©sultat de lâ€™amour de toutes les femmes qui tâ€™ont prÃ©cÃ©dÃ©e."',
+  '"Nâ€™oublie pas de tâ€™Ã©merveiller de ta force douce."',
+  '"Tu es une Å“uvre en mouvement, magnifique Ã  chaque Ã©tape."',
 ]
 const KittyIllustration = () => (
   <svg viewBox="0 0 220 200" role="img" className="self-love-kitty-letter__cat">
@@ -188,7 +188,7 @@ const normalizeState = (value: unknown): SelfLoveState => {
   let letterTo = typeof source.letterTo === 'string' ? source.letterTo : base.letterTo
   let letterFrom = typeof source.letterFrom === 'string' ? source.letterFrom : base.letterFrom
   if (letterTo === 'Moi du futur' && letterFrom === 'Moi du present') {
-    letterTo = 'Moi du présent'
+    letterTo = 'Moi du prÃ©sent'
     letterFrom = 'Moi du futur'
   }
   const savedLetters = Array.isArray(source.savedLetters)
@@ -419,9 +419,9 @@ const SelfLovePage = () => {
   const handleShareCertificate = async () => {
     const qualities = safeState.qualities.map((quality) => `- ${quality.text}`).join('\n')
     const shareText = [
-      'Certificat de pure beauté',
+      'Certificat de pure beautÃ©',
       '',
-      'Je célèbre la personne que je suis :',
+      'Je cÃ©lÃ¨bre la personne que je suis :',
       qualities.length > 0 ? qualities : "- Je m'aime pour qui je suis.",
       '',
       affirmationOfDay,
@@ -430,7 +430,7 @@ const SelfLovePage = () => {
       .join('\n')
     try {
       await navigator.clipboard.writeText(shareText)
-      window.alert('Ton certificat a été copié. Partage-le avec amour !')
+      window.alert('Ton certificat a Ã©tÃ© copiÃ©. Partage-le avec amour !')
     } catch (error) {
       console.error('Clipboard share failed', error)
       window.prompt('Copie ton certificat :', shareText)
@@ -476,7 +476,7 @@ const SelfLovePage = () => {
       neededWords: safeState.innerChildNeededWords.trim(),
     }
     if (!Object.values(snapshot).some((value) => value.length > 0)) {
-      window.alert("Commence par écrire quelques phrases avant d'ajouter cet exercice.")
+      window.alert("Commence par Ã©crire quelques phrases avant d'ajouter cet exercice.")
       return
     }
     const entry: SelfLoveSavedLetter = {
@@ -509,7 +509,7 @@ const SelfLovePage = () => {
       selfTalk: safeState.bestFriendSelfTalk.trim(),
     }
     if (!Object.values(snapshot).some((value) => value.length > 0)) {
-      window.alert("Commence par écrire quelques phrases avant d'ajouter cet exercice.")
+      window.alert("Commence par Ã©crire quelques phrases avant d'ajouter cet exercice.")
       return
     }
     const entry: SelfLoveSavedLetter = {
@@ -520,7 +520,8 @@ const SelfLovePage = () => {
       bestFriend: snapshot,
       entryType: 'bestFriend',
     }
-    setState((previous) => {
+
+   setState((previous) => {
       const current = normalizeState(previous)
       return {
         ...current,
@@ -540,7 +541,7 @@ const SelfLovePage = () => {
     const body = template === 'classic' ? safeState.letterBody : safeState.kittyLetterBody
     const trimmed = body.trim()
     if (trimmed.length === 0) {
-      window.alert("Commence par écrire ta lettre avant de l'enregistrer.")
+      window.alert("Commence par Ã©crire ta lettre avant de l'enregistrer.")
       return
     }
     const innerChildSnapshot: SelfLoveInnerChildSnapshot = {
@@ -592,12 +593,12 @@ const SelfLovePage = () => {
   return (
     <div className="self-love-page">
 <div className="self-love-accent-bar" aria-hidden="true" />
-      <PageHeading eyebrow='Self love' title="S'aimer soi-même" />
+      <PageHeading eyebrow='Self love' title="S'aimer soi-mÃªme" />
       
       <section className="self-love-section self-love-section--photos">
         <div>
           <h2>Aime-toi !</h2>
-          <p>Regarde-toi avec bienveillance et choisis 6 photos où tu rayonnes.</p>
+          <p>Regarde-toi avec bienveillance et choisis 6 photos oÃ¹ tu rayonnes.</p>
         </div>
         <div className="self-love-photos-frame">
           <div className="self-love-photos">
@@ -628,15 +629,15 @@ const SelfLovePage = () => {
       </section>
       <div className="self-love-sections-row">
       <section className="self-love-section self-love-section--qualities">
-        <h2>Liste tes qualités</h2>
+        <h2>Liste tes qualitÃ©s</h2>
         <form className="self-love-form-row" onSubmit={handleAddQuality}>
           <input
             type="text"
-            placeholder="Ex : Je sais écouter avec le cour. "
+            placeholder="Ex : Je sais Ã©couter avec le cÅ“ur. "
             value={qualityDraft}
             onChange={(event) => setQualityDraft(event.target.value)}
           />
-          <button type="submit">+ Ajouter une qualité</button>
+          <button type="submit">+ Ajouter une qualitÃ©</button>
         </form>
         <div className="self-love-list-pad">
           <div className="self-love-list-pad__bow">
@@ -654,7 +655,7 @@ const SelfLovePage = () => {
                   type="button"
                   className="modal__close"
                   onClick={() => handleRemoveQuality(quality.id)}
-                  aria-label="Retirer cette qualite"
+                  aria-label="Retirer cette qualitÃ©"
                 >
                   <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -675,13 +676,13 @@ const SelfLovePage = () => {
       </section>
       <section className="self-love-section self-love-section--thoughts">
         <div>
-          <h2>Pensées négatives à laisser derrière toi</h2>
-          <p>Clique sur une pensée pour la laisser s'envoler.</p>
+          <h2>PensÃ©es nÃ©gatives Ã  laisser derriÃ¨re toi</h2>
+          <p>Clique sur une pensÃ©e pour la laisser s'envoler.</p>
         </div>
         <form className="self-love-form-row" onSubmit={handleAddThought}>
           <input
             type="text"
-            placeholder="Ex. Je dois être parfait(e)."
+            placeholder="Ex. Je dois Ãªtre parfait(e)."
             value={thoughtDraft}
             onChange={(event) => setThoughtDraft(event.target.value)}
           />
@@ -704,7 +705,7 @@ const SelfLovePage = () => {
           })}
           {safeState.thoughts.length === 0 ? (
             <div className="self-love-thought self-love-thought--empty">
-              <span>Plus aucune pensée limitante ici. Bravo !</span>
+              <span>Plus aucune pensÃ©e limitante ici. Bravo !</span>
             </div>
           ) : null}
         </div>
@@ -712,14 +713,14 @@ const SelfLovePage = () => {
       </div>
       <section className="self-love-section self-love-exercises">
         <div>
-          <h2>Exercices guidés pour t'aimer davantage</h2>
-          <p>Prends quelques instants pour écrire et laisser ton cour s'exprimer.</p>
+          <h2>Exercices guidÃ©s pour t'aimer davantage</h2>
+          <p>Prends quelques instants pour Ã©crire et laisser ton cÅ“ur s'exprimer.</p>
         </div>
         <div className="self-love-exercise__grid">
           <article className="self-love-exercise__card">
-            <div className="self-love-exercise__eyebrow">L'enfant intérieur</div>
-            <h3>Dialogue doux avec ton passé</h3>
-            <p>Imagine une situation difficile d'enfance et offre-toi aujourd'hui les mots qui avaient manqué.</p>
+            <div className="self-love-exercise__eyebrow">L'enfant intÃ©rieur</div>
+            <h3>Dialogue doux avec ton passÃ©</h3>
+            <p>Imagine une situation difficile d'enfance et offre-toi aujourd'hui les mots qui avaient manquÃ©.</p>
             <label className="self-love-exercise__prompt">
               <span>Que souhaiterais-tu lui dire maintenant ?</span>
               <textarea
@@ -739,7 +740,7 @@ const SelfLovePage = () => {
               />
             </label>
             <label className="self-love-exercise__prompt">
-              <span>Qu'aurait-il eu besoin d'entendre ?</span>
+              <span>De quoi aurait-il eu besoin d'entendre ?</span>
               <textarea
                 className="self-love-exercise__textarea"
                 value={safeState.innerChildNeededWords}
@@ -752,9 +753,9 @@ const SelfLovePage = () => {
             </button>
           </article>
           <article className="self-love-exercise__card">
-            <div className="self-love-exercise__eyebrow">Jeu des rôles</div>
+            <div className="self-love-exercise__eyebrow">Jeu des rÃ´les</div>
             <h3>Le meilleur ami comme boussole</h3>
-            <p>Imagine qu'un ami cher vive exactement la même situation que toi. Quelles paroles lui offrirais-tu ?</p>
+            <p>Imagine qu'un ami cher vive exactement la mÃªme situation que toi. Quelles paroles lui offrirais-tu ?</p>
             <label className="self-love-exercise__prompt">
               <span>Que lui dirais-tu ?</span>
               <textarea
@@ -765,7 +766,7 @@ const SelfLovePage = () => {
               />
             </label>
             <label className="self-love-exercise__prompt">
-              <span>Quelle est la différence avec ce que tu te dis à toi-même ?</span>
+              <span>Quelle est la diffÃ©rence avec ce que tu te dis Ã  toi-mÃªme ?</span>
               <textarea
                 className="self-love-exercise__textarea"
                 value={safeState.bestFriendSelfTalk}
@@ -773,7 +774,7 @@ const SelfLovePage = () => {
                 placeholder="Je remarque que..."
               />
             </label>
-            <p className="self-love-exercise__hint">Cet exercice casse l'auto-critique et rappelle que tu mérites la même douceur.</p>
+            <p className="self-love-exercise__hint">Cet exercice casse l'auto-critique et rappelle que tu mÃ©rites la mÃªme douceur.</p>
             <button type="button" className="self-love-exercise__save" onClick={handleSaveBestFriendExercise}>
               Ajouter aux archives
             </button>
@@ -783,8 +784,8 @@ const SelfLovePage = () => {
           className={`journaling-save__confirmation self-love-letter__confirmation${exerciseSaveConfirmationVisible ? ' is-visible' : ''}`}
           aria-live="polite"
         >
-       <span aria-hidden="true">?</span>
-          <strong>Page ajoutée !</strong>
+       <span aria-hidden="true">âœ¨</span>
+          <strong>Page ajoutÃ©e !</strong>
         </div>
       </section>
       <section className="self-love-section self-love-letter">
@@ -805,7 +806,7 @@ const SelfLovePage = () => {
             aria-hidden={letterTemplate !== 'classic'}
             style={letterTemplate === 'classic' ? undefined : { display: 'none' }}
           >
-            <p className="self-love-letter__title">Lettre d&apos;amour vers moi-même</p>
+            <p className="self-love-letter__title">Lettre d&apos;amour vers moi-mÃªme</p>
             <div className="self-love-letter__addresses">
               <div className="self-love-letter__fields">
                 <label>
@@ -823,7 +824,7 @@ const SelfLovePage = () => {
                     type="text"
                     value={safeState.letterFrom}
                     onChange={(event) => handleLetterChange('letterFrom', event.target.value)}
-                    placeholder="Ta version présente"
+                    placeholder="Ta version prÃ©sente"
                   />
                 </label>
               </div>
@@ -841,7 +842,7 @@ const SelfLovePage = () => {
               <textarea
                 value={safeState.letterBody}
                 onChange={(event) => handleLetterChange('letterBody', event.target.value)}
-                placeholder="Écris-toi avec douceur..."
+                placeholder="Ã‰cris-toi avec douceur..."
               />
             </div>
             <div className="self-love-letter__footer">
@@ -862,8 +863,8 @@ const SelfLovePage = () => {
           className={`journaling-save__confirmation self-love-letter__confirmation${letterSaveConfirmationVisible ? ' is-visible' : ''}`}
           aria-live="polite"
         >
-         <span aria-hidden="true">?</span>
-          <strong>Page ajoutée !</strong>
+         <span aria-hidden="true">âœ¨</span>
+          <strong>Page ajoutÃ©e !</strong>
         </div>
       </section>
       <div className="self-love-footer-bar" aria-hidden="true" />

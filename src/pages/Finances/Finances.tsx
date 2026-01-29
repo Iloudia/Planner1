@@ -112,14 +112,14 @@ const categoryDefinitions: Record<ExpenseCategory, { label: string; color: strin
   clothing: { label: 'Shopping', color: '#FDE68A' },
   beauty: { label: 'Restaurants et bars', color: '#FBCFE8' },
   leisure: { label: 'Loisirs', color: '#BBF7D0' },
-  health: { label: 'Taxes et impÃƒÆ’Ã‚Â´ts', color: '#BFDBFE' },
+  health: { label: 'Taxes et impôts', color: '#BFDBFE' },
   friends: { label: 'Amis', color: '#FCA5A5' },
 }
 
 const financeMoodboard = [
-  { src: financeMood01, alt: "Moodboard budget" },
-  { src: financeMood02, alt: "Carnet d'ÃƒÆ’Ã‚Â©pargne inspirÃƒÆ’Ã‚Â©" },
-  { src: financeMood03, alt: "Planification creative" },
+  { src: financeMood01, alt: 'Moodboard budget' },
+  { src: financeMood02, alt: "Carnet d'épargne inspiré" },
+  { src: financeMood03, alt: 'Planification créative' },
 ] as const
 
 const financeInspirationImage = financeMoodboard[1]
@@ -432,14 +432,14 @@ const FinancePage = () => {
   const currentDate = useMemo(() => new Date(), [])
   const currentMonthKey = useMemo(() => getMonthKeyFromDate(currentDate), [currentDate])
   const selectedDirectionLabel = useMemo(() => {
-    return draft.direction === 'in' ? 'Revenus' : 'DÃƒÆ’Ã‚Â©pense'
+    return draft.direction === 'in' ? 'Revenus' : 'Dépense'
   }, [draft.direction])
   const selectedCategoryLabel = useMemo(() => {
     if (draft.direction !== 'out') {
-      return 'CatÃƒÆ’Ã‚Â©gorie'
+      return 'Catégorie'
     }
     const definition = draft.category ? categoryDefinitions[draft.category] : undefined
-    return definition?.label ?? 'CatÃƒÆ’Ã‚Â©gorie'
+    return definition?.label ?? 'Catégorie'
   }, [draft.category, draft.direction])
 
   const monthOptions = useMemo(() => {
@@ -563,7 +563,7 @@ const FinancePage = () => {
 
   const financeHeroStats = useMemo(
     () => [
-      { id: 'income', label: 'EntrÃƒÆ’Ã‚Â©es', value: euroFormatter.format(totalIncome) },
+      { id: 'income', label: 'Entrées', value: euroFormatter.format(totalIncome) },
       { id: 'expenses', label: 'Sorties', value: euroFormatter.format(totalSpent) },
       { id: 'balance', label: 'Solde du mois', value: euroFormatter.format(netCashflow) },
     ],
@@ -686,7 +686,7 @@ const FinancePage = () => {
     const trimmedLabel = draft.label.trim()
     const nextEntry: StoredFinanceEntry = {
       id: `finance-${Date.now()}`,
-      label: trimmedLabel.length > 0 ? trimmedLabel : draft.direction === 'in' ? 'Revenus' : 'DÃƒÆ’Ã‚Â©pense',
+      label: trimmedLabel.length > 0 ? trimmedLabel : draft.direction === 'in' ? 'Revenus' : 'Dépense',
       amount: roundCurrency(amountValue),
       date: draft.date,
       direction: draft.direction,
@@ -741,9 +741,9 @@ const FinancePage = () => {
     <div className="finance-page aesthetic-page">
 
       <PageHero
-        eyebrow="ÃƒÆ’Ã¢â‚¬Â°quilibre pastel"
-        title="Mes Finances"
-        description="Visualise tes entrÃƒÆ’Ã‚Â©es et tes sorties pour mieux organiser ton mois."
+        eyebrow="Équilibre pastel"
+        title="Mes finances"
+        description="Visualise tes entrées et tes sorties pour mieux organiser ton mois."
         stats={financeHeroStats}
         images={financeMoodboard}
         tone="blue"
@@ -751,13 +751,13 @@ const FinancePage = () => {
       />
       <div className="finance-page__accent-bar" aria-hidden="true" />
       <div className="finance-heading-row">
-        <PageHeading eyebrow="Finances" title="Mes Finances" />
+        <PageHeading eyebrow="Finances" title="Mes finances" />
         <div className="calendar-month-nav finance-hero__month-nav">
           <button
             type="button"
             onClick={() => handleFinanceMonthNav('prev')}
             disabled={!hasOlderFinanceMonth}
-            aria-label="Mois prÃƒÆ’Ã‚Â©cÃƒÆ’Ã‚Â©dent"
+            aria-label="Mois précédent"
           >
             &lt;
           </button>
@@ -777,12 +777,12 @@ const FinancePage = () => {
         <div className="finance-dashboard__main">
           <section className="finance-summary dashboard-panel">
             <div className="finance-section-chip">
-              <span className="finance-section-chip__title">RÃƒÆ’Ã‚Â©partition par catÃƒÆ’Ã‚Â©gorie</span>
+              <span className="finance-section-chip__title">Répartition par catégorie</span>
               <div className="finance-section-chip__divider" aria-hidden="true" />
             </div>
             <header className="finance-section-header">
-              <span className="finance-section-header__eyebrow">Vue dÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ensemble</span>
-              <p>RepÃƒÆ’Ã‚Â¨re rapidement les catÃƒÆ’Ã‚Â©gories qui te coÃƒÆ’Ã‚Â»tent le plus</p>
+              <span className="finance-section-header__eyebrow">Vue d’ensemble</span>
+              <p>Repère rapidement les catégories qui te coûtent le plus</p>
             </header>
             <div className="finance-summary__grid">
               {Object.entries(totals).map(([categoryKey, amount]) => {
@@ -803,21 +803,21 @@ const FinancePage = () => {
 
           <section className="finance-form dashboard-panel">
             <div className="finance-section-chip">
-              <span className="finance-section-chip__title">Ajouter une dÃƒÆ’Ã‚Â©pense</span>
+              <span className="finance-section-chip__title">Ajouter une dépense</span>
               <div className="finance-section-chip__divider" aria-hidden="true" />
             </div>
             <header className="finance-section-header">
-              <span className="finance-section-header__eyebrow">ajoute ton mouvement</span>
-              <p>Enregistre en un instant les dÃƒÆ’Ã‚Â©penses et les revenus du mois.</p>
+              <span className="finance-section-header__eyebrow">Ajoute ton mouvement</span>
+              <p>Enregistre en un instant les dépenses et les revenus du mois.</p>
             </header>
             <form onSubmit={handleSubmit} className="finance-form__grid">
               <label className="finance-form__field">
-                <span>IntitulÃƒÆ’Ã‚Â©</span>
+                <span>Intitulé</span>
                 <input
                   type="text"
                   value={draft.label}
                   onChange={(event) => handleDraftChange('label', event.target.value)}
-                  placeholder="Ex: Courses semaine"
+                  placeholder="Ex : Courses semaine"
                 />
               </label>
               <label className="finance-form__field">
@@ -826,7 +826,7 @@ const FinancePage = () => {
                   type="text"
                   value={draft.amount}
                   onChange={(event) => handleDraftChange('amount', event.target.value)}
-                  placeholder="Ex: 45.90"
+                  placeholder="Ex : 45,90"
                   required
                 />
               </label>
@@ -857,7 +857,7 @@ const FinancePage = () => {
                           setIsDirectionMenuOpen(false)
                         }}
                       >
-                        DÃƒÆ’Ã‚Â©pense
+                        Dépense
                       </button>
                       <button
                         type="button"
@@ -877,7 +877,7 @@ const FinancePage = () => {
               </label>
               {draft.direction === 'out' && (
                 <label className="finance-form__field">
-                  <span>CatÃƒÆ’Ã‚Â©gorie</span>
+                  <span>Catégorie</span>
                   <div className="finance-form__select-field" ref={categoryMenuRef}>
                     <button
                       type="button"
@@ -932,7 +932,7 @@ const FinancePage = () => {
             <header className="finance-section-header">
               <div className="finance-history__header">
                 <div className="finance-history__title">
-                  <span className="finance-section-header__eyebrow">mÃƒÆ’Ã‚Â©moire du mois</span>
+                  <span className="finance-section-header__eyebrow">Mémoire du mois</span>
                   <h2>Historique du mois</h2>
                 </div>
                 {hasAdditionalHistory ? (
@@ -947,7 +947,7 @@ const FinancePage = () => {
               </div>
             </header>
             {selectedMonthEntries.length === 0 ? (
-              <p className="finance-history__empty">Aucun mouvement enregistrÃƒÆ’Ã‚Â© pour {selectedMonthLabel}.</p>
+              <p className="finance-history__empty">Aucun mouvement enregistré pour {selectedMonthLabel}.</p>
             ) : (
               <div className="finance-history__groups">
                 {groupedHistoryPreview.map((group) => (
@@ -958,9 +958,9 @@ const FinancePage = () => {
                         const definition = entry.category ? categoryDefinitions[entry.category] : undefined
                         const amountValue = entry.direction === 'out' ? -entry.amount : entry.amount
                         const amountColor = entry.direction === 'in' ? '#db2777' : definition?.color ?? '#1e1b4b'
-                        const categoryLabel = entry.direction === 'in' ? 'Revenus' : definition?.label ?? 'DÃƒÆ’Ã‚Â©pense'
+                        const categoryLabel = entry.direction === 'in' ? 'Revenus' : definition?.label ?? 'Dépense'
                         const formattedDate = formatHistoryDate(entry.date)
-                        const directionLabel = entry.direction === 'in' ? 'EntrÃƒÆ’Ã‚Â©e' : 'Sortie'
+                        const directionLabel = entry.direction === 'in' ? 'Entrée' : 'Sortie'
 
                         return (
                           <li key={entry.id} className="finance-history__item">
@@ -979,7 +979,7 @@ const FinancePage = () => {
                                   onClick={() => handleDeleteEntry(entry.id)}
                                   aria-label={`Supprimer ${entry.label}`}
                                 >
-                                  ÃƒÆ’Ã¢â‚¬â€
+                                  —
                                 </button>
                               </div>
                               <div className="finance-history__meta">
@@ -1009,17 +1009,17 @@ const FinancePage = () => {
               <div className="finance-section-chip__divider" aria-hidden="true" />
             </div>
             <header className="finance-section-header finance-section-header--vertical">
-              <span className="finance-section-header__eyebrow">suivi du mois</span>
-              <p>DÃƒÆ’Ã‚Â©finis ton solde de dÃƒÆ’Ã‚Â©part pour un suivi prÃƒÆ’Ã‚Â©cis</p>
+              <span className="finance-section-header__eyebrow">Suivi du mois</span>
+              <p>Définis ton solde de départ pour un suivi précis</p>
             </header>
             <form className="finance-balance__form" onSubmit={handleStartingAmountSubmit}>
               <label className="finance-balance__field">
-                <span>Argent au dÃƒÆ’Ã‚Â©but du mois</span>
+                <span>Argent au début du mois</span>
                 <input
                   type="text"
                   value={startingAmountDraft}
                   onChange={(event) => setStartingAmountDraft(event.target.value)}
-                  placeholder="Ex: 1200"
+                  placeholder="Ex : 1200"
                 />
               </label>
               <button type="submit" className="finance-balance__action">
@@ -1028,7 +1028,7 @@ const FinancePage = () => {
             </form>
             <div className="finance-balance__stats">
               <article className="finance-balance__stat">
-                <span>Argent au dÃƒÆ’Ã‚Â©but</span>
+                <span>Argent au début</span>
                 <strong>{euroFormatter.format(startingAmountValue)}</strong>
               </article>
               <article className="finance-balance__stat">
@@ -1036,11 +1036,11 @@ const FinancePage = () => {
                 <strong>{formatSignedCurrency(totalIncome)}</strong>
               </article>
               <article className="finance-balance__stat">
-                <span>DÃƒÆ’Ã‚Â©penses</span>
+                <span>Dépenses</span>
                 <strong>{formatSignedCurrency(-totalSpent)}</strong>
               </article>
               <article className="finance-balance__stat">
-                <span>Argent ÃƒÆ’Ã‚Â  la fin</span>
+                <span>Argent à la fin</span>
                 <strong>{euroFormatter.format(endingAmount)}</strong>
               </article>
             </div>
@@ -1060,7 +1060,7 @@ const FinancePage = () => {
                   </ul>
                 </div>
               ) : (
-                <p className="finance-balance__empty">Ajoute une dÃƒÆ’Ã‚Â©pense pour visualiser la rÃƒÆ’Ã‚Â©partition.</p>
+                <p className="finance-balance__empty">Ajoute une dépense pour visualiser la répartition.</p>
               )}
             </div>
           </section>
@@ -1072,8 +1072,8 @@ const FinancePage = () => {
         <section className="finance-trend dashboard-panel">
           <header className="finance-section-header">
             <div className="finance-history__title">
-              <span className="finance-section-header__eyebrow">perspective</span>
-              <h2>Evolution du solde</h2>
+              <span className="finance-section-header__eyebrow">Perspective</span>
+              <h2>Évolution du solde</h2>
             </div>
             <div className="finance-trend__legend">
               <span>
@@ -1083,7 +1083,7 @@ const FinancePage = () => {
               {trendSeries.previous ? (
                 <span>
                   <span className="finance-trend__dot finance-trend__dot--previous" />
-                  Mois prÃƒÆ’Ã‚Â©cÃƒÆ’Ã‚Â©dent
+                  Mois précédent
                 </span>
               ) : null}
             </div>
@@ -1098,7 +1098,7 @@ const FinancePage = () => {
           <div className="finance-history-modal__panel">
             <header className="finance-history-modal__header">
               <div>
-                <span className="finance-section-header__eyebrow">mÃƒÆ’Ã‚Â©moire complÃƒÆ’Ã‚Â¨te</span>
+                <span className="finance-section-header__eyebrow">Mémoire complète</span>
                 <h3>{selectedMonthLabel}</h3>
               </div>
               <button
@@ -1107,12 +1107,12 @@ const FinancePage = () => {
                 onClick={() => setHistoryModalOpen(false)}
                 aria-label="Fermer l'historique"
               >
-                ÃƒÆ’Ã¢â‚¬â€
+                —
               </button>
             </header>
             <div className="finance-history-modal__content">
               {selectedMonthEntries.length === 0 ? (
-                <p className="finance-history__empty">Aucun mouvement enregistrÃƒÆ’Ã‚Â© pour {selectedMonthLabel}.</p>
+                <p className="finance-history__empty">Aucun mouvement enregistré pour {selectedMonthLabel}.</p>
               ) : (
                 groupedHistoryFull.map((group) => (
                   <div key={group.monthKey} className="finance-history__group">
@@ -1122,9 +1122,9 @@ const FinancePage = () => {
                         const definition = entry.category ? categoryDefinitions[entry.category] : undefined
                         const amountValue = entry.direction === 'out' ? -entry.amount : entry.amount
                         const amountColor = entry.direction === 'in' ? '#db2777' : definition?.color ?? '#1e1b4b'
-                        const categoryLabel = entry.direction === 'in' ? 'Revenus' : definition?.label ?? 'DÃƒÆ’Ã‚Â©pense'
+                        const categoryLabel = entry.direction === 'in' ? 'Revenus' : definition?.label ?? 'Dépense'
                         const formattedDate = formatHistoryDate(entry.date)
-                        const directionLabel = entry.direction === 'in' ? 'EntrÃƒÆ’Ã‚Â©e' : 'Sortie'
+                        const directionLabel = entry.direction === 'in' ? 'Entrée' : 'Sortie'
 
                         return (
                           <li key={entry.id} className="finance-history__item">
@@ -1143,7 +1143,7 @@ const FinancePage = () => {
                                   onClick={() => handleDeleteEntry(entry.id)}
                                   aria-label={`Supprimer ${entry.label}`}
                                 >
-                                  ÃƒÆ’Ã¢â‚¬â€
+                                  —
                                 </button>
                               </div>
                               <div className="finance-history__meta">
@@ -1300,15 +1300,15 @@ const FinanceTrendChart = ({ series }: FinanceTrendChartProps) => {
         },
         ...(series.previous
           ? [
-            {
-              type: 'spline',
-              name: 'Mois prÃƒÆ’Ã‚Â©cÃƒÆ’Ã‚Â©dent',
-              data: series.previous,
-              color: 'rgba(248, 196, 220, 0.85)',
-              dashStyle: 'ShortDash',
-              lineWidth: 1.8,
-            } as const,
-          ]
+              {
+                type: 'spline',
+                name: 'Mois précédent',
+                data: series.previous,
+                color: 'rgba(248, 196, 220, 0.85)',
+                dashStyle: 'ShortDash',
+                lineWidth: 1.8,
+              } as const,
+            ]
           : []),
       ],
     }
@@ -1324,4 +1324,3 @@ const FinanceTrendChart = ({ series }: FinanceTrendChartProps) => {
     </div>
   )
 }
-

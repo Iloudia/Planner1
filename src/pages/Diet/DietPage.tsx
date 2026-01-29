@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { Link } from "react-router-dom"
 import { useAuth } from "../../context/AuthContext"
 import { buildUserScopedKey } from "../../utils/userScopedKey"
-import { useMemo } from "react"
 import recipeImg1 from "../../assets/planner-01.jpg"
 import recipeImg2 from "../../assets/planner-02.jpg"
 import recipeImg3 from "../../assets/planner-03.jpg"
@@ -36,7 +35,6 @@ import omeletteFetaImg from "../../assets/omelette-feta.jpeg"
 import steackPommeDeTerreImg from "../../assets/steack-pommedeterre.jpeg"
 import saumonBowlImg from "../../assets/saumon-bowl.jpg"
 import bowlPouletImg from "../../assets/bowl-poulet.jpeg"
-import dietHero from "../../assets/food.jpeg"
 import PageHeading from "../../components/PageHeading"
 import "./DietPage.css"
 
@@ -102,7 +100,7 @@ const massRecipes: Recipe[] = [
     "Sirop d'érable (léger)",
   ],
   tips: [
-    "Astuce : Si la pâte est trop épaisse, ajoute quelques gouttes de lait. Si elle est trop liquide, ajoute un peu de farine.",
+    "Astuce : si la pâte est trop épaisse, ajoute quelques gouttes de lait. Si elle est trop liquide, ajoute un peu de farine.",
   ],
 },
 {
@@ -179,9 +177,9 @@ const massRecipes: Recipe[] = [
   ],
   steps: [
     "  Préparer la marinade du poulet",
-    "Dans un grand bol, mélange : l’ail haché, l’origan, le paprika, la poudre d’oignon, les flocons de piment, le sel et poivre. Ajoute le jus de citron, puis mélange. Incorpore les lanières de poulet et mélange bien pour les enrober. Laisse mariner au minimum 15 minutes (idéalement 30 minutes).",
+    "Dans un grand bol, mélange : l’ail haché, l’origan, le paprika, la poudre d’oignon, les flocons de piment, le sel et le poivre. Ajoute le jus de citron, puis mélange. Incorpore les lanières de poulet et mélange bien pour les enrober. Laisse mariner au minimum 15 minutes (idéalement 30 minutes).",
     "Préparer la sauce",
-    "Dans un bol, mélange : le yaourt écrémé, la sriracha, l’ail émincé, le persil, le sel et poivre. Ajoute un peu de jus de citron selon ton goût. Mélange jusqu'à obtenir une sauce homogène. Réserve au frais.",
+    "Dans un bol, mélange : le yaourt écrémé, la sriracha, l’ail émincé, le persil, le sel et le poivre. Ajoute un peu de jus de citron selon ton goût. Mélange jusqu'à obtenir une sauce homogène. Réserve au frais.",
     "Préparer les garnitures",
     "Lave et coupe la laitue. Émince finement l’oignon rouge. Coupe les tomates en petits dés. Réserve l’ensemble.",
     "Cuire le poulet",
@@ -243,7 +241,7 @@ const massRecipes: Recipe[] = [
     "Ajoute les flocons d’avoine, la banane, la whey, le beurre de cacahuète et le sirop d’érable.",
     "Ajoute la cannelle si tu le souhaites.",
     "Mixe pendant 30 à 60 secondes, jusqu'à obtenir une texture lisse et homogène.",
-    "Ajuste la texture : Ajoute un peu de lait si le smoothie est trop épais. Mixe davantage si nécessaire.",
+    "Ajuste la texture : ajoute un peu de lait si le smoothie est trop épais. Mixe davantage si nécessaire.",
     "Verse dans un verre et consomme immédiatement.",
   ],
 },
@@ -257,7 +255,7 @@ const massRecipes: Recipe[] = [
   ingredients: [
     "150 g de blanc de poulet",
     "80 g de pâtes (crues, au choix)",
-    "150 g de champignons (Paris ou autres)",
+    "150 g de champignons (de Paris ou autres)",
     "100 g de fromage blanc ou yaourt grec nature",
     "30 g de parmesan râpé",
     "1 gousse d’ail",
@@ -314,7 +312,7 @@ const massRecipes: Recipe[] = [
     "Préparer le poulet",
     "Coupe le poulet en morceaux. Fais chauffer l’huile d’olive dans une poêle à feu moyen. Ajoute le poulet, sale, poivre et fais cuire 5 à 6 minutes jusqu'à ce qu’il soit bien doré et cuit à cœur. Réserve.",
     "Préparer la sauce",
-    "Dans un bol, mélange : le yaourt grec, le concentré de tomate, l’ail haché, le gingembre, le garam masala, le paprika, le curry, le sel et poivre.",
+    "Dans un bol, mélange : le yaourt grec, le concentré de tomate, l’ail haché, le gingembre, le garam masala, le paprika, le curry, le sel et le poivre.",
     "Assembler le butter chicken",
     "Baisse le feu. Remets le poulet dans la poêle. Ajoute la sauce et mélange délicatement. Laisse mijoter 3 à 5 minutes à feu doux, sans faire bouillir, jusqu'à obtenir une sauce crémeuse.",
     "Servir",
@@ -336,7 +334,7 @@ const massRecipes: Recipe[] = [
     "Sel et poivre",
     "Un filet d’huile d’olive",
     "Jus de citron (facultatif)",
-    "Une pincée de flocons de piment ou paprika",
+    "Une pincée de flocons de piment ou de paprika",
   ],
   steps: [
     "  Préparer l’avocat",
@@ -379,7 +377,7 @@ const massRecipes: Recipe[] = [
     "Préparer l’avocat",
     "Coupe le demi-avocat en tranches ou en dés.",
     "Assembler le bowl",
-    "Dans un bol ou une assiette : Dépose le riz. Ajoute le steak haché chaud. Ajoute l’œuf. Termine par l’avocat.",
+    "Dans un bol ou une assiette : dépose le riz. Ajoute le steak haché chaud. Ajoute l’œuf. Termine par l’avocat.",
   ],
 },
 {
@@ -448,7 +446,7 @@ const massRecipes: Recipe[] = [
 
  {
   id: "mass-overnight-prot",
-  title: "Overnight oats protéines",
+  title: "Overnight oats protéinés",
   flavor: "sucre",
   prepTime: "5 à 7 min",
   servings: "1 pers",
@@ -492,7 +490,7 @@ const massRecipes: Recipe[] = [
     "100 g de farine de blé T65 ou T80",
     "Sel",
     "4 cuillères à soupe de sucre roux ou de sucre de fleur de coco",
-    "4 cuillères à soupe de chocolat en poudre ou cacao en poudre ou 50 g de chocolat noir à pâtisser (70 à 85% de cacao)",
+    "4 cuillères à soupe de chocolat en poudre ou de cacao en poudre ou 50 g de chocolat noir à pâtisser (70 à 85% de cacao)",
     "1 cuillère à soupe de levure chimique",
   ],
   steps: [
@@ -560,7 +558,7 @@ const healthyRecipes: Recipe[] = [
   ],
   steps: [
     "  Cuire la patate douce",
-    "Préchauffe le four à 200°C. Épluche la patate douce et coupe-la en dés. Dépose-la sur une plaque, ajoute la moitié de l’huile d’olive, le paprika, la poudre d’ail, un peu de sel et poivre. Mélange et enfourne pour 25 à 30 minutes, jusqu'à ce qu’elle soit tendre et dorée.",
+    "Préchauffe le four à 200°C. Épluche la patate douce et coupe-la en dés. Dépose-la sur une plaque, ajoute la moitié de l’huile d’olive, le paprika, la poudre d’ail, un peu de sel et de poivre. Mélange et enfourne pour 25 à 30 minutes, jusqu'à ce qu’elle soit tendre et dorée.",
     "Cuire le poulet",
     "Coupe le poulet en morceaux. Fais chauffer une poêle à feu moyen avec le reste de l’huile d’olive. Ajoute le poulet, les épices cajun, sale et poivre. Fais cuire 5 à 7 minutes jusqu'à ce qu’il soit bien doré et cuit à cœur.",
     "Préparer les légumes frais",
@@ -636,7 +634,7 @@ const healthyRecipes: Recipe[] = [
     "Préparer les légumes",
     "Coupe l’avocat en tranches ou en dés. Coupe le concombre en rondelles ou en dés. Coupe la tomate en morceaux.",
     "Préparer la vinaigrette",
-    "Dans un petit bol, mélange l’huile d’olive, le vinaigre (ou jus de citron), le sel et le poivre.",
+    "Dans un petit bol, mélange l’huile d’olive, le vinaigre (ou le jus de citron), le sel et le poivre.",
     "Assembler le bowl",
     "Dans un bol : Dépose le riz. Ajoute le thon émietté. Dispose l’avocat, le concombre et la tomate. Ajoute l’œuf dur.",
     "Finaliser",
@@ -683,7 +681,7 @@ const healthyRecipes: Recipe[] = [
 },
 {
   id: "healthy-soupe-verte",
-  title: "Soupe verte detox",
+  title: "Soupe verte détox",
   flavor: "sale",
   prepTime: "20 à 25 min",
   servings: "1 pers",
@@ -1027,6 +1025,7 @@ const DIET_HEADINGS = {
 } as const
 
 const RECIPE_FAVORITES_KEY = "planner.diet.recipeFavorites"
+const CUSTOM_RECIPES_KEY = "planner.diet.customRecipes"
 const DIET_WEEKLY_PLAN_KEY = "planner.diet.weeklyPlan"
 const DIET_WEEKLY_PLAN_RECIPES_KEY = "planner.diet.weeklyPlanRecipes"
 
@@ -1051,7 +1050,8 @@ const DietClassicPage = () => {
   const favoritesKey = useMemo(() => buildUserScopedKey(userEmail, RECIPE_FAVORITES_KEY), [userEmail])
   const weeklyPlanKey = useMemo(() => buildUserScopedKey(userEmail, DIET_WEEKLY_PLAN_KEY), [userEmail])
   const weeklyPlanRecipesKey = useMemo(() => buildUserScopedKey(userEmail, DIET_WEEKLY_PLAN_RECIPES_KEY), [userEmail])
-  const [tab, setTab] = useState<"sweet" | "savory" | "favorites">("sweet")
+  const customRecipesKey = useMemo(() => buildUserScopedKey(userEmail, CUSTOM_RECIPES_KEY), [userEmail])
+  const [tab, setTab] = useState<"sweet" | "savory" | "favorites" | "custom">("sweet")
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(() => {
     if (typeof window === "undefined") return new Set()
     try {
@@ -1065,8 +1065,28 @@ const DietClassicPage = () => {
   const [planDay, setPlanDay] = useState<typeof weekDays[number]>(weekDays[0])
   const [planSlot, setPlanSlot] = useState<MealSlotId>("midday")
   const [planMealName, setPlanMealName] = useState("")
+  const [customRecipes, setCustomRecipes] = useState<Recipe[]>(() => {
+    if (typeof window === "undefined") return []
+    try {
+      const stored = window.localStorage.getItem(customRecipesKey)
+      return stored ? (JSON.parse(stored) as Recipe[]) : []
+    } catch {
+      return []
+    }
+  })
+  const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const [draftTitle, setDraftTitle] = useState("")
+  const [draftFlavor, setDraftFlavor] = useState<"sucre" | "sale">("sale")
+  const [draftPrepTime, setDraftPrepTime] = useState("")
+  const [draftServings, setDraftServings] = useState("")
+  const [draftImage, setDraftImage] = useState<string | null>(null)
+  const [draftIngredients, setDraftIngredients] = useState("")
+  const [draftSteps, setDraftSteps] = useState("")
+  const [draftToppings, setDraftToppings] = useState("")
+  const [draftTips, setDraftTips] = useState("")
+  const draftImageInputRef = useRef<HTMLInputElement | null>(null)
   const allRecipes = useMemo(() => [...massRecipes, ...healthyRecipes], [])
-  const currentHeading = tab === "favorites" ? null : DIET_HEADINGS[tab]
+  const currentHeading = tab === "favorites" || tab === "custom" ? null : DIET_HEADINGS[tab]
   const favoriteRecipes = useMemo(() => allRecipes.filter((recipe) => favoriteIds.has(recipe.id)), [allRecipes, favoriteIds])
   const filteredRecipes = useMemo(() => {
     if (tab === "favorites") return favoriteRecipes
@@ -1087,6 +1107,15 @@ const DietClassicPage = () => {
       // ignore
     }
   }, [favoriteIds, favoritesKey])
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    try {
+      window.localStorage.setItem(customRecipesKey, JSON.stringify(customRecipes))
+    } catch {
+      // ignore
+    }
+  }, [customRecipes, customRecipesKey])
 
   const toggleFavorite = (recipeId: string) => {
     setFavoriteIds((previous) => {
@@ -1153,6 +1182,61 @@ const DietClassicPage = () => {
       // ignore
     }
   }
+  const handleDraftImageChange = (file?: File) => {
+    if (!file) return
+    if (!file.type.startsWith("image/")) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      const result = typeof reader.result === "string" ? reader.result : null
+      if (result) {
+        setDraftImage(result)
+      }
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const parseLines = (value: string) =>
+    value
+      .split("\n")
+      .map((item) => item.trim())
+      .filter(Boolean)
+
+  const resetDraft = () => {
+    setDraftTitle("")
+    setDraftFlavor("sale")
+    setDraftPrepTime("")
+    setDraftServings("")
+    setDraftImage(null)
+    setDraftIngredients("")
+    setDraftSteps("")
+    setDraftToppings("")
+    setDraftTips("")
+  }
+
+  const handleCreateRecipe = () => {
+    const title = draftTitle.trim()
+    if (!title) return
+    const ingredients = parseLines(draftIngredients)
+    const steps = parseLines(draftSteps)
+    if (ingredients.length === 0 || steps.length === 0) return
+    const recipe: Recipe = {
+      id: `custom-${Date.now()}`,
+      title,
+      flavor: draftFlavor,
+      prepTime: draftPrepTime.trim() || "-",
+      servings: draftServings.trim() || "-",
+      ingredients,
+      steps,
+      toppings: parseLines(draftToppings),
+      tips: parseLines(draftTips),
+    }
+    setCustomRecipes((prev) => [recipe, ...prev])
+    setSelectedRecipe(recipe)
+    setPlanMealName(recipe.title)
+    setIsCreateOpen(false)
+    resetDraft()
+  }
+
   const renderHeartIcon = (isActive: boolean) =>
     isActive ? (
       <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="#ef4444" strokeWidth="1.5" aria-hidden="true">
@@ -1176,9 +1260,7 @@ const DietClassicPage = () => {
 
   return (
   <>
-    <div className="diet-hero-image" aria-hidden="true">
-      <img src={dietHero} alt="Ambiance diet" />
-    </div>
+    
     <div className="page-accent-bar" aria-hidden="true" />
     <main className="diet-gymgirl-page">
       <article className="diet-blog">
@@ -1186,7 +1268,7 @@ const DietClassicPage = () => {
           <>
             <PageHeading
               eyebrow={currentHeading.eyebrow}
-              title="Ma Diet"
+              title="Ma diet"
               className="diet-page-heading"
             />
             <p className="diet-heading__description">{currentHeading.description}</p>
@@ -1195,7 +1277,7 @@ const DietClassicPage = () => {
           <>
             <PageHeading
               eyebrow="Favoris"
-              title="Ma Diet"
+              title="Ma diet"
               className="diet-page-heading"
             />
             <p className="diet-heading__description">
@@ -1236,6 +1318,13 @@ const DietClassicPage = () => {
           >
             Favoris
           </button>
+          <button
+            type="button"
+            className={tab === "custom" ? "is-active" : ""}
+            onClick={() => setTab("custom")}
+          >
+            Mes recettes
+          </button>
         </div>
       </article>
 
@@ -1264,7 +1353,7 @@ const DietClassicPage = () => {
                           event.stopPropagation()
                           toggleFavorite(recipe.id)
                         }}
-                        aria-label="Ajouter en favoris"
+                        aria-label="Ajouter aux favoris"
                       >
                         {renderHeartIcon(favoriteIds.has(recipe.id))}
                       </button>
@@ -1292,6 +1381,67 @@ const DietClassicPage = () => {
               Ajoute des recettes en favoris pour les retrouver ici.
             </p>
           )
+        ) : tab === "custom" ? (
+          <>
+            <div className="diet-custom-header">
+              <div>
+                <h3>Mes recettes</h3>
+                <p className="diet-heading__description">
+                  Crée tes propres recettes et programme-les directement.
+                </p>
+              </div>
+              <button type="button" className="pill pill--diet" onClick={() => setIsCreateOpen(true)}>
+                Créer une recette
+              </button>
+            </div>
+            {customRecipes.length > 0 ? (
+              <div className="diet-recipe-grid">
+                {customRecipes.map((recipe) => (
+                  <article
+                    key={recipe.id}
+                    className="diet-recipe-card"
+                    style={{ backgroundImage: `url(${recipe.image})` }}
+                    onClick={() => setSelectedRecipe(recipe)}
+                  >
+                    <div className="diet-recipe-card__overlay" />
+                    <div className="diet-recipe-card__content">
+                      <div className="diet-recipe-card__header">
+                        <button
+                          type="button"
+                          className={favoriteIds.has(recipe.id) ? "diet-favorite is-active" : "diet-favorite"}
+                          onClick={(event) => {
+                            event.stopPropagation()
+                            toggleFavorite(recipe.id)
+                          }}
+                          aria-label="Ajouter aux favoris"
+                        >
+                          {renderHeartIcon(favoriteIds.has(recipe.id))}
+                        </button>
+                      </div>
+                      <div className="diet-recipe-card__body">
+                        <h3>{recipe.title}</h3>
+                        <div className="diet-recipe-meta">
+                          <span className="diet-info-pill">
+                            {recipe.flavor === "sucre" ? "Sucré" : "Salé"}
+                          </span>
+                          <span className="diet-info-pill">
+                            {recipe.prepTime}
+                          </span>
+                          <span className="diet-info-pill">
+                            {recipe.servings}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p className="diet-heading__description">
+                Aucune recette pour le moment. Crée la première !
+              </p>
+            )}
+          </>
         ) : (
           <div className="diet-recipe-grid">
             {filteredRecipes.map((recipe) => (
@@ -1311,7 +1461,7 @@ const DietClassicPage = () => {
                         event.stopPropagation()
                         toggleFavorite(recipe.id)
                       }}
-                      aria-label="Ajouter en favoris"
+                      aria-label="Ajouter aux favoris"
                     >
                       {renderHeartIcon(favoriteIds.has(recipe.id))}
                     </button>
@@ -1335,7 +1485,105 @@ const DietClassicPage = () => {
             ))}
           </div>
         )}
-</section>
+      </section>
+
+        {isCreateOpen ? (
+          <div className="diet-recipe-modal" role="dialog" aria-label="Créer une recette">
+            <div className="diet-recipe-modal__backdrop" onClick={() => setIsCreateOpen(false)} />
+            <div className="diet-recipe-modal__panel">
+              <div className="diet-recipe-modal__cover">
+                <img
+                  alt="Aperçu recette"
+                  className="diet-recipe-modal__image"
+                />
+                <button
+                  type="button"
+                  className="diet-recipe-close-icon diet-recipe-close-icon--cover"
+                  onClick={() => setIsCreateOpen(false)}
+                  aria-label="Fermer"
+                >
+                  <span aria-hidden="true" />
+                </button>
+              </div>
+              <div className="diet-recipe-modal__content">
+                <header className="diet-recipe-modal__header">
+                  <div>
+                    <h3>Créer une recette</h3>
+                  </div>
+                </header>
+                <div className="diet-recipe-modal__body">
+                  <div className="diet-recipe-form">
+                    <label>
+                      Titre
+                      <input type="text" value={draftTitle} onChange={(event) => setDraftTitle(event.target.value)} />
+                    </label>
+                    <div className="diet-recipe-form__row">
+                      <label>
+                        Type
+                        <select value={draftFlavor} onChange={(event) => setDraftFlavor(event.target.value as "sucre" | "sale")}>
+                          <option value="sale">Salé</option>
+                          <option value="sucre">Sucré</option>
+                        </select>
+                      </label>
+                      <label>
+                        Préparation
+                        <input type="text" value={draftPrepTime} onChange={(event) => setDraftPrepTime(event.target.value)} placeholder="Ex : 20 min" />
+                      </label>
+                      <label>
+                        Portions
+                        <input type="text" value={draftServings} onChange={(event) => setDraftServings(event.target.value)} placeholder="Ex : 2 pers" />
+                      </label>
+                    </div>
+                    <label className="diet-recipe-form__file">
+                      Image
+                      <input
+                        ref={draftImageInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="diet-recipe-form__file-input"
+                        onChange={(event) => {
+                          handleDraftImageChange(event.target.files?.[0])
+                          event.target.value = ""
+                        }}
+                      />
+                      <button
+                        type="button"
+                        className="diet-recipe-form__file-button"
+                        onClick={() => draftImageInputRef.current?.click()}
+                      >
+                        Choisir une image
+                      </button>
+                    </label>
+                    <label>
+                      Ingrédients (1 par ligne)
+                      <textarea value={draftIngredients} onChange={(event) => setDraftIngredients(event.target.value)} rows={5} />
+                    </label>
+                    <label>
+                      Étapes (1 par ligne)
+                      <textarea value={draftSteps} onChange={(event) => setDraftSteps(event.target.value)} rows={6} />
+                    </label>
+                    <label>
+                      Toppings (optionnel)
+                      <textarea value={draftToppings} onChange={(event) => setDraftToppings(event.target.value)} rows={3} />
+                    </label>
+                    <label>
+                      Astuces (optionnel)
+                      <textarea value={draftTips} onChange={(event) => setDraftTips(event.target.value)} rows={3} />
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <footer className="diet-recipe-modal__actions">
+                <button type="button" onClick={() => setIsCreateOpen(false)}>
+                  Annuler
+                </button>
+                <button type="button" onClick={handleCreateRecipe}>
+                  Enregistrer
+                </button>
+              </footer>
+            </div>
+          </div>
+        ) : null}
 
         {selectedRecipe ? (
   <div className="diet-recipe-modal" role="dialog" aria-label={`Recette ${selectedRecipe.title}`}>
@@ -1389,7 +1637,7 @@ const DietClassicPage = () => {
                 type="text"
                 value={planMealName}
                 onChange={(event) => setPlanMealName(event.target.value)}
-                placeholder="�cris ton plat"
+                placeholder="Écris ton plat"
               />
             </label>
             <button type="button" className="diet-recipe-plan__add" onClick={addRecipeToPlan}>
@@ -1448,8 +1696,3 @@ const DietClassicPage = () => {
 }
 
 export default DietClassicPage
-
-
-
-
-

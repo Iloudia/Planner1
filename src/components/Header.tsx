@@ -142,7 +142,7 @@ function Header() {
   return (
     <header className="site-header">
       <div className="site-header__inner">
-        <Link to="/" className="brand">
+        <Link to={isAuthenticated ? "/home" : "/"} className="brand">
           Me&rituals
         </Link>
 
@@ -244,11 +244,6 @@ function Header() {
               {menuOpen ? (
                 <div className="header-menu__panel" role="menu">
                   <ul className="header-menu__list">
-                    <li>
-                      <button type="button" className="header-menu__item" onClick={() => handleNavigate("/profil")}>
-                        Voir mon profil
-                      </button>
-                    </li>
                     <li>
                       <button type="button" className="header-menu__item" onClick={() => handleNavigate("/parametres")}>
                         Paramètres

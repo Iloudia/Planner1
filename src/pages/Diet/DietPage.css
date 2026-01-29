@@ -466,3 +466,60 @@
     align-items: flex-start;
   }
 }
+
+.diet-custom-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.diet-recipe-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.diet-recipe-form__row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+}
+
+.diet-recipe-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.diet-recipe-form input,
+.diet-recipe-form textarea,
+.diet-recipe-form select {
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  border-radius: 12px;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+.diet-recipe-form__file {
+  gap: 0.75rem;
+}
+
+.diet-recipe-form__file-input {
+  display: none;
+}
+
+.diet-recipe-form__file-button {
+  align-self: flex-start;
+  border: none;
+  border-radius: 999px;
+  padding: 0.6rem 1.2rem;
+  background: #ec4899;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 14px 30px rgba(236, 72, 153, 0.25);
+}
