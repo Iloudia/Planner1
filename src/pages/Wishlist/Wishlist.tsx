@@ -1361,12 +1361,6 @@ const closeModal = () => {
 }
 return (
   <div className="wishlist-page aesthetic-page" onClick={() => setOpenMenuFor(null)}>
-    <header className="wishlist-hero dashboard-panel">
-      <div className="wishlist-hero__content">
-        <h2>Imagine ta wishlist idéale, catégorie par catégorie.</h2>
-        <p>Organise tes inspirations shopping, déco ou voyages en un seul espace.</p>
-      </div>
-    </header>
     <div className="page-accent-bar" aria-hidden="true" />
     <div className="wishlist-heading-row">
       <PageHeading eyebrow="Envies" title="Ma Wishlist" />
@@ -1439,7 +1433,7 @@ return (
               </span>
               <div className="wishlist-card__title">
                 <h2>{displayTitle}</h2>
-                {isFavorite ? <span aria-label="Catégorie favorite" className="wishlist-card__favorite">✨</span> : null}
+                {isFavorite ? <span aria-label="Catégorie favorite" className="wishlist-card__favorite">❤️</span> : null}
               </div>
               <p>{category.blurb ?? ""}</p>
             </div>
