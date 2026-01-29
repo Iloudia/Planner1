@@ -646,7 +646,18 @@ return (
           </div>
 
           <div className="todo-input">
-            <input type="text" value={todoInput} onChange={(e) => setTodoInput(e.target.value)} placeholder="Ajouter une tâche" />
+            <input
+              type="text"
+              value={todoInput}
+              onChange={(e) => setTodoInput(e.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === " " || event.key === "Spacebar") {
+                  event.preventDefault()
+                  addTodo()
+                }
+              }}
+              placeholder="Ajouter une tâche"
+            />
             <button type="button" className="todo-add" onClick={addTodo} aria-label="Ajouter une tâche">
               +
             </button>
@@ -809,6 +820,7 @@ return (
       {/* ? Moodboard (fix) */}
       <section className="home-moodboard">
         <div className="home-moodboard__top">
+          <h2>Moodboard</h2>
           <div className="home-moodboard__top-actions">
             <button type="button" className="home-moodboard__button" onClick={() => moodboardInputRef.current?.click()}>
               Changer l'image

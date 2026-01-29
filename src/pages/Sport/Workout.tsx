@@ -93,22 +93,22 @@ const DEFAULT_SERIES: Record<string, SeriesItem[]> = {
 }
 
 const MUSCLE_OPTIONS = [
-  "Jambes",
-  "Quadriceps",
-  "Ischios",
-  "Fessiers",
-  "Mollets",
-  "Dos",
-  "Lombaires",
   "Abdos",
+  "Avant-bras",
+  "Biceps",
+  "Bras",
+  "Dos",
+  "Ã‰paules",
+  "Fessiers",
+  "Ischios",
+  "Jambes",
+  "Lombaires",
+  "Mollets",
   "Obliques",
   "Pectoraux",
-  "Ã‰paules",
-  "Bras",
-  "Biceps",
-  "Triceps",
-  "Avant-bras",
+  "Quadriceps",
   "Tout le corps",
+  "Triceps",
 ]
 
 const MUSCLE_PLACEHOLDER = "SÃ©lectionner un muscle"
@@ -745,12 +745,8 @@ const WorkoutPage = () => {
               <button
                 type="button"
                 className="modal__close"
-                aria-label="Options pour cette session"
-                onClick={() => {
-                  setIsModalMenuOpen((previous) => !previous)
-                  setOpenExerciseMenuId(null)
-                  setOpenVideoMenuId(null)
-                }}
+                aria-label="Fermer"
+                onClick={handleClosePlanner}
               >
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />

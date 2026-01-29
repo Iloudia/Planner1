@@ -382,7 +382,7 @@ const JournalingPage = () => {
               onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
                 setDraft((previous) => ({ ...previous, positiveAnchor: event.target.value }))
               }
-              placeholder="Facultatif, sans obligation."
+              placeholder="Ex : Je me suis fait(e) un ami.  "
               rows={4}
             />
           </div>

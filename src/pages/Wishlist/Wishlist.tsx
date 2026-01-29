@@ -73,15 +73,15 @@ type WishlistCategoryCard = {
 const WISHLIST_DEFINITION_VERSION = 6
 
 const CATEGORY_DEFINITIONS: CategoryDefinition[] = [
-  { id: "hair", label: "Hair essentials", accent: "#f497c0", cover: wishlistHair, blurb: "Brushes, soins et petits accessoires pour une routine cheveux complÃ¨te." },
-  { id: "outfits", label: "Outfits", accent: "#fcd67d", cover: wishlistOutfit, blurb: "IdÃ©es tenues et piÃ¨ces coup de cÅ“ur pour tes looks prÃ©fÃ©rÃ©s." },
-  { id: "makeup", label: "Makeup wishlist", accent: "#fbcada", cover: wishlistMakeup, blurb: "Palette, gloss ou nouveaux blushs Ã  tester absolument." },
-  { id: "electronics", label: "Electronic appareil", accent: "#c9d9ff", cover: wishlistElectronics, blurb: "Gadgets tech, accessoires photo ou outils productivitÃ©." },
+  { id: "hair", label: "Hair essentials", accent: "#f497c0", cover: wishlistHair, blurb: "Brushes, soins et petits accessoires pour une routine cheveux complète." },
+  { id: "outfits", label: "Outfits", accent: "#fcd67d", cover: wishlistOutfit, blurb: "Idées tenues et pièces coup de cœur pour tes looks préférés." },
+  { id: "makeup", label: "Makeup wishlist", accent: "#fbcada", cover: wishlistMakeup, blurb: "Palettes, gloss ou nouveaux blushs à tester absolument." },
+  { id: "electronics", label: "Appareils électroniques", accent: "#c9d9ff", cover: wishlistElectronics, blurb: "Gadgets tech, accessoires photo ou outils de productivité." },
   { id: "skincare", label: "Skincare", accent: "#c1e7db", cover: wishlistSkincare, blurb: "Soins cocooning, masques favoris et indispensables glow." },
-  { id: "books", label: "Livres", accent: "#b4cfff", cover: wishlistBooks, blurb: "Romans, dÃ©veloppement perso et lectures inspirÃ©es." },
-  { id: "room", label: "Chambre", accent: "#d9c5ff", cover: wishlistRoom, blurb: "DÃ©co, ambiance et petits objets cozy pour ta chambre." },
-  { id: "travel", label: "Voyages", accent: "#f6b094", cover: wishlistTravel, blurb: "Destinations ou expÃ©riences Ã  ajouter Ã  ta bucket list." },
-  { id: "jewelry", label: "Bijoux", accent: "#ffd4a8", cover: wishlistJewelry, blurb: "Bagues, colliers et accessoires brillants Ã  collectionner." },
+  { id: "books", label: "Livres", accent: "#b4cfff", cover: wishlistBooks, blurb: "Romans, développement perso et lectures inspirées." },
+  { id: "room", label: "Chambre", accent: "#d9c5ff", cover: wishlistRoom, blurb: "Déco, ambiance et petits objets cozy pour ta chambre." },
+  { id: "travel", label: "Voyages", accent: "#f6b094", cover: wishlistTravel, blurb: "Destinations ou expériences à ajouter à ta bucket list." },
+  { id: "jewelry", label: "Bijoux", accent: "#ffd4a8", cover: wishlistJewelry, blurb: "Bagues, colliers et accessoires brillants à collectionner." },
   { id: "bag", label: "Sac", accent: "#f3b4c5", cover: wishlistBag, blurb: "Sacs tendance et intemporels pour toutes les occasions." },
 ]
 
@@ -100,13 +100,13 @@ const CUSTOM_COVER_POOL = [
   wishlistBag,
 ] as const
 
-const CUSTOM_BLURB = "Ta catÃ©gorie personnalisÃ©e."
+const CUSTOM_BLURB = "Ta catégorie personnalisée."
 
 const BASE_CATEGORY_IDS = new Set(CATEGORY_DEFINITIONS.map((category) => category.id))
 
 const isBaseCategory = (id: WishlistCategoryId) => BASE_CATEGORY_IDS.has(id)
 
-const formatElementLabel = (count: number) => (count > 1 ? "Ã‰lÃ©ments" : "Ã‰lÃ©ment")
+const formatElementLabel = (count: number) => (count > 1 ? "Éléments" : "Élément")
 
 const hashString = (value: string) => {
   let hash = 0
@@ -165,7 +165,7 @@ const buildDefaultEntry = (id: WishlistCategoryId, title?: string): WishlistStor
     const base = createEntryFromDefinition(definition)
     return title ? { ...base, title } : base
   }
-  return createFallbackEntry(id, title ?? "Nouvelle catÃ©gorie")
+  return createFallbackEntry(id, title ?? "Nouvelle catégorie")
 }
 
 const buildDefaultWishlist = (): WishlistState =>
@@ -455,7 +455,7 @@ const WishlistPage = () => {
       .filter(([id]) => !isBaseCategory(id))
       .map(([id, entry]) => ({
         id,
-        title: entry.title ?? "Nouvelle catÃ©gorie",
+        title: entry.title ?? "Nouvelle catégorie",
         label: entry.title ?? "Collection perso",
         accent: entry.accent ?? getAccentForId(id),
         cover: entry.cover ?? getCoverForId(id),
@@ -480,7 +480,6 @@ const WishlistPage = () => {
     })
   }, [wishlist])
 
-
   useEffect(() => {
     document.body.classList.add("planner-page--white")
     return () => {
@@ -488,233 +487,233 @@ const WishlistPage = () => {
     }
   }, [])
 
-  useEffect(() => {
-    resetItemDraft()
-    setEditingItemId(null)
-    setExpandedItems({})
-    setItemMenuOpenFor(null)
-    setIsCategoryPickerOpen(false)
-    setIsNoteMenuOpen(false)
-    if (!selectedCategoryId) {
-      setNoteDraft("")
-      setIsEditingNote(false)
-      setIsNotePanelOpen(false)
-      return
-    }
-    const currentNote = wishlist[selectedCategoryId]?.note ?? ""
-    setNoteDraft(currentNote)
+ useEffect(() => {
+  resetItemDraft()
+  setEditingItemId(null)
+  setExpandedItems({})
+  setItemMenuOpenFor(null)
+  setIsCategoryPickerOpen(false)
+  setIsNoteMenuOpen(false)
+  if (!selectedCategoryId) {
+    setNoteDraft("")
     setIsEditingNote(false)
     setIsNotePanelOpen(false)
-  }, [resetItemDraft, selectedCategoryId, wishlist])
+    return
+  }
+  const currentNote = wishlist[selectedCategoryId]?.note ?? ""
+  setNoteDraft(currentNote)
+  setIsEditingNote(false)
+  setIsNotePanelOpen(false)
+}, [resetItemDraft, selectedCategoryId, wishlist])
 
-  useEffect(() => {
-    if (!renamingCategoryId) {
-      setRenameDraft("")
-      setRenameCoverPreview("")
-      setRenameCoverName("")
-      setRenameInitialCover("")
-      if (renameCoverInputRef.current) {
-        renameCoverInputRef.current.value = ""
-      }
-      return
-    }
-    const card = categoryCards.find((item) => item.id === renamingCategoryId)
-    const fallbackTitle = getCategoryDefinition(renamingCategoryId)?.label ?? ""
-    const title = card?.entry.title ?? card?.title ?? fallbackTitle
-    const cover = card?.entry.cover ?? card?.cover ?? getCoverForId(renamingCategoryId)
-    setRenameDraft(title)
-    setRenameInitialCover(cover)
-    setRenameCoverPreview(cover)
+useEffect(() => {
+  if (!renamingCategoryId) {
+    setRenameDraft("")
+    setRenameCoverPreview("")
     setRenameCoverName("")
+    setRenameInitialCover("")
     if (renameCoverInputRef.current) {
       renameCoverInputRef.current.value = ""
     }
-  }, [renamingCategoryId, categoryCards])
+    return
+  }
+  const card = categoryCards.find((item) => item.id === renamingCategoryId)
+  const fallbackTitle = getCategoryDefinition(renamingCategoryId)?.label ?? ""
+  const title = card?.entry.title ?? card?.title ?? fallbackTitle
+  const cover = card?.entry.cover ?? card?.cover ?? getCoverForId(renamingCategoryId)
+  setRenameDraft(title)
+  setRenameInitialCover(cover)
+  setRenameCoverPreview(cover)
+  setRenameCoverName("")
+  if (renameCoverInputRef.current) {
+    renameCoverInputRef.current.value = ""
+  }
+}, [renamingCategoryId, categoryCards])
 
-  useEffect(() => {
-    if (!feedback) {
+useEffect(() => {
+  if (!feedback) {
+    return
+  }
+  const timeout = window.setTimeout(() => setFeedback(null), 2800)
+  return () => window.clearTimeout(timeout)
+}, [feedback])
+
+useEffect(() => {
+  const handleGlobalPointerDown = (event: PointerEvent) => {
+    const target = event.target as HTMLElement | null
+    if (
+      target?.closest(".profile-menu") ||
+      target?.closest(".wishlist-card__menu-popover") ||
+      target?.closest(".wishlist-note__menu") ||
+      target?.closest(".wishlist-note__menu-popover")
+    ) {
       return
     }
-    const timeout = window.setTimeout(() => setFeedback(null), 2800)
-    return () => window.clearTimeout(timeout)
-  }, [feedback])
-
-  useEffect(() => {
-    const handleGlobalPointerDown = (event: PointerEvent) => {
-      const target = event.target as HTMLElement | null
-      if (
-        target?.closest(".profile-menu") ||
-        target?.closest(".wishlist-card__menu-popover") ||
-        target?.closest(".wishlist-note__menu") ||
-        target?.closest(".wishlist-note__menu-popover")
-      ) {
-        return
-      }
-      if (target?.closest(".wishlist-item__menu")) {
-        return
-      }
-      setOpenMenuFor(null)
-      setItemMenuOpenFor(null)
-      if (!target?.closest(".wishlist-note__menu") && !target?.closest(".wishlist-note__menu-popover")) {
-        setIsNoteMenuOpen(false)
-      }
+    if (target?.closest(".wishlist-item__menu")) {
+      return
     }
-    window.addEventListener("pointerdown", handleGlobalPointerDown)
-    return () => window.removeEventListener("pointerdown", handleGlobalPointerDown)
-  }, [])
-
-  useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") {
-        return
-      }
-      if (renamingCategoryId) {
-        setRenamingCategoryId(null)
-        return
-      }
-      if (selectedCategoryId) {
-        setSelectedCategoryId(null)
-        setIsAddingItem(false)
-        setIsEditingNote(false)
-        setIsCategoryPickerOpen(false)
-      }
+    setOpenMenuFor(null)
+    setItemMenuOpenFor(null)
+    if (!target?.closest(".wishlist-note__menu") && !target?.closest(".wishlist-note__menu-popover")) {
+      setIsNoteMenuOpen(false)
     }
-    window.addEventListener("keydown", handleEscape)
-    return () => window.removeEventListener("keydown", handleEscape)
-  }, [renamingCategoryId, selectedCategoryId])
+  }
+  window.addEventListener("pointerdown", handleGlobalPointerDown)
+  return () => window.removeEventListener("pointerdown", handleGlobalPointerDown)
+}, [])
 
-  useEffect(() => {
-    if (!isAddingItem) {
+useEffect(() => {
+  const handleEscape = (event: KeyboardEvent) => {
+    if (event.key !== "Escape") {
+      return
+    }
+    if (renamingCategoryId) {
+      setRenamingCategoryId(null)
+      return
+    }
+    if (selectedCategoryId) {
+      setSelectedCategoryId(null)
+      setIsAddingItem(false)
+      setIsEditingNote(false)
       setIsCategoryPickerOpen(false)
     }
-  }, [isAddingItem])
+  }
+  window.addEventListener("keydown", handleEscape)
+  return () => window.removeEventListener("keydown", handleEscape)
+}, [renamingCategoryId, selectedCategoryId])
 
-  const selectedCategoryCard = useMemo(() => {
-    if (!selectedCategoryId) {
-      return null
-    }
-    return categoryCards.find((item) => item.id === selectedCategoryId) ?? null
-  }, [categoryCards, selectedCategoryId])
+useEffect(() => {
+  if (!isAddingItem) {
+    setIsCategoryPickerOpen(false)
+  }
+}, [isAddingItem])
 
-  const selectedCategoryState = selectedCategoryCard?.entry ?? null
-  useEffect(() => {
-    if (!selectedCategoryState) {
-      setExpandedItems({})
-      setItemMenuOpenFor(null)
-      return
-    }
-    setExpandedItems((previous) => {
-      const next: Record<string, boolean> = {}
-      selectedCategoryState.items.forEach((item) => {
-        if (previous[item.id]) {
-          next[item.id] = true
-        }
-      })
-      return next
+const selectedCategoryCard = useMemo(() => {
+  if (!selectedCategoryId) {
+    return null
+  }
+  return categoryCards.find((item) => item.id === selectedCategoryId) ?? null
+}, [categoryCards, selectedCategoryId])
+
+const selectedCategoryState = selectedCategoryCard?.entry ?? null
+useEffect(() => {
+  if (!selectedCategoryState) {
+    setExpandedItems({})
+    setItemMenuOpenFor(null)
+    return
+  }
+  setExpandedItems((previous) => {
+    const next: Record<string, boolean> = {}
+    selectedCategoryState.items.forEach((item) => {
+      if (previous[item.id]) {
+        next[item.id] = true
+      }
     })
-    if (itemMenuOpenFor && !selectedCategoryState.items.some((item) => item.id === itemMenuOpenFor)) {
-      setItemMenuOpenFor(null)
-    }
-  }, [itemMenuOpenFor, selectedCategoryState])
+    return next
+  })
+  if (itemMenuOpenFor && !selectedCategoryState.items.some((item) => item.id === itemMenuOpenFor)) {
+    setItemMenuOpenFor(null)
+  }
+}, [itemMenuOpenFor, selectedCategoryState])
 
-  const groupedSelectedItems = useMemo(() => {
-    if (!selectedCategoryState) {
+const groupedSelectedItems = useMemo(() => {
+  if (!selectedCategoryState) {
+    return []
+  }
+  const groups = new Map<string, WishlistItem[]>()
+  selectedCategoryState.items.forEach((item) => {
+    const key = item.subcategory && item.subcategory.trim().length > 0 ? item.subcategory.trim() : "__uncategorized"
+    const current = groups.get(key)
+    if (current) {
+      current.push(item)
+    } else {
+      groups.set(key, [item])
+    }
+  })
+  return Array.from(groups.entries()).map(([key, items]) => ({
+    key,
+    label: key === "__uncategorized" ? "Sans sous-catégorie" : key,
+    items,
+  }))
+}, [selectedCategoryState])
+
+const getCategorySubcategories = useCallback(
+  (categoryId: WishlistCategoryId | null | undefined) => {
+    if (!categoryId) {
       return []
     }
-    const groups = new Map<string, WishlistItem[]>()
-    selectedCategoryState.items.forEach((item) => {
-      const key = item.subcategory && item.subcategory.trim().length > 0 ? item.subcategory.trim() : "__uncategorized"
-      const current = groups.get(key)
-      if (current) {
-        current.push(item)
-      } else {
-        groups.set(key, [item])
+    const entry = wishlist[categoryId]
+    if (!entry) {
+      return []
+    }
+    const unique = new Set<string>()
+    entry.items.forEach((item) => {
+      if (item.subcategory && item.subcategory.trim().length > 0) {
+        unique.add(item.subcategory.trim())
       }
     })
-    return Array.from(groups.entries()).map(([key, items]) => ({
-      key,
-      label: key === "__uncategorized" ? "Sans sous-catÃ©gorie" : key,
-      items,
-    }))
-  }, [selectedCategoryState])
+    return Array.from(unique).sort((a, b) => a.localeCompare(b, "fr", { sensitivity: "base" }))
+  },
+  [wishlist],
+)
 
-  const getCategorySubcategories = useCallback(
-    (categoryId: WishlistCategoryId | null | undefined) => {
-      if (!categoryId) {
-        return []
-      }
-      const entry = wishlist[categoryId]
-      if (!entry) {
-        return []
-      }
-      const unique = new Set<string>()
-      entry.items.forEach((item) => {
-        if (item.subcategory && item.subcategory.trim().length > 0) {
-          unique.add(item.subcategory.trim())
-        }
-      })
-      return Array.from(unique).sort((a, b) => a.localeCompare(b, "fr", { sensitivity: "base" }))
-    },
-    [wishlist],
-  )
+const subcategoryOptions = useMemo(() => getCategorySubcategories(selectedCategoryId), [getCategorySubcategories, selectedCategoryId])
 
-  const subcategoryOptions = useMemo(() => getCategorySubcategories(selectedCategoryId), [getCategorySubcategories, selectedCategoryId])
+const currentMemoValue = selectedCategoryState?.note?.trim() ?? ""
+const hasMemo = currentMemoValue.length > 0
 
-  const currentMemoValue = selectedCategoryState?.note?.trim() ?? ""
-  const hasMemo = currentMemoValue.length > 0
+const movableCategories = useMemo(
+  () => categoryCards.filter((card) => card.id !== selectedCategoryId),
+  [categoryCards, selectedCategoryId],
+)
 
-  const movableCategories = useMemo(
-    () => categoryCards.filter((card) => card.id !== selectedCategoryId),
-    [categoryCards, selectedCategoryId],
-  )
+const moveTargetCategories = useMemo(
+  () => (movingItem ? categoryCards.filter((card) => card.id !== movingItem.categoryId) : []),
+  [categoryCards, movingItem],
+)
 
-  const moveTargetCategories = useMemo(
-    () => (movingItem ? categoryCards.filter((card) => card.id !== movingItem.categoryId) : []),
-    [categoryCards, movingItem],
-  )
-
-  useEffect(() => {
-    if (!movingItem) {
-      setMoveTargetCategoryId(null)
-      setMoveSubcategory("")
-      return
-    }
+useEffect(() => {
+  if (!movingItem) {
     setMoveTargetCategoryId(null)
-    setMoveSubcategory(movingItem.subcategory ?? "")
-  }, [movingItem])
-
-  useEffect(() => {
-    if (!moveTargetCategoryId) {
-      return
-    }
-    const options = getCategorySubcategories(moveTargetCategoryId)
-    if (options.length > 0 && !options.includes(moveSubcategory)) {
-      setMoveSubcategory(options[0])
-    }
-  }, [getCategorySubcategories, moveTargetCategoryId, moveSubcategory])
-
-  useEffect(() => {
-    if (!isNotePanelOpen || hasMemo || isEditingNote) {
-      return
-    }
-    const handlePointerDown = (event: PointerEvent) => {
-      const target = event.target as HTMLElement | null
-      if (target?.closest(".wishlist-modal__note-display") || target?.closest(".wishlist-modal__note")) {
-        return
-      }
-      setIsNotePanelOpen(false)
-    }
-    window.addEventListener("pointerdown", handlePointerDown)
-    return () => window.removeEventListener("pointerdown", handlePointerDown)
-  }, [hasMemo, isEditingNote, isNotePanelOpen])
-
-  const handleToggleMenu = (event: MouseEvent<HTMLButtonElement>, categoryId: WishlistCategoryId) => {
-    event.stopPropagation()
-    event.preventDefault()
-    setOpenMenuFor((current) => (current === categoryId ? null : categoryId))
+    setMoveSubcategory("")
+    return
   }
+  setMoveTargetCategoryId(null)
+  setMoveSubcategory(movingItem.subcategory ?? "")
+}, [movingItem])
 
- const handleCardActivate = (categoryId: WishlistCategoryId) => {
+useEffect(() => {
+  if (!moveTargetCategoryId) {
+    return
+  }
+  const options = getCategorySubcategories(moveTargetCategoryId)
+  if (options.length > 0 && !options.includes(moveSubcategory)) {
+    setMoveSubcategory(options[0])
+  }
+}, [getCategorySubcategories, moveTargetCategoryId, moveSubcategory])
+
+useEffect(() => {
+  if (!isNotePanelOpen || hasMemo || isEditingNote) {
+    return
+  }
+  const handlePointerDown = (event: PointerEvent) => {
+    const target = event.target as HTMLElement | null
+    if (target?.closest(".wishlist-modal__note-display") || target?.closest(".wishlist-modal__note")) {
+      return
+    }
+    setIsNotePanelOpen(false)
+  }
+  window.addEventListener("pointerdown", handlePointerDown)
+  return () => window.removeEventListener("pointerdown", handlePointerDown)
+}, [hasMemo, isEditingNote, isNotePanelOpen])
+
+const handleToggleMenu = (event: MouseEvent<HTMLButtonElement>, categoryId: WishlistCategoryId) => {
+  event.stopPropagation()
+  event.preventDefault()
+  setOpenMenuFor((current) => (current === categoryId ? null : categoryId))
+}
+
+const handleCardActivate = (categoryId: WishlistCategoryId) => {
   const now = Date.now()
   persistWishlist((previous) => {
     const current = previous[categoryId] ?? buildDefaultEntry(categoryId)
@@ -832,7 +831,7 @@ const handleToggleItemDone = (item: WishlistItem) => {
     }
   })
   setItemMenuOpenFor(null)
-  setFeedback(item.isDone ? "Ã‰lÃ©ment remis Ã  faire" : "Ã‰lÃ©ment marquÃ© comme fait")
+  setFeedback(item.isDone ? "Élément remis à faire" : "Élément marqué comme fait")
 }
 
 const handleDuplicateItem = (item: WishlistItem) => {
@@ -854,7 +853,7 @@ const handleDuplicateItem = (item: WishlistItem) => {
     }
   })
   setItemMenuOpenFor(null)
-  setFeedback("Ã‰lÃ©ment dupliquÃ©")
+  setFeedback("Élément dupliqué")
 }
 
 const handleStartEditNote = () => {
@@ -887,7 +886,7 @@ const handleDeleteItem = (item: WishlistItem) => {
     setIsAddingItem(false)
   }
   setItemMenuOpenFor(null)
-  setFeedback("Ã‰lÃ©ment supprimÃ©")
+  setFeedback("Élément supprimé")
 }
 
 const handleMoveItem = (item: WishlistItem, targetCategoryId: WishlistCategoryId, targetSubcategory?: string) => {
@@ -906,7 +905,7 @@ const handleMoveItem = (item: WishlistItem, targetCategoryId: WishlistCategoryId
           },
         }
       })
-      setFeedback("CatÃ©gorie mise Ã  jour")
+      setFeedback("Catégorie mise à jour")
     }
     setItemMenuOpenFor(null)
     return
@@ -943,7 +942,7 @@ const handleMoveItem = (item: WishlistItem, targetCategoryId: WishlistCategoryId
     setIsAddingItem(false)
   }
   setItemMenuOpenFor(null)
-  setFeedback("Ã‰lÃ©ment dÃ©placÃ©")
+  setFeedback("Élément déplacé")
 }
 
 const handleOpenMoveDialog = (item: WishlistItem) => {
@@ -1069,7 +1068,7 @@ const handleCreateCategorySubmit = (event: FormEvent<HTMLFormElement>) => {
   setOpenMenuFor(null)
   setIsEditingNote(false)
   setNoteDraft("")
-  setFeedback("Nouvelle carte ajoutÃ©e")
+  setFeedback("Nouvelle carte ajoutée")
 }
 
 const handleAddItem = (event: FormEvent<HTMLFormElement>) => {
@@ -1118,7 +1117,7 @@ const handleAddItem = (event: FormEvent<HTMLFormElement>) => {
           : item,
       ),
     }))
-    setFeedback("Ã‰lÃ©ment mis Ã  jour")
+    setFeedback("Élément mis à jour")
   } else {
     const nextItem: WishlistItem = {
       id: `wish-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
@@ -1135,7 +1134,7 @@ const handleAddItem = (event: FormEvent<HTMLFormElement>) => {
       ...currentCategory,
       items: [nextItem, ...currentCategory.items],
     }))
-    setFeedback("Produit ajoutÃ© Ã  ta wishlist")
+    setFeedback("Produit ajouté à ta wishlist")
   }
 
   setIsAddingItem(false)
@@ -1188,7 +1187,7 @@ const handleRenameSubmit = (event: FormEvent<HTMLFormElement>) => {
     }
   })
   setRenamingCategoryId(null)
-  setFeedback("CatÃ©gorie mise Ã  jour")
+  setFeedback("Catégorie mise à jour")
 }
 
 const handleResetCategory = (categoryId: WishlistCategoryId) => {
@@ -1213,7 +1212,7 @@ const handleResetCategory = (categoryId: WishlistCategoryId) => {
       ...previous,
       [categoryId]: {
         ...(existing ?? buildDefaultEntry(categoryId)),
-        title: existing?.title ?? definition?.label ?? "CatÃ©gorie",
+        title: existing?.title ?? definition?.label ?? "Catégorie",
         items: [],
         note: "",
         isFavorite: existing?.isFavorite ?? false,
@@ -1232,7 +1231,7 @@ const handleResetCategory = (categoryId: WishlistCategoryId) => {
     }
   }
   setOpenMenuFor(null)
-  setFeedback(isCustom ? "Carte supprimÃ©e" : "CatÃ©gorie nettoyÃ©e")
+  setFeedback(isCustom ? "Carte supprimée" : "Catégorie nettoyée")
 }
 
 const handleShareCategory = async (categoryId: WishlistCategoryId) => {
@@ -1269,10 +1268,10 @@ const handleShareCategory = async (categoryId: WishlistCategoryId) => {
   try {
     if (typeof nav.share === "function") {
       await nav.share({ title: categoryTitle, text: summary })
-      setFeedback("Ta wishlist a Ã©tÃ© partagÃ©e")
+      setFeedback("Ta wishlist a été partagée")
     } else if (nav.clipboard) {
       await nav.clipboard.writeText(summary)
-      setFeedback("Wishlist copiÃ©e dans le presse-papiers")
+      setFeedback("Wishlist copiée dans le presse-papiers")
     } else {
       window.prompt("Copie ta wishlist :", summary)
     }
@@ -1297,7 +1296,7 @@ const handleToggleFavorite = (categoryId: WishlistCategoryId) => {
       },
     }
   })
-  setFeedback("CatÃ©gorie marquÃ©e comme favorite")
+  setFeedback("Catégorie marquée comme favorite")
 }
 
 const handleSaveNote = () => {
@@ -1321,7 +1320,7 @@ const handleSaveNote = () => {
   setNoteDraft(trimmedNote)
   setIsEditingNote(false)
   setIsNoteMenuOpen(false)
-  setFeedback("Note mise Ã  jour")
+  setFeedback("Note mise à jour")
 }
 
 const handleDeleteNote = () => {
@@ -1344,7 +1343,7 @@ const handleDeleteNote = () => {
   setNoteDraft("")
   setIsEditingNote(false)
   setIsNoteMenuOpen(false)
-  setFeedback("MÃ©mo supprimÃ©")
+  setFeedback("Mémo supprimé")
 }
 
 const closeModal = () => {
@@ -1364,8 +1363,8 @@ return (
   <div className="wishlist-page aesthetic-page" onClick={() => setOpenMenuFor(null)}>
     <header className="wishlist-hero dashboard-panel">
       <div className="wishlist-hero__content">
-        <h2>Imagine ta wishlist idÃ©ale, catÃ©gorie par catÃ©gorie.</h2>
-        <p>Organise tes inspirations shopping, dÃ©co ou voyages en un seul espace.</p>
+        <h2>Imagine ta wishlist idéale, catégorie par catégorie.</h2>
+        <p>Organise tes inspirations shopping, déco ou voyages en un seul espace.</p>
       </div>
     </header>
     <div className="page-accent-bar" aria-hidden="true" />
@@ -1379,7 +1378,7 @@ return (
           setIsCreatingCategory(true)
         }}
       >
-        Ajouter une carte
+        Ajouter une catégorie
       </button>
     </div>
 
@@ -1440,7 +1439,7 @@ return (
               </span>
               <div className="wishlist-card__title">
                 <h2>{displayTitle}</h2>
-                {isFavorite ? <span aria-label="CatÃ©gorie favorite" className="wishlist-card__favorite">âœ¨</span> : null}
+                {isFavorite ? <span aria-label="Catégorie favorite" className="wishlist-card__favorite">✨</span> : null}
               </div>
               <p>{category.blurb ?? ""}</p>
             </div>
@@ -1493,13 +1492,13 @@ return (
                         strokeLinejoin="round"
                       />
                     </svg>
-                    <span>MÃ©mo</span>
+                    <span>Mémo</span>
                   </span>
                   <textarea
                     rows={3}
                     value={noteDraft}
                     onChange={(event) => setNoteDraft(event.target.value)}
-                    placeholder="Ajouter des dÃ©tails ou un moodboard rapide..."
+                    placeholder="Ajouter des détails ou un moodboard rapide..."
                   />
                 </label>
                 <div className="wishlist-modal__note-actions">
@@ -1516,7 +1515,7 @@ return (
                 </div>
               </form>
             ) : null}
-            {(!isEditingNote && (hasMemo || isNotePanelOpen)) ? (
+            {!isEditingNote && (hasMemo || isNotePanelOpen) ? (
               <div className="wishlist-modal__note-display">
                 <div className="wishlist-note__header">
                   <strong className="wishlist-memo-label">
@@ -1530,7 +1529,7 @@ return (
                         strokeLinejoin="round"
                       />
                     </svg>
-                    <span>MÃ©mo</span>
+                    <span>Mémo</span>
                   </strong>
                   <div className="wishlist-note__menu">
                     <button
@@ -1557,11 +1556,11 @@ return (
                 {hasMemo ? (
                   <p>{selectedCategoryState.note}</p>
                 ) : (
-                  <p className="wishlist-modal__note-placeholder">Ajoute un mÃ©mo pour cette catÃ©gorie.</p>
+                  <p className="wishlist-modal__note-placeholder">Ajoute un mémo pour cette catégorie.</p>
                 )}
                 {!hasMemo && isNotePanelOpen ? (
                   <button className="wishlist-note__add" type="button" onClick={handleStartEditNote}>
-                    Ajouter un mÃ©mo
+                    Ajouter un mémo
                   </button>
                 ) : null}
               </div>
@@ -1569,7 +1568,7 @@ return (
 
             {isAddingItem ? (
               <form className="wishlist-modal__form" onSubmit={handleAddItem}>
-                <h4>{editingItemId ? "Modifier l'Ã©lÃ©ment" : "Ajouter un Ã©lÃ©ment"}</h4>
+                <h4>{editingItemId ? "Modifier l'élément" : "Ajouter un élément"}</h4>
                 <div className="wishlist-modal__form-media">
                   <div className="wishlist-upload">
                     <span className="wishlist-upload__label">Photo</span>
@@ -1580,7 +1579,7 @@ return (
                     >
                       <input ref={itemImageInputRef} type="file" accept="image/*" onChange={handleItemImageChange} />
                       {itemDraft.imageUrl ? (
-                        <img src={itemDraft.imageUrl} alt={itemDraft.title || "PrÃ©visualisation de l'Ã©lÃ©ment"} />
+                        <img src={itemDraft.imageUrl} alt={itemDraft.title || "Prévisualisation de l'élément"} />
                       ) : (
                         <div className="wishlist-upload__placeholder">
                           <span>+</span>
@@ -1611,7 +1610,7 @@ return (
                         type="text"
                         value={itemDraft.subtitle}
                         onChange={(event) => setItemDraft((previous) => ({ ...previous, subtitle: event.target.value }))}
-                        placeholder="Ex : Couleur, Ã©dition limitÃ©e, prix..."
+                        placeholder="Ex : Couleur, édition limitée, prix..."
                       />
                     </label>
                   </div>
@@ -1623,12 +1622,12 @@ return (
                     inputMode="url"
                     value={itemDraft.link}
                     onChange={(event) => setItemDraft((previous) => ({ ...previous, link: event.target.value }))}
-                    placeholder="Lien boutique ou rÃ©fÃ©rence"
+                    placeholder="Lien boutique ou référence"
                   />
                 </label>
                 <div className="wishlist-category-picker">
                   {itemDraft.subcategory.trim().length > 0 ? (
-                    <span className="wishlist-category-picker__current">CatÃ©gorie actuelle : {itemDraft.subcategory}</span>
+                    <span className="wishlist-category-picker__current">Catégorie actuelle : {itemDraft.subcategory}</span>
                   ) : null}
                   <button
                     type="button"
@@ -1636,7 +1635,7 @@ return (
                     onClick={() => setIsCategoryPickerOpen((previous) => !previous)}
                     aria-expanded={isCategoryPickerOpen}
                   >
-                    <span>+ Ajouter Ã  la catÃ©gorie</span>
+                    <span>+ Ajouter à la catégorie</span>
                     <svg
                       viewBox="0 0 24 24"
                       aria-hidden="true"
@@ -1648,17 +1647,17 @@ return (
                   {isCategoryPickerOpen ? (
                     <div className="wishlist-category-picker__panel">
                       <label>
-                        <span>Nom de la catÃ©gorie</span>
+                        <span>Nom de la catégorie</span>
                         <input
                           type="text"
                           value={itemDraft.subcategory}
                           onChange={(event) => setItemDraft((previous) => ({ ...previous, subcategory: event.target.value }))}
-                          placeholder="Ex: Accessoires, NoÃ«l, Lecture..."
+                          placeholder="Ex : Accessoires, Noël, Lecture..."
                         />
                       </label>
                       {subcategoryOptions.length > 0 ? (
                         <>
-                          <span className="wishlist-category-picker__hint">Suggestions dÃ©jÃ  utilisÃ©es</span>
+                          <span className="wishlist-category-picker__hint">Suggestions déjà utilisées</span>
                           <ul className="wishlist-category-picker__list">
                             {subcategoryOptions.map((option) => (
                               <li key={option}>
@@ -1676,7 +1675,7 @@ return (
                           </ul>
                         </>
                       ) : (
-                        <p className="wishlist-category-picker__empty">Tu n'as pas encore crÃ©Ã© de catÃ©gorie personnalisÃ©e.</p>
+                        <p className="wishlist-category-picker__empty">Tu n'as pas encore créé de catégorie personnalisée.</p>
                       )}
                     </div>
                   ) : null}
@@ -1690,185 +1689,186 @@ return (
               </form>
             ) : null}
 
-           <div className="wishlist-modal__list">
-  {selectedCategoryState.items.length === 0 ? (
-    <p className="wishlist-modal__empty">
-      Aucun Ã©lÃ©ment encore. Clique sur + pour enregistrer tes envies dans cette catÃ©gorie.
-    </p>
-  ) : (
-    groupedSelectedItems.map((group) => (
-      <div key={group.key} className="wishlist-modal__group">
-        {group.key !== "__uncategorized" ? <h4>{group.label}</h4> : null}
-        <ul>
-          {group.items.map((item) => {
-            const linkMeta = getLinkMeta(item.link)
-            return (
-            <li key={item.id} className={item.isDone ? "wishlist-item wishlist-item--done" : "wishlist-item"}>
-              <div className="wishlist-item__header">
-                <div className="wishlist-item__media">
-                  {item.imageUrl ? (
-                    <img src={item.imageUrl} alt={item.title} />
-                  ) : (
-                    <span className="wishlist-item__placeholder" aria-hidden="true">
-                      {item.title.charAt(0).toUpperCase()}
-                    </span>
-                  )}
-                </div>
-                <div className="wishlist-item__text">
-                  <strong>{item.title}</strong>
-                  {item.subtitle ? <span>{item.subtitle}</span> : null}
-                  {item.isDone ? <span className="wishlist-item__status">Fait</span> : null}
-                  {group.key === "__uncategorized" && item.subcategory ? (
-                    <span className="wishlist-item__subcategory">{item.subcategory}</span>
-                  ) : null}
-                </div>
-                <div className="wishlist-item__actions">
-                  <button
-                    type="button"
-                    className={
-                      expandedItems[item.id]
-                        ? "wishlist-item__toggle wishlist-item__toggle--open"
-                        : "wishlist-item__toggle"
-                    }
-                    aria-expanded={expandedItems[item.id] ?? false}
-                    onClick={() => handleToggleItemDetails(item.id)}
-                  >
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </button>
-                  <div className="wishlist-item__menu">
-                    <button
-                      type="button"
-                      className="profile-menu"
-                      aria-haspopup="true"
-                      aria-expanded={itemMenuOpenFor === item.id}
-                      onClick={(event) => handleToggleItemMenu(event, item.id)}
-                    >
-                      <span aria-hidden="true">...</span>
-                    </button>
-                    {itemMenuOpenFor === item.id ? (
-                      <div className="wishlist-item__menu-popover" role="menu">
-                        <button type="button" onClick={() => handleStartEditItem(item)}>
-                          Modifier
-                        </button>
-                        <button type="button" onClick={() => handleToggleItemDone(item)}>
-                          {item.isDone ? "Marquer comme Ã  faire" : "Marquer comme fait"}
-                        </button>
-                        <button type="button" onClick={() => handleDuplicateItem(item)}>
-                          Dupliquer
-                        </button>
-                        <button type="button" onClick={() => handleOpenMoveDialog(item)}>
-                          DÃ©placer vers une autre wishlist
-                        </button>
-                        <button
-                          type="button"
-                          className="wishlist-item__menu-danger"
-                          onClick={() => handleDeleteItem(item)}
-                        >
-                          Supprimer
-                        </button>
-                      </div>
-                    ) : null}
+            <div className="wishlist-modal__list">
+              {selectedCategoryState.items.length === 0 ? (
+                <p className="wishlist-modal__empty">
+                  Aucun élément encore. Clique sur + pour enregistrer tes envies dans cette catégorie.
+                </p>
+              ) : (
+                groupedSelectedItems.map((group) => (
+                  <div key={group.key} className="wishlist-modal__group">
+                    {group.key !== "__uncategorized" ? <h4>{group.label}</h4> : null}
+                    <ul>
+                      {group.items.map((item) => {
+                        const linkMeta = getLinkMeta(item.link)
+                        return (
+                          <li key={item.id} className={item.isDone ? "wishlist-item wishlist-item--done" : "wishlist-item"}>
+                            <div className="wishlist-item__header">
+                              <div className="wishlist-item__media">
+                                {item.imageUrl ? (
+                                  <img src={item.imageUrl} alt={item.title} />
+                                ) : (
+                                  <span className="wishlist-item__placeholder" aria-hidden="true">
+                                    {item.title.charAt(0).toUpperCase()}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="wishlist-item__text">
+                                <strong>{item.title}</strong>
+                                {item.subtitle ? <span>{item.subtitle}</span> : null}
+                                {item.isDone ? <span className="wishlist-item__status">Fait</span> : null}
+                                {group.key === "__uncategorized" && item.subcategory ? (
+                                  <span className="wishlist-item__subcategory">{item.subcategory}</span>
+                                ) : null}
+                              </div>
+                              <div className="wishlist-item__actions">
+                                <button
+                                  type="button"
+                                  className={
+                                    expandedItems[item.id]
+                                      ? "wishlist-item__toggle wishlist-item__toggle--open"
+                                      : "wishlist-item__toggle"
+                                  }
+                                  aria-expanded={expandedItems[item.id] ?? false}
+                                  onClick={() => handleToggleItemDetails(item.id)}
+                                >
+                                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                  </svg>
+                                </button>
+                                <div className="wishlist-item__menu">
+                                  <button
+                                    type="button"
+                                    className="profile-menu"
+                                    aria-haspopup="true"
+                                    aria-expanded={itemMenuOpenFor === item.id}
+                                    onClick={(event) => handleToggleItemMenu(event, item.id)}
+                                  >
+                                    <span aria-hidden="true">...</span>
+                                  </button>
+                                  {itemMenuOpenFor === item.id ? (
+                                    <div className="wishlist-item__menu-popover" role="menu">
+                                      <button type="button" onClick={() => handleStartEditItem(item)}>
+                                        Modifier
+                                      </button>
+                                      <button type="button" onClick={() => handleToggleItemDone(item)}>
+                                        {item.isDone ? "Marquer comme à faire" : "Marquer comme fait"}
+                                      </button>
+                                      <button type="button" onClick={() => handleDuplicateItem(item)}>
+                                        Dupliquer
+                                      </button>
+                                      <button type="button" onClick={() => handleOpenMoveDialog(item)}>
+                                        Déplacer vers une autre wishlist
+                                      </button>
+                                      <button
+                                        type="button"
+                                        className="wishlist-item__menu-danger"
+                                        onClick={() => handleDeleteItem(item)}
+                                      >
+                                        Supprimer
+                                      </button>
+                                    </div>
+                                  ) : null}
+                                </div>
+                              </div>
+                            </div>
+                            {expandedItems[item.id] ? (
+                              <div className="wishlist-item__details-panel">
+                                {linkMeta ? (
+                                  <a className="wishlist-item__link-chip" href={linkMeta.href} target="_blank" rel="noreferrer">
+                                    <img
+                                      className="wishlist-item__link-favicon"
+                                      src={`https://www.google.com/s2/favicons?domain=${linkMeta.host}&sz=64`}
+                                      alt=""
+                                      loading="lazy"
+                                    />
+                                    <span>Visiter {linkMeta.host}</span>
+                                  </a>
+                                ) : (
+                                  <p className="wishlist-item__details-empty">Ajoute un lien pour retrouver l'article.</p>
+                                )}
+                              </div>
+                            ) : null}
+                          </li>
+                        )
+                      })}
+                    </ul>
                   </div>
-                </div>
-              </div>
-              {expandedItems[item.id] ? (
-                <div className="wishlist-item__details-panel">
-                  {linkMeta ? (
-                    <a className="wishlist-item__link-chip" href={linkMeta.href} target="_blank" rel="noreferrer">
-                      <img
-                        className="wishlist-item__link-favicon"
-                        src={`https://www.google.com/s2/favicons?domain=${linkMeta.host}&sz=64`}
-                        alt=""
-                        loading="lazy"
-                      />
-                      <span>Visiter {linkMeta.host}</span>
-                    </a>
-                  ) : (
-                    <p className="wishlist-item__details-empty">Ajoute un lien pour retrouver l'article.</p>
-                  )}
-                </div>
-              ) : null}
-            </li>
-          )})}
-        </ul>
-      </div>
-    ))
+                ))
+              )}
+            </div>
+          </div>
+          <footer className="wishlist-modal__actions">
+            <button
+              type="button"
+              onClick={() => {
+                setRenamingCategoryId(selectedCategoryId)
+                setOpenMenuFor(null)
+              }}
+            >
+              Modifier
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setIsAddingItem((value) => {
+                  const next = !value
+                  setEditingItemId(null)
+                  resetItemDraft()
+                  if (!next) {
+                    setIsCategoryPickerOpen(false)
+                  }
+                  return next
+                })
+                setItemMenuOpenFor(null)
+              }}
+              aria-pressed={isAddingItem}
+            >
+              +
+            </button>
+  <button
+  type="button"
+  onClick={() => {
+    setIsNotePanelOpen((previous) => {
+      const next = !previous
+      setIsEditingNote(false)
+      if (!next) {
+        setIsNoteMenuOpen(false)
+      }
+      return next
+    })
+    setNoteDraft(selectedCategoryState.note ?? "")
+  }}
+  aria-pressed={isNotePanelOpen}
+>
+  <i className="fa-solid fa-message" aria-hidden="true" />
+</button>
+<button
+  type="button"
+  className={selectedCategoryState.isFavorite ? "wishlist-modal__favorite active" : "wishlist-modal__favorite"}
+  aria-pressed={selectedCategoryState.isFavorite}
+  onClick={() => handleToggleFavorite(selectedCategoryId)}
+>
+  {selectedCategoryState.isFavorite ? (
+    <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M11.9999 3.94228C13.1757 2.85872 14.7069 2.25 16.3053 2.25C18.0313 2.25 19.679 2.95977 20.8854 4.21074C22.0832 5.45181 22.75 7.1248 22.75 8.86222C22.75 10.5997 22.0831 12.2728 20.8854 13.5137C20.089 14.3393 19.2938 15.1836 18.4945 16.0323C16.871 17.7562 15.2301 19.4985 13.5256 21.14L13.5216 21.1438C12.6426 21.9779 11.2505 21.9476 10.409 21.0754L3.11399 13.5136C0.62867 10.9374 0.62867 6.78707 3.11399 4.21085C5.54605 1.68984 9.46239 1.60032 11.9999 3.94228Z"
+        fill="currentColor"
+      />
+    </svg>
+  ) : (
+    <svg width="24px" height="24px" strokeWidth="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path
+        d="M22 8.86222C22 10.4087 21.4062 11.8941 20.3458 12.9929C17.9049 15.523 15.5374 18.1613 13.0053 20.5997C12.4249 21.1505 11.5042 21.1304 10.9488 20.5547L3.65376 12.9929C1.44875 10.7072 1.44875 7.01723 3.65376 4.73157C5.88044 2.42345 9.50794 2.42345 11.7346 4.73157L11.9998 5.00642L12.2648 4.73173C13.3324 3.6245 14.7864 3 16.3053 3C17.8242 3 19.2781 3.62444 20.3458 4.73157C21.4063 5.83045 22 7.31577 22 8.86222Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+    </svg>
   )}
-</div>
-</div>
-<footer className="wishlist-modal__actions">
-  <button
-    type="button"
-    onClick={() => {
-      setRenamingCategoryId(selectedCategoryId)
-      setOpenMenuFor(null)
-    }}
-  >
-    Modifier
-  </button>
-  <button
-    type="button"
-    onClick={() => {
-      setIsAddingItem((value) => {
-        const next = !value
-        setEditingItemId(null)
-        resetItemDraft()
-        if (!next) {
-          setIsCategoryPickerOpen(false)
-        }
-        return next
-      })
-      setItemMenuOpenFor(null)
-    }}
-    aria-pressed={isAddingItem}
-  >
-    +
-  </button>
-  <button
-    type="button"
-    onClick={() => {
-      setIsNotePanelOpen((previous) => {
-        const next = !previous
-        setIsEditingNote(false)
-        if (!next) {
-          setIsNoteMenuOpen(false)
-        }
-        return next
-      })
-      setNoteDraft(selectedCategoryState.note ?? "")
-    }}
-    aria-pressed={isNotePanelOpen}
-  >
-    <i className="fa-solid fa-message" aria-hidden="true" />
-  </button>
-  <button
-    type="button"
-    className={selectedCategoryState.isFavorite ? "wishlist-modal__favorite active" : "wishlist-modal__favorite"}
-    aria-pressed={selectedCategoryState.isFavorite}
-    onClick={() => handleToggleFavorite(selectedCategoryId)}
-  >
-    {selectedCategoryState.isFavorite ? (
-      <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M11.9999 3.94228C13.1757 2.85872 14.7069 2.25 16.3053 2.25C18.0313 2.25 19.679 2.95977 20.8854 4.21074C22.0832 5.45181 22.75 7.1248 22.75 8.86222C22.75 10.5997 22.0831 12.2728 20.8854 13.5137C20.089 14.3393 19.2938 15.1836 18.4945 16.0323C16.871 17.7562 15.2301 19.4985 13.5256 21.14L13.5216 21.1438C12.6426 21.9779 11.2505 21.9476 10.409 21.0754L3.11399 13.5136C0.62867 10.9374 0.62867 6.78707 3.11399 4.21085C5.54605 1.68984 9.46239 1.60032 11.9999 3.94228Z"
-          fill="currentColor"
-        />
-      </svg>
-    ) : (
-      <svg width="24px" height="24px" strokeWidth="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path
-          d="M22 8.86222C22 10.4087 21.4062 11.8941 20.3458 12.9929C17.9049 15.523 15.5374 18.1613 13.0053 20.5997C12.4249 21.1505 11.5042 21.1304 10.9488 20.5547L3.65376 12.9929C1.44875 10.7072 1.44875 7.01723 3.65376 4.73157C5.88044 2.42345 9.50794 2.42345 11.7346 4.73157L11.9998 5.00642L12.2648 4.73173C13.3324 3.6245 14.7864 3 16.3053 3C17.8242 3 19.2781 3.62444 20.3458 4.73157C21.4063 5.83045 22 7.31577 22 8.86222Z"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-      </svg>
-    )}
-  </button>
+</button>
 </footer>
 </div>
 </div>
@@ -1943,14 +1943,14 @@ return (
 {renamingCategoryId ? (
   <div className="wishlist-modal__backdrop" role="dialog" aria-modal="true" onClick={() => setRenamingCategoryId(null)}>
     <form className="wishlist-rename" onSubmit={handleRenameSubmit} onClick={(event) => event.stopPropagation()}>
-      <h3>Modifier la catÃ©gorie</h3>
+      <h3>Modifier la catégorie</h3>
       <label>
         <span>Nouveau titre</span>
         <input
           type="text"
           value={renameDraft}
           onChange={(event) => setRenameDraft(event.target.value)}
-          placeholder="Nom de la catÃ©gorie"
+          placeholder="Nom de la catégorie"
           required
         />
       </label>
@@ -1971,11 +1971,11 @@ return (
           </div>
           {renameCoverName ? <span className="wishlist-cover-upload__name">{renameCoverName}</span> : null}
           <div className="wishlist-rename__preview">
-            {renameCoverPreview ? <img src={renameCoverPreview} alt={`AperÃ§u de ${renameDraft || "la carte"}`} /> : <span>Aucune image</span>}
+            {renameCoverPreview ? <img src={renameCoverPreview} alt={`Aperçu de ${renameDraft || "la carte"}`} /> : <span>Aucune image</span>}
           </div>
           {renameCoverName ? (
             <button type="button" className="wishlist-cover-upload__remove" onClick={handleResetRenameCover}>
-              Revenir Ã  la photo actuelle
+              Revenir à la photo actuelle
             </button>
           ) : null}
         </div>
@@ -1993,12 +1993,12 @@ return (
 {movingItem ? (
   <div className="wishlist-modal__backdrop" role="dialog" aria-modal="true" onClick={handleCancelMove}>
     <div className="wishlist-move" onClick={(event) => event.stopPropagation()}>
-      <h3>DÃ©placer vers une autre wishlist</h3>
+      <h3>Déplacer vers une autre wishlist</h3>
       {moveTargetCategories.length === 0 ? (
-        <p>CrÃ©e une nouvelle carte pour pouvoir dÃ©placer cet Ã©lÃ©ment.</p>
+        <p>Crée une nouvelle carte pour pouvoir déplacer cet élément.</p>
       ) : (
         <>
-          <p>Choisis la wishlist de destination puis sÃ©lectionne la catÃ©gorie dans laquelle ranger cet Ã©lÃ©ment.</p>
+          <p>Choisis la wishlist de destination puis sélectionne la catégorie dans laquelle ranger cet élément.</p>
           <div className="wishlist-move__grid">
             {moveTargetCategories.map((card) => (
               <button
@@ -2015,12 +2015,12 @@ return (
           {moveTargetCategoryId ? (
             <div className="wishlist-move__category">
               <label>
-                <span>CatÃ©gorie dans la nouvelle wishlist</span>
+                <span>Catégorie dans la nouvelle wishlist</span>
                 <input
                   type="text"
                   value={moveSubcategory}
                   onChange={(event) => setMoveSubcategory(event.target.value)}
-                  placeholder="Saisis ou choisis une catÃ©gorie"
+                  placeholder="Saisis ou choisis une catégorie"
                 />
               </label>
               {getCategorySubcategories(moveTargetCategoryId).length > 0 ? (
@@ -2055,8 +2055,6 @@ return (
 }
 
 export default WishlistPage
-
-
 
 
 

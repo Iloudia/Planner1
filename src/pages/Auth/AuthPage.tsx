@@ -8,6 +8,11 @@ import "./Auth.css"
 const REMEMBER_PREFERENCE_KEY = "planner.auth.remember"
 const PROFILE_STORAGE_KEY = "planner.profile.preferences.v1"
 const EMAIL_HISTORY_KEY = "planner.auth.email_history.v1"
+const GENDER_OPTIONS = [
+  { value: "", label: "Ne pas préciser" },
+  { value: "femme", label: "Femme" },
+  { value: "homme", label: "Homme" },
+]
 
 type AuthMode = "login" | "register"
 
@@ -92,10 +97,12 @@ const AuthPage = ({ mode }: AuthFormProps) => {
   const [username, setUsername] = useState("")
   const [birthday, setBirthday] = useState("")
   const [gender, setGender] = useState("")
+  const [isGenderMenuOpen, setIsGenderMenuOpen] = useState(false)
   const [acceptTerms, setAcceptTerms] = useState(false)
   const [registerStep, setRegisterStep] = useState(0)
   const [isGoogleReady, setIsGoogleReady] = useState(false)
   const googleButtonRef = useRef<HTMLDivElement | null>(null)
+  const genderMenuRef = useRef<HTMLDivElement | null>(null)
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
   const skipAutoRedirectRef = useRef(false)
 
@@ -103,6 +110,10 @@ const AuthPage = ({ mode }: AuthFormProps) => {
     const fromRoute = location.state as { from?: { pathname: string } } | undefined
     return fromRoute?.from?.pathname ?? "/home"
   }, [location.state])
+  const genderLabel = useMemo(
+    () => GENDER_OPTIONS.find((option) => option.value === gender)?.label ?? "Ne pas préciser",
+    [gender],
+  )
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -152,6 +163,18 @@ const AuthPage = ({ mode }: AuthFormProps) => {
       text: "continue_with",
     })
   }, [destinationPath, googleClientId, isGoogleReady, loginWithGoogle, navigate])
+
+  useEffect(() => {
+    if (!isGenderMenuOpen) return
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node
+      if (genderMenuRef.current && !genderMenuRef.current.contains(target)) {
+        setIsGenderMenuOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [isGenderMenuOpen])
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -419,11 +442,46 @@ const AuthPage = ({ mode }: AuthFormProps) => {
                       </label>
                       <label>
                         Genre
-                        <select value={gender} onChange={(event) => setGender(event.target.value)}>
-                          <option value="">Ne pas préciser</option>
-                          <option value="femme">Femme</option>
-                          <option value="homme">Homme</option>
-                        </select>
+                        <div className="auth-form__select" ref={genderMenuRef}>
+                          <button
+                            type="button"
+                            className={gender ? "auth-form__select-trigger" : "auth-form__select-trigger is-placeholder"}
+                            aria-haspopup="listbox"
+                            aria-expanded={isGenderMenuOpen}
+                            onClick={() => setIsGenderMenuOpen((prev) => !prev)}
+                          >
+                            <span>{genderLabel}</span>
+                            <svg className="auth-form__select-chevron" viewBox="0 0 20 20" aria-hidden="true">
+                              <path
+                                d="M5 7.5L10 12.5L15 7.5"
+                                stroke="currentColor"
+                                strokeWidth="1.6"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                          </button>
+                          {isGenderMenuOpen ? (
+                            <div className="auth-form__select-menu" role="listbox">
+                              {GENDER_OPTIONS.map((option) => (
+                                <button
+                                  key={option.value}
+                                  type="button"
+                                  role="option"
+                                  aria-selected={gender === option.value}
+                                  className={gender === option.value ? "is-selected" : undefined}
+                                  onMouseDown={(event) => {
+                                    event.preventDefault()
+                                    setGender(option.value)
+                                    setIsGenderMenuOpen(false)
+                                  }}
+                                >
+                                  {option.label}
+                                </button>
+                              ))}
+                            </div>
+                          ) : null}
+                        </div>
                       </label>
                     </div>
                     <label className="auth-terms">

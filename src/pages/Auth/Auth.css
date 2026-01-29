@@ -137,6 +137,81 @@
   background: #fff;
 }
 
+.auth-form__select {
+  position: relative;
+  width: 100%;
+}
+
+.auth-form__select-trigger {
+  border: 1px solid rgba(236, 72, 153, 0.25);
+  border-radius: 12px;
+  background: #fff;
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  box-shadow: 0 10px 24px rgba(236, 72, 153, 0.08);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  color: #111827;
+}
+
+.auth-form__select-trigger.is-placeholder {
+  color: rgba(15, 23, 42, 0.6);
+}
+
+.auth-form__select-trigger:focus-visible {
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
+}
+
+.auth-form__select-chevron {
+  width: 18px;
+  height: 18px;
+  color: rgba(15, 23, 42, 0.6);
+  flex: 0 0 auto;
+}
+
+.auth-form__select-menu {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 0.4rem;
+  display: flex;
+  flex-direction: column;
+  min-width: 150px;
+  box-shadow: 0 26px 70px rgba(15, 23, 42, 0.22);
+  z-index: 5;
+}
+
+.auth-form__select-menu button {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 0.55rem 0.85rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  color: #111827;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.auth-form__select-menu button:hover,
+.auth-form__select-menu button:focus-visible,
+.auth-form__select-menu button.is-selected {
+  background: rgba(236, 72, 153, 0.08);
+  color: #be185d;
+  outline: none;
+}
+
 .auth-form input:focus,
 .auth-form select:focus {
   outline: none;
