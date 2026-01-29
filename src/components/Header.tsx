@@ -48,7 +48,7 @@ function Header() {
       { label: "Archives", path: "/archives" },
       { label: "FAQ", path: "/faq" },
       { label: "Cookies", path: "/cookies" },
-      { label: "Parametres", path: "/parametres" },
+      { label: "Paramètres", path: "/parametres" },
     ],
     [],
   )

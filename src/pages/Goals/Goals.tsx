@@ -20,10 +20,7 @@ const GoalsPage = () => {
 
   return (
     <>
-      <div className="goals-hero-image" aria-hidden="true">
-        <img src={goalsHero} alt="Ambiance objectifs" />
-      </div>
-      <div className="page-accent-bar" aria-hidden="true" />
+<div className="page-accent-bar" aria-hidden="true" />
       <PageHeading eyebrow="Goals" title="Mes Goals" className="goals-page-heading" />
       <div className="content-page goals-page">
 

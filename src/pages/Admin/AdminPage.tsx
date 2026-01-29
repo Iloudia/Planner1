@@ -52,7 +52,7 @@ const toStringList = (value: unknown) => {
 }
 
 const bumpCount = (bucket: Record<string, number>, label: unknown) => {
-  const key = cleanString(label) || "non renseigne"
+  const key = cleanString(label) || "non renseigné"
   bucket[key] = (bucket[key] ?? 0) + 1
 }
 
@@ -204,26 +204,26 @@ const AdminPage = () => {
       const onboardingKey = buildUserScopedKey(user.email, ONBOARDING_STORAGE_KEY)
       const onboarding = safeReadJson<OnboardingAnswers>(onboardingKey)
 
-      const source = cleanString(onboarding?.source) || "non renseigne"
+      const source = cleanString(onboarding?.source) || "non renseigné"
       bumpCount(sourceCounts, source)
 
       const reasons = toStringList(onboarding?.reasons)
       if (reasons.length === 0) {
-        bumpCount(reasonsCounts, "non renseigne")
+        bumpCount(reasonsCounts, "non renseigné")
       } else {
         reasons.forEach((reason) => bumpCount(reasonsCounts, reason))
       }
 
       const categories = toStringList(onboarding?.categories)
       if (categories.length === 0) {
-        bumpCount(categoryCounts, "non renseigne")
+        bumpCount(categoryCounts, "non renseigné")
       } else {
         categories.forEach((category) => bumpCount(categoryCounts, category))
       }
 
       const priority = toStringList(onboarding?.priority)
       if (priority.length === 0) {
-        bumpCount(priorityCounts, "non renseigne")
+        bumpCount(priorityCounts, "non renseigné")
       } else {
         priority.forEach((item) => bumpCount(priorityCounts, item))
       }
@@ -274,7 +274,7 @@ const AdminPage = () => {
       setAlert({ type: "error", message: result.error ?? "Impossible de supprimer ce compte." })
       return
     }
-    setAlert({ type: "success", message: "Compte supprimé et données nettoyées." })
+    setAlert({ type: "success", message: "Compte supprimÃ© et donnÃ©es nettoyÃ©es." })
     await refreshUsers()
   }
 
@@ -292,8 +292,8 @@ const AdminPage = () => {
         <div>
           <p className="admin-eyebrow">Back-office</p>
           <h1>Administration des comptes</h1>
-          <p>Connectez-vous en tant qu’admin@planner.local.</p>
-          <p>Accès réservé aux administrateurs vérifiés.</p>
+          <p>Connectez-vous en tant quâ€™admin@planner.local.</p>
+          <p>AccÃ¨s rÃ©servÃ© aux administrateurs vÃ©rifiÃ©s.</p>
         </div>
         <div className="admin-hero">
           <article>
@@ -305,7 +305,7 @@ const AdminPage = () => {
             <strong>{stats.active}</strong>
           </article>
           <article>
-            <span>Désactivés</span>
+            <span>DÃ©sactivÃ©s</span>
             <strong>{stats.disabled}</strong>
           </article>
         </div>
@@ -339,7 +339,7 @@ const AdminPage = () => {
             </div>
             <div className="admin-table__body admin-table__body--scroll">
               {filteredUsers.length === 0 ? (
-                <p className="admin-table__empty">Aucun compte ne correspond a cette adresse e-mail.</p>
+                <p className="admin-table__empty">Aucun compte ne correspond Ã  cette adresse e-mail.</p>
               ) : (
                 filteredUsers.map((user) => (
                   <div
@@ -378,9 +378,9 @@ const AdminPage = () => {
           <header className="admin-panel__header">
             <div>
               <p className="admin-eyebrow">Details</p>
-              <h2>Profil sélectionné</h2>
+              <h2>Profil sÃ©lectionnÃ©</h2>
             </div>
-            <p className="admin-helper">Recherche, sélection, désactivation ou suppression en un clic.</p>
+            <p className="admin-helper">Recherche, sÃ©lection, dÃ©sactivation ou suppression en un clic.</p>
           </header>
 
           {alert ? <div className={`admin-alert admin-alert--${alert.type}`}>{alert.message}</div> : null}
@@ -414,15 +414,15 @@ const AdminPage = () => {
 
               <div className="admin-form__actions">
                 <button type="button" onClick={() => handleStatusToggle(selectedUser)}>
-                  {selectedUser.status === "actif" ? "Désactiver le compte" : "Re-activer le compte"}
+                  {selectedUser.status === "actif" ? "DÃ©sactiver le compte" : "Re-activer le compte"}
                 </button>
                 <button type="button" className="admin-delete admin-delete--wide" onClick={() => handleDelete(selectedUser.email)}>
-                  Supprimer définitivement
+                  Supprimer dÃ©finitivement
                 </button>
               </div>
             </div>
           ) : (
-            <p className="admin-empty-state">Aucun utilisateur a afficher pour le moment.</p>
+            <p className="admin-empty-state">Aucun utilisateur Ã  afficher pour le moment.</p>
           )}
         </section>
       </div>
@@ -449,7 +449,7 @@ const AdminPage = () => {
             <PieChart entries={surveyStats.reasons} />
           </article>
           <article className="admin-stat-card">
-            <h3>Categories</h3>
+            <h3>CatÃ©gories</h3>
             <PieChart entries={surveyStats.categories} />
           </article>
           <article className="admin-stat-card">
@@ -459,11 +459,11 @@ const AdminPage = () => {
         </div>
       </section>
       <section className="admin-safe">
-        <h2>Conformité et sécurité</h2>
+        <h2>ConformitÃ© et sÃ©curitÃ©</h2>
         <ul>
-          <li>Accès limité aux administrateurs authentifiés via une route protégée.</li>
-          <li>Les désactivations coupent les sessions actives et empêchent les nouvelles connexions.</li>
-          <li>Les suppressions nettoient les données locales (identifiants, métadonnées) afin de respecter le droit à l’effacement.</li>
+          <li>AccÃ¨s limitÃ© aux administrateurs authentifiÃ©s via une route protÃ©gÃ©e.</li>
+          <li>Les dÃ©sactivations coupent les sessions actives et empÃªchent les nouvelles connexions.</li>
+          <li>Les suppressions nettoient les donnÃ©es locales (identifiants, mÃ©tadonnÃ©es) afin de respecter le droit Ã  lâ€™effacement.</li>
         </ul>
       </section>
       {showAllUsers ? (
@@ -477,7 +477,7 @@ const AdminPage = () => {
             </header>
             <div className="admin-modal__body">
               {users.length === 0 ? (
-                <p className="admin-table__empty">Aucun compte a afficher.</p>
+                <p className="admin-table__empty">Aucun compte Ã  afficher.</p>
               ) : (
                 <ul className="admin-modal__list">
                   {users.map((user) => (

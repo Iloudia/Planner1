@@ -244,10 +244,7 @@ const SportPage = () => {
 
   return (
     <div className="sport-page">
-      <div className="sport-hero-image">
-        <img src={planner06} alt="Ambiance sport" />
-      </div>
-      <div className="sport-page__accent-bar" aria-hidden="true" />
+<div className="sport-page__accent-bar" aria-hidden="true" />
       <PageHeading eyebrow="Routine active" title="Sport" />
 
       <section className="sport-quick-panels">

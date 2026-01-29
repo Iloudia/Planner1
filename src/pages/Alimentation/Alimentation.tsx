@@ -1,5 +1,7 @@
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { Link } from "react-router-dom"
+import { useAuth } from "../../context/AuthContext"
+import { buildUserScopedKey } from "../../utils/userScopedKey"
 import usePersistentState from "../../hooks/usePersistentState"
 import PageHeading from "../../components/PageHeading"
 import photo1 from "../../assets/planner-01.jpg"
@@ -24,6 +26,21 @@ const mealSlots: { id: MealSlotId; label: string; hint: string }[] = [
 
 type WeeklyPlan = Record<typeof weekDays[number], Record<MealSlotId, string>>
 
+const DIET_WEEKLY_PLAN_RECIPES_KEY = "planner.diet.weeklyPlanRecipes"
+
+type RecipeSnapshot = {
+  id: string
+  title: string
+  flavor: "sucre" | "sale"
+  prepTime: string
+  servings: string
+  image: string
+  ingredients: string[]
+  steps: string[]
+  toppings?: string[]
+  tips?: string[]
+}
+
 type ShoppingItem = {
   id: string
   text: string
@@ -43,6 +60,9 @@ const buildDefaultWeeklyPlan = (): WeeklyPlan => {
 }
 
 function DietPage() {
+  const { userEmail } = useAuth()
+  const weeklyRecipesKey = useMemo(() => buildUserScopedKey(userEmail, DIET_WEEKLY_PLAN_RECIPES_KEY), [userEmail])
+  const [selectedRecipe, setSelectedRecipe] = useState<RecipeSnapshot | null>(null)
   const [weeklyPlan, setWeeklyPlan] = usePersistentState<WeeklyPlan>("planner.diet.weeklyPlan", buildDefaultWeeklyPlan)
   const [shoppingNotes, setShoppingNotes] = usePersistentState<string>("planner.diet.groceriesNotes", "")
 
@@ -69,12 +89,20 @@ function DietPage() {
     }))
   }
 
+  const getRecipeForSlot = (day: typeof weekDays[number], slot: MealSlotId) => {
+    try {
+      const stored = localStorage.getItem(weeklyRecipesKey)
+      if (!stored) return null
+      const parsed = JSON.parse(stored) as Record<string, Record<MealSlotId, RecipeSnapshot>>
+      return parsed?.[day]?.[slot] ?? null
+    } catch {
+      return null
+    }
+  }
+
   return (
     <>
-      <div className="diet-hero-photo" aria-hidden="true">
-        <img src={stripImages[0]} alt="" />
-      </div>
-      <div className="page-accent-bar" aria-hidden="true" />
+<div className="page-accent-bar" aria-hidden="true" />
       <PageHeading eyebrow="Alimentation" title="Cuisine" />
       <main className="content-page diet-page">
         <section className="page-section diet-crosslink">
@@ -107,17 +135,29 @@ function DietPage() {
                     <span className="diet-week__day">{day}</span>
                   </div>
                   {mealSlots.map((slot) => (
-                  <label key={slot.id} className="diet-week__slot">
+                  <div
+                    key={slot.id}
+                    className={`diet-week__slot${getRecipeForSlot(day, slot.id) ? " has-recipe" : ""}`}
+                  >
                     <span>
                       {slot.label}
+                      {getRecipeForSlot(day, slot.id) ? (
+                        <button
+                          type="button"
+                          className="diet-week__recipe-badge"
+                          onClick={() => setSelectedRecipe(getRecipeForSlot(day, slot.id))}
+                        >
+                          Voir recette
+                        </button>
+                      ) : null}
                     </span>
                     <input
-                        type="text"
-                        value={weeklyPlan[day][slot.id]}
-                        placeholder={`Ton plat du ${slot.label.toLowerCase()}`}
-                        onChange={(event) => handleMealChange(day, slot.id, event.target.value)}
-                      />
-                    </label>
+                      type="text"
+                      value={weeklyPlan[day][slot.id]}
+                      placeholder={`Ton plat du ${slot.label.toLowerCase()}`}
+                      onChange={(event) => handleMealChange(day, slot.id, event.target.value)}
+                    />
+                  </div>
                   ))}
                 </article>
               ))}
@@ -150,6 +190,71 @@ function DietPage() {
             </div>
           </div>
         </section>
+        {selectedRecipe ? (
+          <div className="diet-plan-modal" role="dialog" aria-label={`Recette ${selectedRecipe.title}`}>
+            <div className="diet-plan-modal__backdrop" onClick={() => setSelectedRecipe(null)} />
+            <div className="diet-plan-modal__panel">
+              <div className="diet-plan-modal__cover">
+                <img src={selectedRecipe.image} alt={selectedRecipe.title} />
+                <button
+                  type="button"
+                  className="diet-plan-modal__close"
+                  onClick={() => setSelectedRecipe(null)}
+                  aria-label="Fermer"
+                >
+                  x
+                </button>
+              </div>
+              <div className="diet-plan-modal__content">
+                <header>
+                  <h3>{selectedRecipe.title}</h3>
+                  <div className="diet-plan-modal__meta">
+                    <span>{selectedRecipe.flavor === "sucre" ? "Sucré" : "Salé"}</span>
+                    <span>{selectedRecipe.prepTime}</span>
+                    <span>{selectedRecipe.servings}</span>
+                  </div>
+                </header>
+                <section>
+                  <h4>Ingrédients</h4>
+                  <ul>
+                    {selectedRecipe.ingredients.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section>
+                  <h4>Étapes</h4>
+                  <ol>
+                    {selectedRecipe.steps.map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                </section>
+                {selectedRecipe.toppings ? (
+                  <section>
+                    <h4>Idées de toppings</h4>
+                    <ul>
+                      {selectedRecipe.toppings.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </section>
+                ) : null}
+                {selectedRecipe.tips ? (
+                  <section>
+                    <h4>Astuce</h4>
+                    <ul>
+                      {selectedRecipe.tips.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </section>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        ) : null}
+
       </main>
        <div className="page-footer-bar" aria-hidden="true" />
     </>

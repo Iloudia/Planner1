@@ -79,7 +79,7 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 0.7rem;
-  max-width: 1200px;
+  width: 100%;
 }
 
 .onboarding-options--grid {

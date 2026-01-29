@@ -200,11 +200,7 @@ const RoutinePage = () => {
 
   return (
     <div className="routine-page aesthetic-page">
-
-      <section className="routine-hero-image">
-        <img src={routineHeroImage} alt="Ambiance douce pour ritualiser ses routines quotidiennes" />
-      </section>
-      <div className="routine-page__accent-bar" aria-hidden="true" />
+<div className="routine-page__accent-bar" aria-hidden="true" />
       <PageHeading eyebrow="Routine" title="Mes Routines" />
       
 

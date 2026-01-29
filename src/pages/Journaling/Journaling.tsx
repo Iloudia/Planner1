@@ -1,4 +1,4 @@
-Ôªøimport { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ChangeEvent } from 'react'
 import usePersistentState from '../../hooks/usePersistentState'
 import journalingIllustration from '../../assets/planner-09.jpg'
@@ -29,11 +29,11 @@ type JournalEntry = {
 }
 
 const moodOptions = [
-  { value: 'bright', label: 'L√©g√®re', emoji: 'üòÑ' },
-  { value: 'good', label: 'Stable', emoji: 'üôÇ' },
-  { value: 'neutral', label: 'Neutre', emoji: 'üòê' },
-  { value: 'low', label: 'Lourde', emoji: 'üòî' },
-  { value: 'overwhelmed', label: 'Satur√©e', emoji: 'üò£' },
+  { value: 'bright', label: 'LÈgËre', emoji: '??' },
+  { value: 'good', label: 'Stable', emoji: '??' },
+  { value: 'neutral', label: 'Neutre', emoji: '??' },
+  { value: 'low', label: 'Lourde', emoji: '??' },
+  { value: 'overwhelmed', label: 'SaturÈe', emoji: '??' },
 ] as const
 
 const energyOptions = [
@@ -46,7 +46,7 @@ const postFeelingOptions = [
   { value: 'better', label: 'Un peu mieux' },
   { value: 'same', label: 'Pareil' },
   { value: 'clearer', label: 'Plus clair' },
-  { value: 'tiredRelieved', label: 'Fatigu√© mais soulag√©' },
+  { value: 'tiredRelieved', label: 'FatiguÈ mais soulagÈ' },
 ] as const
 
 const anchorOptions = [
@@ -56,40 +56,40 @@ const anchorOptions = [
 
 const guidedQuestionsByMood: Record<MoodValue, string[]> = {
   bright: [
-    "Qu'est-ce qui t'a fait du bien aujourd'hui, m√™me un peu ?",
+    "Qu'est-ce qui t'a fait du bien aujourd'hui, mÍme un peu ?",
     'Quelle petite chose nourrit ta joie en ce moment ?',
-    "Qu'est-ce que tu veux garder pr√©cieusement de cette journ√©e ?",
+    "Qu'est-ce que tu veux garder prÈcieusement de cette journÈe ?",
     "De quoi as-tu envie de te remercier aujourd'hui ?",
   ],
   good: [
     "Qu'est-ce qui te stabilise en ce moment ?",
-    "Quelle partie de ta journ√©e t'a donn√© un peu d'√©lan ?",
+    "Quelle partie de ta journÈe t'a donnÈ un peu d'Èlan ?",
     "Qu'est-ce que tu aimerais continuer demain ?",
     "Qu'est-ce qui te rassure aujourd'hui ?",
   ],
   neutral: [
-    'Que veux-tu d√©poser ici, sans filtre ?',
-    "De quoi aurais-tu besoin l√†, maintenant ?",
-    "Qu'est-ce que tu √©vites en ce moment ?",
+    'Que veux-tu dÈposer ici, sans filtre ?',
+    "De quoi aurais-tu besoin l‡, maintenant ?",
+    "Qu'est-ce que tu Èvites en ce moment ?",
     "Qu'est-ce que tu veux clarifier doucement ?",
   ],
   low: [
-    "Qu'est-ce qui te p√®se le plus aujourd'hui ?",
+    "Qu'est-ce qui te pËse le plus aujourd'hui ?",
     "Quel petit geste pourrait te soulager aujourd'hui ?",
     "Qu'est-ce qui te manque en ce moment ?",
     "Qu'est-ce que tu aimerais qu'on comprenne de toi ?",
   ],
   overwhelmed: [
     "Qu'est-ce qui te prend trop de place aujourd'hui ?",
-    "De quoi pourrais-tu te d√©lester, m√™me un peu ?",
+    "De quoi pourrais-tu te dÈlester, mÍme un peu ?",
     "Quelle limite douce pourrais-tu poser ?",
     "Qu'est-ce que tu veux laisser pour plus tard ?",
   ],
 }
 
 const journalingMoodboard = [
-  { src: journalingIllustration, alt: 'Carnet pastel accompagn√© de fleurs s√©ch√©es' },
-  { src: journalingMoodSecondary, alt: "Pause d'√©criture et tasse de th√©" },
+  { src: journalingIllustration, alt: 'Carnet pastel accompagnÈ de fleurs sÈchÈes' },
+  { src: journalingMoodSecondary, alt: "Pause d'Ècriture et tasse de thÈ" },
   { src: journalingMoodTertiary, alt: 'Planche inspirante pour le journaling' },
 ] as const
 
@@ -214,10 +214,10 @@ const JournalingPage = () => {
       <PageHero
         eyebrow="Rituel doux"
         title="Journaling"
-        description="Un espace s√ªr pour d√©poser ce que tu vis, sans obligation ni comparaison. Tu peux venir quand tu veux, m√™me pour un mot."
+        description="Un espace s˚r pour dÈposer ce que tu vis, sans obligation ni comparaison. Tu peux venir quand tu veux, mÍme pour un mot."
         stats={[]}
         images={journalingMoodboard}
-        heroClassName="self-love-hero"
+        
         heroImage={journalingMoodboard[0]}
         imageOnly
       />
@@ -227,7 +227,7 @@ const JournalingPage = () => {
       <section className="journaling-section journaling-checkin journaling-section--delay-1">
         <header className="journaling-section__header">
           <div>
-            <h2>Check-in √©motionnel</h2>
+            <h2>Check-in Èmotionnel</h2>
             <p>Commence par un point rapide. C'est juste pour toi.</p>
           </div>
           <div className="journaling-checkin__date">{displayDate}</div>
@@ -257,7 +257,7 @@ const JournalingPage = () => {
           </div>
 
           <div className="journaling-checkin__block">
-            <span className="journaling-checkin__label">Niveau d'√©nergie</span>
+            <span className="journaling-checkin__label">Niveau d'Ènergie</span>
             <div className="journaling-energy__options">
               {energyOptions.map((option) => (
                 <label key={option.value} className="journaling-choice journaling-choice--pill">
@@ -278,7 +278,7 @@ const JournalingPage = () => {
           </div>
 
           <div className="journaling-checkin__block">
-            <span className="journaling-checkin__label">Mot-cl√© du jour</span>
+            <span className="journaling-checkin__label">Mot-clÈ du jour</span>
             <input
               className="journaling-input"
               type="text"
@@ -289,7 +289,7 @@ const JournalingPage = () => {
                   keyword: limitKeywordWords(event.target.value),
                 }))
               }
-              placeholder="1 √† 3 mots"
+              placeholder="1 ‡ 3 mots"
             />
             <p className="journaling-helper">Libre, simple, sans pression.</p>
           </div>
@@ -299,20 +299,20 @@ const JournalingPage = () => {
       <section className="journaling-section journaling-question journaling-section--delay-2">
         <header className="journaling-section__header">
           <div>
-            <h2>Question guid√©e du jour</h2>
+            <h2>Question guidÈe du jour</h2>
             <p>Une seule question, pour ouvrir une porte sans t'enfermer.</p>
           </div>
         </header>
         <div className="journaling-question__card">
           <p className="journaling-question__prompt">{dailyQuestion}</p>
           <div className="journaling-question__answer">
-            <span>Ta r√©ponse</span>
+            <span>Ta rÈponse</span>
             <textarea
               value={draft.questionAnswer}
               onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
                 setDraft((previous) => ({ ...previous, questionAnswer: event.target.value }))
               }
-              placeholder="√âcris ce qui vient, m√™me en quelques mots."
+              placeholder="…cris ce qui vient, mÍme en quelques mots."
               rows={4}
             />
           </div>
@@ -322,8 +322,8 @@ const JournalingPage = () => {
       <section className="journaling-section journaling-write journaling-section--delay-3">
         <header className="journaling-section__header">
           <div>
-            <h2>Zone d'√©criture principale</h2>
-            <p>√âcris librement. Personne ne te lira. Tu peux t'arr√™ter quand tu veux.</p>
+            <h2>Zone d'Ècriture principale</h2>
+            <p>…cris librement. Personne ne te lira. Tu peux t'arrÍter quand tu veux.</p>
           </div>
         </header>
         <textarea
@@ -331,7 +331,7 @@ const JournalingPage = () => {
           onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
             setDraft((previous) => ({ ...previous, content: event.target.value }))
           }
-          placeholder="√âcris librement. Personne ne te lira. Tu peux t'arr√™ter quand tu veux."
+          placeholder="…cris librement. Personne ne te lira. Tu peux t'arrÍter quand tu veux."
           rows={10}
         />
       </section>
@@ -339,8 +339,8 @@ const JournalingPage = () => {
       <section className="journaling-section journaling-closure journaling-section--delay-4">
         <header className="journaling-section__header">
           <div>
-            <h2>Cl√¥ture √©motionnelle</h2>
-            <p>Un petit retour sur ce que l'√©criture vient de bouger.</p>
+            <h2>ClÙture Èmotionnelle</h2>
+            <p>Un petit retour sur ce que l'Ècriture vient de bouger.</p>
           </div>
         </header>
         <div className="journaling-closure__grid">
@@ -397,8 +397,8 @@ const JournalingPage = () => {
           className={`journaling-save__confirmation${saveConfirmationVisible ? ' is-visible' : ''}`}
           aria-live="polite"
         >
-          <span aria-hidden="true">‚úì</span>
-          <strong>Page enregistr√©e</strong>
+          <span aria-hidden="true">?</span>
+          <strong>Page enregistrÈe</strong>
         </div>
       </section>
 

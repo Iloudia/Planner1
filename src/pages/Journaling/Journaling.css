@@ -56,21 +56,6 @@
   box-shadow: 0 24px 70px rgba(236, 72, 153, 0.22);
 }
 
-.journaling-page .self-love-hero {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 236, 244, 0.92));
-  border: 1px solid var(--journal-border);
-  box-shadow: var(--journal-shadow);
-  border-radius: 32px;
-  overflow: hidden;
-}
-
-.journaling-page .self-love-hero__photo-only {
-  width: 100%;
-  height: var(--hero-visual-height);
-  object-fit: cover;
-  display: block;
-}
-
 .journaling-page .finance-hero__content {
   color: var(--journal-ink);
 }

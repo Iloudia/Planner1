@@ -365,6 +365,48 @@
   background: #ffffff;
 }
 
+.diet-recipe-plan {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem 1.1rem;
+  border-radius: 18px;
+  border: 1px solid rgba(236, 72, 153, 0.18);
+  background: rgba(252, 231, 243, 0.35);
+}
+
+.diet-recipe-plan__row {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+
+.diet-recipe-plan label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.diet-recipe-plan select,
+.diet-recipe-plan input {
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  border-radius: 12px;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.95rem;
+}
+
+.diet-recipe-plan__add {
+  align-self: flex-start;
+  border: none;
+  border-radius: 999px;
+  padding: 0.6rem 1.2rem;
+  background: #ec4899;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
 .diet-recipe-modal__actions {
   display: flex;
   justify-content: flex-end;

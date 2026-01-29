@@ -152,7 +152,7 @@ const ArchivesPage = () => {
           details.push({ label: "Question du jour", value: entry.question })
         }
         if (entry.questionAnswer) {
-          details.push({ label: "Reponse", value: entry.questionAnswer })
+          details.push({ label: "Réponse", value: entry.questionAnswer })
         }
         if (entry.content) {
           details.push({ label: "Journal", value: entry.content })
@@ -427,9 +427,8 @@ const ArchivesPage = () => {
                   <button
                     key={month.monthKey}
                     type="button"
-                    className={`archives-month-card${selectedMonth === month.monthKey ? " is-active" : ""}${
-                      month.total === 0 ? " is-empty" : ""
-                    }`}
+                    className={`archives-month-card${selectedMonth === month.monthKey ? " is-active" : ""}${month.total === 0 ? " is-empty" : ""
+                      }`}
                     onClick={() => {
                       setSelectedMonth(month.monthKey)
                       setSelectedDay(null)
@@ -477,9 +476,8 @@ const ArchivesPage = () => {
                       <button
                         key={cell.key}
                         type="button"
-                        className={`archives-day archives-day-button${selectedDay === cell.dateKey ? " is-active" : ""}${
-                          cell.isToday ? " is-today" : ""
-                        }`}
+                        className={`archives-day archives-day-button${selectedDay === cell.dateKey ? " is-active" : ""}${cell.isToday ? " is-today" : ""
+                          }`}
                         onClick={() => setSelectedDay(cell.dateKey)}
                         title={tooltip}
                         aria-label={`Voir les écrits du ${formatArchiveDate(cell.dateKey)} (${cell.count})`}

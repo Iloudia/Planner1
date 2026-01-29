@@ -13,7 +13,7 @@ const settingsSections = [
       },
       {
         title: "Changez votre mot de passe",
-        description: "Changez votre mot de passe a tout moment.",
+        description: "Changez votre mot de passe à tout moment.",
       },
       {
         title: "Desactiver ou supprimer le compte",
@@ -26,9 +26,9 @@ const settingsSections = [
   {
     description: "Controle des traceurs utilises sur Planner.",
     items: [
-      { title: "Essentiels actifs", description: "Garantissent la connexion et la securite de l espace perso." },
-      { title: "Statistiques optionnelles", description: "Mesurent les visites de maniere anonyme pour ameliorer le site." },
-      { title: "Personnalisation", description: "Memento des categories favorites et suggestions adaptees." },
+      { title: "Essentiels actifs", description: "Garantissent la connexion et la sécurité de l'espace perso." },
+      { title: "Statistiques optionnelles", description: "Mesurent les visites de manière anonyme pour améliorer le site." },
+      { title: "Personnalisation", description: "Memento des catégories favorites et suggestions adaptées." },
     ],
   },
 ]
@@ -38,7 +38,7 @@ const SettingsPage = () => {
     <>
       <div className="page-accent-bar" aria-hidden="true" />
       <div className="content-page settings-page">
-        <PageHeading eyebrow="Parametres" title="Personnalise ton experience" />
+        <PageHeading eyebrow="Paramètres" title="Personnalise ton expérience" />
         <section className="settings-section">
           <ul>
             {settingsSections.map((section) => (

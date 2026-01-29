@@ -53,7 +53,7 @@ const CookiePreferencesModal = () => {
             <div>
               <p className="cookie-modal__group-title">Essentiels (toujours actifs)</p>
               <p className="cookie-modal__group-text">
-                Acces securise, authentification, conservation de tes parametres systeme. Impossible de les desactiver.
+                Accès sécurisé, authentification, conservation de tes paramètres système. Impossible de les désactiver.
               </p>
             </div>
             <div className="cookie-modal__switch cookie-modal__switch--locked">
@@ -65,7 +65,7 @@ const CookiePreferencesModal = () => {
             <div>
               <p className="cookie-modal__group-title">Statistiques anonymes</p>
               <p className="cookie-modal__group-text">
-                Aide a comprendre comment Planner est utilise pour ameliorer les fonctionnalites.
+                Aide à comprendre comment Planner est utilisé pour améliorer les fonctionnalités.
               </p>
             </div>
             <label className="cookie-modal__switch">

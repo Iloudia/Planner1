@@ -10,7 +10,7 @@ const accountOptions = [
     label: "Informations sur le compte",
     description: "Consultez les informations de votre compte, comme votre numero de telephone et votre adresse e-mail.",
   },
-  { id: "password", label: "Changez votre mot de passe", description: "Changez votre mot de passe a tout moment." },
+  { id: "password", label: "Changez votre mot de passe", description: "Changez votre mot de passe Ã  tout moment." },
   {
     id: "deactivate",
     label: "Desactiver ou supprimer le compte",
@@ -66,7 +66,7 @@ const EyeIcon = ({ open }: { open: boolean }) => (
 type PasswordField = "current" | "next" | "confirm"
 
 const formatDate = (value?: string) => {
-  if (!value) return "Non renseigne"
+  if (!value) return "Non renseigné"
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) {
     return value
@@ -75,7 +75,7 @@ const formatDate = (value?: string) => {
 }
 
 const formatDateTime = (value?: string) => {
-  if (!value) return "Non renseigne"
+  if (!value) return "Non renseigné"
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) {
     return value
@@ -132,12 +132,12 @@ const SettingsAccount = () => {
   const personal = profileData.personal ?? {}
   const identity = profileData.identity ?? {}
 
-  const username = (identity.username as string) ?? (userEmail?.split("@")[0] ?? "Non renseigne")
-  const phone = (personal.phone as string) ?? "Non renseigne"
-  const email = (personal.email as string) ?? userEmail ?? "Non renseigne"
-  const country = (identity.country as string) ?? "Non renseigne"
+  const username = (identity.username as string) ?? (userEmail?.split("@")[0] ?? "Non renseigné")
+  const phone = (personal.phone as string) ?? "Non renseigné"
+  const email = (personal.email as string) ?? userEmail ?? "Non renseigné"
+  const country = (identity.country as string) ?? "Non renseigné"
   const languageCode = (identity.language as string) ?? ""
-  const language = languageLabels[languageCode] ?? (languageCode || "Non renseigne")
+  const language = languageLabels[languageCode] ?? (languageCode || "Non renseigné")
   const gender = (identity.gender as string) || "Non precise"
   const birthday = (identity.birthday as string) ?? ""
   const age = computeAge(birthday)
@@ -149,12 +149,12 @@ const SettingsAccount = () => {
       { label: "Nom d'utilisateur", value: username },
       { label: "Telephone", value: phone },
       { label: "E-mail", value: email },
-      { label: "Creation de compte", value: formattedCreatedAt },
+      { label: "CrÃ©ation de compte", value: formattedCreatedAt },
       { label: "Pays", value: country },
       { label: "Langue", value: language },
       { label: "Genre", value: gender || "Non precise" },
       { label: "Date de naissance", value: formattedBirthday },
-      { label: "Age", value: age !== null ? `${age}` : "Non renseigne" },
+      { label: "Age", value: age !== null ? `${age}` : "Non renseigné" },
     ],
     [username, phone, email, formattedCreatedAt, country, language, gender, formattedBirthday, age],
   )
@@ -200,7 +200,7 @@ const SettingsAccount = () => {
     }
     setPasswordChangeError(null)
     setPasswordForm({ current: "", next: "", confirm: "" })
-    setPasswordChangeSuccess("Votre mot de passe a ete mis a jour.")
+    setPasswordChangeSuccess("Votre mot de passe a Ã©tÃ© mis Ã  jour.")
   }
 
   const handleDeactivateAccount = async () => {
@@ -224,7 +224,7 @@ const SettingsAccount = () => {
       setAccountActionSuccess(null)
       return
     }
-    setAccountActionSuccess("Votre compte a ete supprime.")
+    setAccountActionSuccess("Votre compte a Ã©tÃ© supprimÃ©.")
   }
 
   if (step === "password") {
@@ -291,7 +291,7 @@ const SettingsAccount = () => {
       <div className="settings-section">
         <h2>Changez votre mot de passe</h2>
         <p className="settings-section__intro">Renforcez la securite de votre compte Planner.</p>
-        <p className="settings-note">mot de passe oublié</p>
+        <p className="settings-note">mot de passe oubliÃ©</p>
         <form className="settings-password-change" onSubmit={handlePasswordChangeSubmit}>
           <label>
             <span>Mot de passe actuel</span>

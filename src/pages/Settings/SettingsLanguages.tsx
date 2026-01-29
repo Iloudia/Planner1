@@ -160,7 +160,7 @@ const SettingsLanguages = () => {
 
         <div className="language-results" role="listbox" aria-label="Resultats des langues disponibles">
           {filteredLanguages.length === 0 ? (
-            <p className="language-empty">Aucune langue ne correspond a votre recherche.</p>
+            <p className="language-empty">Aucune langue ne correspond à votre recherche.</p>
           ) : null}
           {filteredLanguages.map((language) => {
             const isSelected = selectedLanguage === language.code

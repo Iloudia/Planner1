@@ -19,6 +19,7 @@ import "./Home.css"
 const HOME_MOODBOARD_SUFFIX = "planner.home.moodboard"
 const DEFAULT_HOME_MOODBOARD = planner02
 const PROFILE_STORAGE_KEY = "planner.profile.preferences.v1"
+const ONBOARDING_STORAGE_KEY = "planner.onboarding.answers.v1"
 
 const PROFILE_PHOTO_SUFFIX = "profile-photo"
 const DEFAULT_PROFILE_PHOTO = planner06
@@ -52,6 +53,17 @@ const cards: CardItem[] = [
   { image: planner08, alt: "Routine", kicker: "Rythme", title: "Routine", path: "/routine" },
   { image: planner09, alt: "Cuisine", kicker: "Saveurs", title: "Cuisine", path: "/alimentation" },
 ]
+
+const CATEGORY_TO_PATH: Record<string, string> = {
+  "sport": "/sport",
+  "journaling": "/journaling",
+  "self-love": "/self-love",
+  "finances": "/finances",
+  "routine": "/routine",
+  "wishlist": "/wishlist",
+  "calendrier mensuel": "/calendrier",
+  "cuisine": "/alimentation",
+}
 
 const defaultCardTitle = (path: string) => cards.find((card) => card.path === path)?.title ?? ""
 
@@ -235,6 +247,10 @@ function HomePage() {
   const cardTitlesKey = useMemo(() => scopedKey(CARD_TITLES_SUFFIX), [scopedKey])
   const cardImagesKey = useMemo(() => scopedKey(CARD_IMAGES_SUFFIX), [scopedKey])
   const cardUsageKey = useMemo(() => scopedKey(CARD_USAGE_SUFFIX), [scopedKey])
+  const onboardingKey = useMemo(
+    () => buildUserScopedKey(normalizeUserEmail(safeEmail), ONBOARDING_STORAGE_KEY),
+    [safeEmail],
+  )
 
   const [openCardMenu, setOpenCardMenu] = useState<string | null>(null)
   const [editingCardPath, setEditingCardPath] = useState<string | null>(null)
@@ -301,16 +317,48 @@ function HomePage() {
     }
   })
 
+  const preferredCardOrder = useMemo(() => {
+    try {
+      const raw = localStorage.getItem(onboardingKey)
+      if (!raw) return []
+      const parsed = JSON.parse(raw) as { categories?: string[] }
+      if (!Array.isArray(parsed?.categories)) return []
+      const mapped = parsed.categories
+        .map((category) => CATEGORY_TO_PATH[String(category).trim().toLowerCase()] ?? "")
+        .filter(Boolean)
+      return Array.from(new Set(mapped))
+    } catch {
+      return []
+    }
+  }, [onboardingKey])
+
   const orderedCards = useMemo(() => {
-  const base = cards.map((card, index) => {
-    const usage = cardUsage[card.path] ?? 0
-    const score = Math.floor(usage / 3)
-    return { card, index, score, usage }
-  })
-  return base
-    .sort((a, b) => (b.score - a.score) || (b.usage - a.usage) || (a.index - b.index))
-    .map((item) => item.card)
-}, [cardUsage])
+    const preferredIndex = new Map(preferredCardOrder.map((path, index) => [path, index]))
+    const base = cards.map((card, index) => {
+      const usage = cardUsage[card.path] ?? 0
+      const usageScore = Math.floor(usage / 3)
+      const preferredOrderIndex = preferredIndex.get(card.path)
+      const isPreferred = preferredOrderIndex !== undefined
+      const score = usageScore + (isPreferred ? 2 : 0)
+      return {
+        card,
+        index,
+        score,
+        usage,
+        isPreferred,
+        preferredOrderIndex: isPreferred ? preferredOrderIndex : Number.POSITIVE_INFINITY,
+      }
+    })
+    return base
+      .sort(
+        (a, b) =>
+          (b.score - a.score) ||
+          (Number(b.isPreferred) - Number(a.isPreferred)) ||
+          (a.preferredOrderIndex - b.preferredOrderIndex) ||
+          (a.index - b.index),
+      )
+      .map((item) => item.card)
+  }, [cardUsage, preferredCardOrder])
 
   /** --- Migration legacy profil --- */
   useEffect(() => {

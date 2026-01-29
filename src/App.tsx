@@ -47,10 +47,10 @@ function NotFound() {
       <div className="page-hero">
         <div className="hero-chip">Oups</div>
         <h1>Page introuvable</h1>
-        <p className="muted">Le lien est cassé ou la page a été déplacée.</p>
+        <p className="muted">Le lien est cassÃ© ou la page a Ã©tÃ© dÃ©placÃ©e.</p>
         <div className="hero-actions">
           <Link to="/" className="pill">
-            Retour à l'accueil
+            Retour Ã  l'accueil
           </Link>
         </div>
       </div>

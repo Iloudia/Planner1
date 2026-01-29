@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import type { FormEvent } from "react"
 import PageHeading from "../../components/PageHeading"
 import usePersistentState from "../../hooks/usePersistentState"
@@ -66,7 +66,7 @@ const DEFAULT_VIDEOS: VideoCard[] = [
   },
   {
     id: "vid-2",
-    title: "EntraÃ®nement Pilates complet",
+    title: "Entraînement Pilates complet",
     url: "https://youtu.be/354ezj2UHdM?si=LObxLx7v79fzZ9np",
     thumbnail: "https://img.youtube.com/vi/354ezj2UHdM/hqdefault.jpg",
   },
@@ -77,7 +77,7 @@ const DEFAULT_SERIES: Record<string, SeriesItem[]> = {
     { id: "serie-1", label: "3x12 incline dumbbell row", completed: false },
     { id: "serie-2", label: "4x10 Lat pull downs", completed: false },
     { id: "serie-3", label: "3x10 Cable rows", completed: false },
-    { id: "serie-4", label: "Pull up ( jusqu'Ã  Ã©puisement )", completed: false },
+    { id: "serie-4", label: "Pull up ( jusqu'à épuisement )", completed: false },
     { id: "serie-5", label: "3x10 Seated cable rows", completed: false },
     { id: "serie-6", label: "3x10 Bent over rows", completed: false },
   ],
@@ -86,7 +86,7 @@ const DEFAULT_SERIES: Record<string, SeriesItem[]> = {
     { id: "serie-8", label: "3x10 Hip thrust", completed: false },
     { id: "serie-9", label: "3x10 Rdls", completed: false },
     { id: "serie-10", label: "3x12 Leg extension", completed: false },
-    { id: "serie-11", label: "Leg cuurls ( jusqu'Ã  Ã©puisement )", completed: false },
+    { id: "serie-11", label: "Leg cuurls ( jusqu'à épuisement )", completed: false },
     { id: "serie-12", label: "3x10 Squats", completed: false },
     { id: "serie-13", label: "3x12 Reverse lunges", completed: false },
   ],
@@ -98,7 +98,7 @@ const MUSCLE_OPTIONS = [
   "Biceps",
   "Bras",
   "Dos",
-  "Ã‰paules",
+  "�?paules",
   "Fessiers",
   "Ischios",
   "Jambes",
@@ -111,7 +111,7 @@ const MUSCLE_OPTIONS = [
   "Triceps",
 ]
 
-const MUSCLE_PLACEHOLDER = "SÃ©lectionner un muscle"
+const MUSCLE_PLACEHOLDER = "Sélectionner un muscle"
 const YOUTUBE_API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY as string | undefined
 
 const formatLocalISODate = (date: Date) => {
@@ -262,7 +262,7 @@ const WorkoutPage = () => {
 
   const handleVideoSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const title = videoForm.title.trim() || "Session vidÃ©o"
+    const title = videoForm.title.trim() || "Session vidéo"
     const id = extractYoutubeId(videoForm.url.trim())
     if (!id) return
     const duration = await fetchYoutubeDuration(id)
@@ -318,7 +318,7 @@ const WorkoutPage = () => {
     setSeriesByExercise((previous) => {
       const current = previous[exerciseId] ?? []
       const nextItem: SeriesItem = {
-        id: `sÃ©rie-${Date.now()}`,
+        id: `série-${Date.now()}`,
         label,
         completed: false,
         weight: weight.length > 0 ? weight : undefined,
@@ -440,10 +440,7 @@ const WorkoutPage = () => {
 
   return (
     <div className="workout-page">
-      <div className="workout-hero-image">
-        <img src={workoutHero} alt="Ambiance workout" />
-      </div>
-      <div className="workout-page__accent-bar" aria-hidden="true" />
+<div className="workout-page__accent-bar" aria-hidden="true" />
       <PageHeading eyebrow="Routine active" title="Workout" />
 
       <div className="workout-layout">
@@ -467,7 +464,7 @@ const WorkoutPage = () => {
                 />
               </label>
               <label>
-                <span>Muscle ciblÃ©</span>
+                <span>Muscle ciblé</span>
                 <div className="workout-form__select" ref={muscleMenuRef}>
                   <button
                     type="button"
@@ -518,7 +515,7 @@ const WorkoutPage = () => {
                 className={`workout-form__photo-preview${form.image ? " workout-form__photo-preview--has-image" : ""}`}
               >
                 {form.image ? (
-                  <img className="workout-form__photo-img" src={form.image} alt="AperÃ§u de la photo sÃ©lectionnÃ©e" />
+                  <img className="workout-form__photo-img" src={form.image} alt="Aperçu de la photo sélectionnée" />
                 ) : (
                   <p>Ajoute une image depuis ton ordinateur.</p>
                 )}
@@ -542,7 +539,7 @@ const WorkoutPage = () => {
                     </button>
                   ) : null}
                 </div>
-                <span className="workout-form__photo-hint">Formats image acceptÃ©s (JPG, PNG, GIF).</span>
+                <span className="workout-form__photo-hint">Formats image acceptés (JPG, PNG, GIF).</span>
               </div>
             </div>
             <button type="submit">Ajouter la carte</button>
@@ -632,7 +629,7 @@ const WorkoutPage = () => {
                 type="text"
                 value={videoForm.title}
                 onChange={(e) => setVideoForm((prev) => ({ ...prev, title: e.target.value }))}
-                placeholder="Nom de la vidÃ©o"
+                placeholder="Nom de la vidéo"
               />
             </label>
             <label>
@@ -645,12 +642,12 @@ const WorkoutPage = () => {
                 required
               />
             </label>
-            <button type="submit">Ajouter la vidÃ©o</button>
+            <button type="submit">Ajouter la vidéo</button>
           </form>
           {videos.length === 0 ? (
             <div className="workout-video-empty">
               <p className="wishlist-modal__empty">
-                Aucune vidÃ©o ajoutÃ©e pour le moment. Commence en ajoutant ta premiÃ¨re vidÃ©o.
+                Aucune vidéo ajoutée pour le moment. Commence en ajoutant ta première vidéo.
               </p>
             </div>
           ) : (
@@ -812,11 +809,11 @@ const WorkoutPage = () => {
                     placeholder="Charge (kg)"
                     className="workout-modal__series-weight-input"
                   />
-                  <button type="submit">Ajouter une sÃ©rie</button>
+                  <button type="submit">Ajouter une série</button>
                 </form>
                 <div className="workout-modal__note">
                   <label>
-                    <span>Notes de séance</span>
+                    <span>Notes de s�ance</span>
                     <textarea
                       rows={3}
                       value={currentNote}
@@ -834,7 +831,7 @@ const WorkoutPage = () => {
                 </div>
                 {selectedSeries.length === 0 ? (
                   <p className="workout-modal__empty">
-                    Aucun Ã©lÃ©ment encore. Clique sur "Ajouter une sÃ©rie" pour enregistrer tes envies dans cette catÃ©gorie.
+                    Aucun élément encore. Clique sur "Ajouter une série" pour enregistrer tes envies dans cette catégorie.
                   </p>
                 ) : (
                   <ul className="workout-modal__series-list">
@@ -873,7 +870,7 @@ const WorkoutPage = () => {
             </div>
             <footer className="workout-modal__footer">
               <div className="workout-modal__summary">
-                {completedSeriesCount}/{selectedSeries.length} sÃ©ries cochÃ©es
+                {completedSeriesCount}/{selectedSeries.length} séries cochées
               </div>
             </footer>
           </div>

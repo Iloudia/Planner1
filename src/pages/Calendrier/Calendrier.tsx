@@ -262,7 +262,7 @@ const CalendrierPage = () => {
       editEndMinutes < dayStartMinutes ||
       editEndMinutes > dayEndMinutes
     ) {
-      window.alert('Les horaires autoris�s sont de 06:00 � 23:00.')
+      window.alert('Les horaires autorisÃ©s sont de 06:00 Ã  23:00.')
       return
     }
     updateTask(taskId, {
@@ -274,7 +274,7 @@ const CalendrierPage = () => {
   }
 
   const handleDeleteTask = (taskId: string) => {
-    const confirmation = window.confirm('Supprimer cette tache ?')
+    const confirmation = window.confirm('Supprimer cette tÃ¢che ?')
     if (!confirmation) {
       return
     }
@@ -340,7 +340,7 @@ const CalendrierPage = () => {
     if (!activeDateKey) {
       return
     }
-    const confirmation = window.confirm("Supprimer tous les �v�nements de cette journ�e ?")
+    const confirmation = window.confirm("Supprimer tous les Ã©vÃ©nements de cette journÃ©e ?")
     if (!confirmation) {
       return
     }
@@ -361,11 +361,11 @@ const CalendrierPage = () => {
   setNewTaskError(null)
   const title = newTaskForm.title.trim()
   if (!title) {
-    setNewTaskError("Ajoute un titre à ton bloc.")
+    setNewTaskError("Ajoute un titre ÃƒÂ  ton bloc.")
     return
   }
   if (!newTaskForm.repeatStart || !newTaskForm.repeatEnd) {
-    setNewTaskError("Sélectionne une période valide.")
+    setNewTaskError("SÃƒÂ©lectionne une pÃƒÂ©riode valide.")
     return
   }
   const startDate = parseDateKey(newTaskForm.repeatStart)
@@ -375,14 +375,14 @@ const CalendrierPage = () => {
     return
   }
   if (startDate.getTime() > endDate.getTime()) {
-    setNewTaskError("La date de fin doit être postérieure à la date de début.")
+    setNewTaskError("La date de fin doit ÃƒÂªtre postÃƒÂ©rieure ÃƒÂ  la date de dÃƒÂ©but.")
     return
   }
 
   const todayStart = new Date(today)
   todayStart.setHours(0, 0, 0, 0)
   if (startDate.getTime() < todayStart.getTime()) {
-    setNewTaskError("Impossible de programmer un événement dans le passé.")
+    setNewTaskError("Impossible de programmer un ÃƒÂ©vÃƒÂ©nement dans le passÃƒÂ©.")
     return
   }
 
@@ -395,13 +395,13 @@ const CalendrierPage = () => {
     endMinutes < dayStartMinutes ||
     endMinutes > dayEndMinutes
   ) {
-    setNewTaskError("Les horaires autoris�s sont de 06:00 � 23:00.")
+    setNewTaskError("Les horaires autorisÃ©s sont de 06:00 Ã  23:00.")
     return
   }
   if (startDate.toDateString() === todayStart.toDateString()) {
     const nowMinutes = today.getHours() * 60 + today.getMinutes()
     if (startMinutes <= nowMinutes) {
-      setNewTaskError("Choisis une heure de début future.")
+      setNewTaskError("Choisis une heure de dÃƒÂ©but future.")
       return
     }
   }
@@ -464,79 +464,29 @@ const totalScheduled = tasks.length
 
 return (
   <div className="calendar-page">
-    <section className="calendar-hero">
-      <div className="calendar-hero__content">
-        <h1>Orchestre ton mois avec intention et douceur.</h1>
-        <p>
-          Visualise en un coup d’œil tes rendez-vous clés, tes temps de pause et tes moments de création.
-        </p>
-        <div className="calendar-hero__actions">
-          <button
-            type="button"
-            className="calendar-hero__cta calendar-hero__cta--primary"
-            onClick={() => handlePlanForDate(getDateKey(today))}
-          >
-            Planifier un événement aujourd'hui
-          </button>
-          <button
-            type="button"
-            className="calendar-hero__cta calendar-hero__cta--ghost"
-            onClick={() => {
-              const tomorrow = new Date(today)
-              tomorrow.setDate(tomorrow.getDate() + 1)
-              handlePlanForDate(getDateKey(tomorrow))
-            }}
-          >
-            Planifier un événement demain
-          </button>
-        </div>
-        
+<div className="page-accent-bar" aria-hidden="true" />
 
-        <div className="calendar-hero__stats">
-          {heroStats.map((stat) => (
-            <article key={stat.id}>
-              <span>{stat.label}</span>
-              <strong>{stat.value}</strong>
-            </article>
-          ))}
-        </div>
-      </div>
-      
-            <div className="calendar-hero__panel">
-        <div className="calendar-next">
-          <span className="calendar-next__label">Prochain rendez-vous</span>
-          <strong>{nextTask ? nextTask.title : "Rien de planifi� pour le moment."}</strong>
-          <p>
-            {nextTask ? `${nextTaskLabel} - ${nextTask.start} - ${nextTask.end}` : "Ajoute un cr�neau."}
-          </p>
-          {nextTask?.tag ? <span className="calendar-next__tag">{nextTask.tag}</span> : null}
-        </div>
-      </div>
-    </section>
-    <div className="page-accent-bar" aria-hidden="true" />
-
-    <div className="calendar-view-toggle" role="tablist" aria-label="Vue calendrier">
-      <button
-        type="button"
-        role="tab"
-        aria-selected={calendarView === 'weekly'}
-        className={`calendar-view-toggle__button${calendarView === 'weekly' ? ' is-active' : ''}`}
-        onClick={() => setCalendarView('weekly')}
-      >
-        Hebdomadaire
-      </button>
-      <button
-        type="button"
-        role="tab"
-        aria-selected={calendarView === 'monthly'}
-        className={`calendar-view-toggle__button${calendarView === 'monthly' ? ' is-active' : ''}`}
-        onClick={() => setCalendarView('monthly')}
-      >
-        Mensuel
-      </button>
-    </div>
-
-    {calendarView === 'weekly' ? (
+<div className="calendar-view-toggle" role="tablist" aria-label="Vue calendrier">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={calendarView === 'weekly'}
+                className={`calendar-view-toggle__button${calendarView === 'weekly' ? ' is-active' : ''}`}
+                onClick={() => setCalendarView('weekly')}
+              >
+                Hebdomadaire
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={calendarView === 'monthly'}
+                className={`calendar-view-toggle__button${calendarView === 'monthly' ? ' is-active' : ''}`}
+                onClick={() => setCalendarView('monthly')}
+              >
+                Mensuel
+              </button>
+            </div>
+{calendarView === 'weekly' ? (
     <section className="calendar-weekly">
       <header className="calendar-weekly__header">
         <PageHeading eyebrow="calendrier hebdomadaire" title={`Semaine du ${weekRangeLabel}`} />
@@ -549,13 +499,13 @@ return (
             onClick={() => handlePlanForDate(getDateKey(today))}
           >
             <span className="calendar-weekly__create-plus">+</span>
-            Cr�er un �v�nement
+            CrÃ©er un Ã©vÃ¨nement
           </button>
           <aside className="calendar-weekly__mini">
           <header className="calendar-weekly__mini-header">
             <span className="calendar-weekly__mini-title">{formatMonthTitle(currentMonthDate)}</span>
             <div className="calendar-month-nav">
-              <button type="button" onClick={() => handleMonthChange(-1)} aria-label="Mois précédent">
+              <button type="button" onClick={() => handleMonthChange(-1)} aria-label="Mois prÃƒÂ©cÃƒÂ©dent">
                 &lt;
               </button>
               <button type="button" onClick={() => handleMonthChange(1)} aria-label="Mois suivant">
@@ -592,7 +542,7 @@ return (
         </aside>
 
         <div className="calendar-legend">
-          <h4>L�gende des couleurs</h4>
+          <h4>LÃ©gende des couleurs</h4>
           <div className="calendar-legend__items">
             {Object.entries(legendColors).map(([label, color]) => (
               <div key={label} className="calendar-legend__item">
@@ -603,8 +553,7 @@ return (
           </div>
         </div>
         </div>
-
-        <div
+<div
           className="calendar-weekly__grid"
           style={{
             "--hour-height": `${hourHeight}px`,
@@ -645,7 +594,7 @@ return (
                 tabIndex={0}
                 onClick={() => handleDaySelect(dateKey)}
                 onKeyDown={(event) => handleDayKeyDown(event, dateKey)}
-                aria-label={`Voir la journée du ${dateKey}`}
+                aria-label={`Voir la journÃƒÂ©e du ${dateKey}`}
               >
                 <div className="calendar-weekly__day-grid">
                   {hours.map((hour) => (
@@ -710,8 +659,7 @@ return (
           </button>
         </div>
       </header>
-
-      <div className="calendar-grid calendar-grid--preview">
+<div className="calendar-grid calendar-grid--preview">
         {weekDays.map((label) => (
           <div key={label} className="calendar-grid__weekday">
             {label}
@@ -740,14 +688,13 @@ return (
                     event.stopPropagation()
                     handlePlanForDate(cell.dateKey!)
                   }}
-                  aria-label={`Ajouter une tache le ${cell.dateKey}`}
+                  aria-label={`Ajouter une tÃ¢che le ${cell.dateKey}`}
                 >
                   +
                 </button>
               </div>
               {cell.tasks[0] ? (
-                <>
-                  <div
+                      <><div
                     className="calendar-day__preview"
                     style={{
                       background: `linear-gradient(135deg, ${withAlpha(cell.tasks[0].color, 0.12)} 0%, ${withAlpha(
@@ -766,7 +713,7 @@ return (
                   ) : null}
                 </>
               ) : (
-                <span className="calendar-day__empty">Rien de prevu</span>
+                <span className="calendar-day__empty">Rien de prÃ©vu</span>
               )}
             </div>
           ),
@@ -780,14 +727,14 @@ return (
         <div className="calendar-modal__panel">
           <header className="calendar-modal__header">
             <div>
-              <span className="calendar-modal__eyebrow">s�ance du jour</span>
+              <span className="calendar-modal__eyebrow">sÃ©ance du jour</span>
               <h2 id="calendar-modal-title">{activeDateLabel}</h2>
               <p>
                 {activeDateTasks.length > 0
                   ? activeDateTasks.length === 1
-                    ? "1 cr�neau."
-                    : `${activeDateTasks.length} cr�neaux.`
-                  : "Aucun cr�neau pour l'instant, profite pour en poser un."}
+                    ? "1 crÃ©neau."
+                    : `${activeDateTasks.length} crÃ©neaux.`
+                  : "Aucun crÃ©neau pour l'instant, profite pour en poser un."}
               </p>
             </div>
             <button type="button" className="modal__close" onClick={handleCloseModal} aria-label="Fermer">
@@ -803,7 +750,7 @@ return (
               className="calendar-hero__cta calendar-hero__cta--ghost"
               onClick={handleResetDay}
             >
-              R�initialiser la journ�e
+              RÃ©initialiser la journÃ©e
             </button>
           </div>
 
@@ -825,7 +772,7 @@ return (
               </label>
               <div className="calendar-task__form-row">
                 <label className="calendar-task__field">
-                  <span>D�but</span>
+                  <span>DÃ©but</span>
                   <input
                     type="time"
                     value={newTaskForm.start}
@@ -864,15 +811,6 @@ return (
               </div>
               <div className="calendar-task__form-row calendar-task__form-row--split">
                 <label className="calendar-task__field">
-                  <span>Couleur</span>
-                  <input
-                    type="color"
-                    value={newTaskForm.color}
-                    onChange={(event) => handleNewTaskFieldChange("color", event.target.value)}
-                    required
-                  />
-                </label>
-                <label className="calendar-task__field">
                   <span>Type</span>
                   <select
                     value={newTaskForm.category}
@@ -903,18 +841,13 @@ return (
             </div>
             <div className="calendar-modal__list">
               {activeDateTasks.length === 0 ? (
-                <p className="calendar-modal__empty">Programme ton premier �v�nement de la journ�e.</p>
+                <p className="calendar-modal__empty">Programme ton premier Ã©vÃ©nement de la journÃ©e.</p>
               ) : (
                 activeDateTasks.map((task) => (
                   <div
                     key={task.id}
                     className={`calendar-task${editingTaskId === task.id ? " calendar-task--editing" : ""}`}
-                    style={{
-                      background: `linear-gradient(135deg, ${withAlpha(task.color, 0.12)} 0%, ${withAlpha(
-                        task.color,
-                        0.32,
-                      )} 100%)`,
-                    }}
+                    style={{ background: task.color }}
                     onClick={() => {
                       if (editingTaskId === task.id) {
                         return
@@ -926,7 +859,7 @@ return (
                       <form className="calendar-task__form" onSubmit={(event) => handleSubmitEdit(event, task.id)}>
                         <div className="calendar-task__form-row">
                           <label className="calendar-task__field">
-                            <span>D�but</span>
+                            <span>DÃ©but</span>
                             <input
                               type="time"
                               value={editDraft.start}
@@ -944,15 +877,6 @@ return (
                             />
                           </label>
                         </div>
-                        <label className="calendar-task__field">
-                          <span>Couleur</span>
-                          <input
-                            type="color"
-                            value={editDraft.color}
-                            onChange={(event) => handleDraftChange("color", event.target.value)}
-                            required
-                          />
-                        </label>
                         <div className="calendar-task__actions">
                           <button
                             type="button"
@@ -974,7 +898,7 @@ return (
                         </div>
                       </form>
                     ) : (
-                        <>
+                      <>
                           <div className="calendar-task__header">
                             <span className="calendar-task__time">
                               {task.start} - {task.end}

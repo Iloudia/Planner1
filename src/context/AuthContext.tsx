@@ -289,8 +289,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         if (displayName) {
           await updateProfile(result.user, { displayName })
         }
-        const data = await ensureUserDocument(result.user, profile)
-        await uploadProfileSnapshot(result.user.uid, data)
+        // Create the profile document without blocking onboarding navigation.
+        void (async () => {
+          try {
+            const data = await ensureUserDocument(result.user, profile)
+            await uploadProfileSnapshot(result.user.uid, data)
+          } catch (error) {
+            console.error("Post-register profile setup failed", error)
+          }
+        })()
         return true
       } catch (error) {
         console.error("Register failed", error)
@@ -438,7 +445,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const adminUpdateStatus = useCallback(async (email: string, status: AccountStatus): Promise<AccountActionResult> => {
     if (!email) {
-      return { success: false, error: "Email requis pour mettre a jour le statut." }
+      return { success: false, error: "Email requis pour mettre à jour le statut." }
     }
     try {
       const targetDoc = await loadAdminUserByEmail(email)
@@ -459,7 +466,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       return { success: true }
     } catch (error) {
       console.error("Admin status update failed", error)
-      return { success: false, error: "Mise a jour impossible." }
+      return { success: false, error: "Mise à jour impossible." }
     }
   }, [])
 
@@ -469,7 +476,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
     const currentEmail = auth.currentUser?.email
     if (currentEmail && normalizeEmail(currentEmail) === normalizeEmail(email)) {
-      return { success: false, error: "Utilisez la suppression de compte depuis vos parametres." }
+      return { success: false, error: "Utilisez la suppression de compte depuis vos paramètres." }
     }
     try {
       const targetDoc = await loadAdminUserByEmail(email)

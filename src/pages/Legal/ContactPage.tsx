@@ -11,7 +11,7 @@ const ContactPage = () => (
     <PageHeading eyebrow="Contact" title="Contacte-moi" />
     <div className="legal-page contact-page">
       <p className="legal-page__intro">
-        Une idee, une question ou envie de collaborer ? Laisse-moi un message et je te repondrai avec grand plaisir.
+        Une idée, une question ou envie de collaborer ? Laisse-moi un message et je te répondrai avec grand plaisir.
       </p>
 
       <section className="legal-section contact-form">

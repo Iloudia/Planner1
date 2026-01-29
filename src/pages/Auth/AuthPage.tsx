@@ -287,18 +287,18 @@ const AuthPage = ({ mode }: AuthFormProps) => {
       mode === "login"
         ? await login({ email, password, remember })
         : await register({
-            email,
-            password,
-            remember,
-            profile: {
-              firstName,
-              lastName,
-              username,
-              birthday,
-              gender,
-              acceptTerms,
-            },
-          })
+          email,
+          password,
+          remember,
+          profile: {
+            firstName,
+            lastName,
+            username,
+            birthday,
+            gender,
+            acceptTerms,
+          },
+        })
     if (!success) {
       skipAutoRedirectRef.current = false
       setError(mode === "register" ? "Un compte existe déjà avec cet email." : "Merci de renseigner un email et un mot de passe valides.")
@@ -322,7 +322,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
       return
     }
     setError("")
-    window.alert("Un lien de reinitialisation a ete envoye a " + email + ".")
+    window.alert("Un lien de réinitialisation a été envoyé à " + email + ".")
   }
 
   const heading = mode === "login" ? "Connexion" : "Création de compte"
@@ -346,7 +346,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
             <Link to={switchTo}>{mode === "login" ? "Créer un compte" : "Se connecter"}</Link>
           </div>
 
-          {isAuthenticated ? (
+          {isAuthenticated && mode !== "register" ? (
             <p className="auth-status">
               Connecte en tant que <strong>{userEmail}</strong>
             </p>
@@ -354,7 +354,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
 
           <form className="auth-form" onSubmit={handleSubmit}>
             {isRegister ? (
-              <div className="auth-steps" aria-label="Progression de creation de compte">
+              <div className="auth-steps" aria-label="Progression de création de compte">
                 {registerSteps.map((label, index) => (
                   <div key={label} className={`auth-step${registerStep === index ? " is-active" : registerStep > index ? " is-done" : ""}`}>
                     <span className="auth-step__index">{index + 1}</span>

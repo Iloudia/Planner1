@@ -31,25 +31,25 @@ type OnboardingAnswers = {
 }
 
 const formatDate = (dateStr?: string | null) => {
-  if (!dateStr) return "Non renseigne"
+  if (!dateStr) return "Non renseigné"
   const date = new Date(dateStr)
-  if (Number.isNaN(date.getTime())) return "Non renseigne"
+  if (Number.isNaN(date.getTime())) return "Non renseigné"
   return date.toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" })
 }
 
 const formatDateTime = (dateStr?: string | null) => {
-  if (!dateStr) return "Non renseigne"
+  if (!dateStr) return "Non renseigné"
   const date = new Date(dateStr)
-  if (Number.isNaN(date.getTime())) return "Non renseigne"
+  if (Number.isNaN(date.getTime())) return "Non renseigné"
   return date.toLocaleString("fr-FR", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })
 }
 
 const zodiacFromDate = (dateStr?: string | null) => {
-  if (!dateStr) return "Non renseigne"
+  if (!dateStr) return "Non renseigné"
   const parts = dateStr.split("-").map((part) => Number(part))
-  if (parts.length !== 3) return "Non renseigne"
+  if (parts.length !== 3) return "Non renseigné"
   const [year, month, day] = parts
-  if (!year || !month || !day) return "Non renseigne"
+  if (!year || !month || !day) return "Non renseigné"
   const value = month * 100 + day
   if (value >= 321 && value <= 419) return "Belier"
   if (value >= 420 && value <= 520) return "Taureau"
@@ -63,7 +63,7 @@ const zodiacFromDate = (dateStr?: string | null) => {
   if (value >= 1222 || value <= 119) return "Capricorne"
   if (value >= 120 && value <= 218) return "Verseau"
   if (value >= 219 && value <= 320) return "Poissons"
-  return "Non renseigne"
+  return "Non renseigné"
 }
 
 async function fileToCompressedSquareDataUrl(
@@ -205,15 +205,15 @@ function ProfilePage() {
   const lastName = personal.lastName ?? ""
   const fullName = [firstName, lastName].filter(Boolean).join(" ").trim()
   const nameValue = fullName || username
-  const emailValue = personal.email ?? userEmail ?? "Non renseigne"
+  const emailValue = personal.email ?? userEmail ?? "Non renseigné"
   const birthday = identity.birthday ?? ""
-  const gender = identity.gender ?? "Non renseigne"
-  const language = identity.language ?? (typeof navigator !== "undefined" ? navigator.language : "Non renseigne")
-  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Non renseigne"
+  const gender = identity.gender ?? "Non renseigné"
+  const language = identity.language ?? (typeof navigator !== "undefined" ? navigator.language : "Non renseigné")
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Non renseigné"
   const zodiac = zodiacFromDate(birthday)
   const createdLabel = formatDateTime(createdAt ?? null)
   const categories = Array.isArray(onboarding.categories) && onboarding.categories.length > 0 ? onboarding.categories : []
-  const priority = onboarding.priority ?? "Non renseigne"
+  const priority = onboarding.priority ?? "Non renseigné"
 
   const upcomingTasks = useMemo(() => {
     const nowTs = Date.now()
@@ -243,8 +243,8 @@ function ProfilePage() {
             </div>
             <div className="profile-identity__info">
               <div className="profile-identity__names">
-                <div className="profile-identity__line">{lastName || "Non renseigne"}</div>
-                <div className="profile-identity__line">{firstName || "Non renseigne"}</div>
+                <div className="profile-identity__line">{lastName || "Non renseigné"}</div>
+                <div className="profile-identity__line">{firstName || "Non renseigné"}</div>
               </div>
               <div className="profile-identity__meta">
                 <div className="profile-identity__row">
@@ -285,7 +285,7 @@ function ProfilePage() {
               <span>{profileSrc === defaultProfilePhoto ? "Par defaut" : "Personnalisee"}</span>
             </div>
             <div className="profile-list__row">
-              <span className="profile-list__label">Creation du compte</span>
+              <span className="profile-list__label">CrÃ©ation du compte</span>
               <span>{createdLabel}</span>
             </div>
           </div>
@@ -298,7 +298,7 @@ function ProfilePage() {
           <div className="profile-list">
             <div className="profile-list__row">
               <span className="profile-list__label">Prenom / Nom</span>
-              <span>{nameValue || "Non renseigne"}</span>
+              <span>{nameValue || "Non renseigné"}</span>
             </div>
             <div className="profile-list__row">
               <span className="profile-list__label">Signe astrologique</span>
@@ -332,16 +332,16 @@ function ProfilePage() {
           <h3>Preferences</h3>
           <div className="profile-list">
             <div className="profile-list__row">
-              <span className="profile-list__label">Categories favorites</span>
-              <span>{categories.length > 0 ? categories.join(", ") : "Non renseigne"}</span>
+              <span className="profile-list__label">CatÃ©gories favorites</span>
+              <span>{categories.length > 0 ? categories.join(", ") : "Non renseignÃ©"}</span>
             </div>
             <div className="profile-list__row">
               <span className="profile-list__label">Objectif</span>
-              <span>{priority || "Non renseigne"}</span>
+              <span>{priority || "Non renseigné"}</span>
             </div>
             <div className="profile-list__row">
               <span className="profile-list__label">Confidentialite</span>
-              <span>Non renseigne</span>
+              <span>Non renseigné</span>
             </div>
           </div>
         </section>
@@ -361,7 +361,7 @@ function ProfilePage() {
         </section>
 
         <section className="section-card profile-card profile-card--activity">
-          <h3>Resume d activite</h3>
+          <h3>RÃ©sumÃ© d'activitÃ©</h3>
           <div className="profile-list">
             <div className="profile-list__row">
               <span className="profile-list__label">Derniere connexion</span>

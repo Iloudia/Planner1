@@ -11,11 +11,11 @@ const settingsLinks = [
 const SettingsLayout = () => {
   return (
     <>
-    <div className="page-accent-bar" aria-hidden="true" />
-    <PageHeading eyebrow="Parametres" title="Personnalise ton experience" />
-      
+      <div className="page-accent-bar" aria-hidden="true" />
+      <PageHeading eyebrow="Paramètres" title="Personnalise ton expérience" />
+
       <div className="content-page settings-page">
-        
+
         <div className="settings-layout">
           <nav className="settings-nav">
             <ul>

@@ -30,14 +30,14 @@ const TRIPS: TripCard[] = [
     title: "City break Lisbonne",
     location: "Portugal",
     dates: "20 - 23 mars",
-    focus: "Cafes, librairies, balade a Belem",
+    focus: "Cafés, librairies, balade à Belém",
     budget: "450 EUR",
     status: "booked",
     cover: travelCity,
   },
   {
     id: "crete-ete",
-    title: "Crete en ete",
+    title: "Crête en été",
     location: "Chania",
     dates: "5 - 12 juillet",
     focus: "Plages, sunset boat, marche local",
@@ -91,7 +91,7 @@ const VoyagePage = () => {
         <p className="muted">Dossiers voyages, budget et checklist cabine regroupes au meme endroit.</p>
         <div className="hero-actions">
           <button type="button" className="pill">
-            Ajouter une idee
+            Ajouter une idée
           </button>
           <button type="button" className="pill pill-ghost">
             Exporter en PDF

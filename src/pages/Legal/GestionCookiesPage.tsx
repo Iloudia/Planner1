@@ -28,15 +28,15 @@ const GestionCookiesPage = () => {
           <p className="legal-section__text">Ce site utilise les types de cookies suivants :</p>
           <ul className="legal-list">
             <li>
-              <strong>Cookies necessaires</strong> � indispensables au fonctionnement du site. Ils ne peuvent pas etre
+              <strong>Cookies necessaires</strong> ÃƒÂ¯Ã‚Â¿Ã‚Â½ indispensables au fonctionnement du site. Ils ne peuvent pas etre
               desactives.
             </li>
             <li>
-              <strong>Cookies de mesure d audience (optionnels)</strong> � permettent de comprendre l usage du site afin
+              <strong>Cookies de mesure d audience (optionnels)</strong> ÃƒÂ¯Ã‚Â¿Ã‚Â½ permettent de comprendre l usage du site afin
               d ameliorer son contenu et ses performances.
             </li>
             <li>
-              <strong>Cookies de personnalisation (optionnels)</strong> � retiennent vos choix (ex. langue, preferences)
+              <strong>Cookies de personnalisation (optionnels)</strong> ÃƒÂ¯Ã‚Â¿Ã‚Â½ retiennent vos choix (ex. langue, preferences)
               pour personnaliser l experience.
             </li>
           </ul>
@@ -50,7 +50,7 @@ const GestionCookiesPage = () => {
           <h2 className="legal-section__title">Consentement</h2>
           <p className="legal-section__text">
             Lors de votre premiere visite, un bandeau vous permet d accepter, de refuser ou de personnaliser votre choix.
-            Vous pouvez modifier ou retirer votre consentement a tout moment.
+            Vous pouvez modifier ou retirer votre consentement ÃƒÆ’Ã‚Â  tout moment.
           </p>
         </section>
 
@@ -71,11 +71,11 @@ const GestionCookiesPage = () => {
         <section className="legal-section">
           <h2 className="legal-section__title">Comment desactiver les cookies ?</h2>
           <p className="legal-section__text">
-            Vous pouvez aussi gerer les cookies depuis votre navigateur (parametres \u003e confidentialite \u003e cookies). Vous
-            pouvez refuser ou supprimer les cookies deja enregistres. Le chemin exact depend de votre navigateur.
+            Vous pouvez aussi gÃƒÂ©rer les cookies depuis votre navigateur (paramètres \u003e confidentialité \u003e cookies). Vous
+            pouvez refuser ou supprimer les cookies dÃƒÂ©jÃƒÂ  enregistrÃƒÂ©s. Le chemin exact dÃƒÂ©pend de votre navigateur.
           </p>
           <p className="legal-section__text">
-            Attention : desactiver les cookies essentiels bloque l acces a l espace securise (connexion, sauvegarde).
+            Attention : dÃƒÆ’Ã‚Â©sactiver les cookies essentiels bloque l'accÃƒÆ’Ã‚Â¨s ÃƒÆ’Ã‚Â  l'espace sÃƒÆ’Ã‚Â©curisÃƒÆ’Ã‚Â© (connexion, sauvegarde).
           </p>
         </section>
 

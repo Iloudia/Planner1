@@ -40,22 +40,12 @@ const CATEGORY_OPTIONS = [
   { label: "Cuisine", icon: "🍳" },
 ]
 
-const PRIORITY_OPTIONS = [
-  "Mieux m'organiser",
-  "Prendre soin de moi",
-  "Atteindre mes objectifs",
-  "Gagner en motivation",
-  "Structurer mon quotidien",
-  "Trouver de l'inspiration",
-]
-
 type OnboardingAnswers = {
   source: string
   sourceOther: string
   reasons: string[]
   reasonsOther: string
   categories: string[]
-  priority: string[]
 }
 
 const initialAnswers: OnboardingAnswers = {
@@ -64,7 +54,6 @@ const initialAnswers: OnboardingAnswers = {
   reasons: [],
   reasonsOther: "",
   categories: [],
-  priority: [],
 }
 
 const OnboardingPage = () => {
@@ -103,7 +92,7 @@ const OnboardingPage = () => {
     }
   }, [storageKey])
 
-  const totalSteps = 4
+  const totalSteps = 3
   const progress = Math.round(((step + 1) / totalSteps) * 100)
 
   const isStepComplete = useMemo(() => {
@@ -123,9 +112,6 @@ const OnboardingPage = () => {
     }
     if (step === 2) {
       return answers.categories.length > 0
-    }
-    if (step === 3) {
-      return answers.priority.length > 0
     }
     return false
   }, [answers, step])
@@ -152,7 +138,6 @@ const OnboardingPage = () => {
             reasons: payload.reasons,
             reasonsOther: payload.reasonsOther,
             categories: payload.categories,
-            priority: payload.priority,
             completedAt,
           },
           updatedAt: completedAt,
@@ -183,7 +168,7 @@ const OnboardingPage = () => {
     setStep((prev) => Math.max(prev - 1, 0))
   }
 
-  const toggleMulti = (key: "reasons" | "categories" | "priority", value: string) => {
+  const toggleMulti = (key: "reasons" | "categories", value: string) => {
     setAnswers((prev) => {
       const current = prev[key]
       const next = current.includes(value) ? current.filter((item) => item !== value) : [...current, value]
@@ -243,7 +228,7 @@ const OnboardingPage = () => {
               </div>
               {answers.source === "Autre" ? (
                 <label className="onboarding-other">
-                  Precise ta reponse
+                  Précise ta réponse
                   <input
                     type="text"
                     value={answers.sourceOther}
@@ -311,27 +296,7 @@ const OnboardingPage = () => {
             </>
           ) : null}
 
-          {step === 3 ? (
-            <>
-              <h2 className="onboarding-question">Quelle est votre priorité actuelle ?</h2>
-              <p className="onboarding-hint">Plusieurs réponses possibles</p>
-              <div className="onboarding-options">
-                {PRIORITY_OPTIONS.map((option) => (
-                  <label key={option} className={`onboarding-option${answers.priority.includes(option) ? " is-selected" : ""}`}>
-                    <input
-                      type="checkbox"
-                      
-                      value={option}
-                      checked={answers.priority.includes(option)}
-                      onChange={() => toggleMulti("priority", option)}
-                    />
-                    <span className="onboarding-option__label">{option}</span>
-                    <span className="onboarding-option__control" aria-hidden="true" />
-                  </label>
-                ))}
-              </div>
-            </>
-          ) : null}
+          
         </section>
 
         <div className="onboarding-actions">

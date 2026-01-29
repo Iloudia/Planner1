@@ -24,11 +24,11 @@ const PageHero = ({
   imageOnly,
   children,
 }: PageHeroProps) => {
-  const sectionClassName = heroClassName ?? 'finance-hero dashboard-panel'
+  const sectionClassName = heroClassName ?? ''
 
   return (
     <section className={sectionClassName}>
-      {heroImage ? <img className="self-love-hero__photo-only" src={heroImage.src} alt={heroImage.alt} /> : null}
+      {heroImage ? <img src={heroImage.src} alt={heroImage.alt} /> : null}
       {!imageOnly ? (
         <div className="finance-hero__content">
           <h1>{title}</h1>
