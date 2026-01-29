@@ -28,6 +28,8 @@ type CookieConsentContextValue = {
 
 const STORAGE_KEY = "planner.cookieConsent"
 
+const NON_ESSENTIAL_COOKIES = ["googtrans"]
+
 const defaultPreferences: CookiePreferences = {
   essential: true,
   analytics: false,
@@ -78,6 +80,17 @@ export const CookieConsentProvider = ({ children }: PropsWithChildren) => {
       // ignore storage failures
     }
   }, [state])
+  useEffect(() => {
+    if (typeof document === "undefined") {
+      return
+    }
+    if (state.status === "accepted" && state.preferences.preferences) {
+      return
+    }
+    NON_ESSENTIAL_COOKIES.forEach((name) => {
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`
+    })
+  }, [state.status, state.preferences.preferences])
 
   const persist = (next: CookieConsentState) => {
     setState(next)

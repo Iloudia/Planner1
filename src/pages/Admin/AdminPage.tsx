@@ -143,12 +143,23 @@ const AdminPage = () => {
   const [showAllUsers, setShowAllUsers] = useState(false)
 
   useEffect(() => {
-    try {
-      const nextUsers = adminListUsers()
-      setUsers(Array.isArray(nextUsers) ? nextUsers : [])
-    } catch (error) {
-      console.error("Admin users load failed", error)
-      setUsers([])
+    let isMounted = true
+    const loadUsers = async () => {
+      try {
+        const nextUsers = await adminListUsers()
+        if (isMounted) {
+          setUsers(Array.isArray(nextUsers) ? nextUsers : [])
+        }
+      } catch (error) {
+        console.error("Admin users load failed", error)
+        if (isMounted) {
+          setUsers([])
+        }
+      }
+    }
+    loadUsers()
+    return () => {
+      isMounted = false
     }
   }, [adminListUsers])
 
@@ -229,9 +240,9 @@ const AdminPage = () => {
 
   const selectedUser = selectedEmail ? users.find((user) => user.email === selectedEmail) ?? null : null
 
-  const refreshUsers = () => {
+  const refreshUsers = async () => {
     try {
-      const nextUsers = adminListUsers()
+      const nextUsers = await adminListUsers()
       setUsers(Array.isArray(nextUsers) ? nextUsers : [])
     } catch (error) {
       console.error("Admin users refresh failed", error)
@@ -239,9 +250,9 @@ const AdminPage = () => {
     }
   }
 
-  const handleStatusToggle = (user: AdminUserRecord) => {
+  const handleStatusToggle = async (user: AdminUserRecord) => {
     const nextStatus = user.status === "actif" ? "desactive" : "actif"
-    const result = adminUpdateStatus(user.email, nextStatus)
+    const result = await adminUpdateStatus(user.email, nextStatus)
     if (!result.success) {
       setAlert({ type: "error", message: result.error ?? "Action impossible pour ce compte." })
       return
@@ -250,21 +261,21 @@ const AdminPage = () => {
       type: nextStatus === "desactive" ? "info" : "success",
       message: nextStatus === "desactive" ? "Compte desactive et sessions coupees." : "Compte reactive.",
     })
-    refreshUsers()
+    await refreshUsers()
   }
 
-  const handleDelete = (email: string) => {
+  const handleDelete = async (email: string) => {
     const confirmed = window.confirm(
       `Supprimer le compte ${email} ? Cette action supprime les donnees locales associees et coupe toutes les sessions.`,
     )
     if (!confirmed) return
-    const result = adminDeleteUser(email)
+    const result = await adminDeleteUser(email)
     if (!result.success) {
       setAlert({ type: "error", message: result.error ?? "Impossible de supprimer ce compte." })
       return
     }
     setAlert({ type: "success", message: "Compte supprimé et données nettoyées." })
-    refreshUsers()
+    await refreshUsers()
   }
 
   const handleRowKeyDown = (event: KeyboardEvent<HTMLDivElement>, email: string) => {
@@ -484,3 +495,4 @@ const AdminPage = () => {
 }
 
 export default AdminPage
+

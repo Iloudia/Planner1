@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useMemo, useState } from "react"
 import { useAuth } from "../../context/AuthContext"
+import { useCookieConsent } from "../../context/CookieConsentContext"
 import { buildUserScopedKey } from "../../utils/userScopedKey"
 
 const LANGUAGE_STORAGE_KEY = "planner.language.preference"
@@ -52,6 +53,7 @@ const languageOptions: LanguageOption[] = [
 ]
 
 const SettingsLanguages = () => {
+  const { preferences, openPreferences } = useCookieConsent()
   const { userEmail } = useAuth()
   const storageKey = useMemo(() => buildUserScopedKey(userEmail, LANGUAGE_STORAGE_KEY), [userEmail])
   const [savedLanguage, setSavedLanguage] = useState<string>("fr-FR")
@@ -114,9 +116,17 @@ const SettingsLanguages = () => {
     if (!selectedLanguage) {
       return
     }
+    if (!preferences.preferences && selectedLanguage !== "fr-FR") {
+      openPreferences()
+      return
+    }
     setSavedLanguage(selectedLanguage)
     try {
-      localStorage.setItem(storageKey, selectedLanguage)
+      if (preferences.preferences) {
+        localStorage.setItem(storageKey, selectedLanguage)
+      } else {
+        localStorage.removeItem(storageKey)
+      }
     } catch {
       // ignore storage errors
     }
@@ -129,7 +139,6 @@ const SettingsLanguages = () => {
     clearGoogleTranslateCookie()
     window.location.reload()
   }
-
   return (
     <div className="settings-section">
       <h2>Langues</h2>

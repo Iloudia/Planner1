@@ -1,11 +1,46 @@
-﻿import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react"
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react"
+import {
+  type User,
+  type UserCredential,
+  GoogleAuthProvider,
+  EmailAuthProvider,
+  browserLocalPersistence,
+  browserSessionPersistence,
+  createUserWithEmailAndPassword,
+  deleteUser,
+  onAuthStateChanged,
+  reauthenticateWithCredential,
+  setPersistence,
+  signInWithCredential,
+  signInWithEmailAndPassword,
+  signOut,
+  updatePassword,
+  updateProfile,
+} from "firebase/auth"
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  setDoc,
+  updateDoc,
+  where,
+} from "firebase/firestore"
+import { deleteObject, ref, uploadBytes } from "firebase/storage"
+import { type FirebaseUserDocument } from "../models/firebase"
+import { auth, db, storage } from "../utils/firebase"
+const THIRTY_DAYS_MS = 1000 * 60 * 60 * 24 * 30
 
-const ADMIN_EMAIL = "admin@planner.local"
-const ADMIN_PASSWORD = "Admin!2025#Planner"
-const SESSION_ID_KEY = "planner.auth.sessionId"
-const SESSION_MAP_KEY = "planner.auth.sessions"
-const ACCOUNT_DEACTIVATION_KEY = "planner.account.deactivation"
-const ACCOUNT_STATUS_KEY = "planner.account.status"
+export type AccountStatus = "actif" | "desactive"
+
+export type AdminUserRecord = {
+  email: string
+  createdAt: string | null
+  status: AccountStatus
+  deletionPlannedAt: string | null
+}
 
 type ChangePasswordResult = {
   success: boolean
@@ -18,415 +53,145 @@ type AccountActionResult = {
   deleteAt?: string
 }
 
-export type AccountStatus = "actif" | "desactive"
-
-export type AdminUserRecord = {
-  email: string
-  createdAt: string | null
-  status: AccountStatus
-  deletionPlannedAt: string | null
+type RegistrationProfile = {
+  firstName?: string
+  lastName?: string
+  username?: string
+  birthday?: string
+  gender?: string
+  acceptTerms?: boolean
 }
 
 export type AuthContextValue = {
+  isAuthReady: boolean
   isAuthenticated: boolean
   isAdmin: boolean
   userEmail: string | null
   createdAt: string | null
-  login: (credentials: { email: string; password: string; remember?: boolean }) => boolean
-  register: (credentials: { email: string; password: string; remember?: boolean }) => boolean
-  loginWithGoogle: (credential: string) => boolean
-  logout: () => void
-  verifyPassword: (input: string) => boolean
-  changePassword: (currentPassword: string, newPassword: string) => ChangePasswordResult
-  deactivateAccount: () => AccountActionResult
-  deleteAccount: () => AccountActionResult
+  login: (credentials: { email: string; password: string; remember?: boolean }) => Promise<boolean>
+  register: (credentials: { email: string; password: string; remember?: boolean; profile?: RegistrationProfile }) => Promise<boolean>
+  loginWithGoogle: (credential: string) => Promise<boolean>
+  logout: () => Promise<void>
+  verifyPassword: (input: string) => Promise<boolean>
+  changePassword: (currentPassword: string, newPassword: string) => Promise<ChangePasswordResult>
+  deactivateAccount: () => Promise<AccountActionResult>
+  deleteAccount: () => Promise<AccountActionResult>
   scheduledDeletionDate: string | null
-  adminListUsers: () => AdminUserRecord[]
-  adminUpdateStatus: (email: string, status: AccountStatus) => AccountActionResult
-  adminDeleteUser: (email: string) => AccountActionResult
+  adminListUsers: () => Promise<AdminUserRecord[]>
+  adminUpdateStatus: (email: string, status: AccountStatus) => Promise<AccountActionResult>
+  adminDeleteUser: (email: string) => Promise<AccountActionResult>
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 
-const STORAGE_KEY = "planner.auth.user"
-const ACCOUNT_META_KEY = "planner.account.meta"
-const USERS_STORAGE_KEY = "planner.auth.users"
-
-type StoredUser = {
-  email: string
-  password: string
-}
-
-type RegisteredUser = {
-  email: string
-  password: string
-}
-
-type AccountMeta = {
-  createdAt: string
-}
-
-type SessionMap = Record<string, string[]>
-type DeactivationRecord = {
-  deleteAt: string
-}
-type DeactivationMap = Record<string, DeactivationRecord>
-type AccountStatusMap = Record<string, AccountStatus>
-
-const THIRTY_DAYS_MS = 1000 * 60 * 60 * 24 * 30
-
 const normalizeEmail = (value: string) => String(value ?? "").trim().toLowerCase()
 
-const readSessionMap = (): SessionMap => {
-  if (typeof window === "undefined") return {}
+const nowIso = () => new Date().toISOString()
+
+const buildUserDocument = (
+  user: User,
+  profile?: RegistrationProfile,
+  options?: { includeCreatedAt?: boolean; status?: AccountStatus; admin?: boolean },
+) => {
+  const email = user.email ?? ""
+  const payload: FirebaseUserDocument = {
+    email,
+    emailLower: normalizeEmail(email),
+    updatedAt: nowIso(),
+  }
+
+  if (options?.includeCreatedAt) {
+    payload.createdAt = user.metadata.creationTime ?? nowIso()
+    payload.admin = options?.admin ?? false
+  }
+
+  if (options?.status) {
+    payload.status = options.status
+  }
+
+  if (profile) {
+    payload.personalInfo = {
+      firstName: profile.firstName?.trim() || "",
+      lastName: profile.lastName?.trim() || "",
+      email,
+    }
+    payload.identityInfo = {
+      username: profile.username?.trim() || "",
+      birthday: profile.birthday?.trim() || "",
+      gender: profile.gender?.trim() || "",
+    }
+    payload.acceptTerms = Boolean(profile.acceptTerms)
+  }
+
+  return payload
+}
+
+const uploadProfileSnapshot = async (uid: string, payload: FirebaseUserDocument) => {
   try {
-    const raw = window.localStorage.getItem(SESSION_MAP_KEY)
-    if (!raw) {
-      return {}
-    }
-    const parsed = JSON.parse(raw)
-    if (parsed && typeof parsed === "object") {
-      return parsed as SessionMap
-    }
+    const snapshotRef = ref(storage, `users/${uid}/profile.json`)
+    const body = JSON.stringify(payload, null, 2)
+    const blob = new Blob([body], { type: "application/json" })
+    await uploadBytes(snapshotRef, blob, { contentType: "application/json" })
   } catch (error) {
-    console.error("Session map read failed", error)
-  }
-  return {}
-}
-
-const writeSessionMap = (map: SessionMap) => {
-  if (typeof window === "undefined") return
-  try {
-    window.localStorage.setItem(SESSION_MAP_KEY, JSON.stringify(map))
-  } catch (error) {
-    console.error("Session map write failed", error)
+    console.error("Profile snapshot upload failed", error)
   }
 }
 
-const readDeactivationMap = (): DeactivationMap => {
-  if (typeof window === "undefined") return {}
-  try {
-    const raw = window.localStorage.getItem(ACCOUNT_DEACTIVATION_KEY)
-    if (!raw) {
-      return {}
-    }
-    const parsed = JSON.parse(raw)
-    if (parsed && typeof parsed === "object") {
-      return parsed as DeactivationMap
-    }
-  } catch (error) {
-    console.error("Deactivation map read failed", error)
+const ensureUserDocument = async (user: User, profile?: RegistrationProfile) => {
+  const docRef = doc(db, "users", user.uid)
+  const snapshot = await getDoc(docRef)
+
+  if (!snapshot.exists()) {
+    const payload = buildUserDocument(user, profile, { includeCreatedAt: true, status: "actif", admin: false })
+    payload.deletionPlannedAt = null
+    await setDoc(docRef, payload)
+    return payload
   }
-  return {}
+
+  const data = snapshot.data() as FirebaseUserDocument
+  const updates: Partial<FirebaseUserDocument> = {}
+  if (!data.createdAt) {
+    updates.createdAt = user.metadata.creationTime ?? nowIso()
+  }
+  if (!data.email && user.email) {
+    updates.email = user.email
+  }
+  if (!data.emailLower && user.email) {
+    updates.emailLower = normalizeEmail(user.email)
+  }
+  if (data.admin === undefined) {
+    updates.admin = false
+  }
+
+  if (Object.keys(updates).length > 0) {
+    updates.updatedAt = nowIso()
+    await updateDoc(docRef, updates)
+  }
+
+  if (profile) {
+    const payload = buildUserDocument(user, profile)
+    await setDoc(docRef, payload, { merge: true })
+  }
+
+  const refreshed = await getDoc(docRef)
+  return (refreshed.data() as FirebaseUserDocument) ?? data
 }
 
-const writeDeactivationMap = (map: DeactivationMap) => {
-  if (typeof window === "undefined") return
-  try {
-    window.localStorage.setItem(ACCOUNT_DEACTIVATION_KEY, JSON.stringify(map))
-  } catch (error) {
-    console.error("Deactivation map write failed", error)
-  }
-}
-
-const getDeactivationEntry = (email: string) => {
+const loadAdminUserByEmail = async (email: string) => {
   const normalized = normalizeEmail(email)
-  const map = readDeactivationMap()
-  return map[normalized]
-}
-
-const scheduleDeactivationForEmail = (email: string, deleteAt: string) => {
-  const normalized = normalizeEmail(email)
-  const map = readDeactivationMap()
-  map[normalized] = { deleteAt }
-  writeDeactivationMap(map)
-}
-
-const clearDeactivationForEmail = (email: string) => {
-  const normalized = normalizeEmail(email)
-  const map = readDeactivationMap()
-  if (map[normalized]) {
-    delete map[normalized]
-    writeDeactivationMap(map)
-  }
-}
-
-const readAccountStatusMap = (): AccountStatusMap => {
-  if (typeof window === "undefined") return {}
-  try {
-    const raw = window.localStorage.getItem(ACCOUNT_STATUS_KEY)
-    if (!raw) {
-      return {}
-    }
-    const parsed = JSON.parse(raw)
-    if (parsed && typeof parsed === "object") {
-      return parsed as AccountStatusMap
-    }
-  } catch (error) {
-    console.error("Account status map read failed", error)
-  }
-  return {}
-}
-
-const writeAccountStatusMap = (map: AccountStatusMap) => {
-  if (typeof window === "undefined") return
-  try {
-    window.localStorage.setItem(ACCOUNT_STATUS_KEY, JSON.stringify(map))
-  } catch (error) {
-    console.error("Account status map write failed", error)
-  }
-}
-
-const getAccountStatus = (email: string): AccountStatus => {
-  const normalized = normalizeEmail(email)
-  const map = readAccountStatusMap()
-  return map[normalized] ?? "actif"
-}
-
-const setAccountStatus = (email: string, status: AccountStatus) => {
-  const normalized = normalizeEmail(email)
-  const map = readAccountStatusMap()
-  map[normalized] = status
-  writeAccountStatusMap(map)
-}
-
-const clearAccountStatus = (email: string) => {
-  const normalized = normalizeEmail(email)
-  const map = readAccountStatusMap()
-  if (map[normalized]) {
-    delete map[normalized]
-    writeAccountStatusMap(map)
-  }
-}
-
-const addSessionForEmail = (email: string, sessionId: string) => {
-  if (!email || !sessionId) return
-  const normalized = normalizeEmail(email)
-  const map = readSessionMap()
-  const existing = map[normalized] ?? []
-  if (!existing.includes(sessionId)) {
-    map[normalized] = [...existing, sessionId]
-    writeSessionMap(map)
-  }
-}
-
-const removeSessionForEmail = (email: string, sessionId: string) => {
-  if (!email || !sessionId) return
-  const normalized = normalizeEmail(email)
-  const map = readSessionMap()
-  const existing = map[normalized]
-  if (!existing) return
-  const next = existing.filter((id) => id !== sessionId)
-  if (next.length > 0) {
-    map[normalized] = next
-  } else {
-    delete map[normalized]
-  }
-  writeSessionMap(map)
-}
-
-const replaceSessionsForEmail = (email: string, sessionIds: string[]) => {
-  const normalized = normalizeEmail(email)
-  const unique = sessionIds.filter(Boolean)
-  const map = readSessionMap()
-  if (unique.length > 0) {
-    map[normalized] = Array.from(new Set(unique))
-  } else {
-    delete map[normalized]
-  }
-  writeSessionMap(map)
-}
-
-const isSessionAllowedForEmail = (email: string, sessionId: string | null) => {
-  if (!email || !sessionId) return false
-  const normalized = normalizeEmail(email)
-  const map = readSessionMap()
-  const allowed = map[normalized]
-  if (!allowed || allowed.length === 0) {
-    return true
-  }
-  return allowed.includes(sessionId)
-}
-
-const generateSessionId = () => {
-  if (typeof window !== "undefined" && window.crypto?.randomUUID) {
-    return window.crypto.randomUUID()
-  }
-  return `sess-${Date.now().toString(36)}-${Math.random().toString(16).slice(2)}`
-}
-
-const readStoredSessionIdentifier = () => {
-  if (typeof window === "undefined") return null
-  try {
-    return window.sessionStorage.getItem(SESSION_ID_KEY) ?? window.localStorage.getItem(SESSION_ID_KEY)
-  } catch (error) {
-    console.error("Session identifier read failed", error)
-    return null
-  }
-}
-
-const persistSessionIdentifier = (value: string | null, remember: boolean) => {
-  if (typeof window === "undefined") return
-  try {
-    if (value) {
-      window.sessionStorage.setItem(SESSION_ID_KEY, value)
-      if (remember) {
-        window.localStorage.setItem(SESSION_ID_KEY, value)
-      } else {
-        window.localStorage.removeItem(SESSION_ID_KEY)
-      }
-    } else {
-      window.sessionStorage.removeItem(SESSION_ID_KEY)
-      window.localStorage.removeItem(SESSION_ID_KEY)
-    }
-  } catch (error) {
-    console.error("Session identifier write failed", error)
-  }
-}
-
-const readAccountMetaMap = (): Record<string, AccountMeta> => {
-  try {
-    const raw = localStorage.getItem(ACCOUNT_META_KEY)
-    if (!raw) {
-      return {}
-    }
-    const parsed = JSON.parse(raw)
-    if (parsed && typeof parsed === "object") {
-      return parsed as Record<string, AccountMeta>
-    }
-  } catch (error) {
-    console.error("Account meta read failed", error)
-  }
-  return {}
-}
-
-const writeAccountMetaMap = (map: Record<string, AccountMeta>) => {
-  try {
-    localStorage.setItem(ACCOUNT_META_KEY, JSON.stringify(map))
-  } catch (error) {
-    console.error("Account meta write failed", error)
-  }
-}
-
-const ensureAccountMeta = (email: string): AccountMeta => {
-  const normalized = normalizeEmail(email)
-  const map = readAccountMetaMap()
-  if (!map[normalized]) {
-    if (map[email]) {
-      map[normalized] = map[email]
-      delete map[email]
-    } else {
-      map[normalized] = { createdAt: new Date().toISOString() }
-    }
-    writeAccountMetaMap(map)
-  }
-  return map[normalized]
-}
-
-const readRegisteredUsers = (): RegisteredUser[] => {
-  try {
-    const raw = localStorage.getItem(USERS_STORAGE_KEY)
-    if (!raw) {
-      return []
-    }
-    const parsed = JSON.parse(raw)
-    if (Array.isArray(parsed)) {
-      return parsed.filter((item): item is RegisteredUser => !!item?.email && !!item?.password)
-    }
-  } catch (error) {
-    console.error("Registered users read failed", error)
-  }
-  return []
-}
-
-const writeRegisteredUsers = (users: RegisteredUser[]) => {
-  try {
-    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users))
-  } catch (error) {
-    console.error("Registered users write failed", error)
-  }
-}
-
-const upsertRegisteredUser = (email: string, password: string) => {
-  const normalizedEmail = normalizeEmail(email)
-  const users = readRegisteredUsers()
-  const index = users.findIndex((user) => user.email.toLowerCase() === normalizedEmail.toLowerCase())
-  if (index >= 0) {
-    users[index] = { email: normalizedEmail, password }
-  } else {
-    users.push({ email: normalizedEmail, password })
-  }
-  writeRegisteredUsers(users)
-}
-
-const removeRegisteredUserEntry = (email: string) => {
-  const normalizedEmail = normalizeEmail(email)
-  const users = readRegisteredUsers().filter((user) => user.email.toLowerCase() !== normalizedEmail)
-  writeRegisteredUsers(users)
-}
-
-const findRegisteredUser = (email: string) => {
-  const normalizedEmail = normalizeEmail(email)
-  return readRegisteredUsers().find((user) => user.email.toLowerCase() === normalizedEmail)
-}
-
-const deleteAccountMetaEntry = (email: string) => {
-  const map = readAccountMetaMap()
-  const normalized = normalizeEmail(email)
-  if (map[normalized]) {
-    delete map[normalized]
-    writeAccountMetaMap(map)
-  }
-}
-
-const purgeAccountData = (email: string) => {
-  removeRegisteredUserEntry(email)
-  deleteAccountMetaEntry(email)
-  clearDeactivationForEmail(email)
-  clearAccountStatus(email)
-  replaceSessionsForEmail(email, [])
-}
-
-const evaluateDeactivationStatus = (email: string) => {
-  const entry = getDeactivationEntry(email)
-  if (!entry) {
-    return { allowed: true, deleteAt: null as string | null }
-  }
-  const deleteAtTime = new Date(entry.deleteAt).getTime()
-  if (Number.isFinite(deleteAtTime) && deleteAtTime <= Date.now()) {
-    purgeAccountData(email)
-    return { allowed: false, deleteAt: null as string | null }
-  }
-  return { allowed: true, deleteAt: entry.deleteAt }
-}
-
-const listRegisteredUserRecords = (): AdminUserRecord[] => {
-  const registeredUsers = readRegisteredUsers()
-  const metaMap = readAccountMetaMap()
-  const statusMap = readAccountStatusMap()
-  const deactivationMap = readDeactivationMap()
-  return registeredUsers.map((user) => {
-    const normalized = normalizeEmail(user.email)
-    const meta = metaMap[normalized]
-    const status = statusMap[normalized] ?? "actif"
-    const deletionPlannedAt = deactivationMap[normalized]?.deleteAt ?? null
-    return {
-      email: user.email,
-      createdAt: meta?.createdAt ?? null,
-      status,
-      deletionPlannedAt,
-    }
-  })
-}
-
-const evaluateAccountAccess = (email: string) => {
-  const status = getAccountStatus(email)
-  if (status === "desactive") {
-    replaceSessionsForEmail(email, [])
-    return { allowed: false, deleteAt: null, status }
-  }
-  const deactivation = evaluateDeactivationStatus(email)
-  return { allowed: deactivation.allowed, deleteAt: deactivation.deleteAt, status }
+  if (!normalized) return null
+  const usersRef = collection(db, "users")
+  const byLower = query(usersRef, where("emailLower", "==", normalized))
+  const snapshot = await getDocs(byLower)
+  if (snapshot.docs[0]) return snapshot.docs[0]
+  const byEmail = query(usersRef, where("email", "==", email))
+  const fallbackSnapshot = await getDocs(byEmail)
+  if (fallbackSnapshot.docs[0]) return fallbackSnapshot.docs[0]
+  const allSnapshot = await getDocs(usersRef)
+  return allSnapshot.docs.find((docSnap) => {
+    const data = docSnap.data() as FirebaseUserDocument
+    return normalizeEmail(data.email ?? "") === normalized
+  }) ?? null
 }
 
 type AuthProviderProps = {
@@ -434,253 +199,159 @@ type AuthProviderProps = {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<StoredUser | null>(null)
+  const [authUser, setAuthUser] = useState<User | null>(auth.currentUser)
+  const [userDoc, setUserDoc] = useState<FirebaseUserDocument | null>(null)
   const [accountCreatedAt, setAccountCreatedAt] = useState<string | null>(null)
-  const [sessionId, setSessionId] = useState<string | null>(() => readStoredSessionIdentifier())
-  const [rememberChoice, setRememberChoice] = useState(false)
   const [scheduledDeletionDate, setScheduledDeletionDate] = useState<string | null>(null)
-
-  const isValidCredential = (candidate: StoredUser | null) => {
-    if (!candidate?.email || !candidate?.password) {
-      return false
-    }
-    const normalizedEmail = normalizeEmail(candidate.email)
-    if (normalizedEmail === ADMIN_EMAIL && candidate.password === ADMIN_PASSWORD) {
-      return true
-    }
-    const registered = findRegisteredUser(normalizedEmail)
-    return Boolean(registered && registered.password === candidate.password)
-  }
+  const [authReady, setAuthReady] = useState(false)
 
   useEffect(() => {
-    try {
-      const raw = sessionStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(STORAGE_KEY)
-      if (!raw) {
-        persistSessionIdentifier(null, false)
-        setSessionId(null)
-        return
-      }
-      const parsed = JSON.parse(raw) as StoredUser
-      if (!isValidCredential(parsed)) {
-        localStorage.removeItem(STORAGE_KEY)
-        persistSessionIdentifier(null, false)
-        setSessionId(null)
-        return
-      }
-      const status = evaluateAccountAccess(parsed.email)
-      if (!status.allowed) {
-        localStorage.removeItem(STORAGE_KEY)
-        persistSessionIdentifier(null, false)
-        setSessionId(null)
+    let isMounted = true
+    const unsubscribe = onAuthStateChanged(auth, async (nextUser) => {
+      setAuthUser(nextUser)
+      if (!nextUser) {
+        setUserDoc(null)
+        setAccountCreatedAt(null)
         setScheduledDeletionDate(null)
+        if (isMounted) {
+          setAuthReady(true)
+        }
         return
       }
-      let storedSession = readStoredSessionIdentifier()
-      if (storedSession && !isSessionAllowedForEmail(parsed.email, storedSession)) {
-        localStorage.removeItem(STORAGE_KEY)
-        persistSessionIdentifier(null, false)
-        setSessionId(null)
-        return
+
+      try {
+        const data = await ensureUserDocument(nextUser)
+        setUserDoc(data)
+        setAccountCreatedAt(data.createdAt ?? nextUser.metadata.creationTime ?? null)
+        setScheduledDeletionDate(data.deletionPlannedAt ?? null)
+        if (data.status === "desactive") {
+          await signOut(auth)
+        }
+      } catch (error) {
+        console.error("Firebase user load failed", error)
+      } finally {
+        if (isMounted) {
+          setAuthReady(true)
+        }
       }
-      if (!storedSession) {
-        storedSession = beginSession(parsed.email, true)
-      } else {
-        ensureSessionRegistered(parsed.email, storedSession, true)
-      }
-      ensureAccountMeta(parsed.email)
-      setAccountStatus(parsed.email, "actif")
-      setUser(parsed)
-      setRememberChoice(true)
-      setScheduledDeletionDate(status.deleteAt ?? null)
-    } catch (error) {
-      console.error("Auth storage read failed", error)
+    })
+
+    return () => {
+      isMounted = false
+      unsubscribe()
     }
   }, [])
 
-  useEffect(() => {
-    if (user?.email) {
-      const meta = ensureAccountMeta(user.email)
-      setAccountCreatedAt(meta.createdAt)
-    } else {
-      setAccountCreatedAt(null)
-    }
-  }, [user?.email])
-
-  useEffect(() => {
-    if (!user?.email) {
-      setScheduledDeletionDate(null)
-      return
-    }
-    const status = evaluateAccountAccess(user.email)
-    if (!status.allowed) {
-      endSession(user.email)
-      persistUser(null)
-      return
-    }
-    setScheduledDeletionDate(status.deleteAt ?? null)
-  }, [user?.email])
-
-  useEffect(() => {
-    if (typeof window === "undefined") return
-    const handleStorage = () => {
-      if (!user?.email) return
-      const status = getAccountStatus(user.email)
-      if (status === "desactive") {
-        replaceSessionsForEmail(user.email, [])
-        persistUser(null)
-        setSessionId(null)
-        persistSessionIdentifier(null, false)
-        return
-      }
-      if (sessionId && !isSessionAllowedForEmail(user.email, sessionId)) {
-        removeSessionForEmail(user.email, sessionId)
-        persistUser(null)
-        setSessionId(null)
-        persistSessionIdentifier(null, false)
-      }
-    }
-    window.addEventListener("storage", handleStorage)
-    return () => window.removeEventListener("storage", handleStorage)
-  }, [sessionId, user?.email])
-
-  const persistUser = (nextUser: StoredUser | null, remember = false) => {
-    setUser(nextUser)
-    setRememberChoice(Boolean(nextUser) && remember)
-    if (!nextUser) {
-      setScheduledDeletionDate(null)
-    }
+  const applyPersistence = useCallback(async (remember?: boolean) => {
     try {
-      if (nextUser) {
-        sessionStorage.setItem(STORAGE_KEY, JSON.stringify(nextUser))
-        if (remember) {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(nextUser))
-        } else {
-          localStorage.removeItem(STORAGE_KEY)
-        }
-      } else {
-        sessionStorage.removeItem(STORAGE_KEY)
-        localStorage.removeItem(STORAGE_KEY)
-      }
+      await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence)
     } catch (error) {
-      console.error("Auth storage write failed", error)
+      console.error("Auth persistence failed", error)
     }
-  }
+  }, [])
 
-  const beginSession = (email: string, remember: boolean) => {
-    const newSessionId = generateSessionId()
-    setSessionId(newSessionId)
-    persistSessionIdentifier(newSessionId, remember)
-    addSessionForEmail(email, newSessionId)
-    return newSessionId
-  }
-
-  const ensureSessionRegistered = (email: string, id: string, remember: boolean) => {
-    if (!id) return
-    setSessionId(id)
-    persistSessionIdentifier(id, remember)
-    addSessionForEmail(email, id)
-  }
-
-  const endSession = (email?: string | null) => {
-    if (email && sessionId) {
-      removeSessionForEmail(email, sessionId)
-    }
-    setSessionId(null)
-    persistSessionIdentifier(null, false)
-  }
-
-  const login = (credentials: { email: string; password: string; remember?: boolean }) => {
-    const { email, password, remember = false } = credentials
-    if (!email || !password) return false
-    const normalizedEmail = normalizeEmail(email)
-    const status = evaluateAccountAccess(normalizedEmail)
-    if (!status.allowed) {
-      return false
-    }
-
-    if (normalizedEmail === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-      ensureAccountMeta(normalizedEmail)
-      setAccountStatus(normalizedEmail, "actif")
-      persistUser({ email: normalizedEmail, password }, remember)
-      beginSession(normalizedEmail, remember)
-      upsertRegisteredUser(normalizedEmail, password)
-      setScheduledDeletionDate(status.deleteAt ?? null)
-      return true
-    }
-
-    const registeredUser = findRegisteredUser(normalizedEmail)
-    if (!registeredUser || registeredUser.password !== password) {
-      return false
-    }
-
-    ensureAccountMeta(registeredUser.email)
-    setAccountStatus(registeredUser.email, "actif")
-    persistUser({ email: registeredUser.email, password: registeredUser.password }, remember)
-    beginSession(registeredUser.email, remember)
-    setScheduledDeletionDate(status.deleteAt ?? null)
-    return true
-  }
-
-  const register = (credentials: { email: string; password: string; remember?: boolean }) => {
-    const { email, password, remember = false } = credentials
-    if (!email || !password) return false
-    const normalizedEmail = normalizeEmail(email)
-    if (findRegisteredUser(normalizedEmail)) {
-      return false
-    }
-    upsertRegisteredUser(normalizedEmail, password)
-    ensureAccountMeta(normalizedEmail)
-    setAccountStatus(normalizedEmail, "actif")
-    persistUser({ email: normalizedEmail, password }, remember)
-    beginSession(normalizedEmail, remember)
-    setScheduledDeletionDate(null)
-    return true
-  }
-
-  const logout = () => {
-    endSession(user?.email ?? null)
-    persistUser(null)
-  }
-
-  const loginWithGoogle = (credential: string) => {
-    try {
-      const payload = credential.split(".")[1]
-      const normalizedPayload = payload.replace(/-/g, "+").replace(/_/g, "/")
-      const decodedPayload = atob(normalizedPayload)
-      const parsed = JSON.parse(decodedPayload) as { email?: string }
-      if (!parsed.email) {
+  const login = useCallback(
+    async (credentials: { email: string; password: string; remember?: boolean }) => {
+      const { email, password, remember = false } = credentials
+      if (!email || !password) return false
+      try {
+        await applyPersistence(remember)
+        const result = await signInWithEmailAndPassword(auth, email, password)
+        const data = await ensureUserDocument(result.user)
+        if (data.status === "desactive") {
+          await signOut(auth)
+          return false
+        }
+        if (data.deletionPlannedAt) {
+          const deleteAtTime = new Date(data.deletionPlannedAt).getTime()
+          if (Number.isFinite(deleteAtTime) && deleteAtTime <= Date.now()) {
+            await signOut(auth)
+            return false
+          }
+        }
+        return true
+      } catch (error) {
+        console.error("Login failed", error)
         return false
       }
-      const normalizedEmail = normalizeEmail(parsed.email)
-      ensureAccountMeta(normalizedEmail)
-      upsertRegisteredUser(normalizedEmail, "__google__")
-      setAccountStatus(normalizedEmail, "actif")
-      persistUser({ email: normalizedEmail, password: "__google__" }, true)
-      beginSession(normalizedEmail, true)
+    },
+    [applyPersistence],
+  )
+
+  const register = useCallback(
+    async (credentials: { email: string; password: string; remember?: boolean; profile?: RegistrationProfile }) => {
+      const { email, password, remember = false, profile } = credentials
+      if (!email || !password) return false
+      try {
+        await applyPersistence(remember)
+        const result = await createUserWithEmailAndPassword(auth, email, password)
+        const displayName = profile?.username || [profile?.firstName, profile?.lastName].filter(Boolean).join(" ")
+        if (displayName) {
+          await updateProfile(result.user, { displayName })
+        }
+        const data = await ensureUserDocument(result.user, profile)
+        await uploadProfileSnapshot(result.user.uid, data)
+        return true
+      } catch (error) {
+        console.error("Register failed", error)
+        return false
+      }
+    },
+    [applyPersistence],
+  )
+
+  const loginWithGoogle = useCallback(
+    async (credential: string) => {
+      if (!credential) return false
+      try {
+        await applyPersistence(true)
+        const googleCredential = GoogleAuthProvider.credential(credential)
+        const result: UserCredential = await signInWithCredential(auth, googleCredential)
+        const data = await ensureUserDocument(result.user)
+        if (result.additionalUserInfo?.isNewUser) {
+          await uploadProfileSnapshot(result.user.uid, data)
+        }
+        if (data.status === "desactive") {
+          await signOut(auth)
+          return false
+        }
+        return true
+      } catch (error) {
+        console.error("Google login failed", error)
+        return false
+      }
+    },
+    [applyPersistence],
+  )
+
+  const logout = useCallback(async () => {
+    try {
+      await signOut(auth)
+    } catch (error) {
+      console.error("Logout failed", error)
+    }
+  }, [])
+
+  const verifyPassword = useCallback(async (input: string) => {
+    if (!auth.currentUser?.email) return false
+    if (!input) return false
+    try {
+      const credential = EmailAuthProvider.credential(auth.currentUser.email, input)
+      await reauthenticateWithCredential(auth.currentUser, credential)
       return true
     } catch (error) {
-      console.error("Invalid Google credential", error)
+      console.error("Password verification failed", error)
       return false
     }
-  }
+  }, [])
 
-  const verifyPassword = (input: string) => {
-    if (!user) return false
-    return user.password === input
-  }
-
-  const changePassword = (currentPassword: string, newPassword: string): ChangePasswordResult => {
-    if (!user?.email) {
+  const changePassword = useCallback(async (currentPassword: string, newPassword: string): Promise<ChangePasswordResult> => {
+    const currentUser = auth.currentUser
+    if (!currentUser?.email) {
       return { success: false, error: "Vous devez etre connecte pour changer votre mot de passe." }
-    }
-    if (user.password === "__google__") {
-      return { success: false, error: "Ce compte utilise la connexion Google. Changez votre mot de passe depuis Google." }
     }
     if (!currentPassword || !newPassword) {
       return { success: false, error: "Tous les champs sont obligatoires." }
-    }
-    if (!verifyPassword(currentPassword)) {
-      return { success: false, error: "Le mot de passe actuel est incorrect." }
     }
     if (newPassword.length < 6) {
       return { success: false, error: "Le nouveau mot de passe doit contenir au moins 6 caracteres." }
@@ -688,88 +359,142 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     if (newPassword === currentPassword) {
       return { success: false, error: "Le nouveau mot de passe doit etre different de l actuel." }
     }
-    upsertRegisteredUser(user.email, newPassword)
-    const updatedUser = { email: user.email, password: newPassword }
-    const remember = rememberChoice
-    persistUser(updatedUser, remember)
-    let activeSessionId = sessionId
-    if (!activeSessionId) {
-      activeSessionId = beginSession(user.email, remember)
-    } else {
-      ensureSessionRegistered(user.email, activeSessionId, remember)
+    try {
+      const credential = EmailAuthProvider.credential(currentUser.email, currentPassword)
+      await reauthenticateWithCredential(currentUser, credential)
+      await updatePassword(currentUser, newPassword)
+      return { success: true }
+    } catch (error) {
+      console.error("Password change failed", error)
+      return { success: false, error: "Mot de passe actuel invalide ou session expiree." }
     }
-    replaceSessionsForEmail(user.email, activeSessionId ? [activeSessionId] : [])
-    return { success: true }
-  }
+  }, [])
 
-  const deactivateAccount = (): AccountActionResult => {
-    if (!user?.email) {
+  const deactivateAccount = useCallback(async (): Promise<AccountActionResult> => {
+    const currentUser = auth.currentUser
+    if (!currentUser) {
       return { success: false, error: "Vous devez etre connecte pour desactiver votre compte." }
     }
     const deleteAt = new Date(Date.now() + THIRTY_DAYS_MS).toISOString()
-    scheduleDeactivationForEmail(user.email, deleteAt)
-    setScheduledDeletionDate(deleteAt)
-    return { success: true, deleteAt }
-  }
+    try {
+      await updateDoc(doc(db, "users", currentUser.uid), {
+        deletionPlannedAt: deleteAt,
+        updatedAt: nowIso(),
+      })
+      setScheduledDeletionDate(deleteAt)
+      return { success: true, deleteAt }
+    } catch (error) {
+      console.error("Account deactivation failed", error)
+      return { success: false, error: "Impossible de planifier la desactivation." }
+    }
+  }, [])
 
-  const deleteAccount = (): AccountActionResult => {
-    if (!user?.email) {
+  const deleteAccount = useCallback(async (): Promise<AccountActionResult> => {
+    const currentUser = auth.currentUser
+    if (!currentUser) {
       return { success: false, error: "Vous devez etre connecte pour supprimer votre compte." }
     }
-    purgeAccountData(user.email)
-    setScheduledDeletionDate(null)
-    endSession(user.email)
-    persistUser(null)
-    return { success: true }
-  }
+    try {
+      await deleteDoc(doc(db, "users", currentUser.uid))
+    } catch (error) {
+      console.error("User document delete failed", error)
+    }
 
-  const adminListUsers = () => listRegisteredUserRecords()
+    try {
+      await deleteObject(ref(storage, `users/${currentUser.uid}/profile.json`))
+    } catch {
+      // ignore missing snapshot
+    }
 
-  const adminUpdateStatus = (email: string, status: AccountStatus): AccountActionResult => {
+    try {
+      await deleteUser(currentUser)
+      return { success: true }
+    } catch (error) {
+      console.error("Account delete failed", error)
+      return {
+        success: false,
+        error: "Suppression impossible sans reconnexion recente. Reconnectez-vous puis reessayez.",
+      }
+    }
+  }, [])
+
+  const adminListUsers = useCallback(async () => {
+    try {
+      const snapshot = await getDocs(collection(db, "users"))
+      return snapshot.docs.map((docSnap) => {
+        const data = docSnap.data() as FirebaseUserDocument
+        return {
+          email: data.email ?? docSnap.id,
+          createdAt: data.createdAt ?? null,
+          status: (data.status ?? "actif") as AccountStatus,
+          deletionPlannedAt: data.deletionPlannedAt ?? null,
+        }
+      })
+    } catch (error) {
+      console.error("Admin users load failed", error)
+      return []
+    }
+  }, [])
+
+  const adminUpdateStatus = useCallback(async (email: string, status: AccountStatus): Promise<AccountActionResult> => {
     if (!email) {
       return { success: false, error: "Email requis pour mettre a jour le statut." }
     }
-    const normalizedEmail = normalizeEmail(email)
-    const target = findRegisteredUser(normalizedEmail)
-    if (!target) {
-      return { success: false, error: "Utilisateur introuvable." }
-    }
-    if (status === "actif") {
-      clearAccountStatus(normalizedEmail)
-      clearDeactivationForEmail(normalizedEmail)
+    try {
+      const targetDoc = await loadAdminUserByEmail(email)
+      if (!targetDoc) {
+        return { success: false, error: "Utilisateur introuvable." }
+      }
+      const updates: Partial<FirebaseUserDocument> = {
+        status,
+        updatedAt: nowIso(),
+      }
+      if (status === "actif") {
+        updates.deletionPlannedAt = null
+      }
+      await updateDoc(targetDoc.ref, updates)
+      if (auth.currentUser?.uid === targetDoc.id && status === "desactive") {
+        await signOut(auth)
+      }
       return { success: true }
+    } catch (error) {
+      console.error("Admin status update failed", error)
+      return { success: false, error: "Mise a jour impossible." }
     }
-    setAccountStatus(normalizedEmail, status)
-    replaceSessionsForEmail(normalizedEmail, [])
-    if (user?.email && normalizeEmail(user.email) === normalizedEmail) {
-      endSession(user.email)
-      persistUser(null)
-    }
-    return { success: true }
-  }
+  }, [])
 
-  const adminDeleteUser = (email: string): AccountActionResult => {
+  const adminDeleteUser = useCallback(async (email: string): Promise<AccountActionResult> => {
     if (!email) {
       return { success: false, error: "Email requis pour supprimer le compte." }
     }
-    const normalizedEmail = normalizeEmail(email)
-    const target = findRegisteredUser(normalizedEmail)
-    if (!target) {
-      return { success: false, error: "Utilisateur introuvable." }
+    const currentEmail = auth.currentUser?.email
+    if (currentEmail && normalizeEmail(currentEmail) === normalizeEmail(email)) {
+      return { success: false, error: "Utilisez la suppression de compte depuis vos parametres." }
     }
-    purgeAccountData(normalizedEmail)
-    if (user?.email && normalizeEmail(user.email) === normalizedEmail) {
-      endSession(user.email)
-      persistUser(null)
+    try {
+      const targetDoc = await loadAdminUserByEmail(email)
+      if (!targetDoc) {
+        return { success: false, error: "Utilisateur introuvable." }
+      }
+      await deleteDoc(targetDoc.ref)
+      try {
+        await deleteObject(ref(storage, `users/${targetDoc.id}/profile.json`))
+      } catch {
+        // ignore missing snapshot or permission errors
+      }
+      return { success: true }
+    } catch (error) {
+      console.error("Admin delete failed", error)
+      return { success: false, error: "Suppression impossible avec les droits actuels." }
     }
-    return { success: true }
-  }
+  }, [])
 
   const value = useMemo<AuthContextValue>(() => {
-    const email = user?.email ?? null
-    const isAdmin = email?.toLowerCase() === ADMIN_EMAIL && user?.password === ADMIN_PASSWORD
+    const email = authUser?.email ?? null
+    const isAdmin = Boolean(userDoc?.admin)
     return {
-      isAuthenticated: Boolean(user),
+      isAuthReady: authReady,
+      isAuthenticated: Boolean(authUser),
       isAdmin,
       userEmail: email,
       createdAt: accountCreatedAt,
@@ -786,7 +511,24 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       adminUpdateStatus,
       adminDeleteUser,
     }
-  }, [user, accountCreatedAt, scheduledDeletionDate, adminDeleteUser, adminListUsers, adminUpdateStatus])
+  }, [
+    accountCreatedAt,
+    adminDeleteUser,
+    adminListUsers,
+    adminUpdateStatus,
+    authReady,
+    authUser,
+    changePassword,
+    deactivateAccount,
+    deleteAccount,
+    login,
+    loginWithGoogle,
+    logout,
+    register,
+    scheduledDeletionDate,
+    userDoc?.admin,
+    verifyPassword,
+  ])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

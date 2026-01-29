@@ -134,9 +134,9 @@ const AuthPage = ({ mode }: AuthFormProps) => {
 
     window.google.accounts.id.initialize({
       client_id: googleClientId,
-      callback: (response: { credential?: string }) => {
+      callback: async (response: { credential?: string }) => {
         if (!response?.credential) return
-        const success = loginWithGoogle(response.credential)
+        const success = await loginWithGoogle(response.credential)
         if (success) {
           navigate(destinationPath, { replace: true })
         } else {
@@ -220,7 +220,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
     rememberEmail(email)
   }
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setError("")
 
@@ -260,7 +260,22 @@ const AuthPage = ({ mode }: AuthFormProps) => {
     if (mode === "register") {
       skipAutoRedirectRef.current = true
     }
-    const success = mode === "login" ? login({ email, password, remember }) : register({ email, password, remember })
+    const success =
+      mode === "login"
+        ? await login({ email, password, remember })
+        : await register({
+            email,
+            password,
+            remember,
+            profile: {
+              firstName,
+              lastName,
+              username,
+              birthday,
+              gender,
+              acceptTerms,
+            },
+          })
     if (!success) {
       skipAutoRedirectRef.current = false
       setError(mode === "register" ? "Un compte existe déjà avec cet email." : "Merci de renseigner un email et un mot de passe valides.")

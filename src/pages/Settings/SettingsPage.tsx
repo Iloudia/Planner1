@@ -21,12 +21,9 @@ const settingsSections = [
       },
     ],
   },
-  { id: "accessibility", title: "Accessibilite", description: "Adapter l experience a tes besoins." },
   { id: "display", title: "Affichage", description: "Modifier la taille de la police et l ambiance visuelle." },
   { id: "languages", title: "Langues", description: "Choisir la langue principale de l interface." },
   {
-    id: "cookies",
-    title: "Gestion des cookies",
     description: "Controle des traceurs utilises sur Planner.",
     items: [
       { title: "Essentiels actifs", description: "Garantissent la connexion et la securite de l espace perso." },

@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
+import { doc, setDoc } from "firebase/firestore"
 import { useAuth } from "../../context/AuthContext"
 import { buildUserScopedKey, normalizeUserEmail } from "../../utils/userScopedKey"
+import { auth, db } from "../../utils/firebase"
 import "./Onboarding.css"
 
 const ONBOARDING_STORAGE_KEY = "planner.onboarding.answers.v1"
@@ -136,15 +138,42 @@ const OnboardingPage = () => {
     }
   }
 
-  const completeOnboarding = (payload: OnboardingAnswers) => {
+  const saveAnswersToFirestore = async (payload: OnboardingAnswers) => {
+    const currentUser = auth.currentUser
+    if (!currentUser) return
+    try {
+      const completedAt = new Date().toISOString()
+      await setDoc(
+        doc(db, "users", currentUser.uid),
+        {
+          onboarding: {
+            source: payload.source,
+            sourceOther: payload.sourceOther,
+            reasons: payload.reasons,
+            reasonsOther: payload.reasonsOther,
+            categories: payload.categories,
+            priority: payload.priority,
+            completedAt,
+          },
+          updatedAt: completedAt,
+        },
+        { merge: true },
+      )
+    } catch (error) {
+      console.error("Onboarding save failed", error)
+    }
+  }
+
+  const completeOnboarding = async (payload: OnboardingAnswers) => {
     persistAnswers(payload)
+    await saveAnswersToFirestore(payload)
     navigate(nextPath, { replace: true })
   }
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (!isStepComplete) return
     if (step >= totalSteps - 1) {
-      completeOnboarding(answers)
+      await completeOnboarding(answers)
       return
     }
     setStep((prev) => Math.min(prev + 1, totalSteps - 1))

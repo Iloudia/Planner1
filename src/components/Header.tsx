@@ -45,6 +45,7 @@ function Header() {
       { label: "Diet", path: "/diet" },
       { label: "Goals", path: "/goals" },
       { label: "S'aimer soi-meme", path: "/self-love" },
+      { label: "Archives", path: "/archives" },
       { label: "FAQ", path: "/faq" },
       { label: "Cookies", path: "/cookies" },
       { label: "Parametres", path: "/parametres" },
@@ -190,6 +191,11 @@ function Header() {
         </div>
 
         <div className="header-cta">
+          {isAuthenticated ? (
+            <Link to="/archives" className="header-link">
+              Archives
+            </Link>
+          ) : null}
 
           {isAuthenticated && isAdmin ? (
             <button className="admin-button" onClick={() => navigate("/admin")}>

@@ -1,5 +1,6 @@
 import { useEffect } from "react"
 import { Link, Route, Routes } from "react-router-dom"
+import { useCookieConsent } from "./context/CookieConsentContext"
 import Header from "./components/Header"
 import Footer from "./components/Footer"
 import ProtectedRoute from "./components/ProtectedRoute"
@@ -37,6 +38,7 @@ import SettingsLanguages from "./pages/Settings/SettingsLanguages"
 import SettingsCookies from "./pages/Settings/SettingsCookies"
 import AboutPage from "./pages/About/AboutPage"
 import ProfilePage from "./pages/Profile/Profile"
+import ArchivesPage from "./pages/Archives/Archives"
 
 function NotFound() {
   return (
@@ -58,13 +60,27 @@ function NotFound() {
 }
 
 function App() {
+  const { preferences } = useCookieConsent()
   useEffect(() => {
     const scriptId = "google-translate-script"
+    const containerId = "google_translate_element"
+
+    if (!preferences.preferences) {
+      const existingScript = document.getElementById(scriptId)
+      if (existingScript) {
+        existingScript.remove()
+      }
+      const existingContainer = document.getElementById(containerId)
+      if (existingContainer) {
+        existingContainer.remove()
+      }
+      return
+    }
+
     if (document.getElementById(scriptId)) {
       return
     }
     ;(window as any).googleTranslateElementInit = () => {
-      const containerId = "google_translate_element"
       if (!document.getElementById(containerId)) {
         const container = document.createElement("div")
         container.id = containerId
@@ -80,10 +96,12 @@ function App() {
     script.id = scriptId
     script.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
     document.body.appendChild(script)
-  }, [])
+  }, [preferences.preferences])
   return (
     <div className="app-shell">
-      <div id="google_translate_element" className="google-translate-element" aria-hidden="true" />
+      {preferences.preferences ? (
+        <div id="google_translate_element" className="google-translate-element" aria-hidden="true" />
+      ) : null}
       <Header />
       <main className="main-area">
         <Routes>
@@ -114,9 +132,9 @@ function App() {
             <Route path="/alimentation" element={<CuisinePage />} />
             <Route path="/voyage" element={<VoyagePage />} />
             <Route path="/profil" element={<ProfilePage />} />
+            <Route path="/archives" element={<ArchivesPage />} />
             <Route path="/parametres" element={<SettingsLayout />}>
               <Route index element={<SettingsAccount />} />
-              <Route path="accessibilite" element={<SettingsAccessibility />} />
               <Route path="affichage" element={<SettingsDisplay />} />
               <Route path="langues" element={<SettingsLanguages />} />
               <Route path="cookies" element={<SettingsCookies />} />

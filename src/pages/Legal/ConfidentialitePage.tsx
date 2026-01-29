@@ -106,7 +106,7 @@ const ConfidentialitePage = () => (
           <li>droit à la limitation du traitement</li>
         </ul>
         <p className="legal-section__text">
-          Pour exercer ces droits, il suffit d’envoyer un email à : [email de contact].
+          Pour exercer ces droits, il suffit d’envoyer un email à : contact@meandrituals.com
         </p>
       </section>
     </div>

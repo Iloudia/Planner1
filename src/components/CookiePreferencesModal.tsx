@@ -82,7 +82,7 @@ const CookiePreferencesModal = () => {
             <div>
               <p className="cookie-modal__group-title">Preferences</p>
               <p className="cookie-modal__group-text">
-                Retient tes themes, ta langue, les dernieres vues consultees pour personnaliser Planner.
+                Retient tes themes, ta langue, les dernieres vues consultees pour personnaliser ton espace.
               </p>
             </div>
             <label className="cookie-modal__switch">

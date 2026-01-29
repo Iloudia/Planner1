@@ -159,8 +159,8 @@ const SettingsAccount = () => {
     [username, phone, email, formattedCreatedAt, country, language, gender, formattedBirthday, age],
   )
 
-  const handleConfirm = () => {
-    if (!verifyPassword(password)) {
+  const handleConfirm = async () => {
+    if (!(await verifyPassword(password))) {
       setError("Mot de passe incorrect.")
       return
     }
@@ -182,7 +182,7 @@ const SettingsAccount = () => {
     setStep("list")
   }
 
-  const handlePasswordChangeSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handlePasswordChangeSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setPasswordChangeSuccess(null)
     if (!passwordForm.current || !passwordForm.next || !passwordForm.confirm) {
@@ -193,7 +193,7 @@ const SettingsAccount = () => {
       setPasswordChangeError("Les nouveaux mots de passe ne correspondent pas.")
       return
     }
-    const result = changePassword(passwordForm.current, passwordForm.next)
+    const result = await changePassword(passwordForm.current, passwordForm.next)
     if (!result.success) {
       setPasswordChangeError(result.error ?? "Impossible de changer le mot de passe.")
       return
@@ -203,9 +203,9 @@ const SettingsAccount = () => {
     setPasswordChangeSuccess("Votre mot de passe a ete mis a jour.")
   }
 
-  const handleDeactivateAccount = () => {
+  const handleDeactivateAccount = async () => {
     setAccountActionError(null)
-    const result = deactivateAccount()
+    const result = await deactivateAccount()
     if (!result.success) {
       setAccountActionSuccess(null)
       setAccountActionError(result.error ?? "Impossible de desactiver le compte.")
@@ -216,9 +216,9 @@ const SettingsAccount = () => {
     setAccountActionSuccess(`Votre compte restera actif jusqu'au ${formatted} avant suppression definitive.`)
   }
 
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = async () => {
     setAccountActionError(null)
-    const result = deleteAccount()
+    const result = await deleteAccount()
     if (!result.success) {
       setAccountActionError(result.error ?? "Impossible de supprimer le compte.")
       setAccountActionSuccess(null)

@@ -175,7 +175,7 @@ const DailyGoalsTracker = () => {
         </div>
         <div className="sport-habits__actions">
           <button type="button" className="sport-habits__edit-toggle" onClick={() => setIsEditingHabits((prev) => !prev)}>
-            {isEditingHabits ? "Terminer" : "Personnaliser"}
+            {isEditingHabits ? "Terminer" : "Ajouter"}
           </button>
         </div>
       </div>

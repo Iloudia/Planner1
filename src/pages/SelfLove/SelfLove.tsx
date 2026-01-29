@@ -149,8 +149,6 @@ const KittyIllustration = () => (
   </svg>
 )
 const STORAGE_KEY = 'planner.selfLove'
-const formatDate = (value: string) =>
-  new Date(value).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
 const normalizeState = (value: unknown): SelfLoveState => {
   const base = createDefaultState()
   if (!value || typeof value !== 'object') {
@@ -264,9 +262,6 @@ const SelfLovePage = () => {
   const [journalDraft, setJournalDraft] = useState('')
   const [releasingThoughtIds, setReleasingThoughtIds] = useState<Set<string>>(new Set())
   const [letterTemplate, setLetterTemplate] = useState<'classic' | 'kitty'>('classic')
-  const [letterArchiveOpen, setLetterArchiveOpen] = useState(false)
-  const [selectedLetterYear, setSelectedLetterYear] = useState<string | null>(null)
-  const [selectedLetterDay, setSelectedLetterDay] = useState<string | null>(null)
   const [letterSaveConfirmationVisible, setLetterSaveConfirmationVisible] = useState(false)
   const letterSaveConfirmationTimeout = useRef<number | null>(null)
   const [exerciseSaveConfirmationVisible, setExerciseSaveConfirmationVisible] = useState(false)
@@ -303,71 +298,6 @@ const SelfLovePage = () => {
       .reduce((accumulator, character) => accumulator + character.charCodeAt(0), 0)
     return inspiringQuotes[hash % inspiringQuotes.length]
   }, [])
-  const lettersByDate = useMemo(() => {
-    const map = new Map<string, SelfLoveSavedLetter[]>()
-    safeState.savedLetters.forEach((letter) => {
-      const dateKey = new Date(letter.createdAt).toISOString().slice(0, 10)
-      const current = map.get(dateKey) ?? []
-      current.push(letter)
-      map.set(dateKey, current)
-    })
-    return Array.from(map.entries())
-      .map(([date, letters]) => ({
-        date,
-        displayDate: formatDate(date),
-        letters: [...letters].sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1)),
-      }))
-      .sort((a, b) => (a.date > b.date ? -1 : 1))
-  }, [safeState.savedLetters])
-  const lettersByYear = useMemo(() => {
-    const map = new Map<
-      string,
-      { date: string; displayDate: string; letters: SelfLoveSavedLetter[] }[]
-    >()
-    lettersByDate.forEach((group) => {
-      const year = group.date.slice(0, 4)
-      const collection = map.get(year) ?? []
-      collection.push(group)
-      map.set(year, collection)
-    })
-    return Array.from(map.entries())
-      .map(([year, groups]) => ({
-        year,
-        totalLetters: groups.reduce((sum, group) => sum + group.letters.length, 0),
-        dates: groups,
-      }))
-      .sort((a, b) => (a.year > b.year ? -1 : 1))
-  }, [lettersByDate])
-  const selectedLetterYearGroup = useMemo(
-    () => lettersByYear.find((group) => group.year === selectedLetterYear) ?? null,
-    [lettersByYear, selectedLetterYear],
-  )
-  const activeLetterDayGroup = useMemo(() => {
-    if (!selectedLetterYearGroup || !selectedLetterDay) {
-      return null
-    }
-    return selectedLetterYearGroup.dates.find((group) => group.date === selectedLetterDay) ?? null
-  }, [selectedLetterYearGroup, selectedLetterDay])
-  useEffect(() => {
-    if (!letterArchiveOpen) {
-      setSelectedLetterYear(null)
-      setSelectedLetterDay(null)
-    }
-  }, [letterArchiveOpen])
-  useEffect(() => {
-    if (selectedLetterYear && !lettersByYear.some((group) => group.year === selectedLetterYear)) {
-      setSelectedLetterYear(null)
-      setSelectedLetterDay(null)
-    }
-  }, [lettersByYear, selectedLetterYear])
-  useEffect(() => {
-    if (
-      selectedLetterDay &&
-      (!selectedLetterYearGroup || !selectedLetterYearGroup.dates.some((group) => group.date === selectedLetterDay))
-    ) {
-      setSelectedLetterDay(null)
-    }
-  }, [selectedLetterYearGroup, selectedLetterDay])
   const handlePhotoChange = (slotId: string, event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (!file) {
@@ -651,37 +581,6 @@ const SelfLovePage = () => {
       letterSaveConfirmationTimeout.current = null
     }, 2000)
   }
-  const handleDeleteSavedLetter = (letterId: string) => {
-    setState((previous) => {
-      const current = normalizeState(previous)
-      return {
-        ...current,
-        savedLetters: current.savedLetters.filter((letter) => letter.id !== letterId),
-      }
-    })
-  }
-
-  const getArchiveBadge = (letter: SelfLoveSavedLetter) => {
-    if (letter.entryType === 'innerChild') {
-      return {
-        label: "L'enfant intérieur",
-        className: 'self-love-saved-letters__badge',
-      }
-    }
-    if (letter.entryType === 'bestFriend') {
-      return {
-        label: 'Jeu des rôles',
-        className: 'self-love-saved-letters__badge self-love-saved-letters__badge--kitty',
-      }
-    }
-    return {
-      label: letter.template === 'classic' ? 'Lettre romantique' : 'Lettre petit chat',
-      className:
-        letter.template === 'classic'
-          ? 'self-love-saved-letters__badge'
-          : 'self-love-saved-letters__badge self-love-saved-letters__badge--kitty',
-    }
-  }
 
   const today = useMemo(() => {
     const date = new Date()
@@ -699,7 +598,7 @@ const SelfLovePage = () => {
       <PageHeading eyebrow='Self love' title="S'aimer soi-même" />
       
       <section className="self-love-section self-love-section--photos">
-        <div className="self-love-section__header">
+        <div>
           <h2>Aime-toi !</h2>
           <p>Regarde-toi avec bienveillance et choisis 6 photos où tu rayonnes.</p>
         </div>
@@ -732,10 +631,11 @@ const SelfLovePage = () => {
       </section>
       <div className="self-love-sections-row">
       <section className="self-love-section self-love-section--qualities">
+        <h2>Liste tes qualités</h2>
         <form className="self-love-form-row" onSubmit={handleAddQuality}>
           <input
             type="text"
-            placeholder="Ajoute une qualité qui te rend fière"
+            placeholder="Ex : Je sais écouter avec le cœur. "
             value={qualityDraft}
             onChange={(event) => setQualityDraft(event.target.value)}
           />
@@ -753,8 +653,15 @@ const SelfLovePage = () => {
               <li key={quality.id}>
                 <span className="self-love-list__heart" aria-hidden="true">*</span>
                 <span className="self-love-list__text">{quality.text}</span>
-                <button type="button" onClick={() => handleRemoveQuality(quality.id)}>
-                  Retirer
+                <button
+                  type="button"
+                  className="modal__close"
+                  onClick={() => handleRemoveQuality(quality.id)}
+                  aria-label="Retirer cette qualite"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                  </svg>
                 </button>
               </li>
             ))}
@@ -770,7 +677,7 @@ const SelfLovePage = () => {
         </div>
       </section>
       <section className="self-love-section self-love-section--thoughts">
-        <div className="self-love-section__header">
+        <div>
           <h2>Pensées négatives à laisser derrière toi</h2>
           <p>Clique sur une pensée pour la laisser s'envoler.</p>
         </div>
@@ -807,7 +714,7 @@ const SelfLovePage = () => {
       </section>
       </div>
       <section className="self-love-section self-love-exercises">
-        <div className="self-love-section__header">
+        <div>
           <h2>Exercices guidés pour t'aimer davantage</h2>
           <p>Prends quelques instants pour écrire et laisser ton cœur s'exprimer.</p>
         </div>
@@ -884,14 +791,6 @@ const SelfLovePage = () => {
         </div>
       </section>
       <section className="self-love-section self-love-letter">
-        <div className="self-love-section__header">
-          <h2>Une lettre pour te guérir</h2>
-          <p>
-            Exemple de 6 lettres d'amour à écrire à toi-même pour guérir : <br/> Une lettre de pardon à ton passé, Une lettre
-            pour ton toi actuel, une lettre d'encouragement pour tes rêves, <br/> une lettre pour ton corps, une lettre pour
-            ton enfant intérieur, Une lettre pour ton futur.
-          </p>
-        </div>
         <div className="self-love-letter__tabs">
           <button
             type="button"
@@ -952,9 +851,6 @@ const SelfLovePage = () => {
               <div>
                 <span className="self-love-letter__date">{today.short}</span>
               </div>
-              <div className="self-love-letter__stampmark">
-                <span>Self Love Club</span>
-              </div>
               <button
                 type="button"
                 className="self-love-letter__save"
@@ -973,154 +869,6 @@ const SelfLovePage = () => {
           <strong>Page ajoutée !</strong>
         </div>
       </section>
-      <section className="self-love-section self-love-saved-letters journaling-history">
-        <div className="self-love-section__header self-love-section__header--archive journaling-history__header">
-          <div>
-            <h2>Archives</h2>
-            <p>Retrouve les mots que tu veux garder près de toi.</p>
-          </div>
-          {safeState.savedLetters.length > 0 ? (
-            <button
-              type="button"
-              className="self-love-archive__toggle journaling-history__toggle"
-              onClick={() => setLetterArchiveOpen((value) => !value)}
-              aria-expanded={letterArchiveOpen}
-            >
-              {letterArchiveOpen ? 'Réduire les archives' : 'Ouvrir les archives'}
-            </button>
-          ) : null}
-        </div>
-        {safeState.savedLetters.length === 0 ? (
-          <p className="self-love-archive__empty">Tu n&apos;as pas encore sauvegardé de lettre.</p>
-        ) : letterArchiveOpen ? (
-          lettersByYear.length > 0 ? (
-            <div className="self-love-archive__years">
-              {lettersByYear.map((group) => (
-                <button
-                  key={group.year}
-                  type="button"
-                  className="self-love-archive__year-card"
-                  onClick={() => {
-                    setSelectedLetterYear(group.year)
-                    setSelectedLetterDay(null)
-                  }}
-                >
-                  <span className="self-love-archive__year">{group.year}</span>
-                  <span className="self-love-archive__count">{group.totalLetters} lettre(s)</span>
-                </button>
-              ))}
-            </div>
-          ) : (
-            <p className="self-love-archive__empty">Aucune archive pour le moment.</p>
-          )
-        ) : null}
-      </section>
-      {selectedLetterYearGroup ? (
-        <div className="self-love-archive-modal" role="dialog" aria-modal="true">
-          <div className="self-love-archive-modal__backdrop" onClick={() => setSelectedLetterYear(null)} />
-          <div className="self-love-archive-modal__content">
-            <header className="self-love-archive-modal__header">
-              <div>
-                <p>Année</p>
-                <h3>{selectedLetterYearGroup.year}</h3>
-                <span>{selectedLetterYearGroup.totalLetters} lettre(s)</span>
-              </div>
-              <button type="button" onClick={() => setSelectedLetterYear(null)}>
-                Fermer
-              </button>
-            </header>
-            <div className="self-love-archive-modal__body">
-              <div className="self-love-archive-modal__dates">
-                {selectedLetterYearGroup.dates.map((group) => (
-                  <button
-                    key={group.date}
-                    type="button"
-                    className={`self-love-archive__day-card${selectedLetterDay === group.date ? ' is-active' : ''}`}
-                    onClick={() =>
-                      setSelectedLetterDay((previous) => (previous === group.date ? null : group.date))
-                    }
-                  >
-                    <span>{group.displayDate}</span>
-                    <strong>{group.letters.length} lettre(s)</strong>
-                  </button>
-                ))}
-              </div>
-              {activeLetterDayGroup ? (
-                <ul className="self-love-archive__list">
-                  {activeLetterDayGroup.letters.map((letter) => (
-                    <li key={letter.id} className="self-love-archive__letter">
-                      <div className="self-love-archive__letter-head">
-                        {(() => {
-                          const badge = getArchiveBadge(letter)
-                          return <span className={badge.className}>{badge.label}</span>
-                        })()}
-                        <time>{formatDate(letter.createdAt)}</time>
-                      </div>
-                      {letter.to ? (
-                        <p className="self-love-archive__letter-addresses">
-                          {letter.to} &rarr; {letter.from}
-                        </p>
-                      ) : null}
-                      <p className="self-love-saved-letters__preview">{letter.body}</p>
-                      {letter.innerChild ? (
-                        <div className="self-love-archive__section">
-                          <h4>L&apos;enfant intérieur ✨ — Dialogue doux avec ton passé</h4>
-                          <dl>
-                            {letter.innerChild.message.length > 0 ? (
-                              <div className="self-love-archive__pair">
-                                <dt>Que souhaiterais-tu lui dire maintenant ?</dt>
-                                <dd>{letter.innerChild.message}</dd>
-                              </div>
-                            ) : null}
-                            {letter.innerChild.reassurance.length > 0 ? (
-                              <div className="self-love-archive__pair">
-                                <dt>Comment pourrais-tu le rassurer ?</dt>
-                                <dd>{letter.innerChild.reassurance}</dd>
-                              </div>
-                            ) : null}
-                            {letter.innerChild.neededWords.length > 0 ? (
-                              <div className="self-love-archive__pair">
-                                <dt>Qu&apos;aurait-il eu besoin d&apos;entendre ?</dt>
-                                <dd>{letter.innerChild.neededWords}</dd>
-                              </div>
-                            ) : null}
-                          </dl>
-                        </div>
-                      ) : null}
-                      {letter.bestFriend ? (
-                        <div className="self-love-archive__section">
-                          <h4>Jeu des rôles ✨ — Le meilleur ami comme boussole</h4>
-                          <dl>
-                            {letter.bestFriend.advice.length > 0 ? (
-                              <div className="self-love-archive__pair">
-                                <dt>Que lui dirais-tu ?</dt>
-                                <dd>{letter.bestFriend.advice}</dd>
-                              </div>
-                            ) : null}
-                            {letter.bestFriend.selfTalk.length > 0 ? (
-                              <div className="self-love-archive__pair">
-                                <dt>Quelle différence avec ce que tu te dis à toi-même ?</dt>
-                                <dd>{letter.bestFriend.selfTalk}</dd>
-                              </div>
-                            ) : null}
-                          </dl>
-                        </div>
-                      ) : null}
-                      <div className="self-love-archive__letter-actions">
-                        <button type="button" onClick={() => handleDeleteSavedLetter(letter.id)}>
-                          Supprimer
-                        </button>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="self-love-archive-modal__empty">Sélectionne un jour pour lire tes lettres.</p>
-              )}
-            </div>
-          </div>
-        </div>
-      ) : null}
       <div className="self-love-footer-bar" aria-hidden="true" />
     </div>
   )
