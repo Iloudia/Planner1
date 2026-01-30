@@ -191,12 +191,6 @@ function Header() {
         </div>
 
         <div className="header-cta">
-          {isAuthenticated ? (
-            <Link to="/archives" className="header-link">
-              Archives
-            </Link>
-          ) : null}
-
           {isAuthenticated && isAdmin ? (
             <button className="admin-button" onClick={() => navigate("/admin")}>
               Back-office
@@ -244,6 +238,11 @@ function Header() {
               {menuOpen ? (
                 <div className="header-menu__panel" role="menu">
                   <ul className="header-menu__list">
+                    <li>
+                      <button type="button" className="header-menu__item" onClick={() => handleNavigate("/archives")}>
+                        Archives
+                      </button>
+                    </li>
                     <li>
                       <button type="button" className="header-menu__item" onClick={() => handleNavigate("/parametres")}>
                         Paramètres

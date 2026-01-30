@@ -15,21 +15,21 @@ import cardSport from "../../assets/sport.jpeg"
 
 const carouselItems = [
   { title: "Sport", text: "Bouge avec douceur et plaisir.", image: cardSport },
-  { title: "Journaling", text: "Ã‰cris, clarifie et te recentre.", image: cardMallika },
-  { title: "S'aimer soi-mÃªme", text: "Instants self-love au quotidien.", image: cardSelflove },
-  { title: "Wishlist", text: "Garde tes envies au mÃªme endroit.", image: cardMedhanshi },
+  { title: "Journaling", text: "Écris, clarifie et te recentre.", image: cardMallika },
+  { title: "S'aimer soi-même", text: "Instants self-love au quotidien.", image: cardSelflove },
+  { title: "Wishlist", text: "Garde tes envies au même endroit.", image: cardMedhanshi },
   { title: "Calendrier mensuel", text: "Une vue claire sur le mois.", image: cardKatieHuber },
-  { title: "Finances", text: "Budget et dÃ©penses sans stress.", image: cardEbony },
+  { title: "Finances", text: "Budget et dépenses sans stress.", image: cardEbony },
   { title: "Routine", text: "Rituels matin et soir qui te ressemblent.", image: cardLB },
-  { title: "Cuisine", text: "IdÃ©es repas pour libÃ©rer ta charge mentale.", image: cardKatieMansfield },
+  { title: "Cuisine", text: "Idées repas pour libérer ta charge mentale.", image: cardKatieMansfield },
 ]
 
 const differentiatorHighlights = [
-  "AllÃ©ger ta charge mentale",
-  "Tâ€™aider Ã  te sentir plus sereinÂ·e",
-  "Reprendre le contrÃ´le de ton temps",
-  "CrÃ©er une vie qui te ressemble",
-  "Te reconnecter Ã  toi-mÃªme",
+  "Alléger ta charge mentale",
+  "T’aider à te sentir plus serein·e",
+  "Reprendre le contrôle de ton temps",
+  "Créer une vie qui te ressemble",
+  "Te reconnecter à toi-même",
 ]
 
 const LandingPage = () => {
@@ -73,10 +73,10 @@ const LandingPage = () => {
       <section className="landing-hero">
         <div className="landing-hero__content">
           <h1>
-            Lâ€™espace qui transforme ton quotidien en une vie plus fluide, plus douce et plus alignÃ©e.
+            L’espace qui transforme ton quotidien en une vie plus fluide, plus douce et plus alignée.
           </h1>
           <p className="landing-hero__accent">
-            Parce que tu mÃ©rites une vie structurÃ©e sans pression, productive sans stress, et inspirante au quotidien.
+            Parce que tu mérites une vie structurée sans pression, productive sans stress, et inspirante au quotidien.
           </p>
           <div className="landing-hero__actions">
             <button type="button" className="landing-cta-button" onClick={() => navigate("/login")}>
@@ -90,9 +90,9 @@ const LandingPage = () => {
           </div>
           {isAuthenticated ? (
             <div className="landing-hero__status">
-              ConnectÃ© en tant que <strong>{userEmail}</strong>
+              Connecté en tant que <strong>{userEmail}</strong>
               <button type="button" onClick={logout}>
-                Se dÃ©connecter
+                Se déconnecter
               </button>
             </div>
           ) : null}
@@ -104,15 +104,15 @@ const LandingPage = () => {
 
       <section className="landing-daily-hub" aria-labelledby="landing-daily-hub-title">
         <div className="landing-section-heading">
-          <h2 id="landing-daily-hub-title">Sur ce site tu as accÃ¨s Ã  : </h2>
+          <h2 id="landing-daily-hub-title">Sur ce site tu as accès à :</h2>
           <p>
-            Fini les carnets Ã©parpillÃ©s, les notes sur ton tÃ©lÃ©phone et les applis dans tous les sens. Ici, tout est centralisÃ© pour
-            simplifier ton quotidien et te libÃ©rer de la charge mentale.
+            Fini les carnets éparpillés, les notes sur ton téléphone et les applis dans tous les sens. Ici, tout est centralisé pour
+            simplifier ton quotidien et te libérer de la charge mentale.
           </p>
         </div>
         <div className="landing-carousel">
-          <button type="button" className="landing-carousel__arrow landing-carousel__arrow--left" aria-label="Cartes prÃ©cÃ©dentes" onClick={handleCarouselPrev}>
-            <span aria-hidden="true">â€¹</span>
+          <button type="button" className="landing-carousel__arrow landing-carousel__arrow--left" aria-label="Cartes précédentes" onClick={handleCarouselPrev}>
+            <span aria-hidden="true">‹</span>
           </button>
           <div className="landing-carousel__grid">
             {visibleCards.map((card) => (
@@ -128,7 +128,7 @@ const LandingPage = () => {
             ))}
           </div>
           <button type="button" className="landing-carousel__arrow landing-carousel__arrow--right" aria-label="Cartes suivantes" onClick={handleCarouselNext}>
-            <span aria-hidden="true">â€º</span>
+            <span aria-hidden="true">›</span>
           </button>
         </div>
       </section>
@@ -137,9 +137,9 @@ const LandingPage = () => {
         <div className="landing-section-heading">
           <h2 id="landing-differentiator-title">Bien plus qu'un outil d'organisation</h2>
           <p>
-            Ce site nâ€™est pas seulement un planner digital. Câ€™est un vÃ©ritable cocon positif, conÃ§u pour te rappeler que tu peux avancer Ã  ton rythme, avec bienveillance envers toi-mÃªme.
+            Ce site n’est pas seulement un planner digital. C’est un véritable cocon positif, conçu pour te rappeler que tu peux avancer à ton rythme, avec bienveillance envers toi-même.
           </p>
-          <p>Tout est pensÃ© pour que tu te sentes bien, inspirÃ©Â·e et en accord avec toi.</p>
+          <p>Tout est pensé pour que tu te sentes bien, inspiré·e et en accord avec toi.</p>
         </div>
         <ul className="landing-differentiator__list">
           {differentiatorHighlights.map((highlight) => (
@@ -153,10 +153,10 @@ const LandingPage = () => {
       <section className="landing-final-cta" aria-labelledby="landing-final-cta-title">
         <h2 id="landing-final-cta-title">Et si tu t'offrais enfin une organisation qui te fait du bien ?</h2>
         <p>
-          Tu nâ€™as pas besoin dâ€™en faire davantage. Tu as besoin dâ€™un espace qui te laisse respirer, te guide et soutienne ton Ã©panouissement.
+          Tu n’as pas besoin d’en faire davantage. Tu as besoin d’un espace qui te laisse respirer, te guide et soutienne ton épanouissement.
         </p>
         <button type="button" className="landing-cta-button" onClick={() => navigate("/register")}>
-          Je commence mon organisation positive dÃ¨s maintenant
+          Je commence mon organisation positive dès maintenant
         </button>
       </section>
 

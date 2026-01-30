@@ -355,6 +355,39 @@
   }
 }
 
+@media (max-width: 480px) {
+  .page-section {
+    padding: 1.25rem;
+  }
+
+  .diet-week__group {
+    padding: 0.8rem;
+  }
+
+  .diet-week__grid {
+    min-width: 0;
+  }
+
+  .diet-week__card {
+    padding: 0.9rem;
+    min-width: 0;
+  }
+
+  .diet-week__card-head {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .diet-week__slot {
+    min-width: 0;
+  }
+
+  .diet-week__slot input {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
 @media (max-width: 900px) {
   .diet-shopping {
     grid-template-columns: 1fr;

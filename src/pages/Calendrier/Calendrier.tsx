@@ -599,7 +599,6 @@ return (
             )}
           </div>
         </aside>
-
         <div className="calendar-legend">
           <h4>Légende des couleurs</h4>
           <div className="calendar-legend__items">
@@ -1053,12 +1052,18 @@ return (
           </div>
         </div>
       ) : null}
+
       <div className="page-footer-bar" aria-hidden="true" />
     </div>
   )
 }
 
 export default CalendrierPage
+
+
+
+
+
 
 
 

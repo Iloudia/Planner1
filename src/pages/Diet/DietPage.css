@@ -256,6 +256,7 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  padding: 0 1rem;
 }
 
 .diet-recipe-modal__backdrop {
@@ -269,12 +270,13 @@
   z-index: 1;
   background: #fdf4ff;
   border-radius: 30px;
-  width: min(900px, 100%);
+  width: min(900px, calc(100% - 2rem));
   max-height: calc(100vh - 3rem);
   box-shadow: 0 40px 120px rgba(15, 23, 42, 0.28);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  margin: 0 auto;
 }
 
 .diet-recipe-modal__cover {
@@ -442,6 +444,12 @@
   .diet-recipe-grid {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
+
+  .diet-recipe-modal__panel {
+    width: min(720px, calc(100% - 2rem));
+    max-height: calc(100vh - 2rem);
+    margin: 0 auto;
+  }
 }
 
 @media (max-width: 640px) {
@@ -464,6 +472,36 @@
 .diet-block header {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .diet-recipe-modal__panel {
+    border-radius: 22px;
+    max-height: calc(100vh - 1.5rem);
+    margin: 0 auto;
+  }
+
+  .diet-recipe-modal__image {
+    height: 200px;
+  }
+
+  .diet-recipe-modal__content {
+    margin-top: -1rem;
+    padding: 1.2rem;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .diet-recipe-modal__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .diet-recipe-modal__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .diet-recipe-modal__actions button {
+    width: 100%;
   }
 }
 

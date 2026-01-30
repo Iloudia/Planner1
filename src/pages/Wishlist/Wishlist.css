@@ -1558,6 +1558,12 @@
   }
 }
 
+@media (min-width: 564px) and (max-width: 614px) {
+  .wishlist-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (min-width: 768px) and (max-width: 1023px) {
   .wishlist-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1582,11 +1588,17 @@
 
 @media (min-width: 1024px) {
   .wishlist-grid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .wishlist-modal__actions {
     justify-content: space-between;
+  }
+}
+
+@media (min-width: 1520px) and (max-width: 1600px) {
+  .wishlist-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }
 /* Footer accent bar sizing for wishlist */

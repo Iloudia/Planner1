@@ -1586,113 +1586,116 @@ const DietClassicPage = () => {
         ) : null}
 
         {selectedRecipe ? (
-  <div className="diet-recipe-modal" role="dialog" aria-label={`Recette ${selectedRecipe.title}`}>
-    <div className="diet-recipe-modal__backdrop" onClick={() => setSelectedRecipe(null)} />
-  <div className="diet-recipe-modal__panel">
-    <div className="diet-recipe-modal__cover">
-      <img src={selectedRecipe.image} alt={selectedRecipe.title} className="diet-recipe-modal__image" />
-      <button
-        type="button"
-        className="diet-recipe-close-icon diet-recipe-close-icon--cover"
-        onClick={() => setSelectedRecipe(null)}
-        aria-label="Fermer"
-      >
-        <span aria-hidden="true" />
-      </button>
-    </div>
-    <div className="diet-recipe-modal__content">
-      <header className="diet-recipe-modal__header">
-        <div>
-          <h3>{selectedRecipe.title}</h3>
-        </div>
-      </header>
-      <div className="diet-recipe-modal__body">
-          <section className="diet-recipe-plan">
-            <h4>Ajouter au planning</h4>
-            <div className="diet-recipe-plan__row">
-              <label>
-                Jour
-                <select value={planDay} onChange={(event) => setPlanDay(event.target.value as typeof weekDays[number])}>
-                  {weekDays.map((day) => (
-                    <option key={day} value={day}>
-                      {day}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                Moment
-                <select value={planSlot} onChange={(event) => setPlanSlot(event.target.value as MealSlotId)}>
-                  {mealSlots.map((slot) => (
-                    <option key={slot.id} value={slot.id}>
-                      {slot.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
+          <div className="diet-recipe-modal" role="dialog" aria-label={`Recette ${selectedRecipe.title}`}>
+            <div className="diet-recipe-modal__backdrop" onClick={() => setSelectedRecipe(null)} />
+            <div className="diet-recipe-modal__panel">
+              <div className="diet-recipe-modal__cover">
+                <img src={selectedRecipe.image} alt={selectedRecipe.title} className="diet-recipe-modal__image" />
+                <button
+                  type="button"
+                  className="diet-recipe-close-icon diet-recipe-close-icon--cover"
+                  onClick={() => setSelectedRecipe(null)}
+                  aria-label="Fermer"
+                >
+                  <span aria-hidden="true" />
+                </button>
+              </div>
+              <div className="diet-recipe-modal__content">
+                <header className="diet-recipe-modal__header">
+                  <div>
+                    <h3>{selectedRecipe.title}</h3>
+                  </div>
+                </header>
+                <div className="diet-recipe-modal__body">
+                  <section className="diet-recipe-plan">
+                    <h4>Ajouter au planning</h4>
+                    <div className="diet-recipe-plan__row">
+                      <label>
+                        Jour
+                        <select value={planDay} onChange={(event) => setPlanDay(event.target.value as typeof weekDays[number])}>
+                          {weekDays.map((day) => (
+                            <option key={day} value={day}>
+                              {day}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <label>
+                        Moment
+                        <select value={planSlot} onChange={(event) => setPlanSlot(event.target.value as MealSlotId)}>
+                          {mealSlots.map((slot) => (
+                            <option key={slot.id} value={slot.id}>
+                              {slot.label}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                    </div>
+                    <label>
+                      Plat
+                      <input
+                        type="text"
+                        value={planMealName}
+                        onChange={(event) => setPlanMealName(event.target.value)}
+                        placeholder="Écris ton plat"
+                      />
+                    </label>
+                    <button type="button" className="diet-recipe-plan__add" onClick={addRecipeToPlan}>
+                      Ajouter au planning
+                    </button>
+                  </section>
+                  <section>
+                    <h4>Ingrédients</h4>
+                    <ul>
+                      {selectedRecipe.ingredients.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </section>
+                  <section>
+                    <h4>Étapes</h4>
+                    <ol>
+                      {selectedRecipe.steps.map((step) => (
+                        <li key={step}>{step}</li>
+                      ))}
+                    </ol>
+                  </section>
+                  {selectedRecipe.toppings ? (
+                    <section>
+                      <h4>{"Idées de toppings (optionnel)"}</h4>
+                      <ul>
+                        {selectedRecipe.toppings.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </section>
+                  ) : null}
+                  {selectedRecipe.tips ? (
+                    <section>
+                      <h4>{"💡 Astuce"}</h4>
+                      <ul>
+                        {selectedRecipe.tips.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </section>
+                  ) : null}
+                </div>
+              </div>
+              <footer className="diet-recipe-modal__actions">
+                <button type="button" onClick={() => setSelectedRecipe(null)}>
+                  Fermer
+                </button>
+              </footer>
             </div>
-            <label>
-              Plat
-              <input
-                type="text"
-                value={planMealName}
-                onChange={(event) => setPlanMealName(event.target.value)}
-                placeholder="Écris ton plat"
-              />
-            </label>
-            <button type="button" className="diet-recipe-plan__add" onClick={addRecipeToPlan}>
-              Ajouter au planning
-            </button>
-          </section>          <section>
-            <h4>Ingrédients</h4>
-            <ul>
-              {selectedRecipe.ingredients.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </section>
-          <section>
-            <h4>Étapes</h4>
-            <ol>
-              {selectedRecipe.steps.map((step) => (
-                <li key={step}>{step}</li>
-              ))}
-            </ol>
-          </section>
-          {selectedRecipe.toppings ? (
-            <section>
-              <h4>{"Idées de toppings (optionnel)"}</h4>
-              <ul>
-                {selectedRecipe.toppings.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </section>
-          ) : null}
-          {selectedRecipe.tips ? (
-            <section>
-              <h4>{"💡 Astuce"}</h4>
-              <ul>
-                {selectedRecipe.tips.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </section>
-          ) : null}
-        </div>
-      </div>
-    </div>
-    <footer className="diet-recipe-modal__actions">
-      <button type="button" onClick={() => setSelectedRecipe(null)}>
-        Fermer
-      </button>
-    </footer>
-  </div>
-) : null}
-</main>
+          </div>
+        ) : null}
+          </main>
 <div className="page-footer-bar" aria-hidden="true" />
 </>
 )
 }
 
 export default DietClassicPage
+
+

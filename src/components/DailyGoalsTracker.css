@@ -4,13 +4,33 @@
   padding: 1rem;
   border: 1px solid rgba(15, 23, 42, 0.08);
   box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
-  display: inline-flex;
-  flex-direction: column;
+  display: block;
   gap: 0.55rem;
   width: 100%;
   max-width: 100%;
   justify-self: start;
   align-self: start;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sport-habits__table-wrapper::-webkit-scrollbar {
+  height: 10px;
+}
+
+.sport-habits__table-wrapper::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.08);
+  border-radius: 999px;
+}
+
+.sport-habits__table-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(236, 72, 153, 0.55);
+  border-radius: 999px;
+}
+
+.sport-habits__table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: rgba(236, 72, 153, 0.75);
 }
 
 .sport-habits__header {
@@ -117,6 +137,7 @@
 .sport-habits__table {
   display: grid;
   gap: 0.35rem;
+  width: 100%;
 }
 
 .sport-habits__row {
@@ -128,6 +149,41 @@
   border-radius: 12px;
   overflow: hidden;
   min-width: 640px;
+}
+
+@media (max-width: 900px) {
+  .sport-habits__table-wrapper {
+    overflow-x: auto;
+  }
+
+  .sport-habits__row {
+    min-width: 720px;
+  }
+}
+
+@media (max-width: 747px) {
+  .sport-habits__table-wrapper {
+    padding: 0.75rem;
+  }
+
+  .sport-habits__row {
+    min-width: 680px;
+  }
+
+  .sport-habits__cell {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.45rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .sport-habits__row {
+    min-width: 620px;
+  }
+
+  .sport-habits__cell {
+    font-size: 0.82rem;
+  }
 }
 
 .sport-habits__row--head {

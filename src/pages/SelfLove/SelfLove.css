@@ -1,4 +1,4 @@
-﻿.self-love-page {
+.self-love-page {
   display: flex;
   flex-direction: column;
   gap: 3.5rem;
@@ -1710,6 +1710,7 @@
   box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
 }
 
+
 .self-love-form-row input:focus {
   outline: none;
   border-color: #ec4899;
@@ -1824,6 +1825,16 @@
   justify-content: center;
   cursor: pointer;
   transition: transform 150ms ease, background 150ms ease;
+}
+
+.self-love-list .modal__close {
+  position: static;
+  margin-left: auto;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  background: rgba(236, 72, 153, 0.12);
+  color: #db2777;
 }
 
 .self-love-list li button:hover {
@@ -2236,6 +2247,21 @@
   .self-love-form-row {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .self-love-section--thoughts .self-love-form-row input,
+  .self-love-section--qualities .self-love-form-row input {
+    height: 24px !important;
+    min-height: 24px !important;
+    padding: 0 0.5rem !important;
+    line-height: 1 !important;
+  }
+
+
+
+  .self-love-form-row button {
+    padding: 0.55rem 1rem;
+    font-size: 0.9rem;
   }
 
   .self-love-form-row input,

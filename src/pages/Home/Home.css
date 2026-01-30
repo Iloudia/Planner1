@@ -620,7 +620,7 @@
   }
 
   .page.home-page .aside-right {
-    order: 1;
+    display: none;
   }
 
   .page.home-page .board {
@@ -735,7 +735,7 @@
   }
 
   .page.home-page .aside-right {
-    order: 1;
+    display: none;
   }
 
   .page.home-page .board {
