@@ -1,6 +1,5 @@
 import { useState } from "react"
 import PageHeading from "../../components/PageHeading"
-import heroImage from "../../assets/kalen-mcdonald-dupe.jpeg"
 import faqPortrait from "../../assets/maria-bolinder-dupe.jpeg"
 import "./FaqPage.css"
 
@@ -37,13 +36,9 @@ const FAQPage = () => {
 
   return (
     <>
-      <section className="page-hero-banner" aria-hidden="true">
-        <img src={heroImage} alt="" loading="lazy" />
-      </section>
-
-      <PageHeading eyebrow="FAQ" title="FAQ" />
-      <div className="faq-wrapper">
+<div className="faq-wrapper">
         <div className="legal-page faq-page">
+          <PageHeading eyebrow="FAQ" title="FAQ" />
           <p className="legal-page__intro">Toutes les réponses essentielles pour tirer le meilleur du Planner.</p>
 
           <div className="faq-accordion">
@@ -85,3 +80,6 @@ const FAQPage = () => {
 }
 
 export default FAQPage
+
+
+

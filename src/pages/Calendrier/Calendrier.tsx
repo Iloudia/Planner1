@@ -705,6 +705,7 @@ return (
               tabIndex={0}
               aria-label={`Voir la journée du ${cell.dateKey}`}
             >
+                            
               <div className="calendar-day__header">
                 <span className="calendar-day__number">{cell.day}</span>
                 <button
@@ -719,6 +720,14 @@ return (
                   +
                 </button>
               </div>
+              {cell.tasks.length > 0 ? (
+                <span
+                  className="calendar-day__indicator"
+                  aria-label={`${cell.tasks.length} événement${cell.tasks.length > 1 ? "s" : ""}`}
+                >
+                  {cell.tasks.length > 1 ? cell.tasks.length : ""}
+                </span>
+              ) : null}
               {cell.tasks[0] ? (
                       <><div
                     className="calendar-day__preview"
@@ -753,7 +762,6 @@ return (
         <div className="calendar-modal__panel">
           <header className="calendar-modal__header">
             <div>
-              <span className="calendar-modal__eyebrow">séance du jour</span>
               <h2 id="calendar-modal-title">{activeDateLabel}</h2>
               <p>
                 {activeDateTasks.length > 0
@@ -1023,6 +1031,16 @@ return (
 }
 
 export default CalendrierPage
+
+
+
+
+
+
+
+
+
+
 
 
 

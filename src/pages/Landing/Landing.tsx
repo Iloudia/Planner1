@@ -39,13 +39,34 @@ const LandingPage = () => {
   const { moodboardSrc } = useMoodboard()
   const [carouselIndex, setCarouselIndex] = useState(0)
 
+  const [cardsPerView, setCardsPerView] = useState(1)
+
+  useEffect(() => {
+    const updateCardsPerView = () => {
+      const width = window.innerWidth
+      if (width >= 1200) {
+        setCardsPerView(4)
+      } else if (width >= 980) {
+        setCardsPerView(3)
+      } else if (width >= 700) {
+        setCardsPerView(2)
+      } else {
+        setCardsPerView(1)
+      }
+    }
+
+    updateCardsPerView()
+    window.addEventListener("resize", updateCardsPerView)
+    return () => window.removeEventListener("resize", updateCardsPerView)
+  }, [])
+
   const visibleCards = useMemo(
     () =>
-      Array.from({ length: 4 }, (_, offset) => {
+      Array.from({ length: cardsPerView }, (_, offset) => {
         const total = carouselItems.length
         return carouselItems[(carouselIndex + offset + total) % total]
       }),
-    [carouselIndex],
+    [carouselIndex, cardsPerView],
   )
 
   const handleCarouselPrev = () => {
@@ -105,10 +126,6 @@ const LandingPage = () => {
       <section className="landing-daily-hub" aria-labelledby="landing-daily-hub-title">
         <div className="landing-section-heading">
           <h2 id="landing-daily-hub-title">Sur ce site tu as accès à :</h2>
-          <p>
-            Fini les carnets éparpillés, les notes sur ton téléphone et les applis dans tous les sens. Ici, tout est centralisé pour
-            simplifier ton quotidien et te libérer de la charge mentale.
-          </p>
         </div>
         <div className="landing-carousel">
           <button type="button" className="landing-carousel__arrow landing-carousel__arrow--left" aria-label="Cartes précédentes" onClick={handleCarouselPrev}>
@@ -137,9 +154,9 @@ const LandingPage = () => {
         <div className="landing-section-heading">
           <h2 id="landing-differentiator-title">Bien plus qu'un outil d'organisation</h2>
           <p>
-            Ce site n’est pas seulement un planner digital. C’est un véritable cocon positif, conçu pour te rappeler que tu peux avancer à ton rythme, avec bienveillance envers toi-même.
+            Fini les carnets éparpillés, les notes sur ton téléphone et les applis dans tous les sens. Ici, tout est centralisé pour
+            simplifier ton quotidien et te libérer de la charge mentale.
           </p>
-          <p>Tout est pensé pour que tu te sentes bien, inspiré·e et en accord avec toi.</p>
         </div>
         <ul className="landing-differentiator__list">
           {differentiatorHighlights.map((highlight) => (

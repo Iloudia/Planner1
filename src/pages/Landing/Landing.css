@@ -38,8 +38,9 @@
 
 .landing-hero__content h1 {
   margin: 0;
-  font-size: clamp(2.2rem, 3vw + 1.6rem, 3.2rem);
+  font-size: 30px;
   line-height: 1.15;
+  max-width: 375px;
 }
 
 .landing-hero__content p {
@@ -188,15 +189,17 @@
 }
 
 .landing-carousel {
+  position: relative;
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: 1fr;
   gap: 1rem;
   align-items: center;
+  padding: 0 3rem;
 }
 
 .landing-carousel__grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(1, minmax(0, 1fr));
   gap: clamp(0.8rem, 2vw, 1.2rem);
   grid-auto-rows: 1fr;
   align-items: stretch;
@@ -256,6 +259,9 @@
 }
 
 .landing-carousel__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -272,8 +278,16 @@
 }
 
 .landing-carousel__arrow:hover {
-  transform: translateY(-1px);
+  transform: translateY(-50%) translateY(-1px);
   box-shadow: 0 18px 38px rgba(236, 72, 153, 0.22);
+}
+
+.landing-carousel__arrow--left {
+  left: 0;
+}
+
+.landing-carousel__arrow--right {
+  right: 0;
 }
 
 .landing-differentiator {
@@ -531,12 +545,30 @@
   }
 
   .landing-carousel__grid {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 
   .landing-carousel__arrow {
     justify-self: center;
     order: 2;
+  }
+}
+
+@media (min-width: 700px) {
+  .landing-carousel__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 980px) {
+  .landing-carousel__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1200px) {
+  .landing-carousel__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 

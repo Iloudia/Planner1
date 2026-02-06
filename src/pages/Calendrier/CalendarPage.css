@@ -1500,3 +1500,22 @@
   background: rgba(236, 72, 153, 0.75);
 }
 
+
+.calendar-day__indicator {
+  display: none;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #9d174d;
+}
+
+.calendar-day__indicator::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #ec4899;
+}
+
+

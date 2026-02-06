@@ -1,15 +1,10 @@
 import PageHeading from "../../components/PageHeading"
-import heroImage from "../../assets/victoria-harder-dupe.jpeg"
 import "./MentionsLegalesPage.css"
 
 const MentionsLegalesPage = () => (
   <>
-    <section className="page-hero-banner" aria-hidden="true">
-      <img src={heroImage} alt="" loading="lazy" />
-    </section>
-
-    <PageHeading eyebrow="Mentions légales" title="Mentions légales" />
     <div className="legal-page">
+      <PageHeading eyebrow="Mentions légales" title="Mentions légales" />
       <p className="legal-page__intro">
         Mentions légales complètes, incluant l'éditeur, l'hébergeur, la propriété intellectuelle et les règles d'utilisation du site Planner.
       </p>
@@ -69,3 +64,6 @@ const MentionsLegalesPage = () => (
 )
 
 export default MentionsLegalesPage
+
+
+

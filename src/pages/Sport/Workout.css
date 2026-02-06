@@ -933,3 +933,15 @@
   }
 }
 
+@media (max-width: 375px) {
+  .workout-video-form {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .workout-video-form button {
+    justify-self: stretch;
+    width: 100%;
+  }
+}
+

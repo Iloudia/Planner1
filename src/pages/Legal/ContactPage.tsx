@@ -1,15 +1,10 @@
-import PageHeading from "../../components/PageHeading"
-import heroImage from "../../assets/jenna-van der heide-dupe.jpeg"
 import "./ContactPage.css"
 
 const ContactPage = () => (
   <>
-    <section className="page-hero-banner" aria-hidden="true">
-      <img src={heroImage} alt="" loading="lazy" />
-    </section>
-
-    <PageHeading eyebrow="Contact" title="Contacte-moi" />
     <div className="legal-page contact-page">
+      <span className="sport-header__eyebrow">Contact</span>
+      <h1>Contacte-moi</h1>
       <p className="legal-page__intro">
         Une idée, une question ou envie de collaborer ? Laisse-moi un message et je te répondrai avec grand plaisir.
       </p>

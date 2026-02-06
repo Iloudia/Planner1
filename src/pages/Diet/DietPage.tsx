@@ -1271,7 +1271,6 @@ const DietClassicPage = () => {
               title="Ma diet"
               className="diet-page-heading"
             />
-            <p className="diet-heading__description">{currentHeading.description}</p>
           </>
         ) : (
           <>
@@ -1280,9 +1279,6 @@ const DietClassicPage = () => {
               title="Ma diet"
               className="diet-page-heading"
             />
-            <p className="diet-heading__description">
-              Retrouve ici toutes les recettes que tu as aimées.
-            </p>
           </>
         )}
         <div className="diet-crosslink">
@@ -1377,18 +1373,13 @@ const DietClassicPage = () => {
               ))}
             </div>
           ) : (
-            <p className="diet-heading__description">
-              Ajoute des recettes en favoris pour les retrouver ici.
-            </p>
+            null
           )
         ) : tab === "custom" ? (
           <>
             <div className="diet-custom-header">
               <div>
                 <h3>Mes recettes</h3>
-                <p className="diet-heading__description">
-                  Crée tes propres recettes et programme-les directement.
-                </p>
               </div>
               <button type="button" className="pill pill--diet" onClick={() => setIsCreateOpen(true)}>
                 Créer une recette
@@ -1437,9 +1428,7 @@ const DietClassicPage = () => {
                 ))}
               </div>
             ) : (
-              <p className="diet-heading__description">
-                Aucune recette pour le moment. Crée la première !
-              </p>
+              null
             )}
           </>
         ) : (

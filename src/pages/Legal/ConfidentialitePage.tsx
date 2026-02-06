@@ -1,15 +1,10 @@
 import PageHeading from "../../components/PageHeading"
-import heroImage from "../../assets/kalina-wolf-dupe.jpeg"
 import "./ConfidentialitePage.css"
 
 const ConfidentialitePage = () => (
   <>
-    <section className="page-hero-banner" aria-hidden="true">
-      <img src={heroImage} alt="" loading="lazy" />
-    </section>
-
-    <PageHeading eyebrow="Confidentialité" title="Politique de confidentialité" />
     <div className="legal-page">
+      <PageHeading eyebrow="Confidentialité" title="Politique de confidentialité" />
       <p className="legal-page__intro">
         La présente politique de confidentialité a pour objectif d’informer les utilisateurs du site sur la manière dont
         leurs données personnelles sont collectées, utilisées et protégées.
@@ -115,3 +110,8 @@ const ConfidentialitePage = () => (
 )
 
 export default ConfidentialitePage
+
+
+
+
+

@@ -1,5 +1,4 @@
 import PageHeading from "../../components/PageHeading"
-import heroImage from "../../assets/natalia-grabarczyk-dupe.jpeg"
 import portrait from "../../assets/madison-hart-dupe.jpeg"
 import "./AboutPage.css"
 
@@ -38,21 +37,15 @@ const siteValues = [
 
 const AboutPage = () => (
   <>
-    <section className="page-hero-banner" aria-hidden="true">
-      <img src={heroImage} alt="" loading="lazy" />
-    </section>
-
     <div className="about-page">
-      <PageHeading eyebrow="A propos" title="A propos de moi" />
       <div className="about-shell">
         <article className="about-article" aria-label="A propos">
+          <PageHeading eyebrow="A propos" title="A propos de moi" />
+          <h2>Pourquoi j'ai crée ce site ?</h2>
           {paragraphs.map((text) => (
             <p key={text}>{text}</p>
           ))}
         </article>
-        <figure className="about-figure" aria-hidden="true">
-          <img src={portrait} alt="" loading="lazy" />
-        </figure>
       </div>
       <section className="about-values" aria-label="Valeurs du site">
         <p className="values-intro">Les valeurs du site sont :</p>
@@ -73,4 +66,16 @@ const AboutPage = () => (
 )
 
 export default AboutPage
+
+
+
+
+
+
+
+
+
+
+
+
 

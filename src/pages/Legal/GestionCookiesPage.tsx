@@ -1,6 +1,5 @@
 import PageHeading from "../../components/PageHeading"
 import { useCookieConsent } from "../../context/CookieConsentContext"
-import heroImage from "../../assets/lindsay-piotter-dupe.jpeg"
 import "./GestionCookiesPage.css"
 
 const GestionCookiesPage = () => {
@@ -8,12 +7,8 @@ const GestionCookiesPage = () => {
 
   return (
     <>
-      <section className="page-hero-banner" aria-hidden="true">
-        <img src={heroImage} alt="" loading="lazy" />
-      </section>
-
-      <PageHeading eyebrow="Cookies" title="Gestion des cookies" />
       <div className="legal-page">
+        <PageHeading eyebrow="Cookies" title="Gestion des cookies" />
         <p className="legal-page__intro">
           Lors de la consultation de ce site, des cookies peuvent etre deposes sur votre appareil (ordinateur, mobile ou
           tablette).
@@ -98,3 +93,6 @@ const GestionCookiesPage = () => {
 }
 
 export default GestionCookiesPage
+
+
+
