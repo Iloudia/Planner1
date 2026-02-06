@@ -609,8 +609,9 @@ const SelfLovePage = () => {
                     <img src={photo.dataUrl} alt={`Souvenir ${index + 1}`} />
                   ) : (
                     <span className="self-love-photo-card__placeholder">
-                      <span role="img" aria-label="mirror"></span>
-                      Photo {index + 1}
+                      <span className="body-goal-slot__upload">
+                        <span>Ajouter une photo</span>
+                      </span>
                     </span>
                   )}
                   <input type="file" accept="image/*" onChange={(event) => handlePhotoChange(photo.id, event)} />
@@ -619,9 +620,7 @@ const SelfLovePage = () => {
                   <button type="button" onClick={() => handleClearPhoto(photo.id)}>
                     Changer la photo
                   </button>
-                ) : (
-                  <span className="self-love-photo-card__hint">Ajoute une photo</span>
-                )}
+                ) : null}
               </div>
             ))}
           </div>
@@ -631,8 +630,8 @@ const SelfLovePage = () => {
       <section className="self-love-section self-love-section--qualities">
         <h2>Liste tes qualitÃ©s</h2>
         <form className="self-love-form-row" onSubmit={handleAddQuality}>
-          <input
-            type="text"
+          <textarea
+            className="self-love-exercise__textarea"
             placeholder="Ex : Je sais Ã©couter avec le cÅ“ur. "
             value={qualityDraft}
             onChange={(event) => setQualityDraft(event.target.value)}
@@ -680,8 +679,8 @@ const SelfLovePage = () => {
           <p>Clique sur une pensÃ©e pour la laisser s'envoler.</p>
         </div>
         <form className="self-love-form-row" onSubmit={handleAddThought}>
-          <input
-            type="text"
+          <textarea
+            className="self-love-exercise__textarea"
             placeholder="Ex. Je dois Ãªtre parfait(e)."
             value={thoughtDraft}
             onChange={(event) => setThoughtDraft(event.target.value)}
