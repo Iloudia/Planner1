@@ -765,7 +765,7 @@ const FinancePage = () => {
 
       <section className="finance-dashboard">
         <div className="finance-dashboard__main">
-          <section className="finance-summary dashboard-panel">
+          <section className="finance-summary-categories dashboard-panel">
             <div className="finance-section-chip">
               <span className="finance-section-chip__title">Rpartition par catgorie</span>
               <div className="finance-section-chip__divider" aria-hidden="true" />
