@@ -61,9 +61,9 @@ const SettingsPage = () => {
           </ul>
         </section>
       </div>
-      <div className="page-footer-bar" aria-hidden="true" />
-    </>
+</>
   )
 }
 
 export default SettingsPage
+

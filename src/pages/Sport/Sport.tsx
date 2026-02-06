@@ -380,10 +380,9 @@ const SportPage = () => {
           </div>
         </div>
       </section>
-
-      <div className="sport-page__footer-bar" aria-hidden="true" />
-    </div>
+</div>
   )
 }
 
 export default SportPage
+

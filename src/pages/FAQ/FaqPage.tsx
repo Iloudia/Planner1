@@ -81,12 +81,12 @@ const FAQPage = () => {
           <img src={faqPortrait} alt="" loading="lazy" />
         </figure>
       </div>
-      <div className="page-footer-bar" aria-hidden="true" />
-    </>
+</>
   )
 }
 
 export default FAQPage
+
 
 
 

@@ -440,8 +440,8 @@ p {
 }
 
 .auth-button--login {
-  background: rgba(129, 140, 248, 0.15);
-  color: #312e81;
+  background: rgba(194, 24, 91, 0.12);
+  color: #c2185b;
 }
 
 .auth-button--logout {
@@ -699,6 +699,7 @@ p {
   background: rgba(236, 72, 153, 0.06);
   border: 1px solid var(--border);
   font-weight: 600;
+  color: var(--color-chocolate);
 }
 
 .home-hero-strip {
@@ -723,6 +724,7 @@ p {
   gap: 8px;
   letter-spacing: -0.01em;
   margin-bottom: 12px;
+  color: var(--color-chocolate);
 }
 
 .dot {
@@ -784,7 +786,7 @@ p {
   margin: 0 0 4px;
   font-size: 24px;
   font-weight: 700;
-  color: #111827;
+  color: var(--color-chocolate);
 }
 
 .task-note {
@@ -917,7 +919,8 @@ p {
 
 .pill--diet {
   background: var(--color-caramel);
-  color: #ffffff;
+  color: var(--color-chocolate);
+  box-shadow: none;
 }
 
 .pill:hover {
@@ -929,13 +932,6 @@ p {
   color: var(--text);
   border: 1px solid var(--border);
   box-shadow: none;
-}
-
-.page-footer-bar {
-  height: 2.2rem;
-  border-radius: 28px;
-  background: linear-gradient(140deg, #ffe4f1 0%, #fbcfe8 40%, #f472b6 100%);
-  box-shadow: 0 24px 80px rgba(244, 114, 182, 0.22);
 }
 
 .page-hero-banner {
@@ -1729,3 +1725,4 @@ p {
     display: none;
   }
 }
+

@@ -1294,7 +1294,7 @@ const DietClassicPage = () => {
               Passe sur la page Alimentation pour organiser tes repas et ta liste de courses.
             </p>
           </div>
-          <Link to="/alimentation" className="pill">
+          <Link to="/alimentation" className="pill pill--diet">
             Planifier les repas
           </Link>
         </div>
@@ -1686,11 +1686,11 @@ const DietClassicPage = () => {
           </div>
         ) : null}
           </main>
-<div className="page-footer-bar" aria-hidden="true" />
 </>
 )
 }
 
 export default DietClassicPage
+
 
 

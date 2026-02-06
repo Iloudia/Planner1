@@ -51,12 +51,6 @@
   box-shadow: none;
 }
 
-.finance-page__footer-bar {
-  height: 2.2rem;
-  border-radius: 28px;
-  background: linear-gradient(90deg, #fce7f3 0%, #f472b6 50%, #f9a8d4 100%);
-  box-shadow: 0 28px 90px rgba(148, 163, 184, 0.28);
-}
 
 .finance-hero {
   display: grid;
@@ -243,7 +237,7 @@
   background: rgba(255, 255, 255, 0.94);
   padding: 2rem 2.25rem;
   border-radius: 28px;
-  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.08);
+  box-shadow: none;
   gap: 2.25rem;
 }
 
@@ -400,7 +394,7 @@
   border-radius: 16px;
   border: none;
   background-color: var(--color-caramel);
-  color: #f8fafc;
+  color: var(--color-chocolate);
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.2s ease;
@@ -469,11 +463,10 @@
   border-radius: 14px;
   border: none;
   background-color: var(--color-caramel);
-  color: #f8fafc;
+  color: var(--color-chocolate);
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
-  box-shadow: 0 12px 32px rgba(244, 114, 182, 0.24);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   width: 100%;
   justify-self: stretch;
@@ -535,7 +528,7 @@
   flex-direction: column;
   gap: 1.25rem;
   border: 1px solid rgba(148, 163, 184, 0.16);
-  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.08);
+  box-shadow: none;
   min-height: 560px;
   max-height: 560px;
   overflow: hidden;
@@ -1377,7 +1370,7 @@
   border-radius: 26px;
   background: #fff;
   padding: 0.75rem 1.25rem 1rem;
-  box-shadow: 0 30px 60px rgba(15, 23, 42, 0.08);
+  box-shadow: none;
 }
 
 .finance-trend-chart .highcharts-container {
@@ -1425,3 +1418,4 @@
   background: #ffffff;
   border-radius: 28px;
 }
+

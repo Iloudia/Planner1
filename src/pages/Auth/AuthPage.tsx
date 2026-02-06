@@ -573,9 +573,9 @@ const AuthPage = ({ mode }: AuthFormProps) => {
           </div>
         </div>
       </div>
-      <div className="page-footer-bar" aria-hidden="true" />
-    </div>
+</div>
   )
 }
 
 export default AuthPage
+

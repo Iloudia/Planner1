@@ -1010,12 +1010,12 @@ const CalendrierPage = () => {
                     </div>
                 </div>
             ) : null}
-            <div className="page-footer-bar" aria-hidden="true" />
-        </div>
+</div>
     )
 }
 
 export default CalendrierPage
+
 
 
 

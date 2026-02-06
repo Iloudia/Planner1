@@ -261,11 +261,10 @@ const RoutinePage = () => {
           </div>
         </section>
       </div>
-
-      <div className="routine-page__footer-bar" aria-hidden="true" />
-    </div>
+</div>
   )
 }
 
 export default RoutinePage
+
 

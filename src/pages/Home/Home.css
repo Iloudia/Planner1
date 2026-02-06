@@ -11,15 +11,6 @@
   margin-bottom: 1rem;
 }
 
-.home-footer-bar {
-  height: 2.6rem;
-  border-radius: 28px;
-  background: linear-gradient(90deg, #fce7f3 0%, #f472b6 50%, #f9a8d4 100%);
-  box-shadow: 0 24px 80px rgba(99, 102, 241, 0.18);
-  margin-top: 1.5rem;
-  grid-column: 1 / -1;
-  width: 100%;
-}
 
 .home-hero-strip {
   display: flex;
@@ -57,7 +48,7 @@
   background: #fff;
   border-radius: 24px;
   padding: 1.25rem;
-  box-shadow: 0 26px 70px rgba(15, 23, 42, 0.12);
+  box-shadow: none;
   position: relative;
 }
 
@@ -83,13 +74,17 @@
   z-index: 1;
 }
 
+.home-moodboard__top h2 {
+  color: var(--color-chocolate);
+}
+
 .home-moodboard__button {
   border: none;
   border-radius: 999px;
   padding: 0.45rem 0.95rem;
   font-weight: 600;
-  background: var(--color-rose-500);
-  color: #fff;
+  background: var(--color-caramel);
+  color: var(--color-chocolate);
   cursor: pointer;
   font-size: 0.9rem;
   margin: 0 0 0.5rem auto;
@@ -250,6 +245,7 @@
 .card h3 {
   margin: 0 0 6px;
   font-size: 18px;
+  color: var(--color-chocolate);
 }
 
 .card-title-input {
@@ -418,13 +414,17 @@
   margin: 0.8rem 0 0;
   text-align: center;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--color-chocolate);
 }
 
 .notes {
   display: flex;
   flex-direction: column;
   gap: 0.7rem;
+}
+
+.notes h3 {
+  color: var(--color-chocolate);
 }
 
 .todo-input {
@@ -451,6 +451,10 @@
   border-radius: 12px;
   padding: 0.7rem 0.9rem;
   font-size: 0.95rem;
+}
+
+.todo-input input::placeholder {
+  font-size: 0.85rem;
 }
 
 .todo-input input:focus {
@@ -560,7 +564,7 @@
   margin: 0;
   font-size: 1.05rem;
   font-weight: 600;
-  color: #111827;
+  color: var(--color-chocolate);
 }
 
 .task-meta {
@@ -620,6 +624,7 @@
   color: rgba(15, 23, 42, 0.55);
 }
 
+
 /* Telephone */
 @media (max-width: 767px) {
   .page.home-page {
@@ -642,9 +647,6 @@
     order: 4;
   }
 
-  .page.home-page .home-footer-bar {
-    order: 5;
-  }
 
   .home-hero-strip {
     margin-bottom: 0.75rem;
@@ -759,9 +761,6 @@
     order: 4;
   }
 
-  .page.home-page .home-footer-bar {
-    order: 5;
-  }
 
   .home-page .card-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -806,3 +805,4 @@
     height: 860px;
   }
 }
+

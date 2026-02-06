@@ -67,10 +67,9 @@ function PageTemplate({
           </article>
         ))}
       </div>
-
-      <div className="page-footer-bar" aria-hidden="true" />
-    </div>
+</div>
   );
 }
 
 export default PageTemplate;
+

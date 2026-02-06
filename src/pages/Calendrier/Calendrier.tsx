@@ -303,7 +303,7 @@ const CalendrierPage = () => {
       editEndMinutes < dayStartMinutes ||
       editEndMinutes > dayEndMinutes
     ) {
-      window.alert('Les horaires autorisés sont de 06:00 à 23:00.')
+      window.alert('Les horaires autorisÃ©s sont de 06:00 Ã  23:00.')
       return
     }
     updateTask(taskId, {
@@ -315,7 +315,7 @@ const CalendrierPage = () => {
   }
 
   const handleDeleteTask = (taskId: string) => {
-    const confirmation = window.confirm('Supprimer cette tâche ?')
+    const confirmation = window.confirm('Supprimer cette tÃ¢che ?')
     if (!confirmation) {
       return
     }
@@ -324,7 +324,7 @@ const CalendrierPage = () => {
   }
 
   const handleDuplicateTask = (task: ScheduledTask) => {
-    const raw = window.prompt('Dupliquer sur combien de jours ? (ex: 3)')
+    const raw = window.prompt('Dupliquer sur combien de jours ? (ex : 3)')
     if (!raw) {
       return
     }
@@ -409,7 +409,7 @@ const CalendrierPage = () => {
     if (!activeDateKey) {
       return
     }
-    const confirmation = window.confirm('Supprimer tous les événements de cette journée ?')
+    const confirmation = window.confirm('Supprimer tous les Ã©vÃ©nements de cette journÃ©e ?')
     if (!confirmation) {
       return
     }
@@ -430,11 +430,11 @@ const CalendrierPage = () => {
     setNewTaskError(null)
     const title = newTaskForm.title.trim()
     if (!title) {
-      setNewTaskError('Ajoute un titre à ton bloc.')
+      setNewTaskError('Ajoute un titre Ã  ton bloc.')
       return
     }
     if (!newTaskForm.repeatStart || !newTaskForm.repeatEnd) {
-      setNewTaskError('Sélectionne une période valide.')
+      setNewTaskError('SÃ©lectionne une pÃ©riode valide.')
       return
     }
     const startDate = parseDateKey(newTaskForm.repeatStart)
@@ -444,14 +444,14 @@ const CalendrierPage = () => {
       return
     }
     if (startDate.getTime() > endDate.getTime()) {
-      setNewTaskError('La date de fin doit être postérieure à la date de début.')
+      setNewTaskError('La date de fin doit Ãªtre postÃ©rieure Ã  la date de dÃ©but.')
       return
     }
 
     const todayStart = new Date(today)
     todayStart.setHours(0, 0, 0, 0)
     if (startDate.getTime() < todayStart.getTime()) {
-      setNewTaskError('Impossible de programmer un événement dans le passé.')
+      setNewTaskError('Impossible de programmer un Ã©vÃ©nement dans le passÃ©.')
       return
     }
 
@@ -464,13 +464,13 @@ const CalendrierPage = () => {
       endMinutes < dayStartMinutes ||
       endMinutes > dayEndMinutes
     ) {
-      setNewTaskError('Les horaires autorisés sont de 06:00 à 23:00.')
+      setNewTaskError('Les horaires autorisÃ©s sont de 06:00 Ã  23:00.')
       return
     }
     if (startDate.toDateString() === todayStart.toDateString()) {
       const nowMinutes = today.getHours() * 60 + today.getMinutes()
       if (startMinutes <= nowMinutes) {
-        setNewTaskError("Choisis une heure de début future.")
+        setNewTaskError("Choisis une heure de dÃ©but future.")
         return
       }
     }
@@ -573,10 +573,10 @@ return (
             onClick={() => handlePlanForDate(getDateKey(today))}
           >
             <span className="calendar-weekly__create-plus">+</span>
-            Créer un événement
+            CrÃ©er un Ã©vÃ©nement
           </button>
           <div className="calendar-month-nav">
-            <button type="button" onClick={() => handleWeekChange(-1)} aria-label="Semaine précédente">
+            <button type="button" onClick={() => handleWeekChange(-1)} aria-label="Semaine prÃ©cÃ©dente">
               &lt;
             </button>
             <button type="button" onClick={() => handleWeekChange(1)} aria-label="Semaine suivante">
@@ -625,7 +625,7 @@ return (
                 tabIndex={0}
                 onClick={() => handleDaySelect(dateKey)}
                 onKeyDown={(event) => handleDayKeyDown(event, dateKey)}
-                aria-label={`Voir la journée du ${dateKey}`}
+                aria-label={`Voir la journÃ©e du ${dateKey}`}
               >
                 <div className="calendar-weekly__day-grid">
                   {hours.map((hour) => (
@@ -679,12 +679,12 @@ return (
     {calendarView === 'monthly' ? (
     <section className="calendar-monthly-preview">
       <header className="calendar-header calendar-header--compact">
-        <PageHeading eyebrow="aperçu mensuel" title={formatMonthTitle(currentMonthDate)}>
+        <PageHeading eyebrow="aperÃ§u mensuel" title={formatMonthTitle(currentMonthDate)}>
           {viewToggle}
         </PageHeading>
       </header>
       <div className="calendar-month-nav">
-        <button type="button" onClick={() => handleMonthChange(-1)} aria-label="Mois précédent">
+        <button type="button" onClick={() => handleMonthChange(-1)} aria-label="Mois prÃ©cÃ©dent">
           &lt;
         </button>
         <button type="button" onClick={() => handleMonthChange(1)} aria-label="Mois suivant">
@@ -709,7 +709,7 @@ return (
               onKeyDown={(event) => handleDayKeyDown(event, cell.dateKey!)}
               role="button"
               tabIndex={0}
-              aria-label={`Voir la journée du ${cell.dateKey}`}
+              aria-label={`Voir la journÃ©e du ${cell.dateKey}`}
             >
                             
               <div className="calendar-day__header">
@@ -721,7 +721,7 @@ return (
                     event.stopPropagation()
                     handlePlanForDate(cell.dateKey!)
                   }}
-                  aria-label={`Ajouter une tâche le ${cell.dateKey}`}
+                  aria-label={`Ajouter une tÃ¢che le ${cell.dateKey}`}
                 >
                   +
                 </button>
@@ -729,7 +729,7 @@ return (
               {cell.tasks.length > 0 ? (
                 <span
                   className="calendar-day__indicator"
-                  aria-label={`${cell.tasks.length} événement${cell.tasks.length > 1 ? "s" : ""}`}
+                  aria-label={`${cell.tasks.length} Ã©vÃ©nement${cell.tasks.length > 1 ? "s" : ""}`}
                 >
                   {cell.tasks.length > 1 ? cell.tasks.length : ""}
                 </span>
@@ -754,7 +754,7 @@ return (
                   ) : null}
                 </>
               ) : (
-                <span className="calendar-day__empty">Rien de prévu</span>
+                <span className="calendar-day__empty">Rien de prÃ©vu</span>
               )}
             </div>
           ),
@@ -772,9 +772,9 @@ return (
               <p>
                 {activeDateTasks.length > 0
                   ? activeDateTasks.length === 1
-                    ? "1 créneau."
-                    : `${activeDateTasks.length} créneaux.`
-                  : "Aucun créneau pour l'instant, profite pour en poser un."}
+                    ? "1 crÃ©neau."
+                    : `${activeDateTasks.length} crÃ©neaux.`
+                  : "Aucun crÃ©neau pour l'instant, profite pour en poser un."}
               </p>
             </div>
             <button type="button" className="modal__close" onClick={handleCloseModal} aria-label="Fermer">
@@ -790,7 +790,7 @@ return (
               className="calendar-hero__cta calendar-hero__cta--ghost"
               onClick={handleResetDay}
             >
-              Réinitialiser la journée
+              RÃ©initialiser la journÃ©e
             </button>
           </div>
 
@@ -812,7 +812,7 @@ return (
               </label>
               <div className="calendar-task__form-row">
                 <label className="calendar-task__field">
-                  <span>Début</span>
+                  <span>DÃ©but</span>
                   <input
                     type="time"
                     value={newTaskForm.start}
@@ -910,7 +910,7 @@ return (
             </div>
             <div className="calendar-modal__list">
               {activeDateTasks.length === 0 ? (
-                <p className="calendar-modal__empty">Programme ton premier événement de la journée.</p>
+                <p className="calendar-modal__empty">Programme ton premier Ã©vÃ©nement de la journÃ©e.</p>
               ) : (
                 activeDateTasks.map((task) => (
                   <div
@@ -928,7 +928,7 @@ return (
                       <form className="calendar-task__form" onSubmit={(event) => handleSubmitEdit(event, task.id)}>
                         <div className="calendar-task__form-row">
                           <label className="calendar-task__field">
-                            <span>Début</span>
+                            <span>DÃ©but</span>
                             <input
                               type="time"
                               value={editDraft.start}
@@ -1031,12 +1031,12 @@ return (
           </div>
         </div>
       ) : null}
-      <div className="page-footer-bar" aria-hidden="true" />
-    </div>
+</div>
   )
 }
 
 export default CalendrierPage
+
 
 
 

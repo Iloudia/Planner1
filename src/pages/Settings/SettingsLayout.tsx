@@ -34,9 +34,9 @@ const SettingsLayout = () => {
           </section>
         </div>
       </div>
-      <div className="page-footer-bar" aria-hidden="true" />
-    </>
+</>
   )
 }
 
 export default SettingsLayout
+

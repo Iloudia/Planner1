@@ -112,14 +112,14 @@ const categoryDefinitions: Record<ExpenseCategory, { label: string; color: strin
   clothing: { label: 'Shopping', color: '#FDE68A' },
   beauty: { label: 'Restaurants et bars', color: '#FBCFE8' },
   leisure: { label: 'Loisirs', color: '#BBF7D0' },
-  health: { label: 'Taxes et impts', color: '#BFDBFE' },
+  health: { label: 'Taxes et impôts', color: '#BFDBFE' },
   friends: { label: 'Amis', color: '#FCA5A5' },
 }
 
 const financeMoodboard = [
   { src: financeMood01, alt: 'Moodboard budget' },
-  { src: financeMood02, alt: "Carnet d'pargne inspir" },
-  { src: financeMood03, alt: 'Planification crative' },
+  { src: financeMood02, alt: "Carnet d'épargne inspirant" },
+  { src: financeMood03, alt: 'Planification créative' },
 ] as const
 
 const financeInspirationImage = financeMoodboard[1]
@@ -432,14 +432,14 @@ const FinancePage = () => {
   const currentDate = useMemo(() => new Date(), [])
   const currentMonthKey = useMemo(() => getMonthKeyFromDate(currentDate), [currentDate])
   const selectedDirectionLabel = useMemo(() => {
-    return draft.direction === 'in' ? 'Revenus' : 'Dpense'
+    return draft.direction === 'in' ? 'Revenus' : 'Dépense'
   }, [draft.direction])
   const selectedCategoryLabel = useMemo(() => {
     if (draft.direction !== 'out') {
-      return 'Catgorie'
+      return 'Catégorie'
     }
     const definition = draft.category ? categoryDefinitions[draft.category] : undefined
-    return definition?.label ?? 'Catgorie'
+    return definition?.label ?? 'Catégorie'
   }, [draft.category, draft.direction])
 
   const monthOptions = useMemo(() => {
@@ -548,7 +548,7 @@ const FinancePage = () => {
 
   const financeHeroStats = useMemo(
     () => [
-      { id: 'income', label: 'Entres', value: euroFormatter.format(totalIncome) },
+      { id: 'income', label: 'Entrées', value: euroFormatter.format(totalIncome) },
       { id: 'expenses', label: 'Sorties', value: euroFormatter.format(totalSpent) },
       { id: 'balance', label: 'Solde du mois', value: euroFormatter.format(netCashflow) },
     ],
@@ -671,7 +671,7 @@ const FinancePage = () => {
     const trimmedLabel = draft.label.trim()
     const nextEntry: StoredFinanceEntry = {
       id: `finance-${Date.now()}`,
-      label: trimmedLabel.length > 0 ? trimmedLabel : draft.direction === 'in' ? 'Revenus' : 'Dpense',
+      label: trimmedLabel.length > 0 ? trimmedLabel : draft.direction === 'in' ? 'Revenus' : 'Dépense',
       amount: roundCurrency(amountValue),
       date: draft.date,
       direction: draft.direction,
@@ -731,7 +731,7 @@ const FinancePage = () => {
           <button
             type="button"
             onClick={() => handleFinanceMonthNav('prev')}
-            aria-label="Mois prcdent"
+            aria-label="Mois précédent"
           >
             &lt;
           </button>
@@ -750,11 +750,11 @@ const FinancePage = () => {
         <div className="finance-dashboard__main">
           <section className="finance-summary-categories dashboard-panel">
             <div className="finance-section-chip">
-              <span className="finance-section-chip__title">Rpartition par catgorie</span>
+              <span className="finance-section-chip__title">Répartition par catégorie</span>
               <div className="finance-section-chip__divider" aria-hidden="true" />
             </div>
             <header className="finance-section-header">
-              <p>Repre rapidement les catgories qui te cotent le plus</p>
+              <p>Repère rapidement les catégories qui te coûtent le plus</p>
             </header>
             <div className="finance-summary__grid">
               {Object.entries(totals).map(([categoryKey, amount]) => {
@@ -775,15 +775,15 @@ const FinancePage = () => {
 
           <section className="finance-form dashboard-panel">
             <div className="finance-section-chip">
-              <span className="finance-section-chip__title">Ajouter une dpense</span>
+              <span className="finance-section-chip__title">Ajouter une dépense</span>
               <div className="finance-section-chip__divider" aria-hidden="true" />
             </div>
             <header className="finance-section-header">
-              <p>Enregistre en un instant les dpenses et les revenus du mois.</p>
+              <p>Enregistre en un instant les dépenses et les revenus du mois.</p>
             </header>
             <form onSubmit={handleSubmit} className="finance-form__grid">
               <label className="finance-form__field">
-                <span>Intitul</span>
+                <span>Intitulé</span>
                 <input
                   type="text"
                   value={draft.label}
@@ -828,7 +828,7 @@ const FinancePage = () => {
                           setIsDirectionMenuOpen(false)
                         }}
                       >
-                        Dpense
+                        Dépense
                       </button>
                       <button
                         type="button"
@@ -848,7 +848,7 @@ const FinancePage = () => {
               </label>
               {draft.direction === 'out' && (
                 <label className="finance-form__field">
-                  <span>Catgorie</span>
+                  <span>Catégorie</span>
                   <div className="finance-form__select-field" ref={categoryMenuRef}>
                     <button
                       type="button"
@@ -917,7 +917,7 @@ const FinancePage = () => {
               </div>
             </header>
             {selectedMonthEntries.length === 0 ? (
-              <p className="finance-history__empty">Aucun mouvement enregistr pour {selectedMonthLabel}.</p>
+              <p className="finance-history__empty">Aucun mouvement enregistré pour {selectedMonthLabel}.</p>
             ) : (
               <div className="finance-history__groups">
                 {groupedHistoryPreview.map((group) => (
@@ -928,9 +928,9 @@ const FinancePage = () => {
                         const definition = entry.category ? categoryDefinitions[entry.category] : undefined
                         const amountValue = entry.direction === 'out' ? -entry.amount : entry.amount
                         const amountColor = entry.direction === 'in' ? '#db2777' : definition?.color ?? '#1e1b4b'
-                        const categoryLabel = entry.direction === 'in' ? 'Revenus' : definition?.label ?? 'Dpense'
+                        const categoryLabel = entry.direction === 'in' ? 'Revenus' : definition?.label ?? 'Dépense'
                         const formattedDate = formatHistoryDate(entry.date)
-                        const directionLabel = entry.direction === 'in' ? 'Entre' : 'Sortie'
+                        const directionLabel = entry.direction === 'in' ? 'Entrée' : 'Sortie'
 
                         return (
                           <li key={entry.id} className="finance-history__item">
@@ -979,11 +979,11 @@ const FinancePage = () => {
               <div className="finance-section-chip__divider" aria-hidden="true" />
             </div>
             <header className="finance-section-header finance-section-header--vertical">
-              <p>Dfinis ton solde de dpart pour un suivi prcis</p>
+              <p>Définis ton solde de départ pour un suivi précis</p>
             </header>
             <form className="finance-balance__form" onSubmit={handleStartingAmountSubmit}>
               <label className="finance-balance__field">
-                <span>Argent au dbut du mois</span>
+                <span>Argent au début du mois</span>
                 <input
                   type="text"
                   value={startingAmountDraft}
@@ -997,7 +997,7 @@ const FinancePage = () => {
             </form>
             <div className="finance-balance__stats">
               <article className="finance-balance__stat">
-                <span>Argent au dbut</span>
+                <span>Argent au début</span>
                 <strong>{euroFormatter.format(startingAmountValue)}</strong>
               </article>
               <article className="finance-balance__stat">
@@ -1005,18 +1005,18 @@ const FinancePage = () => {
                 <strong>{formatSignedCurrency(totalIncome)}</strong>
               </article>
               <article className="finance-balance__stat">
-                <span>Dpenses</span>
+                <span>Dépenses</span>
                 <strong>{formatSignedCurrency(-totalSpent)}</strong>
               </article>
               <article className="finance-balance__stat">
-                <span>Argent  la fin</span>
+                <span>Argent à la fin</span>
                 <strong>{euroFormatter.format(endingAmount)}</strong>
               </article>
             </div>
           </section>
 
           <div className="finance-balance__chart-card">
-            <h3>Diagramme en fromage</h3>
+            <h3>Diagramme en camembert</h3>
             {hasPieData ? (
               <div className="finance-pie">
                 <div className="finance-pie__figure" style={{ backgroundImage: pieBackground }} />
@@ -1031,7 +1031,7 @@ const FinancePage = () => {
                 </ul>
               </div>
             ) : (
-              <p className="finance-balance__empty">Ajoute une dpense pour visualiser la rpartition.</p>
+              <p className="finance-balance__empty">Ajoute une dépense pour visualiser la répartition.</p>
             )}
           </div>
         </aside>
@@ -1062,7 +1062,7 @@ const FinancePage = () => {
             </header>
             <div className="finance-history-modal__content">
               {selectedMonthEntries.length === 0 ? (
-                <p className="finance-history__empty">Aucun mouvement enregistr pour {selectedMonthLabel}.</p>
+                <p className="finance-history__empty">Aucun mouvement enregistré pour {selectedMonthLabel}.</p>
               ) : (
                 groupedHistoryFull.map((group) => (
                   <div key={group.monthKey} className="finance-history__group">
@@ -1072,9 +1072,9 @@ const FinancePage = () => {
                         const definition = entry.category ? categoryDefinitions[entry.category] : undefined
                         const amountValue = entry.direction === 'out' ? -entry.amount : entry.amount
                         const amountColor = entry.direction === 'in' ? '#db2777' : definition?.color ?? '#1e1b4b'
-                        const categoryLabel = entry.direction === 'in' ? 'Revenus' : definition?.label ?? 'Dpense'
+                        const categoryLabel = entry.direction === 'in' ? 'Revenus' : definition?.label ?? 'Dépense'
                         const formattedDate = formatHistoryDate(entry.date)
-                        const directionLabel = entry.direction === 'in' ? 'Entre' : 'Sortie'
+                        const directionLabel = entry.direction === 'in' ? 'Entrée' : 'Sortie'
 
                         return (
                           <li key={entry.id} className="finance-history__item">
@@ -1115,9 +1115,7 @@ const FinancePage = () => {
           </div>
         </div>
       ) : null}
-
-      <div className="finance-page__footer-bar" aria-hidden="true" />
-    </div>
+</div>
   )
 }
 
@@ -1252,7 +1250,7 @@ const FinanceTrendChart = ({ series }: FinanceTrendChartProps) => {
           ? [
               {
                 type: 'spline',
-                name: 'Mois prcdent',
+                name: 'Mois précédent',
                 data: series.previous,
                 color: 'rgba(248, 196, 220, 0.85)',
                 dashStyle: 'ShortDash',
@@ -1272,7 +1270,7 @@ const FinanceTrendChart = ({ series }: FinanceTrendChartProps) => {
     <div className="finance-trend-chart finance-trend-chart--highcharts">
       <header className="finance-section-header">
         <div className="finance-history__title">
-          <h2>volution du solde</h2>
+          <h2>Évolution du solde</h2>
         </div>
         <div className="finance-trend__legend">
           <span>
@@ -1282,7 +1280,7 @@ const FinanceTrendChart = ({ series }: FinanceTrendChartProps) => {
           {series?.previous ? (
             <span>
               <span className="finance-trend__dot finance-trend__dot--previous" />
-              Mois prcdent
+              Mois précédent
             </span>
           ) : null}
         </div>
@@ -1291,7 +1289,4 @@ const FinanceTrendChart = ({ series }: FinanceTrendChartProps) => {
     </div>
   )
 }
-
-
-
 

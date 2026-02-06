@@ -64,18 +64,18 @@
 
 .calendar-hero__cta--primary {
   background: var(--color-caramel);
-  color: #fff5fb;
-  box-shadow: 0 18px 40px rgba(236, 72, 153, 0.35);
+  color: var(--color-chocolate);
+  box-shadow: none;
 }
 
 .calendar-hero__cta--primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 26px 50px rgba(236, 72, 153, 0.4);
+  box-shadow: none;
 }
 
 .calendar-hero__cta--ghost {
   background: rgba(255, 255, 255, 0.6);
-  color: #312e81;
+  color: #ec4899;
   border: 1px solid rgba(49, 46, 129, 0.12);
 }
 
@@ -228,7 +228,7 @@
   border-radius: 28px;
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(15, 23, 42, 0.08);
-  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+  box-shadow: none;
   min-width: 0;
 }
 
@@ -271,7 +271,7 @@
 .calendar-weekly__day-date {
   font-size: 1.05rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--color-chocolate);
 }
 
 .calendar-weekly__time-column {

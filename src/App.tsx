@@ -54,8 +54,7 @@ function NotFound() {
           </Link>
         </div>
       </div>
-      <div className="page-footer-bar" aria-hidden="true" />
-    </div>
+</div>
   )
 }
 
@@ -156,3 +155,4 @@ function App() {
 }
 
 export default App
+

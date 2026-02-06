@@ -183,10 +183,9 @@ const LandingPage = () => {
           Je commence mon organisation positive dès maintenant
         </button>
       </section>
-
-      <div className="page-footer-bar" aria-hidden="true" />
-    </div>
+</div>
   )
 }
 
 export default LandingPage
+

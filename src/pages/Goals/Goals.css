@@ -7,6 +7,10 @@
   background: #ffffff;
 }
 
+.content-page.goals-page {
+  box-shadow: none;
+}
+
 .goals-hero {
   display: flex;
   flex-wrap: wrap;

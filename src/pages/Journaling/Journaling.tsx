@@ -387,10 +387,9 @@ const JournalingPage = () => {
           <strong>Page enregistrée</strong>
         </div>
       </section>
-
-      <div className="journaling-page__footer-bar" aria-hidden="true" />
-    </div>
+</div>
   )
 }
 
 export default JournalingPage
+

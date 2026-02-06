@@ -101,7 +101,7 @@
 .routine-note__title-band h2 {
   margin: 0;
   font-size: 1.55rem;
-  color: #ffffff;
+  color: var(--color-chocolate);
   letter-spacing: -0.01em;
 }
 
@@ -326,7 +326,7 @@
   border-radius: 999px;
   padding: 0.55rem 1.4rem;
   background-color: var(--color-caramel);
-  color: #fff;
+  color: var(--color-chocolate);
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -340,11 +340,6 @@
 }
 
 
-.routine-page__footer-bar {
-  height: 2.2rem;
-  border-radius: 28px;
-  background: linear-gradient(140deg, #ffe4f1 0%, #fbcfe8 40%, #f472b6 100%);
-}
 
 .routine-hero-image {
   width: 100%;
@@ -412,3 +407,4 @@
     max-height: 320px;
   }
 }
+

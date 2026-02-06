@@ -54,11 +54,11 @@
   border-radius: 999px;
   border: none;
   background: var(--color-caramel);
-  color: #fff;
+  color: var(--color-chocolate);
   font-weight: 600;
   font-size: 0.95rem;
   cursor: pointer;
-  box-shadow: 0 20px 45px rgba(244, 114, 182, 0.45);
+  box-shadow: none;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   align-self: flex-start;
   margin-right: auto;
@@ -96,7 +96,7 @@
 
 .wishlist-card:hover {
   transform: translateY(-6px) rotate(-0.6deg);
-  box-shadow: 0 44px 110px rgba(15, 23, 42, 0.2);
+  box-shadow: 0 44px 110px rgba(244, 114, 182, 0.35);
 }
 
 .wishlist-card:focus-visible {
@@ -409,7 +409,7 @@
 .wishlist-modal__note-actions button[type="submit"],
 .wishlist-modal__form-actions button[type="submit"] {
   background-color: var(--color-caramel);
-  color: #ffffff;
+  color: var(--color-chocolate);
 }
 
 .wishlist-modal__note-actions button[type="button"],
@@ -1343,7 +1343,7 @@
 
 .wishlist-create__actions button[type="submit"] {
   background: var(--color-caramel);
-  color: #fff;
+  color: var(--color-chocolate);
   box-shadow: 0 18px 42px rgba(244, 114, 182, 0.45);
 }
 
@@ -1368,7 +1368,7 @@
 
 .wishlist-create .wishlist-modal__actions button[type="submit"] {
   background: var(--color-caramel);
-  color: #fff;
+  color: var(--color-chocolate);
 }
 
 .wishlist-create .wishlist-modal__actions button:nth-child(2),
@@ -1452,7 +1452,7 @@
 
 .wishlist-rename__actions button:first-child {
   background-color: var(--color-caramel);
-  color: #ffffff;
+  color: var(--color-chocolate);
 }
 
 .wishlist-rename__actions button:last-child {
@@ -1625,22 +1625,10 @@
     grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }
-/* Footer accent bar sizing for wishlist */
-.page-footer-bar {
-  height: 4px;
-  margin: 0 clamp(1rem, 3vw, 2rem);
-  border-radius: 999px;
-  background: linear-gradient(90deg, #f472b6, #facc15, #34d399);
-  opacity: 0.7;
-}
-
-.page-footer-bar {
-  margin-top: 2.5rem;
-  margin-bottom: 2.5rem;
-}
 .wishlist-item__actions .profile-menu {
   position: static;
   width: 36px;
   height: 36px;
   font-size: 1.1rem;
 }
+

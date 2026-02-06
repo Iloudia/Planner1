@@ -489,10 +489,10 @@ const AdminPage = () => {
           </div>
         </div>
       ) : null}
-      <div className="home-footer-bar" aria-hidden="true" />
-    </div>
+</div>
   )
 }
 
 export default AdminPage
+
 

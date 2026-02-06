@@ -259,10 +259,10 @@ function DietPage() {
         ) : null}
 
       </main>
-       <div className="page-footer-bar" aria-hidden="true" />
-    </>
+</>
   )
 }
 
 export default DietPage
+
 
