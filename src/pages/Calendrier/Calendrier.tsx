@@ -242,6 +242,14 @@ const CalendrierPage = () => {
     return startLabel === endLabel ? startLabel : `${startLabel} -> ${endLabel}`
   }, [newTaskForm.repeatStart, newTaskForm.repeatEnd])
 
+  const handleWeekChange = (delta: number) => {
+    setWeekAnchorDate((previous) => {
+      const next = new Date(previous)
+      next.setDate(previous.getDate() + delta * 7)
+      return next
+    })
+  }
+
   const handleMonthChange = (delta: number) => {
     setCurrentMonthDate((previous) => {
       const next = new Date(previous)
@@ -547,11 +555,12 @@ return (
 {calendarView === 'weekly' ? (
     <section className="calendar-weekly">
       <header className="calendar-weekly__header">
-        <PageHeading eyebrow="calendrier hebdomadaire" title={`Semaine du ${weekRangeLabel}`} />
-        {viewToggle}
+        <PageHeading eyebrow="calendrier hebdomadaire" title={`Semaine du ${weekRangeLabel}`}>
+          {viewToggle}
+        </PageHeading>
       </header>
       <div className="calendar-weekly__layout">
-        <div className="calendar-weekly__side">
+        <div className="calendar-weekly__toolbar">
           <button
             type="button"
             className="calendar-weekly__create"
@@ -560,57 +569,14 @@ return (
             <span className="calendar-weekly__create-plus">+</span>
             Créer un événement
           </button>
-          <aside className="calendar-weekly__mini">
-          <header className="calendar-weekly__mini-header">
-            <span className="calendar-weekly__mini-title">{formatMonthTitle(currentMonthDate)}</span>
-            <div className="calendar-month-nav">
-              <button type="button" onClick={() => handleMonthChange(-1)} aria-label="Mois précédent">
-                &lt;
-              </button>
-              <button type="button" onClick={() => handleMonthChange(1)} aria-label="Mois suivant">
-                &gt;
-              </button>
-            </div>
-          </header>
-          <div className="calendar-grid calendar-grid--mini">
-            {weekDays.map((label) => (
-              <div key={label} className="calendar-grid__weekday">
-                {label}
-              </div>
-            ))}
-            {cells.map((cell) =>
-              cell.day === null || cell.dateKey === null ? (
-                <div key={cell.key} className="calendar-day calendar-day--empty" />
-              ) : (
-                <button
-                  key={cell.key}
-                  type="button"
-                  className={`calendar-day calendar-day--mini${cell.isToday ? " calendar-day--today" : ""}`}
-                  onClick={() => {
-                    const [yearValue, monthValue, dayValue] = cell.dateKey!.split("-").map(Number)
-                    const nextDate = new Date(yearValue, (monthValue ?? 1) - 1, dayValue ?? 1)
-                    setWeekAnchorDate(nextDate)
-                  }}
-                  aria-label={`Voir la semaine du ${cell.dateKey}`}
-                >
-                  <span className="calendar-day__number">{cell.day}</span>
-                </button>
-              ),
-            )}
+          <div className="calendar-month-nav">
+            <button type="button" onClick={() => handleWeekChange(-1)} aria-label="Semaine précédente">
+              &lt;
+            </button>
+            <button type="button" onClick={() => handleWeekChange(1)} aria-label="Semaine suivante">
+              &gt;
+            </button>
           </div>
-        </aside>
-
-        <div className="calendar-legend">
-          <h4>Légende des couleurs</h4>
-          <div className="calendar-legend__items">
-            {Object.entries(legendColors).map(([label, color]) => (
-              <div key={label} className="calendar-legend__item">
-                <span className="calendar-legend__swatch" style={{ backgroundColor: color }} aria-hidden="true" />
-                <span className="calendar-legend__label">{label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
         </div>
         <div
           className="calendar-weekly__grid"
@@ -688,7 +654,6 @@ return (
                           handleDaySelect(dateKey)
                         }}
                       >
-                        {isOngoing ? <span className="calendar-weekly__task-status">En cours</span> : null}
                         <span className="calendar-weekly__task-title">{task.title}</span>
                         <span className="calendar-weekly__task-time">
                           {task.start} - {task.end}
@@ -708,19 +673,18 @@ return (
     {calendarView === 'monthly' ? (
     <section className="calendar-monthly-preview">
       <header className="calendar-header calendar-header--compact">
-        <PageHeading eyebrow="aperçu mensuel" title={formatMonthTitle(currentMonthDate)} />
-        <div className="calendar-monthly__controls">
+        <PageHeading eyebrow="aperçu mensuel" title={formatMonthTitle(currentMonthDate)}>
           {viewToggle}
-          <div className="calendar-month-nav">
-            <button type="button" onClick={() => handleMonthChange(-1)} aria-label="Mois précédent">
-              &lt;
-            </button>
-            <button type="button" onClick={() => handleMonthChange(1)} aria-label="Mois suivant">
-              &gt;
-            </button>
-          </div>
-        </div>
+        </PageHeading>
       </header>
+      <div className="calendar-month-nav">
+        <button type="button" onClick={() => handleMonthChange(-1)} aria-label="Mois précédent">
+          &lt;
+        </button>
+        <button type="button" onClick={() => handleMonthChange(1)} aria-label="Mois suivant">
+          &gt;
+        </button>
+      </div>
 <div className="calendar-grid calendar-grid--preview">
         {weekDays.map((label) => (
           <div key={label} className="calendar-grid__weekday">
@@ -1059,6 +1023,28 @@ return (
 }
 
 export default CalendrierPage
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

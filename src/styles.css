@@ -1088,6 +1088,10 @@ p {
   margin-top: 0;
 }
 
+.sport-header .calendar-view-toggle {
+  align-self: flex-start;
+}
+
 .sport-header__eyebrow {
   text-transform: uppercase;
   letter-spacing: 0.22em;

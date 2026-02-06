@@ -157,7 +157,8 @@
 .self-love-letter__stamps {
   display: grid;
   grid-template-columns: repeat(2, 120px);
-  gap: 0.6rem;
+  justify-content: end;
+  column-gap: 0.3rem;
 }
 
 .self-love-letter__stamp {
@@ -165,6 +166,8 @@
   border-radius: 14px;
   padding: 0.25rem;
   background: #fff;
+  width: 120px;
+  height: 120px;
 }
 
 .self-love-letter__stamp img {
@@ -262,12 +265,12 @@
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  color: #fb7185;
+  color: #6b7280;
 }
 
 .self-love-exercise__card h3 {
   margin: 0;
-  color: #be123c;
+  color: var(--color-contrast);
 }
 
 .self-love-exercise__card p {
@@ -2282,7 +2285,9 @@
   }
 
   .self-love-letter__stamps {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, 120px);
+    justify-content: end;
+    column-gap: 0.3rem;
   }
 
   .self-love-letter__footer {

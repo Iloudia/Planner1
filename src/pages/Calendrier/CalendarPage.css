@@ -185,6 +185,12 @@
   justify-content: space-between;
 }
 
+.calendar-weekly__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .calendar-view-toggle {
   display: inline-flex;
   gap: 0.35rem;
@@ -207,8 +213,8 @@
 }
 
 .calendar-view-toggle__button.is-active {
-  background: #0f172a;
-  color: #f8fafc;
+  background: #f472b6;
+  color: #fff5fb;
 }
 
 .calendar-weekly__grid {
@@ -338,22 +344,11 @@
   line-height: 1.2;
 }
 
-.calendar-weekly__task-status {
-  align-self: flex-start;
-  padding: 0.15rem 0.45rem;
-  border-radius: 999px;
-  font-size: 0.6rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  background: rgba(15, 23, 42, 0.12);
-  color: #0f172a;
-}
-
 .calendar-weekly__layout {
-  display: grid;
-  grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
-  align-items: start;
+  align-items: stretch;
   min-width: 0;
 }
 
@@ -386,6 +381,14 @@
   font-size: clamp(1.15rem, 2.2vw, 1.6rem);
   line-height: 1;
   font-weight: 700;
+}
+
+.calendar-weekly__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .calendar-weekly__mini {
@@ -823,6 +826,12 @@
   background-color: rgba(255, 255, 255, 0.9);
 }
 
+
+.calendar-modal__panel .calendar-task__field input,
+.calendar-modal__panel .calendar-task__field select,
+.calendar-modal__panel .calendar-select__trigger {
+  border-radius: 18px;
+}
 .calendar-task__field select {
   border-radius: 14px;
   border: 1px solid rgba(148, 163, 184, 0.3);
@@ -1209,7 +1218,7 @@
   }
 
   .calendar-weekly__layout {
-    grid-template-columns: 1fr;
+    flex-direction: column;
   }
 
   .calendar-weekly__side {
@@ -1453,5 +1462,41 @@
   .calendar-day {
     min-height: 130px;
   }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.calendar-monthly-preview > .calendar-month-nav {
+  align-self: flex-end;
+}
+
+
+.calendar-weekly__grid::-webkit-scrollbar {
+  height: 10px;
+}
+
+.calendar-weekly__grid::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.08);
+  border-radius: 999px;
+}
+
+.calendar-weekly__grid::-webkit-scrollbar-thumb {
+  background: rgba(236, 72, 153, 0.55);
+  border-radius: 999px;
+}
+
+.calendar-weekly__grid::-webkit-scrollbar-thumb:hover {
+  background: rgba(236, 72, 153, 0.75);
 }
 

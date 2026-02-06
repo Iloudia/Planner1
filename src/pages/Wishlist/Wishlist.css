@@ -1556,6 +1556,21 @@
   }
 }
 
+@media (max-width: 375px) {
+  .wishlist-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .wishlist-card {
+    aspect-ratio: 3 / 3.6;
+  }
+
+  .wishlist-card__title h2 {
+    font-size: 1.35rem;
+  }
+}
+
 
 @media (min-width: 564px) and (max-width: 614px) {
   .wishlist-grid {
@@ -1595,7 +1610,7 @@
   }
 }
 
-@media (min-width: 1520px) and (max-width: 1600px) {
+@media (min-width: 1600px) {
   .wishlist-grid {
     grid-template-columns: repeat(5, minmax(0, 1fr));
   }

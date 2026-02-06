@@ -1359,7 +1359,6 @@ return (
                 <h2>{displayTitle}</h2>
                 {isFavorite ? <span aria-label="Catégorie favorite" className="wishlist-card__favorite">??</span> : null}
               </div>
-              <p>{category.blurb ?? ""}</p>
             </div>
           </article>
         )
@@ -1804,15 +1803,6 @@ return (
           onChange={(event) => setCategoryDraft((previous) => ({ ...previous, title: event.target.value }))}
           placeholder="Nom de la carte"
           required
-        />
-      </label>
-      <label>
-        <span>Description (optionnel)</span>
-        <textarea
-          rows={2}
-          value={categoryDraft.blurb}
-          onChange={(event) => setCategoryDraft((previous) => ({ ...previous, blurb: event.target.value }))}
-          placeholder="Ajoute un petit texte pour la carte"
         />
       </label>
       <label className="wishlist-modal__file-field">
