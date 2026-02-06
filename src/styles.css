@@ -144,6 +144,13 @@ p {
     var(--bg);
 }
 
+.finance-page--gradient {
+  background: radial-gradient(circle at 20% 10%, rgba(249, 168, 212, 0.28), transparent 30%),
+    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.6), transparent 40%),
+    radial-gradient(circle at 40% 80%, rgba(236, 72, 153, 0.16), transparent 45%),
+    var(--bg);
+}
+
 .app-shell {
   display: flex;
   flex-direction: column;
@@ -1074,6 +1081,7 @@ p {
   flex-direction: column;
   gap: 1.5rem;
   padding: 1.4rem 1.6rem;
+  padding-left: 0;
   border-radius: 20px;
   background: #ffffff;
   overflow: hidden;

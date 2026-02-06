@@ -1450,13 +1450,13 @@ return (
                     <span>Mémo</span>
                   </strong>
                   <div className="wishlist-note__menu">
-                    <button
-                      type="button"
-                      className="wishlist-note__menu-toggle"
-                      aria-haspopup="true"
-                      aria-expanded={isNoteMenuOpen}
-                      onClick={handleToggleNoteMenu}
-                    >
+                      <button
+                        type="button"
+                        className="profile-menu"
+                        aria-haspopup="true"
+                        aria-expanded={isNoteMenuOpen}
+                        onClick={handleToggleNoteMenu}
+                      >
                       <span aria-hidden="true">...</span>
                     </button>
                     {isNoteMenuOpen ? (
@@ -1966,7 +1966,6 @@ return (
   </div>
 ) : null}
 
-{feedback ? <div className="wishlist-toast">{feedback}</div> : null}
 <div className="page-footer-bar" aria-hidden="true" />
 </div>
 )

@@ -30,7 +30,7 @@ const PageHero = ({
     <section className={sectionClassName}>
       {heroImage ? <img src={heroImage.src} alt={heroImage.alt} /> : null}
       {!imageOnly ? (
-        <div className="finance-hero__content">
+        <>
           <h1>{title}</h1>
           <p>{description}</p>
           <div className="finance-hero__stats">
@@ -42,7 +42,7 @@ const PageHero = ({
             ))}
           </div>
           {children}
-        </div>
+        </>
       ) : null}
     </section>
   )
