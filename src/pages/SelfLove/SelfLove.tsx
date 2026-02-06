@@ -812,18 +812,18 @@ const SelfLovePage = () => {
                   <span>De :</span>
                   <input
                     type="text"
-                    value={safeState.letterTo}
-                    onChange={(event) => handleLetterChange('letterTo', event.target.value)}
-                    placeholder="Ton moi futur "
+                    value={safeState.letterFrom}
+                    onChange={(event) => handleLetterChange('letterFrom', event.target.value)}
+                    placeholder="Ta version prÃ©sente"
                   />
                 </label>
                 <label>
                   <span>Pour :</span>
                   <input
                     type="text"
-                    value={safeState.letterFrom}
-                    onChange={(event) => handleLetterChange('letterFrom', event.target.value)}
-                    placeholder="Ta version prÃ©sente"
+                    value={safeState.letterTo}
+                    onChange={(event) => handleLetterChange('letterTo', event.target.value)}
+                    placeholder="Ton moi futur "
                   />
                 </label>
               </div>

@@ -14,7 +14,7 @@
   --color-border: rgba(236, 72, 153, 0.18);
   --color-border-strong: rgba(15, 23, 42, 0.12);
 
-  --bg: var(--color-rose-50);
+  --bg: #f8f0e6;
   --panel: var(--color-surface);
   --panel-alt: #fff0f7;
   --card: var(--color-rose-100);
@@ -73,6 +73,13 @@ body {
   padding: 0;
 }
 
+.playfair-display-regular {
+  font-family: "Playfair Display", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
 .google-translate-element {
   position: absolute;
   width: 0;
@@ -95,7 +102,7 @@ input[type="text"]::placeholder {
 
 h1,
 .h1 {
-  font-family: var(--font-display);
+  font-family: "Playfair Display", serif;
   font-size: var(--font-size-h1);
   line-height: var(--leading-display);
   margin: 0 0 var(--space-sm);
@@ -138,10 +145,7 @@ p {
 }
 
 .wishlist-page--gradient {
-  background: radial-gradient(circle at 20% 10%, rgba(249, 168, 212, 0.28), transparent 30%),
-    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.6), transparent 40%),
-    radial-gradient(circle at 40% 80%, rgba(236, 72, 153, 0.16), transparent 45%),
-    var(--bg);
+  background: #f8f0e6;
 }
 
 .finance-page--gradient {
@@ -150,6 +154,43 @@ p {
     radial-gradient(circle at 40% 80%, rgba(236, 72, 153, 0.16), transparent 45%),
     var(--bg);
 }
+
+.diet-page--beige {
+  background: #f8f0e6;
+}
+
+.sport-page--beige {
+  background: #f8f0e6;
+}
+
+.goals-page--beige {
+  background: #f8f0e6;
+}
+
+.workout-page--beige {
+  background: #f8f0e6;
+}
+
+.journaling-page--beige {
+  background: #f8f0e6;
+}
+
+.calendar-page--beige {
+  background: #f8f0e6;
+}
+
+.finance-page--beige {
+  background: #f8f0e6;
+}
+
+.routine-page--beige {
+  background: #f8f0e6;
+}
+
+.alimentation-page--beige {
+  background: #f8f0e6;
+}
+
 
 .app-shell {
   display: flex;
@@ -612,7 +653,7 @@ p {
   background: linear-gradient(145deg, var(--panel), var(--panel-alt));
   border: 1px solid var(--border);
   border-radius: 28px;
-  padding: 22px 20px;
+  padding: 22px 32px;
   box-shadow: none;
 }
 
@@ -1243,7 +1284,7 @@ p {
 
 @media (min-width: 1024px) {
   .main-area {
-    padding: 32px clamp(1.5rem, 4vw, 4rem) 48px;
+    padding: 32px clamp(2.5rem, 6vw, 9rem) 48px;
   }
 }
 

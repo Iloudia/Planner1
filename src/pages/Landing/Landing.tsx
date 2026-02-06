@@ -60,6 +60,13 @@ const LandingPage = () => {
     return () => window.removeEventListener("resize", updateCardsPerView)
   }, [])
 
+  useEffect(() => {
+    document.body.classList.add('calendar-page--beige')
+    return () => {
+      document.body.classList.remove('calendar-page--beige')
+    }
+  }, [])
+
   const visibleCards = useMemo(
     () =>
       Array.from({ length: cardsPerView }, (_, offset) => {

@@ -32,6 +32,10 @@
   padding: 2rem clamp(1rem, 4vw, 3rem) 3rem;
 }
 
+.content-page.diet-page {
+  border: none;
+}
+
 .page-section {
   background: #ffffff;
   border-radius: 24px;
@@ -58,7 +62,7 @@
   gap: 1.5rem;
   flex-wrap: wrap;
   background: linear-gradient(135deg, rgba(236, 72, 153, 0.08), rgba(253, 242, 248, 0.9));
-  border: 1px solid rgba(236, 72, 153, 0.18);
+  border: none;
 }
 
 .diet-crosslink__label {
@@ -124,7 +128,7 @@
   flex-direction: column;
   gap: 0.85rem;
   background: #ffffff;
-  border: 1px solid rgba(236, 72, 153, 0.18);
+  border: none;
   box-shadow: 0 18px 34px rgba(236, 72, 153, 0.14);
 }
 
@@ -172,7 +176,7 @@
 }
 
 .diet-shopping__panel {
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  border: none;
   border-radius: 20px;
   padding: 1.5rem;
   background: #fdf2f8;

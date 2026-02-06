@@ -1,7 +1,16 @@
+import { useEffect } from "react"
 import PageHeading from "../../components/PageHeading"
 import "./ConfidentialitePage.css"
 
-const ConfidentialitePage = () => (
+const ConfidentialitePage = () => {
+  useEffect(() => {
+    document.body.classList.add("calendar-page--beige")
+    return () => {
+      document.body.classList.remove("calendar-page--beige")
+    }
+  }, [])
+
+  return (
   <>
     <div className="legal-page">
       <PageHeading eyebrow="Confidentialité" title="Politique de confidentialité" />
@@ -107,7 +116,8 @@ const ConfidentialitePage = () => (
     </div>
     <div className="page-footer-bar" aria-hidden="true" />
   </>
-)
+  )
+}
 
 export default ConfidentialitePage
 

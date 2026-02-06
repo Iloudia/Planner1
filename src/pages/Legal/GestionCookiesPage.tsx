@@ -1,9 +1,17 @@
+import { useEffect } from "react"
 import PageHeading from "../../components/PageHeading"
 import { useCookieConsent } from "../../context/CookieConsentContext"
 import "./GestionCookiesPage.css"
 
 const GestionCookiesPage = () => {
   const { acceptAll, rejectAll, openPreferences } = useCookieConsent()
+
+  useEffect(() => {
+    document.body.classList.add("calendar-page--beige")
+    return () => {
+      document.body.classList.remove("calendar-page--beige")
+    }
+  }, [])
 
   return (
     <>

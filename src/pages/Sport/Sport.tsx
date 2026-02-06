@@ -92,6 +92,12 @@ const legacyDefaults = new Set(["Cardio", "Renforcement", "Yoga", "Fitness", "Mo
 
 const SportPage = () => {
   const { userEmail } = useAuth()
+  useEffect(() => {
+    document.body.classList.add("sport-page--beige")
+    return () => {
+      document.body.classList.remove("sport-page--beige")
+    }
+  }, [])
   const [board, setBoard] = usePersistentState<SportBoardDay[]>(SPORT_BOARD_STORAGE_KEY, createDefaultBoard)
   const [quickItems, setQuickItems] = usePersistentState<{ id: string; text: string }[]>(SPORT_QUICK_STORAGE_KEY, () => [])
   const [isEditingQuick, setIsEditingQuick] = useState(() =>

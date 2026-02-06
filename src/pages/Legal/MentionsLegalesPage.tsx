@@ -1,7 +1,16 @@
+import { useEffect } from "react"
 import PageHeading from "../../components/PageHeading"
 import "./MentionsLegalesPage.css"
 
-const MentionsLegalesPage = () => (
+const MentionsLegalesPage = () => {
+  useEffect(() => {
+    document.body.classList.add("calendar-page--beige")
+    return () => {
+      document.body.classList.remove("calendar-page--beige")
+    }
+  }, [])
+
+  return (
   <>
     <div className="legal-page">
       <PageHeading eyebrow="Mentions légales" title="Mentions légales" />
@@ -61,7 +70,8 @@ const MentionsLegalesPage = () => (
     </div>
     <div className="page-footer-bar" aria-hidden="true" />
   </>
-)
+  )
+}
 
 export default MentionsLegalesPage
 

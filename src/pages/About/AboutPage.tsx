@@ -1,3 +1,4 @@
+import { useEffect } from "react"
 import PageHeading from "../../components/PageHeading"
 import portrait from "../../assets/madison-hart-dupe.jpeg"
 import "./AboutPage.css"
@@ -35,7 +36,15 @@ const siteValues = [
   },
 ]
 
-const AboutPage = () => (
+const AboutPage = () => {
+  useEffect(() => {
+    document.body.classList.add("calendar-page--beige")
+    return () => {
+      document.body.classList.remove("calendar-page--beige")
+    }
+  }, [])
+
+  return (
   <>
     <div className="about-page">
       <div className="about-shell">
@@ -63,7 +72,8 @@ const AboutPage = () => (
     </div>
     <div className="page-footer-bar" aria-hidden="true" />
   </>
-)
+  )
+}
 
 export default AboutPage
 

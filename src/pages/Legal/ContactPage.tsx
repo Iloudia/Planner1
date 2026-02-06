@@ -1,6 +1,15 @@
+import { useEffect } from "react"
 import "./ContactPage.css"
 
-const ContactPage = () => (
+const ContactPage = () => {
+  useEffect(() => {
+    document.body.classList.add("calendar-page--beige")
+    return () => {
+      document.body.classList.remove("calendar-page--beige")
+    }
+  }, [])
+
+  return (
   <>
     <div className="legal-page contact-page">
       <span className="sport-header__eyebrow">Contact</span>
@@ -46,6 +55,7 @@ const ContactPage = () => (
     </div>
     <div className="page-footer-bar" aria-hidden="true" />
   </>
-)
+  )
+}
 
 export default ContactPage

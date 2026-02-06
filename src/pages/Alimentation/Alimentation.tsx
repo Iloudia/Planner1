@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Link } from "react-router-dom"
 import { useAuth } from "../../context/AuthContext"
 import { buildUserScopedKey } from "../../utils/userScopedKey"
@@ -61,6 +61,12 @@ const buildDefaultWeeklyPlan = (): WeeklyPlan => {
 
 function DietPage() {
   const { userEmail } = useAuth()
+  useEffect(() => {
+    document.body.classList.add("alimentation-page--beige")
+    return () => {
+      document.body.classList.remove("alimentation-page--beige")
+    }
+  }, [])
   const weeklyRecipesKey = useMemo(() => buildUserScopedKey(userEmail, DIET_WEEKLY_PLAN_RECIPES_KEY), [userEmail])
   const [selectedRecipe, setSelectedRecipe] = useState<RecipeSnapshot | null>(null)
   const [weeklyPlan, setWeeklyPlan] = usePersistentState<WeeklyPlan>("planner.diet.weeklyPlan", buildDefaultWeeklyPlan)

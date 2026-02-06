@@ -452,6 +452,13 @@ function HomePage() {
   }, [])
 
   useEffect(() => {
+    document.body.classList.add('calendar-page--beige')
+    return () => {
+      document.body.classList.remove('calendar-page--beige')
+    }
+  }, [])
+
+  useEffect(() => {
     if (!openCardMenu) return
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement

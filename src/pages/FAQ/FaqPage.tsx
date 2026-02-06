@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import PageHeading from "../../components/PageHeading"
 import faqPortrait from "../../assets/maria-bolinder-dupe.jpeg"
 import "./FaqPage.css"
@@ -33,6 +33,13 @@ const faqItems: FaqItem[] = [
 
 const FAQPage = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
+
+  useEffect(() => {
+    document.body.classList.add("calendar-page--beige")
+    return () => {
+      document.body.classList.remove("calendar-page--beige")
+    }
+  }, [])
 
   return (
     <>

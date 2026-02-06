@@ -1,4 +1,4 @@
-﻿import type { FormEvent } from 'react'
+import type { FormEvent } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { AxisLabelsFormatterContextObject, Options, TooltipFormatterContextObject } from 'highcharts'
 import Highcharts from 'highcharts'
@@ -368,9 +368,9 @@ const FinancePage = () => {
   const [isHistoryModalOpen, setHistoryModalOpen] = useState(false)
 
   useEffect(() => {
-    document.body.classList.add('planner-page--white')
+    document.body.classList.add('finance-page--beige')
     return () => {
-      document.body.classList.remove('planner-page--white')
+      document.body.classList.remove('finance-page--beige')
     }
   }, [])
 
@@ -470,31 +470,16 @@ const FinancePage = () => {
     if (monthOptions.length === 0) {
       return
     }
-    if (!monthOptions.includes(selectedMonthKey)) {
+    if (!selectedMonthKey) {
       setSelectedMonthKey(monthOptions[0] ?? currentMonthKey)
     }
   }, [monthOptions, selectedMonthKey, currentMonthKey])
 
   const selectedMonthLabel = useMemo(() => formatMonthKey(selectedMonthKey), [selectedMonthKey])
 
-  const selectedMonthIndex = monthOptions.findIndex((monthKey) => monthKey === selectedMonthKey)
-  const hasOlderFinanceMonth = selectedMonthIndex >= 0 && selectedMonthIndex < monthOptions.length - 1
-  const hasNewerFinanceMonth = selectedMonthIndex > 0
-
   const handleFinanceMonthNav = (direction: 'prev' | 'next') => {
-    if (monthOptions.length === 0) {
-      return
-    }
-    const currentIndex = monthOptions.findIndex((monthKey) => monthKey === selectedMonthKey)
-    if (currentIndex === -1) {
-      setSelectedMonthKey(monthOptions[0])
-      return
-    }
-    const offset = direction === 'prev' ? 1 : -1
-    const targetMonth = monthOptions[currentIndex + offset]
-    if (targetMonth) {
-      setSelectedMonthKey(targetMonth)
-    }
+    const offset = direction === 'prev' ? -1 : 1
+    setSelectedMonthKey(addMonthsToMonthKey(selectedMonthKey, offset))
   }
 
   useEffect(() => {
@@ -741,12 +726,11 @@ const FinancePage = () => {
     <div className="finance-page aesthetic-page">
 
       <div className="finance-heading-row">
-        <PageHeading eyebrow="Finances" title="Mes finances" />
+        <PageHeading eyebrow="Finances" title={selectedMonthLabel} />
         <div className="calendar-month-nav finance-hero__month-nav">
           <button
             type="button"
             onClick={() => handleFinanceMonthNav('prev')}
-            disabled={!hasOlderFinanceMonth}
             aria-label="Mois prcdent"
           >
             &lt;
@@ -754,7 +738,6 @@ const FinancePage = () => {
           <button
             type="button"
             onClick={() => handleFinanceMonthNav('next')}
-            disabled={!hasNewerFinanceMonth}
             aria-label="Mois suivant"
           >
             &gt;

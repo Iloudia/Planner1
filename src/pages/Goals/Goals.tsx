@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import DailyGoalsTracker from "../../components/DailyGoalsTracker";
 import PageHeading from "../../components/PageHeading";
 import goalsHero from "../../assets/olivia-roberts-dupe.jpeg";
@@ -6,6 +6,12 @@ import "./Goals.css";
 
 const GoalsPage = () => {
   const [bodyGoals, setBodyGoals] = useState<Array<string | null>>([null, null, null, null]);
+  useEffect(() => {
+    document.body.classList.add("goals-page--beige");
+    return () => {
+      document.body.classList.remove("goals-page--beige");
+    };
+  }, []);
 
   const handleBodyPhotoChange = (index: number) => (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

@@ -138,6 +138,12 @@ const limitKeywordWords = (value: string) => {
 
 const JournalingPage = () => {
   const [, setEntries] = usePersistentState<JournalEntry[]>('planner.journal.entries', () => [])
+  useEffect(() => {
+    document.body.classList.add('journaling-page--beige')
+    return () => {
+      document.body.classList.remove('journaling-page--beige')
+    }
+  }, [])
   const [draft, setDraft] = useState({
     date: getTodayISO(),
     mood: 'neutral' as MoodValue,

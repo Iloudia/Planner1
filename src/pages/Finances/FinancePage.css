@@ -14,39 +14,41 @@
   flex-wrap: wrap;
 }
 
-.finance-heading-row .calendar-month-nav {
+.finance-heading-row .calendar-month-nav.finance-hero__month-nav {
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.35rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(244, 114, 182, 0.25);
-  box-shadow: 0 12px 28px rgba(244, 114, 182, 0.18);
+  gap: 0.5rem;
+  padding: 0;
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: none;
+  border: none;
 }
 
-.finance-heading-row .calendar-month-nav button {
-  border: none;
-  background: linear-gradient(120deg, #fde2e7 0%, #fbcfe8 100%);
-  color: #9d174d;
-  border-radius: 50%;
-  width: 42px;
-  height: 42px;
+.finance-heading-row .calendar-month-nav.finance-hero__month-nav button {
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: #f8fafc;
+  color: #0f172a;
+  border-radius: 6px;
+  width: 34px;
+  height: 34px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: none;
   cursor: pointer;
-  box-shadow: 0 12px 26px rgba(244, 114, 182, 0.24);
-  transition: transform 0.16s ease, box-shadow 0.16s ease, opacity 0.16s ease;
+  box-shadow: none;
+  transition: background-color 0.16s ease, border-color 0.16s ease;
 }
 
-.finance-heading-row .calendar-month-nav button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 18px 34px rgba(244, 114, 182, 0.3);
-  opacity: 0.95;
+.finance-heading-row .calendar-month-nav.finance-hero__month-nav button:hover {
+  background: #f1f5f9;
+  border-color: rgba(15, 23, 42, 0.2);
+  transform: none;
+  opacity: 1;
+  box-shadow: none;
 }
 
 .finance-page__footer-bar {
@@ -115,7 +117,37 @@
 }
 
 .finance-hero__month-nav {
-  gap: 0.4rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0;
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: none;
+  border: none;
+}
+
+.finance-hero__month-nav button {
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: #f8fafc;
+  color: #0f172a;
+  border-radius: 6px;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  cursor: pointer;
+  box-shadow: none;
+  transition: background-color 0.16s ease, border-color 0.16s ease;
+}
+
+.finance-hero__month-nav button:hover {
+  background: #f1f5f9;
+  border-color: rgba(15, 23, 42, 0.2);
 }
 
 .finance-hero__month-nav button:disabled {

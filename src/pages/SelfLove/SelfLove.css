@@ -1335,7 +1335,8 @@
 
 
 .self-love-page--gradient {
-  background: linear-gradient(140deg, #fff3f8 0%, #f0f4ff 60%, #fff7fb 100%) !important;
+  background: #f8f0e6 !important;
+  min-height: 100vh;
 }
 
 .self-love-profile {

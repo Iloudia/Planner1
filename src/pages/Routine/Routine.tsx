@@ -1,4 +1,4 @@
-﻿import type { FormEvent } from 'react'
+import type { FormEvent } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import type { RoutineItem } from '../../data/sampleData'
 import { eveningRoutine as defaultEveningRoutine, morningRoutine as defaultMorningRoutine } from '../../data/sampleData'
@@ -62,7 +62,7 @@ const RoutineChecklist = ({
                 onClick={() => onRemoveItem(item.id)}
                 aria-label={`Supprimer ${item.title}`}
               >
-                Ã—
+                ×
               </button>
             </div>
           ) : null}
@@ -101,11 +101,11 @@ const RoutineComposer = ({
         maxLength={ROUTINE_FIELD_MAX_LENGTH}
       />
       {draft.title.length >= ROUTINE_FIELD_MAX_LENGTH ? (
-        <span className="routine-note__composer-hint">Limite de 67 caractÃ¨res atteinte.</span>
+        <span className="routine-note__composer-hint">Limite de 67 caractères atteinte.</span>
       ) : null}
     </label>
     <label>
-      <span>DÃ©tail (optionnel)</span>
+      <span>Détail (optionnel)</span>
       <textarea
         value={draft.detail}
         onChange={(event) => onDraftChange('detail', event.target.value.slice(0, ROUTINE_FIELD_MAX_LENGTH))}
@@ -114,7 +114,7 @@ const RoutineComposer = ({
         maxLength={ROUTINE_FIELD_MAX_LENGTH}
       />
       {draft.detail.length >= ROUTINE_FIELD_MAX_LENGTH ? (
-        <span className="routine-note__composer-hint">Limite de 67 caractÃ¨res atteinte.</span>
+        <span className="routine-note__composer-hint">Limite de 67 caractères atteinte.</span>
       ) : null}
     </label>
     <button type="submit" className="routine-note__composer-submit">
@@ -140,9 +140,9 @@ const RoutinePage = () => {
   const completedSet = useMemo(() => new Set<RoutineId>(completedIds), [completedIds])
 
   useEffect(() => {
-    document.body.classList.add('planner-page--white')
+    document.body.classList.add('routine-page--beige')
     return () => {
-      document.body.classList.remove('planner-page--white')
+      document.body.classList.remove('routine-page--beige')
     }
   }, [])
 
@@ -226,9 +226,9 @@ const RoutinePage = () => {
               draft={routineDrafts.morning}
               onDraftChange={(field, value) => handleRoutineDraftChange('morning', field, value)}
               onSubmit={handleRoutineSubmit('morning')}
-              buttonLabel="Ajouter Ã  ma routine du matin"
-              placeholderTitle="Ex : Boire un verre dâ€™eau tiÃ¨de citronnÃ©"
-              placeholderDetail="Ex : DurÃ©e, intention..."
+              buttonLabel="Ajouter à ma routine du matin"
+              placeholderTitle="Ex : Boire un verre d’eau tiède citronné"
+              placeholderDetail="Ex : Durée, intention..."
             />
           </div>
         </section>
@@ -254,9 +254,9 @@ const RoutinePage = () => {
               draft={routineDrafts.evening}
               onDraftChange={(field, value) => handleRoutineDraftChange('evening', field, value)}
               onSubmit={handleRoutineSubmit('evening')}
-              buttonLabel="Ajouter Ã  ma routine du soir"
-              placeholderTitle="Ex : PrÃ©parer mes vÃªtements pour demain"
-              placeholderDetail="Ex : DurÃ©e, intention..."
+              buttonLabel="Ajouter à ma routine du soir"
+              placeholderTitle="Ex : Préparer mes vêtements pour demain"
+              placeholderDetail="Ex : Durée, intention..."
             />
           </div>
         </section>

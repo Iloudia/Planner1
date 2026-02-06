@@ -32,6 +32,12 @@
   width: 100%;
 }
 
+.page.home-page .aside-right,
+.page.home-page .board,
+.page.home-page .aside-left {
+  border: none;
+}
+
 .home-hero-strip__center {
   display: flex;
   flex-direction: column;
@@ -51,7 +57,6 @@
   border-radius: 24px;
   padding: 1.25rem;
   box-shadow: 0 26px 70px rgba(15, 23, 42, 0.12);
-  border: 1px solid rgba(148, 163, 184, 0.18);
   position: relative;
 }
 
