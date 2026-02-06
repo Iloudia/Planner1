@@ -542,7 +542,7 @@ const viewToggle = (
 
 return (
   <div className="calendar-page">
-<div className="page-accent-bar" aria-hidden="true" />
+
 
 {calendarView === 'weekly' ? (
     <section className="calendar-weekly">

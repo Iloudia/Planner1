@@ -43,7 +43,7 @@ import ArchivesPage from "./pages/Archives/Archives"
 function NotFound() {
   return (
     <div className="content-page notfound-page">
-      <div className="page-accent-bar" aria-hidden="true" />
+
       <div className="page-hero">
         <div className="hero-chip">Oups</div>
         <h1>Page introuvable</h1>

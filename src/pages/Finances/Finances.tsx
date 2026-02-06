@@ -1,4 +1,4 @@
-import type { FormEvent } from 'react'
+﻿import type { FormEvent } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { AxisLabelsFormatterContextObject, Options, TooltipFormatterContextObject } from 'highcharts'
 import Highcharts from 'highcharts'
@@ -749,7 +749,7 @@ const FinancePage = () => {
         tone="blue"
         heroClassName="finance-hero dashboard-panel"
       />
-      <div className="finance-page__accent-bar" aria-hidden="true" />
+
       <div className="finance-heading-row">
         <PageHeading eyebrow="Finances" title="Mes finances" />
         <div className="calendar-month-nav finance-hero__month-nav">
@@ -1324,3 +1324,5 @@ const FinanceTrendChart = ({ series }: FinanceTrendChartProps) => {
     </div>
   )
 }
+
+

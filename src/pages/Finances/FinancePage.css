@@ -4,12 +4,6 @@
   gap: 2.75rem;
 }
 
-.finance-page__accent-bar {
-  height: 0.55rem;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #fce7f3 0%, #f472b6 50%, #f9a8d4 100%);
-  box-shadow: 0 12px 40px rgba(148, 163, 184, 0.35);
-}
 
 .finance-heading-row {
   display: flex;
@@ -1072,9 +1066,6 @@
     align-self: flex-start;
   }
 
-  .finance-page__accent-bar {
-    height: 0.45rem;
-  }
 
   .finance-hero {
     grid-template-columns: 1fr;

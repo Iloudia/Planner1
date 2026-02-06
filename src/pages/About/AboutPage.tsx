@@ -1,37 +1,37 @@
-ï»¿import PageHeading from "../../components/PageHeading"
+import PageHeading from "../../components/PageHeading"
 import heroImage from "../../assets/natalia-grabarczyk-dupe.jpeg"
 import portrait from "../../assets/madison-hart-dupe.jpeg"
 import "./AboutPage.css"
 
 const paragraphs = [
-  "Au bout d'un moment, j'ai voulu mieux organiser mes journÃ©es. J'ai donc installÃ© plusieurs applications, et je me suis vite rendu compte qu'il fallait payer pour des choses assez simples, comme programmer des Ã©vÃ©nements sur plusieurs jours ou encore changer la couleur des Ã©vÃ©nements.",
-  "J'ai alors dÃ©cidÃ© de coder mon propre planner. Ã€ la base, cela ne devait me prendre que deux jours, tout au plus. Puis je me suis dit que je pourrais ajouter une page, puis une autre, et ainsi de suite. En cours de route, j'ai rÃ©alisÃ© que je pourrais en faire profiter tout le monde.",
-  "C'est pour cette raison que j'ai dÃ©cidÃ© de crÃ©er un vÃ©ritable site web, et pas seulement quelque chose que je garderais pour moi. C'est ainsi que PLANNER est nÃ©.",
-  "Ce site est nÃ© d'une envie d'aider les autres Ã  mieux organiser leurs journÃ©es, Ã  penser un peu plus positivement et Ã  essayer de se rÃ©concilier avec soi-mÃªme grÃ¢ce Ã  quelques exercices simples.",
-  "Aimez-vous tel que vous Ãªtes, prenez du temps pour sculpter votre corps, prenez du temps pour faire du journaling et poser toutes vos pensÃ©es, nÃ©gatives comme positives, et vous pourrez observer un grand changement dans votre vie.",
-  "Dans ma vie, je me suis longtemps cherchÃ©e. Mais s'il y a une chose que je sais avec certitude aujourd'hui, c'est que j'aime aider les gens, et j'espÃ¨re que ce site en sera la preuve.",
+  "Au bout d'un moment, j'ai voulu mieux organiser mes journées. J'ai donc installé plusieurs applications, et je me suis vite rendu compte qu'il fallait payer pour des choses assez simples, comme programmer des événements sur plusieurs jours ou encore changer la couleur des événements.",
+  "J'ai alors décidé de coder mon propre planner. À la base, cela ne devait me prendre que deux jours, tout au plus. Puis je me suis dit que je pourrais ajouter une page, puis une autre, et ainsi de suite. En cours de route, j'ai réalisé que je pourrais en faire profiter tout le monde.",
+  "C'est pour cette raison que j'ai décidé de créer un véritable site web, et pas seulement quelque chose que je garderais pour moi. C'est ainsi que PLANNER est né.",
+  "Ce site est né d'une envie d'aider les autres à mieux organiser leurs journées, à penser un peu plus positivement et à essayer de se réconcilier avec soi-même grâce à quelques exercices simples.",
+  "Aimez-vous tel que vous êtes, prenez du temps pour sculpter votre corps, prenez du temps pour faire du journaling et poser toutes vos pensées, négatives comme positives, et vous pourrez observer un grand changement dans votre vie.",
+  "Dans ma vie, je me suis longtemps cherchée. Mais s'il y a une chose que je sais avec certitude aujourd'hui, c'est que j'aime aider les gens, et j'espère que ce site en sera la preuve.",
 ]
 
 const siteValues = [
   {
-    title: "Bien-Ãªtre",
+    title: "Bien-être",
     description: [
-      "CrÃ©er un espace oÃ¹ l'on peut ralentir, respirer et retrouver un Ã©quilibre intÃ©rieur.",
-      "Un lieu pour apaiser le mental, allÃ©ger la charge Ã©motionnelle et cultiver un mieux-Ãªtre durable.",
+      "Créer un espace où l'on peut ralentir, respirer et retrouver un équilibre intérieur.",
+      "Un lieu pour apaiser le mental, alléger la charge émotionnelle et cultiver un mieux-être durable.",
     ],
   },
   {
     title: "Bienveillance",
     description: [
-      "Apprendre Ã  se parler avec douceur, sans jugement ni auto-critique.",
-      "Avancer en se respectant, en s'accueillant pleinement, mÃªme dans les moments de doute.",
+      "Apprendre à se parler avec douceur, sans jugement ni auto-critique.",
+      "Avancer en se respectant, en s'accueillant pleinement, même dans les moments de doute.",
     ],
   },
   {
-    title: "PersÃ©vÃ©rance",
+    title: "Persévérance",
     description: [
       "Rappeler que chaque petit pas compte.",
-      "Continuer d'avancer, mÃªme lentement, avec confiance et constance, un jour Ã  la fois.",
+      "Continuer d'avancer, même lentement, avec confiance et constance, un jour à la fois.",
     ],
   },
 ]
@@ -41,7 +41,7 @@ const AboutPage = () => (
     <section className="page-hero-banner" aria-hidden="true">
       <img src={heroImage} alt="" loading="lazy" />
     </section>
-    <div className="page-accent-bar" aria-hidden="true" />
+
     <div className="about-page">
       <PageHeading eyebrow="A propos" title="A propos de moi" />
       <div className="about-shell">

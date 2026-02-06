@@ -40,7 +40,7 @@ const FAQPage = () => {
       <section className="page-hero-banner" aria-hidden="true">
         <img src={heroImage} alt="" loading="lazy" />
       </section>
-      <div className="page-accent-bar" aria-hidden="true" />
+
       <PageHeading eyebrow="FAQ" title="FAQ" />
       <div className="faq-wrapper">
         <div className="legal-page faq-page">

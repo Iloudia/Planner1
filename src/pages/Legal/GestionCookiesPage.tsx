@@ -11,7 +11,7 @@ const GestionCookiesPage = () => {
       <section className="page-hero-banner" aria-hidden="true">
         <img src={heroImage} alt="" loading="lazy" />
       </section>
-      <div className="page-accent-bar" aria-hidden="true" />
+
       <PageHeading eyebrow="Cookies" title="Gestion des cookies" />
       <div className="legal-page">
         <p className="legal-page__intro">

@@ -1,4 +1,4 @@
-ï»¿import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react"
 import { useAuth } from "../context/AuthContext"
 import { buildUserScopedKey, normalizeUserEmail } from "../utils/userScopedKey"
@@ -48,7 +48,7 @@ function Header() {
       { label: "Archives", path: "/archives" },
       { label: "FAQ", path: "/faq" },
       { label: "Cookies", path: "/cookies" },
-      { label: "ParamÃ¨tres", path: "/parametres" },
+      { label: "Paramètres", path: "/parametres" },
     ],
     [],
   )
@@ -245,12 +245,12 @@ function Header() {
                     </li>
                     <li>
                       <button type="button" className="header-menu__item" onClick={() => handleNavigate("/parametres")}>
-                        ParamÃ¨tres
+                        Paramètres
                       </button>
                     </li>
                     <li>
                       <button type="button" className="header-menu__item header-menu__item--danger" onClick={handleLogout}>
-                        DÃ©connexion
+                        Déconnexion
                       </button>
                     </li>
                   </ul>

@@ -513,7 +513,7 @@ const CalendrierPage = () => {
                     </div>
                 </div>
             </section>
-            <div className="page-accent-bar" aria-hidden="true" />
+
 
             <div className="calendar-view-toggle" role="tablist" aria-label="Vue calendrier">
                 <button

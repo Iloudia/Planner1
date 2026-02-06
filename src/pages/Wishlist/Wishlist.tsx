@@ -431,6 +431,13 @@ const WishlistPage = () => {
     })
   }, [setWishlist])
 
+  useEffect(() => {
+    document.body.classList.add("wishlist-page--gradient")
+    return () => {
+      document.body.classList.remove("wishlist-page--gradient")
+    }
+  }, [])
+
   const categoryCards = useMemo<WishlistCategoryCard[]>(() => {
     const baseCards = CATEGORY_DEFINITIONS.map((definition, index) => {
       const entry = wishlist[definition.id] ?? createEntryFromDefinition(definition)
@@ -480,12 +487,15 @@ const WishlistPage = () => {
     })
   }, [wishlist])
 
-  useEffect(() => {
-    document.body.classList.add("planner-page--white")
-    return () => {
-      document.body.classList.remove("planner-page--white")
+  const selectedCategoryCard = useMemo(() => {
+    if (!selectedCategoryId) {
+      return null
     }
-  }, [])
+    return categoryCards.find((item) => item.id === selectedCategoryId) ?? null
+  }, [categoryCards, selectedCategoryId])
+
+  const selectedCategoryState = selectedCategoryCard?.entry ?? null
+
 
  useEffect(() => {
   resetItemDraft()
@@ -505,38 +515,6 @@ const WishlistPage = () => {
   setIsEditingNote(false)
   setIsNotePanelOpen(false)
 }, [resetItemDraft, selectedCategoryId, wishlist])
-
-useEffect(() => {
-  if (!renamingCategoryId) {
-    setRenameDraft("")
-    setRenameCoverPreview("")
-    setRenameCoverName("")
-    setRenameInitialCover("")
-    if (renameCoverInputRef.current) {
-      renameCoverInputRef.current.value = ""
-    }
-    return
-  }
-  const card = categoryCards.find((item) => item.id === renamingCategoryId)
-  const fallbackTitle = getCategoryDefinition(renamingCategoryId)?.label ?? ""
-  const title = card?.entry.title ?? card?.title ?? fallbackTitle
-  const cover = card?.entry.cover ?? card?.cover ?? getCoverForId(renamingCategoryId)
-  setRenameDraft(title)
-  setRenameInitialCover(cover)
-  setRenameCoverPreview(cover)
-  setRenameCoverName("")
-  if (renameCoverInputRef.current) {
-    renameCoverInputRef.current.value = ""
-  }
-}, [renamingCategoryId, categoryCards])
-
-useEffect(() => {
-  if (!feedback) {
-    return
-  }
-  const timeout = window.setTimeout(() => setFeedback(null), 2800)
-  return () => window.clearTimeout(timeout)
-}, [feedback])
 
 useEffect(() => {
   const handleGlobalPointerDown = (event: PointerEvent) => {
@@ -562,40 +540,6 @@ useEffect(() => {
   return () => window.removeEventListener("pointerdown", handleGlobalPointerDown)
 }, [])
 
-useEffect(() => {
-  const handleEscape = (event: KeyboardEvent) => {
-    if (event.key !== "Escape") {
-      return
-    }
-    if (renamingCategoryId) {
-      setRenamingCategoryId(null)
-      return
-    }
-    if (selectedCategoryId) {
-      setSelectedCategoryId(null)
-      setIsAddingItem(false)
-      setIsEditingNote(false)
-      setIsCategoryPickerOpen(false)
-    }
-  }
-  window.addEventListener("keydown", handleEscape)
-  return () => window.removeEventListener("keydown", handleEscape)
-}, [renamingCategoryId, selectedCategoryId])
-
-useEffect(() => {
-  if (!isAddingItem) {
-    setIsCategoryPickerOpen(false)
-  }
-}, [isAddingItem])
-
-const selectedCategoryCard = useMemo(() => {
-  if (!selectedCategoryId) {
-    return null
-  }
-  return categoryCards.find((item) => item.id === selectedCategoryId) ?? null
-}, [categoryCards, selectedCategoryId])
-
-const selectedCategoryState = selectedCategoryCard?.entry ?? null
 useEffect(() => {
   if (!selectedCategoryState) {
     setExpandedItems({})
@@ -671,26 +615,6 @@ const moveTargetCategories = useMemo(
   () => (movingItem ? categoryCards.filter((card) => card.id !== movingItem.categoryId) : []),
   [categoryCards, movingItem],
 )
-
-useEffect(() => {
-  if (!movingItem) {
-    setMoveTargetCategoryId(null)
-    setMoveSubcategory("")
-    return
-  }
-  setMoveTargetCategoryId(null)
-  setMoveSubcategory(movingItem.subcategory ?? "")
-}, [movingItem])
-
-useEffect(() => {
-  if (!moveTargetCategoryId) {
-    return
-  }
-  const options = getCategorySubcategories(moveTargetCategoryId)
-  if (options.length > 0 && !options.includes(moveSubcategory)) {
-    setMoveSubcategory(options[0])
-  }
-}, [getCategorySubcategories, moveTargetCategoryId, moveSubcategory])
 
 useEffect(() => {
   if (!isNotePanelOpen || hasMemo || isEditingNote) {
@@ -1361,7 +1285,7 @@ const closeModal = () => {
 }
 return (
   <div className="wishlist-page aesthetic-page" onClick={() => setOpenMenuFor(null)}>
-    <div className="page-accent-bar" aria-hidden="true" />
+
     <div className="wishlist-heading-row">
       <PageHeading eyebrow="Envies" title="Ma Wishlist" />
       <button
@@ -1433,7 +1357,7 @@ return (
               </span>
               <div className="wishlist-card__title">
                 <h2>{displayTitle}</h2>
-                {isFavorite ? <span aria-label="Catégorie favorite" className="wishlist-card__favorite">❤️</span> : null}
+                {isFavorite ? <span aria-label="Catégorie favorite" className="wishlist-card__favorite">??</span> : null}
               </div>
               <p>{category.blurb ?? ""}</p>
             </div>
@@ -2049,6 +1973,7 @@ return (
 }
 
 export default WishlistPage
+
 
 
 

@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import usePersistentState from "../hooks/usePersistentState"
 import "./DailyGoalsTracker.css"
 
@@ -272,8 +272,8 @@ const DailyGoalsTracker = () => {
                 <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
               </svg>
             </button>
-            <h4>Jour validé ✨</h4>
-            <p>Bravo, tu as tout coché pour {HABIT_DAYS_FULL[rewardDay]}.</p>
+            <h4>Jour valid� ?</h4>
+            <p>Bravo, tu as tout coch� pour {HABIT_DAYS_FULL[rewardDay]}.</p>
           </div>
         </div>
       ) : null}

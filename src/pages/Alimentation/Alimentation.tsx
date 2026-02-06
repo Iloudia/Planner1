@@ -102,7 +102,7 @@ function DietPage() {
 
   return (
     <>
-<div className="page-accent-bar" aria-hidden="true" />
+
       <PageHeading eyebrow="Alimentation" title="Cuisine" />
       <main className="content-page diet-page">
         <section className="page-section diet-crosslink">
@@ -120,10 +120,7 @@ function DietPage() {
           <header className="diet-week__header">
             <div>
               <h3>Planning des repas de la semaine</h3>
-              <p>
-                Ce planning a pour objectif dâ€™organiser les repas de la semaine de maniÃ¨re simple et Ã©quilibrÃ©e. 
-                <br />Il permet de gagner du temps, de mieux gÃ©rer les courses et de varier les menus tout en respectant les envies et les besoins de chacun.
-              </p>
+              
             </div>
             <p className="diet-week__range">{weekRangeLabel}</p>
           </header>
@@ -209,13 +206,13 @@ function DietPage() {
                 <header>
                   <h3>{selectedRecipe.title}</h3>
                   <div className="diet-plan-modal__meta">
-                    <span>{selectedRecipe.flavor === "sucre" ? "Sucré" : "Salé"}</span>
+                    <span>{selectedRecipe.flavor === "sucre" ? "Sucrï¿½" : "Salï¿½"}</span>
                     <span>{selectedRecipe.prepTime}</span>
                     <span>{selectedRecipe.servings}</span>
                   </div>
                 </header>
                 <section>
-                  <h4>Ingrédients</h4>
+                  <h4>Ingrï¿½dients</h4>
                   <ul>
                     {selectedRecipe.ingredients.map((item) => (
                       <li key={item}>{item}</li>
@@ -223,7 +220,7 @@ function DietPage() {
                   </ul>
                 </section>
                 <section>
-                  <h4>Étapes</h4>
+                  <h4>ï¿½tapes</h4>
                   <ol>
                     {selectedRecipe.steps.map((step) => (
                       <li key={step}>{step}</li>
@@ -232,7 +229,7 @@ function DietPage() {
                 </section>
                 {selectedRecipe.toppings ? (
                   <section>
-                    <h4>Idées de toppings</h4>
+                    <h4>Idï¿½es de toppings</h4>
                     <ul>
                       {selectedRecipe.toppings.map((item) => (
                         <li key={item}>{item}</li>

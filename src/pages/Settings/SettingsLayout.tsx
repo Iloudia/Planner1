@@ -1,4 +1,4 @@
-ï»¿import { NavLink, Outlet } from "react-router-dom"
+import { NavLink, Outlet } from "react-router-dom"
 import PageHeading from "../../components/PageHeading"
 import "./SettingsPage.css"
 
@@ -11,8 +11,8 @@ const settingsLinks = [
 const SettingsLayout = () => {
   return (
     <>
-      <div className="page-accent-bar" aria-hidden="true" />
-      <PageHeading eyebrow="ParamÃ¨tres" title="Personnalise ton expÃ©rience" />
+
+      <PageHeading eyebrow="Paramètres" title="Personnalise ton expérience" />
 
       <div className="content-page settings-page">
 

@@ -1,4 +1,4 @@
-﻿.journaling-page {
+.journaling-page {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -40,13 +40,6 @@
   background: radial-gradient(circle, rgba(244, 114, 182, 0.2), transparent 65%);
   filter: blur(8px);
   z-index: -1;
-}
-
-.journaling-page__accent-bar {
-  height: 0.6rem;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #fbcfe8 0%, #ec4899 45%, #f472b6 100%);
-  box-shadow: 0 16px 40px rgba(236, 72, 153, 0.24);
 }
 
 .journaling-page__footer-bar {

@@ -194,7 +194,7 @@ const OnboardingPage = () => {
 
   return (
     <>
-      <div className="page-accent-bar" aria-hidden="true" />
+
       <div className="onboarding-layout">
         <section className="onboarding-panel">
           <div className="onboarding-progress">

@@ -11,7 +11,6 @@ const PageHeading = ({ eyebrow, title, className }: PageHeadingProps) => {
         <span className="sport-header__eyebrow">{eyebrow}</span>
         <h1>{title}</h1>
       </div>
-      <div className="sport-header__divider" aria-hidden="true" />
     </header>
   )
 }

@@ -1,4 +1,4 @@
-ï»¿import PageHeading from "../../components/PageHeading"
+import PageHeading from "../../components/PageHeading"
 import heroImage from "../../assets/victoria-harder-dupe.jpeg"
 import "./MentionsLegalesPage.css"
 
@@ -7,15 +7,15 @@ const MentionsLegalesPage = () => (
     <section className="page-hero-banner" aria-hidden="true">
       <img src={heroImage} alt="" loading="lazy" />
     </section>
-    <div className="page-accent-bar" aria-hidden="true" />
-    <PageHeading eyebrow="Mentions lÃ©gales" title="Mentions lÃ©gales" />
+
+    <PageHeading eyebrow="Mentions légales" title="Mentions légales" />
     <div className="legal-page">
       <p className="legal-page__intro">
-        Mentions lÃ©gales complÃ¨tes, incluant l'Ã©diteur, l'hÃ©bergeur, la propriÃ©tÃ© intellectuelle et les rÃ¨gles d'utilisation du site Planner.
+        Mentions légales complètes, incluant l'éditeur, l'hébergeur, la propriété intellectuelle et les règles d'utilisation du site Planner.
       </p>
 
       <section className="legal-section">
-        <h2 className="legal-section__title">Ã‰diteur du site</h2>
+        <h2 className="legal-section__title">Éditeur du site</h2>
         <p className="legal-section__text">
           Nom : Vasseur Iloudia
           <br />
@@ -31,36 +31,36 @@ const MentionsLegalesPage = () => (
       </section>
 
       <section className="legal-section">
-        <h2 className="legal-section__title">HÃ©bergement</h2>
+        <h2 className="legal-section__title">Hébergement</h2>
         <p className="legal-section__text">
-          Le site est hÃ©bergÃ© par :
+          Le site est hébergé par :
           <br />
-          [Nom de l'hÃ©bergeur]
+          [Nom de l'hébergeur]
           <br />
-          [Adresse de l'hÃ©bergeur]
+          [Adresse de l'hébergeur]
           <br />
-          [TÃ©lÃ©phone de l'hÃ©bergeur]
+          [Téléphone de l'hébergeur]
         </p>
       </section>
 
       <section className="legal-section">
-        <h2 className="legal-section__title">PropriÃ©tÃ© intellectuelle</h2>
+        <h2 className="legal-section__title">Propriété intellectuelle</h2>
         <p className="legal-section__text">
-          L'ensemble du contenu prÃ©sent sur ce site (textes, images, graphismes, logo, structure) est la propriÃ©tÃ© exclusive de l'Ã©diteur, sauf mention contraire. Toute reproduction, reprÃ©sentation, modification ou adaptation, totale ou partielle, est interdite sans autorisation prÃ©alable.
+          L'ensemble du contenu présent sur ce site (textes, images, graphismes, logo, structure) est la propriété exclusive de l'éditeur, sauf mention contraire. Toute reproduction, représentation, modification ou adaptation, totale ou partielle, est interdite sans autorisation préalable.
         </p>
       </section>
 
       <section className="legal-section">
-        <h2 className="legal-section__title">ResponsabilitÃ©</h2>
+        <h2 className="legal-section__title">Responsabilité</h2>
         <p className="legal-section__text">
-          L'Ã©diteur s'efforce de fournir des informations aussi prÃ©cises que possible. Il ne saurait toutefois Ãªtre tenu responsable des omissions, inexactitudes ou carences dans la mise Ã  jour du contenu.
+          L'éditeur s'efforce de fournir des informations aussi précises que possible. Il ne saurait toutefois être tenu responsable des omissions, inexactitudes ou carences dans la mise à jour du contenu.
         </p>
       </section>
 
       <section className="legal-section">
-        <h2 className="legal-section__title">DonnÃ©es personnelles</h2>
+        <h2 className="legal-section__title">Données personnelles</h2>
         <p className="legal-section__text">
-          Les informations relatives Ã  la collecte et au traitement des donnÃ©es personnelles sont dÃ©taillÃ©es dans la page Politique de confidentialitÃ©. L'utilisation des cookies est expliquÃ©e dans la page Gestion des cookies.
+          Les informations relatives à la collecte et au traitement des données personnelles sont détaillées dans la page Politique de confidentialité. L'utilisation des cookies est expliquée dans la page Gestion des cookies.
         </p>
       </section>
     </div>

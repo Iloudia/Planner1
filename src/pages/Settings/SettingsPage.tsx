@@ -36,7 +36,7 @@ const settingsSections = [
 const SettingsPage = () => {
   return (
     <>
-      <div className="page-accent-bar" aria-hidden="true" />
+
       <div className="content-page settings-page">
         <PageHeading eyebrow="Paramètres" title="Personnalise ton expérience" />
         <section className="settings-section">

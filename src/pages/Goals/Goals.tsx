@@ -20,7 +20,7 @@ const GoalsPage = () => {
 
   return (
     <>
-<div className="page-accent-bar" aria-hidden="true" />
+
       <PageHeading eyebrow="Goals" title="Mes Goals" className="goals-page-heading" />
       <div className="content-page goals-page">
 

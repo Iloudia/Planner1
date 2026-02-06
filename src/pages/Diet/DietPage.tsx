@@ -1261,7 +1261,7 @@ const DietClassicPage = () => {
   return (
   <>
     
-    <div className="page-accent-bar" aria-hidden="true" />
+
     <main className="diet-gymgirl-page">
       <article className="diet-blog">
         {currentHeading ? (

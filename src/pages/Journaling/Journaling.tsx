@@ -203,7 +203,6 @@ const JournalingPage = () => {
 
   return (
     <div className="journaling-page aesthetic-page">
-      <div className="journaling-page__accent-bar" aria-hidden="true" />
       <PageHeading eyebrow="Reflet" title="Journaling" />
 
       <section className="journaling-section journaling-checkin journaling-section--delay-1">

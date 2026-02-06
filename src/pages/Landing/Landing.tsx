@@ -69,7 +69,7 @@ const LandingPage = () => {
 
   return (
     <div className="landing-page">
-      <div className="page-accent-bar" aria-hidden="true" />
+
       <section className="landing-hero">
         <div className="landing-hero__content">
           <h1>
