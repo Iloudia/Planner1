@@ -107,7 +107,7 @@ h1,
   line-height: var(--leading-display);
   margin: 0 0 var(--space-sm);
   font-weight: 700;
-  color: var(--color-contrast);
+  color: var(--color-chocolate);
 }
 
 h2,
@@ -1148,7 +1148,7 @@ p {
   margin: 0;
   font-size: clamp(2.4rem, 4vw, 3.2rem);
   font-weight: 700;
-  color: #0f172a;
+  color: var(--color-chocolate);
 }
 
 

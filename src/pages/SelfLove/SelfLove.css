@@ -5,6 +5,10 @@
   padding-bottom: 4rem;
 }
 
+.self-love-chocolate {
+  color: var(--color-chocolate);
+}
+
 .self-love-footer-bar {
   height: 2.2rem;
   border-radius: 28px;
@@ -107,7 +111,7 @@
 
 .self-love-letter__title {
   font-size: clamp(1.4rem, 2.6vw, 2rem);
-  color: #be123c;
+  color: var(--color-chocolate);
   text-align: center;
   margin: 0;
   font-family: var(--font-display);
@@ -133,7 +137,7 @@
   flex-direction: column;
   gap: 0.35rem;
   font-size: 1.1rem;
-  color: rgba(67, 20, 51, 0.9);
+  color: var(--color-chocolate);
   font-family: var(--font-display);
 }
 
@@ -143,7 +147,7 @@
   padding: 0.2rem 0;
   font-family: var(--font-display);
   font-size: 1.2rem;
-  color: #b91c1c;
+  color: var(--color-chocolate);
   background: transparent;
   width: min(220px, 100%);
 }
@@ -188,7 +192,7 @@
   margin: 0;
   text-align: center;
   font-size: 2rem;
-  color: #b91c1c;
+  color: var(--color-chocolate);
   font-family: var(--font-display);
 }
 
@@ -199,7 +203,7 @@
   background: transparent;
   font-size: 1.05rem;
   line-height: 1.8;
-  color: #7a1b2f;
+  color: var(--color-chocolate);
   font-family: 'Great Vibes', 'Handlee', 'Caveat', 'Playfair Display', cursive;
   resize: vertical;
   font-style: italic;
@@ -216,7 +220,7 @@
   justify-content: space-between;
   align-items: center;
   font-family: 'Playfair Display', serif;
-  color: #be123c;
+  color: var(--color-chocolate);
 }
 
 .self-love-letter__date {
@@ -270,12 +274,12 @@
 
 .self-love-exercise__card h3 {
   margin: 0;
-  color: var(--color-contrast);
+  color: var(--color-chocolate);
 }
 
 .self-love-exercise__card p {
   margin: 0;
-  color: rgba(55, 28, 52, 0.85);
+  color: var(--color-chocolate);
 }
 
 .self-love-exercise__prompt {
@@ -1798,7 +1802,7 @@
 .self-love-list__text {
   flex: 1;
   font-size: 1rem;
-  color: rgba(62, 12, 37, 0.85);
+  color: var(--color-chocolate);
   line-height: 1.6;
   overflow-wrap: anywhere;
 }
@@ -1850,7 +1854,7 @@
   padding: 1rem 1.2rem;
   background: linear-gradient(130deg, rgba(148, 163, 184, 0.08) 0%, rgba(236, 72, 153, 0.1) 100%);
   border: 1px solid rgba(236, 72, 153, 0.18);
-  color: rgba(15, 23, 42, 0.78);
+  color: var(--color-chocolate);
   text-align: left;
   cursor: pointer;
   position: relative;

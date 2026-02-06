@@ -181,7 +181,7 @@
 
 .finance-section-chip__title {
   font-family: var(--font-heading);
-  color: #000000;
+  color: var(--color-chocolate);
   font-weight: 700;
   width: 100%;
   display: block;
@@ -220,6 +220,7 @@
 .finance-section-header h2 {
   margin: 0;
   font-size: clamp(1.35rem, 2.2vw, 1.9rem);
+  color: var(--color-chocolate);
 }
 
 .finance-section-header p {
@@ -272,7 +273,7 @@
   font-size: 0.72rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(15, 23, 42, 0.55);
+  color: var(--color-chocolate);
 }
 
 .finance-summary__value {
@@ -342,7 +343,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  color: #111827;
+  color: var(--color-chocolate);
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
@@ -381,7 +382,7 @@
   padding: 0.55rem 0.85rem;
   border-radius: 12px;
   font-size: 1rem;
-  color: #000000;
+  color: var(--color-chocolate);
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease;
 }
@@ -506,7 +507,7 @@
   font-size: 0.72rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(15, 23, 42, 0.55);
+  color: var(--color-chocolate);
 }
 
 .finance-balance__stat strong {
@@ -552,7 +553,7 @@
 .finance-balance__chart-card h3 {
   margin: 0;
   font-size: 1.15rem;
-  color: #9d174d;
+  color: var(--color-chocolate);
 }
 
 .finance-balance__empty {
@@ -613,7 +614,7 @@
 
 .finance-pie__label {
   font-size: 0.9rem;
-  color: rgba(15, 23, 42, 0.65);
+  color: var(--color-chocolate);
 }
 
 .finance-pie__value {
@@ -788,6 +789,7 @@
   letter-spacing: 0.08em;
   font-size: 0.72rem;
   font-weight: 700;
+  color: var(--color-chocolate);
 }
 
 .finance-history__direction {

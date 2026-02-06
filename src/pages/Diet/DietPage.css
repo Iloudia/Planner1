@@ -52,7 +52,11 @@
   color: #111827;
 }
 
-.diet-blog h1,
+.diet-blog h1 {
+  margin: 0;
+  color: var(--color-chocolate);
+}
+
 .diet-blog h2,
 .diet-blog h3 {
   margin: 0;
@@ -98,7 +102,7 @@
 
 .diet-crosslink__text {
   margin: 0;
-  color: #4b5563;
+  color: var(--color-chocolate);
   max-width: 52ch;
 }
 
@@ -220,7 +224,7 @@
 .diet-recipe-card h3 {
   margin: 0;
   font-size: 1.25rem;
-  color: #fff;
+  color: inherit;
   line-height: 1.2;
 }
 
@@ -229,7 +233,7 @@
   flex-wrap: wrap;
   gap: 0.35rem;
   font-weight: 600;
-  color: #111827;
+  color: inherit;
 }
 
 .diet-info-pill {
@@ -241,7 +245,7 @@
   align-items: center;
   justify-content: center;
   column-gap: 0.35rem;
-  color: #111827;
+  color: inherit;
   position: relative;
   text-align: center;
 }
@@ -307,6 +311,10 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 1rem;
+}
+
+.diet-recipe-modal__header h3 {
+  color: var(--color-chocolate);
 }
 
 .diet-recipe-close-icon {
@@ -385,15 +393,17 @@
   flex-direction: column;
   gap: 0.4rem;
   font-weight: 600;
-  color: #111827;
+  color: var(--color-chocolate);
 }
 
 .diet-recipe-plan select,
 .diet-recipe-plan input {
-  border: 1px solid rgba(148, 163, 184, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.45);
   border-radius: 12px;
-  padding: 0.55rem 0.75rem;
+  padding: 0.6rem 0.75rem;
   font-size: 0.95rem;
+  font-family: inherit;
+  background: #fff;
 }
 
 .diet-recipe-plan__add {
@@ -402,7 +412,7 @@
   border-radius: 999px;
   padding: 0.6rem 1.2rem;
   background: var(--color-caramel);
-  color: #ffffff;
+  color: var(--color-chocolate);
   font-weight: 700;
   cursor: pointer;
 }
@@ -428,13 +438,14 @@
 
 .diet-recipe-modal__body h4 {
   margin: 0 0 0.3rem;
+  color: var(--color-chocolate);
 }
 
 .diet-recipe-modal__body ul,
 .diet-recipe-modal__body ol {
   margin: 0;
   padding-left: 1.2rem;
-  color: #374151;
+  color: var(--color-chocolate);
 }
 
 @media (max-width: 900px) {

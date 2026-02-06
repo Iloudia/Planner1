@@ -73,7 +73,7 @@
 
 .workout-exercises__header h2 {
   margin: 0;
-  color: #0f172a;
+  color: var(--color-chocolate);
 }
 
 .workout-exercises__header p {
@@ -125,7 +125,7 @@
 .workout-form label span {
   font-weight: 600;
   font-size: 0.9rem;
-  color: #000000;
+  color: var(--color-chocolate);
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -189,7 +189,7 @@
 
 .workout-form__photo-preview p {
   margin: 0;
-  color: #000000;
+  color: var(--color-chocolate);
   font-weight: 500;
 }
 
@@ -490,7 +490,7 @@
 .workout-card__body h3 {
   margin: 0;
   font-size: 1rem;
-  color: #0f172a;
+  color: var(--color-chocolate);
 }
 
 .workout-card__meta {
@@ -542,7 +542,7 @@
 .workout-video-form label span {
   font-weight: 600;
   font-size: 0.9rem;
-  color: #000000;
+  color: var(--color-chocolate);
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -643,7 +643,7 @@
 
 .workout-video-card__body p {
   margin: 0;
-  color: #000000;
+  color: var(--color-chocolate);
   font-weight: 800;
   font-size: 0.97rem;
 }
@@ -716,7 +716,7 @@
 .workout-modal__header h3 {
   margin: 0.25rem 0 0;
   font-size: clamp(1.8rem, 3vw, 2.2rem);
-  color: #000000;
+  color: var(--color-chocolate);
 }
 
 
@@ -791,7 +791,7 @@
   font-size: 0.85rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: #111827;
+  color: var(--color-chocolate);
 }
 
 .workout-modal__note textarea {
@@ -903,7 +903,7 @@
 .workout-modal__summary {
   padding-top: 0.2rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--color-chocolate);
 }
 
 @media (max-width: 900px) {

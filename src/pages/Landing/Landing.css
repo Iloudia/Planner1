@@ -173,12 +173,12 @@
 .landing-section-heading h2 {
   margin: 0;
   font-size: clamp(2rem, 1.3vw + 1.4rem, 2.7rem);
-  color: #111827;
+  color: var(--color-chocolate);
 }
 
 .landing-section-heading p {
   margin: 0;
-  color: rgba(15, 23, 42, 0.75);
+  color: var(--color-chocolate);
   line-height: 1.7;
 }
 
@@ -334,6 +334,7 @@
 .landing-final-cta h2 {
   margin: 0;
   font-size: clamp(2rem, 1.8vw + 1.3rem, 2.6rem);
+  color: var(--color-chocolate);
 }
 
 .landing-final-cta p {
@@ -341,6 +342,7 @@
   max-width: 680px;
   line-height: 1.6;
   font-size: 1.05rem;
+  color: var(--color-chocolate);
 }
 
 .landing-duo {

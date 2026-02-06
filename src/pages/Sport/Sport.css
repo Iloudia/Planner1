@@ -38,7 +38,7 @@
 .sport-section-header h2 {
   margin: 0;
   font-size: clamp(1.8rem, 3vw, 2.2rem);
-  color: #0f172a;
+  color: var(--color-chocolate);
 }
 
 .sport-board {
@@ -51,7 +51,7 @@
   margin: 0;
   color: #c2185b;
   font-weight: 600;
-  background: var(--color-caramel);
+  background: rgba(194, 24, 91, 0.12);
   padding: 0.4rem 0.85rem;
   border-radius: 999px;
 }
@@ -87,7 +87,7 @@
 .sport-board-card__header h3 {
   margin: 0;
   font-size: 1.15rem;
-  color: #0f172a;
+  color: var(--color-chocolate);
 }
 
 .sport-board-card__header time {
@@ -99,8 +99,8 @@
 .sport-board-card__status {
   padding: 0.4rem 0.75rem;
   border-radius: 999px;
-  background: var(--color-caramel);
-  color: #9d174d;
+  background: rgba(194, 24, 91, 0.12);
+  color: #c2185b;
   font-weight: 700;
   font-size: 0.85rem;
   white-space: nowrap;
@@ -142,7 +142,7 @@
   align-items: center;
   gap: 0.5rem;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--color-chocolate);
 }
 
 .sport-board-card__checkbox input {
@@ -181,7 +181,7 @@
   letter-spacing: 0.02em;
   font-size: 1.2rem;
   text-transform: none;
-  color: #0f172a;
+  color: var(--color-chocolate);
 }
 
 
@@ -253,6 +253,7 @@
   padding: 0.55rem 0.85rem;
   background: #ffffff;
   font-weight: 600;
+  color: var(--color-chocolate);
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.2s ease;
 }
@@ -396,7 +397,7 @@
 .sport-life-card h3 {
   margin: 0;
   font-size: 1rem;
-  color: #111827;
+  color: var(--color-chocolate);
   padding: 0.85rem 1rem 1rem;
   position: relative;
   z-index: 1;

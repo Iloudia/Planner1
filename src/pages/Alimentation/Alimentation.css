@@ -88,6 +88,10 @@
   flex-wrap: wrap;
 }
 
+.diet-week__header h3 {
+  color: var(--color-chocolate);
+}
+
 .diet-week__eyebrow {
   display: inline-block;
   text-transform: uppercase;
@@ -101,8 +105,8 @@
 .diet-week__header .diet-week__range {
   margin: 0;
   font-weight: 600;
-  color: #725c3f;
-  background: var(--color-caramel);
+  color: #c2185b;
+  background: rgba(194, 24, 91, 0.12);
   padding: 0.4rem 0.85rem;
   border-radius: 999px;
   white-space: nowrap;
@@ -140,12 +144,20 @@
   color: #0f172a;
 }
 
+.diet-week__day {
+  color: var(--color-chocolate);
+}
+
 .diet-week__slot {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
   font-weight: 600;
   color: #334155;
+}
+
+.diet-week__slot > span {
+  color: var(--color-chocolate);
 }
 
 .diet-week__slot small {
@@ -183,6 +195,10 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+.diet-shopping__panel h3 {
+  color: var(--color-chocolate);
 }
 
 .diet-shopping__textarea {
@@ -337,12 +353,12 @@
 
 .diet-ideas__tips h4 {
   margin: 0 0 0.4rem;
-  color: #0f172a;
+  color: var(--color-chocolate);
 }
 
 .diet-ideas__tips p {
   margin: 0;
-  color: #475569;
+  color: var(--color-chocolate);
   line-height: 1.5;
 }
 

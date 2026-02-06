@@ -34,11 +34,11 @@
 }
 
 .journaling-page .finance-hero__content {
-  color: var(--journal-ink);
+  color: var(--color-chocolate);
 }
 
 .journaling-page .finance-hero__content p {
-  color: var(--journal-muted);
+  color: var(--color-chocolate);
 }
 
 .journaling-page .finance-hero__stats:empty {
@@ -118,12 +118,12 @@
 .journaling-section__header h2 {
   margin: 0.4rem 0 0;
   font-size: clamp(1.4rem, 2.2vw, 2rem);
-  color: var(--journal-ink);
+  color: var(--color-chocolate);
 }
 
 .journaling-section__header p {
   margin: 0.4rem 0 0;
-  color: var(--journal-muted);
+  color: var(--color-chocolate);
   max-width: 640px;
 }
 
@@ -138,25 +138,25 @@
   text-transform: uppercase;
   font-weight: 700;
   background: rgba(236, 72, 153, 0.16);
-  color: #9d174d;
+  color: var(--color-chocolate);
 }
 
 .journaling-tag--premium {
   background: rgba(244, 114, 182, 0.2);
-  color: #9d174d;
+  color: var(--color-chocolate);
 }
 
 .journaling-helper {
   margin: 0.4rem 0 0;
-  color: var(--journal-muted);
+  color: var(--color-chocolate);
   font-size: 0.9rem;
 }
 
 .journaling-checkin__date {
   padding: 0.4rem 0.9rem;
   border-radius: 999px;
-  background: var(--color-caramel);
-  color: var(--color-chocolate);
+  background: rgba(194, 24, 91, 0.12);
+  color: #c2185b;
   font-weight: 600;
   font-size: 0.9rem;
   align-self: flex-start;
@@ -183,7 +183,7 @@
 
 .journaling-checkin__label {
   font-weight: 600;
-  color: var(--journal-ink);
+  color: var(--color-chocolate);
 }
 
 .journaling-mood__options {
@@ -225,7 +225,7 @@
   gap: 0.3rem;
   text-align: center;
   font-size: 0.85rem;
-  color: var(--journal-muted);
+  color: var(--color-chocolate);
   box-shadow: 0 10px 22px rgba(236, 72, 153, 0.12);
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
@@ -259,7 +259,7 @@
 .journaling-choice input:checked + .journaling-choice__content {
   border-color: rgba(236, 72, 153, 0.6);
   background: rgba(236, 72, 153, 0.18);
-  color: var(--journal-ink);
+  color: var(--color-chocolate);
   box-shadow: 0 10px 26px rgba(236, 72, 153, 0.2);
 }
 
@@ -270,7 +270,7 @@
   padding: 0.8rem 1rem;
   font-size: 1rem;
   font-family: inherit;
-  color: var(--journal-ink);
+  color: var(--color-chocolate);
   background: #fff;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -294,7 +294,7 @@
 .journaling-question__prompt {
   margin: 0;
   font-size: clamp(1.3rem, 2.4vw, 1.8rem);
-  color: var(--journal-ink);
+  color: var(--color-chocolate);
   font-family: var(--font-display, inherit);
 }
 
@@ -309,7 +309,7 @@
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: rgba(31, 42, 51, 0.55);
+  color: var(--color-chocolate);
 }
 
 .journaling-write textarea {
@@ -364,14 +364,14 @@
   border: 1px solid rgba(236, 72, 153, 0.35);
   background: rgba(255, 255, 255, 0.85);
   font-size: 0.85rem;
-  color: var(--journal-muted);
+  color: var(--color-chocolate);
   transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 }
 
 .journaling-toggle input:checked + .journaling-toggle__label {
   border-color: rgba(236, 72, 153, 0.5);
   background: rgba(236, 72, 153, 0.16);
-  color: var(--journal-ink);
+  color: var(--color-chocolate);
   font-weight: 600;
 }
 
@@ -405,7 +405,7 @@
   padding: 0.35rem 0.9rem;
   border-radius: 999px;
   background: rgba(236, 72, 153, 0.16);
-  color: #9d174d;
+  color: var(--color-chocolate);
   font-weight: 600;
   font-size: 0.9rem;
   opacity: 0;
@@ -448,7 +448,7 @@
   align-items: center;
   gap: 0.6rem;
   font-size: 0.85rem;
-  color: var(--journal-muted);
+  color: var(--color-chocolate);
   cursor: pointer;
 }
 
@@ -503,20 +503,20 @@
 
 .journaling-premium__card h3 {
   margin: 0;
-  color: var(--journal-ink);
+  color: var(--color-chocolate);
 }
 
 .journaling-premium__card ul {
   margin: 0;
   padding-left: 1.1rem;
-  color: var(--journal-muted);
+  color: var(--color-chocolate);
   display: grid;
   gap: 0.35rem;
 }
 
 .journaling-premium__card p {
   margin: 0;
-  color: var(--journal-muted);
+  color: var(--color-chocolate);
 }
 
 .journaling-premium__card.is-muted {
@@ -536,7 +536,7 @@
   padding: 0.35rem 1.1rem;
   font-weight: 600;
   cursor: pointer;
-  color: var(--journal-ink);
+  color: var(--color-chocolate);
 }
 
 .journaling-archive__list {
@@ -552,7 +552,7 @@
   margin-bottom: 8px;
   font-size: 14px;
   font-weight: 600;
-  color: var(--journal-ink);
+  color: var(--color-chocolate);
 }
 
 .journaling-month__list {
@@ -567,7 +567,7 @@
   background: transparent;
   padding: 0.5rem 0;
   cursor: pointer;
-  color: var(--journal-ink);
+  color: var(--color-chocolate);
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
@@ -590,7 +590,7 @@
 .journaling-empty {
   margin: 0;
   font-style: italic;
-  color: var(--journal-muted);
+  color: var(--color-chocolate);
 }
 
 .journaling-modal {
@@ -637,7 +637,7 @@
   margin: 0.25rem 0 0;
   font-size: clamp(1.8rem, 3vw, 2.2rem);
   font-weight: 600;
-  color: #1f1a2f;
+  color: var(--color-chocolate);
 }
 
 .journaling-modal__header p {
@@ -646,14 +646,14 @@
   letter-spacing: 0.18em;
   text-transform: uppercase;
   opacity: 0.7;
-  color: rgba(236, 72, 153, 0.7);
+  color: var(--color-chocolate);
   font-weight: 600;
 }
 
 .journaling-modal__close {
   border: none;
   background: transparent;
-  color: rgba(31, 42, 51, 0.6);
+  color: var(--color-chocolate);
   font-weight: 600;
   cursor: pointer;
   font-size: 0.9rem;
@@ -671,26 +671,26 @@
   flex: 1;
   font-size: 14px;
   line-height: 1.6;
-  color: #1f1a2f;
+  color: var(--color-chocolate);
 }
 
 .journaling-modal__block span {
   font-size: 0.78rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(236, 72, 153, 0.7);
+  color: var(--color-chocolate);
   font-weight: 600;
 }
 
 .journaling-modal__block p {
   margin: 0.35rem 0 0;
-  color: rgba(31, 42, 51, 0.82);
+  color: var(--color-chocolate);
 }
 
 .journaling-modal__empty {
   margin: 0;
   font-style: italic;
-  color: rgba(31, 42, 51, 0.6);
+  color: var(--color-chocolate);
   font-size: 14px;
 }
 
@@ -698,7 +698,7 @@
   padding: 12px 24px 24px;
   font-size: 12px;
   opacity: 0.6;
-  color: rgba(31, 42, 51, 0.7);
+  color: var(--color-chocolate);
   background: #ffffff;
 }
 
@@ -739,3 +739,4 @@ body.journaling-modal-open {
     width: 100%;
   }
 }
+

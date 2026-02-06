@@ -953,7 +953,7 @@ const FinancePage = () => {
                                 </button>
                               </div>
                               <div className="finance-history__meta">
-                                <span className="finance-history__category-chip" style={{ color: amountColor }}>
+                                <span className="finance-history__category-chip">
                                   {categoryLabel}
                                 </span>
                                 <span className="finance-history__direction">{directionLabel}</span>
@@ -1097,7 +1097,7 @@ const FinancePage = () => {
                                 </button>
                               </div>
                               <div className="finance-history__meta">
-                                <span className="finance-history__category-chip" style={{ color: amountColor }}>
+                                <span className="finance-history__category-chip">
                                   {categoryLabel}
                                 </span>
                                 <span className="finance-history__direction">{directionLabel}</span>
