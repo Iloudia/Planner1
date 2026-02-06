@@ -8,7 +8,7 @@
   --journal-bg: #fff5f8;
   --journal-panel: #fff9fb;
   --journal-panel-soft: #ffeef5;
-  --journal-ink: #2b1b22;
+  --journal-ink: var(--color-chocolate);
   --journal-muted: #6a5560;
   --journal-accent: #ec4899;
   --journal-accent-2: #f472b6;
@@ -155,8 +155,8 @@
 .journaling-checkin__date {
   padding: 0.4rem 0.9rem;
   border-radius: 999px;
-  background: rgba(244, 114, 182, 0.16);
-  color: #9d174d;
+  background: var(--color-caramel);
+  color: var(--color-chocolate);
   font-weight: 600;
   font-size: 0.9rem;
   align-self: flex-start;
@@ -390,8 +390,8 @@
   border: none;
   border-radius: 999px;
   padding: 0.9rem 2.2rem;
-  background: linear-gradient(120deg, var(--journal-accent), var(--journal-accent-2));
-  color: #ffffff;
+  background: var(--color-caramel);
+  color: var(--color-chocolate);
   font-weight: 700;
   font-size: 1rem;
   cursor: pointer;

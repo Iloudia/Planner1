@@ -63,7 +63,7 @@
 }
 
 .calendar-hero__cta--primary {
-  background: #f472b6;
+  background: var(--color-caramel);
   color: #fff5fb;
   box-shadow: 0 18px 40px rgba(236, 72, 153, 0.35);
 }
@@ -213,7 +213,7 @@
 }
 
 .calendar-view-toggle__button.is-active {
-  background: #f472b6;
+  background: var(--color-caramel);
   color: #fff5fb;
 }
 
@@ -365,10 +365,11 @@
   align-self: flex-start;
   width: clamp(190px, 42vw, 280px);
   justify-content: center;
+  background: var(--color-caramel);
   font-size: clamp(0.78rem, 1.2vw, 0.9rem);
   font-weight: 600;
   cursor: pointer;
-  background: #f472b6;
+  background: var(--color-caramel);
   color: #fff;
   box-shadow: none;
   display: inline-flex;

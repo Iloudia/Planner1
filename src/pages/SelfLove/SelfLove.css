@@ -65,7 +65,7 @@
   border: none;
   border-radius: 999px;
   padding: 0.55rem 1.3rem;
-  background: linear-gradient(120deg, #f9a8d4, #f472b6);
+  background: var(--color-caramel);
   color: #fff;
   font-weight: 600;
   cursor: pointer;
@@ -110,7 +110,7 @@
   color: #be123c;
   text-align: center;
   margin: 0;
-  font-family: 'Great Vibes', cursive;
+  font-family: var(--font-display);
 }
 
 .self-love-letter__addresses {
@@ -134,14 +134,14 @@
   gap: 0.35rem;
   font-size: 1.1rem;
   color: rgba(67, 20, 51, 0.9);
-  font-family: 'Great Vibes', cursive;
+  font-family: var(--font-display);
 }
 
 .self-love-letter__addresses input {
   border: none;
   border-bottom: 0.5px solid rgba(67, 20, 51, 0.6);
   padding: 0.2rem 0;
-  font-family: 'Great Vibes', cursive;
+  font-family: var(--font-display);
   font-size: 1.2rem;
   color: #b91c1c;
   background: transparent;
@@ -189,7 +189,7 @@
   text-align: center;
   font-size: 2rem;
   color: #b91c1c;
-  font-family: 'Great Vibes', 'Handlee', cursive;
+  font-family: var(--font-display);
 }
 
 .self-love-letter__body textarea {
@@ -317,7 +317,7 @@
   border-radius: 999px;
   padding: 0.5rem 1.4rem;
   font-weight: 700;
-  background: linear-gradient(120deg, #f472b6, #ec4899);
+  background: var(--color-caramel);
   color: #fff;
   cursor: pointer;
   box-shadow: 0 16px 36px rgba(244, 114, 182, 0.3);
@@ -1497,7 +1497,7 @@
   font-weight: 600;
   font-size: 0.85rem;
   cursor: pointer;
-  background: rgba(236, 72, 153, 0.22);
+  background: var(--color-caramel);
   color: #be185d;
   box-shadow: 0 12px 30px rgba(236, 72, 153, 0.2);
   transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
@@ -1671,7 +1671,7 @@
   border: none;
   border-radius: 999px;
   padding: 0.6rem 1.2rem;
-  background: #f472b6;
+  background: var(--color-caramel);
   color: #fff;
   font-weight: 600;
   font-size: 0.9rem;
@@ -1712,7 +1712,7 @@
   border: none;
   border-radius: 16px;
   padding: 0.85rem 1.6rem;
-  background: rgba(236, 72, 153, 0.15);
+  background: var(--color-caramel);
   color: #be185d;
   font-weight: 600;
   cursor: pointer;
@@ -1720,7 +1720,7 @@
 }
 
 .self-love-form-row button:hover {
-  background: rgba(236, 72, 153, 0.22);
+  background: var(--color-caramel);
   transform: translateY(-1px);
 }
 
@@ -1830,7 +1830,7 @@
 
 .self-love-list li button:hover {
   transform: translateY(-1px);
-  background: rgba(236, 72, 153, 0.22);
+  background: var(--color-caramel);
 }
 
 .self-love-list__empty {

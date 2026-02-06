@@ -398,7 +398,7 @@
   padding: 0.9rem 1.6rem;
   border-radius: 16px;
   border: none;
-  background-color: #f472b6;
+  background-color: var(--color-caramel);
   color: #f8fafc;
   font-weight: 600;
   cursor: pointer;
@@ -467,7 +467,7 @@
   padding: 0.8rem 1rem;
   border-radius: 14px;
   border: none;
-  background-color: #f472b6;
+  background-color: var(--color-caramel);
   color: #f8fafc;
   font-weight: 600;
   font-size: 1rem;

@@ -51,7 +51,7 @@
   margin: 0;
   color: #c2185b;
   font-weight: 600;
-  background: rgba(194, 24, 91, 0.12);
+  background: var(--color-caramel);
   padding: 0.4rem 0.85rem;
   border-radius: 999px;
 }
@@ -99,7 +99,7 @@
 .sport-board-card__status {
   padding: 0.4rem 0.75rem;
   border-radius: 999px;
-  background: rgba(236, 72, 153, 0.12);
+  background: var(--color-caramel);
   color: #9d174d;
   font-weight: 700;
   font-size: 0.85rem;

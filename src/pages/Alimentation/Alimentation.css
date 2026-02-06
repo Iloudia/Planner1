@@ -101,8 +101,8 @@
 .diet-week__header .diet-week__range {
   margin: 0;
   font-weight: 600;
-  color: #c2185b;
-  background: rgba(194, 24, 91, 0.12);
+  color: #725c3f;
+  background: var(--color-caramel);
   padding: 0.4rem 0.85rem;
   border-radius: 999px;
   white-space: nowrap;

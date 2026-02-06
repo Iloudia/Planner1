@@ -293,7 +293,6 @@ const JournalingPage = () => {
         <div className="journaling-question__card">
           <p className="journaling-question__prompt">{dailyQuestion}</p>
           <div className="journaling-question__answer">
-            <span>Ta réponse</span>
             <textarea
               value={draft.questionAnswer}
               onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
@@ -318,7 +317,7 @@ const JournalingPage = () => {
           onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
             setDraft((previous) => ({ ...previous, content: event.target.value }))
           }
-          placeholder="Écris librement. Personne ne te lira. Tu peux t'arrêter quand tu veux."
+          placeholder="Ex : Aujourd'hui j'ai eu du mal à me lever, mais j'ai aimé mon café du matin. J'ai aussi réussi à régler ce problème qui traînait depuis une semaine, ce qui m'a soulagé. Par contre je me sens un peu tendu à l'idée de la réunion de demain..."
           rows={10}
         />
       </section>
