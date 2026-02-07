@@ -1,7 +1,7 @@
 import { useEffect } from "react"
-import travelCity from "../../assets/planner-09.jpg"
-import travelBeach from "../../assets/planner-12.jpg"
-import travelNature from "../../assets/planner-06.jpg"
+import travelCity from "../../assets/voyage.jpeg"
+import travelBeach from "../../assets/victoria-harder-dupe.jpeg"
+import travelNature from "../../assets/amy-rikard-dupe.jpeg"
 import PageHeading from "../../components/PageHeading"
 import "./Voyage.css"
 

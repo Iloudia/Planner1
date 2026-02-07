@@ -417,6 +417,14 @@
   color: var(--color-chocolate);
 }
 
+.profile-welcome__bow {
+  display: inline-block;
+  width: 64px;
+  height: auto;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
 .notes {
   display: flex;
   flex-direction: column;

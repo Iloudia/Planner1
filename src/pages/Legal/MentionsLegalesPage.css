@@ -34,8 +34,16 @@
 .legal-page__intro {
   margin: 0;
   font-size: 1rem;
-  color: rgba(15, 23, 42, 0.65);
+  color: var(--color-chocolate);
   max-width: 640px;
+}
+
+.legal-page .sport-header {
+  background: transparent;
+  box-shadow: none;
+  padding-left: 0;
+  padding-right: 0;
+  align-items: flex-start;
 }
 
 .legal-section {
@@ -48,14 +56,14 @@
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: rgba(15, 23, 42, 0.78);
+  color: var(--color-chocolate);
 }
 
 .legal-section__text {
   margin: 0;
   font-size: 0.95rem;
   line-height: 1.7;
-  color: rgba(15, 23, 42, 0.68);
+  color: var(--color-chocolate);
 }
 
 @media (max-width: 640px) {

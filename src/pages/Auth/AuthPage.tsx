@@ -264,7 +264,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
       }
       if (registerStep === 1) {
         if (!firstName.trim() || !lastName.trim() || !username.trim()) {
-          setError("Merci de renseigner prenom, nom et pseudo.")
+          setError("Merci de renseigner Prénom, nom et pseudo.")
           return
         }
         setRegisterStep(2)

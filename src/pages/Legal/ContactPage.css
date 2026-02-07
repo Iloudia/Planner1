@@ -73,7 +73,7 @@
   flex-direction: column;
   gap: 0.35rem;
   font-size: 0.9rem;
-  color: rgba(15, 23, 42, 0.7);
+  color: var(--color-chocolate);
   font-weight: 600;
 }
 
@@ -89,7 +89,7 @@
 }
 
 .contact-form__body textarea {
-  resize: vertical;
+  resize: none;
   min-height: 140px;
 }
 
@@ -99,16 +99,16 @@
 
 .contact-form__submit {
   grid-column: 1 / -1;
-  justify-self: flex-start;
+  justify-self: flex-end;
   border: none;
   border-radius: 999px;
   padding: 0.9rem 2.2rem;
-  background: linear-gradient(120deg, #f472b6, #ec4899);
-  color: #fff;
+  background: var(--color-caramel);
+  color: var(--color-chocolate);
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
-  box-shadow: 0 18px 40px rgba(236, 72, 153, 0.25);
+  box-shadow: 0 18px 40px rgba(227, 215, 202, 0.45);
 }
 @media (max-width: 640px) {
   .legal-page {

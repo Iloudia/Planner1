@@ -10,24 +10,24 @@ type FaqItem = {
 
 const faqItems: FaqItem[] = [
   {
-    question: "Est-ce que Planner est gratuit ?",
+    question: "Est-ce que Me&rituals est gratuit ?",
     answer:
-      "Oui, le projet est disponible librement pour t’accompagner au quotidien. De nouvelles fonctionnalités arrivent régulièrement pour enrichir ton expérience.",
+      "Oui, le projet est disponible librement pour tâ€™accompagner au quotidien. De nouvelles fonctionnalitÃ©s arrivent rÃ©guliÃ¨rement pour enrichir ton expÃ©rience.",
   },
   {
-    question: "Comment sauvegarder mes données ?",
+    question: "Comment sauvegarder mes donnÃ©es ?",
     answer:
-      "Tes notes restent enregistrées localement sur ton appareil. Pour plus de sécurité, exporte les informations clés afin d’en garder une copie personnelle.",
+      "Tes notes restent enregistrÃ©es localement sur ton appareil. Pour plus de sÃ©curitÃ©, exporte les informations clÃ©s afin dâ€™en garder une copie personnelle.",
   },
   {
-    question: "Puis-je suggérer des idées ?",
+    question: "Puis-je suggÃ©rer des idÃ©es ?",
     answer:
-      "Bien sûr ! J’adore recevoir vos retours. Écris-moi via la page contact pour partager tes envies et inspirer les prochaines évolutions du Planner.",
+      "Bien sÃ»r ! Jâ€™adore recevoir vos retours. Ã‰cris-moi via la page contact pour partager tes envies et inspirer les prochaines Ã©volutions du Planner.",
   },
   {
     question: "Planner fonctionne-t-il hors connexion ?",
     answer:
-      "Oui. Les pages restent accessibles même sans connexion car les données sont gardées dans ton navigateur. Reviens en ligne régulièrement pour profiter des mises à jour.",
+      "Oui. Les pages restent accessibles mÃªme sans connexion car les donnÃ©es sont gardÃ©es dans ton navigateur. Reviens en ligne rÃ©guliÃ¨rement pour profiter des mises Ã  jour.",
   },
 ]
 
@@ -43,10 +43,10 @@ const FAQPage = () => {
 
   return (
     <>
-<div className="faq-wrapper">
+      <PageHeading eyebrow="FAQ" title="FAQ" className="faq-header" />
+      <div className="faq-wrapper">
         <div className="legal-page faq-page">
-          <PageHeading eyebrow="FAQ" title="FAQ" />
-          <p className="legal-page__intro">Toutes les réponses essentielles pour tirer le meilleur du Planner.</p>
+          <p className="legal-page__intro">Toutes les rÃ©ponses essentielles pour tirer le meilleur du Planner.</p>
 
           <div className="faq-accordion">
             {faqItems.map((item, index) => {
@@ -81,12 +81,8 @@ const FAQPage = () => {
           <img src={faqPortrait} alt="" loading="lazy" />
         </figure>
       </div>
-</>
+    </>
   )
 }
 
 export default FAQPage
-
-
-
-

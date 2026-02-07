@@ -13,6 +13,7 @@ import planner06 from "../../assets/katie-huber-rhoades-dupe (1).jpeg"
 import planner07 from "../../assets/ebony-forsyth-dupe.jpeg"
 import planner08 from "../../assets/l-b-dupe.jpeg"
 import planner09 from "../../assets/katie-mansfield-dupe.jpeg"
+import noeudPapillon from "../../assets/noeud-papillon.png"
 
 import "./Home.css"
 
@@ -660,7 +661,8 @@ return (
         </div>
 
         <p className="profile-welcome">
-          {`C'est un plaisir de te revoir${profileUsername ? `, ${profileUsername}` : ""}.`}
+          {`C'est un plaisir de te revoir${profileUsername ? `, ${profileUsername}` : ""}`}
+          <img className="profile-welcome__bow" src={noeudPapillon} alt="" aria-hidden="true" />
         </p>
 
         <div className="progress-panel">

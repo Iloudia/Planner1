@@ -62,11 +62,12 @@
   display: flex;
   justify-content: space-between;
   font-weight: 700;
-  color: #111827;
+  color: var(--color-chocolate);
 }
 
 .onboarding-question {
   margin: 0 0 0.3rem;
+  color: var(--color-chocolate);
 }
 
 .onboarding-hint {
@@ -97,7 +98,7 @@
   background: #ffffff;
   cursor: pointer;
   font-weight: 600;
-  color: #111827;
+  color: var(--color-chocolate);
   transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
   box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
 }

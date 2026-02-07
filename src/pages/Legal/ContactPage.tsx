@@ -1,4 +1,5 @@
 import { useEffect } from "react"
+import PageHeading from "../../components/PageHeading"
 import "./ContactPage.css"
 
 const ContactPage = () => {
@@ -12,8 +13,7 @@ const ContactPage = () => {
   return (
   <>
     <div className="legal-page contact-page">
-      <span className="sport-header__eyebrow">Contact</span>
-      <h1>Contacte-moi</h1>
+      <PageHeading eyebrow="Contact" title="Contacte-moi" />
       <p className="legal-page__intro">
         Une idée, une question ou envie de collaborer ? Laisse-moi un message et je te répondrai avec grand plaisir.
       </p>
@@ -27,7 +27,7 @@ const ContactPage = () => {
           }}
         >
           <label>
-            <span>Prenom</span>
+            <span>Prénom</span>
             <input type="text" name="firstName" placeholder="Ex. Sofia" required />
           </label>
           <label>

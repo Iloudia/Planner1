@@ -1,34 +1,17 @@
-import { Link, useNavigate } from "react-router-dom"
+ï»¿import { Link, useNavigate } from "react-router-dom"
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react"
 import { useAuth } from "../context/AuthContext"
-import { buildUserScopedKey, normalizeUserEmail } from "../utils/userScopedKey"
 import defaultProfilePhoto from "../assets/katie-huber-rhoades-dupe (1).jpeg"
 
-const PROFILE_STORAGE_KEY = "planner.profile.preferences.v1"
-
-const readProfileUsername = (key: string) => {
-  try {
-    const raw = localStorage.getItem(key)
-    if (!raw) return ""
-    const parsed = JSON.parse(raw) as { identityInfo?: { username?: string } }
-    return parsed?.identityInfo?.username ?? ""
-  } catch {
-    return ""
-  }
-}
-
 function Header() {
-  const { isAuthenticated, isAdmin, logout, userEmail } = useAuth()
+  const { isAuthenticated, isAdmin } = useAuth()
   const navigate = useNavigate()
-  const [menuOpen, setMenuOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [searchSuggestionsOpen, setSearchSuggestionsOpen] = useState(false)
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [profileSrc, setProfileSrc] = useState(() => localStorage.getItem("profile-photo") ?? defaultProfilePhoto)
-  const menuRef = useRef<HTMLDivElement | null>(null)
   const searchRef = useRef<HTMLDivElement | null>(null)
-  const profileDataKey = useMemo(() => buildUserScopedKey(normalizeUserEmail(userEmail), PROFILE_STORAGE_KEY), [userEmail])
-  const profileUsername = useMemo(() => readProfileUsername(profileDataKey), [profileDataKey])
-  const displayName = profileUsername || (userEmail ? userEmail.split("@")[0] : "Utilisateur")
+  const searchInputRef = useRef<HTMLInputElement | null>(null)
   const searchTargets = useMemo(
     () => [
       { label: "A propos de moi", path: "/a-propos" },
@@ -48,7 +31,7 @@ function Header() {
       { label: "Archives", path: "/archives" },
       { label: "FAQ", path: "/faq" },
       { label: "Cookies", path: "/cookies" },
-      { label: "Paramètres", path: "/parametres" },
+      { label: "ParamÃ¨tres", path: "/parametres" },
     ],
     [],
   )
@@ -62,19 +45,8 @@ function Header() {
 
   const shouldShowSuggestions = searchSuggestionsOpen && filteredSuggestions.length > 0
 
-  const closeMenus = () => {
-    setMenuOpen(false)
-  }
-
-  const handleLogout = () => {
-    logout()
-    navigate("/login")
-    closeMenus()
-  }
-
   const handleNavigate = (path: string) => {
     navigate(path)
-    closeMenus()
   }
 
   const handleSearchSubmit = () => {
@@ -100,36 +72,40 @@ function Header() {
     }
   }
 
+  const handleSearchToggle = () => {
+    if (!isSearchOpen) {
+      setIsSearchOpen(true)
+      return
+    }
+    handleSearchSubmit()
+  }
+
   const handleSuggestionNavigate = (path: string) => {
     handleNavigate(path)
     setSearchTerm("")
     setSearchSuggestionsOpen(false)
+    setIsSearchOpen(false)
   }
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        closeMenus()
-      }
-    }
-    if (menuOpen) {
-      document.addEventListener("mousedown", handleClickOutside)
-    }
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [menuOpen])
 
   useEffect(() => {
     const handleClickOutsideSearch = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
         setSearchSuggestionsOpen(false)
+        setIsSearchOpen(false)
       }
     }
 
-    if (searchSuggestionsOpen) {
+    if (searchSuggestionsOpen || isSearchOpen) {
       document.addEventListener("mousedown", handleClickOutsideSearch)
     }
     return () => document.removeEventListener("mousedown", handleClickOutsideSearch)
-  }, [searchSuggestionsOpen])
+  }, [searchSuggestionsOpen, isSearchOpen])
+
+  useEffect(() => {
+    if (isSearchOpen) {
+      searchInputRef.current?.focus()
+    }
+  }, [isSearchOpen])
 
   useEffect(() => {
     const handleStorage = () => {
@@ -142,36 +118,35 @@ function Header() {
   return (
     <header className="site-header">
       <div className="site-header__inner">
-        <Link to={isAuthenticated ? "/home" : "/"} className="brand">
-          Me&rituals
-        </Link>
-
-        <div className="nav-search nav-search--center" ref={searchRef}>
-          <button className="nav-search__button" aria-label="Valider la recherche" onClick={handleSearchSubmit}>
+        <div className={`nav-search nav-search--center${isSearchOpen ? " nav-search--open" : ""}`} ref={searchRef}>
+          <button className="nav-search__button" aria-label="Ouvrir la recherche" onClick={handleSearchToggle}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="11" cy="11" r="7" />
               <line x1="16.65" y1="16.65" x2="21" y2="21" />
             </svg>
           </button>
-          <input
-            className="nav-search__input"
-            type="search"
-            placeholder="Rechercher"
-            aria-label="Rechercher"
-            value={searchTerm}
-            onChange={handleSearchChange}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") {
-                event.preventDefault()
-                handleSearchSubmit()
-              }
-            }}
-            onFocus={() => {
-              if (searchTerm.trim()) {
-                setSearchSuggestionsOpen(true)
-              }
-            }}
-          />
+          {isSearchOpen ? (
+            <input
+              ref={searchInputRef}
+              className="nav-search__input"
+              type="search"
+              placeholder="Rechercher"
+              aria-label="Rechercher"
+              value={searchTerm}
+              onChange={handleSearchChange}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault()
+                  handleSearchSubmit()
+                }
+              }}
+              onFocus={() => {
+                if (searchTerm.trim()) {
+                  setSearchSuggestionsOpen(true)
+                }
+              }}
+            />
+          ) : null}
           {shouldShowSuggestions ? (
             <ul className="nav-search__suggestions" role="listbox">
               {filteredSuggestions.map((target) => (
@@ -190,74 +165,51 @@ function Header() {
           ) : null}
         </div>
 
-        <div className="header-cta">
-          {isAuthenticated && isAdmin ? (
-            <button className="admin-button" onClick={() => navigate("/admin")}>
-              Back-office
-            </button>
-          ) : null}
+        <div className="site-header__center">
+          <Link to={isAuthenticated ? "/home" : "/"} className="brand site-header__brand">
+            Me&rituals
+          </Link>
 
-          <div className="header-auth">
-            {!isAuthenticated ? (
-              <button className="auth-button auth-button--login" onClick={() => navigate("/login")}>
-                Connexion
+          <nav className="site-header__nav" aria-label="Navigation principale">
+            <Link to={isAuthenticated ? "/home" : "/"} className="site-header__nav-link">
+              Accueil
+            </Link>
+            <Link to="/boutique" className="site-header__nav-link">
+              Boutique
+            </Link>
+            <Link to="/a-propos" className="site-header__nav-link">
+              Ã€ propos
+            </Link>
+            <Link to="/contact" className="site-header__nav-link">
+              Contact
+            </Link>
+          </nav>
+        </div>
+
+        <div className="site-header__right">
+          <div className="header-cta">
+            {isAuthenticated && isAdmin ? (
+              <button className="admin-button" onClick={() => navigate("/admin")}>
+                Back-office
               </button>
             ) : null}
-          </div>
 
-          {isAuthenticated ? (
-            <div className="header-menu" ref={menuRef}>
-              <button
-                type="button"
-                className={menuOpen ? "header-menu__profile is-open" : "header-menu__profile"}
-                aria-haspopup="true"
-                aria-expanded={menuOpen}
-                onClick={() => setMenuOpen((previous) => !previous)}
-              >
+            <div className="header-auth">
+              {!isAuthenticated ? (
+                <button className="auth-button auth-button--login" onClick={() => navigate("/login")}>
+                  Connexion
+                </button>
+              ) : null}
+            </div>
+
+            {isAuthenticated ? (
+              <button type="button" className="header-menu__profile" onClick={() => handleNavigate("/profil")}>
                 <span className="header-menu__avatar">
                   <img src={profileSrc} alt="Profil" />
                 </span>
-                <span className="header-menu__name">{displayName}</span>
-                <span className="header-menu__caret" aria-hidden="true">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="6 9 12 15 18 9" />
-                  </svg>
-                </span>
               </button>
-              <button
-                type="button"
-                className={menuOpen ? "header-menu__toggle is-open" : "header-menu__toggle"}
-                aria-haspopup="true"
-                aria-expanded={menuOpen}
-                onClick={() => setMenuOpen((previous) => !previous)}
-              >
-                <span />
-                <span />
-                <span />
-              </button>
-              {menuOpen ? (
-                <div className="header-menu__panel" role="menu">
-                  <ul className="header-menu__list">
-                    <li>
-                      <button type="button" className="header-menu__item" onClick={() => handleNavigate("/archives")}>
-                        Archives
-                      </button>
-                    </li>
-                    <li>
-                      <button type="button" className="header-menu__item" onClick={() => handleNavigate("/parametres")}>
-                        Paramètres
-                      </button>
-                    </li>
-                    <li>
-                      <button type="button" className="header-menu__item header-menu__item--danger" onClick={handleLogout}>
-                        Déconnexion
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              ) : null}
-            </div>
-          ) : null}
+            ) : null}
+          </div>
         </div>
       </div>
     </header>
