@@ -255,6 +255,23 @@ p {
   gap: clamp(0.6rem, 1.4vw, 1rem);
 }
 
+.header-logout {
+  border: none;
+  background: rgba(236, 72, 153, 0.12);
+  color: #9d174d;
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.header-logout:hover {
+  background: rgba(236, 72, 153, 0.2);
+  color: #7f1239;
+  box-shadow: 0 10px 24px rgba(236, 72, 153, 0.18);
+}
+
 .site-header__nav-link {
   text-decoration: none;
   font-size: 0.95rem;
@@ -1630,8 +1647,8 @@ p {
 }
 
 .header-menu__avatar {
-  width: 40px;
-  height: 40px;
+  width: 64px;
+  height: 64px;
   border-radius: 999px;
   overflow: hidden;
   display: inline-flex;

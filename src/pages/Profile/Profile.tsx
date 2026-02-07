@@ -412,8 +412,8 @@ const ProfilePage = () => {
 
   return (
     <>
+      <PageHeading eyebrow="Paramètres" title="Personnalise ton expérience" />
       <div className="content-page settings-page">
-        <PageHeading eyebrow="Paramètres" title="Personnalise ton expérience" />
         <section className="settings-layout">
           <nav className="settings-nav" aria-label="Sections profil">
             <ul>
@@ -683,18 +683,30 @@ const ProfilePage = () => {
                   <header className="settings-display-group__header">
                     <div>
                       <h3>Couleurs</h3>
-                      <p>Bientôt disponible</p>
+                      <p>Personnalisation des couleurs du site</p>
                     </div>
                   </header>
+                  <div className="settings-options">
+                    <div className="settings-option">
+                      <span className="settings-option__label">Bientôt disponible</span>
+                      <span className="settings-option__description">Le choix précis des couleurs arrive bientôt.</span>
+                    </div>
+                  </div>
                 </section>
 
                 <section className="settings-display-group">
                   <header className="settings-display-group__header">
                     <div>
                       <h3>Arriere-plan</h3>
-                      <p>Bientôt disponible</p>
+                      <p>Ambiance claire ou plus sombre</p>
                     </div>
                   </header>
+                  <div className="settings-options">
+                    <div className="settings-option">
+                      <span className="settings-option__label">Bientôt disponible</span>
+                      <span className="settings-option__description">Le choix de l'arrière-plan arrive bientôt.</span>
+                    </div>
+                  </div>
                 </section>
               </div>
             ) : (

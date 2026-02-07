@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext"
 import defaultProfilePhoto from "../assets/katie-huber-rhoades-dupe (1).jpeg"
 
 function Header() {
-  const { isAuthenticated, isAdmin } = useAuth()
+  const { isAuthenticated, isAdmin, logout } = useAuth()
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState("")
   const [searchSuggestionsOpen, setSearchSuggestionsOpen] = useState(false)
@@ -47,6 +47,11 @@ function Header() {
 
   const handleNavigate = (path: string) => {
     navigate(path)
+  }
+
+  const handleLogout = async () => {
+    await logout()
+    navigate("/login")
   }
 
   const handleSearchSubmit = () => {
@@ -203,11 +208,16 @@ function Header() {
             </div>
 
             {isAuthenticated ? (
-              <button type="button" className="header-menu__profile" onClick={() => handleNavigate("/profil")}>
-                <span className="header-menu__avatar">
-                  <img src={profileSrc} alt="Profil" />
-                </span>
-              </button>
+              <>
+                <button type="button" className="header-menu__profile" onClick={() => handleNavigate("/profil")}>
+                  <span className="header-menu__avatar">
+                    <img src={profileSrc} alt="Profil" />
+                  </span>
+                </button>
+                <button type="button" className="header-logout" onClick={handleLogout}>
+                  Déconnexion
+                </button>
+              </>
             ) : null}
           </div>
         </div>
