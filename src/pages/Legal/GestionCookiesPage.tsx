@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+﻿import { useEffect } from "react"
 import PageHeading from "../../components/PageHeading"
 import { useCookieConsent } from "../../context/CookieConsentContext"
 import "./GestionCookiesPage.css"
@@ -15,8 +15,8 @@ const GestionCookiesPage = () => {
 
   return (
     <>
+        <PageHeading eyebrow="Cookies" title="Gestion des cookies" className="cookies-page__header" />
       <div className="legal-page">
-        <PageHeading eyebrow="Cookies" title="Gestion des cookies" />
         <p className="legal-page__intro">
           Lors de la consultation de ce site, des cookies peuvent etre deposes sur votre appareil (ordinateur, mobile ou
           tablette).
@@ -31,15 +31,15 @@ const GestionCookiesPage = () => {
           <p className="legal-section__text">Ce site utilise les types de cookies suivants :</p>
           <ul className="legal-list">
             <li>
-              <strong>Cookies necessaires</strong> ÃƒÂ¯Ã‚Â¿Ã‚Â½ indispensables au fonctionnement du site. Ils ne peuvent pas etre
+              <strong>Cookies necessaires</strong> ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¿Ãƒâ€šÃ‚Â½ indispensables au fonctionnement du site. Ils ne peuvent pas etre
               desactives.
             </li>
             <li>
-              <strong>Cookies de mesure d audience (optionnels)</strong> ÃƒÂ¯Ã‚Â¿Ã‚Â½ permettent de comprendre l usage du site afin
+              <strong>Cookies de mesure d audience (optionnels)</strong> ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¿Ãƒâ€šÃ‚Â½ permettent de comprendre l usage du site afin
               d ameliorer son contenu et ses performances.
             </li>
             <li>
-              <strong>Cookies de personnalisation (optionnels)</strong> ÃƒÂ¯Ã‚Â¿Ã‚Â½ retiennent vos choix (ex. langue, preferences)
+              <strong>Cookies de personnalisation (optionnels)</strong> ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¿Ãƒâ€šÃ‚Â½ retiennent vos choix (ex. langue, preferences)
               pour personnaliser l experience.
             </li>
           </ul>
@@ -53,7 +53,7 @@ const GestionCookiesPage = () => {
           <h2 className="legal-section__title">Consentement</h2>
           <p className="legal-section__text">
             Lors de votre premiere visite, un bandeau vous permet d accepter, de refuser ou de personnaliser votre choix.
-            Vous pouvez modifier ou retirer votre consentement ÃƒÆ’Ã‚Â  tout moment.
+            Vous pouvez modifier ou retirer votre consentement ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  tout moment.
           </p>
         </section>
 
@@ -74,11 +74,11 @@ const GestionCookiesPage = () => {
         <section className="legal-section">
           <h2 className="legal-section__title">Comment desactiver les cookies ?</h2>
           <p className="legal-section__text">
-            Vous pouvez aussi gÃƒÂ©rer les cookies depuis votre navigateur (paramètres \u003e confidentialité \u003e cookies). Vous
-            pouvez refuser ou supprimer les cookies dÃƒÂ©jÃƒÂ  enregistrÃƒÂ©s. Le chemin exact dÃƒÂ©pend de votre navigateur.
+            Vous pouvez aussi gÃƒÆ’Ã‚Â©rer les cookies depuis votre navigateur (paramÃ¨tres \u003e confidentialitÃ© \u003e cookies). Vous
+            pouvez refuser ou supprimer les cookies dÃƒÆ’Ã‚Â©jÃƒÆ’Ã‚Â  enregistrÃƒÆ’Ã‚Â©s. Le chemin exact dÃƒÆ’Ã‚Â©pend de votre navigateur.
           </p>
           <p className="legal-section__text">
-            Attention : dÃƒÆ’Ã‚Â©sactiver les cookies essentiels bloque l'accÃƒÆ’Ã‚Â¨s ÃƒÆ’Ã‚Â  l'espace sÃƒÆ’Ã‚Â©curisÃƒÆ’Ã‚Â© (connexion, sauvegarde).
+            Attention : dÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©sactiver les cookies essentiels bloque l'accÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¨s ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  l'espace sÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©curisÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â© (connexion, sauvegarde).
           </p>
         </section>
 

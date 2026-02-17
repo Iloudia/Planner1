@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+﻿import { useEffect } from "react"
 import PageHeading from "../../components/PageHeading"
 import "./MentionsLegalesPage.css"
 
@@ -12,14 +12,14 @@ const MentionsLegalesPage = () => {
 
   return (
   <>
+      <PageHeading eyebrow="Mentions lï¿½gales" title="Mentions lï¿½gales" className="mentions-legales__header" />
     <div className="legal-page">
-      <PageHeading eyebrow="Mentions l�gales" title="Mentions l�gales" />
       <p className="legal-page__intro">
-        Mentions l�gales compl�tes, incluant l'�diteur, l'h�bergeur, la propri�t� intellectuelle et les r�gles d'utilisation du site Planner.
+        Mentions lï¿½gales complï¿½tes, incluant l'ï¿½diteur, l'hï¿½bergeur, la propriï¿½tï¿½ intellectuelle et les rï¿½gles d'utilisation du site Planner.
       </p>
 
       <section className="legal-section">
-        <h2 className="legal-section__title">�diteur du site</h2>
+        <h2 className="legal-section__title">ï¿½diteur du site</h2>
         <p className="legal-section__text">
           Nom : Vasseur Iloudia
           <br />
@@ -35,36 +35,36 @@ const MentionsLegalesPage = () => {
       </section>
 
       <section className="legal-section">
-        <h2 className="legal-section__title">H�bergement</h2>
+        <h2 className="legal-section__title">Hï¿½bergement</h2>
         <p className="legal-section__text">
-          Le site est h�berg� par :
+          Le site est hï¿½bergï¿½ par :
           <br />
-          [Nom de l'h�bergeur]
+          [Nom de l'hï¿½bergeur]
           <br />
-          [Adresse de l'h�bergeur]
+          [Adresse de l'hï¿½bergeur]
           <br />
-          [T�l�phone de l'h�bergeur]
+          [Tï¿½lï¿½phone de l'hï¿½bergeur]
         </p>
       </section>
 
       <section className="legal-section">
-        <h2 className="legal-section__title">Propri�t� intellectuelle</h2>
+        <h2 className="legal-section__title">Propriï¿½tï¿½ intellectuelle</h2>
         <p className="legal-section__text">
-          L'ensemble du contenu pr�sent sur ce site (textes, images, graphismes, logo, structure) est la propri�t� exclusive de l'�diteur, sauf mention contraire. Toute reproduction, repr�sentation, modification ou adaptation, totale ou partielle, est interdite sans autorisation pr�alable.
+          L'ensemble du contenu prï¿½sent sur ce site (textes, images, graphismes, logo, structure) est la propriï¿½tï¿½ exclusive de l'ï¿½diteur, sauf mention contraire. Toute reproduction, reprï¿½sentation, modification ou adaptation, totale ou partielle, est interdite sans autorisation prï¿½alable.
         </p>
       </section>
 
       <section className="legal-section">
-        <h2 className="legal-section__title">Responsabilit�</h2>
+        <h2 className="legal-section__title">Responsabilitï¿½</h2>
         <p className="legal-section__text">
-          L'�diteur s'efforce de fournir des informations aussi pr�cises que possible. Il ne saurait toutefois �tre tenu responsable des omissions, inexactitudes ou carences dans la mise � jour du contenu.
+          L'ï¿½diteur s'efforce de fournir des informations aussi prï¿½cises que possible. Il ne saurait toutefois ï¿½tre tenu responsable des omissions, inexactitudes ou carences dans la mise ï¿½ jour du contenu.
         </p>
       </section>
 
       <section className="legal-section">
-        <h2 className="legal-section__title">Donn�es personnelles</h2>
+        <h2 className="legal-section__title">Donnï¿½es personnelles</h2>
         <p className="legal-section__text">
-          Les informations relatives � la collecte et au traitement des donn�es personnelles sont d�taill�es dans la page Politique de confidentialit�. L'utilisation des cookies est expliqu�e dans la page Gestion des cookies.
+          Les informations relatives ï¿½ la collecte et au traitement des donnï¿½es personnelles sont dï¿½taillï¿½es dans la page Politique de confidentialitï¿½. L'utilisation des cookies est expliquï¿½e dans la page Gestion des cookies.
         </p>
       </section>
     </div>

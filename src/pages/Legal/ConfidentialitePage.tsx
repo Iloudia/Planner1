@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+﻿import { useEffect } from "react"
 import PageHeading from "../../components/PageHeading"
 import "./ConfidentialitePage.css"
 
@@ -12,105 +12,105 @@ const ConfidentialitePage = () => {
 
   return (
   <>
+      <PageHeading eyebrow="ConfidentialitÃ©" title="Politique de confidentialitÃ©" className="confidentialite-page__header" />
     <div className="legal-page">
-      <PageHeading eyebrow="Confidentialité" title="Politique de confidentialité" />
       <p className="legal-page__intro">
-        La présente politique de confidentialité a pour objectif d’informer les utilisateurs du site sur la manière dont
-        leurs données personnelles sont collectées, utilisées et protégées.
+        La prÃ©sente politique de confidentialitÃ© a pour objectif dâ€™informer les utilisateurs du site sur la maniÃ¨re dont
+        leurs donnÃ©es personnelles sont collectÃ©es, utilisÃ©es et protÃ©gÃ©es.
       </p>
 
       <section className="legal-section">
         <h2 className="legal-section__title">Responsable du traitement</h2>
         <p className="legal-section__text">
-          Le responsable du traitement des données est [Ton nom / Prénom], éditrice du site [Nom du site]. Pour toute
-          question relative aux données personnelles, vous pouvez contacter : [email de contact].
+          Le responsable du traitement des donnÃ©es est [Ton nom / PrÃ©nom], Ã©ditrice du site [Nom du site]. Pour toute
+          question relative aux donnÃ©es personnelles, vous pouvez contacter : [email de contact].
         </p>
       </section>
 
       <section className="legal-section">
-        <h2 className="legal-section__title">Données collectées</h2>
+        <h2 className="legal-section__title">DonnÃ©es collectÃ©es</h2>
         <p className="legal-section__text">
-          Selon l’utilisation du site, les données suivantes peuvent être collectées :
+          Selon lâ€™utilisation du site, les donnÃ©es suivantes peuvent Ãªtre collectÃ©es :
         </p>
         <ul className="legal-list">
-          <li>prénom</li>
+          <li>prÃ©nom</li>
           <li>adresse email</li>
-          <li>messages envoyés via les formulaires</li>
-          <li>données de navigation (cookies)</li>
-          <li>informations nécessaires à l’accès aux services</li>
+          <li>messages envoyÃ©s via les formulaires</li>
+          <li>donnÃ©es de navigation (cookies)</li>
+          <li>informations nÃ©cessaires Ã  lâ€™accÃ¨s aux services</li>
         </ul>
         <p className="legal-section__text">
-          Dans le cadre de l’achat de produits (ebooks ou autres contenus payants), certaines données peuvent être
-          collectées à des fins de gestion de commande. Les données bancaires ne sont jamais stockées par le site et sont
-          traitées exclusivement par des prestataires de paiement sécurisés.
+          Dans le cadre de lâ€™achat de produits (ebooks ou autres contenus payants), certaines donnÃ©es peuvent Ãªtre
+          collectÃ©es Ã  des fins de gestion de commande. Les donnÃ©es bancaires ne sont jamais stockÃ©es par le site et sont
+          traitÃ©es exclusivement par des prestataires de paiement sÃ©curisÃ©s.
         </p>
       </section>
 
       <section className="legal-section">
-        <h2 className="legal-section__title">Finalité de la collecte</h2>
+        <h2 className="legal-section__title">FinalitÃ© de la collecte</h2>
         <p className="legal-section__text">
-          Les données personnelles sont collectées pour :
+          Les donnÃ©es personnelles sont collectÃ©es pour :
         </p>
         <ul className="legal-list">
-          <li>permettre l’accès et l’utilisation du site</li>
-          <li>répondre aux messages et demandes</li>
-          <li>envoyer des contenus ou informations liées au projet</li>
-          <li>gérer les commandes et la facturation</li>
-          <li>améliorer le fonctionnement du site</li>
+          <li>permettre lâ€™accÃ¨s et lâ€™utilisation du site</li>
+          <li>rÃ©pondre aux messages et demandes</li>
+          <li>envoyer des contenus ou informations liÃ©es au projet</li>
+          <li>gÃ©rer les commandes et la facturation</li>
+          <li>amÃ©liorer le fonctionnement du site</li>
         </ul>
       </section>
 
       <section className="legal-section">
-        <h2 className="legal-section__title">Base légale</h2>
+        <h2 className="legal-section__title">Base lÃ©gale</h2>
         <p className="legal-section__text">
-          La collecte des données repose sur :
+          La collecte des donnÃ©es repose sur :
         </p>
         <ul className="legal-list">
-          <li>le consentement de l’utilisateur</li>
-          <li>l’exécution d’un contrat (achat de produits)</li>
-          <li>le respect d’obligations légales</li>
+          <li>le consentement de lâ€™utilisateur</li>
+          <li>lâ€™exÃ©cution dâ€™un contrat (achat de produits)</li>
+          <li>le respect dâ€™obligations lÃ©gales</li>
         </ul>
       </section>
 
       <section className="legal-section">
-        <h2 className="legal-section__title">Durée de conservation</h2>
+        <h2 className="legal-section__title">DurÃ©e de conservation</h2>
         <p className="legal-section__text">
-          Les données sont conservées uniquement pendant la durée nécessaire aux finalités pour lesquelles elles sont
-          collectées, et conformément aux obligations légales en vigueur.
+          Les donnÃ©es sont conservÃ©es uniquement pendant la durÃ©e nÃ©cessaire aux finalitÃ©s pour lesquelles elles sont
+          collectÃ©es, et conformÃ©ment aux obligations lÃ©gales en vigueur.
         </p>
       </section>
 
       <section className="legal-section">
-        <h2 className="legal-section__title">Partage des données</h2>
+        <h2 className="legal-section__title">Partage des donnÃ©es</h2>
         <p className="legal-section__text">
-          Les données peuvent être transmises à des prestataires techniques (hébergement, outils d’emailing, paiement,
+          Les donnÃ©es peuvent Ãªtre transmises Ã  des prestataires techniques (hÃ©bergement, outils dâ€™emailing, paiement,
           statistiques) uniquement dans le cadre du fonctionnement du site.
         </p>
-        <p className="legal-section__text">Aucune donnée personnelle n’est vendue ou cédée à des tiers.</p>
+        <p className="legal-section__text">Aucune donnÃ©e personnelle nâ€™est vendue ou cÃ©dÃ©e Ã  des tiers.</p>
       </section>
 
       <section className="legal-section">
-        <h2 className="legal-section__title">Sécurité</h2>
+        <h2 className="legal-section__title">SÃ©curitÃ©</h2>
         <p className="legal-section__text">
-          Le site met en œuvre des mesures de sécurité pour protéger les données personnelles contre tout accès non
-          autorisé, perte ou divulgation.
+          Le site met en Å“uvre des mesures de sÃ©curitÃ© pour protÃ©ger les donnÃ©es personnelles contre tout accÃ¨s non
+          autorisÃ©, perte ou divulgation.
         </p>
       </section>
 
       <section className="legal-section">
         <h2 className="legal-section__title">Droits des utilisateurs</h2>
         <p className="legal-section__text">
-          Conformément à la réglementation en vigueur, vous disposez des droits suivants :
+          ConformÃ©ment Ã  la rÃ©glementation en vigueur, vous disposez des droits suivants :
         </p>
         <ul className="legal-list">
-          <li>droit d’accès</li>
+          <li>droit dâ€™accÃ¨s</li>
           <li>droit de rectification</li>
           <li>droit de suppression</li>
-          <li>droit d’opposition</li>
-          <li>droit à la limitation du traitement</li>
+          <li>droit dâ€™opposition</li>
+          <li>droit Ã  la limitation du traitement</li>
         </ul>
         <p className="legal-section__text">
-          Pour exercer ces droits, il suffit d’envoyer un email à : contact@meandrituals.com
+          Pour exercer ces droits, il suffit dâ€™envoyer un email Ã  : contact@meandrituals.com
         </p>
       </section>
     </div>

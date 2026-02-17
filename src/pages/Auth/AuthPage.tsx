@@ -125,6 +125,13 @@ const AuthPage = ({ mode }: AuthFormProps) => {
   }, [destinationPath, isAuthenticated, mode, navigate])
 
   useEffect(() => {
+    document.body.classList.add("auth-page--lux")
+    return () => {
+      document.body.classList.remove("auth-page--lux")
+    }
+  }, [])
+
+  useEffect(() => {
     const scriptId = "google-client-script"
     if (document.getElementById(scriptId)) {
       setIsGoogleReady(true)

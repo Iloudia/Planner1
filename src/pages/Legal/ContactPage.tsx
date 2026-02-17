@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+﻿import { useEffect } from "react"
 import PageHeading from "../../components/PageHeading"
 import "./ContactPage.css"
 
@@ -12,10 +12,10 @@ const ContactPage = () => {
 
   return (
   <>
+    <PageHeading eyebrow="Contact" title="Contacte-moi" className="contact-page__header" />
     <div className="legal-page contact-page">
-      <PageHeading eyebrow="Contact" title="Contacte-moi" />
       <p className="legal-page__intro">
-        Une idée, une question ou envie de collaborer ? Laisse-moi un message et je te répondrai avec grand plaisir.
+        Une idÃ©e, une question ou envie de collaborer ? Laisse-moi un message et je te rÃ©pondrai avec grand plaisir.
       </p>
 
       <section className="legal-section contact-form">
@@ -27,7 +27,7 @@ const ContactPage = () => {
           }}
         >
           <label>
-            <span>Prénom</span>
+            <span>PrÃ©nom</span>
             <input type="text" name="firstName" placeholder="Ex. Sofia" required />
           </label>
           <label>

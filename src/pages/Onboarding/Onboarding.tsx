@@ -92,6 +92,13 @@ const OnboardingPage = () => {
     }
   }, [storageKey])
 
+  useEffect(() => {
+    document.body.classList.add("onboarding-page--lux")
+    return () => {
+      document.body.classList.remove("onboarding-page--lux")
+    }
+  }, [])
+
   const totalSteps = 3
   const progress = Math.round(((step + 1) / totalSteps) * 100)
 

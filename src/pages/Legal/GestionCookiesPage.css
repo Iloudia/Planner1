@@ -12,6 +12,11 @@
   gap: clamp(1.8rem, 3vw, 2.4rem);
 }
 
+.cookies-page__header {
+  max-width: 880px;
+  margin: 0 auto;
+}
+
 .legal-page__header {
   display: flex;
   flex-direction: column;

@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../../context/AuthContext"
-import { useMoodboard } from "../../context/MoodboardContext"
 import "./Landing.css"
 
+import heroBackdrop from "../../assets/frances-leynes-dupe.jpeg"
 import cardEbony from "../../assets/ebony-forsyth-dupe.jpeg"
 import cardMedhanshi from "../../assets/medhanshi-mandawewala-dupe.jpeg"
 import cardSelflove from "../../assets/selflove.jpeg"
@@ -36,7 +36,6 @@ const LandingPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { isAuthenticated, userEmail, logout } = useAuth()
-  const { moodboardSrc } = useMoodboard()
   const [carouselIndex, setCarouselIndex] = useState(0)
 
   const [cardsPerView, setCardsPerView] = useState(1)
@@ -61,9 +60,9 @@ const LandingPage = () => {
   }, [])
 
   useEffect(() => {
-    document.body.classList.add('calendar-page--beige')
+    document.body.classList.add("landing-page--lux")
     return () => {
-      document.body.classList.remove('calendar-page--beige')
+      document.body.classList.remove("landing-page--lux")
     }
   }, [])
 
@@ -98,7 +97,7 @@ const LandingPage = () => {
   return (
     <div className="landing-page">
 
-      <section className="landing-hero">
+      <section className="landing-hero" style={{ backgroundImage: `url(${heroBackdrop})` }}>
         <div className="landing-hero__content">
           <h1>
             L’espace qui transforme ton quotidien en une vie plus fluide, plus douce et plus alignée.
@@ -124,9 +123,6 @@ const LandingPage = () => {
               </button>
             </div>
           ) : null}
-        </div>
-        <div className="landing-hero__visual">
-          <img src={moodboardSrc} alt="Moodboard Planner" />
         </div>
       </section>
 

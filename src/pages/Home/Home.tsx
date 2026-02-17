@@ -45,11 +45,11 @@ type TaskDisplay = {
 }
 
 const cards: CardItem[] = [
-  { image: planner01, alt: "Sport", kicker: "Énergie", title: "Sport", path: "/sport" },
+  { image: planner01, alt: "Sport", kicker: "ï¿½nergie", title: "Sport", path: "/sport" },
   { image: planner06, alt: "Calendrier", kicker: "Vue globale", title: "Calendrier mensuel", path: "/calendrier" },
   { image: planner05, alt: "Wishlist", kicker: "Envie", title: "Wishlist", path: "/wishlist" },
   { image: planner03, alt: "Journaling", kicker: "Reflet", title: "Journaling", path: "/journaling" },
-  { image: planner04, alt: "Self-love", kicker: "Care", title: "S'aimer soi-même", path: "/self-love" },
+  { image: planner04, alt: "Self-love", kicker: "Care", title: "S'aimer soi-mï¿½me", path: "/self-love" },
   { image: planner07, alt: "Finances", kicker: "Budget", title: "Finances", path: "/finances" },
   { image: planner08, alt: "Routine", kicker: "Rythme", title: "Routine", path: "/routine" },
   { image: planner09, alt: "Cuisine", kicker: "Saveurs", title: "Cuisine", path: "/alimentation" },
@@ -111,7 +111,7 @@ const readProfileUsername = (key: string) => {
   }
 }
 
-/** --- Storage helpers (gère legacy JSON.stringify) --- */
+/** --- Storage helpers (gï¿½re legacy JSON.stringify) --- */
 function safeReadStorage(key: string): string | null {
   try {
     const raw = localStorage.getItem(key)
@@ -139,7 +139,7 @@ function safeRemoveStorage(key: string) {
   }
 }
 
-/** --- Compression profil : crop carré (petit) --- */
+/** --- Compression profil : crop carrï¿½ (petit) --- */
 async function fileToCompressedSquareDataUrl(
   file: File,
   opts?: { size?: number; quality?: number }
@@ -259,12 +259,12 @@ function HomePage() {
   const [now, setNow] = useState(() => new Date())
   const cardFileInputsRef = useRef<Record<string, HTMLInputElement | null>>({})
 
-  /** ? Profil (persisté + compressé) */
+  /** ? Profil (persistï¿½ + compressï¿½) */
   const [profileSrc, setProfileSrc] = useState<string>(() => safeReadStorage(profileStorageKey) ?? DEFAULT_PROFILE_PHOTO)
   const [profileError, setProfileError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
-  /** ? Moodboard (persisté + compressé) */
+  /** ? Moodboard (persistï¿½ + compressï¿½) */
   const [homeMoodboardSrc, setHomeMoodboardSrc] = useState<string>(() => safeReadStorage(homeMoodboardKey) ?? DEFAULT_HOME_MOODBOARD)
   const [moodboardError, setMoodboardError] = useState<string | null>(null)
   const moodboardInputRef = useRef<HTMLInputElement | null>(null)
@@ -388,7 +388,7 @@ function HomePage() {
     try {
       safeWriteStorage(profileStorageKey, profileSrc)
     } catch {
-      setProfileError("Impossible d’enregistrer la photo (stockage plein). Choisis une image plus légère.")
+      setProfileError("Impossible dï¿½enregistrer la photo (stockage plein). Choisis une image plus lï¿½gï¿½re.")
     }
   }, [profileStorageKey, profileSrc])
 
@@ -400,7 +400,7 @@ function HomePage() {
       return
     }
 
-    // anciennes clés possibles
+    // anciennes clï¿½s possibles
     const legacy1 = safeReadStorage("planner.home.moodboard")
     if (legacy1) {
       setHomeMoodboardSrc(legacy1)
@@ -420,7 +420,7 @@ function HomePage() {
     try {
       safeWriteStorage(homeMoodboardKey, homeMoodboardSrc)
     } catch {
-      setMoodboardError("Impossible d’enregistrer le moodboard (stockage plein). Choisis une image plus légère.")
+      setMoodboardError("Impossible dï¿½enregistrer le moodboard (stockage plein). Choisis une image plus lï¿½gï¿½re.")
     }
   }, [homeMoodboardKey, homeMoodboardSrc])
 
@@ -491,7 +491,7 @@ function HomePage() {
     if (!file) return
 
     if (!file.type.startsWith("image/")) {
-      setProfileError("Format non supporté. Choisis une image.")
+      setProfileError("Format non supportï¿½. Choisis une image.")
       event.target.value = ""
       return
     }
@@ -501,7 +501,7 @@ function HomePage() {
   const compressed = await fileToCompressedSquareDataUrl(file, { size: 320, quality: 0.82 })
   setProfileSrc(compressed)
 } catch (e) {
-  setProfileError(e instanceof Error ? e.message : "Erreur lors du traitement de l’image.")
+  setProfileError(e instanceof Error ? e.message : "Erreur lors du traitement de lï¿½image.")
 } finally {
   event.target.value = ""
 }
@@ -520,7 +520,7 @@ const handleMoodboardInput = async (event: ChangeEvent<HTMLInputElement>) => {
   if (!file) return
 
   if (!file.type.startsWith("image/")) {
-    setMoodboardError("Format non supporté. Choisis une image.")
+    setMoodboardError("Format non supportï¿½. Choisis une image.")
     event.target.value = ""
     return
   }
@@ -530,7 +530,7 @@ const handleMoodboardInput = async (event: ChangeEvent<HTMLInputElement>) => {
     const compressed = await fileToCompressedFitDataUrl(file, { maxSide: 1600, quality: 0.78 })
     setHomeMoodboardSrc(compressed)
   } catch (e) {
-    setMoodboardError(e instanceof Error ? e.message : "Erreur lors du traitement de l’image.")
+    setMoodboardError(e instanceof Error ? e.message : "Erreur lors du traitement de lï¿½image.")
   } finally {
     event.target.value = ""
   }
@@ -668,7 +668,7 @@ return (
         <div className="progress-panel">
           <div className="progress-row">
             <div className="progress-label">
-              <span>Année</span>
+              <span>Annï¿½e</span>
               <span>{progress.year.toFixed(1)}%</span>
             </div>
             <div className="progress-bar">
@@ -686,7 +686,7 @@ return (
           </div>
           <div className="progress-row">
             <div className="progress-label">
-              <span>Journée</span>
+              <span>Journï¿½e</span>
               <span>{progress.day.toFixed(1)}%</span>
             </div>
             <div className="progress-bar">
@@ -713,9 +713,9 @@ return (
                   addTodo()
                 }
               }}
-              placeholder="Ajouter une tâche"
+              placeholder="Ajouter une tï¿½che"
             />
-            <button type="button" className="todo-add" onClick={addTodo} aria-label="Ajouter une tâche">
+            <button type="button" className="todo-add" onClick={addTodo} aria-label="Ajouter une tï¿½che">
               +
             </button>
           </div>
@@ -727,7 +727,7 @@ return (
                   <input type="checkbox" checked={item.done} onChange={() => toggleTodo(item.id)} />
                   <span>{item.text}</span>
                 </label>
-                <button type="button" onClick={() => deleteTodo(item.id)} aria-label="Supprimer la tâche">
+                <button type="button" onClick={() => deleteTodo(item.id)} aria-label="Supprimer la tï¿½che">
                   x
                 </button>
               </li>
@@ -740,7 +740,7 @@ return (
         <section className="home-hero-strip">
           <div className="home-hero-strip__center">
             <div className="today">{todayLabel()}</div>
-            <h1>Organise tes journées avec intention</h1>
+            <h1>Organise tes journï¿½es avec intention</h1>
           </div>
         </section>
 
@@ -845,7 +845,7 @@ return (
       </main>
 
       <aside className="aside-left">
-        <div className="aside-title">Prochaines tâches</div>
+        <div className="aside-title">Prochaines tï¿½ches</div>
         <div className="task-window">
           <div className="task-list">
             {upcomingTasks.length > 0 ? (
@@ -866,8 +866,8 @@ return (
               ))
             ) : (
               <article className="task-card">
-                <p className="task-title">Aucune tâche prévue</p>
-                <p className="task-note">Ajoute une tâche dans le calendrier.</p>
+                <p className="task-title">Aucune tï¿½che prï¿½vue</p>
+                <p className="task-note">Ajoute une tï¿½che dans le calendrier.</p>
               </article>
             )}
           </div>
@@ -882,11 +882,7 @@ return (
             <button type="button" className="home-moodboard__button" onClick={() => moodboardInputRef.current?.click()}>
               Changer l'image
             </button>
-            {isHomeCustom ? (
-              <button type="button" className="home-moodboard__reset" onClick={resetMoodboard}>
-                Réinitialiser
-              </button>
-            ) : null}
+            
           </div>
 
           <input
@@ -901,7 +897,7 @@ return (
         {moodboardError ? <p className="home-moodboard__error">{moodboardError}</p> : null}
 
         <div className="home-moodboard__preview">
-          <img src={homeMoodboardSrc} alt="Moodboard personnalisé" />
+          <img src={homeMoodboardSrc} alt="Moodboard personnalisï¿½" />
         </div>
       </section>
 </div>
