@@ -1252,10 +1252,11 @@ p {
 
 .sport-header__eyebrow {
   text-transform: uppercase;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.35em;
   font-weight: 600;
   font-size: 0.75rem;
-  color: rgba(15, 23, 42, 0.55);
+  font-family: var(--font-heading);
+  color: var(--lux-accent-strong, #9b8976);
 }
 
 .sport-header h1 {

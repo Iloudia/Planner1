@@ -15,6 +15,15 @@
 .contact-page__header {
   max-width: 742px;
   margin: 0 auto;
+  font-family: "Inter", "Times New Roman", sans-serif;
+}
+
+.contact-page__header .sport-header__eyebrow {
+  color: var(--lux-accent-strong, #9b8976);
+}
+
+.contact-page {
+  font-family: "Inter", "Times New Roman", sans-serif;
 }
 
 .legal-page__header {
@@ -90,9 +99,14 @@
   border-radius: 14px;
   padding: 0.8rem 1rem;
   font-size: 1rem;
-  font-family: inherit;
+  font-family: "Inter", "Times New Roman", sans-serif;
   background: rgba(255, 255, 255, 0.92);
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+.contact-form__body input::placeholder,
+.contact-form__body textarea::placeholder {
+  font-family: "Inter", "Times New Roman", sans-serif;
 }
 
 .contact-form__body textarea {
@@ -143,6 +157,11 @@ body.legal-page--lux .legal-page {
   font-family: "Playfair Display", "Times New Roman", serif;
 }
 
+body.legal-page--lux .contact-page,
+body.legal-page--lux .contact-page__header {
+  font-family: "Inter", "Times New Roman", sans-serif;
+}
+
 body.legal-page--lux .legal-page h1,
 body.legal-page--lux .legal-page h2,
 body.legal-page--lux .legal-page h3 {
@@ -181,6 +200,12 @@ body.legal-page--lux .contact-form__body textarea {
   border: 1px solid var(--lux-line);
   background: var(--lux-paper);
   box-shadow: none;
+  font-family: "Inter", "Times New Roman", sans-serif;
+}
+
+body.legal-page--lux .contact-form__body input::placeholder,
+body.legal-page--lux .contact-form__body textarea::placeholder {
+  font-family: "Inter", "Times New Roman", sans-serif;
 }
 
 body.legal-page--lux .contact-form__submit {
