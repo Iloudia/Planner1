@@ -49,9 +49,9 @@ const siteValues = [
 
 const AboutPage = () => {
   useEffect(() => {
-    document.body.classList.add("calendar-page--beige")
+    document.body.classList.add("about-page--lux")
     return () => {
-      document.body.classList.remove("calendar-page--beige")
+      document.body.classList.remove("about-page--lux")
     }
   }, [])
 

@@ -4,22 +4,22 @@ import "./MentionsLegalesPage.css"
 
 const MentionsLegalesPage = () => {
   useEffect(() => {
-    document.body.classList.add("calendar-page--beige")
+    document.body.classList.add("legal-page--lux")
     return () => {
-      document.body.classList.remove("calendar-page--beige")
+      document.body.classList.remove("legal-page--lux")
     }
   }, [])
 
   return (
   <>
     <div className="legal-page">
-      <PageHeading eyebrow="Mentions légales" title="Mentions légales" />
+      <PageHeading eyebrow="Mentions lï¿½gales" title="Mentions lï¿½gales" />
       <p className="legal-page__intro">
-        Mentions légales complètes, incluant l'éditeur, l'hébergeur, la propriété intellectuelle et les règles d'utilisation du site Planner.
+        Mentions lï¿½gales complï¿½tes, incluant l'ï¿½diteur, l'hï¿½bergeur, la propriï¿½tï¿½ intellectuelle et les rï¿½gles d'utilisation du site Planner.
       </p>
 
       <section className="legal-section">
-        <h2 className="legal-section__title">Éditeur du site</h2>
+        <h2 className="legal-section__title">ï¿½diteur du site</h2>
         <p className="legal-section__text">
           Nom : Vasseur Iloudia
           <br />
@@ -35,36 +35,36 @@ const MentionsLegalesPage = () => {
       </section>
 
       <section className="legal-section">
-        <h2 className="legal-section__title">Hébergement</h2>
+        <h2 className="legal-section__title">Hï¿½bergement</h2>
         <p className="legal-section__text">
-          Le site est hébergé par :
+          Le site est hï¿½bergï¿½ par :
           <br />
-          [Nom de l'hébergeur]
+          [Nom de l'hï¿½bergeur]
           <br />
-          [Adresse de l'hébergeur]
+          [Adresse de l'hï¿½bergeur]
           <br />
-          [Téléphone de l'hébergeur]
+          [Tï¿½lï¿½phone de l'hï¿½bergeur]
         </p>
       </section>
 
       <section className="legal-section">
-        <h2 className="legal-section__title">Propriété intellectuelle</h2>
+        <h2 className="legal-section__title">Propriï¿½tï¿½ intellectuelle</h2>
         <p className="legal-section__text">
-          L'ensemble du contenu présent sur ce site (textes, images, graphismes, logo, structure) est la propriété exclusive de l'éditeur, sauf mention contraire. Toute reproduction, représentation, modification ou adaptation, totale ou partielle, est interdite sans autorisation préalable.
+          L'ensemble du contenu prï¿½sent sur ce site (textes, images, graphismes, logo, structure) est la propriï¿½tï¿½ exclusive de l'ï¿½diteur, sauf mention contraire. Toute reproduction, reprï¿½sentation, modification ou adaptation, totale ou partielle, est interdite sans autorisation prï¿½alable.
         </p>
       </section>
 
       <section className="legal-section">
-        <h2 className="legal-section__title">Responsabilité</h2>
+        <h2 className="legal-section__title">Responsabilitï¿½</h2>
         <p className="legal-section__text">
-          L'éditeur s'efforce de fournir des informations aussi précises que possible. Il ne saurait toutefois être tenu responsable des omissions, inexactitudes ou carences dans la mise à jour du contenu.
+          L'ï¿½diteur s'efforce de fournir des informations aussi prï¿½cises que possible. Il ne saurait toutefois ï¿½tre tenu responsable des omissions, inexactitudes ou carences dans la mise ï¿½ jour du contenu.
         </p>
       </section>
 
       <section className="legal-section">
-        <h2 className="legal-section__title">Données personnelles</h2>
+        <h2 className="legal-section__title">Donnï¿½es personnelles</h2>
         <p className="legal-section__text">
-          Les informations relatives à la collecte et au traitement des données personnelles sont détaillées dans la page Politique de confidentialité. L'utilisation des cookies est expliquée dans la page Gestion des cookies.
+          Les informations relatives ï¿½ la collecte et au traitement des donnï¿½es personnelles sont dï¿½taillï¿½es dans la page Politique de confidentialitï¿½. L'utilisation des cookies est expliquï¿½e dans la page Gestion des cookies.
         </p>
       </section>
     </div>

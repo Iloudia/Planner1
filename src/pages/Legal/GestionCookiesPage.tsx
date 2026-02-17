@@ -7,9 +7,9 @@ const GestionCookiesPage = () => {
   const { acceptAll, rejectAll, openPreferences } = useCookieConsent()
 
   useEffect(() => {
-    document.body.classList.add("calendar-page--beige")
+    document.body.classList.add("legal-page--lux")
     return () => {
-      document.body.classList.remove("calendar-page--beige")
+      document.body.classList.remove("legal-page--lux")
     }
   }, [])
 

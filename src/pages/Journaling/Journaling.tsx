@@ -139,9 +139,9 @@ const limitKeywordWords = (value: string) => {
 const JournalingPage = () => {
   const [, setEntries] = usePersistentState<JournalEntry[]>('planner.journal.entries', () => [])
   useEffect(() => {
-    document.body.classList.add('journaling-page--beige')
+    document.body.classList.add('journaling-page--lux')
     return () => {
-      document.body.classList.remove('journaling-page--beige')
+      document.body.classList.remove('journaling-page--lux')
     }
   }, [])
   const [draft, setDraft] = useState({
@@ -392,4 +392,5 @@ const JournalingPage = () => {
 }
 
 export default JournalingPage
+
 

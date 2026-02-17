@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@400;600;700&display=swap');
+
 .self-love-page {
   display: flex;
   flex-direction: column;
@@ -2484,5 +2486,161 @@
 .self-love-letter-modal__section p {
   margin: 0 0 0.35rem;
   color: rgba(15, 23, 42, 0.7);
+}
+
+/* Luxury overrides (match boutique design) */
+body.self-love-page--lux {
+  background: #f7f3ee;
+  color: #1f1a2f;
+  font-family: 'Libre Baskerville', serif;
+}
+
+body.self-love-page--lux .self-love-page {
+  color: #1f1a2f;
+}
+
+body.self-love-page--lux h1,
+body.self-love-page--lux h2,
+body.self-love-page--lux h3,
+body.self-love-page--lux .self-love-chocolate {
+  color: #1f1a2f;
+  font-family: 'Playfair Display', serif;
+}
+
+body.self-love-page--lux .self-love-section--photos,
+body.self-love-page--lux .self-love-section--qualities,
+body.self-love-page--lux .self-love-section--thoughts,
+body.self-love-page--lux .self-love-section--extras,
+body.self-love-page--lux .self-love-exercise__card,
+body.self-love-page--lux .self-love-list-pad,
+body.self-love-page--lux .self-love-photos-frame,
+body.self-love-page--lux .self-love-archive__calendar,
+body.self-love-page--lux .self-love-archive__detail,
+body.self-love-page--lux .self-love-saved-letters__list li,
+body.self-love-page--lux .self-love-section.self-love-saved-letters.journaling-history,
+body.self-love-page--lux .self-love-card,
+body.self-love-page--lux .self-love-certificate,
+body.self-love-page--lux .self-love-letter__frame {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.self-love-page--lux .self-love-section--certificate {
+  background: transparent;
+}
+
+body.self-love-page--lux .self-love-letter__frame::after,
+body.self-love-page--lux .self-love-photos-frame::after,
+body.self-love-page--lux .self-love-thought::after {
+  display: none;
+}
+
+body.self-love-page--lux .self-love-letter__tabs {
+  background: transparent;
+  border: 1px solid rgba(15, 23, 42, 0.18);
+  border-radius: 0;
+}
+
+body.self-love-page--lux .self-love-letter__tabs button,
+body.self-love-page--lux .self-love-form-row button,
+body.self-love-page--lux .self-love-photo-card button,
+body.self-love-page--lux .self-love-exercise__save,
+body.self-love-page--lux .self-love-letter__save,
+body.self-love-page--lux .self-love-certificate__share,
+body.self-love-page--lux .self-love-certificate__controls button,
+body.self-love-page--lux .self-love-archive__toggle,
+body.self-love-page--lux .self-love-saved-letters__list button,
+body.self-love-page--lux .self-love-list li button {
+  border-radius: 0;
+  background: #1f1a2f;
+  color: #fff;
+  box-shadow: none;
+}
+
+body.self-love-page--lux .self-love-letter__tabs button.is-active {
+  background: #1f1a2f;
+  color: #fff;
+  box-shadow: none;
+}
+
+body.self-love-page--lux .self-love-photo-card__drop {
+  background: #fff;
+  border: 1px solid rgba(15, 23, 42, 0.2);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.self-love-page--lux .self-love-thought {
+  background: #fff;
+  border: 1px solid rgba(15, 23, 42, 0.18);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.self-love-page--lux .self-love-thought em {
+  color: rgba(15, 23, 42, 0.6);
+}
+
+body.self-love-page--lux .self-love-list li {
+  border-bottom: 1px solid rgba(15, 23, 42, 0.12);
+}
+
+body.self-love-page--lux .self-love-list__heart {
+  color: #1f1a2f;
+}
+
+body.self-love-page--lux .self-love-exercise__textarea,
+body.self-love-page--lux .self-love-affirmations__textarea,
+body.self-love-page--lux .self-love-card--journal textarea,
+body.self-love-page--lux .self-love-letter__body textarea,
+body.self-love-page--lux .self-love-letter__addresses input,
+body.self-love-page--lux .self-love-archive__search input,
+body.self-love-page--lux .self-love-archive__filter select,
+body.self-love-page--lux .self-love-archive__sort select,
+body.self-love-page--lux .self-love-form-row input {
+  border-radius: 0;
+  border: 1px solid rgba(15, 23, 42, 0.22);
+  background: #fff;
+  box-shadow: none;
+  color: #1f1a2f;
+}
+
+body.self-love-page--lux .self-love-card--affirmation,
+body.self-love-page--lux .self-love-card--quote,
+body.self-love-page--lux .self-love-card--music,
+body.self-love-page--lux .self-love-card--journal {
+  background: #fff;
+}
+
+body.self-love-page--lux .self-love-letter__stamp,
+body.self-love-page--lux .self-love-letter__stamp img,
+body.self-love-page--lux .self-love-archive__year-card,
+body.self-love-page--lux .self-love-archive__month-card,
+body.self-love-page--lux .self-love-archive__day,
+body.self-love-page--lux .self-love-archive__day-button,
+body.self-love-page--lux .self-love-archive__day-list-item,
+body.self-love-page--lux .journaling-history__year-card,
+body.self-love-page--lux .journaling-history__day-card {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.self-love-page--lux .self-love-letter__stamp {
+  border: 1px solid rgba(15, 23, 42, 0.2);
+  background: #fff;
+}
+
+body.self-love-page--lux .self-love-certificate__share {
+  border: 1px solid rgba(15, 23, 42, 0.85);
+}
+
+body.self-love-page--lux .self-love-certificate__upload {
+  border-radius: 0;
+  background: #fff;
+  border: 1px solid rgba(15, 23, 42, 0.2);
+  box-shadow: none;
+  color: #1f1a2f;
 }
 

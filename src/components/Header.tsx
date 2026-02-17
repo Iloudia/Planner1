@@ -1,7 +1,7 @@
 ﻿import { Link, useNavigate } from "react-router-dom"
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react"
 import { useAuth } from "../context/AuthContext"
-import defaultProfilePhoto from "../assets/katie-huber-rhoades-dupe (1).jpeg"
+import logo from "../assets/Logo.png"
 
 function Header() {
   const { isAuthenticated, isAdmin, logout } = useAuth()
@@ -10,10 +10,11 @@ function Header() {
   const [searchSuggestionsOpen, setSearchSuggestionsOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [profileSrc, setProfileSrc] = useState(() => localStorage.getItem("profile-photo") ?? defaultProfilePhoto)
+  const [isAccountOpen, setIsAccountOpen] = useState(false)
   const searchRef = useRef<HTMLDivElement | null>(null)
   const searchInputRef = useRef<HTMLInputElement | null>(null)
   const menuRef = useRef<HTMLDivElement | null>(null)
+  const accountRef = useRef<HTMLDivElement | null>(null)
   const searchTargets = useMemo(
     () => [
       { label: "A propos de moi", path: "/a-propos" },
@@ -122,89 +123,29 @@ function Header() {
   }, [isMenuOpen])
 
   useEffect(() => {
+    const handleClickOutsideAccount = (event: MouseEvent) => {
+      if (accountRef.current && !accountRef.current.contains(event.target as Node)) {
+        setIsAccountOpen(false)
+      }
+    }
+
+    if (isAccountOpen) {
+      document.addEventListener("mousedown", handleClickOutsideAccount)
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutsideAccount)
+  }, [isAccountOpen])
+
+  useEffect(() => {
     if (isSearchOpen) {
       searchInputRef.current?.focus()
     }
   }, [isSearchOpen])
 
-  useEffect(() => {
-    const handleStorage = () => {
-      setProfileSrc(localStorage.getItem("profile-photo") ?? defaultProfilePhoto)
-    }
-    window.addEventListener("storage", handleStorage)
-    return () => window.removeEventListener("storage", handleStorage)
-  }, [])
-
   return (
     <header className="site-header">
       <div className="site-header__inner">
-        <Link to={isAuthenticated ? "/home" : "/"} className="brand site-header__brand">
-          Me&rituals
-        </Link>
-
-        <nav className="site-header__nav" aria-label="Navigation principale">
-          <Link to={isAuthenticated ? "/home" : "/"} className="site-header__nav-link">
-            Accueil
-          </Link>
-          <Link to="/boutique" className="site-header__nav-link">
-            Boutique
-          </Link>
-          <Link to="/a-propos" className="site-header__nav-link">
-            À propos
-          </Link>
-          <Link to="/contact" className="site-header__nav-link">
-            Contact
-          </Link>
-        </nav>
-
-        <div className="site-header__right">
-          <div className={`nav-search${isSearchOpen ? " nav-search--open" : ""}`} ref={searchRef}>
-            <button className="nav-search__button" aria-label="Ouvrir la recherche" onClick={handleSearchToggle}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="7" />
-                <line x1="16.65" y1="16.65" x2="21" y2="21" />
-              </svg>
-            </button>
-            {isSearchOpen ? (
-              <input
-                ref={searchInputRef}
-                className="nav-search__input"
-                type="search"
-                placeholder="Rechercher"
-                aria-label="Rechercher"
-                value={searchTerm}
-                onChange={handleSearchChange}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") {
-                    event.preventDefault()
-                    handleSearchSubmit()
-                  }
-                }}
-                onFocus={() => {
-                  if (searchTerm.trim()) {
-                    setSearchSuggestionsOpen(true)
-                  }
-                }}
-              />
-            ) : null}
-            {shouldShowSuggestions ? (
-              <ul className="nav-search__suggestions" role="listbox">
-                {filteredSuggestions.map((target) => (
-                  <li key={target.path}>
-                    <button
-                      type="button"
-                      className="nav-search__suggestion"
-                      role="option"
-                      onClick={() => handleSuggestionNavigate(target.path)}
-                    >
-                      {target.label}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-          </div>
-          <div className="header-cta">
+        <div className="site-header__top">
+          <div className="site-header__left">
             <div className="header-menu" ref={menuRef}>
               <button
                 type="button"
@@ -282,7 +223,7 @@ function Header() {
                             setIsMenuOpen(false)
                           }}
                         >
-                          Connexion
+                          Se connecter
                         </button>
                       </li>
                     )}
@@ -290,34 +231,135 @@ function Header() {
                 </div>
               ) : null}
             </div>
+          </div>
+
+          <Link to={isAuthenticated ? "/home" : "/"} className="brand site-header__brand" aria-label="Accueil">
+            <img src={logo} alt="Logo" className="site-header__logo" />
+          </Link>
+
+          <div className="site-header__right">
+            <div className={`nav-search${isSearchOpen ? " nav-search--open" : ""}`} ref={searchRef}>
+              <button className="nav-search__button" aria-label="Ouvrir la recherche" onClick={handleSearchToggle}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="7" />
+                  <line x1="16.65" y1="16.65" x2="21" y2="21" />
+                </svg>
+              </button>
+              {isSearchOpen ? (
+                <input
+                  ref={searchInputRef}
+                  className="nav-search__input"
+                  type="search"
+                  placeholder="Rechercher"
+                  aria-label="Rechercher"
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault()
+                      handleSearchSubmit()
+                    }
+                  }}
+                  onFocus={() => {
+                    if (searchTerm.trim()) {
+                      setSearchSuggestionsOpen(true)
+                    }
+                  }}
+                />
+              ) : null}
+              {shouldShowSuggestions ? (
+                <ul className="nav-search__suggestions" role="listbox">
+                  {filteredSuggestions.map((target) => (
+                    <li key={target.path}>
+                      <button
+                        type="button"
+                        className="nav-search__suggestion"
+                        role="option"
+                        onClick={() => handleSuggestionNavigate(target.path)}
+                      >
+                        {target.label}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+
             {isAuthenticated && isAdmin ? (
               <button className="admin-button" onClick={() => navigate("/admin")}>
                 Back-office
               </button>
             ) : null}
 
-            <div className="header-auth">
-              {!isAuthenticated ? (
-                <button className="auth-button auth-button--login" onClick={() => navigate("/login")}>
-                  Connexion
-                </button>
-              ) : null}
-            </div>
-
-            {isAuthenticated ? (
-              <>
-                <button type="button" className="header-menu__profile" onClick={() => handleNavigate("/profil")}>
-                  <span className="header-menu__avatar">
-                    <img src={profileSrc} alt="Profil" />
+            {!isAuthenticated ? (
+              <button className="auth-button auth-button--login" onClick={() => navigate("/login")}>
+                Se connecter
+              </button>
+            ) : (
+              <div className="account-menu" ref={accountRef}>
+                <button
+                  type="button"
+                  className={`account-menu__toggle${isAccountOpen ? " is-open" : ""}`}
+                  aria-label="Ouvrir le menu du compte"
+                  aria-expanded={isAccountOpen}
+                  aria-controls="account-menu-panel"
+                  onClick={() => setIsAccountOpen((prev) => !prev)}
+                >
+                  <span className="account-menu__icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="8" r="4" />
+                      <path d="M4 20c2.4-4 5.8-6 8-6s5.6 2 8 6" />
+                    </svg>
+                  </span>
+                  <span className="account-menu__caret" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M5.25 7.5L10 12.25L14.75 7.5H5.25Z" />
+                    </svg>
                   </span>
                 </button>
-                <button type="button" className="header-logout" onClick={handleLogout}>
-                  Déconnexion
-                </button>
-              </>
-            ) : null}
+                {isAccountOpen ? (
+                  <div className="account-menu__panel" id="account-menu-panel" role="menu">
+                    <button
+                      type="button"
+                      className="account-menu__item"
+                      onClick={() => {
+                        handleNavigate("/profil")
+                        setIsAccountOpen(false)
+                      }}
+                    >
+                      Gérer le compte
+                    </button>
+                    <button
+                      type="button"
+                      className="account-menu__item account-menu__item--danger"
+                      onClick={async () => {
+                        await handleLogout()
+                        setIsAccountOpen(false)
+                      }}
+                    >
+                      Déconnexion
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+            )}
           </div>
         </div>
+
+        <nav className="site-header__nav" aria-label="Navigation principale">
+          <Link to={isAuthenticated ? "/home" : "/"} className="site-header__nav-link">
+            Accueil
+          </Link>
+          <Link to="/boutique" className="site-header__nav-link">
+            Boutique
+          </Link>
+          <Link to="/a-propos" className="site-header__nav-link">
+            À propos
+          </Link>
+          <Link to="/contact" className="site-header__nav-link">
+            Contact
+          </Link>
+        </nav>
       </div>
     </header>
   )

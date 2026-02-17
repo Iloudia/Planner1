@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@400;600;700&display=swap');
+
 .finance-page {
   display: flex;
   flex-direction: column;
@@ -1418,4 +1420,113 @@
   background: #ffffff;
   border-radius: 28px;
 }
+/* Luxury overrides (match boutique design) */
+body.finance-page--lux {
+  background: #f7f3ee;
+  color: #1f1a2f;
+  font-family: 'Libre Baskerville', serif;
+}
 
+body.finance-page--lux .finance-page {
+  color: #1f1a2f;
+}
+
+body.finance-page--lux h1,
+body.finance-page--lux h2,
+body.finance-page--lux h3,
+body.finance-page--lux .finance-section-chip__title,
+body.finance-page--lux .finance-section-header h2 {
+  color: #1f1a2f;
+  font-family: 'Playfair Display', serif;
+}
+
+body.finance-page--lux .finance-hero,
+body.finance-page--lux .finance-summary-categories.dashboard-panel,
+body.finance-page--lux .finance-form.dashboard-panel,
+body.finance-page--lux .finance-entry.dashboard-panel,
+body.finance-page--lux .finance-tip.dashboard-panel,
+body.finance-page--lux .finance-history.dashboard-panel,
+body.finance-page--lux .finance-balance.dashboard-panel,
+body.finance-page--lux .finance-balance__chart-card,
+body.finance-page--lux .finance-history__item,
+body.finance-page--lux .finance-archive-card,
+body.finance-page--lux .finance-history-modal__panel,
+body.finance-page--lux .finance-trend-chart {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.finance-page--lux .finance-hero {
+  background-image: none;
+}
+
+body.finance-page--lux .finance-hero__stats article,
+body.finance-page--lux .finance-summary__card,
+body.finance-page--lux .finance-balance__stat {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.finance-page--lux .finance-tip.dashboard-panel {
+  background: #ffffff;
+}
+
+body.finance-page--lux .finance-inspiration img {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.finance-page--lux .finance-form__field input,
+body.finance-page--lux .finance-form__field select,
+body.finance-page--lux .finance-form__select-trigger,
+body.finance-page--lux .finance-form__select-menu,
+body.finance-page--lux .finance-balance__field input {
+  border-radius: 0;
+  border: 1px solid rgba(15, 23, 42, 0.2);
+  background: #ffffff;
+  box-shadow: none;
+  color: #1f1a2f;
+}
+
+body.finance-page--lux .finance-form__select-menu {
+  box-shadow: none;
+}
+
+body.finance-page--lux .finance-form__select-menu button {
+  border-radius: 0;
+}
+
+body.finance-page--lux .finance-form__submit,
+body.finance-page--lux .finance-balance__action,
+body.finance-page--lux .finance-history__collapse,
+body.finance-page--lux .finance-history__more,
+body.finance-page--lux .finance-history__delete,
+body.finance-page--lux .finance-archives__year-nav button {
+  border-radius: 0;
+  background: #1f1a2f;
+  color: #ffffff;
+  box-shadow: none;
+  border: 1px solid rgba(15, 23, 42, 0.85);
+}
+
+body.finance-page--lux .finance-history__month-chip,
+body.finance-page--lux .finance-history__category-chip,
+body.finance-page--lux .finance-archive-card__spark,
+body.finance-page--lux .finance-archive-card__drawer {
+  border-radius: 0;
+}
+
+body.finance-page--lux .finance-pie__figure,
+body.finance-page--lux .finance-pie__figure::after,
+body.finance-page--lux .finance-history__indicator {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.finance-page--lux .finance-trend__dot {
+  border-radius: 0;
+}

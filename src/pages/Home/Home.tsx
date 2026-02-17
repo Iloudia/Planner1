@@ -453,9 +453,9 @@ function HomePage() {
   }, [])
 
   useEffect(() => {
-    document.body.classList.add('calendar-page--beige')
+    document.body.classList.add("home-page--lux")
     return () => {
-      document.body.classList.remove('calendar-page--beige')
+      document.body.classList.remove("home-page--lux")
     }
   }, [])
 
@@ -877,7 +877,7 @@ return (
       {/* ? Moodboard (fix) */}
       <section className="home-moodboard">
         <div className="home-moodboard__top">
-          <h2>Moodboard</h2>
+          <h2>Mon moodboard</h2>
           <div className="home-moodboard__top-actions">
             <button type="button" className="home-moodboard__button" onClick={() => moodboardInputRef.current?.click()}>
               Changer l'image
@@ -910,6 +910,8 @@ return (
 }
 
 export default HomePage
+
+
 
 
 

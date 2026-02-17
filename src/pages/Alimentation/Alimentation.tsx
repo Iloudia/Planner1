@@ -62,9 +62,9 @@ const buildDefaultWeeklyPlan = (): WeeklyPlan => {
 function DietPage() {
   const { userEmail } = useAuth()
   useEffect(() => {
-    document.body.classList.add("alimentation-page--beige")
+    document.body.classList.add("alimentation-page--lux")
     return () => {
-      document.body.classList.remove("alimentation-page--beige")
+      document.body.classList.remove("alimentation-page--lux")
     }
   }, [])
   const weeklyRecipesKey = useMemo(() => buildUserScopedKey(userEmail, DIET_WEEKLY_PLAN_RECIPES_KEY), [userEmail])
@@ -108,9 +108,7 @@ function DietPage() {
 
   return (
     <>
-
       <PageHeading eyebrow="Alimentation" title="Cuisine" />
-      <main className="content-page diet-page">
         <section className="page-section diet-crosslink">
           <div>
             <p className="diet-crosslink__label">Besoin d'idées ?</p>
@@ -130,41 +128,39 @@ function DietPage() {
             </div>
             <p className="diet-week__range">{weekRangeLabel}</p>
           </header>
-          <div className="diet-week__group">
-            <div className="diet-week__grid">
-              {weekDays.map((day) => (
-                <article key={day} className="diet-week__card">
-                  <div className="diet-week__card-head">
-                    <span className="diet-week__day">{day}</span>
-                  </div>
-                  {mealSlots.map((slot) => (
-                  <div
-                    key={slot.id}
-                    className={`diet-week__slot${getRecipeForSlot(day, slot.id) ? " has-recipe" : ""}`}
-                  >
-                    <span>
-                      {slot.label}
-                      {getRecipeForSlot(day, slot.id) ? (
-                        <button
-                          type="button"
-                          className="diet-week__recipe-badge"
-                          onClick={() => setSelectedRecipe(getRecipeForSlot(day, slot.id))}
-                        >
-                          Voir recette
-                        </button>
-                      ) : null}
-                    </span>
-                    <input
-                      type="text"
-                      value={weeklyPlan[day][slot.id]}
-                      placeholder={`Ton plat du ${slot.label.toLowerCase()}`}
-                      onChange={(event) => handleMealChange(day, slot.id, event.target.value)}
-                    />
-                  </div>
-                  ))}
-                </article>
-              ))}
-            </div>
+          <div className="diet-week__grid">
+            {weekDays.map((day) => (
+              <article key={day} className="diet-week__card">
+                <div className="diet-week__card-head">
+                  <span className="diet-week__day">{day}</span>
+                </div>
+                {mealSlots.map((slot) => (
+                <div
+                  key={slot.id}
+                  className={`diet-week__slot${getRecipeForSlot(day, slot.id) ? " has-recipe" : ""}`}
+                >
+                  <span>
+                    {slot.label}
+                    {getRecipeForSlot(day, slot.id) ? (
+                      <button
+                        type="button"
+                        className="diet-week__recipe-badge"
+                        onClick={() => setSelectedRecipe(getRecipeForSlot(day, slot.id))}
+                      >
+                        Voir recette
+                      </button>
+                    ) : null}
+                  </span>
+                  <input
+                    type="text"
+                    value={weeklyPlan[day][slot.id]}
+                    placeholder={`Ton plat du ${slot.label.toLowerCase()}`}
+                    onChange={(event) => handleMealChange(day, slot.id, event.target.value)}
+                  />
+                </div>
+                ))}
+              </article>
+            ))}
           </div>
         </section>
 
@@ -257,12 +253,12 @@ function DietPage() {
             </div>
           </div>
         ) : null}
-
-      </main>
-</>
+    </>
   )
 }
 
 export default DietPage
+
+
 
 

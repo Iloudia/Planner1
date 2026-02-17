@@ -1,4 +1,6 @@
-﻿.settings-page {
+﻿@import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@500;600;700&display=swap");
+
+.settings-page {
   background: linear-gradient(135deg, rgba(255, 241, 245, 0.9), rgba(255, 255, 255, 0.9));
   border: 1px solid rgba(236, 72, 153, 0.12);
   border-radius: 28px;
@@ -532,4 +534,115 @@
 .tone-option.is-active {
   border-color: rgba(79, 70, 229, 0.5);
   box-shadow: 0 16px 34px rgba(79, 70, 229, 0.2);
+}
+/* Luxury overrides (match boutique design) */
+body.profile-page--lux {
+  background: #f8f6f1;
+}
+
+body.profile-page--lux .content-page.settings-page {
+  --lux-ink: #1f1b16;
+  --lux-ink-soft: #5b5249;
+  --lux-accent: #b8a99a;
+  --lux-accent-strong: #9b8976;
+  --lux-line: rgba(31, 27, 22, 0.18);
+  --lux-paper: #ffffff;
+  --lux-shadow: 0 12px 30px rgba(31, 27, 22, 0.08);
+  background: transparent;
+  color: var(--lux-ink);
+  font-family: "Libre Baskerville", "Times New Roman", serif;
+  border: 1px solid var(--lux-line);
+  border-radius: 0;
+  box-shadow: var(--lux-shadow);
+}
+
+body.profile-page--lux .content-page.settings-page h1,
+body.profile-page--lux .content-page.settings-page h2,
+body.profile-page--lux .content-page.settings-page h3 {
+  color: var(--lux-ink);
+  font-family: "Playfair Display", "Times New Roman", serif;
+  letter-spacing: 0.02em;
+}
+
+body.profile-page--lux .settings-nav,
+body.profile-page--lux .settings-panel,
+body.profile-page--lux .settings-option,
+body.profile-page--lux .settings-display-group,
+body.profile-page--lux .font-scale-option,
+body.profile-page--lux .tone-option,
+body.profile-page--lux .account-info-list,
+body.profile-page--lux .account-info-edit,
+body.profile-page--lux .account-select__menu,
+body.profile-page--lux .account-danger {
+  background: var(--lux-paper);
+  border: 1px solid var(--lux-line);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.profile-page--lux .settings-nav {
+  box-shadow: none;
+}
+
+body.profile-page--lux .settings-nav button,
+body.profile-page--lux .account-info-actions button,
+body.profile-page--lux .account-danger__choices button,
+body.profile-page--lux .account-danger__submit,
+body.profile-page--lux .account-avatar-actions button,
+body.profile-page--lux .account-info-forgot,
+body.profile-page--lux .account-select__menu button {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.profile-page--lux .settings-nav button {
+  color: var(--lux-ink-soft);
+}
+
+body.profile-page--lux .settings-nav button.is-active {
+  background: #f4efe8;
+  color: var(--lux-ink);
+  box-shadow: none;
+}
+
+body.profile-page--lux .settings-panel__header p,
+body.profile-page--lux .settings-section__intro,
+body.profile-page--lux .settings-option__description,
+body.profile-page--lux .account-info-label,
+body.profile-page--lux .account-info-arrow {
+  color: var(--lux-ink-soft);
+}
+
+body.profile-page--lux .account-info-value,
+body.profile-page--lux .account-info-actions button,
+body.profile-page--lux .account-danger__toggle,
+body.profile-page--lux .account-danger__submit {
+  color: var(--lux-ink);
+}
+
+body.profile-page--lux .account-avatar,
+body.profile-page--lux .account-select__trigger,
+body.profile-page--lux .account-info-edit input,
+body.profile-page--lux .account-danger__label textarea {
+  border-radius: 0;
+  border: 1px solid var(--lux-line);
+  box-shadow: none;
+}
+
+body.profile-page--lux .account-info-actions button,
+body.profile-page--lux .account-danger__submit {
+  background: var(--lux-ink);
+  border: 1px solid var(--lux-ink);
+  color: #ffffff;
+}
+
+body.profile-page--lux .account-info-actions .is-ghost {
+  background: var(--lux-paper);
+  color: var(--lux-ink);
+  border: 1px solid var(--lux-line);
+}
+
+body.profile-page--lux .account-danger__choices button.is-active {
+  background: #f2ede6;
+  color: var(--lux-ink);
 }

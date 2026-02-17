@@ -7,9 +7,9 @@ import "./Goals.css";
 const GoalsPage = () => {
   const [bodyGoals, setBodyGoals] = useState<Array<string | null>>([null, null, null, null]);
   useEffect(() => {
-    document.body.classList.add("goals-page--beige");
+    document.body.classList.add("goals-page--lux");
     return () => {
-      document.body.classList.remove("goals-page--beige");
+      document.body.classList.remove("goals-page--lux");
     };
   }, []);
 
@@ -67,4 +67,5 @@ const GoalsPage = () => {
 };
 
 export default GoalsPage;
+
 

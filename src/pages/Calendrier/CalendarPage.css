@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@500;600;700&display=swap");
+
 .calendar-page {
   display: flex;
   flex-direction: column;
@@ -1517,6 +1519,114 @@
   height: 8px;
   border-radius: 999px;
   background: #ec4899;
+}
+
+/* Luxury overrides (match boutique design) */
+body.calendar-page--lux {
+  background: #f8f6f1;
+  color: #1f1b16;
+  font-family: "Libre Baskerville", "Times New Roman", serif;
+  --lux-ink: #1f1b16;
+  --lux-ink-soft: #5b5249;
+  --lux-line: rgba(31, 27, 22, 0.18);
+  --lux-paper: #ffffff;
+  --lux-accent: #b8a99a;
+  --lux-accent-strong: #9b8976;
+}
+
+body.calendar-page--lux .calendar-page {
+  color: var(--lux-ink);
+}
+
+body.calendar-page--lux h1,
+body.calendar-page--lux h2,
+body.calendar-page--lux h3,
+body.calendar-page--lux h4 {
+  color: var(--lux-ink);
+  font-family: "Playfair Display", "Times New Roman", serif;
+}
+
+body.calendar-page--lux .calendar-hero,
+body.calendar-page--lux .calendar-hero__panel,
+body.calendar-page--lux .calendar-weekly__mini,
+body.calendar-page--lux .calendar-weekly__grid,
+body.calendar-page--lux .calendar-monthly-preview,
+body.calendar-page--lux .calendar-grid,
+body.calendar-page--lux .calendar-day,
+body.calendar-page--lux .calendar-modal__panel,
+body.calendar-page--lux .calendar-task,
+body.calendar-page--lux .calendar-new-task,
+body.calendar-page--lux .calendar-modal__section,
+body.calendar-page--lux .calendar-weekly__side {
+  background: var(--lux-paper);
+  border: 1px solid var(--lux-line);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.calendar-page--lux .calendar-hero {
+  background-image: none;
+}
+
+body.calendar-page--lux .calendar-hero__cta,
+body.calendar-page--lux .calendar-weekly__create,
+body.calendar-page--lux .calendar-task__button,
+body.calendar-page--lux .calendar-day__add,
+body.calendar-page--lux .calendar-view-toggle__button,
+body.calendar-page--lux .calendar-month-nav button {
+  border-radius: 0;
+  background: var(--lux-ink);
+  color: #ffffff;
+  border: 1px solid var(--lux-ink);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  box-shadow: none;
+}
+
+body.calendar-page--lux .calendar-hero__cta--ghost,
+body.calendar-page--lux .calendar-task__button--ghost,
+body.calendar-page--lux .calendar-view-toggle__button {
+  background: #ffffff;
+  color: var(--lux-ink);
+}
+
+body.calendar-page--lux .calendar-view-toggle__button.is-active {
+  background: var(--lux-ink);
+  color: #ffffff;
+}
+
+body.calendar-page--lux .calendar-task__field input,
+body.calendar-page--lux .calendar-task__field select,
+body.calendar-page--lux .calendar-task__field textarea,
+body.calendar-page--lux .calendar-select__trigger {
+  border-radius: 0;
+  border: 1px solid var(--lux-line);
+  background: #ffffff;
+  box-shadow: none;
+  color: var(--lux-ink);
+}
+
+body.calendar-page--lux .calendar-select__menu,
+body.calendar-page--lux .calendar-modal,
+body.calendar-page--lux .calendar-task__form,
+body.calendar-page--lux .calendar-task__actions {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.calendar-page--lux .calendar-day__add,
+body.calendar-page--lux .calendar-task__edit {
+  border-radius: 0;
+}
+
+body.calendar-page--lux .calendar-weekly__day-header,
+body.calendar-page--lux .calendar-grid__weekday,
+body.calendar-page--lux .calendar-day__number,
+body.calendar-page--lux .calendar-month-eyebrow,
+body.calendar-page--lux .calendar-legend__label,
+body.calendar-page--lux .calendar-hero__content p,
+body.calendar-page--lux .calendar-next p {
+  color: var(--lux-ink-soft);
 }
 
 

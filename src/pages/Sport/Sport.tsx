@@ -93,9 +93,9 @@ const legacyDefaults = new Set(["Cardio", "Renforcement", "Yoga", "Fitness", "Mo
 const SportPage = () => {
   const { userEmail } = useAuth()
   useEffect(() => {
-    document.body.classList.add("sport-page--beige")
+    document.body.classList.add("sport-page--lux")
     return () => {
-      document.body.classList.remove("sport-page--beige")
+      document.body.classList.remove("sport-page--lux")
     }
   }, [])
   const [board, setBoard] = usePersistentState<SportBoardDay[]>(SPORT_BOARD_STORAGE_KEY, createDefaultBoard)
@@ -385,4 +385,5 @@ const SportPage = () => {
 }
 
 export default SportPage
+
 

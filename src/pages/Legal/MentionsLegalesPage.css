@@ -1,4 +1,6 @@
-﻿.legal-page {
+﻿@import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@500;600;700&display=swap");
+
+.legal-page {
   max-width: 880px;
   margin: 0 auto;
   padding: clamp(2rem, 4vw, 3rem);
@@ -71,4 +73,80 @@
     padding: clamp(1.6rem, 7vw, 2.2rem);
     gap: 1.6rem;
   }
+}
+/* Luxury overrides (match boutique design) */
+body.legal-page--lux {
+  background: #f8f6f1;
+}
+
+body.legal-page--lux .legal-page {
+  --lux-ink: #1f1b16;
+  --lux-ink-soft: #5b5249;
+  --lux-accent: #b8a99a;
+  --lux-accent-strong: #9b8976;
+  --lux-line: rgba(31, 27, 22, 0.18);
+  --lux-paper: #ffffff;
+  background: var(--lux-paper);
+  border: 1px solid var(--lux-line);
+  border-radius: 0;
+  box-shadow: none;
+  color: var(--lux-ink);
+  font-family: "Libre Baskerville", "Times New Roman", serif;
+}
+
+body.legal-page--lux .legal-page h1,
+body.legal-page--lux .legal-page h2,
+body.legal-page--lux .legal-page h3 {
+  color: var(--lux-ink);
+  font-family: "Playfair Display", "Times New Roman", serif;
+  letter-spacing: 0.02em;
+}
+
+body.legal-page--lux .sport-header__eyebrow {
+  color: var(--lux-accent-strong);
+  letter-spacing: 0.35em;
+}
+
+body.legal-page--lux .legal-page__intro,
+body.legal-page--lux .legal-section__text,
+body.legal-page--lux .legal-list,
+body.legal-page--lux .legal-steps {
+  color: var(--lux-ink-soft);
+}
+
+body.legal-page--lux .legal-section__title,
+body.legal-page--lux .legal-list strong {
+  color: var(--lux-ink);
+}
+
+body.legal-page--lux .legal-link {
+  color: var(--lux-accent-strong);
+}
+
+body.legal-page--lux .legal-link:hover {
+  color: var(--lux-ink);
+}
+
+body.legal-page--lux .legal-page .sport-header {
+  background: var(--lux-paper);
+  border: 1px solid var(--lux-line);
+  box-shadow: none;
+}
+
+body.legal-page--lux .cookie-actions .cookie-banner__action {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.legal-page--lux .cookie-actions .cookie-banner__action--primary {
+  background: var(--lux-ink);
+  border: 1px solid var(--lux-ink);
+  color: #ffffff;
+}
+
+body.legal-page--lux .cookie-actions .cookie-banner__action--outline,
+body.legal-page--lux .cookie-actions .cookie-banner__action--ghost {
+  background: var(--lux-paper);
+  border: 1px solid var(--lux-line);
+  color: var(--lux-ink);
 }

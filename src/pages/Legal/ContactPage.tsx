@@ -4,9 +4,9 @@ import "./ContactPage.css"
 
 const ContactPage = () => {
   useEffect(() => {
-    document.body.classList.add("calendar-page--beige")
+    document.body.classList.add("legal-page--lux")
     return () => {
-      document.body.classList.remove("calendar-page--beige")
+      document.body.classList.remove("legal-page--lux")
     }
   }, [])
 

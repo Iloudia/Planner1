@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@400;600;700&display=swap');
+
 .routine-page {
   display: flex;
   flex-direction: column;
@@ -158,15 +160,21 @@
 
 .routine-note__item {
   margin: 0;
+  padding: 0.9rem 1rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
 }
 
 .routine-note__label {
   display: grid;
   grid-template-columns: auto auto 1fr;
   align-items: start;
+  justify-items: center;
+  text-align: center;
   gap: 1rem;
   color: rgba(15, 23, 42, 0.85);
-  font-size: 0.98rem;
+  font-size: 1.03rem;
   flex: 1;
   min-width: 0;
 }
@@ -208,6 +216,8 @@
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
+  text-align: left;
+  justify-self: stretch;
 }
 
 .routine-note__item-title {
@@ -232,7 +242,8 @@
 .routine-note__row {
   display: flex;
   gap: 0.75rem;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: center;
 }
 
 .routine-note__actions {
@@ -322,6 +333,7 @@
 
 .routine-note__composer-submit {
   align-self: flex-start;
+  margin-right: auto;
   border: none;
   border-radius: 999px;
   padding: 0.55rem 1.4rem;
@@ -407,4 +419,83 @@
     max-height: 320px;
   }
 }
+/* Luxury overrides (match boutique design) */
+body.routine-page--lux {
+  background: #f7f3ee;
+  color: #1f1a2f;
+  font-family: 'Libre Baskerville', serif;
+}
 
+body.routine-page--lux .routine-page {
+  color: #1f1a2f;
+}
+
+body.routine-page--lux h1,
+body.routine-page--lux h2,
+body.routine-page--lux h3 {
+  color: #1f1a2f;
+  font-family: 'Playfair Display', serif;
+}
+
+body.routine-page--lux .routine-note,
+body.routine-page--lux .routine-note__body,
+body.routine-page--lux .routine-note__top,
+body.routine-page--lux .routine-note__composer,
+body.routine-page--lux .routine-note__item,
+body.routine-page--lux .routine-note__list {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.routine-page--lux .routine-note {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+}
+
+body.routine-page--lux .routine-note__title-band {
+  background: transparent;
+  border-bottom: none;
+}
+
+body.routine-page--lux .routine-note__pin,
+body.routine-page--lux .routine-note__pin::before,
+body.routine-page--lux .routine-note__pin::after {
+  display: none;
+}
+
+body.routine-page--lux .routine-note__item {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  padding: 1rem 1.1rem;
+}
+
+body.routine-page--lux .routine-note__checkbox {
+  accent-color: #1f1a2f;
+}
+
+body.routine-page--lux .routine-note__composer input,
+body.routine-page--lux .routine-note__composer textarea {
+  border-radius: 0;
+  border: 1px solid rgba(15, 23, 42, 0.2);
+  background: #ffffff;
+  box-shadow: none;
+  color: #1f1a2f;
+}
+
+body.routine-page--lux .routine-note__composer-submit,
+body.routine-page--lux .routine-note__remove {
+  border-radius: 0;
+  background: #1f1a2f;
+  color: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.85);
+  box-shadow: none;
+}
+
+body.routine-page--lux .routine-note__index {
+  color: #1f1a2f;
+}
+
+body.routine-page--lux .routine-note__item-title,
+body.routine-page--lux .routine-note__item-detail {
+  color: #1f1a2f;
+}

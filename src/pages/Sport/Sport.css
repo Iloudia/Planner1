@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@500;600;700&display=swap");
+
 .sport-page {
   display: flex;
   flex-direction: column;
@@ -39,6 +41,21 @@
   display: flex;
   flex-direction: column;
   gap: 1.8rem;
+  position: relative;
+  z-index: 1;
+  padding: 2rem 0 2.4rem;
+}
+
+.sport-board::before {
+  content: "";
+  position: absolute;
+  top: -1.5rem;
+  bottom: -1.8rem;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  background: #ffffff;
+  z-index: -1;
 }
 
 .sport-board__range {
@@ -508,5 +525,103 @@
   .sport-board__columns {
     grid-template-columns: 1fr;
   }
+}
+
+body.sport-page--lux {
+  background: #f8f6f1;
+}
+
+.sport-page {
+  --lux-ink: #1f1b16;
+  --lux-ink-soft: #5b5249;
+  --lux-accent: #b8a99a;
+  --lux-line: rgba(31, 27, 22, 0.18);
+  background: transparent;
+  font-family: "Libre Baskerville", "Times New Roman", serif;
+  color: var(--lux-ink);
+}
+
+.sport-page h1,
+.sport-page h2,
+.sport-page h3 {
+  font-family: "Playfair Display", "Times New Roman", serif;
+  color: var(--lux-ink);
+}
+
+.sport-section-header h2 {
+  color: var(--lux-ink);
+}
+
+.sport-quick-panel,
+.sport-board__group,
+.sport-board-card,
+.sport-reminders__card,
+.sport-life-card {
+  border-radius: 0;
+  border: 1px solid var(--lux-line);
+  box-shadow: none;
+  background: #ffffff;
+}
+
+.sport-board-card__status,
+.sport-board__range {
+  border-radius: 0;
+  background: #f4efe8;
+  color: var(--lux-ink);
+}
+
+.sport-board-card__status.is-done {
+  background: #f4efe8;
+  color: var(--lux-ink);
+}
+
+.sport-board-card__field input,
+.sport-chip__inline-editor input {
+  border-radius: 0;
+  border: 1px solid var(--lux-line);
+  box-shadow: none;
+}
+
+.sport-chip,
+.sport-chip--remove,
+.sport-chip--add {
+  border-radius: 0;
+  border: 1px solid var(--lux-line);
+  background: #ffffff;
+  color: var(--lux-ink);
+  box-shadow: none;
+}
+
+.sport-chip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(31, 27, 22, 0.12);
+}
+
+.sport-life-card::after {
+  display: none;
+}
+
+.sport-life-card__media,
+.sport-habits__image,
+.sport-hero-image {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.sport-life-card__menu {
+  border-radius: 50%;
+  border: 1px solid var(--lux-line);
+  background: #ffffff;
+  color: var(--lux-ink);
+}
+
+.sport-life-card__menu-popover {
+  border-radius: 0;
+  border: 1px solid var(--lux-line);
+  box-shadow: 0 18px 40px rgba(31, 27, 22, 0.12);
+}
+
+.sport-life-card__menu-item {
+  border-radius: 0;
 }
 

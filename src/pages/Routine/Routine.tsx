@@ -140,9 +140,9 @@ const RoutinePage = () => {
   const completedSet = useMemo(() => new Set<RoutineId>(completedIds), [completedIds])
 
   useEffect(() => {
-    document.body.classList.add('routine-page--beige')
+    document.body.classList.add('routine-page--lux')
     return () => {
-      document.body.classList.remove('routine-page--beige')
+      document.body.classList.remove('routine-page--lux')
     }
   }, [])
 
@@ -266,5 +266,6 @@ const RoutinePage = () => {
 }
 
 export default RoutinePage
+
 
 

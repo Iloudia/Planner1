@@ -126,9 +126,9 @@ const parseTimeToMinutes = (value: string) => {
 const CalendrierPage = () => {
   const { tasks, addTask, updateTask, removeTask } = useTasks()
   useEffect(() => {
-    document.body.classList.add('calendar-page--beige')
+    document.body.classList.add('calendar-page--lux')
     return () => {
-      document.body.classList.remove('calendar-page--beige')
+      document.body.classList.remove('calendar-page--lux')
     }
   }, [])
   const today = new Date()

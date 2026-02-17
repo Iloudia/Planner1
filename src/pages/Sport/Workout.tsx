@@ -186,9 +186,9 @@ const WorkoutPage = () => {
   const muscleMenuRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    document.body.classList.add("workout-page--beige")
+    document.body.classList.add("workout-page--lux")
     return () => {
-      document.body.classList.remove("workout-page--beige")
+      document.body.classList.remove("workout-page--lux")
     }
   }, [])
 
@@ -881,4 +881,5 @@ const WorkoutPage = () => {
 }
 
 export default WorkoutPage
+
 

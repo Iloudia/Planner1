@@ -7,21 +7,6 @@
   background: #f8f0e6;
 }
 
-.diet-hero-image {
-  width: 100%;
-  overflow: hidden;
-  border-radius: 18px;
-  height: var(--hero-visual-height);
-  box-shadow: 0 16px 36px rgba(236, 72, 153, 0.15);
-  margin-bottom: 1.2rem;
-}
-
-.diet-hero-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
 .diet-toggle {
   display: flex;
   gap: 0.75rem;
@@ -56,6 +41,7 @@
   margin: 0;
   color: var(--color-chocolate);
 }
+@import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@500;600;700&display=swap");
 
 .diet-blog h2,
 .diet-blog h3 {
@@ -70,12 +56,6 @@
 .diet-page-heading {
   gap: 1rem;
   padding-bottom: 0.4rem;
-}
-
-.diet-heading__description {
-  margin: 0;
-  color: #4b5563;
-  max-width: 60ch;
 }
 
 .diet-crosslink {
@@ -113,53 +93,6 @@
   align-items: center;
 }
 
-.diet-eyebrow {
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: 0.8rem;
-  color: #be185d;
-  font-weight: 700;
-}
-
-.diet-block {
-  border-top: 1px solid rgba(15, 23, 42, 0.08);
-  padding-top: 0.9rem;
-}
-
-.diet-block header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.diet-block h3 {
-  margin: 0;
-  font-size: 1.1rem;
-}
-
-.diet-block span {
-  font-size: 0.9rem;
-  color: #be123c;
-  font-weight: 600;
-}
-
-.diet-block ul,
-.diet-list {
-  margin: 0;
-  padding-left: 1.1rem;
-  display: grid;
-  gap: 0.3rem;
-  color: #374151;
-}
-
-.diet-note {
-  margin-top: 0.6rem;
-  font-style: italic;
-  color: #7c3aed;
-}
-
 .diet-recipe-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -177,9 +110,7 @@
 }
 
 .diet-recipe-card__overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.6);
+  display: none;
 }
 
 .diet-recipe-card__content {
@@ -461,26 +392,6 @@
 }
 
 @media (max-width: 640px) {
-  
-.diet-hero-image {
-  width: 100%;
-  overflow: hidden;
-  border-radius: 18px;
-  height: var(--hero-visual-height);
-  box-shadow: 0 16px 36px rgba(236, 72, 153, 0.15);
-  margin-bottom: 1.2rem;
-}
-
-.diet-hero-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-.diet-block header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
 
   .diet-recipe-modal__panel {
     border-radius: 22px;
@@ -569,3 +480,94 @@
   cursor: pointer;
   box-shadow: 0 14px 30px rgba(236, 72, 153, 0.25);
 }
+
+body.diet-page--lux {
+  background: #f8f6f1;
+}
+
+.diet-gymgirl-page {
+  --lux-ink: #1f1b16;
+  --lux-ink-soft: #5b5249;
+  --lux-accent: #b8a99a;
+  --lux-line: rgba(31, 27, 22, 0.18);
+  font-family: "Libre Baskerville", "Times New Roman", serif;
+  color: var(--lux-ink);
+  background: transparent;
+}
+
+.diet-gymgirl-page h1,
+.diet-gymgirl-page h2,
+.diet-gymgirl-page h3,
+.diet-gymgirl-page h4 {
+  font-family: "Playfair Display", "Times New Roman", serif;
+  color: var(--lux-ink);
+}
+
+.diet-gymgirl-page .pill,
+.diet-gymgirl-page .pill--diet {
+  border-radius: 0;
+  border: 1px solid var(--lux-line);
+  background: #ffffff;
+  color: var(--lux-ink);
+  box-shadow: none;
+}
+
+.diet-toggle button,
+.diet-info-pill {
+  border-radius: 0;
+  border: 1px solid var(--lux-line);
+  background: #ffffff;
+  color: var(--lux-ink);
+  box-shadow: none;
+}
+
+.diet-recipe-card,
+.diet-recipe-modal__panel,
+.diet-recipe-modal__content,
+.diet-recipe-modal__cover,
+.diet-recipe-modal__body,
+.diet-recipe-form,
+.diet-custom-header,
+.diet-crosslink {
+  border-radius: 0;
+  border: 1px solid var(--lux-line);
+  background: #ffffff;
+  box-shadow: none;
+}
+
+.diet-recipe-card__overlay {
+  display: none;
+}
+
+.diet-recipe-card h3,
+.diet-recipe-card__body h3 {
+  color: var(--lux-ink);
+}
+
+.diet-recipe-modal__actions button,
+.diet-recipe-plan__add,
+.diet-recipe-form__file-button {
+  border-radius: 0;
+  border: 1px solid var(--lux-line);
+  background: var(--lux-ink);
+  color: #ffffff;
+}
+
+.diet-recipe-modal__actions button:first-child {
+  background: #ffffff;
+  color: var(--lux-ink);
+}
+
+.diet-recipe-modal__body input,
+.diet-recipe-modal__body textarea,
+.diet-recipe-form input,
+.diet-recipe-form textarea,
+.diet-recipe-form select,
+.diet-recipe-plan input,
+.diet-recipe-plan select {
+  border-radius: 0;
+  border: 1px solid var(--lux-line);
+  box-shadow: none;
+}
+
+

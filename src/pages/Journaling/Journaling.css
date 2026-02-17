@@ -18,6 +18,8 @@
   --journal-shadow-soft: 0 12px 34px rgba(43, 27, 34, 0.1);
 }
 
+@import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@500;600;700&display=swap");
+
 .journaling-page::before {
   content: none;
 }
@@ -390,6 +392,7 @@
 }
 
 .journaling-save__button {
+  margin-left: auto;
   border: none;
   border-radius: 999px;
   padding: 0.9rem 2.2rem;
@@ -409,6 +412,7 @@
 }
 
 .journaling-save__confirmation {
+  order: -1;
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -742,12 +746,105 @@ body.journaling-modal-open {
 
   .journaling-save {
     flex-direction: column;
-    align-items: stretch;
+    align-items: flex-end;
   }
 
   .journaling-save__button {
-    width: 100%;
+    width: auto;
+    align-self: flex-end;
   }
 }
 
 
+
+body.journaling-page--lux {
+  background: #f8f6f1;
+}
+
+.journaling-page {
+  --lux-ink: #1f1b16;
+  --lux-ink-soft: #5b5249;
+  --lux-accent: #b8a99a;
+  --lux-line: rgba(31, 27, 22, 0.18);
+  background: transparent;
+  font-family: "Libre Baskerville", "Times New Roman", serif;
+  color: var(--lux-ink);
+  --journal-bg: #ffffff;
+  --journal-panel: #ffffff;
+  --journal-panel-soft: #ffffff;
+  --journal-accent: #1f1b16;
+  --journal-accent-2: #1f1b16;
+  --journal-accent-soft: #f4efe8;
+  --journal-border: var(--lux-line);
+  --journal-shadow: none;
+  --journal-shadow-soft: none;
+}
+
+.journaling-page h1,
+.journaling-page h2,
+.journaling-page h3,
+.journaling-page h4 {
+  font-family: "Playfair Display", "Times New Roman", serif;
+  color: var(--lux-ink);
+}
+
+.journaling-section,
+.journaling-checkin__block,
+.journaling-question__card,
+.journaling-closure__block,
+.journaling-premium__card,
+.journaling-modal__panel,
+.journaling-modal__body,
+.journaling-modal__footer {
+  border-radius: 0;
+  border: 1px solid var(--lux-line);
+  box-shadow: none;
+  background: #ffffff;
+}
+
+.journaling-section::after {
+  display: none;
+}
+
+.journaling-checkin__date,
+.journaling-tag,
+.journaling-toggle__label,
+.journaling-save__confirmation,
+.journaling-save__button,
+.journaling-choice__content {
+  border-radius: 0;
+  border: 1px solid var(--lux-line);
+  background: #ffffff;
+  color: var(--lux-ink);
+  box-shadow: none;
+}
+
+.journaling-choice__dot {
+  background: var(--lux-ink);
+}
+
+.journaling-input,
+.journaling-section textarea,
+.journaling-question__answer textarea {
+  border-radius: 0;
+  border: 1px solid var(--lux-line);
+  box-shadow: none;
+  background: #ffffff;
+}
+
+.journaling-choice input:checked + .journaling-choice__content,
+.journaling-toggle input:checked + .journaling-toggle__label {
+  background: #f4efe8;
+  border-color: var(--lux-line);
+  color: var(--lux-ink);
+}
+
+.journaling-save__button {
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.8rem;
+}
+
+.journaling-modal__backdrop {
+  backdrop-filter: blur(2px);
+}

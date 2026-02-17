@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@400;600;700&display=swap');
+
 .diet-hero-photo {
   padding: 2rem clamp(1rem, 3vw, 2rem);
   border-radius: 28px;
@@ -111,6 +113,7 @@
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
+  margin-top: 1.5rem;
 }
 
 .diet-week__card {
@@ -134,6 +137,10 @@
 
 .diet-week__day {
   color: var(--color-chocolate);
+  background: #f4efe8;
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--line);
 }
 
 .diet-week__slot {
@@ -504,4 +511,116 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
+/* Luxury overrides (match boutique design, keep colors) */
+body.alimentation-page--lux {
+  background: #f8f6f1;
+  color: #1f1b16;
+  font-family: 'Libre Baskerville', serif;
+  --lux-ink: #1f1b16;
+  --lux-ink-soft: #5b5249;
+  --lux-line: rgba(31, 27, 22, 0.18);
+  --lux-paper: #ffffff;
+  --lux-accent: #b8a99a;
+  --lux-accent-strong: #9b8976;
+}
 
+body.alimentation-page--lux .content-page.diet-page {
+  background: transparent;
+}
+
+body.alimentation-page--lux .page-section {
+  background: var(--lux-paper);
+  border: 1px solid var(--lux-line);
+  color: var(--lux-ink);
+}
+
+body.alimentation-page--lux h1,
+body.alimentation-page--lux h2,
+body.alimentation-page--lux h3,
+body.alimentation-page--lux h4 {
+  color: var(--lux-ink);
+  font-family: 'Playfair Display', serif;
+}
+
+body.alimentation-page--lux .page-section,
+body.alimentation-page--lux .diet-week__card,
+body.alimentation-page--lux .diet-shopping__panel,
+body.alimentation-page--lux .diet-ideas,
+body.alimentation-page--lux .diet-plan-modal__panel,
+body.alimentation-page--lux .diet-plan-modal__cover,
+body.alimentation-page--lux .diet-plan-modal__content {
+  border: 1px solid var(--lux-line);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.alimentation-page--lux .diet-crosslink,
+body.alimentation-page--lux .diet-shopping__panel,
+body.alimentation-page--lux .diet-ideas {
+  background: var(--lux-paper);
+}
+
+body.alimentation-page--lux .diet-crosslink__label {
+  color: var(--lux-accent-strong);
+}
+
+body.alimentation-page--lux .diet-week__group {
+  background: var(--lux-paper);
+  border: 1px solid var(--lux-line);
+  border-radius: 0;
+}
+
+body.alimentation-page--lux .diet-week__range {
+  background: transparent;
+  border: 1px solid var(--lux-line);
+  color: var(--lux-ink);
+}
+
+body.alimentation-page--lux .diet-week__card {
+  background: var(--lux-paper);
+}
+
+body.alimentation-page--lux .diet-week__slot input,
+body.alimentation-page--lux textarea {
+  border: 1px solid var(--lux-line);
+  background: #ffffff;
+  color: var(--lux-ink);
+  box-shadow: none;
+}
+
+body.alimentation-page--lux .diet-week__slot input:focus,
+body.alimentation-page--lux textarea:focus {
+  border-color: var(--lux-ink);
+  box-shadow: none;
+}
+
+body.alimentation-page--lux .diet-week__recipe-badge,
+body.alimentation-page--lux .diet-plan-modal__close,
+body.alimentation-page--lux .pill,
+body.alimentation-page--lux button {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.alimentation-page--lux .pill,
+body.alimentation-page--lux .diet-week__recipe-badge,
+body.alimentation-page--lux .diet-plan-modal__close,
+body.alimentation-page--lux .diet-shopping__input button {
+  background: #f472b6;
+  color: #ffffff;
+  border: 1px solid #f472b6;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+body.alimentation-page--lux .pill--diet {
+  background: #000000;
+  border-color: #000000;
+  color: #ffffff;
+}
+
+body.alimentation-page--lux input,
+body.alimentation-page--lux textarea {
+  border-radius: 0;
+  box-shadow: none;
+}

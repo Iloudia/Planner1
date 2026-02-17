@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@500;600;700&display=swap");
+
 .faq-wrapper {
   --faq-card-size: clamp(420px, 48vw, 760px);
   max-width: min(100%, 1600px);
@@ -161,4 +163,86 @@
     width: 100%;
     aspect-ratio: auto;
   }
+}
+
+/* Luxury overrides (match boutique design) */
+body.faq-page--lux {
+  background: #f8f6f1;
+}
+
+body.faq-page--lux .faq-wrapper {
+  --lux-ink: #1f1b16;
+  --lux-ink-soft: #5b5249;
+  --lux-accent: #b8a99a;
+  --lux-accent-strong: #9b8976;
+  --lux-line: rgba(31, 27, 22, 0.18);
+  --lux-paper: #ffffff;
+  color: var(--lux-ink);
+  font-family: "Libre Baskerville", "Times New Roman", serif;
+}
+
+body.faq-page--lux .faq-wrapper h1,
+body.faq-page--lux .faq-wrapper h2,
+body.faq-page--lux .faq-wrapper h3 {
+  color: var(--lux-ink);
+  font-family: "Playfair Display", "Times New Roman", serif;
+  letter-spacing: 0.02em;
+}
+
+body.faq-page--lux .sport-header__eyebrow {
+  color: var(--lux-accent-strong);
+  letter-spacing: 0.35em;
+}
+
+body.faq-page--lux .legal-page {
+  background: var(--lux-paper);
+  border: 1px solid var(--lux-line);
+  border-radius: 0;
+  box-shadow: none;
+  color: var(--lux-ink);
+}
+
+body.faq-page--lux .legal-page__intro {
+  color: var(--lux-ink-soft);
+}
+
+body.faq-page--lux .faq-floating-figure {
+  border-radius: 0;
+  box-shadow: none;
+  border: 1px solid var(--lux-line);
+}
+
+body.faq-page--lux .faq-floating-figure img {
+  border-radius: 0;
+}
+
+body.faq-page--lux .faq-item {
+  border-radius: 0;
+  background: var(--lux-paper);
+  border: 1px solid var(--lux-line);
+  box-shadow: none;
+}
+
+body.faq-page--lux .faq-item.is-open {
+  border-color: var(--lux-ink);
+  box-shadow: none;
+}
+
+body.faq-page--lux .faq-item__header {
+  background: var(--lux-paper);
+  color: var(--lux-ink);
+}
+
+body.faq-page--lux .faq-item__icon {
+  border-radius: 0;
+  background: #f2ede6;
+  color: var(--lux-ink);
+}
+
+body.faq-page--lux .faq-item__body {
+  background: var(--lux-paper);
+}
+
+body.faq-page--lux .faq-item__body p {
+  color: var(--lux-ink-soft);
 }

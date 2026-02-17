@@ -170,6 +170,13 @@ const ProfilePage = () => {
   }, [displayPrefs, displayPrefsKey])
 
   useEffect(() => {
+    document.body.classList.add("profile-page--lux")
+    return () => {
+      document.body.classList.remove("profile-page--lux")
+    }
+  }, [])
+
+  useEffect(() => {
     document.documentElement.style.setProperty("--user-font-scale", displayPrefs.fontScale.toString())
     document.documentElement.dataset.backgroundTone = displayPrefs.backgroundTone
     document.documentElement.dataset.theme = displayPrefs.themeTone

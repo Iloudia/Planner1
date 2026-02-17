@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@500;600;700&display=swap");
+
 .goals-page {
   --page-accent: #7ae0ff;
   --page-glow: rgba(122, 224, 255, 0.12);
@@ -114,4 +116,47 @@
   font-weight: 600;
   cursor: pointer;
   box-shadow: 0 8px 16px rgba(15, 23, 42, 0.18);
+}
+
+body.goals-page--lux {
+  background: #f8f6f1;
+}
+
+.goals-page {
+  --lux-ink: #1f1b16;
+  --lux-ink-soft: #5b5249;
+  --lux-accent: #b8a99a;
+  --lux-line: rgba(31, 27, 22, 0.18);
+  font-family: "Libre Baskerville", "Times New Roman", serif;
+  color: var(--lux-ink);
+  background: transparent;
+}
+
+.goals-page h1,
+.goals-page h2,
+.goals-page h3 {
+  font-family: "Playfair Display", "Times New Roman", serif;
+  color: var(--lux-ink);
+}
+
+.content-page.goals-page {
+  border-radius: 0;
+  border: 1px solid var(--lux-line);
+  box-shadow: none;
+  background: #ffffff;
+}
+
+.body-goal-slot,
+.body-goal-slot__upload,
+.body-goal-slot__action {
+  border-radius: 0;
+  border: 1px solid var(--lux-line);
+  box-shadow: none;
+  background: #ffffff;
+  color: var(--lux-ink);
+}
+
+.body-goals__header p,
+.goals-page .muted {
+  color: var(--lux-ink-soft);
 }

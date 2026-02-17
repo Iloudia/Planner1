@@ -268,9 +268,9 @@ const SelfLovePage = () => {
   const exerciseSaveConfirmationTimeout = useRef<number | null>(null)
   const safeState = useMemo(() => normalizeState(state), [state])
   useEffect(() => {
-    document.body.classList.add('self-love-page--gradient')
+    document.body.classList.add('self-love-page--lux')
     return () => {
-      document.body.classList.remove('self-love-page--gradient')
+      document.body.classList.remove('self-love-page--lux')
       if (letterSaveConfirmationTimeout.current !== null) {
         window.clearTimeout(letterSaveConfirmationTimeout.current)
       }
@@ -859,4 +859,5 @@ const SelfLovePage = () => {
   )
 }
 export default SelfLovePage
+
 

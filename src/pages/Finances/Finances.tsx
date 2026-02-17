@@ -368,9 +368,9 @@ const FinancePage = () => {
   const [isHistoryModalOpen, setHistoryModalOpen] = useState(false)
 
   useEffect(() => {
-    document.body.classList.add('finance-page--beige')
+    document.body.classList.add('finance-page--lux')
     return () => {
-      document.body.classList.remove('finance-page--beige')
+      document.body.classList.remove('finance-page--lux')
     }
   }, [])
 
@@ -1289,4 +1289,5 @@ const FinanceTrendChart = ({ series }: FinanceTrendChartProps) => {
     </div>
   )
 }
+
 

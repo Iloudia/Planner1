@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@500;600;700&display=swap");
+
 .about-page {
   padding: clamp(1rem, 2.2vw, 1.8rem) 0;
 }
@@ -115,12 +117,12 @@
 }
 
 .value-block {
-  padding: clamp(1.1rem, 1.8vw, 1.6rem);
+  padding: clamp(0.7rem, 1.1vw, 1.05rem);
   text-align: left;
   color: var(--color-chocolate);
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.45rem;
   background: transparent;
   border-radius: 0;
   box-shadow: none;
@@ -136,15 +138,15 @@
 }
 
 .value-block h3 {
-  font-size: clamp(1.4rem, 0.8vw + 1rem, 1.75rem);
-  margin: 0 0 0.75rem;
+  font-size: clamp(1.05rem, 0.6vw + 0.9rem, 1.4rem);
+  margin: 0 0 0.5rem;
   letter-spacing: 0.02em;
   color: var(--color-chocolate);
 }
 
 .value-block p {
   margin: 0;
-  font-size: clamp(1rem, 0.35vw + 0.95rem, 1.1rem);
+  font-size: clamp(0.88rem, 0.2vw + 0.86rem, 0.98rem);
   line-height: 1.6;
   color: var(--color-chocolate);
 }
@@ -169,6 +171,65 @@
 .about-shell > .sport-header {
   width: 100%;
   margin: 0;
+}
+
+/* Luxury overrides (match boutique design) */
+body.about-page--lux {
+  background: #f8f6f1;
+}
+
+body.about-page--lux .about-page {
+  --lux-ink: #1f1b16;
+  --lux-ink-soft: #5b5249;
+  --lux-accent: #b8a99a;
+  --lux-accent-strong: #9b8976;
+  --lux-line: rgba(31, 27, 22, 0.18);
+  --lux-paper: #ffffff;
+  color: var(--lux-ink);
+  font-family: "Libre Baskerville", "Times New Roman", serif;
+}
+
+body.about-page--lux .about-page h1,
+body.about-page--lux .about-page h2,
+body.about-page--lux .about-page h3 {
+  color: var(--lux-ink);
+  font-family: "Playfair Display", "Times New Roman", serif;
+  letter-spacing: 0.02em;
+}
+
+body.about-page--lux .sport-header__eyebrow {
+  color: var(--lux-accent-strong);
+  letter-spacing: 0.35em;
+}
+
+body.about-page--lux .about-article,
+body.about-page--lux .about-article p,
+body.about-page--lux .value-block p {
+  color: var(--lux-ink-soft);
+}
+
+body.about-page--lux .about-article h2,
+body.about-page--lux .value-block h3,
+body.about-page--lux .values-intro {
+  color: var(--lux-ink);
+  font-family: "Playfair Display", "Times New Roman", serif;
+}
+
+body.about-page--lux .about-story-block__content,
+body.about-page--lux .value-block {
+  background: var(--lux-paper);
+  border: 1px solid var(--lux-line);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.about-page--lux .about-story-block--reverse .about-story-block__content {
+  background: #f4efe8;
+}
+
+body.about-page--lux .about-story-block__media img,
+body.about-page--lux .value-block img {
+  border-radius: 0;
 }
 
 

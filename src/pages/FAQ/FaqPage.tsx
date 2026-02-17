@@ -35,9 +35,9 @@ const FAQPage = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   useEffect(() => {
-    document.body.classList.add("calendar-page--beige")
+    document.body.classList.add("faq-page--lux")
     return () => {
-      document.body.classList.remove("calendar-page--beige")
+      document.body.classList.remove("faq-page--lux")
     }
   }, [])
 

@@ -1042,9 +1042,9 @@ const buildDefaultWeeklyPlan = (): WeeklyPlan => {
 const DietClassicPage = () => {
   const { userEmail } = useAuth()
   useEffect(() => {
-    document.body.classList.add("diet-page--beige")
+    document.body.classList.add("diet-page--lux")
     return () => {
-      document.body.classList.remove("diet-page--beige")
+      document.body.classList.remove("diet-page--lux")
     }
   }, [])
   const favoritesKey = useMemo(() => buildUserScopedKey(userEmail, RECIPE_FAVORITES_KEY), [userEmail])
@@ -1685,6 +1685,9 @@ const DietClassicPage = () => {
 }
 
 export default DietClassicPage
+
+
+
 
 
 

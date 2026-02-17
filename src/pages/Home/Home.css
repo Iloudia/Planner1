@@ -76,6 +76,8 @@
 
 .home-moodboard__top h2 {
   color: var(--color-chocolate);
+  font-size: 1.9rem;
+  white-space: nowrap;
 }
 
 .home-moodboard__button {
@@ -814,3 +816,187 @@
   }
 }
 
+body.home-page--lux {
+  background: #f8f6f1;
+}
+
+.page.home-page {
+  --lux-ink: #1f1b16;
+  --lux-ink-soft: #5b5249;
+  --lux-accent: #b8a99a;
+  --lux-line: rgba(31, 27, 22, 0.18);
+  font-family: "Libre Baskerville", "Times New Roman", serif;
+  color: var(--lux-ink);
+}
+
+.page.home-page::before,
+.page.home-page::after {
+  content: none;
+}
+
+.page.home-page h1,
+.page.home-page h2,
+.page.home-page h3,
+.page.home-page h4 {
+  font-family: "Playfair Display", "Times New Roman", serif;
+  color: var(--lux-ink);
+}
+
+.page.home-page .aside-right,
+.page.home-page .board,
+.page.home-page .aside-left {
+  background: #ffffff;
+  border: 1px solid var(--lux-line);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.page.home-page .today {
+  background: #ffffff;
+  border: 1px solid var(--lux-line);
+  border-radius: 0;
+  color: var(--lux-ink-soft);
+  box-shadow: none;
+}
+
+.page.home-page .home-hero-strip h1 {
+  color: var(--lux-ink);
+  letter-spacing: 0.02em;
+}
+
+.page.home-page .card-grid {
+  gap: 18px;
+}
+
+.page.home-page .card {
+  border: 1px solid var(--lux-line);
+  border-radius: 0;
+  box-shadow: none;
+  background: #ffffff;
+}
+
+.page.home-page .card::after {
+  display: none;
+}
+
+.page.home-page .card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(31, 27, 22, 0.4);
+  box-shadow: 0 12px 26px rgba(31, 27, 22, 0.12);
+}
+
+.page.home-page .card img {
+  height: 130px;
+}
+
+.page.home-page .card-grid .card:nth-child(-n+3) {
+  box-shadow: none;
+  border-color: var(--lux-line);
+}
+
+.page.home-page .card-grid .card:nth-child(-n+3) img {
+  height: 170px;
+}
+
+.page.home-page .card-grid .card:nth-child(-n+3) .card-body {
+  padding: 16px 16px 18px;
+  background: #ffffff;
+}
+
+.page.home-page .card h3 {
+  color: var(--lux-ink);
+}
+
+.page.home-page .card-title-input {
+  border-radius: 0;
+  border: 1px solid var(--lux-line);
+  font-family: "Libre Baskerville", "Times New Roman", serif;
+}
+
+.page.home-page .card-menu {
+  border-radius: 0;
+  background: #ffffff;
+  border: 1px solid var(--lux-line);
+  color: var(--lux-ink);
+}
+
+.page.home-page .profile-menu {
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid var(--lux-line);
+  color: var(--lux-ink);
+}
+
+.page.home-page .card-menu:hover {
+  border-color: rgba(31, 27, 22, 0.4);
+  box-shadow: 0 12px 24px rgba(31, 27, 22, 0.12);
+}
+
+.page.home-page .profile-photo {
+  border-radius: 0;
+  border: 1px solid var(--lux-line);
+  box-shadow: none;
+}
+
+.page.home-page .profile-welcome {
+  color: var(--lux-ink);
+}
+
+.page.home-page .notes,
+.page.home-page .progress-panel {
+  border-radius: 0;
+  border: 1px solid var(--lux-line);
+  background: #ffffff;
+  box-shadow: none;
+}
+
+.page.home-page .todo-input input,
+.page.home-page .todo-item,
+.page.home-page .task-card {
+  border-radius: 0;
+  border: 1px solid var(--lux-line);
+  box-shadow: none;
+  background: #ffffff;
+}
+
+.page.home-page .todo-add {
+  border-radius: 0;
+  background: #f472b6;
+  color: #ffffff;
+}
+
+.page.home-page .task-time-chip {
+  border-radius: 0;
+  background: #f4efe8;
+  color: var(--lux-ink);
+}
+
+.page.home-page .home-moodboard {
+  border-radius: 0;
+  border: 1px solid var(--lux-line);
+  background: #ffffff;
+  box-shadow: none;
+}
+
+.page.home-page .home-moodboard::before {
+  content: none;
+}
+
+.page.home-page .home-moodboard img {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.page.home-page .home-moodboard__button,
+.page.home-page .home-moodboard__reset,
+.page.home-page .profile-reset {
+  border-radius: 0;
+  border: 1px solid var(--lux-line);
+  background: #ffffff;
+  color: var(--lux-ink);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.7rem;
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@500;600;700&display=swap");
