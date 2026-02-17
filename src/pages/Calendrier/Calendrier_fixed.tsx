@@ -515,31 +515,30 @@ const CalendrierPage = () => {
             </section>
 
 
-            <div className="calendar-view-toggle" role="tablist" aria-label="Vue calendrier">
-                <button
-                    type="button"
-                    role="tab"
-                    aria-selected={calendarView === 'weekly'}
-                    className={`calendar-view-toggle__button${calendarView === 'weekly' ? ' is-active' : ''}`}
-                    onClick={() => setCalendarView('weekly')}
-                >
-                    Hebdomadaire
-                </button>
-                <button
-                    type="button"
-                    role="tab"
-                    aria-selected={calendarView === 'monthly'}
-                    className={`calendar-view-toggle__button${calendarView === 'monthly' ? ' is-active' : ''}`}
-                    onClick={() => setCalendarView('monthly')}
-                >
-                    Mensuel
-                </button>
-            </div>
-
             {calendarView === 'weekly' ? (
                 <section className="calendar-weekly">
                     <header className="calendar-weekly__header">
                         <PageHeading eyebrow="calendrier hebdomadaire" title={`Semaine du ${weekRangeLabel}`} />
+                        <div className="calendar-view-toggle" role="tablist" aria-label="Vue calendrier">
+                            <button
+                                type="button"
+                                role="tab"
+                                aria-selected={calendarView === 'weekly'}
+                                className={`calendar-view-toggle__button${calendarView === 'weekly' ? ' is-active' : ''}`}
+                                onClick={() => setCalendarView('weekly')}
+                            >
+                                Hebdomadaire
+                            </button>
+                            <button
+                                type="button"
+                                role="tab"
+                                aria-selected={calendarView === 'monthly'}
+                                className={`calendar-view-toggle__button${calendarView === 'monthly' ? ' is-active' : ''}`}
+                                onClick={() => setCalendarView('monthly')}
+                            >
+                                Mensuel
+                            </button>
+                        </div>
                     </header>
                     <div className="calendar-weekly__layout">
                         <div className="calendar-weekly__side">
@@ -701,13 +700,35 @@ const CalendrierPage = () => {
                 <section className="calendar-monthly-preview">
                     <header className="calendar-header calendar-header--compact">
                         <PageHeading eyebrow="apercu mensuel" title={formatMonthTitle(currentMonthDate)} />
-                        <div className="calendar-month-nav">
-                            <button type="button" onClick={() => handleMonthChange(-1)} aria-label="Mois precedent">
-                                &lt;
-                            </button>
-                            <button type="button" onClick={() => handleMonthChange(1)} aria-label="Mois suivant">
-                                &gt;
-                            </button>
+                        <div className="calendar-monthly__controls">
+                            <div className="calendar-view-toggle" role="tablist" aria-label="Vue calendrier">
+                                <button
+                                    type="button"
+                                    role="tab"
+                                    aria-selected={calendarView === 'weekly'}
+                                    className={`calendar-view-toggle__button${calendarView === 'weekly' ? ' is-active' : ''}`}
+                                    onClick={() => setCalendarView('weekly')}
+                                >
+                                    Hebdomadaire
+                                </button>
+                                <button
+                                    type="button"
+                                    role="tab"
+                                    aria-selected={calendarView === 'monthly'}
+                                    className={`calendar-view-toggle__button${calendarView === 'monthly' ? ' is-active' : ''}`}
+                                    onClick={() => setCalendarView('monthly')}
+                                >
+                                    Mensuel
+                                </button>
+                            </div>
+                            <div className="calendar-month-nav">
+                                <button type="button" onClick={() => handleMonthChange(-1)} aria-label="Mois precedent">
+                                    &lt;
+                                </button>
+                                <button type="button" onClick={() => handleMonthChange(1)} aria-label="Mois suivant">
+                                    &gt;
+                                </button>
+                            </div>
                         </div>
                     </header>
 
@@ -1015,6 +1036,8 @@ const CalendrierPage = () => {
 }
 
 export default CalendrierPage
+
+
 
 
 

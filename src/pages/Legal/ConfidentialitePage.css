@@ -1,4 +1,4 @@
-﻿@import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@500;600;700&display=swap");
 
 .legal-page {
   max-width: 880px;
@@ -88,7 +88,7 @@ body.legal-page--lux .legal-page {
   border-radius: 0;
   box-shadow: none;
   color: var(--lux-ink);
-  font-family: "Libre Baskerville", "Times New Roman", serif;
+  font-family: "Playfair Display", "Times New Roman", serif;
 }
 
 body.legal-page--lux .legal-page h1,
@@ -147,3 +147,4 @@ body.legal-page--lux .cookie-actions .cookie-banner__action--ghost {
   border: 1px solid var(--lux-line);
   color: var(--lux-ink);
 }
+

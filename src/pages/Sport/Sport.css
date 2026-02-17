@@ -537,7 +537,7 @@ body.sport-page--lux {
   --lux-accent: #b8a99a;
   --lux-line: rgba(31, 27, 22, 0.18);
   background: transparent;
-  font-family: "Libre Baskerville", "Times New Roman", serif;
+  font-family: "Playfair Display", "Times New Roman", serif;
   color: var(--lux-ink);
 }
 
@@ -624,4 +624,5 @@ body.sport-page--lux {
 .sport-life-card__menu-item {
   border-radius: 0;
 }
+
 

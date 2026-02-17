@@ -127,7 +127,7 @@ body.goals-page--lux {
   --lux-ink-soft: #5b5249;
   --lux-accent: #b8a99a;
   --lux-line: rgba(31, 27, 22, 0.18);
-  font-family: "Libre Baskerville", "Times New Roman", serif;
+  font-family: "Playfair Display", "Times New Roman", serif;
   color: var(--lux-ink);
   background: transparent;
 }
@@ -160,3 +160,4 @@ body.goals-page--lux {
 .goals-page .muted {
   color: var(--lux-ink-soft);
 }
+

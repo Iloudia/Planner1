@@ -561,9 +561,8 @@ return (
 {calendarView === 'weekly' ? (
     <section className="calendar-weekly">
       <header className="calendar-weekly__header">
-        <PageHeading eyebrow="calendrier hebdomadaire" title={`Semaine du ${weekRangeLabel}`}>
-          {viewToggle}
-        </PageHeading>
+        <PageHeading eyebrow="calendrier hebdomadaire" title={`Semaine du ${weekRangeLabel}`} />
+        {viewToggle}
       </header>
       <div className="calendar-weekly__layout">
         <div className="calendar-weekly__toolbar">
@@ -679,18 +678,19 @@ return (
     {calendarView === 'monthly' ? (
     <section className="calendar-monthly-preview">
       <header className="calendar-header calendar-header--compact">
-        <PageHeading eyebrow="aperçu mensuel" title={formatMonthTitle(currentMonthDate)}>
+        <PageHeading eyebrow="aperçu mensuel" title={formatMonthTitle(currentMonthDate)} />
+        <div className="calendar-monthly__controls">
           {viewToggle}
-        </PageHeading>
+          <div className="calendar-month-nav">
+            <button type="button" onClick={() => handleMonthChange(-1)} aria-label="Mois précédent">
+              &lt;
+            </button>
+            <button type="button" onClick={() => handleMonthChange(1)} aria-label="Mois suivant">
+              &gt;
+            </button>
+          </div>
+        </div>
       </header>
-      <div className="calendar-month-nav">
-        <button type="button" onClick={() => handleMonthChange(-1)} aria-label="Mois précédent">
-          &lt;
-        </button>
-        <button type="button" onClick={() => handleMonthChange(1)} aria-label="Mois suivant">
-          &gt;
-        </button>
-      </div>
 <div className="calendar-grid calendar-grid--preview">
         {weekDays.map((label) => (
           <div key={label} className="calendar-grid__weekday">
@@ -1036,6 +1036,8 @@ return (
 }
 
 export default CalendrierPage
+
+
 
 
 

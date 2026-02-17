@@ -184,7 +184,7 @@ body.about-page--lux .about-page {
   --lux-line: rgba(31, 27, 22, 0.18);
   --lux-paper: #ffffff;
   color: var(--lux-ink);
-  font-family: "Libre Baskerville", "Times New Roman", serif;
+  font-family: "Playfair Display", "Times New Roman", serif;
 }
 
 body.about-page--lux .about-page h1,
@@ -225,6 +225,7 @@ body.about-page--lux .about-feature__media img,
 body.about-page--lux .value-block img {
   border-radius: 0;
 }
+
 
 
 

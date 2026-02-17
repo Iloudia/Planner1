@@ -1630,7 +1630,7 @@
 body.wishlist-page--lux {
   background: #f8f6f1;
   color: #1f1b16;
-  font-family: "Libre Baskerville", "Times New Roman", serif;
+  font-family: "Playfair Display", "Times New Roman", serif;
   --lux-ink: #1f1b16;
   --lux-ink-soft: #5b5249;
   --lux-line: rgba(31, 27, 22, 0.18);
@@ -1760,4 +1760,5 @@ body.wishlist-page--lux .wishlist-modal__actions {
   background: var(--lux-paper);
   border-top: 1px solid var(--lux-line);
 }
+
 

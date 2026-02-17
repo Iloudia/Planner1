@@ -24,9 +24,9 @@
   --border: var(--color-border);
   --shadow: 0 16px 40px rgba(236, 72, 153, 0.12);
 
-  --font-display: "Playfair Display", "Georgia", serif;
-  --font-heading: "Playfair Display", "Georgia", serif;
-  --font-body: "Inter", "Manrope", "Space Grotesk", sans-serif;
+  --font-display: "Playfair Display", "Times New Roman", serif;
+  --font-heading: "Playfair Display", "Times New Roman", serif;
+  --font-body: "Inter", "Times New Roman", sans-serif;
 
   --font-size-display: clamp(3rem, 2.4vw + 2.4rem, 4rem);
   --font-size-h1: clamp(3rem, 2.2vw + 2.2rem, 4rem);
@@ -80,6 +80,15 @@ body {
   font-style: normal;
 }
 
+.kapakana-brand {
+  font-family: "Kapakana", cursive;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-size: clamp(2.8rem, 4.2vw, 3.8rem);
+  color: #000000;
+}
+
 .google-translate-element {
   position: absolute;
   width: 0;
@@ -107,7 +116,7 @@ h1,
   line-height: var(--leading-display);
   margin: 0 0 var(--space-sm);
   font-weight: 700;
-  color: var(--color-chocolate);
+  color: #000000;
 }
 
 h2,
@@ -220,6 +229,7 @@ p {
   top: 0;
   width: 100%;
   z-index: 20;
+  font-family: var(--font-body);
 }
 
 .site-header__inner {
@@ -266,6 +276,7 @@ p {
   padding-left: 0;
   padding-bottom: 0.2rem;
   line-height: 1;
+  text-decoration: none;
 }
 
 .site-header__logo {
@@ -316,13 +327,14 @@ p {
   font-weight: 600;
   color: rgba(15, 23, 42, 0.7);
   padding: 0.35rem 0.6rem;
-  border-radius: 999px;
+  border-radius: 0;
   transition: color 0.2s ease, background-color 0.2s ease;
 }
 
 .site-header__nav-link:hover {
   color: #0f172a;
-  background: rgba(236, 72, 153, 0.08);
+  background: var(--color-caramel);
+  border-radius: 0;
 }
 
 .site-header__brand-link {
@@ -656,7 +668,7 @@ p {
 
 .site-footer__link:hover,
 .site-footer__social-link:hover {
-  color: #db2777;
+  color: #000000;
   transform: translateX(3px);
 }
 
@@ -1224,10 +1236,14 @@ p {
   flex-direction: column;
   gap: 1.5rem;
   padding: 1.4rem 1.6rem;
-  background: #ffffff;
+  background: transparent;
+  border-top: 1px solid rgba(15, 23, 42, 0.2);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.2);
   overflow: hidden;
   width: 100%;
   margin-top: 0;
+  align-items: center;
+  text-align: center;
 }
 
 .sport-header .calendar-view-toggle {
@@ -1700,16 +1716,27 @@ p {
 }
 
 .header-menu__panel {
-  position: absolute;
-  right: 0;
-  top: calc(100% + 0.5rem);
-  width: 240px;
-  border-radius: 18px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: min(280px, 80vw);
+  border-radius: 0;
   background: #ffffff;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  box-shadow: 0 28px 60px rgba(15, 23, 42, 0.18);
-  padding: 0.8rem;
+  border-right: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 12px 0 28px rgba(15, 23, 42, 0.18);
+  padding: 1rem;
   z-index: 50;
+  animation: header-menu-slide-in 220ms ease;
+}
+
+@keyframes header-menu-slide-in {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
 .header-menu__list {
@@ -1734,6 +1761,10 @@ p {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  text-decoration: none;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  line-height: 1.2;
 }
 
 .header-menu__item:hover {
@@ -1815,40 +1846,52 @@ p {
   color: #0f172a;
 }
 
-.account-menu__panel {
+.account-menu .account-menu__panel {
   position: absolute;
+  top: calc(100% + 0.4rem);
   right: 0;
-  top: calc(100% + 0.5rem);
   width: 220px;
-  border-radius: 16px;
-  background: #ffffff;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  box-shadow: 0 24px 50px rgba(15, 23, 42, 0.16);
-  padding: 0.6rem;
-  z-index: 50;
+  min-width: 150px;
+  background: #ffffff !important;
+  border-radius: 16px !important;
+  padding: 0.4rem !important;
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
+  box-shadow: 0 26px 70px rgba(15, 23, 42, 0.22) !important;
+  border: none !important;
+  z-index: 50;
 }
 
-.account-menu__item {
+.account-menu .account-menu__item {
   width: 100%;
   border: none;
   background: transparent;
   text-align: left;
-  padding: 0.55rem 0.65rem;
-  border-radius: 12px;
-  font-weight: 600;
-  color: #0f172a;
+  padding: 0.55rem 0.85rem !important;
+  border-radius: 12px !important;
+  font-size: 1rem !important;
+  font-weight: 400 !important;
+  color: #111827 !important;
   cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+  text-decoration: none;
 }
 
-.account-menu__item:hover {
-  background: rgba(236, 72, 153, 0.08);
+.account-menu .account-menu__item:hover,
+.account-menu .account-menu__item:focus-visible,
+.account-menu .account-menu__item.is-selected {
+  background: rgba(236, 72, 153, 0.08) !important;
+  color: #be185d !important;
+  outline: none;
 }
 
-.account-menu__item--danger {
+.account-menu .account-menu__item--danger {
   color: #b91c1c;
+}
+
+h1 {
+  color: #000000 !important;
 }
 
 :root[data-theme="caramel"] {
@@ -1866,3 +1909,4 @@ p {
   --panel: #eef8f5;
   --card: #e6f5f0;
 }
+

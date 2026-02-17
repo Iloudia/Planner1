@@ -11,6 +11,28 @@
   color: var(--color-chocolate);
 }
 
+.self-love-page span {
+  font-family: "Inter", "Times New Roman", sans-serif;
+}
+
+.self-love-list__text {
+  font-family: "Inter", "Times New Roman", sans-serif;
+}
+
+.self-love-photos__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.35rem;
+  margin: 0 auto;
+}
+
+.self-love-photos__title,
+.self-love-photos__subtitle {
+  margin: 0;
+}
+
 
 .self-love-letter {
   display: flex;
@@ -18,36 +40,27 @@
   gap: 1.5rem;
 }
 
-.self-love-letter__tabs {
-  display: inline-flex;
-  gap: 0.6rem;
-  background: rgba(244, 114, 182, 0.12);
-  padding: 0.3rem;
-  border-radius: 999px;
-  align-self: center;
-}
-
-.self-love-letter__tabs button {
-  border: none;
-  border-radius: 999px;
-  padding: 0.45rem 1rem;
-  background: transparent;
-  font-weight: 600;
-  color: #a21caf;
-  cursor: pointer;
-}
-
-.self-love-letter__tabs button.is-active {
-  background: #fff;
-  box-shadow: 0 10px 30px rgba(244, 114, 182, 0.25);
-}
 
 .self-love-letter__cards {
   display: grid;
   grid-template-columns: 1fr;
   justify-items: center;
+  position: relative;
+  padding: clamp(2rem, 5vw, 3.6rem) 0;
+  z-index: 0;
 }
 
+.self-love-letter__cards::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  background: #ffffff;
+  z-index: -1;
+}
 .self-love-letter__card {
   display: none;
 }
@@ -136,7 +149,7 @@
 
 .self-love-letter__addresses input {
   border: none;
-  border-bottom: 0.5px solid rgba(67, 20, 51, 0.6);
+  border-bottom: 1px solid rgba(67, 20, 51, 0.5);
   padding: 0.2rem 0;
   font-family: var(--font-display);
   font-size: 1.2rem;
@@ -147,8 +160,6 @@
 
 .self-love-letter__addresses input:focus {
   outline: none;
-  border-color: #ec4899;
-  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
 }
 
 .self-love-letter__stamps {
@@ -197,7 +208,7 @@
   font-size: 1.05rem;
   line-height: 1.8;
   color: var(--color-chocolate);
-  font-family: 'Great Vibes', 'Handlee', 'Caveat', 'Playfair Display', cursive;
+  font-family: 'Playfair Display', 'Times New Roman', serif;
   resize: vertical;
   font-style: italic;
 }
@@ -350,7 +361,7 @@
   border: none;
   background: rgba(251, 207, 232, 0.3);
   padding: 0.7rem 0.9rem;
-  font-family: 'Handlee', 'Caveat', cursive;
+  font-family: 'Playfair Display', 'Times New Roman', serif;
   line-height: 1.5;
   color: #7a1b2f;
   resize: vertical;
@@ -1289,7 +1300,7 @@
   font-size: 1.2rem;
   line-height: 1.5;
   color: #be123c;
-  font-family: 'Great Vibes', 'Handlee', cursive;
+  font-family: 'Playfair Display', 'Times New Roman', serif;
 }
 
 .self-love-kitty-letter__textarea {
@@ -1302,7 +1313,7 @@
   font-size: 1.05rem;
   line-height: 1.7;
   color: #a31641;
-  font-family: 'Handlee', 'Caveat', cursive;
+  font-family: 'Playfair Display', 'Times New Roman', serif;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
   resize: vertical;
 }
@@ -1566,6 +1577,11 @@
   padding: clamp(2rem, 4vw, 2.8rem);
 }
 
+.self-love-section--photos {
+  width: min(100%, 880px);
+  margin: 0 auto;
+}
+
 
 
 .self-love-section__header h2 {
@@ -1722,6 +1738,21 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: clamp(1rem, 3vw, 2rem);
+  position: relative;
+  padding: clamp(1.2rem, 3vw, 2.2rem) 0;
+  z-index: 0;
+}
+
+.self-love-sections-row::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  background: #ffffff;
+  z-index: -1;
 }
 
 @media (min-width: 1024px) {
@@ -2268,12 +2299,6 @@
     width: 100%;
   }
 
-  .self-love-letter__tabs {
-    align-self: stretch;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
   .self-love-letter__addresses {
     flex-direction: column;
     align-items: stretch;
@@ -2492,7 +2517,7 @@
 body.self-love-page--lux {
   background: #f7f3ee;
   color: #1f1a2f;
-  font-family: 'Libre Baskerville', serif;
+  font-family: 'Playfair Display', 'Times New Roman', serif;
 }
 
 body.self-love-page--lux .self-love-page {
@@ -2537,13 +2562,6 @@ body.self-love-page--lux .self-love-thought::after {
   display: none;
 }
 
-body.self-love-page--lux .self-love-letter__tabs {
-  background: transparent;
-  border: 1px solid rgba(15, 23, 42, 0.18);
-  border-radius: 0;
-}
-
-body.self-love-page--lux .self-love-letter__tabs button,
 body.self-love-page--lux .self-love-form-row button,
 body.self-love-page--lux .self-love-photo-card button,
 body.self-love-page--lux .self-love-exercise__save,
@@ -2554,12 +2572,6 @@ body.self-love-page--lux .self-love-archive__toggle,
 body.self-love-page--lux .self-love-saved-letters__list button,
 body.self-love-page--lux .self-love-list li button {
   border-radius: 0;
-  background: #1f1a2f;
-  color: #fff;
-  box-shadow: none;
-}
-
-body.self-love-page--lux .self-love-letter__tabs button.is-active {
   background: #1f1a2f;
   color: #fff;
   box-shadow: none;
@@ -2607,6 +2619,11 @@ body.self-love-page--lux .self-love-form-row input {
   color: #1f1a2f;
 }
 
+body.self-love-page--lux .self-love-letter__addresses input {
+  border: none;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.35);
+}
+
 body.self-love-page--lux .self-love-card--affirmation,
 body.self-love-page--lux .self-love-card--quote,
 body.self-love-page--lux .self-love-card--music,
@@ -2643,4 +2660,5 @@ body.self-love-page--lux .self-love-certificate__upload {
   box-shadow: none;
   color: #1f1a2f;
 }
+
 

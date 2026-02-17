@@ -448,8 +448,8 @@
   height: 36px;
   border-radius: 12px;
   border: none;
-  background: #f472b6;
-  color: #fff;
+  background: #000000;
+  color: #ffffff;
   font-weight: 700;
   cursor: pointer;
   box-shadow: none;
@@ -825,7 +825,7 @@ body.home-page--lux {
   --lux-ink-soft: #5b5249;
   --lux-accent: #b8a99a;
   --lux-line: rgba(31, 27, 22, 0.18);
-  font-family: "Libre Baskerville", "Times New Roman", serif;
+  font-family: "Playfair Display", "Times New Roman", serif;
   color: var(--lux-ink);
 }
 
@@ -910,7 +910,7 @@ body.home-page--lux {
 .page.home-page .card-title-input {
   border-radius: 0;
   border: 1px solid var(--lux-line);
-  font-family: "Libre Baskerville", "Times New Roman", serif;
+  font-family: "Playfair Display", "Times New Roman", serif;
 }
 
 .page.home-page .card-menu {
@@ -950,6 +950,19 @@ body.home-page--lux {
   box-shadow: none;
 }
 
+.page.home-page .progress-panel {
+  border-color: rgba(148, 163, 184, 0.45);
+}
+
+.page.home-page .progress-label span:last-child {
+  color: #64748b;
+}
+
+.page.home-page .progress-bar {
+  background: rgba(148, 163, 184, 0.2);
+  border-color: rgba(148, 163, 184, 0.35);
+}
+
 .page.home-page .todo-input input,
 .page.home-page .todo-item,
 .page.home-page .task-card {
@@ -961,7 +974,7 @@ body.home-page--lux {
 
 .page.home-page .todo-add {
   border-radius: 0;
-  background: #f472b6;
+  background: #000000;
   color: #ffffff;
 }
 
@@ -999,4 +1012,24 @@ body.home-page--lux {
   font-size: 0.7rem;
 }
 
+body.home-page--lux .account-menu__panel {
+  border-radius: 0;
+  border: 1px solid var(--lux-line);
+  box-shadow: none;
+}
+
+body.home-page--lux .account-menu__item {
+  border-radius: 0;
+  color: var(--lux-ink);
+}
+
+body.home-page--lux .account-menu__item:hover,
+body.home-page--lux .account-menu__item:focus-visible,
+body.home-page--lux .account-menu__item.is-selected {
+  background: #f4efe8;
+  color: var(--lux-ink);
+}
+
+
 @import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@500;600;700&display=swap");
+

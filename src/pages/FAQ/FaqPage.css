@@ -140,6 +140,7 @@
   font-size: 0.95rem;
   color: var(--color-chocolate);
   line-height: 1.7;
+  font-family: "Inter", "Times New Roman", sans-serif;
 }
 
 @media (max-width: 640px) {
@@ -178,7 +179,7 @@ body.faq-page--lux .faq-wrapper {
   --lux-line: rgba(31, 27, 22, 0.18);
   --lux-paper: #ffffff;
   color: var(--lux-ink);
-  font-family: "Libre Baskerville", "Times New Roman", serif;
+  font-family: "Playfair Display", "Times New Roman", serif;
 }
 
 body.faq-page--lux .faq-wrapper h1,
@@ -245,4 +246,6 @@ body.faq-page--lux .faq-item__body {
 
 body.faq-page--lux .faq-item__body p {
   color: var(--lux-ink-soft);
+  font-family: "Inter", "Times New Roman", sans-serif;
 }
+

@@ -213,7 +213,7 @@
     ),
     #fffdf9;
   color: #0f172a;
-  resize: vertical;
+  resize: none;
   line-height: 1.6;
 }
 
@@ -515,7 +515,7 @@
 body.alimentation-page--lux {
   background: #f8f6f1;
   color: #1f1b16;
-  font-family: 'Libre Baskerville', serif;
+  font-family: 'Playfair Display', 'Times New Roman', serif;
   --lux-ink: #1f1b16;
   --lux-ink-soft: #5b5249;
   --lux-line: rgba(31, 27, 22, 0.18);
@@ -624,3 +624,4 @@ body.alimentation-page--lux textarea {
   border-radius: 0;
   box-shadow: none;
 }
+

@@ -16,7 +16,7 @@ body.boutique-page--tone {
   flex-direction: column;
   gap: clamp(2.4rem, 6vw, 4.6rem);
   color: var(--ink);
-  font-family: "Libre Baskerville", "Times New Roman", serif;
+  font-family: "Playfair Display", "Times New Roman", serif;
 }
 
 .boutique-page img {
@@ -690,3 +690,4 @@ body.boutique-page--tone {
     transition: none;
   }
 }
+

@@ -76,7 +76,7 @@
   text-transform: uppercase;
   letter-spacing: 0.12em;
   font-size: 0.75rem;
-  color: #be185d;
+  color: #000000;
   font-weight: 700;
 }
 
@@ -490,7 +490,7 @@ body.diet-page--lux {
   --lux-ink-soft: #5b5249;
   --lux-accent: #b8a99a;
   --lux-line: rgba(31, 27, 22, 0.18);
-  font-family: "Libre Baskerville", "Times New Roman", serif;
+  font-family: "Playfair Display", "Times New Roman", serif;
   color: var(--lux-ink);
   background: transparent;
 }
@@ -506,10 +506,21 @@ body.diet-page--lux {
 .diet-gymgirl-page .pill,
 .diet-gymgirl-page .pill--diet {
   border-radius: 0;
-  border: 1px solid var(--lux-line);
-  background: #ffffff;
-  color: var(--lux-ink);
+  border: 1px solid #f472b6;
+  background: #f472b6;
+  color: #ffffff;
   box-shadow: none;
+  padding: 10px 14px;
+  font-weight: 700;
+}
+
+.diet-gymgirl-page .pill--diet {
+  background: #000000;
+  border-color: #000000;
+  color: #ffffff;
+  padding: 6px 10px;
+  font-size: 0.95rem;
+  font-family: "Playfair Display", "Times New Roman", serif;
 }
 
 .diet-toggle button,
@@ -569,5 +580,4 @@ body.diet-page--lux {
   border: 1px solid var(--lux-line);
   box-shadow: none;
 }
-
 

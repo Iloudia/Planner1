@@ -955,7 +955,7 @@ body.workout-page--lux {
   --lux-ink-soft: #5b5249;
   --lux-accent: #b8a99a;
   --lux-line: rgba(31, 27, 22, 0.18);
-  font-family: "Libre Baskerville", "Times New Roman", serif;
+  font-family: "Playfair Display", "Times New Roman", serif;
   color: var(--lux-ink);
   background: transparent;
 }
@@ -1057,4 +1057,5 @@ body.workout-page--lux {
 .workout-modal {
   backdrop-filter: blur(2px);
 }
+
 

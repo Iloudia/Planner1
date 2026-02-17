@@ -1,7 +1,6 @@
 ﻿import { Link, useNavigate } from "react-router-dom"
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react"
 import { useAuth } from "../context/AuthContext"
-import logo from "../assets/Logo.png"
 
 function Header() {
   const { isAuthenticated, isAdmin, logout } = useAuth()
@@ -197,7 +196,7 @@ function Header() {
                               setIsMenuOpen(false)
                             }}
                           >
-                            Profil
+                            Gérer le compte
                           </button>
                         </li>
                         <li>
@@ -233,8 +232,8 @@ function Header() {
             </div>
           </div>
 
-          <Link to={isAuthenticated ? "/home" : "/"} className="brand site-header__brand" aria-label="Accueil">
-            <img src={logo} alt="Logo" className="site-header__logo" />
+          <Link to={isAuthenticated ? "/home" : "/"} className="site-header__brand kapakana-brand" aria-label="Accueil">
+            Me&rituals
           </Link>
 
           <div className="site-header__right">

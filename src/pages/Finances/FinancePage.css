@@ -6,6 +6,9 @@
   gap: 2.75rem;
   padding: clamp(1.2rem, 3vw, 2rem);
 }
+.finance-page span {
+  font-family: "Inter", "Times New Roman", sans-serif;
+}
 
 
 .finance-heading-row {
@@ -1381,7 +1384,7 @@
 }
 
 .finance-trend-chart .highcharts-root {
-  font-family: var(--font-body, 'Inter', 'Segoe UI', sans-serif);
+  font-family: var(--font-body, 'Inter', 'Times New Roman', sans-serif);
 }
 
 .finance-trend-chart .highcharts-background {
@@ -1424,7 +1427,7 @@
 body.finance-page--lux {
   background: #f7f3ee;
   color: #1f1a2f;
-  font-family: 'Libre Baskerville', serif;
+  font-family: 'Playfair Display', 'Times New Roman', serif;
 }
 
 body.finance-page--lux .finance-page {
@@ -1530,3 +1533,6 @@ body.finance-page--lux .finance-history__indicator {
 body.finance-page--lux .finance-trend__dot {
   border-radius: 0;
 }
+
+
+

@@ -423,7 +423,7 @@
 body.routine-page--lux {
   background: #f7f3ee;
   color: #1f1a2f;
-  font-family: 'Libre Baskerville', serif;
+  font-family: 'Playfair Display', 'Times New Roman', serif;
 }
 
 body.routine-page--lux .routine-page {
@@ -499,3 +499,4 @@ body.routine-page--lux .routine-note__item-title,
 body.routine-page--lux .routine-note__item-detail {
   color: #1f1a2f;
 }
+
