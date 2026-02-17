@@ -619,7 +619,7 @@ p {
   font-size: 40px;
   font-weight: 700;
   letter-spacing: 0.02em;
-  color: #ec4899;
+  color: #000000;
 }
 
 .site-footer__sections {
@@ -639,7 +639,7 @@ p {
   font-size: 0.85rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #db2777;
+  color: #000000;
 }
 
 .site-footer__link,

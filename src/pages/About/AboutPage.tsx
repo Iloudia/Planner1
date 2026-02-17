@@ -61,28 +61,28 @@ const AboutPage = () => {
         <div className="about-shell">
           <PageHeading eyebrow="A propos" title="A propos de moi" />
           <article className="about-article" aria-label="A propos">
-            <section className="about-story-block">
-              <div className="about-story-block__media">
+            <div className="about-feature">
+              <div className="about-feature__copy">
+                <span className="about-feature__eyebrow">Pourquoi j'ai créé ce site ? </span>
+                <h2 className="about-feature__title">
+                  J'ai voulu creer un espace simple, doux et organise pour avancer en paix.
+                </h2>
+                <div className="about-feature__text">
+                  {firstStoryPart.map((text) => (
+                    <p key={text}>{text}</p>
+                  ))}
+                  <p className="about-feature__pull">
+                    {secondStoryPart[0]}
+                  </p>
+                  {secondStoryPart.slice(1).map((text) => (
+                    <p key={text}>{text}</p>
+                  ))}
+                </div>
+              </div>
+              <figure className="about-feature__media">
                 <img src={portrait} alt="Portrait de la creatrice du site" />
-              </div>
-              <div className="about-story-block__content">
-                <h2>Pourquoi j'ai cree ce site ?</h2>
-                {firstStoryPart.map((text) => (
-                  <p key={text}>{text}</p>
-                ))}
-              </div>
-            </section>
-
-            <section className="about-story-block about-story-block--reverse">
-              <div className="about-story-block__content">
-                {secondStoryPart.map((text) => (
-                  <p key={text}>{text}</p>
-                ))}
-              </div>
-              <div className="about-story-block__media">
-                <img src={valuePhotoTwo} alt="Photo inspiration bienveillance" />
-              </div>
-            </section>
+              </figure>
+            </div>
           </article>
         </div>
         <section className="about-values" aria-label="Valeurs du site">

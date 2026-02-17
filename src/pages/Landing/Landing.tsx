@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthContext"
 import "./Landing.css"
 
 import heroBackdrop from "../../assets/frances-leynes-dupe.jpeg"
+import finalCtaBackdrop from "../../assets/lilie-hill-dupe.jpeg"
 import cardEbony from "../../assets/ebony-forsyth-dupe.jpeg"
 import cardMedhanshi from "../../assets/medhanshi-mandawewala-dupe.jpeg"
 import cardSelflove from "../../assets/selflove.jpeg"
@@ -170,7 +171,11 @@ const LandingPage = () => {
         </ul>
       </section>
 
-      <section className="landing-final-cta" aria-labelledby="landing-final-cta-title">
+      <section
+        className="landing-final-cta"
+        aria-labelledby="landing-final-cta-title"
+        style={{ backgroundImage: `url(${finalCtaBackdrop})` }}
+      >
         <h2 id="landing-final-cta-title">Et si tu t'offrais enfin une organisation qui te fait du bien ?</h2>
         <p>
           Tu n’as pas besoin d’en faire davantage. Tu as besoin d’un espace qui te laisse respirer, te guide et soutienne ton épanouissement.

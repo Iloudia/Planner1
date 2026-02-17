@@ -1,160 +1,8 @@
 import { useEffect, useMemo, useState } from "react"
+import { Link } from "react-router-dom"
 import "./Boutique.css"
 
-import heroBackdrop from "../../assets/rowena-regterschot-dupe.jpeg"
-import categoryEbook from "../../assets/voyage.jpeg"
-import categoryTemplate from "../../assets/food2.jpeg"
-import categoryCarousel from "../../assets/lauren-lista-dupe.jpeg"
-import productEbook from "../../assets/ebony-forsyth-dupe.jpeg"
-import productTemplate from "../../assets/katie-huber-rhoades-dupe (1).jpeg"
-import productCarousel from "../../assets/lindsay-piotter-dupe.jpeg"
-import productPricing from "../../assets/lilie-hill-dupe.jpeg"
-import productPortfolio from "../../assets/mallika-jain-dupe.jpeg"
-import productStory from "../../assets/amy-rikard-dupe.jpeg"
-import productBundle from "../../assets/lauren-lista-dupe.jpeg"
-import productPlan from "../../assets/kalina-wolf-dupe.jpeg"
-
-const categories = [
-  {
-    id: "ebooks",
-    title: "Ebooks PDF",
-    description: "Guides actionnables, frameworks et checklists pour vendre plus vite.",
-    highlight: "Structurer ton offre",
-    image: categoryEbook,
-  },
-  {
-    id: "templates",
-    title: "Templates Canva",
-    description: "Designs premium prêts à personnaliser pour un rendu pro en minutes.",
-    highlight: "Gagner du temps",
-    image: categoryTemplate,
-  },
-  {
-    id: "carrousels",
-    title: "Carrousels Instagram",
-    description: "Storytelling clair, hooks puissants, et call-to-action optimisés.",
-    highlight: "Booster l'engagement",
-    image: categoryCarousel,
-  },
-]
-
-const products = [
-  {
-    id: "ebook-clarte",
-    title: "Ebook « Clarté d'offre »",
-    benefit: "Trouve ton angle et vends avec confiance.",
-    price: "19€",
-    format: "PDF - 52 pages",
-    formatLabel: "PDF",
-    badge: "Best-seller",
-    mockup: "ebook",
-    bestSeller: true,
-    image: productEbook,
-  },
-  {
-    id: "template-lancement",
-    title: "Pack Templates « Lancement »",
-    benefit: "Slides prêtes pour teaser, vendre, convertir.",
-    price: "29€",
-    format: "Canva - 45 pages",
-    formatLabel: "Canva",
-    badge: "Best-seller",
-    mockup: "template",
-    bestSeller: true,
-    image: productTemplate,
-  },
-  {
-    id: "carrousel-conversion",
-    title: "Kit Carrousel Conversion",
-    benefit: "Hooks + structure pour vendre sans forcer.",
-    price: "24€",
-    format: "Canva - 30 carrousels",
-    formatLabel: "Canva",
-    badge: "Best-seller",
-    mockup: "carousel",
-    bestSeller: true,
-    image: productCarousel,
-  },
-  {
-    id: "ebook-pricing",
-    title: "Ebook Pricing Magnétique",
-    benefit: "Construis des prix perçus comme évidents.",
-    price: "17€",
-    format: "PDF - 38 pages",
-    formatLabel: "PDF",
-    badge: "Nouveau",
-    mockup: "ebook",
-    bestSeller: false,
-    image: productPricing,
-  },
-  {
-    id: "template-portfolio",
-    title: "Templates Portfolio Insta",
-    benefit: "Montre ta valeur avec un feed aligné.",
-    price: "26€",
-    format: "Canva - 28 pages",
-    formatLabel: "Canva",
-    badge: "Favori",
-    mockup: "template",
-    bestSeller: false,
-    image: productPortfolio,
-  },
-  {
-    id: "carrousel-story",
-    title: "Carrousels Storytelling",
-    benefit: "Crée des posts qui retiennent jusqu'à la dernière slide.",
-    price: "22€",
-    format: "Canva - 24 carrousels",
-    formatLabel: "Canva",
-    badge: "",
-    mockup: "carousel",
-    bestSeller: false,
-    image: productStory,
-  },
-  {
-    id: "bundle-creator",
-    title: "Bundle Creator Focus",
-    benefit: "Tout ce qu'il faut pour un mois de contenu.",
-    price: "49€",
-    format: "PDF + Canva",
-    formatLabel: "Bundle",
-    badge: "Bundle",
-    mockup: "bundle",
-    bestSeller: false,
-    image: productBundle,
-  },
-  {
-    id: "ebook-plan",
-    title: "Ebook Plan d'action 30 jours",
-    benefit: "Transforme ta vision en plan clair.",
-    price: "21€",
-    format: "PDF - 60 pages",
-    formatLabel: "PDF",
-    badge: "",
-    mockup: "ebook",
-    bestSeller: false,
-    image: productPlan,
-  },
-]
-
-const benefits = [
-  {
-    title: "Pensé pour convertir",
-    text: "Chaque ressource est orientée action, avec des hooks et des CTA prêts à l'emploi.",
-  },
-  {
-    title: "Gain de temps immédiat",
-    text: "Fini les pages blanches : tu personnalises, tu publies, tu vends.",
-  },
-  {
-    title: "Designs premium",
-    text: "Une esthétique élégante et moderne pour renforcer ta crédibilité.",
-  },
-  {
-    title: "Accès à vie",
-    text: "Tu télécharges et tu utilises quand tu veux, où tu veux.",
-  },
-]
+import { benefits, boutiqueHeroBackdrop, categories, products } from "./boutiqueData"
 
 const BoutiquePage = () => {
   const [activeFilter, setActiveFilter] = useState("all")
@@ -196,16 +44,23 @@ const BoutiquePage = () => {
   }, [activeFilter])
 
   const bestSellers = products.filter((product) => product.bestSeller)
+  const categoryProductMap = useMemo(() => {
+    return categories.reduce<Record<string, string>>((acc, category) => {
+      const match = products.find((product) => product.mockup === category.productType) ?? products[0]
+      if (match) acc[category.id] = match.id
+      return acc
+    }, {})
+  }, [])
 
   return (
     <div className="boutique-page">
       <section className="boutique-hero reveal" aria-labelledby="boutique-hero-title">
-        <div className="boutique-hero__media" style={{ backgroundImage: `url(${heroBackdrop})` }}>
+        <div className="boutique-hero__media" style={{ backgroundImage: `url(${boutiqueHeroBackdrop})` }}>
           <div className="boutique-hero__content">
             <span className="boutique-eyebrow">Boutique digitale</span>
-            <h1 id="boutique-hero-title">Des ressources prêtes à vendre pour les créateurs ambitieux.</h1>
+            <h1 id="boutique-hero-title">Des ressources pr�tes � vendre pour les cr�ateurs ambitieux.</h1>
             <p className="boutique-hero__subtitle">
-              Ebooks PDF, templates Canva, carrousels Instagram : tout est pensé pour booster tes ventes, ta visibilité et ton
+              Ebooks PDF, templates Canva, carrousels Instagram : tout est pens� pour booster tes ventes, ta visibilit� et ton
               expertise en un temps record.
             </p>
             <div className="boutique-hero__actions">
@@ -217,11 +72,11 @@ const BoutiquePage = () => {
               </a>
             </div>
             <div className="boutique-hero__meta">
-              <span>Accès immédiat</span>
+              <span>Acc�s imm�diat</span>
               <span>|</span>
-              <span>Mises à jour incluses</span>
+              <span>Mises � jour incluses</span>
               <span>|</span>
-              <span>Usage commercial autorisé</span>
+              <span>Usage commercial autoris�</span>
             </div>
           </div>
         </div>
@@ -229,13 +84,17 @@ const BoutiquePage = () => {
 
       <section className="boutique-section boutique-section--olive reveal" id="categories" aria-labelledby="boutique-categories-title">
         <div className="boutique-section__header">
-          <span className="boutique-eyebrow">Catégories</span>
-          <h2 id="boutique-categories-title">Choisis le format qui correspond à ta façon de créer.</h2>
+          <span className="boutique-eyebrow">Cat�gories</span>
+          <h2 id="boutique-categories-title">Choisis le format qui correspond � ta fa�on de cr�er.</h2>
           <p>Chaque format est construit pour simplifier ta production et maximiser tes conversions.</p>
         </div>
         <div className="boutique-categories">
           {categories.map((category) => (
-            <article key={category.id} className="boutique-category-card">
+            <Link
+              key={category.id}
+              to={`/boutique/produit/${categoryProductMap[category.id]}`}
+              className="boutique-category-card"
+            >
               <div className="boutique-category-card__image">
                 <img src={category.image} alt="" />
               </div>
@@ -244,10 +103,8 @@ const BoutiquePage = () => {
                 <span className="boutique-category-card__tag">{category.highlight}</span>
               </div>
               <p>{category.description}</p>
-              <button type="button" className="boutique-link-button">
-                Explorer
-              </button>
-            </article>
+              <span className="boutique-link-button">Explorer</span>
+            </Link>
           ))}
         </div>
       </section>
@@ -255,12 +112,16 @@ const BoutiquePage = () => {
       <section className="boutique-section boutique-section--paper reveal" id="best-sellers" aria-labelledby="boutique-best-title">
         <div className="boutique-section__header">
           <span className="boutique-eyebrow">Best-sellers</span>
-          <h2 id="boutique-best-title">Les favoris des créateurs en ce moment.</h2>
+          <h2 id="boutique-best-title">Les favoris des cr�ateurs en ce moment.</h2>
           <p>Des ressources ultra efficaces pour vendre, publier et performer sans surcharger ton planning.</p>
         </div>
         <div className="boutique-products boutique-products--featured">
           {bestSellers.map((product) => (
-            <article key={product.id} className="boutique-product-card boutique-product-card--featured">
+            <Link
+              key={product.id}
+              to={`/boutique/produit/${product.id}`}
+              className="boutique-product-card boutique-product-card--featured"
+            >
               <div className={`boutique-product__mockup boutique-product__mockup--${product.mockup}`} aria-hidden="true">
                 <img className="boutique-product__image" src={product.image} alt="" />
                 <span className="boutique-product__mockup-label">{product.formatLabel}</span>
@@ -273,11 +134,9 @@ const BoutiquePage = () => {
                   <span>{product.format}</span>
                   <span className="boutique-product__price">{product.price}</span>
                 </div>
-                <button type="button" className="boutique-button boutique-button--primary">
-                  Acheter
-                </button>
+                <span className="boutique-button boutique-button--primary">Acheter</span>
               </div>
-            </article>
+            </Link>
           ))}
         </div>
       </section>
@@ -286,7 +145,7 @@ const BoutiquePage = () => {
         <div className="boutique-section__header">
           <span className="boutique-eyebrow">Produits</span>
           <h2 id="boutique-products-title">Toute la boutique digitale.</h2>
-          <p>Fais ton choix, personnalise et publie. Les CTA sont pensés pour la conversion.</p>
+          <p>Fais ton choix, personnalise et publie. Les CTA sont pens�s pour la conversion.</p>
         </div>
         <div className="boutique-filters" role="list">
           <button
@@ -332,7 +191,7 @@ const BoutiquePage = () => {
         </div>
         <div className="boutique-products">
           {filteredProducts.map((product) => (
-            <article key={product.id} className="boutique-product-card">
+            <Link key={product.id} to={`/boutique/produit/${product.id}`} className="boutique-product-card">
               <div className={`boutique-product__mockup boutique-product__mockup--${product.mockup}`} aria-hidden="true">
                 <img className="boutique-product__image" src={product.image} alt="" />
                 <span className="boutique-product__mockup-label">{product.formatLabel}</span>
@@ -345,11 +204,9 @@ const BoutiquePage = () => {
                   <span>{product.format}</span>
                   <span className="boutique-product__price">{product.price}</span>
                 </div>
-                <button type="button" className="boutique-button boutique-button--primary">
-                  Acheter
-                </button>
+                <span className="boutique-button boutique-button--primary">Acheter</span>
               </div>
-            </article>
+            </Link>
           ))}
         </div>
       </section>
@@ -357,7 +214,7 @@ const BoutiquePage = () => {
       <section className="boutique-section reveal" aria-labelledby="boutique-benefits-title">
         <div className="boutique-section__header">
           <span className="boutique-eyebrow">Promesse</span>
-          <h2 id="boutique-benefits-title">Une boutique qui vend pendant que tu crées.</h2>
+          <h2 id="boutique-benefits-title">Une boutique qui vend pendant que tu cr�es.</h2>
         </div>
         <div className="boutique-benefits">
           {benefits.map((benefit) => (
@@ -371,8 +228,8 @@ const BoutiquePage = () => {
 
       <section className="boutique-cta reveal" aria-labelledby="boutique-cta-title">
         <div className="boutique-cta__content">
-          <h2 id="boutique-cta-title">Prêt·e à passer à la vitesse supérieure ?</h2>
-          <p>Choisis tes ressources et lance ton prochain contenu dès aujourd'hui.</p>
+          <h2 id="boutique-cta-title">Pr�t�e � passer � la vitesse sup�rieure ?</h2>
+          <p>Choisis tes ressources et lance ton prochain contenu d�s aujourd'hui.</p>
         </div>
         <a className="boutique-button boutique-button--primary" href="#produits">
           Voir la boutique
@@ -381,10 +238,10 @@ const BoutiquePage = () => {
 
       <section className="boutique-legal">
         <div className="boutique-legal__content">
-          <span>Paiement sécurisé | Accès immédiat | Support sous 48h</span>
+          <span>Paiement s�curis� | Acc�s imm�diat | Support sous 48h</span>
           <div className="boutique-legal__links">
-            <a href="/mentions-legales">Mentions légales</a>
-            <a href="/confidentialite">Confidentialité</a>
+            <a href="/mentions-legales">Mentions l�gales</a>
+            <a href="/confidentialite">Confidentialit�</a>
             <a href="/contact">Contact</a>
           </div>
         </div>
@@ -394,3 +251,10 @@ const BoutiquePage = () => {
 }
 
 export default BoutiquePage
+
+
+
+
+
+
+
