@@ -118,8 +118,8 @@
 }
 
 .sport-board-card__status.is-done {
-  background: rgba(34, 197, 94, 0.16);
-  color: #166534;
+  background: #dff3e4;
+  color: #2f7a4b;
 }
 
 .sport-board-card__field {
@@ -144,8 +144,8 @@
 .sport-board-card__field select:focus,
 .sport-board-card__field input:focus {
   outline: none;
-  border-color: #ec4899;
-  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
+  border-color: #000000;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.15);
 }
 
 .sport-board-card__checkbox {
@@ -571,8 +571,8 @@ body.sport-page--lux {
 }
 
 .sport-board-card__status.is-done {
-  background: #f4efe8;
-  color: var(--lux-ink);
+  background: #dff3e4;
+  color: #2f7a4b;
 }
 
 .sport-board-card__field input,

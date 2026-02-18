@@ -42,6 +42,7 @@ import ArchivesPage from "./pages/Archives/Archives"
 import BoutiquePage from "./pages/Boutique/Boutique"
 import BoutiqueCategoryPage from "./pages/Boutique/BoutiqueCategory"
 import BoutiqueProductPage from "./pages/Boutique/BoutiqueProduct"
+import ThankYouPage from "./pages/Boutique/ThankYouPage"
 
 function NotFound() {
   return (
@@ -115,6 +116,7 @@ function App() {
           <Route path="/boutique" element={<BoutiquePage />} />
           <Route path="/boutique/:categoryId" element={<BoutiqueCategoryPage />} />
           <Route path="/boutique/produit/:productId" element={<BoutiqueProductPage />} />
+          <Route path="/merci" element={<ThankYouPage />} />
           <Route path="/confidentialite" element={<ConfidentialitePage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/cookies" element={<GestionCookiesPage />} />

@@ -7,6 +7,8 @@ import { products } from "./boutiqueData"
 const BoutiqueProductPage = () => {
   const { productId } = useParams()
   const product = useMemo(() => products.find((item) => item.id === productId) ?? null, [productId])
+  const [isCheckoutLoading, setIsCheckoutLoading] = useState(false)
+  const [checkoutError, setCheckoutError] = useState<string | null>(null)
 
   const gallery = product?.gallery ?? []
   const thumbnails = gallery.slice(1, 6)
@@ -22,6 +24,35 @@ const BoutiqueProductPage = () => {
       document.body.classList.remove("boutique-page--tone")
     }
   }, [])
+
+  const handleCheckout = async () => {
+    if (!product) {
+      return
+    }
+    setIsCheckoutLoading(true)
+    setCheckoutError(null)
+    try {
+      const apiBase = import.meta.env.VITE_API_BASE || ""
+      const response = await fetch(`${apiBase}/api/create-checkout-session`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId: product.id }),
+      })
+      if (!response.ok) {
+        throw new Error("Impossible de lancer le paiement.")
+      }
+      const data = await response.json()
+      if (!data?.url) {
+        throw new Error("Lien de paiement manquant.")
+      }
+      window.location.href = data.url
+    } catch (error) {
+      console.error(error)
+      setCheckoutError("Impossible de lancer le paiement. RÃ©essaie dans quelques secondes.")
+    } finally {
+      setIsCheckoutLoading(false)
+    }
+  }
 
   if (!product) {
     return (
@@ -82,9 +113,15 @@ const BoutiqueProductPage = () => {
               <span>Accès immédiat</span>
               <span>Licence commerciale incluse</span>
             </div>
-            <button type="button" className="boutique-button boutique-button--primary">
-              Acheter maintenant
+            <button
+              type="button"
+              className="boutique-button boutique-button--primary"
+              onClick={handleCheckout}
+              disabled={isCheckoutLoading}
+            >
+              {isCheckoutLoading ? "Redirection..." : "Acheter maintenant"}
             </button>
+            {checkoutError ? <p className="boutique-checkout-error">{checkoutError}</p> : null}
             <div className="boutique-detail__features">
               <h2>Ce que tu reçois</h2>
               <ul>

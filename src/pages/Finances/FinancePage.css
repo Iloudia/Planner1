@@ -322,6 +322,17 @@
   border-color: #ec4899;
   box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
 }
+.finance-form__field input[type="text"],
+.finance-form__field input[type="date"] {
+  border-radius: 0;
+}
+
+.finance-form__field input[type="text"]:focus,
+.finance-form__field input[type="date"]:focus {
+  outline: none;
+  border-color: #000000;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.15);
+}
 
 .finance-form__select-field {
   position: relative;
@@ -461,6 +472,15 @@
   outline: none;
   border-color: #ec4899;
   box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
+}
+.finance-balance__field input[type="text"] {
+  border-radius: 0;
+}
+
+.finance-balance__field input[type="text"]:focus {
+  outline: none;
+  border-color: #000000;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.15);
 }
 
 .finance-balance__action {
@@ -1494,6 +1514,13 @@ body.finance-page--lux .finance-balance__field input {
   box-shadow: none;
   color: #1f1a2f;
 }
+body.finance-page--lux .finance-form__field input[type="text"]:focus,
+body.finance-page--lux .finance-form__field input[type="date"]:focus,
+body.finance-page--lux .finance-balance__field input[type="text"]:focus {
+  outline: none;
+  border-color: #000000;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.15);
+}
 
 body.finance-page--lux .finance-form__select-menu {
   box-shadow: none;
@@ -1533,6 +1560,9 @@ body.finance-page--lux .finance-history__indicator {
 body.finance-page--lux .finance-trend__dot {
   border-radius: 0;
 }
+
+
+
 
 
 

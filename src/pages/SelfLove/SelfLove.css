@@ -306,8 +306,8 @@
 
 .self-love-exercise__textarea:focus {
   outline: none;
-  border-color: #ec4899;
-  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
+  border-color: #000000;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.15);
 }
 
 .self-love-exercise__hint {
@@ -2617,6 +2617,12 @@ body.self-love-page--lux .self-love-form-row input {
   background: #fff;
   box-shadow: none;
   color: #1f1a2f;
+}
+
+body.self-love-page--lux .self-love-exercise__textarea:focus {
+  outline: none;
+  border-color: #000000;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.15);
 }
 
 body.self-love-page--lux .self-love-letter__addresses input {

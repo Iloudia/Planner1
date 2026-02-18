@@ -461,6 +461,16 @@
   font-size: 0.95rem;
   font-family: inherit;
 }
+
+.diet-recipe-modal__body input[type="text"] {
+  border-radius: 0;
+}
+
+.diet-recipe-modal__body input[type="text"]:focus {
+  outline: none;
+  border-color: #000000;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.15);
+}
 .diet-recipe-form__file {
   gap: 0.75rem;
 }
@@ -580,4 +590,3 @@ body.diet-page--lux {
   border: 1px solid var(--lux-line);
   box-shadow: none;
 }
-

@@ -607,9 +607,6 @@ p {
   margin-top: clamp(2.5rem, 6vw, 4rem);
   padding: clamp(2.4rem, 6vw, 3.6rem) clamp(1.6rem, 5vw, 3rem) clamp(2rem, 5vw, 3rem);
   background: #ffffff;
-  color: #ec4899;
-  border-top: 1px solid rgba(236, 72, 153, 0.2);
-  box-shadow: 0 -24px 60px rgba(236, 72, 153, 0.08);
 }
 
 
@@ -1821,13 +1818,11 @@ p {
   background: #ffffff;
   padding: 0.4rem 0.65rem;
   cursor: pointer;
-  box-shadow: 0 12px 30px rgba(236, 72, 153, 0.12);
-  transition: transform 160ms ease, box-shadow 160ms ease;
+  transition: transform 160ms ease;
 }
 
 .account-menu__toggle.is-open {
   transform: translateY(-1px);
-  box-shadow: 0 16px 34px rgba(236, 72, 153, 0.2);
 }
 
 .account-menu__icon {

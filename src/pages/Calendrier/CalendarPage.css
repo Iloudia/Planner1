@@ -854,6 +854,18 @@
 .calendar-modal__panel .calendar-select__trigger {
   border-radius: 18px;
 }
+
+.calendar-modal__panel .calendar-task__field input[type="text"] {
+  border-radius: 0;
+}
+
+.calendar-modal__panel .calendar-task__field input[type="time"] {
+  border-radius: 0;
+}
+
+.calendar-modal__panel .calendar-task__field input[type="date"] {
+  border-radius: 0;
+}
 .calendar-task__field select {
   border-radius: 14px;
   border: 1px solid rgba(148, 163, 184, 0.3);
@@ -870,6 +882,24 @@
   outline: none;
   border-color: #ec4899;
   box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
+}
+
+.calendar-modal__panel .calendar-task__field input[type="text"]:focus {
+  outline: none;
+  border-color: #000000;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.15);
+}
+
+.calendar-modal__panel .calendar-task__field input[type="time"]:focus {
+  outline: none;
+  border-color: #000000;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.15);
+}
+
+.calendar-modal__panel .calendar-task__field input[type="date"]:focus {
+  outline: none;
+  border-color: #000000;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.15);
 }
 
 .calendar-task__field--color {

@@ -321,6 +321,27 @@
   box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
 }
 
+.routine-note__composer input[type="text"] {
+  border-radius: 0;
+}
+
+.routine-note__composer input[type="text"]:focus {
+  outline: none;
+  border-color: #000000;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.15);
+}
+
+.routine-note__composer textarea {
+  border-radius: 0;
+  resize: none;
+}
+
+.routine-note__composer textarea:focus {
+  outline: none;
+  border-color: #000000;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.15);
+}
+
 .routine-note__composer textarea {
   min-height: 70px;
 }
@@ -480,6 +501,18 @@ body.routine-page--lux .routine-note__composer textarea {
   background: #ffffff;
   box-shadow: none;
   color: #1f1a2f;
+}
+
+body.routine-page--lux .routine-note__composer input[type="text"]:focus {
+  outline: none;
+  border-color: #000000;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.15);
+}
+
+body.routine-page--lux .routine-note__composer textarea:focus {
+  outline: none;
+  border-color: #000000;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.15);
 }
 
 body.routine-page--lux .routine-note__composer-submit,
