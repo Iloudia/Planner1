@@ -185,6 +185,11 @@ function Header() {
                         Contact
                       </Link>
                     </li>
+                    <li>
+                      <Link to="/archives" className="header-menu__item" onClick={() => setIsMenuOpen(false)}>
+                        Archives
+                      </Link>
+                    </li>
                     {isAuthenticated ? (
                       <>
                         <li>
@@ -327,6 +332,16 @@ function Header() {
                       }}
                     >
                       Gérer le compte
+                    </button>
+                    <button
+                      type="button"
+                      className="account-menu__item"
+                      onClick={() => {
+                        handleNavigate("/archives")
+                        setIsAccountOpen(false)
+                      }}
+                    >
+                      Archives
                     </button>
                     <button
                       type="button"

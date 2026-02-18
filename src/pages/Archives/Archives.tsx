@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import PageHeading from "../../components/PageHeading"
 import usePersistentState from "../../hooks/usePersistentState"
 import "./Archives.css"
@@ -46,6 +46,11 @@ const JOURNAL_KEY = "planner.journal.entries"
 const SELF_LOVE_KEY = "planner.selfLove"
 
 const weekDays = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"]
+const SECTION_OPTIONS: Array<{ value: "all" | "journaling" | "self-love"; label: string }> = [
+  { value: "all", label: "Toutes les sections" },
+  { value: "journaling", label: "Journaling" },
+  { value: "self-love", label: "Self Love" },
+]
 
 const getTimestampFromDateKey = (dateKey: string) => {
   const [year, month, day] = dateKey.split("-").map(Number)
@@ -128,6 +133,8 @@ const ArchivesPage = () => {
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest")
   const [selectedEntry, setSelectedEntry] = useState<ArchiveEntry | null>(null)
+  const [isSectionMenuOpen, setIsSectionMenuOpen] = useState(false)
+  const sectionMenuRef = useRef<HTMLDivElement | null>(null)
 
   const journalingArchiveEntries = useMemo<ArchiveEntry[]>(() => {
     return journalEntries
@@ -358,6 +365,7 @@ const ArchivesPage = () => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setSelectedEntry(null)
+        setIsSectionMenuOpen(false)
       }
     }
     if (selectedEntry) {
@@ -365,6 +373,26 @@ const ArchivesPage = () => {
     }
     return () => document.removeEventListener("keydown", handleKeyDown)
   }, [selectedEntry])
+
+  useEffect(() => {
+    if (!isSectionMenuOpen) return
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node
+      if (sectionMenuRef.current?.contains(target)) return
+      setIsSectionMenuOpen(false)
+    }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsSectionMenuOpen(false)
+      }
+    }
+    window.addEventListener("mousedown", handleClickOutside)
+    window.addEventListener("keydown", handleKeyDown)
+    return () => {
+      window.removeEventListener("mousedown", handleClickOutside)
+      window.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [isSectionMenuOpen])
 
   return (
     <div className="archives-page aesthetic-page">
@@ -386,14 +414,46 @@ const ArchivesPage = () => {
           </label>
           <label className="archives-control">
             <span>Section</span>
-            <select
-              value={sectionFilter}
-              onChange={(event) => setSectionFilter(event.target.value as "all" | "journaling" | "self-love")}
-            >
-              <option value="all">Toutes les sections</option>
-              <option value="journaling">Journaling</option>
-              <option value="self-love">Self Love</option>
-            </select>
+            <div className="workout-form__select" ref={sectionMenuRef}>
+              <button
+                type="button"
+                className="workout-form__select-trigger"
+                aria-haspopup="listbox"
+                aria-expanded={isSectionMenuOpen}
+                onClick={() => setIsSectionMenuOpen((prev) => !prev)}
+              >
+                <span>{SECTION_OPTIONS.find((option) => option.value === sectionFilter)?.label ?? sectionFilter}</span>
+                <svg className="workout-form__select-chevron" viewBox="0 0 20 20" aria-hidden="true">
+                  <path
+                    d="M5 7.5L10 12.5L15 7.5"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+              {isSectionMenuOpen ? (
+                <div className="workout-form__select-menu" role="listbox">
+                  {SECTION_OPTIONS.map((option) => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      role="option"
+                      aria-selected={sectionFilter === option.value}
+                      className={sectionFilter === option.value ? "is-selected" : undefined}
+                      onMouseDown={(event) => {
+                        event.preventDefault()
+                        setSectionFilter(option.value)
+                        setIsSectionMenuOpen(false)
+                      }}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+            </div>
           </label>
         </div>
       </header>

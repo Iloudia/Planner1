@@ -1030,6 +1030,13 @@ const mealSlots: { id: MealSlotId; label: string }[] = [
   { id: "midday", label: "Midi" },
   { id: "evening", label: "Soir" },
 ]
+const FLAVOR_OPTIONS: Array<{ value: "sucre" | "sale"; label: string }> = [
+  { value: "sale", label: "Salé" },
+  { value: "sucre", label: "Sucré" },
+]
+const FLAVOR_PLACEHOLDER = "Sélectionner un type"
+const PLAN_DAY_PLACEHOLDER = "Sélectionner un jour"
+const PLAN_SLOT_PLACEHOLDER = "Sélectionner un moment"
 type WeeklyPlan = Record<typeof weekDays[number], Record<MealSlotId, string>>
 
 const buildDefaultWeeklyPlan = (): WeeklyPlan => {
@@ -1084,7 +1091,13 @@ const DietClassicPage = () => {
   const [draftSteps, setDraftSteps] = useState("")
   const [draftToppings, setDraftToppings] = useState("")
   const [draftTips, setDraftTips] = useState("")
+  const [isFlavorMenuOpen, setIsFlavorMenuOpen] = useState(false)
+  const [isPlanDayMenuOpen, setIsPlanDayMenuOpen] = useState(false)
+  const [isPlanSlotMenuOpen, setIsPlanSlotMenuOpen] = useState(false)
   const draftImageInputRef = useRef<HTMLInputElement | null>(null)
+  const flavorMenuRef = useRef<HTMLDivElement | null>(null)
+  const planDayMenuRef = useRef<HTMLDivElement | null>(null)
+  const planSlotMenuRef = useRef<HTMLDivElement | null>(null)
   const allRecipes = useMemo(() => [...massRecipes, ...healthyRecipes], [])
   const currentHeading = tab === "favorites" || tab === "custom" ? null : DIET_HEADINGS[tab]
   const favoriteRecipes = useMemo(() => allRecipes.filter((recipe) => favoriteIds.has(recipe.id)), [allRecipes, favoriteIds])
@@ -1098,6 +1111,32 @@ const DietClassicPage = () => {
     if (!selectedRecipe) return
     setPlanMealName(selectedRecipe.title)
   }, [selectedRecipe])
+
+  useEffect(() => {
+    if (!isFlavorMenuOpen && !isPlanDayMenuOpen && !isPlanSlotMenuOpen) return
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node
+      if (flavorMenuRef.current?.contains(target)) return
+      if (planDayMenuRef.current?.contains(target)) return
+      if (planSlotMenuRef.current?.contains(target)) return
+      setIsFlavorMenuOpen(false)
+      setIsPlanDayMenuOpen(false)
+      setIsPlanSlotMenuOpen(false)
+    }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsFlavorMenuOpen(false)
+        setIsPlanDayMenuOpen(false)
+        setIsPlanSlotMenuOpen(false)
+      }
+    }
+    window.addEventListener("mousedown", handleClickOutside)
+    window.addEventListener("keydown", handleKeyDown)
+    return () => {
+      window.removeEventListener("mousedown", handleClickOutside)
+      window.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [isFlavorMenuOpen, isPlanDayMenuOpen, isPlanSlotMenuOpen])
 
   useEffect(() => {
     if (typeof window === "undefined") return
@@ -1509,10 +1548,56 @@ const DietClassicPage = () => {
                     <div className="diet-recipe-form__row">
                       <label>
                         Type
-                        <select value={draftFlavor} onChange={(event) => setDraftFlavor(event.target.value as "sucre" | "sale")}>
-                          <option value="sale">Salé</option>
-                          <option value="sucre">Sucré</option>
-                        </select>
+                        <div className="workout-form__select" ref={flavorMenuRef}>
+                          <button
+                            type="button"
+                            className={
+                              draftFlavor ? "workout-form__select-trigger" : "workout-form__select-trigger is-placeholder"
+                            }
+                            aria-haspopup="listbox"
+                            aria-expanded={isFlavorMenuOpen}
+                            onClick={() => {
+                              setIsFlavorMenuOpen((prev) => !prev)
+                              setIsPlanDayMenuOpen(false)
+                              setIsPlanSlotMenuOpen(false)
+                            }}
+                          >
+                            <span>
+                              {draftFlavor
+                                ? FLAVOR_OPTIONS.find((option) => option.value === draftFlavor)?.label ?? draftFlavor
+                                : FLAVOR_PLACEHOLDER}
+                            </span>
+                            <svg className="workout-form__select-chevron" viewBox="0 0 20 20" aria-hidden="true">
+                              <path
+                                d="M5 7.5L10 12.5L15 7.5"
+                                stroke="currentColor"
+                                strokeWidth="1.6"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                          </button>
+                          {isFlavorMenuOpen ? (
+                            <div className="workout-form__select-menu" role="listbox">
+                              {FLAVOR_OPTIONS.map((option) => (
+                                <button
+                                  key={option.value}
+                                  type="button"
+                                  role="option"
+                                  aria-selected={draftFlavor === option.value}
+                                  className={draftFlavor === option.value ? "is-selected" : undefined}
+                                  onMouseDown={(event) => {
+                                    event.preventDefault()
+                                    setDraftFlavor(option.value)
+                                    setIsFlavorMenuOpen(false)
+                                  }}
+                                >
+                                  {option.label}
+                                </button>
+                              ))}
+                            </div>
+                          ) : null}
+                        </div>
                       </label>
                       <label>
                         Préparation
@@ -1601,23 +1686,97 @@ const DietClassicPage = () => {
                     <div className="diet-recipe-plan__row">
                       <label>
                         Jour
-                        <select value={planDay} onChange={(event) => setPlanDay(event.target.value as typeof weekDays[number])}>
-                          {weekDays.map((day) => (
-                            <option key={day} value={day}>
-                              {day}
-                            </option>
-                          ))}
-                        </select>
+                        <div className="workout-form__select" ref={planDayMenuRef}>
+                          <button
+                            type="button"
+                            className={planDay ? "workout-form__select-trigger" : "workout-form__select-trigger is-placeholder"}
+                            aria-haspopup="listbox"
+                            aria-expanded={isPlanDayMenuOpen}
+                            onClick={() => {
+                              setIsPlanDayMenuOpen((prev) => !prev)
+                              setIsFlavorMenuOpen(false)
+                              setIsPlanSlotMenuOpen(false)
+                            }}
+                          >
+                            <span>{planDay || PLAN_DAY_PLACEHOLDER}</span>
+                            <svg className="workout-form__select-chevron" viewBox="0 0 20 20" aria-hidden="true">
+                              <path
+                                d="M5 7.5L10 12.5L15 7.5"
+                                stroke="currentColor"
+                                strokeWidth="1.6"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                          </button>
+                          {isPlanDayMenuOpen ? (
+                            <div className="workout-form__select-menu" role="listbox">
+                              {weekDays.map((day) => (
+                                <button
+                                  key={day}
+                                  type="button"
+                                  role="option"
+                                  aria-selected={planDay === day}
+                                  className={planDay === day ? "is-selected" : undefined}
+                                  onMouseDown={(event) => {
+                                    event.preventDefault()
+                                    setPlanDay(day)
+                                    setIsPlanDayMenuOpen(false)
+                                  }}
+                                >
+                                  {day}
+                                </button>
+                              ))}
+                            </div>
+                          ) : null}
+                        </div>
                       </label>
                       <label>
                         Moment
-                        <select value={planSlot} onChange={(event) => setPlanSlot(event.target.value as MealSlotId)}>
-                          {mealSlots.map((slot) => (
-                            <option key={slot.id} value={slot.id}>
-                              {slot.label}
-                            </option>
-                          ))}
-                        </select>
+                        <div className="workout-form__select" ref={planSlotMenuRef}>
+                          <button
+                            type="button"
+                            className={planSlot ? "workout-form__select-trigger" : "workout-form__select-trigger is-placeholder"}
+                            aria-haspopup="listbox"
+                            aria-expanded={isPlanSlotMenuOpen}
+                            onClick={() => {
+                              setIsPlanSlotMenuOpen((prev) => !prev)
+                              setIsFlavorMenuOpen(false)
+                              setIsPlanDayMenuOpen(false)
+                            }}
+                          >
+                            <span>{mealSlots.find((slot) => slot.id === planSlot)?.label ?? PLAN_SLOT_PLACEHOLDER}</span>
+                            <svg className="workout-form__select-chevron" viewBox="0 0 20 20" aria-hidden="true">
+                              <path
+                                d="M5 7.5L10 12.5L15 7.5"
+                                stroke="currentColor"
+                                strokeWidth="1.6"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                          </button>
+                          {isPlanSlotMenuOpen ? (
+                            <div className="workout-form__select-menu" role="listbox">
+                              {mealSlots.map((slot) => (
+                                <button
+                                  key={slot.id}
+                                  type="button"
+                                  role="option"
+                                  aria-selected={planSlot === slot.id}
+                                  className={planSlot === slot.id ? "is-selected" : undefined}
+                                  onMouseDown={(event) => {
+                                    event.preventDefault()
+                                    setPlanSlot(slot.id)
+                                    setIsPlanSlotMenuOpen(false)
+                                  }}
+                                >
+                                  {slot.label}
+                                </button>
+                              ))}
+                            </div>
+                          ) : null}
+                        </div>
                       </label>
                     </div>
                     <label>

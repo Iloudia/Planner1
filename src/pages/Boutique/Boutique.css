@@ -448,10 +448,36 @@ body.boutique-page--tone {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 1.2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.boutique-cta.reveal.is-visible {
+  background: url("../../assets/heidi-østergaad-dupe.jpeg") center/cover no-repeat;
 }
 
 .boutique-cta__content {
   max-width: 520px;
+  position: relative;
+  z-index: 1;
+}
+
+#boutique-cta-title,
+.boutique-cta p {
+  color: #ffffff;
+}
+ 
+.boutique-cta.reveal.is-visible::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 18, 16, 0.35);
+  z-index: 0;
+}
+
+.boutique-cta .boutique-button--primary {
+  position: relative;
+  z-index: 1;
 }
 
 .boutique-legal {
