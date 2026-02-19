@@ -124,8 +124,10 @@ const getSelfLoveExcerpt = (letter: SelfLoveSavedLetter) => {
 }
 
 const ArchivesPage = () => {
-  const [journalEntries] = usePersistentState<JournalingEntry[]>(JOURNAL_KEY, () => [])
-  const [selfLoveState] = usePersistentState<SelfLoveState>(SELF_LOVE_KEY, () => ({ savedLetters: [] }))
+  const [journalEntries, setJournalEntries] = usePersistentState<JournalingEntry[]>(JOURNAL_KEY, () => [])
+  const [selfLoveState, setSelfLoveState] = usePersistentState<SelfLoveState>(SELF_LOVE_KEY, () => ({
+    savedLetters: [],
+  }))
   const [sectionFilter, setSectionFilter] = useState<"all" | "journaling" | "self-love">("all")
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedYear, setSelectedYear] = useState<string | null>(null)
@@ -135,6 +137,13 @@ const ArchivesPage = () => {
   const [selectedEntry, setSelectedEntry] = useState<ArchiveEntry | null>(null)
   const [isSectionMenuOpen, setIsSectionMenuOpen] = useState(false)
   const sectionMenuRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    document.body.classList.add("boutique-page--tone")
+    return () => {
+      document.body.classList.remove("boutique-page--tone")
+    }
+  }, [])
 
   const journalingArchiveEntries = useMemo<ArchiveEntry[]>(() => {
     return journalEntries
@@ -394,8 +403,25 @@ const ArchivesPage = () => {
     }
   }, [isSectionMenuOpen])
 
+  const handleDeleteSelectedEntry = () => {
+    if (!selectedEntry) return
+    if (selectedEntry.section === "journaling") {
+      setJournalEntries((previous) => previous.filter((entry) => entry.id !== selectedEntry.id))
+    } else {
+      setSelfLoveState((previous) => {
+        const safePrevious = previous ?? { savedLetters: [] }
+        const savedLetters = safePrevious.savedLetters ?? []
+        return {
+          ...safePrevious,
+          savedLetters: savedLetters.filter((letter) => letter.id !== selectedEntry.id),
+        }
+      })
+    }
+    setSelectedEntry(null)
+  }
+
   return (
-    <div className="archives-page aesthetic-page">
+    <div className="archives-page aesthetic-page boutique-page">
       <PageHeading eyebrow="Archives" title="Archives" />
 
       <header className="archives-header">
@@ -636,8 +662,15 @@ const ArchivesPage = () => {
                 <p>{selectedEntry.sectionLabel}</p>
                 <h3>{formatArchiveDate(selectedEntry.dateKey)}</h3>
               </div>
-              <button type="button" className="archives-modal__close" onClick={() => setSelectedEntry(null)}>
-                Fermer
+              <button
+                type="button"
+                className="modal__close"
+                aria-label="Fermer"
+                onClick={() => setSelectedEntry(null)}
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
               </button>
             </header>
             <div className="archives-modal__body">
@@ -655,6 +688,11 @@ const ArchivesPage = () => {
                 <p>Aucun detail disponible.</p>
               )}
             </div>
+            <footer className="archives-modal__footer">
+              <button type="button" className="archives-modal__delete" onClick={handleDeleteSelectedEntry}>
+                Supprimer
+              </button>
+            </footer>
           </div>
         </div>
       ) : null}

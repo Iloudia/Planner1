@@ -69,6 +69,9 @@ function DietPage() {
   }, [])
   const weeklyRecipesKey = useMemo(() => buildUserScopedKey(userEmail, DIET_WEEKLY_PLAN_RECIPES_KEY), [userEmail])
   const [selectedRecipe, setSelectedRecipe] = useState<RecipeSnapshot | null>(null)
+  const [selectedRecipeSlot, setSelectedRecipeSlot] = useState<{ day: typeof weekDays[number]; slot: MealSlotId } | null>(
+    null,
+  )
   const [weeklyPlan, setWeeklyPlan] = usePersistentState<WeeklyPlan>("planner.diet.weeklyPlan", buildDefaultWeeklyPlan)
   const [shoppingNotes, setShoppingNotes] = usePersistentState<string>("planner.diet.groceriesNotes", "")
 
@@ -89,10 +92,28 @@ function DietPage() {
   }, [])
 
   const handleMealChange = (day: typeof weekDays[number], slot: MealSlotId, value: string) => {
-    setWeeklyPlan((previous) => ({
-      ...previous,
-      [day]: { ...previous[day], [slot]: value },
-    }))
+    setWeeklyPlan((previous) => {
+      const previousValue = previous[day]?.[slot] ?? ""
+      if (previousValue !== value) {
+        try {
+          const stored = localStorage.getItem(weeklyRecipesKey)
+          if (stored) {
+            const parsed = JSON.parse(stored) as Record<string, Record<MealSlotId, RecipeSnapshot>>
+            if (parsed?.[day]?.[slot]) {
+              const { [slot]: _removed, ...restSlots } = parsed[day]
+              const next = { ...parsed, [day]: restSlots }
+              localStorage.setItem(weeklyRecipesKey, JSON.stringify(next))
+            }
+          }
+        } catch {
+          // ignore
+        }
+      }
+      return {
+        ...previous,
+        [day]: { ...previous[day], [slot]: value },
+      }
+    })
   }
 
   const getRecipeForSlot = (day: typeof weekDays[number], slot: MealSlotId) => {
@@ -104,6 +125,28 @@ function DietPage() {
     } catch {
       return null
     }
+  }
+
+  const removeRecipeFromPlan = (day: typeof weekDays[number], slot: MealSlotId) => {
+    setWeeklyPlan((previous) => ({
+      ...previous,
+      [day]: { ...previous[day], [slot]: "" },
+    }))
+    try {
+      const stored = localStorage.getItem(weeklyRecipesKey)
+      if (stored) {
+        const parsed = JSON.parse(stored) as Record<string, Record<MealSlotId, RecipeSnapshot>>
+        if (parsed?.[day]?.[slot]) {
+          const { [slot]: _removed, ...restSlots } = parsed[day]
+          const next = { ...parsed, [day]: restSlots }
+          localStorage.setItem(weeklyRecipesKey, JSON.stringify(next))
+        }
+      }
+    } catch {
+      // ignore
+    }
+    setSelectedRecipe(null)
+    setSelectedRecipeSlot(null)
   }
 
   return (
@@ -145,7 +188,10 @@ function DietPage() {
                       <button
                         type="button"
                         className="diet-week__recipe-badge"
-                        onClick={() => setSelectedRecipe(getRecipeForSlot(day, slot.id))}
+                        onClick={() => {
+                          setSelectedRecipe(getRecipeForSlot(day, slot.id))
+                          setSelectedRecipeSlot({ day, slot: slot.id })
+                        }}
                       >
                         Voir recette
                       </button>
@@ -191,17 +237,26 @@ function DietPage() {
         </section>
         {selectedRecipe ? (
           <div className="diet-plan-modal" role="dialog" aria-label={`Recette ${selectedRecipe.title}`}>
-            <div className="diet-plan-modal__backdrop" onClick={() => setSelectedRecipe(null)} />
+            <div
+              className="diet-plan-modal__backdrop"
+              onClick={() => {
+                setSelectedRecipe(null)
+                setSelectedRecipeSlot(null)
+              }}
+            />
             <div className="diet-plan-modal__panel">
               <div className="diet-plan-modal__cover">
                 <img src={selectedRecipe.image} alt={selectedRecipe.title} />
                 <button
                   type="button"
-                  className="diet-plan-modal__close"
-                  onClick={() => setSelectedRecipe(null)}
+                  className="diet-recipe-close-icon diet-recipe-close-icon--cover"
+                  onClick={() => {
+                    setSelectedRecipe(null)
+                    setSelectedRecipeSlot(null)
+                  }}
                   aria-label="Fermer"
                 >
-                  x
+                  <span aria-hidden="true" />
                 </button>
               </div>
               <div className="diet-plan-modal__content">
@@ -250,6 +305,17 @@ function DietPage() {
                   </section>
                 ) : null}
               </div>
+              <footer className="diet-recipe-modal__actions">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!selectedRecipeSlot) return
+                    removeRecipeFromPlan(selectedRecipeSlot.day, selectedRecipeSlot.slot)
+                  }}
+                >
+                  Supprimer la recette du planning
+                </button>
+              </footer>
             </div>
           </div>
         ) : null}

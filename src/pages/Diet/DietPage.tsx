@@ -2090,11 +2090,7 @@ const DietClassicPage = () => {
                   ) : null}
                 </div>
               </div>
-              <footer className="diet-recipe-modal__actions">
-                <button type="button" onClick={() => setSelectedRecipe(null)}>
-                  Fermer
-                </button>
-              </footer>
+              <footer className="diet-recipe-modal__actions" />
             </div>
           </div>
         ) : null}
@@ -2104,6 +2100,7 @@ const DietClassicPage = () => {
 }
 
 export default DietClassicPage
+
 
 
 

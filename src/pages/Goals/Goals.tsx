@@ -4,8 +4,31 @@ import PageHeading from "../../components/PageHeading";
 import goalsHero from "../../assets/olivia-roberts-dupe.jpeg";
 import "./Goals.css";
 
+const BODY_GOALS_STORAGE_KEY = "goals:bodyPhotos";
+const DEFAULT_BODY_GOALS: Array<string | null> = [null, null, null, null];
+
 const GoalsPage = () => {
-  const [bodyGoals, setBodyGoals] = useState<Array<string | null>>([null, null, null, null]);
+  const [bodyGoals, setBodyGoals] = useState<Array<string | null>>(DEFAULT_BODY_GOALS);
+
+  useEffect(() => {
+    const stored = localStorage.getItem(BODY_GOALS_STORAGE_KEY);
+    if (!stored) return;
+    try {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed)) {
+        const normalized = DEFAULT_BODY_GOALS.map((_, index) =>
+          typeof parsed[index] === "string" ? parsed[index] : null
+        );
+        setBodyGoals(normalized);
+      }
+    } catch {
+      // Ignore invalid stored data.
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(BODY_GOALS_STORAGE_KEY, JSON.stringify(bodyGoals));
+  }, [bodyGoals]);
   useEffect(() => {
     document.body.classList.add("goals-page--lux");
     return () => {
@@ -13,11 +36,20 @@ const GoalsPage = () => {
     };
   }, []);
 
-  const handleBodyPhotoChange = (index: number) => (event: ChangeEvent<HTMLInputElement>) => {
+  const handleBodyPhotoChange = (index: number) => async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    const url = URL.createObjectURL(file);
-    setBodyGoals((prev) => prev.map((item, idx) => (idx === index ? url : item)));
+    try {
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = () => reject(reader.error ?? new Error("File read failed"));
+        reader.readAsDataURL(file);
+      });
+      setBodyGoals((prev) => prev.map((item, idx) => (idx === index ? dataUrl : item)));
+    } catch {
+      // Ignore failed file reads.
+    }
   };
 
   const handleClearBodyPhoto = (index: number) => {

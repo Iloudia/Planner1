@@ -697,7 +697,6 @@ body.diet-page--lux {
 .diet-recipe-modal__cover,
 .diet-crosslink {
   border-radius: 0;
-  border: 1px solid var(--lux-line);
   background: #ffffff;
   box-shadow: none;
 }

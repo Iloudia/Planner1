@@ -670,10 +670,11 @@ const WorkoutPage = () => {
                   <button
                     type="button"
                     className="modal__close"
-                    aria-label={`Options pour ${video.title}`}
+                    aria-label={`Supprimer ${video.title}`}
                     onClick={(event) => {
                       event.stopPropagation()
-                      setOpenVideoMenuId((previous) => (previous === video.id ? null : video.id))
+                      handleDeleteVideo(video.id)
+                      setOpenVideoMenuId(null)
                       setOpenExerciseMenuId(null)
                     }}
                   >
@@ -881,5 +882,9 @@ const WorkoutPage = () => {
 }
 
 export default WorkoutPage
+
+
+
+
 
 
