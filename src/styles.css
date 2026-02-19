@@ -28,13 +28,17 @@
   --font-heading: "Playfair Display", "Times New Roman", serif;
   --font-body: "Inter", "Times New Roman", sans-serif;
 
-  --font-size-display: clamp(3rem, 2.4vw + 2.4rem, 4rem);
-  --font-size-h1: clamp(3rem, 2.2vw + 2.2rem, 4rem);
-  --font-size-h2: clamp(2rem, 1.6vw + 1.5rem, 2.5rem);
-  --font-size-h3: clamp(1.4rem, 0.9vw + 1.1rem, 1.75rem);
-  --font-size-h4: 1.1rem;
-  --font-size-body: 1.05rem;
-  --font-size-small: 0.85rem;
+  --font-size-display: 2.5rem;
+  --font-size-h1: 2rem;
+  --font-size-h2: 1.5rem;
+  --font-size-h3: 1.25rem;
+  --font-size-h4: 1.125rem;
+  --font-size-body: 1rem;
+  --font-size-small: 0.875rem;
+  --font-size-caption: 0.75rem;
+  --font-size-overline: 0.6875rem;
+  --font-size-button: 0.875rem;
+  --font-size-input: 0.9375rem;
   --leading-display: 1.12;
   --leading-heading: 1.25;
   --leading-body: 1.7;
@@ -449,20 +453,30 @@ p {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 0.4rem 0.6rem;
-  border-radius: 14px;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  background: rgba(241, 245, 249, 0.9);
+  padding: 0.25rem 0.4rem;
+  border-radius: 9px;
+  border: 1px solid #000000;
+  background: transparent;
   position: relative;
 }
 
 .nav-search--open {
-  padding: 0.55rem 0.95rem;
+  padding: 0.35rem 0.5rem 0.25rem;
+  background: transparent;
+  border: 1px solid #000000;
+  border-radius: 999px;
+  box-shadow: inset 0 -1px 0 #000000;
 }
 
 .nav-search:focus-within {
-  border-color: #ec4899;
-  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
+  border: none;
+  box-shadow: none;
+}
+
+.nav-search--open:focus-within {
+  border-color: transparent;
+  border-bottom-color: #000000;
+  box-shadow: none;
 }
 
 .nav-search--center {
@@ -499,13 +513,13 @@ p {
   top: calc(100% + 0.35rem);
   left: 0;
   right: 0;
-  padding: 0.3rem 0;
+  padding: 0.4rem 0;
   margin: 0;
   list-style: none;
   background: #ffffff;
-  border-radius: 12px;
-  border: 1px solid var(--color-border-strong);
-  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.12);
+  border-radius: 0;
+  border: 1px solid #e6e1d9;
+  box-shadow: none;
   z-index: 25;
 }
 
@@ -517,18 +531,17 @@ p {
   width: 100%;
   border: none;
   background: transparent;
-  padding: 0.5rem 0.9rem;
+  padding: 0.6rem 1rem;
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
-  font-size: 0.92rem;
   color: var(--text);
   cursor: pointer;
 }
 
 .nav-search__suggestion:hover,
 .nav-search__suggestion:focus-visible {
-  background: rgba(236, 72, 153, 0.08);
+  background: #f1ece4;
   outline: none;
 }
 
@@ -625,7 +638,7 @@ p {
 
 .site-footer__title {
   margin: 0;
-  font-size: 40px;
+  font-size: 38px !important;
   font-weight: 700;
   letter-spacing: 0.02em;
   color: #000000;
@@ -1327,7 +1340,7 @@ p {
   }
 
   .site-footer__title {
-    font-size: 28px;
+    font-size: 22px !important;
   }
 }
 
@@ -1753,7 +1766,7 @@ p {
   text-align: left;
   padding: 0.6rem 1rem;
   border-radius: 0;
-  font-weight: 600;
+  font-weight: 400;
   color: #0f172a;
   cursor: pointer;
   display: flex;
@@ -1761,7 +1774,7 @@ p {
   justify-content: space-between;
   text-decoration: none;
   font-family: var(--font-body);
-  font-size: 0.95rem;
+  font-size: calc(var(--font-size-button) * var(--user-font-scale));
   line-height: 1.2;
 }
 
@@ -1866,8 +1879,8 @@ p {
   text-align: left;
   padding: 0.6rem 1rem !important;
   border-radius: 0 !important;
-  font-size: 1rem !important;
-  font-weight: 400 !important;
+  font-size: calc(var(--font-size-button) * var(--user-font-scale)) !important;
+  font-weight: 500 !important;
   color: #111827 !important;
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease;
@@ -1904,5 +1917,84 @@ h1 {
   --bg: #f3faf8;
   --panel: #eef8f5;
   --card: #e6f5f0;
+}
+
+/* Typography system */
+:where(.display, .hero-title) {
+  font-family: var(--font-display) !important;
+  font-size: calc(var(--font-size-display) * var(--user-font-scale)) !important;
+  line-height: var(--leading-display) !important;
+}
+
+:where(h1, .h1) {
+  font-family: var(--font-display) !important;
+  font-size: calc(var(--font-size-h1) * var(--user-font-scale)) !important;
+  line-height: var(--leading-display) !important;
+}
+
+:where(h2, .h2) {
+  font-family: var(--font-heading) !important;
+  font-size: calc(var(--font-size-h2) * var(--user-font-scale)) !important;
+  line-height: var(--leading-heading) !important;
+}
+
+:where(h3, .h3) {
+  font-family: var(--font-heading) !important;
+  font-size: calc(var(--font-size-h3) * var(--user-font-scale)) !important;
+  line-height: var(--leading-heading) !important;
+}
+
+:where(h4, .h4) {
+  font-family: var(--font-heading) !important;
+  font-size: calc(var(--font-size-h4) * var(--user-font-scale)) !important;
+  line-height: var(--leading-heading) !important;
+}
+
+:where(p, li, dd, dt, blockquote, label) {
+  font-family: var(--font-body) !important;
+  font-size: calc(var(--font-size-body) * var(--user-font-scale)) !important;
+  line-height: var(--leading-body) !important;
+}
+
+:where(small) {
+  font-size: calc(var(--font-size-small) * var(--user-font-scale)) !important;
+}
+
+:where([class*="hint"], [class*="caption"]) {
+  font-size: calc(var(--font-size-caption) * var(--user-font-scale)) !important;
+}
+
+:where(.eyebrow, [class*="eyebrow"]) {
+  font-family: var(--font-body) !important;
+  font-size: calc(var(--font-size-overline) * var(--user-font-scale)) !important;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+:where(button, .pill, .pill-ghost, [class*="pill"], [class*="badge"], .diet-info-pill, .task-tag) {
+  font-family: var(--font-body) !important;
+  font-size: calc(var(--font-size-button) * var(--user-font-scale)) !important;
+  line-height: 1.2;
+}
+
+:where(input, textarea, select, option) {
+  font-family: var(--font-body) !important;
+  font-size: calc(var(--font-size-input) * var(--user-font-scale)) !important;
+}
+
+:where(
+  .card-menu-popover__item,
+  .sport-life-card__menu-item,
+  .workout-form__select-menu button,
+  .auth-form__select-menu button,
+  .wishlist-card__menu-popover button,
+  .calendar-select__menu button,
+  .header-menu__item,
+  .account-menu__item,
+  .nav-search__suggestion
+) {
+  font-family: var(--font-body) !important;
+  font-size: calc(var(--font-size-button) * var(--user-font-scale)) !important;
+  font-weight: 500 !important;
 }
 

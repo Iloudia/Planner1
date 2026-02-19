@@ -18,6 +18,7 @@ function Header() {
     () => [
       { label: "A propos de moi", path: "/a-propos" },
       { label: "Accueil", path: "/home" },
+      { label: "Boutique", path: "/boutique" },
       { label: "Mentions legales", path: "/mentions-legales" },
       { label: "Politique de confidentialite", path: "/confidentialite" },
       { label: "Contact", path: "/contact" },
@@ -27,8 +28,10 @@ function Header() {
       { label: "Wishlist", path: "/wishlist" },
       { label: "Sport", path: "/sport" },
       { label: "Workout", path: "/sport/workout" },
+      { label: "Journaling", path: "/journaling" },
       { label: "Diet", path: "/diet" },
       { label: "Goals", path: "/goals" },
+      { label: "Routine", path: "/routine" },
       { label: "S'aimer soi-meme", path: "/self-love" },
       { label: "Archives", path: "/archives" },
       { label: "FAQ", path: "/faq" },

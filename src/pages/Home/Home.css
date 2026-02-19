@@ -183,7 +183,7 @@
 .card {
   border: 1px solid rgba(236, 72, 153, 0.25);
   border-radius: 18px;
-  overflow: hidden;
+  overflow: visible;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -216,6 +216,8 @@
   height: 105px;
   object-fit: cover;
   display: block;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
 }
 
 .card-grid .card:nth-child(-n+3) img {
@@ -228,6 +230,8 @@
   z-index: 1;
   flex: 1;
   font-weight: 600;
+  border-bottom-left-radius: inherit;
+  border-bottom-right-radius: inherit;
 }
 
 .card-grid .card:nth-child(-n+3) {
