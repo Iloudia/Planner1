@@ -46,7 +46,7 @@ const FAQPage = () => {
       <PageHeading eyebrow="FAQ" title="FAQ" className="faq-header" />
       <div className="faq-wrapper">
         <div className="legal-page faq-page">
-          <p className="legal-page__intro">Toutes les rÃ©ponses essentielles pour tirer le meilleur du Planner.</p>
+          <p className="legal-page__intro">Toutes les rÃ©ponses essentielles pour tirer le meilleur du site.</p>
 
           <div className="faq-accordion">
             {faqItems.map((item, index) => {

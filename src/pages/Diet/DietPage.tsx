@@ -1082,6 +1082,8 @@ const DietClassicPage = () => {
     }
   })
   const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const [isEditOpen, setIsEditOpen] = useState(false)
+  const [customMenuOpenId, setCustomMenuOpenId] = useState<string | null>(null)
   const [draftTitle, setDraftTitle] = useState("")
   const [draftFlavor, setDraftFlavor] = useState<"sucre" | "sale">("sale")
   const [draftPrepTime, setDraftPrepTime] = useState("")
@@ -1091,10 +1093,21 @@ const DietClassicPage = () => {
   const [draftSteps, setDraftSteps] = useState("")
   const [draftToppings, setDraftToppings] = useState("")
   const [draftTips, setDraftTips] = useState("")
+  const [editId, setEditId] = useState<string | null>(null)
+  const [editTitle, setEditTitle] = useState("")
+  const [editFlavor, setEditFlavor] = useState<"sucre" | "sale">("sale")
+  const [editPrepTime, setEditPrepTime] = useState("")
+  const [editServings, setEditServings] = useState("")
+  const [editImage, setEditImage] = useState<string | null>(null)
+  const [editIngredients, setEditIngredients] = useState("")
+  const [editSteps, setEditSteps] = useState("")
+  const [editToppings, setEditToppings] = useState("")
+  const [editTips, setEditTips] = useState("")
   const [isFlavorMenuOpen, setIsFlavorMenuOpen] = useState(false)
   const [isPlanDayMenuOpen, setIsPlanDayMenuOpen] = useState(false)
   const [isPlanSlotMenuOpen, setIsPlanSlotMenuOpen] = useState(false)
   const draftImageInputRef = useRef<HTMLInputElement | null>(null)
+  const editImageInputRef = useRef<HTMLInputElement | null>(null)
   const flavorMenuRef = useRef<HTMLDivElement | null>(null)
   const planDayMenuRef = useRef<HTMLDivElement | null>(null)
   const planSlotMenuRef = useRef<HTMLDivElement | null>(null)
@@ -1252,6 +1265,19 @@ const DietClassicPage = () => {
     setDraftTips("")
   }
 
+  const resetEdit = () => {
+    setEditId(null)
+    setEditTitle("")
+    setEditFlavor("sale")
+    setEditPrepTime("")
+    setEditServings("")
+    setEditImage(null)
+    setEditIngredients("")
+    setEditSteps("")
+    setEditToppings("")
+    setEditTips("")
+  }
+
   const handleCreateRecipe = () => {
     const title = draftTitle.trim()
     if (!title) return
@@ -1264,6 +1290,7 @@ const DietClassicPage = () => {
       flavor: draftFlavor,
       prepTime: draftPrepTime.trim() || "-",
       servings: draftServings.trim() || "-",
+      image: draftImage || wrapPouletImg,
       ingredients,
       steps,
       toppings: parseLines(draftToppings),
@@ -1274,6 +1301,73 @@ const DietClassicPage = () => {
     setPlanMealName(recipe.title)
     setIsCreateOpen(false)
     resetDraft()
+  }
+
+  const openEditRecipe = (recipe: Recipe) => {
+    setEditId(recipe.id)
+    setEditTitle(recipe.title)
+    setEditFlavor(recipe.flavor)
+    setEditPrepTime(recipe.prepTime)
+    setEditServings(recipe.servings)
+    setEditImage(recipe.image)
+    setEditIngredients(recipe.ingredients.join("\n"))
+    setEditSteps(recipe.steps.join("\n"))
+    setEditToppings(recipe.toppings ? recipe.toppings.join("\n") : "")
+    setEditTips(recipe.tips ? recipe.tips.join("\n") : "")
+    setIsEditOpen(true)
+  }
+
+  const handleEditImageChange = (file?: File) => {
+    if (!file) return
+    if (!file.type.startsWith("image/")) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      const result = typeof reader.result === "string" ? reader.result : null
+      if (result) {
+        setEditImage(result)
+      }
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handleUpdateRecipe = () => {
+    if (!editId) return
+    const title = editTitle.trim()
+    if (!title) return
+    const ingredients = parseLines(editIngredients)
+    const steps = parseLines(editSteps)
+    if (ingredients.length === 0 || steps.length === 0) return
+    const updatedRecipe: Recipe = {
+      id: editId,
+      title,
+      flavor: editFlavor,
+      prepTime: editPrepTime.trim() || "-",
+      servings: editServings.trim() || "-",
+      image: editImage || wrapPouletImg,
+      ingredients,
+      steps,
+      toppings: parseLines(editToppings),
+      tips: parseLines(editTips),
+    }
+    setCustomRecipes((prev) => prev.map((recipe) => (recipe.id === editId ? updatedRecipe : recipe)))
+    if (selectedRecipe?.id === editId) {
+      setSelectedRecipe(updatedRecipe)
+    }
+    setIsEditOpen(false)
+    resetEdit()
+  }
+
+  const handleDeleteRecipe = (recipeId: string) => {
+    setCustomRecipes((prev) => prev.filter((recipe) => recipe.id !== recipeId))
+    setFavoriteIds((prev) => {
+      if (!prev.has(recipeId)) return prev
+      const next = new Set(prev)
+      next.delete(recipeId)
+      return next
+    })
+    if (selectedRecipe?.id === recipeId) {
+      setSelectedRecipe(null)
+    }
   }
 
   const renderHeartIcon = (isActive: boolean) =>
@@ -1371,9 +1465,11 @@ const DietClassicPage = () => {
                 <article
                   key={recipe.id}
                   className="diet-recipe-card"
-                  style={{ backgroundImage: `url(${recipe.image})` }}
                   onClick={() => setSelectedRecipe(recipe)}
                 >
+                  <div className="diet-recipe-card__media">
+                    <img src={recipe.image} alt={recipe.title} loading="lazy" />
+                  </div>
                   <div className="diet-recipe-card__overlay" />
                   <div className="diet-recipe-card__content">
                     <div className="diet-recipe-card__header">
@@ -1426,21 +1522,64 @@ const DietClassicPage = () => {
             </div>
             {customRecipes.length > 0 ? (
               <div className="diet-recipe-grid">
-                {customRecipes.map((recipe) => (
-                  <article
-                    key={recipe.id}
-                    className="diet-recipe-card"
-                    style={{ backgroundImage: `url(${recipe.image})` }}
-                    onClick={() => setSelectedRecipe(recipe)}
-                  >
-                    <div className="diet-recipe-card__overlay" />
-                    <div className="diet-recipe-card__content">
-                      <div className="diet-recipe-card__header">
-                        <button
-                          type="button"
-                          className={favoriteIds.has(recipe.id) ? "diet-favorite is-active" : "diet-favorite"}
-                          onClick={(event) => {
-                            event.stopPropagation()
+                  {customRecipes.map((recipe) => (
+                    <article
+                      key={recipe.id}
+                      className="diet-recipe-card"
+                      onClick={() => {
+                        setCustomMenuOpenId(null)
+                        setSelectedRecipe(recipe)
+                      }}
+                    >
+                      <div className="diet-recipe-card__media">
+                        <img src={recipe.image} alt={recipe.title} loading="lazy" />
+                      </div>
+                      <div className="diet-recipe-card__overlay" />
+                      <div className="diet-recipe-card__content">
+                        <div className="diet-recipe-card__header">
+                          <button
+                            type="button"
+                            className="diet-recipe-card__menu"
+                            onClick={(event) => {
+                              event.stopPropagation()
+                              setCustomMenuOpenId((prev) => (prev === recipe.id ? null : recipe.id))
+                            }}
+                            aria-label="Ouvrir le menu"
+                          >
+                            <span />
+                            <span />
+                            <span />
+                          </button>
+                          {customMenuOpenId === recipe.id ? (
+                            <div
+                              className="wishlist-card__menu-popover"
+                              onClick={(event) => event.stopPropagation()}
+                            >
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setCustomMenuOpenId(null)
+                                  openEditRecipe(recipe)
+                                }}
+                              >
+                                Modifier
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setCustomMenuOpenId(null)
+                                  handleDeleteRecipe(recipe.id)
+                                }}
+                              >
+                                Supprimer
+                              </button>
+                            </div>
+                          ) : null}
+                          <button
+                            type="button"
+                            className={favoriteIds.has(recipe.id) ? "diet-favorite is-active" : "diet-favorite"}
+                            onClick={(event) => {
+                              event.stopPropagation()
                             toggleFavorite(recipe.id)
                           }}
                           aria-label="Ajouter aux favoris"
@@ -1476,9 +1615,11 @@ const DietClassicPage = () => {
               <article
                 key={recipe.id}
                 className="diet-recipe-card"
-                style={{ backgroundImage: `url(${recipe.image})` }}
                 onClick={() => setSelectedRecipe(recipe)}
               >
+                <div className="diet-recipe-card__media">
+                  <img src={recipe.image} alt={recipe.title} loading="lazy" />
+                </div>
                 <div className="diet-recipe-card__overlay" />
                 <div className="diet-recipe-card__content">
                   <div className="diet-recipe-card__header">
@@ -1519,20 +1660,23 @@ const DietClassicPage = () => {
           <div className="diet-recipe-modal" role="dialog" aria-label="Créer une recette">
             <div className="diet-recipe-modal__backdrop" onClick={() => setIsCreateOpen(false)} />
             <div className="diet-recipe-modal__panel">
-              <div className="diet-recipe-modal__cover">
-                <img
-                  alt="Aperçu recette"
-                  className="diet-recipe-modal__image"
-                />
-                <button
-                  type="button"
-                  className="diet-recipe-close-icon diet-recipe-close-icon--cover"
-                  onClick={() => setIsCreateOpen(false)}
-                  aria-label="Fermer"
-                >
-                  <span aria-hidden="true" />
-                </button>
-              </div>
+              {draftImage ? (
+                <div className="diet-recipe-modal__cover">
+                  <img
+                    src={draftImage}
+                    alt="Aperçu recette"
+                    className="diet-recipe-modal__image"
+                  />
+                  <button
+                    type="button"
+                    className="diet-recipe-close-icon diet-recipe-close-icon--cover"
+                    onClick={() => setIsCreateOpen(false)}
+                    aria-label="Fermer"
+                  >
+                    <span aria-hidden="true" />
+                  </button>
+                </div>
+              ) : null}
               <div className="diet-recipe-modal__content">
                 <header className="diet-recipe-modal__header">
                   <div>
@@ -1652,6 +1796,122 @@ const DietClassicPage = () => {
                   Annuler
                 </button>
                 <button type="button" onClick={handleCreateRecipe}>
+                  Enregistrer
+                </button>
+              </footer>
+            </div>
+          </div>
+        ) : null}
+
+        {isEditOpen ? (
+          <div className="diet-recipe-modal" role="dialog" aria-label="Modifier une recette">
+            <div
+              className="diet-recipe-modal__backdrop"
+              onClick={() => {
+                setIsEditOpen(false)
+                resetEdit()
+              }}
+            />
+            <div className="diet-recipe-modal__panel">
+              {editImage ? (
+                <div className="diet-recipe-modal__cover">
+                  <img
+                    src={editImage}
+                    alt="Aperçu recette"
+                    className="diet-recipe-modal__image"
+                  />
+                  <button
+                    type="button"
+                    className="diet-recipe-close-icon diet-recipe-close-icon--cover"
+                    onClick={() => {
+                      setIsEditOpen(false)
+                      resetEdit()
+                    }}
+                    aria-label="Fermer"
+                  >
+                    <span aria-hidden="true" />
+                  </button>
+                </div>
+              ) : null}
+              <div className="diet-recipe-modal__content">
+                <header className="diet-recipe-modal__header">
+                  <div>
+                    <h3>Modifier une recette</h3>
+                  </div>
+                </header>
+                <div className="diet-recipe-modal__body">
+                  <div className="diet-recipe-form">
+                    <label>
+                      Titre
+                      <input type="text" value={editTitle} onChange={(event) => setEditTitle(event.target.value)} />
+                    </label>
+                    <div className="diet-recipe-form__row">
+                      <label>
+                        Type
+                        <select value={editFlavor} onChange={(event) => setEditFlavor(event.target.value as "sucre" | "sale")}>
+                          <option value="sale">Salé</option>
+                          <option value="sucre">Sucré</option>
+                        </select>
+                      </label>
+                      <label>
+                        Préparation
+                        <input type="text" value={editPrepTime} onChange={(event) => setEditPrepTime(event.target.value)} placeholder="Ex : 20 min" />
+                      </label>
+                      <label>
+                        Portions
+                        <input type="text" value={editServings} onChange={(event) => setEditServings(event.target.value)} placeholder="Ex : 2 pers" />
+                      </label>
+                    </div>
+                    <label className="diet-recipe-form__file">
+                      Image
+                      <input
+                        ref={editImageInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="diet-recipe-form__file-input"
+                        onChange={(event) => {
+                          handleEditImageChange(event.target.files?.[0])
+                          event.target.value = ""
+                        }}
+                      />
+                      <button
+                        type="button"
+                        className="diet-recipe-form__file-button"
+                        onClick={() => editImageInputRef.current?.click()}
+                      >
+                        Choisir une image
+                      </button>
+                    </label>
+                    <label>
+                      Ingrédients (1 par ligne)
+                      <textarea value={editIngredients} onChange={(event) => setEditIngredients(event.target.value)} rows={5} />
+                    </label>
+                    <label>
+                      Étapes (1 par ligne)
+                      <textarea value={editSteps} onChange={(event) => setEditSteps(event.target.value)} rows={6} />
+                    </label>
+                    <label>
+                      Toppings (optionnel)
+                      <textarea value={editToppings} onChange={(event) => setEditToppings(event.target.value)} rows={3} />
+                    </label>
+                    <label>
+                      Astuces (optionnel)
+                      <textarea value={editTips} onChange={(event) => setEditTips(event.target.value)} rows={3} />
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <footer className="diet-recipe-modal__actions">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsEditOpen(false)
+                    resetEdit()
+                  }}
+                >
+                  Annuler
+                </button>
+                <button type="button" onClick={handleUpdateRecipe}>
                   Enregistrer
                 </button>
               </footer>

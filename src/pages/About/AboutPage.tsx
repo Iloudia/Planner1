@@ -8,7 +8,7 @@ import "./AboutPage.css"
 const firstStoryPart = [
   "Au bout d'un moment, j'ai voulu mieux organiser mes journees. J'ai donc installe plusieurs applications, et je me suis vite rendu compte qu'il fallait payer pour des choses assez simples, comme programmer des evenements sur plusieurs jours ou encore changer la couleur des evenements.",
   "J'ai alors decide de coder mon propre planner. A la base, cela ne devait me prendre que deux jours, tout au plus. Puis je me suis dit que je pourrais ajouter une page, puis une autre, et ainsi de suite. En cours de route, j'ai realise que je pourrais en faire profiter tout le monde.",
-  "C'est pour cette raison que j'ai decide de creer un veritable site web, et pas seulement quelque chose que je garderais pour moi. C'est ainsi que PLANNER est ne.",
+  "C'est pour cette raison que j'ai decide de creer un veritable site web, et pas seulement quelque chose que je garderais pour moi. C'est ainsi que Me&rituals est né.",
 ]
 
 const secondStoryPart = [
