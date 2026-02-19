@@ -77,16 +77,16 @@ const DEFAULT_SERIES: Record<string, SeriesItem[]> = {
     { id: "serie-1", label: "3x12 incline dumbbell row", completed: false },
     { id: "serie-2", label: "4x10 Lat pull downs", completed: false },
     { id: "serie-3", label: "3x10 Cable rows", completed: false },
-    { id: "serie-4", label: "Pull up ( jusqu'à épuisement )", completed: false },
+    { id: "serie-4", label: "Pull up (jusqu'à épuisement)", completed: false },
     { id: "serie-5", label: "3x10 Seated cable rows", completed: false },
     { id: "serie-6", label: "3x10 Bent over rows", completed: false },
   ],
   "ex-2": [
     { id: "serie-7", label: "3x10 hip/leg press", completed: false },
     { id: "serie-8", label: "3x10 Hip thrust", completed: false },
-    { id: "serie-9", label: "3x10 Rdls", completed: false },
+    { id: "serie-9", label: "3x10 RDLs", completed: false },
     { id: "serie-10", label: "3x12 Leg extension", completed: false },
-    { id: "serie-11", label: "Leg cuurls ( jusqu'à épuisement )", completed: false },
+    { id: "serie-11", label: "Leg curls (jusqu'à épuisement)", completed: false },
     { id: "serie-12", label: "3x10 Squats", completed: false },
     { id: "serie-13", label: "3x12 Reverse lunges", completed: false },
   ],
@@ -98,7 +98,7 @@ const MUSCLE_OPTIONS = [
   "Biceps",
   "Bras",
   "Dos",
-  "�?paules",
+  "Épaules",
   "Fessiers",
   "Ischios",
   "Jambes",
@@ -150,7 +150,6 @@ const fetchYoutubeDuration = async (videoId: string) => {
     return null
   }
 }
-
 
 const extractYoutubeId = (url: string) => {
   try {
@@ -242,7 +241,6 @@ const WorkoutPage = () => {
     return () => window.removeEventListener("pointerdown", handleOutsideMenu)
   }, [])
 
-
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const title = form.title.trim()
@@ -276,7 +274,6 @@ const WorkoutPage = () => {
     setVideos((prev) => [nextVideo, ...prev])
     setVideoForm({ title: "", url: "" })
   }
-
 
   const handleDeleteExercise = (exerciseId: string) => {
     setExercises((previous) => previous.filter((item) => item.id !== exerciseId))
@@ -437,10 +434,9 @@ const WorkoutPage = () => {
     window.localStorage.setItem(WORKOUT_RESET_KEY, today)
   }, [setSeriesByExercise])
 
-
   return (
     <div className="workout-page">
-<div className="workout-page__accent-bar" aria-hidden="true" />
+      <div className="workout-page__accent-bar" aria-hidden="true" />
       <PageHeading eyebrow="Routine active" title="Workout" />
 
       <div className="workout-layout">
@@ -539,7 +535,7 @@ const WorkoutPage = () => {
                     </button>
                   ) : null}
                 </div>
-                <span className="workout-form__photo-hint">Formats image acceptés (JPG, PNG, GIF).</span>
+                <span className="workout-form__photo-hint">Formats d'image acceptés (JPG, PNG, GIF).</span>
               </div>
             </div>
             <button type="submit">Ajouter la carte</button>
@@ -666,22 +662,22 @@ const WorkoutPage = () => {
                     }
                   }}
                 >
-                <div className="workout-card__menu">
-                  <button
-                    type="button"
-                    className="modal__close"
-                    aria-label={`Supprimer ${video.title}`}
-                    onClick={(event) => {
-                      event.stopPropagation()
-                      handleDeleteVideo(video.id)
-                      setOpenVideoMenuId(null)
-                      setOpenExerciseMenuId(null)
-                    }}
-                  >
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                    </svg>
-                  </button>
+                  <div className="workout-card__menu">
+                    <button
+                      type="button"
+                      className="modal__close"
+                      aria-label={`Supprimer ${video.title}`}
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        handleDeleteVideo(video.id)
+                        setOpenVideoMenuId(null)
+                        setOpenExerciseMenuId(null)
+                      }}
+                    >
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                      </svg>
+                    </button>
                     {openVideoMenuId === video.id ? (
                       <div className="workout-card__menu-panel" role="menu" onClick={(event) => event.stopPropagation()}>
                         <label className="workout-card__menu-item">
@@ -713,18 +709,18 @@ const WorkoutPage = () => {
                   <div className="workout-video-thumb">
                     <img src={video.thumbnail} alt={video.title} />
                   </div>
-                <div className="workout-video-card__body">
-                  <div className="workout-video-card__title-row">
-                    <p>{video.title}</p>
-                    {video.duration ? (
-                      <span className="workout-video-card__duration">{video.duration}</span>
-                    ) : null}
+                  <div className="workout-video-card__body">
+                    <div className="workout-video-card__title-row">
+                      <p>{video.title}</p>
+                      {video.duration ? (
+                        <span className="workout-video-card__duration">{video.duration}</span>
+                      ) : null}
+                    </div>
+                    <span className="workout-video-card__source">youtube.com</span>
                   </div>
-                  <span className="workout-video-card__source">youtube.com</span>
-                </div>
-              </article>
-            ))}
-          </div>
+                </article>
+              ))}
+            </div>
           )}
         </section>
       </div>
@@ -814,7 +810,7 @@ const WorkoutPage = () => {
                 </form>
                 <div className="workout-modal__note">
                   <label>
-                    <span>Notes de s�ance</span>
+                    <span>Notes de séance</span>
                     <textarea
                       rows={3}
                       value={currentNote}
@@ -832,7 +828,7 @@ const WorkoutPage = () => {
                 </div>
                 {selectedSeries.length === 0 ? (
                   <p className="workout-modal__empty">
-                    Aucun élément encore. Clique sur "Ajouter une série" pour enregistrer tes envies dans cette catégorie.
+                    Aucun élément pour le moment. Clique sur "Ajouter une série" pour enregistrer tes exercices dans cette catégorie.
                   </p>
                 ) : (
                   <ul className="workout-modal__series-list">
@@ -882,9 +878,3 @@ const WorkoutPage = () => {
 }
 
 export default WorkoutPage
-
-
-
-
-
-

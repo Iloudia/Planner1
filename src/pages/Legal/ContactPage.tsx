@@ -15,7 +15,7 @@ const ContactPage = () => {
     <PageHeading eyebrow="Contact" title="Contacte-moi" className="contact-page__header" />
     <div className="legal-page contact-page">
       <p className="legal-page__intro">
-        Une idÃ©e, une question ou envie de collaborer ? Laisse-moi un message et je te rÃ©pondrai avec grand plaisir.
+        Une idée, une question ou envie de collaborer ? Laisse-moi un message et je te répondrai avec grand plaisir.
       </p>
 
       <section className="legal-section contact-form">
@@ -23,11 +23,11 @@ const ContactPage = () => {
           className="contact-form__body"
           onSubmit={(event) => {
             event.preventDefault()
-            window.alert("Merci pour ton message ! Je te repondrai tres vite.")
+            window.alert("Merci pour ton message ! Je te répondrai très vite.")
           }}
         >
           <label>
-            <span>PrÃ©nom</span>
+            <span>Prénom</span>
             <input type="text" name="firstName" placeholder="Ex. Sofia" required />
           </label>
           <label>
@@ -44,7 +44,7 @@ const ContactPage = () => {
           </label>
           <label className="contact-form__field--full">
             <span>Message</span>
-            <textarea name="message" placeholder="Ecris ton message ici..." rows={5} required />
+            <textarea name="message" placeholder="Écris ton message ici..." rows={5} required />
           </label>
           <button type="submit" className="contact-form__submit">
             Envoyer
@@ -58,4 +58,3 @@ const ContactPage = () => {
 }
 
 export default ContactPage
-

@@ -13,7 +13,7 @@ import PageHeading from '../../components/PageHeading'
 import usePersistentState from '../../hooks/usePersistentState'
 import financeMood01 from '../../assets/katie-huber-rhoades-dupe (2).jpeg'
 import financeMood02 from '../../assets/jade-rideout-dupe.jpeg'
-import financeMood03 from '../../assets/activities.jpeg'
+import financeMood03 from '../../assets/Moodboard.png'
 import './FinancePage.css'
 
 type HighchartsModuleLoader = ((chart: typeof Highcharts) => typeof Highcharts) & {

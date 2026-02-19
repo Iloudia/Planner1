@@ -58,9 +58,9 @@ const BoutiquePage = () => {
         <div className="boutique-hero__media" style={{ backgroundImage: `url(${boutiqueHeroBackdrop})` }}>
           <div className="boutique-hero__content">
             <span className="boutique-eyebrow">Boutique digitale</span>
-            <h1 id="boutique-hero-title">Des ressources pr�tes � vendre pour les cr�ateurs ambitieux.</h1>
+            <h1 id="boutique-hero-title">Des ressources prêtes à vendre pour les créateurs ambitieux.</h1>
             <p className="boutique-hero__subtitle">
-              Ebooks PDF, templates Canva, carrousels Instagram : tout est pens� pour booster tes ventes, ta visibilit� et ton
+              Ebooks PDF, templates Canva, carrousels Instagram : tout est pensé pour booster tes ventes, ta visibilité et ton
               expertise en un temps record.
             </p>
             <div className="boutique-hero__actions">
@@ -72,11 +72,11 @@ const BoutiquePage = () => {
               </a>
             </div>
             <div className="boutique-hero__meta">
-              <span>Acc�s imm�diat</span>
+              <span>Accès immédiat</span>
               <span>|</span>
-              <span>Mises � jour incluses</span>
+              <span>Mises à jour incluses</span>
               <span>|</span>
-              <span>Usage commercial autoris�</span>
+              <span>Usage commercial autorisé</span>
             </div>
           </div>
         </div>
@@ -84,8 +84,8 @@ const BoutiquePage = () => {
 
       <section className="boutique-section boutique-section--olive reveal" id="categories" aria-labelledby="boutique-categories-title">
         <div className="boutique-section__header">
-          <span className="boutique-eyebrow">Cat�gories</span>
-          <h2 id="boutique-categories-title">Choisis le format qui correspond � ta fa�on de cr�er.</h2>
+          <span className="boutique-eyebrow">Catégories</span>
+          <h2 id="boutique-categories-title">Choisis le format qui correspond à ta façon de créer.</h2>
           <p>Chaque format est construit pour simplifier ta production et maximiser tes conversions.</p>
         </div>
         <div className="boutique-categories">
@@ -112,7 +112,7 @@ const BoutiquePage = () => {
       <section className="boutique-section boutique-section--paper reveal" id="best-sellers" aria-labelledby="boutique-best-title">
         <div className="boutique-section__header">
           <span className="boutique-eyebrow">Best-sellers</span>
-          <h2 id="boutique-best-title">Les favoris des cr�ateurs en ce moment.</h2>
+          <h2 id="boutique-best-title">Les favoris des créateurs en ce moment.</h2>
           <p>Des ressources ultra efficaces pour vendre, publier et performer sans surcharger ton planning.</p>
         </div>
         <div className="boutique-products boutique-products--featured">
@@ -145,7 +145,7 @@ const BoutiquePage = () => {
         <div className="boutique-section__header">
           <span className="boutique-eyebrow">Produits</span>
           <h2 id="boutique-products-title">Toute la boutique digitale.</h2>
-          <p>Fais ton choix, personnalise et publie. Les CTA sont pens�s pour la conversion.</p>
+          <p>Fais ton choix, personnalise et publie. Les CTA sont pensés pour la conversion.</p>
         </div>
         <div className="boutique-filters" role="list">
           <button
@@ -214,7 +214,7 @@ const BoutiquePage = () => {
       <section className="boutique-section reveal" aria-labelledby="boutique-benefits-title">
         <div className="boutique-section__header">
           <span className="boutique-eyebrow">Promesse</span>
-          <h2 id="boutique-benefits-title">Une boutique qui vend pendant que tu cr�es.</h2>
+          <h2 id="boutique-benefits-title">Une boutique qui vend pendant que tu crées.</h2>
         </div>
         <div className="boutique-benefits">
           {benefits.map((benefit) => (
@@ -228,8 +228,8 @@ const BoutiquePage = () => {
 
       <section className="boutique-cta reveal" aria-labelledby="boutique-cta-title">
         <div className="boutique-cta__content">
-          <h2 id="boutique-cta-title">Pr�t�e � passer � la vitesse sup�rieure ?</h2>
-          <p>Choisis tes ressources et lance ton prochain contenu d�s aujourd'hui.</p>
+          <h2 id="boutique-cta-title">Prête à passer à la vitesse supérieure ?</h2>
+          <p>Choisis tes ressources et lance ton prochain contenu dès aujourd'hui.</p>
         </div>
         <a className="boutique-button boutique-button--primary" href="#produits">
           Voir la boutique
@@ -238,10 +238,10 @@ const BoutiquePage = () => {
 
       <section className="boutique-legal">
         <div className="boutique-legal__content">
-          <span>Paiement s�curis� | Acc�s imm�diat | Support sous 48h</span>
+          <span>Paiement sécurisé | Accès immédiat | Support sous 48h</span>
           <div className="boutique-legal__links">
-            <a href="/mentions-legales">Mentions l�gales</a>
-            <a href="/confidentialite">Confidentialit�</a>
+            <a href="/mentions-legales">Mentions légales</a>
+            <a href="/confidentialite">Confidentialité</a>
             <a href="/contact">Contact</a>
           </div>
         </div>
@@ -251,10 +251,3 @@ const BoutiquePage = () => {
 }
 
 export default BoutiquePage
-
-
-
-
-
-
-
