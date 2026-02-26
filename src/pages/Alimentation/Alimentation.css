@@ -410,6 +410,10 @@
   .diet-crosslink {
     align-items: flex-start;
   }
+
+  .diet-generator__grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .diet-plan-modal {
@@ -585,6 +589,134 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
+
+.diet-generator__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.diet-generator__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.diet-generator__primary {
+  border: none;
+  background: #0f172a;
+  color: #ffffff;
+  padding: 0.7rem 1.4rem;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.diet-generator__status {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.diet-generator__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  margin-top: 1.4rem;
+}
+
+.diet-generator__panel {
+  border-radius: 18px;
+  padding: 1.2rem;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(248, 250, 252, 0.7);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.diet-generator__label {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.78rem;
+  color: #64748b;
+  font-weight: 700;
+}
+
+.diet-generator__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.diet-goal-chip {
+  border: 1px solid rgba(15, 23, 42, 0.16);
+  border-radius: 16px;
+  padding: 0.6rem 0.8rem;
+  background: #ffffff;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3rem;
+  min-width: 150px;
+  flex: 1 1 180px;
+  text-align: left;
+}
+
+.diet-goal-chip span {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.diet-goal-chip small {
+  font-size: 0.75rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.diet-goal-chip.is-active {
+  background: #ec4899;
+  border-color: #ec4899;
+}
+
+.diet-goal-chip.is-active span,
+.diet-goal-chip.is-active small {
+  color: #ffffff;
+}
+
+.diet-generator__toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.diet-generator__preview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.diet-generator__ideas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.diet-generator__ideas span {
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  padding: 0.3rem 0.75rem;
+  font-size: 0.85rem;
+  color: #0f172a;
+}
 /* Luxury overrides (match boutique design, keep colors) */
 body.alimentation-page--lux {
   background: #f8f6f1;
@@ -707,5 +839,49 @@ body.alimentation-page--lux input,
 body.alimentation-page--lux textarea {
   border-radius: 0;
   box-shadow: none;
+}
+
+body.alimentation-page--lux .diet-generator__panel {
+  background: var(--lux-paper);
+  border: 1px solid var(--lux-line);
+  border-radius: 0;
+}
+
+body.alimentation-page--lux .diet-generator__primary {
+  background: #000000;
+  color: #ffffff;
+  border: 1px solid #000000;
+}
+
+body.alimentation-page--lux .diet-generator__status {
+  color: var(--lux-ink-soft);
+}
+
+body.alimentation-page--lux .diet-goal-chip {
+  border-color: var(--lux-line);
+  background: #ffffff;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+body.alimentation-page--lux .diet-goal-chip span,
+body.alimentation-page--lux .diet-goal-chip small {
+  color: var(--lux-ink);
+}
+
+body.alimentation-page--lux .diet-goal-chip.is-active {
+  background: #000000;
+  border-color: #000000;
+}
+
+body.alimentation-page--lux .diet-goal-chip.is-active span,
+body.alimentation-page--lux .diet-goal-chip.is-active small {
+  color: #ffffff;
+}
+
+body.alimentation-page--lux .diet-generator__ideas span {
+  background: #ffffff;
+  border: 1px solid var(--lux-line);
+  color: var(--lux-ink);
 }
 

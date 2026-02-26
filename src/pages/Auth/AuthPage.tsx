@@ -158,7 +158,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
         if (success) {
           navigate(destinationPath, { replace: true })
         } else {
-          setError("Connexion Google impossible. Merci de reessayer.")
+          setError("Connexion Google impossible. Merci de réessayer.")
         }
       },
     })
@@ -271,18 +271,18 @@ const AuthPage = ({ mode }: AuthFormProps) => {
       }
       if (registerStep === 1) {
         if (!firstName.trim() || !lastName.trim() || !username.trim()) {
-          setError("Merci de renseigner Prénom, nom et pseudo.")
+          setError("Merci de renseigner le prénom, le nom et le pseudo.")
           return
         }
         setRegisterStep(2)
         return
       }
       if (!password.trim() || !hasMinLength || !hasUpper || !hasLower || !hasDigit || !hasSpecial) {
-        setError("Le mot de passe doit avoir au moins 6 caracteres, 1 majuscule, 1 minuscule, 1 chiffre et 1 caractere special.")
+        setError("Le mot de passe doit avoir au moins 6 caractères, 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial.")
         return
       }
       if (!acceptTerms) {
-        setError("Merci d accepter les conditions generales.")
+        setError("Merci d’accepter les conditions générales.")
         return
       }
     }
@@ -325,7 +325,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
 
   const handleForgot = () => {
     if (!email.trim()) {
-      setError("Renseigne ton email pour recevoir un lien de reinitialisation.")
+      setError("Renseigne ton email pour recevoir un lien de réinitialisation.")
       return
     }
     setError("")
@@ -355,7 +355,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
 
           {isAuthenticated && mode !== "register" ? (
             <p className="auth-status">
-              Connecte en tant que <strong>{userEmail}</strong>
+              Connecté en tant que <strong>{userEmail}</strong>
             </p>
           ) : null}
 
@@ -585,4 +585,3 @@ const AuthPage = ({ mode }: AuthFormProps) => {
 }
 
 export default AuthPage
-
