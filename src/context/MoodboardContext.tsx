@@ -81,7 +81,7 @@ export function MoodboardProvider({ children }: { children: ReactNode }) {
 export function useMoodboard() {
   const context = useContext(MoodboardContext)
   if (!context) {
-    throw new Error("useMoodboard doit etre utilise dans MoodboardProvider")
+    throw new Error("useMoodboard doit être utilisé dans MoodboardProvider")
   }
   return context
 }

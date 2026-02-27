@@ -1,15 +1,15 @@
 const accessibilityOptions = [
   {
     label: "Navigation au clavier",
-    description: "Activez les options pour faciliter l utilisation du clavier dans les menus.",
+    description: "Activez les options pour faciliter l’utilisation du clavier dans les menus.",
   },
 ]
 
 const SettingsAccessibility = () => {
   return (
     <div className="settings-section">
-      <h2>Accessibilite</h2>
-      <p className="settings-section__intro">Adapter l experience aux besoins de chacun pour rendre l interface confortable.</p>
+      <h2>Accessibilité</h2>
+      <p className="settings-section__intro">Adapter l’expérience aux besoins de chacun pour rendre l’interface confortable.</p>
       <div className="settings-options">
         {accessibilityOptions.map((option) => (
           <button type="button" className="settings-option" key={option.label}>

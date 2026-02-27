@@ -39,9 +39,9 @@ const CookiePreferencesModal = () => {
       <div className="cookie-modal__panel">
         <header className="cookie-modal__header">
           <div>
-            <p className="cookie-modal__eyebrow">Centre de preferences</p>
+            <p className="cookie-modal__eyebrow">Centre de préférences</p>
             <h2 id="cookie-modal-title">Choisis les cookies que tu acceptes</h2>
-            <p>Les cookies essentiels sont toujours actifs pour des raisons de securite.</p>
+            <p>Les cookies essentiels sont toujours actifs pour des raisons de sécurité.</p>
           </div>
           <button type="button" className="modal__close" aria-label="Fermer" onClick={closePreferences}>
             ×
@@ -57,7 +57,7 @@ const CookiePreferencesModal = () => {
               </p>
             </div>
             <div className="cookie-modal__switch cookie-modal__switch--locked">
-              <span>Active</span>
+              <span>Actifs</span>
             </div>
           </article>
 
@@ -65,7 +65,7 @@ const CookiePreferencesModal = () => {
             <div>
               <p className="cookie-modal__group-title">Statistiques anonymes</p>
               <p className="cookie-modal__group-text">
-                Aide à comprendre comment Planner est utilisé pour améliorer les fonctionnalités.
+                Aident à comprendre comment Planner est utilisé afin d’améliorer les fonctionnalités.
               </p>
             </div>
             <label className="cookie-modal__switch">
@@ -74,15 +74,15 @@ const CookiePreferencesModal = () => {
                 checked={analyticsEnabled}
                 onChange={(event) => setAnalyticsEnabled(event.target.checked)}
               />
-              <span>{analyticsEnabled ? "Active" : "Desactive"}</span>
+              <span>{analyticsEnabled ? "Actif" : "Désactivé"}</span>
             </label>
           </article>
 
           <article className="cookie-modal__group">
             <div>
-              <p className="cookie-modal__group-title">Preferences</p>
+              <p className="cookie-modal__group-title">Préférences</p>
               <p className="cookie-modal__group-text">
-                Retient tes themes, ta langue, les dernieres vues consultees pour personnaliser ton espace.
+                Retiennent tes thèmes, ta langue et les dernières vues consultées pour personnaliser ton espace.
               </p>
             </div>
             <label className="cookie-modal__switch">
@@ -91,7 +91,7 @@ const CookiePreferencesModal = () => {
                 checked={preferencesEnabled}
                 onChange={(event) => setPreferencesEnabled(event.target.checked)}
               />
-              <span>{preferencesEnabled ? "Active" : "Desactive"}</span>
+              <span>{preferencesEnabled ? "Actif" : "Désactivé"}</span>
             </label>
           </article>
         </div>
@@ -113,4 +113,3 @@ const CookiePreferencesModal = () => {
 }
 
 export default CookiePreferencesModal
-

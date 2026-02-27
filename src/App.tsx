@@ -16,7 +16,6 @@ import CalendrierPage from "./pages/Calendrier/Calendrier"
 import FinancesPage from "./pages/Finances/Finances"
 import RoutinePage from "./pages/Routine/Routine"
 import GoalsPage from "./pages/Goals/Goals"
-import CulturePage from "./pages/Culture/Culture"
 import CuisinePage from "./pages/Alimentation/Alimentation"
 import DietClassicPage from "./pages/Diet/DietPage"
 import VoyagePage from "./pages/Voyage/Voyage"
@@ -145,7 +144,6 @@ function App() {
             <Route path="/finances" element={<FinancesPage />} />
             <Route path="/routine" element={<RoutinePage />} />
             <Route path="/goals" element={<GoalsPage />} />
-            <Route path="/culture" element={<CulturePage />} />
             <Route path="/diet" element={<DietClassicPage />} />
             <Route path="/alimentation" element={<CuisinePage />} />
             <Route path="/voyage" element={<VoyagePage />} />

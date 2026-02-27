@@ -12,7 +12,7 @@ const SettingsLayout = () => {
   return (
     <>
 
-      <PageHeading eyebrow="Paramètres" title="Personnalise ton expérience" />
+      <PageHeading eyebrow="ParamÃ¨tres" title="Personnalise ton expÃ©rience" />
 
       <div className="content-page settings-page">
 
@@ -39,4 +39,3 @@ const SettingsLayout = () => {
 }
 
 export default SettingsLayout
-

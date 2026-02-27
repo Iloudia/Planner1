@@ -2,7 +2,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import stampLove from '../../assets/Timbre-1.png'
 import stampKey from '../../assets/Timbre-2.png'
-import heroImage from '../../assets/Self-love-image.webp'
 import PageHeading from '../../components/PageHeading'
 import usePersistentState from '../../hooks/usePersistentState'
 import './SelfLove.css'
@@ -934,7 +933,7 @@ const SelfLovePage = () => {
               <div>
                 <p className="self-love-letter__title">Lettre à mon moi du futur</p>
                 <p className="self-love-future-letter__subtitle">
-                  Écris-la aujourd&apos;hui, laisse le temps faire le reste.
+                  Écris-la aujourd'hui, laisse le temps faire le reste.
                 </p>
               </div>
               <div className="self-love-future-letter__status">
@@ -962,7 +961,7 @@ const SelfLovePage = () => {
                 />
               </label>
               <label>
-                <span>Date d&apos;ouverture</span>
+                <span>Date d'ouverture</span>
                 <input
                   type="date"
                   min={today.iso}

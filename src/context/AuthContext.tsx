@@ -355,16 +355,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const changePassword = useCallback(async (currentPassword: string, newPassword: string): Promise<ChangePasswordResult> => {
     const currentUser = auth.currentUser
     if (!currentUser?.email) {
-      return { success: false, error: "Vous devez etre connecte pour changer votre mot de passe." }
+      return { success: false, error: "Vous devez être connecté pour changer votre mot de passe." }
     }
     if (!currentPassword || !newPassword) {
       return { success: false, error: "Tous les champs sont obligatoires." }
     }
     if (newPassword.length < 6) {
-      return { success: false, error: "Le nouveau mot de passe doit contenir au moins 6 caracteres." }
+      return { success: false, error: "Le nouveau mot de passe doit contenir au moins 6 caractères." }
     }
     if (newPassword === currentPassword) {
-      return { success: false, error: "Le nouveau mot de passe doit etre different de l actuel." }
+      return { success: false, error: "Le nouveau mot de passe doit être différent de l’actuel." }
     }
     try {
       const credential = EmailAuthProvider.credential(currentUser.email, currentPassword)
@@ -373,14 +373,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       return { success: true }
     } catch (error) {
       console.error("Password change failed", error)
-      return { success: false, error: "Mot de passe actuel invalide ou session expiree." }
+      return { success: false, error: "Mot de passe actuel invalide ou session expirée." }
     }
   }, [])
 
   const deactivateAccount = useCallback(async (): Promise<AccountActionResult> => {
     const currentUser = auth.currentUser
     if (!currentUser) {
-      return { success: false, error: "Vous devez etre connecte pour desactiver votre compte." }
+      return { success: false, error: "Vous devez être connecté pour désactiver votre compte." }
     }
     const deleteAt = new Date(Date.now() + THIRTY_DAYS_MS).toISOString()
     try {
@@ -392,14 +392,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       return { success: true, deleteAt }
     } catch (error) {
       console.error("Account deactivation failed", error)
-      return { success: false, error: "Impossible de planifier la desactivation." }
+      return { success: false, error: "Impossible de planifier la désactivation." }
     }
   }, [])
 
   const deleteAccount = useCallback(async (): Promise<AccountActionResult> => {
     const currentUser = auth.currentUser
     if (!currentUser) {
-      return { success: false, error: "Vous devez etre connecte pour supprimer votre compte." }
+      return { success: false, error: "Vous devez être connecté pour supprimer votre compte." }
     }
     try {
       await deleteDoc(doc(db, "users", currentUser.uid))
@@ -420,7 +420,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       console.error("Account delete failed", error)
       return {
         success: false,
-        error: "Suppression impossible sans reconnexion recente. Reconnectez-vous puis reessayez.",
+        error: "Suppression impossible sans reconnexion récente. Reconnectez-vous puis réessayez.",
       }
     }
   }, [])
@@ -445,7 +445,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const adminUpdateStatus = useCallback(async (email: string, status: AccountStatus): Promise<AccountActionResult> => {
     if (!email) {
-      return { success: false, error: "Email requis pour mettre à jour le statut." }
+      return { success: false, error: "E-mail requis pour mettre à jour le statut." }
     }
     try {
       const targetDoc = await loadAdminUserByEmail(email)
@@ -472,7 +472,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const adminDeleteUser = useCallback(async (email: string): Promise<AccountActionResult> => {
     if (!email) {
-      return { success: false, error: "Email requis pour supprimer le compte." }
+      return { success: false, error: "E-mail requis pour supprimer le compte." }
     }
     const currentEmail = auth.currentUser?.email
     if (currentEmail && normalizeEmail(currentEmail) === normalizeEmail(email)) {

@@ -8,18 +8,18 @@ const accountOptions = [
   {
     id: "info",
     label: "Informations sur le compte",
-    description: "Consultez les informations de votre compte, comme votre numero de telephone et votre adresse e-mail.",
+    description: "Consultez les informations de votre compte, comme votre numéro de téléphone et votre adresse e-mail.",
   },
-  { id: "password", label: "Changez votre mot de passe", description: "Changez votre mot de passe Ã  tout moment." },
+  { id: "password", label: "Changez votre mot de passe", description: "Changez votre mot de passe à tout moment." },
   {
     id: "deactivate",
-    label: "Desactiver ou supprimer le compte",
-    description: "Planifiez une desactivation de 30 jours ou supprimez-le immediatement.",
+    label: "Désactiver ou supprimer le compte",
+    description: "Planifiez une désactivation de 30 jours ou supprimez-le immédiatement.",
   },
 ]
 
 const languageLabels: Record<string, string> = {
-  "fr-FR": "Francais",
+  "fr-FR": "Français",
   "en-US": "Anglais",
   "es-ES": "Espagnol",
 }
@@ -138,7 +138,7 @@ const SettingsAccount = () => {
   const country = (identity.country as string) ?? "Non renseigné"
   const languageCode = (identity.language as string) ?? ""
   const language = languageLabels[languageCode] ?? (languageCode || "Non renseigné")
-  const gender = (identity.gender as string) || "Non precise"
+  const gender = (identity.gender as string) || "Non précisé"
   const birthday = (identity.birthday as string) ?? ""
   const age = computeAge(birthday)
   const formattedBirthday = formatDate(birthday)
@@ -147,14 +147,14 @@ const SettingsAccount = () => {
   const detailEntries = useMemo(
     () => [
       { label: "Nom d'utilisateur", value: username },
-      { label: "Telephone", value: phone },
+      { label: "Téléphone", value: phone },
       { label: "E-mail", value: email },
-      { label: "CrÃ©ation de compte", value: formattedCreatedAt },
+      { label: "Création du compte", value: formattedCreatedAt },
       { label: "Pays", value: country },
       { label: "Langue", value: language },
-      { label: "Genre", value: gender || "Non precise" },
+      { label: "Genre", value: gender || "Non précisé" },
       { label: "Date de naissance", value: formattedBirthday },
-      { label: "Age", value: age !== null ? `${age}` : "Non renseigné" },
+      { label: "Âge", value: age !== null ? `${age}` : "Non renseigné" },
     ],
     [username, phone, email, formattedCreatedAt, country, language, gender, formattedBirthday, age],
   )
@@ -200,7 +200,7 @@ const SettingsAccount = () => {
     }
     setPasswordChangeError(null)
     setPasswordForm({ current: "", next: "", confirm: "" })
-    setPasswordChangeSuccess("Votre mot de passe a Ã©tÃ© mis Ã  jour.")
+    setPasswordChangeSuccess("Votre mot de passe a été mis à jour.")
   }
 
   const handleDeactivateAccount = async () => {
@@ -208,12 +208,12 @@ const SettingsAccount = () => {
     const result = await deactivateAccount()
     if (!result.success) {
       setAccountActionSuccess(null)
-      setAccountActionError(result.error ?? "Impossible de desactiver le compte.")
+      setAccountActionError(result.error ?? "Impossible de désactiver le compte.")
       return
     }
     const deletionDate = result.deleteAt ?? scheduledDeletionDate
     const formatted = deletionDate ? formatDateTime(deletionDate) : "30 jours"
-    setAccountActionSuccess(`Votre compte restera actif jusqu'au ${formatted} avant suppression definitive.`)
+    setAccountActionSuccess(`Votre compte restera actif jusqu'au ${formatted} avant suppression définitive.`)
   }
 
   const handleDeleteAccount = async () => {
@@ -224,7 +224,7 @@ const SettingsAccount = () => {
       setAccountActionSuccess(null)
       return
     }
-    setAccountActionSuccess("Votre compte a Ã©tÃ© supprimÃ©.")
+    setAccountActionSuccess("Votre compte a été supprimé.")
   }
 
   if (step === "password") {
@@ -251,7 +251,7 @@ const SettingsAccount = () => {
           </label>
           {error ? <p className="settings-error">{error}</p> : null}
           <button type="button" className="settings-password__forgot">
-            Mot de passe oublie ?
+            Mot de passe oublié ?
           </button>
           <div className="settings-password__actions">
             <button type="button" onClick={handleReset}>
@@ -290,8 +290,8 @@ const SettingsAccount = () => {
     return (
       <div className="settings-section">
         <h2>Changez votre mot de passe</h2>
-        <p className="settings-section__intro">Renforcez la securite de votre compte Planner.</p>
-        <p className="settings-note">mot de passe oubliÃ©</p>
+        <p className="settings-section__intro">Renforcez la sécurité de votre compte Planner.</p>
+        <p className="settings-note">Mot de passe oublié</p>
         <form className="settings-password-change" onSubmit={handlePasswordChangeSubmit}>
           <label>
             <span>Mot de passe actuel</span>
@@ -358,7 +358,7 @@ const SettingsAccount = () => {
           {passwordChangeError ? <p className="settings-error">{passwordChangeError}</p> : null}
           {passwordChangeSuccess ? <p className="settings-success">{passwordChangeSuccess}</p> : null}
           <p className="settings-note">
-            Modifier votre mot de passe vous deconnectera de toutes vos sessions actives sauf celle que vous utilisez actuellement.
+            Modifier votre mot de passe vous déconnectera de toutes vos sessions actives, sauf celle que vous utilisez actuellement.
           </p>
           <div className="settings-password__actions">
             <button type="button" onClick={handlePasswordChangeReset}>
@@ -377,26 +377,26 @@ const SettingsAccount = () => {
     const formattedDeletion = scheduledDeletionDate ? formatDateTime(scheduledDeletionDate) : null
     return (
       <div className="settings-section">
-        <h2>Desactiver ou supprimer le compte</h2>
+        <h2>Désactiver ou supprimer le compte</h2>
         <p className="settings-section__intro">
-          Desactivez votre compte pour planifier sa suppression sous 30 jours ou supprimez-le immediatement si vous etes sur de votre choix.
+          Désactivez votre compte pour planifier sa suppression sous 30 jours ou supprimez-le immédiatement si vous êtes sûr de votre choix.
         </p>
         {accountActionError ? <p className="settings-error">{accountActionError}</p> : null}
         {accountActionSuccess ? <p className="settings-success">{accountActionSuccess}</p> : null}
-        {formattedDeletion ? <p className="settings-note">Suppression programmee le {formattedDeletion}.</p> : null}
+        {formattedDeletion ? <p className="settings-note">Suppression programmée le {formattedDeletion}.</p> : null}
         <div className="settings-dual-actions">
           <article className="settings-action-card">
-            <h3>Desactiver le compte</h3>
-            <p>Le compte restera accessible pendant 30 jours, puis il sera supprime automatiquement.</p>
+            <h3>Désactiver le compte</h3>
+            <p>Le compte restera accessible pendant 30 jours, puis il sera supprimé automatiquement.</p>
             <button type="button" onClick={handleDeactivateAccount}>
-              Desactiver mon compte
+              Désactiver mon compte
             </button>
           </article>
           <article className="settings-action-card settings-action-card--danger">
             <h3>Supprimer le compte</h3>
-            <p>Supprime immediatement et definitivement vos donnees et sessions.</p>
+            <p>Supprime immédiatement et définitivement vos données et sessions.</p>
             <button type="button" onClick={handleDeleteAccount}>
-              Supprimer definitivement
+              Supprimer définitivement
             </button>
           </article>
         </div>
@@ -410,7 +410,7 @@ const SettingsAccount = () => {
   return (
     <div className="settings-section">
       <h2>Votre compte</h2>
-      <p className="settings-section__intro">Gardez le controle de vos informations personnelles.</p>
+      <p className="settings-section__intro">Gardez le contrôle de vos informations personnelles.</p>
       <div className="settings-options">
         {accountOptions.map((option) => (
           <button

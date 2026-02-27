@@ -1,7 +1,7 @@
 const notificationOptions = [
   {
     label: "Notifications par e-mail",
-    description: "Recevez un resume de vos activites ou des rappels de taches directement dans votre boite de reception.",
+    description: "Recevez un résumé de vos activités ou des rappels de tâches directement dans votre boîte de réception.",
   },
 ]
 
@@ -9,7 +9,7 @@ const SettingsNotifications = () => {
   return (
     <div className="settings-section">
       <h2>Notifications</h2>
-      <p className="settings-section__intro">Choisissez vos preferences par type de notification.</p>
+      <p className="settings-section__intro">Choisissez vos préférences par type de notification.</p>
       <div className="settings-options">
         {notificationOptions.map((option) => (
           <button type="button" className="settings-option" key={option.label}>

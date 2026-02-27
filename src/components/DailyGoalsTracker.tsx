@@ -7,7 +7,7 @@ const HABIT_ROWS_DEFAULT = [
   "5k+ steps",
   "Drinking 2 Litres of Water",
   "Healthy meals",
-  "No junk/ sugar",
+  "No junk/sugar",
   "1 Fruit",
   "8 Hours of Sleep",
 ]
@@ -169,7 +169,7 @@ const DailyGoalsTracker = () => {
     <div className="sport-habits__table-wrapper">
       <div className="sport-habits__header">
         <div className="sport-habits__header-content">
-          <h3>Daily goals</h3>
+          <h3>Objectifs quotidiens</h3>
           <p className="muted">Coche tes objectifs pour chaque jour.</p>
           {habitWeekRange ? <p className="sport-habits__week">Semaine du {habitWeekRange}</p> : null}
         </div>
@@ -179,7 +179,7 @@ const DailyGoalsTracker = () => {
           </button>
         </div>
       </div>
-      <div className="sport-habits__table" role="table" aria-label="Suivi objectifs quotidiens">
+      <div className="sport-habits__table" role="table" aria-label="Suivi des objectifs quotidiens">
         <div className="sport-habits__row sport-habits__row--head" role="row">
           <div className="sport-habits__cell sport-habits__cell--head" role="columnheader">
             Objectif
@@ -212,7 +212,7 @@ const DailyGoalsTracker = () => {
                       onClick={() => handleHabitDelete(rowIndex)}
                       aria-label={`Supprimer ${rowLabel}`}
                     >
-                      x
+                      ×
                     </button>
                   ) : null}
                 </div>
@@ -272,8 +272,8 @@ const DailyGoalsTracker = () => {
                 <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
               </svg>
             </button>
-            <h4>Jour valid� ?</h4>
-            <p>Bravo, tu as tout coch� pour {HABIT_DAYS_FULL[rewardDay]}.</p>
+            <h4>Journée validée 🎉</h4>
+            <p>Bravo, tu as tout coché pour {HABIT_DAYS_FULL[rewardDay]}.</p>
           </div>
         </div>
       ) : null}
@@ -282,7 +282,3 @@ const DailyGoalsTracker = () => {
 }
 
 export default DailyGoalsTracker
-
-
-
-

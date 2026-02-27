@@ -20,8 +20,8 @@ const FONT_SCALE_OPTIONS = [
 ]
 
 const BACKGROUND_OPTIONS: { id: BackgroundTone; label: string; description: string }[] = [
-  { id: "light", label: "Clair", description: "Fond lumineux et aere" },
-  { id: "dark", label: "Sombre", description: "Fond doux et contraste" },
+  { id: "light", label: "Clair", description: "Fond lumineux et aéré" },
+  { id: "dark", label: "Sombre", description: "Fond doux et contrasté" },
 ]
 
 const SettingsDisplay = () => {
@@ -67,7 +67,7 @@ const SettingsDisplay = () => {
   return (
     <div className="settings-section">
       <h2>Affichage</h2>
-      <p className="settings-section__intro">Adapte la lecture et l ambiance visuelle de Planner.</p>
+      <p className="settings-section__intro">Adapte la lecture et l’ambiance visuelle de Planner.</p>
 
       <section className="settings-display-group">
         <header className="settings-display-group__header">
@@ -98,8 +98,8 @@ const SettingsDisplay = () => {
       <section className="settings-display-group">
         <header className="settings-display-group__header">
           <div>
-            <h3>Couleur</h3>
-            <p>Le choix fin des couleurs arrivera tres vite.</p>
+            <h3>Couleurs</h3>
+            <p>Le choix fin des couleurs arrivera très vite.</p>
           </div>
         </header>
         <div className="color-placeholder">
@@ -110,11 +110,11 @@ const SettingsDisplay = () => {
       <section className="settings-display-group">
         <header className="settings-display-group__header">
           <div>
-            <h3>Arriere-plan</h3>
+            <h3>Arrière-plan</h3>
             <p>Opte pour une ambiance claire ou plus sombre.</p>
           </div>
         </header>
-        <div className="background-tone-selector" role="group" aria-label="Choisir le ton de l arriere-plan">
+        <div className="background-tone-selector" role="group" aria-label="Choisir le ton de l’arrière-plan">
           {BACKGROUND_OPTIONS.map((option) => (
             <button
               key={option.id}
