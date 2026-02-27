@@ -115,6 +115,166 @@
   pointer-events: none;
 }
 
+.self-love-future-letter__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.4rem;
+  flex-wrap: wrap;
+}
+
+.self-love-future-letter__subtitle {
+  margin: 0.4rem 0 0;
+  color: rgba(67, 20, 51, 0.65);
+  font-size: 1rem;
+  font-style: italic;
+}
+
+.self-love-future-letter__status {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.7rem 1.1rem;
+  border-radius: 999px;
+  border: 1px dashed rgba(236, 72, 153, 0.5);
+  background: linear-gradient(120deg, rgba(236, 72, 153, 0.12), rgba(254, 215, 170, 0.2));
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: rgba(67, 20, 51, 0.75);
+}
+
+.self-love-future-letter__status strong {
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: none;
+  font-weight: 600;
+  color: rgba(67, 20, 51, 0.9);
+}
+
+.self-love-future-letter__status.is-locked {
+  background: linear-gradient(120deg, rgba(15, 23, 42, 0.12), rgba(244, 114, 182, 0.12));
+  border-color: rgba(15, 23, 42, 0.35);
+  color: rgba(15, 23, 42, 0.7);
+}
+
+.self-love-future-letter__addresses {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.self-love-future-letter__addresses label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 1rem;
+  color: var(--color-chocolate);
+  font-family: var(--font-display);
+}
+
+.self-love-future-letter__body {
+  position: relative;
+}
+
+.self-love-future-letter__lock {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 250, 245, 0.92);
+  backdrop-filter: blur(2px);
+  border-radius: 18px;
+  padding: 1.2rem;
+}
+
+.self-love-future-letter__lock-body {
+  max-width: 360px;
+  background: #fff;
+  border: 1px solid rgba(15, 23, 42, 0.2);
+  padding: 1.4rem 1.6rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.12);
+}
+
+.self-love-future-letter__lock-body span {
+  font-size: 0.85rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(15, 23, 42, 0.6);
+}
+
+.self-love-future-letter__lock-body strong {
+  font-size: 1.1rem;
+  color: rgba(15, 23, 42, 0.9);
+}
+
+.self-love-future-letter__lock-body p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: rgba(15, 23, 42, 0.7);
+  font-style: italic;
+}
+
+.self-love-future-letter__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.self-love-future-letter__stamp {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.self-love-future-letter__stamp img {
+  width: 58px;
+  height: 58px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid rgba(236, 72, 153, 0.35);
+  background: #fff;
+}
+
+.self-love-future-letter__actions {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.self-love-future-letter__actions .self-love-letter__save {
+  margin-left: 0;
+}
+
+.self-love-future-letter__seal {
+  border: none;
+  border-radius: 999px;
+  padding: 0.55rem 1.4rem;
+  background: linear-gradient(130deg, #111827 0%, #e11d48 100%);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.self-love-future-letter__seal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 35px rgba(17, 24, 39, 0.25);
+}
+
+.self-love-future-letter__seal:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 .self-love-letter__title {
   font-size: clamp(1.4rem, 2.6vw, 2rem);
   color: var(--color-chocolate);
@@ -156,6 +316,16 @@
   color: var(--color-chocolate);
   background: transparent;
   width: min(220px, 100%);
+}
+
+.self-love-future-letter__addresses input {
+  border: 1px solid rgba(67, 20, 51, 0.25);
+  padding: 0.45rem 0.6rem;
+  background: rgba(255, 255, 255, 0.9);
+  font-family: 'Playfair Display', 'Times New Roman', serif;
+  font-size: 1rem;
+  color: var(--color-chocolate);
+  width: 100%;
 }
 
 .self-love-letter__addresses input:focus {
@@ -211,6 +381,14 @@
   font-family: 'Playfair Display', 'Times New Roman', serif;
   resize: vertical;
   font-style: italic;
+}
+
+.self-love-future-letter__body textarea {
+  min-height: 260px;
+  padding: 0.8rem;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 18px;
+  border: 1px solid rgba(236, 72, 153, 0.2);
 }
 
 .self-love-letter__body textarea:focus {
@@ -2322,6 +2500,28 @@
     text-align: center;
   }
 
+  .self-love-future-letter__head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .self-love-future-letter__status {
+    width: 100%;
+  }
+
+  .self-love-future-letter__footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .self-love-future-letter__actions {
+    width: 100%;
+  }
+
+  .self-love-future-letter__actions button {
+    width: 100%;
+  }
+
   .self-love-exercise__grid {
     grid-template-columns: 1fr;
   }
@@ -2639,6 +2839,7 @@ body.self-love-page--lux .self-love-card--journal {
 
 body.self-love-page--lux .self-love-letter__stamp,
 body.self-love-page--lux .self-love-letter__stamp img,
+body.self-love-page--lux .self-love-future-letter__stamp img,
 body.self-love-page--lux .self-love-archive__year-card,
 body.self-love-page--lux .self-love-archive__month-card,
 body.self-love-page--lux .self-love-archive__day,
@@ -2665,6 +2866,27 @@ body.self-love-page--lux .self-love-certificate__upload {
   border: 1px solid rgba(15, 23, 42, 0.2);
   box-shadow: none;
   color: #1f1a2f;
+}
+
+body.self-love-page--lux .self-love-future-letter__status {
+  border-radius: 0;
+  background: #fff;
+  border: 1px solid rgba(15, 23, 42, 0.25);
+  color: rgba(15, 23, 42, 0.7);
+}
+
+body.self-love-page--lux .self-love-future-letter__seal {
+  border-radius: 0;
+  background: #1f1a2f;
+  color: #fff;
+  box-shadow: none;
+}
+
+body.self-love-page--lux .self-love-future-letter__addresses input,
+body.self-love-page--lux .self-love-future-letter__body textarea,
+body.self-love-page--lux .self-love-future-letter__lock-body {
+  border-radius: 0;
+  box-shadow: none;
 }
 
 

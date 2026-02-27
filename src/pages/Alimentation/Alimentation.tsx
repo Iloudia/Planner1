@@ -4,12 +4,12 @@ import { useAuth } from "../../context/AuthContext"
 import { buildUserScopedKey } from "../../utils/userScopedKey"
 import usePersistentState from "../../hooks/usePersistentState"
 import PageHeading from "../../components/PageHeading"
-import photo1 from "../../assets/food.jpeg"
-import photo2 from "../../assets/food2.jpeg"
-import photo3 from "../../assets/bowl-mediteraneen.jpg"
-import photo4 from "../../assets/bowl-poulet.jpeg"
-import photo5 from "../../assets/wrap-poulet.jpg"
-import photo6 from "../../assets/salade-de-fruit.jpeg"
+import photo1 from "../../assets/food.webp"
+import photo2 from "../../assets/food2.webp"
+import photo3 from "../../assets/bowl-mediteraneen.webp"
+import photo4 from "../../assets/bowl-poulet.webp"
+import photo5 from "../../assets/wrap-poulet.webp"
+import photo6 from "../../assets/salade-de-fruit.webp"
 import "./Alimentation.css"
 
 const stripImages = [photo1, photo2, photo3, photo4, photo5, photo6]
@@ -616,7 +616,7 @@ function DietPage() {
             />
             <div className="diet-plan-modal__panel">
               <div className="diet-plan-modal__cover">
-                <img src={selectedRecipe.image} alt={selectedRecipe.title} />
+                <img src={selectedRecipe.image} alt={selectedRecipe.title} loading="lazy" decoding="async" />
                 <button
                   type="button"
                   className="diet-recipe-close-icon diet-recipe-close-icon--cover"

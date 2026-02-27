@@ -1,7 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+﻿import { useEffect, useMemo, useRef, useState } from "react"
 import PageHeading from "../../components/PageHeading"
 import usePersistentState from "../../hooks/usePersistentState"
+import stampLove from "../../assets/Timbre-1.png"
+import stampKey from "../../assets/Timbre-2.png"
 import "./Archives.css"
+
 
 type JournalingEntry = {
   id: string
@@ -21,6 +24,8 @@ type SelfLoveSavedLetter = {
   from?: string
   body: string
   createdAt: string
+  openDate?: string
+  sealedAt?: string
   innerChild?: { message: string; reassurance: string; neededWords: string }
   bestFriend?: { advice: string; selfTalk: string }
   entryType: "letter" | "innerChild" | "bestFriend"
@@ -40,6 +45,7 @@ type ArchiveEntry = {
   section: "journaling" | "self-love"
   sectionLabel: string
   tags: string[]
+  selfLoveLetter?: SelfLoveSavedLetter
 }
 
 const JOURNAL_KEY = "planner.journal.entries"
@@ -100,15 +106,32 @@ const buildMonthGrid = (year: number, monthIndex: number) => {
 
 const getSelfLoveTitle = (letter: SelfLoveSavedLetter) => {
   if (letter.entryType === "innerChild") {
-    return "Exercice — L'enfant intérieur"
+    return "Exercice â€” L'enfant intÃ©rieur"
   }
   if (letter.entryType === "bestFriend") {
-    return "Exercice — Jeu des rôles"
+    return "Exercice â€” Jeu des rÃ´les"
+  }
+  if (letter.openDate) {
+    return "Lettre au futur"
   }
   return letter.template === "classic" ? "Lettre romantique" : "Lettre petit chat"
 }
 
+const isFutureLetterLocked = (letter: SelfLoveSavedLetter) => {
+  if (!letter.openDate || !letter.sealedAt) {
+    return false
+  }
+  const openDate = new Date(`${letter.openDate}T00:00:00`)
+  if (Number.isNaN(openDate.getTime())) {
+    return false
+  }
+  return openDate.getTime() > Date.now()
+}
+
 const getSelfLoveExcerpt = (letter: SelfLoveSavedLetter) => {
+  if (isFutureLetterLocked(letter)) {
+    return "Lettre scellée jusqu'à sa date d'ouverture."
+  }
   if (letter.entryType === "innerChild") {
     return (
       letter.innerChild?.message ||
@@ -150,9 +173,9 @@ const ArchivesPage = () => {
       .filter((entry) => entry.date)
       .map((entry) => {
         const title = entry.keyword
-          ? `Mot-clé : ${entry.keyword}`
+          ? `Mot-clÃ© : ${entry.keyword}`
           : entry.question
-            ? "Question guidée"
+            ? "Question guidÃ©e"
             : "Journal"
         const excerpt = entry.content || entry.questionAnswer || entry.positiveAnchor || ""
         const createdAt = entry.createdAt ?? getTimestampFromDateKey(entry.date)
@@ -168,7 +191,7 @@ const ArchivesPage = () => {
           details.push({ label: "Question du jour", value: entry.question })
         }
         if (entry.questionAnswer) {
-          details.push({ label: "Réponse", value: entry.questionAnswer })
+          details.push({ label: "RÃ©ponse", value: entry.questionAnswer })
         }
         if (entry.content) {
           details.push({ label: "Journal", value: entry.content })
@@ -206,7 +229,14 @@ const ArchivesPage = () => {
         details.push({ label: "De", value: letter.from })
       }
       if (letter.body) {
-        details.push({ label: "Lettre", value: letter.body })
+        const isLocked = isFutureLetterLocked(letter)
+        details.push({
+          label: "Lettre",
+          value: isLocked ? "Lettre scellée. Reviens après la date d'ouverture." : letter.body,
+        })
+      }
+      if (letter.openDate) {
+        details.push({ label: "Date d'ouverture", value: letter.openDate })
       }
       if (letter.innerChild?.message) {
         details.push({ label: "Enfant interieur - Message", value: letter.innerChild.message })
@@ -233,6 +263,7 @@ const ArchivesPage = () => {
         section: "self-love",
         sectionLabel: "Self Love",
         tags,
+        selfLoveLetter: letter,
       }
     })
   }, [selfLoveState.savedLetters])
@@ -417,8 +448,30 @@ const ArchivesPage = () => {
         }
       })
     }
-    setSelectedEntry(null)
+        setSelectedEntry(null)
   }
+
+  const selectedLetter = selectedEntry?.section === "self-love" ? selectedEntry.selfLoveLetter ?? null : null
+  const selectedLetterLocked = selectedLetter ? isFutureLetterLocked(selectedLetter) : false
+  const selectedLetterDate = selectedLetter
+    ? new Date(selectedLetter.createdAt).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" })
+    : ""
+  const selectedLetterOpenDateRaw = selectedLetter?.openDate ?? ""
+  const selectedLetterOpenDate =
+    selectedLetterOpenDateRaw && !Number.isNaN(new Date(`${selectedLetterOpenDateRaw}T00:00:00`).getTime())
+      ? new Date(`${selectedLetterOpenDateRaw}T00:00:00`).toLocaleDateString("fr-FR", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })
+      : null
+  const selectedLetterStatus = selectedLetter
+    ? selectedLetterLocked
+      ? "SCELLÉE"
+      : selectedLetter.sealedAt
+        ? "OUVERTE"
+        : "ARCHIVÉE"
+    : ""
 
   return (
     <div className="archives-page aesthetic-page boutique-page">
@@ -426,7 +479,7 @@ const ArchivesPage = () => {
 
       <header className="archives-header">
         <div className="archives-intro">
-          <p>Retrouvez vos écrits par date.</p>
+          <p>Retrouvez vos Ã©crits par date.</p>
         </div>
         <div className="archives-controls">
           <label className="archives-control">
@@ -485,7 +538,7 @@ const ArchivesPage = () => {
       </header>
 
       {archiveYears.length === 0 ? (
-        <p className="archives-empty">Aucun écrit pour le moment.</p>
+        <p className="archives-empty">Aucun Ã©crit pour le moment.</p>
       ) : (
         <div className="archives-layout">
           <div className="archives-nav">
@@ -502,7 +555,7 @@ const ArchivesPage = () => {
                   }}
                 >
                   <span className="archives-year">{group.year}</span>
-                  <span className="archives-count">{group.total} écrits</span>
+                  <span className="archives-count">{group.total} Ã©crits</span>
                 </button>
               ))}
             </div>
@@ -526,7 +579,7 @@ const ArchivesPage = () => {
                 ))}
               </div>
             ) : (
-              <p className="archives-hint">Choisis une année pour voir les mois.</p>
+              <p className="archives-hint">Choisis une annÃ©e pour voir les mois.</p>
             )}
 
             {selectedMonth ? (
@@ -556,8 +609,8 @@ const ArchivesPage = () => {
                     const preview = dayEntries
                       .slice(0, 2)
                       .map((entry) => entry.title)
-                      .join(" · ")
-                    const tooltip = `${cell.count} écrit(s)${preview ? ` — ${preview}` : ""}`
+                      .join(" Â· ")
+                    const tooltip = `${cell.count} Ã©crit(s)${preview ? ` â€” ${preview}` : ""}`
                     return (
                       <button
                         key={cell.key}
@@ -566,10 +619,10 @@ const ArchivesPage = () => {
                           }`}
                         onClick={() => setSelectedDay(cell.dateKey)}
                         title={tooltip}
-                        aria-label={`Voir les écrits du ${formatArchiveDate(cell.dateKey)} (${cell.count})`}
+                        aria-label={`Voir les Ã©crits du ${formatArchiveDate(cell.dateKey)} (${cell.count})`}
                       >
                         <span className="archives-day-number">{cell.day}</span>
-                        <span className="archives-day-badge">• {cell.count}</span>
+                        <span className="archives-day-badge">â€¢ {cell.count}</span>
                       </button>
                     )
                   })}
@@ -588,11 +641,11 @@ const ArchivesPage = () => {
                       onClick={() => setSelectedDay(day.dateKey)}
                     >
                       <span>{day.label}</span>
-                      <span className="archives-day-badge">• {day.total}</span>
+                      <span className="archives-day-badge">â€¢ {day.total}</span>
                     </button>
                   ))
                 ) : (
-                  <p className="archives-empty">Aucun écrit sur ce mois.</p>
+                  <p className="archives-empty">Aucun Ã©crit sur ce mois.</p>
                 )}
               </div>
             ) : null}
@@ -603,7 +656,7 @@ const ArchivesPage = () => {
               <>
                 <div className="archives-detail-header">
                   <div>
-                    <span className="archives-detail-eyebrow">Détails du jour</span>
+                    <span className="archives-detail-eyebrow">DÃ©tails du jour</span>
                     <h3>{formatArchiveDate(selectedDay)}</h3>
                   </div>
                   <label className="archives-control">
@@ -612,7 +665,7 @@ const ArchivesPage = () => {
                       value={sortOrder}
                       onChange={(event) => setSortOrder(event.target.value as "newest" | "oldest")}
                     >
-                      <option value="newest">Plus récent</option>
+                      <option value="newest">Plus rÃ©cent</option>
                       <option value="oldest">Plus ancien</option>
                     </select>
                   </label>
@@ -639,11 +692,11 @@ const ArchivesPage = () => {
                     ))}
                   </ul>
                 ) : (
-                  <p className="archives-empty">Aucun écrit pour ce jour.</p>
+                  <p className="archives-empty">Aucun Ã©crit pour ce jour.</p>
                 )}
               </>
             ) : (
-              <div className="archives-empty">Choisis un jour pour voir tes écrits.</div>
+              <div className="archives-empty">Choisis un jour pour voir tes Ã©crits.</div>
             )}
           </aside>
         </div>
@@ -656,12 +709,16 @@ const ArchivesPage = () => {
             onClick={() => setSelectedEntry(null)}
             aria-label="Fermer"
           />
-          <div className="archives-modal__content">
-            <header className="archives-modal__header">
-              <div>
-                <p>{selectedEntry.sectionLabel}</p>
-                <h3>{formatArchiveDate(selectedEntry.dateKey)}</h3>
-              </div>
+          <div className={`archives-modal__content${selectedLetter ? " archives-modal__content--letter" : ""}`}>
+            <header className={`archives-modal__header${selectedLetter ? " archives-modal__header--letter" : ""}`}>
+              {selectedLetter ? (
+                <div />
+              ) : (
+                <div>
+                  <p>{selectedEntry.sectionLabel}</p>
+                  <h3>{formatArchiveDate(selectedEntry.dateKey)}</h3>
+                </div>
+              )}
               <button
                 type="button"
                 className="modal__close"
@@ -673,19 +730,117 @@ const ArchivesPage = () => {
                 </svg>
               </button>
             </header>
-            <div className="archives-modal__body">
-              <h4>{selectedEntry.title}</h4>
-              {selectedEntry.details.length > 0 ? (
-                <div className="archives-modal__details">
-                  {selectedEntry.details.map((detail) => (
-                    <div key={`${selectedEntry.id}-${detail.label}`} className="archives-modal__detail">
-                      <span>{detail.label}</span>
-                      <p>{detail.value}</p>
+            <div className={`archives-modal__body${selectedLetter ? " archives-modal__body--letter" : ""}`}>
+              {selectedLetter ? (
+                selectedLetter.openDate ? (
+                  <div className="self-love-letter__frame self-love-letter__card self-love-letter__card--classic is-active archives-letter-card">
+                    <div className="self-love-future-letter__head">
+                      <div>
+                        <p className="self-love-letter__title">Lettre à mon moi du futur</p>
+                        <p className="self-love-future-letter__subtitle">
+                          Écris-la aujourd&apos;hui, laisse le temps faire le reste.
+                        </p>
+                      </div>
+                      <div className={`self-love-future-letter__status${selectedLetterLocked ? " is-locked" : ""}`}>
+                        <span>{selectedLetterStatus}</span>
+                        <strong>{selectedLetterOpenDate ?? "Date d'ouverture à définir"}</strong>
+                      </div>
                     </div>
-                  ))}
-                </div>
+                    <div className="self-love-letter__addresses self-love-future-letter__addresses">
+                      <label>
+                        <span>De</span>
+                        <input type="text" value={selectedLetter.from ?? ""} readOnly />
+                      </label>
+                      <label>
+                        <span>À</span>
+                        <input type="text" value={selectedLetter.to ?? ""} readOnly />
+                      </label>
+                      <label>
+                        <span>Date d&apos;ouverture</span>
+                        <input type="date" value={selectedLetterOpenDateRaw} readOnly />
+                      </label>
+                    </div>
+                    <div className="self-love-letter__body self-love-future-letter__body">
+                      <p className="self-love-letter__salutation">Cher moi,</p>
+                      <textarea
+                        value={selectedLetterLocked ? "" : selectedLetter.body}
+                        placeholder="Lettre scellée."
+                        readOnly
+                      />
+                      {selectedLetterLocked && selectedLetterOpenDate ? (
+                        <div className="self-love-future-letter__lock">
+                          <div className="self-love-future-letter__lock-body">
+                            <span>Lettre scellée</span>
+                            <strong>Rendez-vous le {selectedLetterOpenDate}</strong>
+                            <p>Garde cette promesse. Le futur toi t&apos;attend.</p>
+                          </div>
+                        </div>
+                      ) : null}
+                    </div>
+                    <div className="self-love-future-letter__footer">
+                      <div className="self-love-future-letter__stamp">
+                        <img src={stampLove} alt="Timbre souvenir" loading="lazy" decoding="async" />
+                        <img src={stampKey} alt="Timbre secret" loading="lazy" decoding="async" />
+                      </div>
+                      <div>
+                        <span className="self-love-letter__date">{selectedLetterDate}</span>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="self-love-letter__frame self-love-letter__card self-love-letter__card--classic is-active archives-letter-card">
+                    <p className="self-love-letter__title">{selectedEntry.title}</p>
+                    <div className="self-love-letter__addresses">
+                      <div className="self-love-letter__fields">
+                        {selectedLetter.from ? (
+                          <label>
+                            <span>De :</span>
+                            <input type="text" value={selectedLetter.from} readOnly />
+                          </label>
+                        ) : null}
+                        {selectedLetter.to ? (
+                          <label>
+                            <span>Pour :</span>
+                            <input type="text" value={selectedLetter.to} readOnly />
+                          </label>
+                        ) : null}
+                      </div>
+                      <div className="self-love-letter__stamps" aria-hidden="true">
+                        <div className="self-love-letter__stamp self-love-letter__stamp--love">
+                          <img src={stampLove} alt="Timbre d'amour" loading="lazy" decoding="async" />
+                        </div>
+                        <div className="self-love-letter__stamp self-love-letter__stamp--key">
+                          <img src={stampKey} alt="Timbre secret" loading="lazy" decoding="async" />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="self-love-letter__body">
+                      <p className="self-love-letter__salutation">Cher moi,</p>
+                      <p className="archives-letter__text">{selectedLetter.body}</p>
+                    </div>
+                    <div className="self-love-letter__footer">
+                      <div>
+                        <span className="self-love-letter__date">{selectedLetterDate}</span>
+                      </div>
+                    </div>
+                  </div>
+                )
               ) : (
-                <p>Aucun detail disponible.</p>
+                <>
+                  <h4>{selectedEntry.title}</h4>
+                  {selectedEntry.details.length > 0 ? (
+                    <div className="archives-modal__details">
+                      {selectedEntry.details.map((detail) => (
+                        <div key={`${selectedEntry.id}-${detail.label}`} className="archives-modal__detail">
+                          <span>{detail.label}</span>
+                          <p>{detail.value}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p>Aucun detail disponible.</p>
+                  )}
+                </>
               )}
             </div>
             <footer className="archives-modal__footer">
@@ -701,3 +856,18 @@ const ArchivesPage = () => {
 }
 
 export default ArchivesPage
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

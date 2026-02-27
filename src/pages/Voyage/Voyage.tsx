@@ -1,7 +1,7 @@
 import { useEffect } from "react"
-import travelCity from "../../assets/voyage.jpeg"
-import travelBeach from "../../assets/victoria-harder-dupe.jpeg"
-import travelNature from "../../assets/amy-rikard-dupe.jpeg"
+import travelCity from "../../assets/voyage.webp"
+import travelBeach from "../../assets/victoria-harder-dupe.webp"
+import travelNature from "../../assets/amy-rikard-dupe.webp"
 import PageHeading from "../../components/PageHeading"
 import "./Voyage.css"
 
@@ -113,7 +113,7 @@ const VoyagePage = () => {
             {TRIPS.map((trip) => (
               <article key={trip.id} className="voyage-card">
                 <div className="voyage-card__media">
-                  <img src={trip.cover} alt={trip.title} />
+                  <img src={trip.cover} alt={trip.title} loading="lazy" decoding="async" />
                   <span className={`voyage-status voyage-status--${trip.status}`}>
                     {TRIP_STATUS_LABELS[trip.status]}
                   </span>

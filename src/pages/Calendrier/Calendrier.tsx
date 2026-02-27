@@ -140,8 +140,13 @@ const CalendrierPage = () => {
     return new Date(base.getFullYear(), base.getMonth(), 1)
   })
   const [calendarView, setCalendarView] = useState<'weekly' | 'monthly'>('weekly')
+  const [isCompact, setIsCompact] = useState(() => window.innerWidth < 1024)
+  const [mobileSelectedDateKey, setMobileSelectedDateKey] = useState(() => getDateKey(new Date()))
   const [weekAnchorDate, setWeekAnchorDate] = useState(() => new Date())
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
+  const [duplicateTask, setDuplicateTask] = useState<ScheduledTask | null>(null)
+  const [duplicateDays, setDuplicateDays] = useState('3')
+  const [duplicateError, setDuplicateError] = useState<string | null>(null)
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false)
   const categoryMenuRef = useRef<HTMLDivElement | null>(null)
   const [activeDateKey, setActiveDateKey] = useState<string | null>(null)
@@ -174,6 +179,17 @@ const CalendrierPage = () => {
   useEffect(() => {
     const intervalId = window.setInterval(() => setNow(new Date()), 60000)
     return () => window.clearInterval(intervalId)
+  }, [])
+
+  useEffect(() => {
+    if (!isCompact) return
+    setMobileSelectedDateKey(todayKey)
+  }, [isCompact, todayKey])
+
+  useEffect(() => {
+    const handleResize = () => setIsCompact(window.innerWidth < 1024)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
   }, [])
 
   useEffect(() => {
@@ -237,6 +253,8 @@ const CalendrierPage = () => {
   }, [tasks, now])
 
   const activeDateTasks = activeDateKey ? tasksByDate.get(activeDateKey) ?? [] : []
+  const mobileSelectedTasks = tasksByDate.get(mobileSelectedDateKey) ?? []
+  const mobileSelectedLabel = useMemo(() => formatDateLabel(mobileSelectedDateKey), [mobileSelectedDateKey])
 
   const activeDateLabel = useMemo(() => formatDateLabel(activeDateKey), [activeDateKey])
   const newTaskRangeLabel = useMemo(() => {
@@ -254,6 +272,14 @@ const CalendrierPage = () => {
       next.setDate(previous.getDate() + delta * 7)
       return next
     })
+  }
+
+  const handleDayChange = (delta: number) => {
+    const base = parseDateKey(mobileSelectedDateKey)
+    base.setDate(base.getDate() + delta)
+    const nextKey = getDateKey(base)
+    setMobileSelectedDateKey(nextKey)
+    setWeekAnchorDate(base)
   }
 
   const handleMonthChange = (delta: number) => {
@@ -324,16 +350,21 @@ const CalendrierPage = () => {
   }
 
   const handleDuplicateTask = (task: ScheduledTask) => {
-    const raw = window.prompt('Dupliquer sur combien de jours ? (ex : 3)')
-    if (!raw) {
+    setDuplicateTask(task)
+    setDuplicateDays('3')
+    setDuplicateError(null)
+  }
+
+  const handleConfirmDuplicate = () => {
+    if (!duplicateTask) {
       return
     }
-    const days = Number.parseInt(raw, 10)
+    const days = Number.parseInt(duplicateDays, 10)
     if (!Number.isFinite(days) || days <= 0) {
-      window.alert('Nombre de jours invalide.')
+      setDuplicateError('Nombre de jours invalide.')
       return
     }
-    const [yearValue, monthValue, dayValue] = task.date.split('-').map(Number)
+    const [yearValue, monthValue, dayValue] = duplicateTask.date.split('-').map(Number)
     const baseDate = new Date(yearValue, (monthValue ?? 1) - 1, dayValue ?? 1)
     for (let offset = 1; offset <= days; offset += 1) {
       const nextDate = new Date(baseDate)
@@ -341,14 +372,17 @@ const CalendrierPage = () => {
       const dateKey = getDateKey(nextDate)
       addTask({
         id: `task-${dateKey}-${Math.random().toString(36).slice(2, 8)}`,
-        title: task.title,
-        start: task.start,
-        end: task.end,
+        title: duplicateTask.title,
+        start: duplicateTask.start,
+        end: duplicateTask.end,
         date: dateKey,
-        color: task.color,
-        tag: task.tag,
+        color: duplicateTask.color,
+        tag: duplicateTask.tag,
       })
     }
+    setDuplicateTask(null)
+    setDuplicateDays('3')
+    setDuplicateError(null)
   }
 
   const handlePrepareNewTask = (dateKey: string) => {
@@ -388,6 +422,13 @@ const CalendrierPage = () => {
     setActiveDateKey(null)
     setEditingTaskId(null)
     setNewTaskError(null)
+    setDuplicateTask(null)
+    setDuplicateError(null)
+  }
+
+  const handleCloseDuplicate = () => {
+    setDuplicateTask(null)
+    setDuplicateError(null)
   }
 
   const handleNewTaskFieldChange = (field: keyof NewTaskFormState, value: string) => {
@@ -556,11 +597,80 @@ const viewToggle = (
 
 return (
   <div className="calendar-page">
-
-
-{calendarView === 'weekly' ? (
+    {calendarView === 'weekly' ? (
     <section className="calendar-weekly">
-      <header className="calendar-weekly__header">
+      {isCompact ? (
+        <div className="calendar-weekly__mobile calendar-mobile" role="region" aria-label="Calendrier mobile">
+          <div className="calendar-mobile__panel">
+            <span className="calendar-mobile__month">{formatMonthTitle(weekStartDate)}</span>
+            <div className="calendar-mobile__week" role="list">
+              {weekDates.map((date, index) => {
+                const dateKey = getDateKey(date)
+                const isToday = date.toDateString() === today.toDateString()
+                return (
+                  <button
+                    key={dateKey}
+                    type="button"
+                    className={`calendar-mobile__day-card${isToday ? " is-today" : ""}`}
+                    onClick={() => {
+                      setMobileSelectedDateKey(dateKey)
+                      handleDaySelect(dateKey)
+                    }}
+                    aria-current={isToday ? "date" : undefined}
+                    aria-label={`Voir la journee du ${dateKey}`}
+                  >
+                    <span className="calendar-mobile__day-name">{weekDays[index].toLowerCase()}</span>
+                    <span className="calendar-mobile__day-number">{date.getDate()}</span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          <div className="calendar-mobile__today-row">
+            <span>{mobileSelectedLabel}</span>
+            <div className="calendar-mobile__toggle">{viewToggle}</div>
+          </div>
+
+          <div className="calendar-mobile__nav calendar-month-nav" aria-label="Navigation semaine">
+            <button type="button" onClick={() => handleDayChange(-1)} aria-label="Jour précédent">
+              &lt;
+            </button>
+            <button type="button" onClick={() => handleDayChange(1)} aria-label="Jour suivant">
+              &gt;
+            </button>
+          </div>
+
+          <div className="calendar-mobile__agenda" role="list">
+            {mobileSelectedTasks.length === 0 ? (
+              <p className="calendar-mobile__empty">Aucun evenement pour cette journee.</p>
+            ) : (
+              mobileSelectedTasks.map((task) => (
+                <div key={task.id} className="calendar-mobile__event">
+                  <span className="calendar-mobile__event-time">{task.start}</span>
+                  <div
+                    className="calendar-mobile__event-card"
+                    style={{
+                      background: `linear-gradient(135deg, ${withAlpha(task.color, 0.12)} 0%, ${withAlpha(
+                        task.color,
+                        0.28,
+                      )} 100%)`,
+                      borderColor: withAlpha(task.color, 0.4),
+                    }}
+                  >
+                    <span className="calendar-mobile__event-title">{task.title}</span>
+                    <span className="calendar-mobile__event-hours">
+                      {task.start} - {task.end}
+                    </span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      ) : (
+        <>
+          <header className="calendar-weekly__header">
         <PageHeading eyebrow="calendrier hebdomadaire" title={`Semaine du ${weekRangeLabel}`} />
         {viewToggle}
       </header>
@@ -672,6 +782,8 @@ return (
           })}
         </div>
       </div>
+        </>
+      )}
     </section>
     ) : null}
 
@@ -731,7 +843,7 @@ return (
                   className="calendar-day__indicator"
                   aria-label={`${cell.tasks.length} événement${cell.tasks.length > 1 ? "s" : ""}`}
                 >
-                  {cell.tasks.length > 1 ? cell.tasks.length : ""}
+                  {cell.tasks.length}
                 </span>
               ) : null}
               {cell.tasks[0] ? (
@@ -904,7 +1016,7 @@ return (
           </section>
           <div className="calendar-modal__divider" aria-hidden="true" />
 
-          <section className="calendar-modal__section">
+          <section className="calendar-modal__section calendar-modal__section--agenda">
             <div className="calendar-modal__section-header">
               <h3>Agenda du jour</h3>
             </div>
@@ -1027,6 +1139,41 @@ return (
                 )}
               </div>
             </section>
+            </div>
+          </div>
+        </div>
+      ) : null}
+      {duplicateTask ? (
+        <div className="calendar-duplicate" role="dialog" aria-modal="true" aria-labelledby="calendar-duplicate-title">
+          <div className="calendar-duplicate__backdrop" onClick={handleCloseDuplicate} aria-hidden="true" />
+          <div className="calendar-duplicate__panel">
+            <header className="calendar-duplicate__header">
+              <h2 id="calendar-duplicate-title">Dupliquer</h2>
+              <button type="button" className="modal__close" onClick={handleCloseDuplicate} aria-label="Fermer">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              </button>
+            </header>
+            <p className="calendar-duplicate__subtitle">Dupliquer "{duplicateTask.title}"</p>
+            <label className="calendar-duplicate__field">
+              <span>Nombre de jours</span>
+              <input
+                className="calendar-duplicate__input"
+                type="number"
+                min={1}
+                value={duplicateDays}
+                onChange={(event) => setDuplicateDays(event.target.value)}
+              />
+            </label>
+            {duplicateError ? <p className="calendar-duplicate__error">{duplicateError}</p> : null}
+            <div className="calendar-duplicate__actions">
+              <button type="button" className="calendar-task__button calendar-task__button--ghost" onClick={handleCloseDuplicate}>
+                Annuler
+              </button>
+              <button type="button" className="calendar-task__button calendar-task__button--primary" onClick={handleConfirmDuplicate}>
+                Dupliquer
+              </button>
             </div>
           </div>
         </div>

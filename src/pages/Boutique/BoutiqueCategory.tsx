@@ -60,7 +60,7 @@ const BoutiqueCategoryPage = () => {
       <section className="boutique-detail__layout">
         <div className="boutique-detail__gallery">
           <div className="boutique-detail__main">
-            <img src={activeImage} alt={product.title} />
+            <img src={activeImage} alt={product.title} loading="lazy" decoding="async" />
           </div>
           <div className="boutique-detail__thumbs">
             {thumbnails.map((thumb, index) => (
@@ -71,7 +71,7 @@ const BoutiqueCategoryPage = () => {
                 onClick={() => setActiveImage(thumb)}
                 aria-label={`Voir la photo ${index + 2}`}
               >
-                <img src={thumb} alt="" />
+                <img src={thumb} alt="" loading="lazy" decoding="async" />
               </button>
             ))}
           </div>

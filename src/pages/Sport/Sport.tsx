@@ -4,10 +4,10 @@ import PageHeading from "../../components/PageHeading"
 import { useAuth } from "../../context/AuthContext"
 import usePersistentState from "../../hooks/usePersistentState"
 import { buildUserScopedKey } from "../../utils/userScopedKey"
-import planner06 from "../../assets/tina-ghazi-dupe.jpeg"
-import heroWorkout from "../../assets/tuany-kohler-dupe.jpeg"
-import heroDiet from "../../assets/thayna-queiroz-dupe.jpeg"
-import heroGoals from "../../assets/sport-1.jpg"
+import planner06 from "../../assets/tina-ghazi-dupe.webp"
+import heroWorkout from "../../assets/tuany-kohler-dupe.webp"
+import heroDiet from "../../assets/thayna-queiroz-dupe.webp"
+import heroGoals from "../../assets/sport-1.webp"
 import "./Sport.css"
 
 type SportBoardActivity = string
@@ -332,7 +332,7 @@ const SportPage = () => {
                   ) : null}
                 </div>
                 <div className="sport-life-card__media">
-                  <img src={card.image} alt={card.label} />
+                  <img src={card.image} alt={card.label} loading="lazy" decoding="async" />
                 </div>
                 <h3>{card.label}</h3>
               </Link>

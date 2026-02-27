@@ -344,7 +344,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
 
       <div className="auth-hero">
         <div className="auth-visual">
-          <img src={moodboardSrc} alt="Moodboard Planner" />
+          <img src={moodboardSrc} alt="Moodboard Planner" loading="eager" decoding="async" />
         </div>
         <div className="auth-panel">
           <h1 className="auth-title">{heading}</h1>

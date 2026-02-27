@@ -2,9 +2,9 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import type { FormEvent } from "react"
 import PageHeading from "../../components/PageHeading"
 import usePersistentState from "../../hooks/usePersistentState"
-import workoutHero from "../../assets/tuany-kohler-dupe.jpeg"
-import backdayImage from "../../assets/Backday.jpg"
-import legdayImage from "../../assets/legday.jpg"
+import workoutHero from "../../assets/tuany-kohler-dupe.webp"
+import backdayImage from "../../assets/Backday.webp"
+import legdayImage from "../../assets/legday.webp"
 import "./Workout.css"
 
 type ExerciseCard = {
@@ -511,7 +511,7 @@ const WorkoutPage = () => {
                 className={`workout-form__photo-preview${form.image ? " workout-form__photo-preview--has-image" : ""}`}
               >
                 {form.image ? (
-                  <img className="workout-form__photo-img" src={form.image} alt="Aperçu de la photo sélectionnée" />
+                  <img className="workout-form__photo-img" src={form.image} alt="Aperçu de la photo sélectionnée" loading="lazy" decoding="async" />
                 ) : (
                   <p>Ajoute une image depuis ton ordinateur.</p>
                 )}
@@ -601,7 +601,7 @@ const WorkoutPage = () => {
                     ) : null}
                   </div>
                   <div className="workout-card__media">
-                    <img src={exercise.image} alt={exercise.title} />
+                    <img src={exercise.image} alt={exercise.title} loading="lazy" decoding="async" />
                   </div>
                   <div className="workout-card__body">
                     <h3>{exercise.title}</h3>
@@ -707,7 +707,7 @@ const WorkoutPage = () => {
                     ) : null}
                   </div>
                   <div className="workout-video-thumb">
-                    <img src={video.thumbnail} alt={video.title} />
+                    <img src={video.thumbnail} alt={video.title} loading="lazy" decoding="async" />
                   </div>
                   <div className="workout-video-card__body">
                     <div className="workout-video-card__title-row">
@@ -774,7 +774,7 @@ const WorkoutPage = () => {
               ) : null}
             </div>
             <div className="workout-modal__cover">
-              <img src={selectedExercise.image} alt={selectedExercise.title} />
+              <img src={selectedExercise.image} alt={selectedExercise.title} loading="lazy" decoding="async" />
             </div>
             <div className="workout-modal__body">
               <header className="workout-modal__header">

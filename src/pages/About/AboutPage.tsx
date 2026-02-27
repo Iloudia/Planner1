@@ -1,9 +1,9 @@
 import { useEffect } from "react"
 import PageHeading from "../../components/PageHeading"
-import portrait from "../../assets/Fleurs-blanches.jpeg"
-import valuePhotoTwo from "../../assets/Ballons-coeur.jpeg"
-import valuePhotoThree from "../../assets/Perseverance.jpeg"
-import planteVerte from "../../assets/Plante-verte.jpeg"
+import portrait from "../../assets/Fleurs-blanches.webp"
+import valuePhotoTwo from "../../assets/Ballons-coeur.webp"
+import valuePhotoThree from "../../assets/Perseverance.webp"
+import planteVerte from "../../assets/Plante-verte.webp"
 import "./AboutPage.css"
 
 const firstStoryPart = [
@@ -81,7 +81,7 @@ const AboutPage = () => {
                 </div>
               </div>
               <figure className="about-feature__media">
-                <img src={portrait} alt="Portrait de la créatrice du site" />
+                <img src={portrait} alt="Portrait de la créatrice du site" loading="lazy" decoding="async" />
               </figure>
             </div>
           </article>
@@ -91,7 +91,7 @@ const AboutPage = () => {
           <div className="values-stack">
             {siteValues.map((value) => (
               <article className="value-block" key={value.title}>
-                <img src={value.image} alt={value.imageAlt} />
+                <img src={value.image} alt={value.imageAlt} loading="lazy" decoding="async" />
                 <h3>{value.title}</h3>
                 {value.description.map((line) => (
                   <p key={line}>{line}</p>

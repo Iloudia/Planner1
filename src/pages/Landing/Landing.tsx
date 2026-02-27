@@ -3,16 +3,16 @@ import { useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../../context/AuthContext"
 import "./Landing.css"
 
-import heroBackdrop from "../../assets/frances-leynes-dupe.jpeg"
-import finalCtaBackdrop from "../../assets/lilie-hill-dupe.jpeg"
-import cardEbony from "../../assets/ebony-forsyth-dupe.jpeg"
-import cardMedhanshi from "../../assets/medhanshi-mandawewala-dupe.jpeg"
-import cardSelflove from "../../assets/selflove.jpeg"
-import cardLB from "../../assets/l-b-dupe.jpeg"
-import cardKatieMansfield from "../../assets/katie-mansfield-dupe.jpeg"
-import cardMallika from "../../assets/mallika-jain-dupe.jpeg"
-import cardKatieHuber from "../../assets/katie-huber-rhoades-dupe (1).jpeg"
-import cardSport from "../../assets/sport.jpeg"
+import heroBackdrop from "../../assets/frances-leynes-dupe.webp"
+import finalCtaBackdrop from "../../assets/camille-coss-dupe.webp"
+import cardEbony from "../../assets/ebony-forsyth-dupe.webp"
+import cardMedhanshi from "../../assets/medhanshi-mandawewala-dupe.webp"
+import cardSelflove from "../../assets/selflove.webp"
+import cardLB from "../../assets/l-b-dupe.webp"
+import cardKatieMansfield from "../../assets/katie-mansfield-dupe.webp"
+import cardMallika from "../../assets/mallika-jain-dupe.webp"
+import cardKatieHuber from "../../assets/katie-huber-rhoades-dupe (1).webp"
+import cardSport from "../../assets/sport.webp"
 
 const carouselItems = [
   { title: "Sport", text: "Bouge avec douceur et plaisir.", image: cardSport },
@@ -139,7 +139,7 @@ const LandingPage = () => {
             {visibleCards.map((card) => (
               <article key={card.title} className="landing-carousel__card">
                 <div className="landing-carousel__image">
-                  <img src={card.image} alt={card.title} />
+                  <img src={card.image} alt={card.title} loading="lazy" decoding="async" />
                 </div>
                 <div className="landing-carousel__body">
                   <h3>{card.title}</h3>

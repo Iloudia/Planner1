@@ -96,8 +96,8 @@
 }
 
 .landing-cta-button {
-  background: var(--color-caramel);
-  color: var(--color-chocolate);
+  background: #f4efe8;
+  color: #000000;
   box-shadow: none;
 }
 
@@ -332,6 +332,8 @@
 }
 
 .landing-final-cta {
+  position: relative;
+  overflow: hidden;
   padding: clamp(2.4rem, 5vw, 3.4rem);
   border-radius: 40px;
   background-size: cover;
@@ -345,10 +347,23 @@
   align-items: center;
 }
 
+.landing-final-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  z-index: 0;
+}
+
+.landing-final-cta > * {
+  position: relative;
+  z-index: 1;
+}
+
 .landing-final-cta h2 {
   margin: 0;
   font-size: clamp(2rem, 1.8vw + 1.3rem, 2.6rem);
-  color: var(--color-chocolate);
+  color: #ffffff !important;
 }
 
 .landing-final-cta p {
@@ -356,7 +371,7 @@
   max-width: 680px;
   line-height: 1.6;
   font-size: 1.05rem;
-  color: var(--color-chocolate);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .landing-duo {
@@ -592,6 +607,42 @@
   }
 }
 
+@media (max-width: 375px) {
+  .landing-hero__content {
+    gap: 1.1rem;
+    padding: 1rem;
+  }
+
+  .landing-hero__tagline {
+    font-size: 0.7rem;
+    padding: 0.45rem 0.9rem;
+  }
+
+  .landing-hero__content h1 {
+    font-size: 1.25rem !important;
+    line-height: 1.22 !important;
+  }
+
+  .landing-hero__content p {
+    font-size: 0.85rem !important;
+  }
+
+  .landing-hero__accent {
+    padding: 0.8rem 1rem;
+  }
+
+  .landing-hero__status {
+    font-size: 0.85rem;
+    padding: 0.6rem 0.8rem;
+  }
+
+  .landing-cta-button,
+  .landing-secondary-button {
+    padding: 0.8rem 1.4rem;
+    font-size: 0.9rem;
+  }
+}
+
 
 /* Luxury overrides (match boutique design) */
 body.landing-page--lux {
@@ -651,8 +702,8 @@ body.landing-page--lux .landing-secondary-button {
   letter-spacing: 0.24em;
   font-size: 0.66rem;
   padding: 0.6rem 1.4rem;
-  background: var(--lux-ink);
-  color: #ffffff;
+  background: #f4efe8 !important;
+  color: #000000 !important;
   box-shadow: none;
 }
 
@@ -748,11 +799,11 @@ body.landing-page--lux .landing-final-cta {
   border-radius: 0;
   background-color: #f4efe8;
   border: 1px solid var(--lux-line);
-  color: var(--lux-ink);
+  color: #ffffff;
 }
 
 body.landing-page--lux .landing-final-cta p {
-  color: var(--lux-ink-soft);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 body.landing-page--lux .landing-top-visual__title,

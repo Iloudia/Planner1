@@ -445,7 +445,7 @@ const ProfilePage = () => {
                   <h2>Informations de base</h2>
                   <div className="account-avatar-row">
                     <button type="button" className="account-avatar" onClick={() => fileInputRef.current?.click()}>
-                      {avatarSrc ? <img src={avatarSrc} alt="Profil" /> : null}
+                      {avatarSrc ? <img src={avatarSrc} alt="Profil" loading="eager" decoding="async" width={64} height={64} /> : null}
                     </button>
                     <div className="account-avatar-actions">
                       <button type="button" onClick={() => fileInputRef.current?.click()}>

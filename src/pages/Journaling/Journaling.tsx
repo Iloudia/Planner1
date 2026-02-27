@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ChangeEvent } from 'react'
 import usePersistentState from '../../hooks/usePersistentState'
-import journalingMoodSecondary from '../../assets/livre.jpeg'
-import journalingMoodTertiary from '../../assets/mallika-jain-dupe.jpeg'
+import journalingMoodSecondary from '../../assets/livre.webp'
+import journalingMoodTertiary from '../../assets/mallika-jain-dupe.webp'
 import PageHeading from '../../components/PageHeading'
 import './Journaling.css'
 

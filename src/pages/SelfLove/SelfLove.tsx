@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import stampLove from '../../assets/Timbre-1.png'
 import stampKey from '../../assets/Timbre-2.png'
-import heroImage from '../../assets/Self-love-image.jpeg'
+import heroImage from '../../assets/Self-love-image.webp'
 import PageHeading from '../../components/PageHeading'
 import usePersistentState from '../../hooks/usePersistentState'
 import './SelfLove.css'
@@ -39,6 +39,8 @@ type SelfLoveSavedLetter = {
   from?: string
   body: string
   createdAt: string
+  openDate?: string
+  sealedAt?: string
   innerChild?: SelfLoveInnerChildSnapshot
   bestFriend?: SelfLoveBestFriendSnapshot
   entryType: 'letter' | 'innerChild' | 'bestFriend'
@@ -53,6 +55,10 @@ type SelfLoveState = {
   letterFrom: string
   letterBody: string
   kittyLetterBody: string
+  futureLetterTo: string
+  futureLetterFrom: string
+  futureLetterBody: string
+  futureLetterOpenDate: string
   innerChildMessage: string
   innerChildReassurance: string
   innerChildNeededWords: string
@@ -67,6 +73,11 @@ const DEFAULT_CUSTOM_AFFIRMATIONS = [
   "Je mérite l'attention que je me donne.",
   "Je prends soin de moi un peu plus chaque jour.",
 ]
+const getDefaultFutureOpenDate = () => {
+  const date = new Date()
+  date.setMonth(date.getMonth() + 3)
+  return date.toISOString().slice(0, 10)
+}
 const createDefaultState = (): SelfLoveState => ({
   certificatePhoto: null,
   photos: Array.from({ length: PHOTO_SLOT_COUNT }, (_, index) => ({
@@ -89,6 +100,11 @@ const createDefaultState = (): SelfLoveState => ({
   letterBody: "Cher moi, merci de continuer à te choisir chaque jour...",
   kittyLetterBody:
     "Je suis si fier/fière de toi. Merci de te relever, de rire, de pleurer et de croire en toi-même quand c'est compliqué. Tu es doux/douce, courageux/courageuse et tellement lumineux/lumineuse.",
+  futureLetterTo: "Moi du futur",
+  futureLetterFrom: "Moi du présent",
+  futureLetterBody:
+    "Si tu lis ces mots, c'est que tu as tenu bon. J'espère que tu te souviens de nos promesses : continuer à te respecter, à protéger ta paix et à célébrer tes petites victoires.",
+  futureLetterOpenDate: getDefaultFutureOpenDate(),
   innerChildMessage: "",
   innerChildReassurance: "",
   innerChildNeededWords: "",
@@ -191,6 +207,14 @@ const normalizeState = (value: unknown): SelfLoveState => {
     letterTo = "Moi du présent"
     letterFrom = "Moi du futur"
   }
+  const futureLetterTo =
+    typeof source.futureLetterTo === "string" ? source.futureLetterTo : letterTo || base.futureLetterTo
+  const futureLetterFrom =
+    typeof source.futureLetterFrom === "string" ? source.futureLetterFrom : letterFrom || base.futureLetterFrom
+  const futureLetterBody =
+    typeof source.futureLetterBody === "string" ? source.futureLetterBody : source.letterBody || base.futureLetterBody
+  const futureLetterOpenDate =
+    typeof source.futureLetterOpenDate === "string" ? source.futureLetterOpenDate : base.futureLetterOpenDate
   const savedLetters = Array.isArray(source.savedLetters)
     ? source.savedLetters
         .filter(
@@ -208,6 +232,8 @@ const normalizeState = (value: unknown): SelfLoveState => {
           from: typeof item.from === "string" ? item.from : undefined,
           body: item.body,
           createdAt: item.createdAt,
+          openDate: typeof item.openDate === "string" ? item.openDate : undefined,
+          sealedAt: typeof item.sealedAt === "string" ? item.sealedAt : undefined,
           innerChild:
             item.innerChild &&
             typeof item.innerChild === "object" &&
@@ -243,6 +269,10 @@ const normalizeState = (value: unknown): SelfLoveState => {
     letterFrom,
     letterBody: typeof source.letterBody === "string" ? source.letterBody : base.letterBody,
     kittyLetterBody: typeof source.kittyLetterBody === "string" ? source.kittyLetterBody : base.kittyLetterBody,
+    futureLetterTo,
+    futureLetterFrom,
+    futureLetterBody,
+    futureLetterOpenDate,
     innerChildMessage: typeof source.innerChildMessage === "string" ? source.innerChildMessage : base.innerChildMessage,
     innerChildReassurance:
       typeof source.innerChildReassurance === "string" ? source.innerChildReassurance : base.innerChildReassurance,
@@ -264,6 +294,8 @@ const SelfLovePage = () => {
   const [letterTemplate, setLetterTemplate] = useState<"classic" | "kitty">("classic")
   const [letterSaveConfirmationVisible, setLetterSaveConfirmationVisible] = useState(false)
   const letterSaveConfirmationTimeout = useRef<number | null>(null)
+  const [futureSealConfirmationVisible, setFutureSealConfirmationVisible] = useState(false)
+  const futureSealConfirmationTimeout = useRef<number | null>(null)
   const [exerciseSaveConfirmationVisible, setExerciseSaveConfirmationVisible] = useState(false)
   const exerciseSaveConfirmationTimeout = useRef<number | null>(null)
   const safeState = useMemo(() => normalizeState(state), [state])
@@ -276,6 +308,9 @@ const SelfLovePage = () => {
       }
       if (exerciseSaveConfirmationTimeout.current !== null) {
         window.clearTimeout(exerciseSaveConfirmationTimeout.current)
+      }
+      if (futureSealConfirmationTimeout.current !== null) {
+        window.clearTimeout(futureSealConfirmationTimeout.current)
       }
     }
   }, [])
@@ -446,6 +481,18 @@ const SelfLovePage = () => {
       }
     })
   }
+  const handleFutureLetterChange = (
+    field: "futureLetterTo" | "futureLetterFrom" | "futureLetterBody" | "futureLetterOpenDate",
+    value: string,
+  ) => {
+    setState((previous) => {
+      const current = normalizeState(previous)
+      return {
+        ...current,
+        [field]: value,
+      }
+    })
+  }
   const handleInnerChildChange = (
     field: "innerChildMessage" | "innerChildReassurance" | "innerChildNeededWords",
     value: string,
@@ -582,14 +629,104 @@ const SelfLovePage = () => {
       letterSaveConfirmationTimeout.current = null
     }, 2000)
   }
+  const handleSealFutureLetter = () => {
+    const trimmed = safeState.futureLetterBody.trim()
+    if (trimmed.length === 0) {
+      window.alert("Écris quelques lignes avant de sceller ta lettre.")
+      return
+    }
+    if (!safeState.futureLetterOpenDate) {
+      window.alert("Choisis une date d'ouverture pour sceller ta lettre.")
+      return
+    }
+    const openDate = new Date(`${safeState.futureLetterOpenDate}T00:00:00`)
+    if (Number.isNaN(openDate.getTime())) {
+      window.alert("Choisis une date d'ouverture valide.")
+      return
+    }
+    if (openDate.getTime() <= Date.now()) {
+      window.alert("Choisis une date future pour que la lettre puisse se verrouiller.")
+      return
+    }
+    const entry: SelfLoveSavedLetter = {
+      id: `saved-letter-future-${Date.now()}`,
+      template: "classic",
+      to: safeState.futureLetterTo,
+      from: safeState.futureLetterFrom,
+      body: trimmed,
+      createdAt: new Date().toISOString(),
+      openDate: safeState.futureLetterOpenDate || undefined,
+      sealedAt: new Date().toISOString(),
+      entryType: "letter",
+    }
+    setState((previous) => {
+      const current = normalizeState(previous)
+      return {
+        ...current,
+        savedLetters: [entry, ...current.savedLetters].slice(0, 30),
+        futureLetterBody: "",
+        futureLetterOpenDate: getDefaultFutureOpenDate(),
+      }
+    })
+    setFutureSealConfirmationVisible(true)
+    if (futureSealConfirmationTimeout.current !== null) {
+      window.clearTimeout(futureSealConfirmationTimeout.current)
+    }
+    futureSealConfirmationTimeout.current = window.setTimeout(() => {
+      setFutureSealConfirmationVisible(false)
+      futureSealConfirmationTimeout.current = null
+    }, 2200)
+  }
+  const handleSaveFutureLetter = () => {
+    const trimmed = safeState.futureLetterBody.trim()
+    if (trimmed.length === 0) {
+      window.alert("Commence par écrire ta lettre avant de l'enregistrer.")
+      return
+    }
+    const entry: SelfLoveSavedLetter = {
+      id: `saved-letter-future-${Date.now()}`,
+      template: "classic",
+      to: safeState.futureLetterTo,
+      from: safeState.futureLetterFrom,
+      body: trimmed,
+      createdAt: new Date().toISOString(),
+      openDate: safeState.futureLetterOpenDate || undefined,
+      entryType: "letter",
+    }
+    setState((previous) => {
+      const current = normalizeState(previous)
+      return {
+        ...current,
+        savedLetters: [entry, ...current.savedLetters].slice(0, 30),
+      }
+    })
+    setLetterSaveConfirmationVisible(true)
+    if (letterSaveConfirmationTimeout.current !== null) {
+      window.clearTimeout(letterSaveConfirmationTimeout.current)
+    }
+    letterSaveConfirmationTimeout.current = window.setTimeout(() => {
+      setLetterSaveConfirmationVisible(false)
+      letterSaveConfirmationTimeout.current = null
+    }, 2000)
+  }
 
   const today = useMemo(() => {
     const date = new Date()
     return {
-      short: date.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" }),
-      full: date.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" }),
+      iso: date.toISOString().slice(0, 10),
     }
- }, [])
+  }, [])
+  const futureOpenDate = safeState.futureLetterOpenDate
+  const openDateTimestamp = futureOpenDate ? new Date(`${futureOpenDate}T00:00:00`).getTime() : NaN
+  const openDateLabel =
+    futureOpenDate && !Number.isNaN(openDateTimestamp)
+      ? new Date(`${futureOpenDate}T00:00:00`).toLocaleDateString("fr-FR", {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })
+      : "Date d'ouverture à définir"
   return (
     <div className="self-love-page">
 
@@ -606,7 +743,7 @@ const SelfLovePage = () => {
               <div key={photo.id} className="self-love-photo-card">
                 <label className="self-love-photo-card__drop">
                   {photo.dataUrl ? (
-                    <img src={photo.dataUrl} alt={`Souvenir ${index + 1}`} />
+                    <img src={photo.dataUrl} alt={`Souvenir ${index + 1}`} loading="lazy" decoding="async" />
                   ) : (
                     <span className="self-love-photo-card__placeholder">
                       <span className="body-goal-slot__upload">
@@ -793,58 +930,81 @@ const SelfLovePage = () => {
             aria-hidden={letterTemplate !== "classic"}
             style={letterTemplate === "classic" ? undefined : { display: "none" }}
           >
-            <p className="self-love-letter__title">Lettre d&apos;amour à moi-même</p>
-            <div className="self-love-letter__addresses">
-              <div className="self-love-letter__fields">
-                <label>
-                  <span>De :</span>
-                  <input
-                    type="text"
-                    value={safeState.letterFrom}
-                    onChange={(event) => handleLetterChange("letterFrom", event.target.value)}
-                    placeholder="Ta version présente"
-                  />
-                </label>
-                <label>
-                  <span>Pour :</span>
-                  <input
-                    type="text"
-                    value={safeState.letterTo}
-                    onChange={(event) => handleLetterChange("letterTo", event.target.value)}
-                    placeholder="Ton moi futur"
-                  />
-                </label>
+            <div className="self-love-future-letter__head">
+              <div>
+                <p className="self-love-letter__title">Lettre à mon moi du futur</p>
+                <p className="self-love-future-letter__subtitle">
+                  Écris-la aujourd&apos;hui, laisse le temps faire le reste.
+                </p>
               </div>
-              <div className="self-love-letter__stamps" aria-hidden="true">
-                <div className="self-love-letter__stamp self-love-letter__stamp--love">
-                  <img src={stampLove} alt="Timbre d'amour" />
-                </div>
-                <div className="self-love-letter__stamp self-love-letter__stamp--key">
-                  <img src={stampKey} alt="Timbre secret" />
-                </div>
+              <div className="self-love-future-letter__status">
+                <span>Prête à sceller</span>
+                <strong>{openDateLabel}</strong>
               </div>
             </div>
-            <div className="self-love-letter__body">
+            <div className="self-love-letter__addresses self-love-future-letter__addresses">
+              <label>
+                <span>De</span>
+                <input
+                  type="text"
+                  value={safeState.futureLetterFrom}
+                  onChange={(event) => handleFutureLetterChange("futureLetterFrom", event.target.value)}
+                  placeholder="Ta version présente"
+                />
+              </label>
+              <label>
+                <span>À</span>
+                <input
+                  type="text"
+                  value={safeState.futureLetterTo}
+                  onChange={(event) => handleFutureLetterChange("futureLetterTo", event.target.value)}
+                  placeholder="Ton moi futur"
+                />
+              </label>
+              <label>
+                <span>Date d&apos;ouverture</span>
+                <input
+                  type="date"
+                  min={today.iso}
+                  value={safeState.futureLetterOpenDate}
+                  onChange={(event) => handleFutureLetterChange("futureLetterOpenDate", event.target.value)}
+                />
+              </label>
+            </div>
+            <div className="self-love-letter__body self-love-future-letter__body">
               <p className="self-love-letter__salutation">Cher moi,</p>
               <textarea
-                value={safeState.letterBody}
-                onChange={(event) => handleLetterChange("letterBody", event.target.value)}
-                placeholder="Écris-toi avec douceur..."
+                value={safeState.futureLetterBody}
+                onChange={(event) => handleFutureLetterChange("futureLetterBody", event.target.value)}
+                placeholder="Parle-lui de tes rêves, de tes peurs, de ce que tu espères garder vivant."
               />
             </div>
-            <div className="self-love-letter__footer">
-              <div>
-                <span className="self-love-letter__date">{today.short}</span>
+            <div className="self-love-future-letter__footer">
+              <div className="self-love-future-letter__stamp">
+                <img src={stampLove} alt="Timbre souvenir" loading="lazy" decoding="async" />
+                <img src={stampKey} alt="Timbre secret" loading="lazy" decoding="async" />
               </div>
-              <button
-                type="button"
-                className="self-love-letter__save"
-                onClick={() => handleSaveLetter("classic")}
-              >
-                Enregistrer cette lettre
-              </button>
+              <div className="self-love-future-letter__actions">
+                <button type="button" className="self-love-letter__save" onClick={handleSaveFutureLetter}>
+                  Enregistrer une copie
+                </button>
+                <button
+                  type="button"
+                  className="self-love-future-letter__seal"
+                  onClick={handleSealFutureLetter}
+                >
+                  Sceller la lettre
+                </button>
+              </div>
             </div>
           </div>
+        </div>
+        <div
+          className={`journaling-save__confirmation self-love-letter__confirmation${futureSealConfirmationVisible ? " is-visible" : ""}`}
+          aria-live="polite"
+        >
+          <span aria-hidden="true">✓</span>
+          <strong>Lettre scellée &amp; archivée !</strong>
         </div>
         <div
           className={`journaling-save__confirmation self-love-letter__confirmation${letterSaveConfirmationVisible ? " is-visible" : ""}`}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import PageHeading from "../../components/PageHeading"
-import faqPortrait from "../../assets/maria-bolinder-dupe.jpeg"
+import faqPortrait from "../../assets/maria-bolinder-dupe.webp"
 import "./FaqPage.css"
 
 type FaqItem = {
@@ -12,7 +12,7 @@ const faqItems: FaqItem[] = [
   {
     question: "Est-ce que Me&rituals est gratuit ?",
     answer:
-      "Oui, le projet est disponible librement pour t’accompagner au quotidien. De nouvelles fonctionnalités arrivent régulièrement pour enrichir ton expérience.",
+      "Oui, le projet est disponible librement pour t’accompagner au quotidien. Certaines fonctionnalités restent payantes, mais de nouvelles arrivent régulièrement pour enrichir ton expérience.",
   },
   {
     question: "Comment sauvegarder mes données ?",
@@ -78,7 +78,7 @@ const FAQPage = () => {
           </div>
         </div>
         <figure className="faq-floating-figure" aria-hidden="true">
-          <img src={faqPortrait} alt="" loading="lazy" />
+          <img src={faqPortrait} alt="" loading="lazy" decoding="async" />
         </figure>
       </div>
     </>

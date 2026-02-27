@@ -6,7 +6,7 @@ import usePersistentState from '../../hooks/usePersistentState'
 import PageHeading from '../../components/PageHeading'
 import morningIllustration from '../../assets/evening-note.svg'
 import eveningIllustration from '../../assets/evening-note.svg'
-import routineHeroImage from '../../assets/kalen-mcdonald-dupe.jpeg'
+import routineHeroImage from '../../assets/kalen-mcdonald-dupe.webp'
 import './RoutinePage.css'
 
 type RoutineId = string

@@ -2,33 +2,33 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { Link } from "react-router-dom"
 import { useAuth } from "../../context/AuthContext"
 import { buildUserScopedKey } from "../../utils/userScopedKey"
-import wrapPouletImg from "../../assets/wrap-poulet.jpg"
-import pancakesProteineImg from "../../assets/Pancakes-proteine.jpeg"
-import butterChickenImg from "../../assets/butter-chicken.jpeg"
-import alfredoPastaImg from "../../assets/alfredo-pasta.jpeg"
-import avocadoToastImg from "../../assets/avocado-toast.jpg"
-import curryPoischicheImg from "../../assets/curry-poischiche.jpg"
-import smoothieBananeImg from "../../assets/smoothie-banane.jpeg"
-import brownieProteineImg from "../../assets/brownie-proteine.jpg"
-import overnightOatsImg from "../../assets/overnight-oats.jpeg"
-import fruitsRougesGranolaImg from "../../assets/fruitsrouges-granola.jpeg"
-import bowlThonImg from "../../assets/bowl-thon.jpg"
-import bowlMediteraneenImg from "../../assets/bowl-mediteraneen.jpg"
-import soupeDetoxImg from "../../assets/soupe-detox.jpeg"
-import bananaBreadImg from "../../assets/banana-bread.jpeg"
-import brownieSaleImg from "../../assets/brownie-sale.jpeg"
-import biscuitsAvoineImg from "../../assets/biscuits-avoine.jpg"
-import saumonCitronImg from "../../assets/saumon-citron.jpg"
-import puddingChiaImg from "../../assets/pudding-chia.jpg"
-import saladeCesarImg from "../../assets/salade-cesar.jpg"
-import granolaMaisonImg from "../../assets/granola-maison.jpg"
-import brochettesImg from "../../assets/brochettes.jpg"
-import smoothieMangueImg from "../../assets/smoothie-mangue.jpeg"
-import saladeDeFruitImg from "../../assets/salade-de-fruit.jpeg"
-import omeletteFetaImg from "../../assets/omelette-feta.jpeg"
-import steackPommeDeTerreImg from "../../assets/steack-pommedeterre.jpeg"
-import saumonBowlImg from "../../assets/saumon-bowl.jpg"
-import bowlPouletImg from "../../assets/bowl-poulet.jpeg"
+import wrapPouletImg from "../../assets/wrap-poulet.webp"
+import pancakesProteineImg from "../../assets/Pancakes-proteine.webp"
+import butterChickenImg from "../../assets/butter-chicken.webp"
+import alfredoPastaImg from "../../assets/alfredo-pasta.webp"
+import avocadoToastImg from "../../assets/avocado-toast.webp"
+import curryPoischicheImg from "../../assets/curry-poischiche.webp"
+import smoothieBananeImg from "../../assets/smoothie-banane.webp"
+import brownieProteineImg from "../../assets/brownie-proteine.webp"
+import overnightOatsImg from "../../assets/overnight-oats.webp"
+import fruitsRougesGranolaImg from "../../assets/fruitsrouges-granola.webp"
+import bowlThonImg from "../../assets/bowl-thon.webp"
+import bowlMediteraneenImg from "../../assets/bowl-mediteraneen.webp"
+import soupeDetoxImg from "../../assets/soupe-detox.webp"
+import bananaBreadImg from "../../assets/banana-bread.webp"
+import brownieSaleImg from "../../assets/brownie-sale.webp"
+import biscuitsAvoineImg from "../../assets/biscuits-avoine.webp"
+import saumonCitronImg from "../../assets/saumon-citron.webp"
+import puddingChiaImg from "../../assets/pudding-chia.webp"
+import saladeCesarImg from "../../assets/salade-cesar.webp"
+import granolaMaisonImg from "../../assets/granola-maison.webp"
+import brochettesImg from "../../assets/brochettes.webp"
+import smoothieMangueImg from "../../assets/smoothie-mangue.webp"
+import saladeDeFruitImg from "../../assets/salade-de-fruit.webp"
+import omeletteFetaImg from "../../assets/omelette-feta.webp"
+import steackPommeDeTerreImg from "../../assets/steack-pommedeterre.webp"
+import saumonBowlImg from "../../assets/saumon-bowl.webp"
+import bowlPouletImg from "../../assets/bowl-poulet.webp"
 import PageHeading from "../../components/PageHeading"
 import "./DietPage.css"
 
@@ -1468,7 +1468,7 @@ const DietClassicPage = () => {
                   onClick={() => setSelectedRecipe(recipe)}
                 >
                   <div className="diet-recipe-card__media">
-                    <img src={recipe.image} alt={recipe.title} loading="lazy" />
+                    <img src={recipe.image} alt={recipe.title} loading="lazy" decoding="async" />
                   </div>
                   <div className="diet-recipe-card__overlay" />
                   <div className="diet-recipe-card__content">
@@ -1532,7 +1532,7 @@ const DietClassicPage = () => {
                       }}
                     >
                       <div className="diet-recipe-card__media">
-                        <img src={recipe.image} alt={recipe.title} loading="lazy" />
+                        <img src={recipe.image} alt={recipe.title} loading="lazy" decoding="async" />
                       </div>
                       <div className="diet-recipe-card__overlay" />
                       <div className="diet-recipe-card__content">
@@ -1618,7 +1618,7 @@ const DietClassicPage = () => {
                 onClick={() => setSelectedRecipe(recipe)}
               >
                 <div className="diet-recipe-card__media">
-                  <img src={recipe.image} alt={recipe.title} loading="lazy" />
+                  <img src={recipe.image} alt={recipe.title} loading="lazy" decoding="async" />
                 </div>
                 <div className="diet-recipe-card__overlay" />
                 <div className="diet-recipe-card__content">
@@ -1666,6 +1666,8 @@ const DietClassicPage = () => {
                     src={draftImage}
                     alt="Aperçu recette"
                     className="diet-recipe-modal__image"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <button
                     type="button"
@@ -1819,6 +1821,8 @@ const DietClassicPage = () => {
                     src={editImage}
                     alt="Aperçu recette"
                     className="diet-recipe-modal__image"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <button
                     type="button"
@@ -1924,7 +1928,7 @@ const DietClassicPage = () => {
             <div className="diet-recipe-modal__backdrop" onClick={() => setSelectedRecipe(null)} />
             <div className="diet-recipe-modal__panel">
               <div className="diet-recipe-modal__cover">
-                <img src={selectedRecipe.image} alt={selectedRecipe.title} className="diet-recipe-modal__image" />
+                <img src={selectedRecipe.image} alt={selectedRecipe.title} className="diet-recipe-modal__image" loading="lazy" decoding="async" />
                 <button
                   type="button"
                   className="diet-recipe-close-icon diet-recipe-close-icon--cover"

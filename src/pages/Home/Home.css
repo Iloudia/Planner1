@@ -30,6 +30,10 @@
   background: #ffffff;
 }
 
+.page.home-page .board {
+  overflow: visible;
+}
+
 .home-hero-strip__center {
   display: flex;
   flex-direction: column;
@@ -572,7 +576,11 @@
   margin: 0;
   font-size: 0.9rem;
   font-weight: 700;
-  color: #0f172a;
+  color: #000;
+}
+
+.home-page .task-date {
+  color: #000;
 }
 
 .task-title {
@@ -751,6 +759,12 @@
 @media (max-width: 375px) {
   .home-moodboard__button {
     width: 100%;
+  }
+
+  .card-menu-popover {
+    right: -36px;
+    min-width: 200px;
+    max-width: calc(100vw - 24px);
   }
 }
 

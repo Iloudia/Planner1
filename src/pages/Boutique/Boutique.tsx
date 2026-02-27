@@ -96,7 +96,7 @@ const BoutiquePage = () => {
               className="boutique-category-card"
             >
               <div className="boutique-category-card__image">
-                <img src={category.image} alt="" />
+                <img src={category.image} alt="" loading="lazy" decoding="async" />
               </div>
               <div className="boutique-category-card__top">
                 <h3>{category.title}</h3>
@@ -123,7 +123,7 @@ const BoutiquePage = () => {
               className="boutique-product-card boutique-product-card--featured"
             >
               <div className={`boutique-product__mockup boutique-product__mockup--${product.mockup}`} aria-hidden="true">
-                <img className="boutique-product__image" src={product.image} alt="" />
+                <img className="boutique-product__image" src={product.image} alt="" loading="lazy" decoding="async" />
                 <span className="boutique-product__mockup-label">{product.formatLabel}</span>
               </div>
               <div className="boutique-product__body">
@@ -193,7 +193,7 @@ const BoutiquePage = () => {
           {filteredProducts.map((product) => (
             <Link key={product.id} to={`/boutique/produit/${product.id}`} className="boutique-product-card">
               <div className={`boutique-product__mockup boutique-product__mockup--${product.mockup}`} aria-hidden="true">
-                <img className="boutique-product__image" src={product.image} alt="" />
+                <img className="boutique-product__image" src={product.image} alt="" loading="lazy" decoding="async" />
                 <span className="boutique-product__mockup-label">{product.formatLabel}</span>
               </div>
               <div className="boutique-product__body">

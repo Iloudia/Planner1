@@ -28,7 +28,7 @@ const PageHero = ({
 
   return (
     <section className={sectionClassName}>
-      {heroImage ? <img src={heroImage.src} alt={heroImage.alt} /> : null}
+      {heroImage ? <img src={heroImage.src} alt={heroImage.alt} loading="eager" decoding="async" /> : null}
       {!imageOnly ? (
         <>
           <h1>{title}</h1>

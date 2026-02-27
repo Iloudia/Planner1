@@ -4,15 +4,15 @@ import { useTasks } from "../../context/TasksContext"
 import { useAuth } from "../../context/AuthContext"
 import { buildUserScopedKey, normalizeUserEmail } from "../../utils/userScopedKey"
 
-import planner01 from "../../assets/sport.jpeg"
+import planner01 from "../../assets/sport.webp"
 import planner02 from "../../assets/Moodboard.png"
-import planner03 from "../../assets/Journaling.jpeg"
-import planner04 from "../../assets/Aimer.jpeg"
-import planner05 from "../../assets/Habits.jpeg"
-import planner06 from "../../assets/katie-huber-rhoades-dupe (1).jpeg"
-import planner07 from "../../assets/ebony-forsyth-dupe.jpeg"
-import planner08 from "../../assets/Routine.jpeg"
-import planner09 from "../../assets/avocado-toast.jpg"
+import planner03 from "../../assets/Journaling.webp"
+import planner04 from "../../assets/Aimer.webp"
+import planner05 from "../../assets/Habits.webp"
+import planner06 from "../../assets/katie-huber-rhoades-dupe (1).webp"
+import planner07 from "../../assets/ebony-forsyth-dupe.webp"
+import planner08 from "../../assets/Routine.webp"
+import planner09 from "../../assets/avocado-toast.webp"
 import noeudPapillon from "../../assets/noeud-papillon.png"
 
 import "./Home.css"
@@ -70,8 +70,12 @@ const defaultCardTitle = (path: string) => cards.find((card) => card.path === pa
 
 const clamp = (value: number) => Math.min(100, Math.max(0, value))
 
+const capitalizeFirst = (value: string) => (value ? value.charAt(0).toUpperCase() + value.slice(1) : value)
+
 const formatDate = (dateStr: string) =>
-  new Date(dateStr).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })
+  capitalizeFirst(
+    new Date(dateStr).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })
+  )
 
 const todayLabel = () =>
   new Date().toLocaleDateString("fr-FR", {
@@ -671,7 +675,7 @@ function HomePage() {
         <aside className="aside-right">
           <div className="profile-card">
             <div className="profile-photo">
-              <img src={profileSrc} alt="Profil" />
+              <img src={profileSrc} alt="Profil" loading="eager" decoding="async" width={220} height={220} />
               <button className="profile-menu" aria-label="Modifier la photo" type="button" onClick={() => fileInputRef.current?.click()}>
                 <span aria-hidden="true">...</span>
               </button>
@@ -685,7 +689,7 @@ function HomePage() {
 
           <p className="profile-welcome">
             {`C'est un plaisir de te revoir${profileUsername ? `, ${profileUsername}` : ""}`}
-            <img className="profile-welcome__bow" src={noeudPapillon} alt="" aria-hidden="true" />
+            <img className="profile-welcome__bow" src={noeudPapillon} alt="" aria-hidden="true" loading="eager" decoding="async" />
           </p>
 
           <div className="progress-panel">
@@ -822,6 +826,8 @@ function HomePage() {
                 <img
                   src={getCardImage(card)}
                   alt={card.alt}
+                  loading="lazy"
+                  decoding="async"
                   style={card.path === "/self-love" ? { objectPosition: "center 30%" } : undefined}
                 />
                 <input
@@ -923,7 +929,7 @@ function HomePage() {
           {moodboardError ? <p className="home-moodboard__error">{moodboardError}</p> : null}
 
           <div className="home-moodboard__preview">
-            <img src={homeMoodboardSrc} alt="Moodboard personnalisé" />
+            <img src={homeMoodboardSrc} alt="Moodboard personnalisé" loading="lazy" decoding="async" />
           </div>
         </section>
       </div>

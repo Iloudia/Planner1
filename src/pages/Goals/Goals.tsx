@@ -1,7 +1,7 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import DailyGoalsTracker from "../../components/DailyGoalsTracker";
 import PageHeading from "../../components/PageHeading";
-import goalsHero from "../../assets/olivia-roberts-dupe.jpeg";
+import goalsHero from "../../assets/olivia-roberts-dupe.webp";
 import "./Goals.css";
 
 const BODY_GOALS_STORAGE_KEY = "goals:bodyPhotos";
@@ -77,7 +77,7 @@ const GoalsPage = () => {
               <div key={index} className="body-goal-slot">
                 {image ? (
                   <>
-                    <img src={image} alt={`Body goal ${index + 1}`} />
+                    <img src={image} alt={`Body goal ${index + 1}`} loading="lazy" decoding="async" />
                     <button type="button" className="body-goal-slot__action" onClick={() => handleClearBodyPhoto(index)}>
                       Retirer
                     </button>

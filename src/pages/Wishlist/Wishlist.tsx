@@ -2,16 +2,16 @@ import type { FormEvent, KeyboardEvent as ReactKeyboardEvent, MouseEvent } from 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import type { ChangeEvent } from "react"
 import usePersistentState from "../../hooks/usePersistentState"
-import wishlistHair from "../../assets/ruby--dupe.jpeg"
-import wishlistOutfit from "../../assets/emma-masur-dupe.jpeg"
-import wishlistMakeup from "../../assets/makeup.jpeg"
-import wishlistElectronics from "../../assets/ebony-forsyth-dupe.jpeg"
-import wishlistSkincare from "../../assets/margaux-martinez-dupe.jpeg"
-import wishlistBooks from "../../assets/madeline- edwards-dupe.jpeg"
-import wishlistRoom from "../../assets/rowena-regterschot-dupe.jpeg"
-import wishlistTravel from "../../assets/voyage.jpeg"
-import wishlistJewelry from "../../assets/lauren-lista-dupe.jpeg"
-import wishlistBag from "../../assets/frances-leynes-dupe.jpeg"
+import wishlistHair from "../../assets/ruby--dupe.webp"
+import wishlistOutfit from "../../assets/emma-masur-dupe.webp"
+import wishlistMakeup from "../../assets/makeup.webp"
+import wishlistElectronics from "../../assets/ebony-forsyth-dupe.webp"
+import wishlistSkincare from "../../assets/margaux-martinez-dupe.webp"
+import wishlistBooks from "../../assets/madeline- edwards-dupe.webp"
+import wishlistRoom from "../../assets/rowena-regterschot-dupe.webp"
+import wishlistTravel from "../../assets/voyage.webp"
+import wishlistJewelry from "../../assets/lauren-lista-dupe.webp"
+import wishlistBag from "../../assets/frances-leynes-dupe.webp"
 import PageHeading from "../../components/PageHeading"
 import "./Wishlist.css"
 
@@ -1316,7 +1316,7 @@ const WishlistPage = () => {
               onKeyDown={(event) => handleCardKeyDown(event, category.id)}
               style={{ animationDelay: `${index * 70}ms` }}
             >
-              <img className="wishlist-card__cover" src={category.cover} alt={`Moodboard ${displayTitle}`} />
+              <img className="wishlist-card__cover" src={category.cover} alt={`Moodboard ${displayTitle}`} loading="lazy" decoding="async" />
               <div
                 className="wishlist-card__overlay"
                 style={{
@@ -1374,7 +1374,7 @@ const WishlistPage = () => {
               </svg>
             </button>
             <div className="wishlist-modal__cover">
-              <img src={selectedCategoryCard.cover} alt={`Photo ${selectedCategoryState.title}`} />
+              <img src={selectedCategoryCard.cover} alt={`Photo ${selectedCategoryState.title}`} loading="lazy" decoding="async" />
             </div>
             <div className="wishlist-modal__body">
               <header className="wishlist-modal__header">
@@ -1496,7 +1496,7 @@ const WishlistPage = () => {
                       >
                         <input ref={itemImageInputRef} type="file" accept="image/*" onChange={handleItemImageChange} />
                         {itemDraft.imageUrl ? (
-                          <img src={itemDraft.imageUrl} alt={itemDraft.title || "Prévisualisation de l'élément"} />
+                          <img src={itemDraft.imageUrl} alt={itemDraft.title || "Prévisualisation de l'élément"} loading="lazy" decoding="async" />
                         ) : (
                           <div className="wishlist-upload__placeholder">
                             <span>+</span>
@@ -1623,7 +1623,7 @@ const WishlistPage = () => {
                               <div className="wishlist-item__header">
                                 <div className="wishlist-item__media">
                                   {item.imageUrl ? (
-                                    <img src={item.imageUrl} alt={item.title} />
+                                    <img src={item.imageUrl} alt={item.title} loading="lazy" decoding="async" />
                                   ) : (
                                     <span className="wishlist-item__placeholder" aria-hidden="true">
                                       {item.title.charAt(0).toUpperCase()}
@@ -1698,6 +1698,7 @@ const WishlistPage = () => {
                                         src={`https://www.google.com/s2/favicons?domain=${linkMeta.host}&sz=64`}
                                         alt=""
                                         loading="lazy"
+                                        decoding="async"
                                       />
                                       <span>Visiter {linkMeta.host}</span>
                                     </a>
@@ -1853,7 +1854,7 @@ const WishlistPage = () => {
                 </div>
                 {renameCoverName ? <span className="wishlist-cover-upload__name">{renameCoverName}</span> : null}
                 <div className="wishlist-rename__preview">
-                  {renameCoverPreview ? <img src={renameCoverPreview} alt={`Aperçu de ${renameDraft || "la carte"}`} /> : <span>Aucune image</span>}
+                  {renameCoverPreview ? <img src={renameCoverPreview} alt={`Aperçu de ${renameDraft || "la carte"}`} loading="lazy" decoding="async" /> : <span>Aucune image</span>}
                 </div>
                 {renameCoverName ? (
                   <button type="button" className="wishlist-cover-upload__remove" onClick={handleResetRenameCover}>
@@ -1889,7 +1890,7 @@ const WishlistPage = () => {
                       className={moveTargetCategoryId === card.id ? "wishlist-move__card wishlist-move__card--selected" : "wishlist-move__card"}
                       onClick={() => setMoveTargetCategoryId(card.id)}
                     >
-                      <img src={card.cover} alt={card.title} />
+                      <img src={card.cover} alt={card.title} loading="lazy" decoding="async" />
                       <span>{card.title}</span>
                     </button>
                   ))}
