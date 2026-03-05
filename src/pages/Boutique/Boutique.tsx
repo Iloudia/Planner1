@@ -3,9 +3,11 @@ import { Link } from "react-router-dom"
 import "./Boutique.css"
 
 import { benefits, boutiqueHeroBackdrop, categories, products } from "./boutiqueData"
+import { loadCustomProducts } from "./boutiqueStorage"
 
 const BoutiquePage = () => {
   const [activeFilter, setActiveFilter] = useState("all")
+  const [customProducts, setCustomProducts] = useState(() => loadCustomProducts())
 
   useEffect(() => {
     document.body.classList.add("boutique-page--tone")
@@ -38,19 +40,31 @@ const BoutiquePage = () => {
     return () => observer.disconnect()
   }, [])
 
-  const filteredProducts = useMemo(() => {
-    if (activeFilter === "all") return products
-    return products.filter((product) => product.mockup === activeFilter)
-  }, [activeFilter])
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === "boutique.customProducts.v1") {
+        setCustomProducts(loadCustomProducts())
+      }
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
-  const bestSellers = products.filter((product) => product.bestSeller)
+  const allProducts = useMemo(() => [...products, ...customProducts], [customProducts])
+
+  const filteredProducts = useMemo(() => {
+    if (activeFilter === "all") return allProducts
+    return allProducts.filter((product) => product.mockup === activeFilter)
+  }, [activeFilter, allProducts])
+
+  const bestSellers = allProducts.filter((product) => product.bestSeller)
   const categoryProductMap = useMemo(() => {
     return categories.reduce<Record<string, string>>((acc, category) => {
-      const match = products.find((product) => product.mockup === category.productType) ?? products[0]
+      const match = allProducts.find((product) => product.mockup === category.productType) ?? allProducts[0]
       if (match) acc[category.id] = match.id
       return acc
     }, {})
-  }, [])
+  }, [allProducts])
 
   return (
     <div className="boutique-page">

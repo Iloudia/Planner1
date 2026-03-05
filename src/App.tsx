@@ -28,6 +28,7 @@ import MentionsLegalesPage from "./pages/Legal/MentionsLegalesPage"
 import CookieBanner from "./components/CookieBanner"
 import CookiePreferencesModal from "./components/CookiePreferencesModal"
 import AdminPage from "./pages/Admin/AdminPage"
+import AdminProductsPage from "./pages/AdminProducts/AdminProductsPage"
 import AdminRoute from "./components/AdminRoute"
 import SettingsLayout from "./pages/Settings/SettingsLayout"
 import SettingsAccount from "./pages/Settings/SettingsAccount"
@@ -127,6 +128,7 @@ function App() {
           <Route path="/boutique/:categoryId" element={<BoutiqueCategoryPage />} />
           <Route path="/boutique/produit/:productId" element={<BoutiqueProductPage />} />
           <Route path="/merci" element={<ThankYouPage />} />
+          <Route path="/admin/produits" element={<AdminProductsPage />} />
           <Route path="/confidentialite" element={<ConfidentialitePage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/cookies" element={<GestionCookiesPage />} />
