@@ -45,7 +45,6 @@ type SelfLoveSavedLetter = {
   entryType: 'letter' | 'innerChild' | 'bestFriend'
 }
 type SelfLoveState = {
-  certificatePhoto: string | null
   photos: SelfLovePhotoSlot[]
   qualities: SelfLoveQuality[]
   thoughts: SelfLoveThought[]
@@ -63,22 +62,15 @@ type SelfLoveState = {
   innerChildNeededWords: string
   bestFriendAdvice: string
   bestFriendSelfTalk: string
-  customAffirmations: string[]
   savedLetters: SelfLoveSavedLetter[]
 }
 const PHOTO_SLOT_COUNT = 6
-const DEFAULT_CUSTOM_AFFIRMATIONS = [
-  "J'apprends à me traiter avec douceur.",
-  "Je mérite l'attention que je me donne.",
-  "Je prends soin de moi un peu plus chaque jour.",
-]
 const getDefaultFutureOpenDate = () => {
   const date = new Date()
   date.setMonth(date.getMonth() + 3)
   return date.toISOString().slice(0, 10)
 }
 const createDefaultState = (): SelfLoveState => ({
-  certificatePhoto: null,
   photos: Array.from({ length: PHOTO_SLOT_COUNT }, (_, index) => ({
     id: `photo-${index}`,
     dataUrl: null,
@@ -109,60 +101,8 @@ const createDefaultState = (): SelfLoveState => ({
   innerChildNeededWords: "",
   bestFriendAdvice: "",
   bestFriendSelfTalk: "",
-  customAffirmations: [...DEFAULT_CUSTOM_AFFIRMATIONS],
   savedLetters: [],
 })
-const affirmations = [
-  "Je m'offre la même douceur que je donne aux autres.",
-  "Je suis déjà assez et je le reste à chaque souffle.",
-  "Ma présence est un cadeau pour ce monde.",
-  "Je choisis de me regarder avec de l'amour aujourd'hui.",
-  "Je laisse ma lumière briller sans me cacher.",
-  "Je suis digne de tendresse, de joie et de paix.",
-]
-const inspiringQuotes = [
-  "\"S'aimer soi-même est le début d'une histoire d'amour qui dure toute la vie.\" - Oscar Wilde",
-  '"Tu es ton propre refuge. Tu es ton propre soleil."',
-  "\"Tu es le résultat de l'amour de toutes les femmes qui t'ont précédée.\"",
-  "\"N'oublie pas de t'émerveiller de ta force douce.\"",
-  "\"Tu es une œuvre en mouvement, magnifique à chaque étape.\"",
-]
-const KittyIllustration = () => (
-  <svg viewBox="0 0 220 200" role="img" className="self-love-kitty-letter__cat">
-    <defs>
-      <linearGradient id="kittyBody" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#fce7f3" />
-        <stop offset="100%" stopColor="#f9a8d4" />
-      </linearGradient>
-      <linearGradient id="kittyCheek" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stopColor="#f472b6" stopOpacity="0.7" />
-        <stop offset="100%" stopColor="#fb7185" stopOpacity="0.9" />
-      </linearGradient>
-    </defs>
-    <path
-      d="M38 60c0-20 12-34 24-46l10 24 28-18 28 18 10-24c12 12 24 26 24 46s-4 48-6 70-26 48-56 48-54-26-56-48-6-50-6-70z"
-      fill="url(#kittyBody)"
-      stroke="#f472b6"
-      strokeWidth="3"
-      strokeLinejoin="round"
-    />
-    <ellipse cx="78" cy="96" rx="10" ry="14" fill="#fff" opacity="0.45" />
-    <ellipse cx="142" cy="96" rx="10" ry="14" fill="#fff" opacity="0.45" />
-    <circle cx="92" cy="110" r="9" fill="url(#kittyCheek)" />
-    <circle cx="128" cy="110" r="9" fill="url(#kittyCheek)" />
-    <rect x="96" y="128" width="28" height="4" rx="2" fill="#fb7185" />
-    <path d="M86 144c8 8 40 8 48 0" stroke="#fb7185" strokeWidth="4" strokeLinecap="round" fill="none" />
-    <path d="M70 118c-10 2-18 6-20 10m18 8c-8 4-16 6-24 4" stroke="#f472b6" strokeWidth="4" strokeLinecap="round" />
-    <path d="M150 118c10 2 18 6 20 10m-18 8c8 4 16 6 24 4" stroke="#f472b6" strokeWidth="4" strokeLinecap="round" />
-    <path
-      d="M62 164c-2 10 26 30 46 30s48-20 46-30"
-      stroke="#f472b6"
-      strokeWidth="4"
-      strokeLinecap="round"
-      fill="none"
-    />
-  </svg>
-)
 const STORAGE_KEY = "planner.selfLove"
 const normalizeState = (value: unknown): SelfLoveState => {
   const base = createDefaultState()
@@ -194,12 +134,6 @@ const normalizeState = (value: unknown): SelfLoveState => {
         )
         .map((item) => ({ id: item.id, text: item.text, createdAt: item.createdAt }))
     : base.journal
-  const normalizedAffirmations = Array.isArray(source.customAffirmations)
-    ? source.customAffirmations.map((value) => (typeof value === "string" ? value : "")).slice(0, 3)
-    : base.customAffirmations
-  while (normalizedAffirmations.length < base.customAffirmations.length) {
-    normalizedAffirmations.push(base.customAffirmations[normalizedAffirmations.length])
-  }
   let letterTo = typeof source.letterTo === "string" ? source.letterTo : base.letterTo
   let letterFrom = typeof source.letterFrom === "string" ? source.letterFrom : base.letterFrom
   if (letterTo === "Moi du futur" && letterFrom === "Moi du present") {
@@ -259,7 +193,6 @@ const normalizeState = (value: unknown): SelfLoveState => {
         }))
     : base.savedLetters
   return {
-    certificatePhoto: typeof source.certificatePhoto === "string" ? source.certificatePhoto : base.certificatePhoto,
     photos,
     qualities,
     thoughts,
@@ -280,7 +213,6 @@ const normalizeState = (value: unknown): SelfLoveState => {
     bestFriendAdvice: typeof source.bestFriendAdvice === "string" ? source.bestFriendAdvice : base.bestFriendAdvice,
     bestFriendSelfTalk:
       typeof source.bestFriendSelfTalk === "string" ? source.bestFriendSelfTalk : base.bestFriendSelfTalk,
-    customAffirmations: normalizedAffirmations,
     savedLetters,
   }
 }
@@ -312,25 +244,6 @@ const SelfLovePage = () => {
         window.clearTimeout(futureSealConfirmationTimeout.current)
       }
     }
-  }, [])
-  const certificateImage = useMemo(() => {
-    if (safeState.certificatePhoto) {
-      return safeState.certificatePhoto
-    }
-    return safeState.photos.find((photo) => photo.dataUrl)?.dataUrl ?? null
-  }, [safeState.certificatePhoto, safeState.photos])
-  const affirmationOfDay = useMemo(() => {
-    const todayKey = new Date().toISOString().slice(0, 10)
-    const hash = todayKey.split("").reduce((accumulator, character) => accumulator + character.charCodeAt(0), 0)
-    return affirmations[hash % affirmations.length]
-  }, [])
-  const quoteOfDay = useMemo(() => {
-    const todayKey = new Date().toISOString().slice(0, 10)
-    const hash = todayKey
-      .split("")
-      .reverse()
-      .reduce((accumulator, character) => accumulator + character.charCodeAt(0), 0)
-    return inspiringQuotes[hash % inspiringQuotes.length]
   }, [])
   const handlePhotoChange = (slotId: string, event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -435,42 +348,6 @@ const SelfLovePage = () => {
     })
     setJournalDraft("")
   }
-  const handleCertificatePhotoChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) {
-      return
-    }
-    const reader = new FileReader()
-    reader.onload = () => {
-      const result = typeof reader.result === "string" ? reader.result : null
-      setState((previous) => ({ ...normalizeState(previous), certificatePhoto: result }))
-    }
-    reader.readAsDataURL(file)
-  }
-  const handleClearCertificatePhoto = () => {
-    setState((previous) => ({ ...normalizeState(previous), certificatePhoto: null }))
-  }
-  const handleShareCertificate = async () => {
-    const qualities = safeState.qualities.map((quality) => `- ${quality.text}`).join("\n")
-    const shareText = [
-      "Certificat de pure beauté",
-      "",
-      "Je célèbre la personne que je suis :",
-      qualities.length > 0 ? qualities : "- Je m'aime pour qui je suis.",
-      "",
-      affirmationOfDay,
-    ]
-      .filter(Boolean)
-      .join("\n")
-    try {
-      await navigator.clipboard.writeText(shareText)
-      window.alert("Ton certificat a été copié. Partage-le avec amour !")
-    } catch (error) {
-      console.error("Clipboard share failed", error)
-      window.prompt("Copie ton certificat :", shareText)
-    }
-  }
-
   const handleLetterChange = (field: "letterTo" | "letterFrom" | "letterBody" | "kittyLetterBody", value: string) => {
     setState((previous) => {
       const current = normalizeState(previous)
@@ -505,14 +382,6 @@ const SelfLovePage = () => {
     setState((previous) => {
       const current = normalizeState(previous)
       return { ...current, [field]: value }
-    })
-  }
-  const handleCustomAffirmationChange = (index: number, value: string) => {
-    setState((previous) => {
-      const current = normalizeState(previous)
-      const next = [...current.customAffirmations]
-      next[index] = value
-      return { ...current, customAffirmations: next }
     })
   }
   const handleSaveInnerChildExercise = () => {

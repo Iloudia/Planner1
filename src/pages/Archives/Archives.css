@@ -368,10 +368,16 @@
   justify-content: space-between;
   gap: 1rem;
   align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.archives-detail-header > div {
+  flex: 1 1 220px;
+  min-width: 0;
 }
 
 .archives-detail-eyebrow {
-  font-size: 0.7rem;
+  font-size: 0.35rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: rgba(71, 21, 49, 0.6);
@@ -379,8 +385,11 @@
 
 .archives-detail h3 {
   margin: 0.35rem 0 0;
-  font-size: 1.35rem;
+  font-size: 0.9rem;
   color: #1f1a2f;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .archives-entries {
@@ -779,5 +788,3 @@ body.boutique-page--tone .archives-modal__body--letter {
 body.boutique-page--tone .archives-modal__header--letter {
   padding: 1rem 1.2rem 0;
 }
-
-

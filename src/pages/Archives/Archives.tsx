@@ -5,7 +5,6 @@ import stampLove from "../../assets/Timbre-1.png"
 import stampKey from "../../assets/Timbre-2.png"
 import "./Archives.css"
 
-
 type JournalingEntry = {
   id: string
   date: string
@@ -106,10 +105,10 @@ const buildMonthGrid = (year: number, monthIndex: number) => {
 
 const getSelfLoveTitle = (letter: SelfLoveSavedLetter) => {
   if (letter.entryType === "innerChild") {
-    return "Exercice â€” L'enfant intÃ©rieur"
+    return "Exercice — L'enfant intérieur"
   }
   if (letter.entryType === "bestFriend") {
-    return "Exercice â€” Jeu des rÃ´les"
+    return "Exercice — Jeu de rôles"
   }
   if (letter.openDate) {
     return "Lettre au futur"
@@ -172,11 +171,7 @@ const ArchivesPage = () => {
     return journalEntries
       .filter((entry) => entry.date)
       .map((entry) => {
-        const title = entry.keyword
-          ? `Mot-clÃ© : ${entry.keyword}`
-          : entry.question
-            ? "Question guidÃ©e"
-            : "Journal"
+        const title = entry.keyword ? `Mot-clé : ${entry.keyword}` : entry.question ? "Question guidée" : "Journal"
         const excerpt = entry.content || entry.questionAnswer || entry.positiveAnchor || ""
         const createdAt = entry.createdAt ?? getTimestampFromDateKey(entry.date)
         const tags = ["Journaling"]
@@ -185,13 +180,13 @@ const ArchivesPage = () => {
         }
         const details: Array<{ label: string; value: string }> = []
         if (entry.keyword) {
-          details.push({ label: "Mot-cle", value: entry.keyword })
+          details.push({ label: "Mot-clé", value: entry.keyword })
         }
         if (entry.question) {
           details.push({ label: "Question du jour", value: entry.question })
         }
         if (entry.questionAnswer) {
-          details.push({ label: "RÃ©ponse", value: entry.questionAnswer })
+          details.push({ label: "Réponse", value: entry.questionAnswer })
         }
         if (entry.content) {
           details.push({ label: "Journal", value: entry.content })
@@ -239,19 +234,19 @@ const ArchivesPage = () => {
         details.push({ label: "Date d'ouverture", value: letter.openDate })
       }
       if (letter.innerChild?.message) {
-        details.push({ label: "Enfant interieur - Message", value: letter.innerChild.message })
+        details.push({ label: "Enfant intérieur - Message", value: letter.innerChild.message })
       }
       if (letter.innerChild?.reassurance) {
-        details.push({ label: "Enfant interieur - Reassurance", value: letter.innerChild.reassurance })
+        details.push({ label: "Enfant intérieur - Réassurance", value: letter.innerChild.reassurance })
       }
       if (letter.innerChild?.neededWords) {
-        details.push({ label: "Enfant interieur - Mots utiles", value: letter.innerChild.neededWords })
+        details.push({ label: "Enfant intérieur - Mots utiles", value: letter.innerChild.neededWords })
       }
       if (letter.bestFriend?.advice) {
-        details.push({ label: "Jeu des roles - Conseil", value: letter.bestFriend.advice })
+        details.push({ label: "Jeu de rôles - Conseil", value: letter.bestFriend.advice })
       }
       if (letter.bestFriend?.selfTalk) {
-        details.push({ label: "Jeu des roles - Auto-discours", value: letter.bestFriend.selfTalk })
+        details.push({ label: "Jeu de rôles - Auto-discours", value: letter.bestFriend.selfTalk })
       }
       return {
         id: letter.id,
@@ -280,9 +275,7 @@ const ArchivesPage = () => {
       return base
     }
     return base.filter((entry) => {
-      const haystack = [entry.title, entry.excerpt, entry.sectionLabel, entry.tags.join(" ")]
-        .join(" ")
-        .toLowerCase()
+      const haystack = [entry.title, entry.excerpt, entry.sectionLabel, entry.tags.join(" ")].join(" ").toLowerCase()
       return haystack.includes(query)
     })
   }, [journalingArchiveEntries, selfLoveArchiveEntries, sectionFilter, searchQuery])
@@ -375,9 +368,7 @@ const ArchivesPage = () => {
       return []
     }
     const entries = entriesByDate.get(selectedDay) ?? []
-    return [...entries].sort((a, b) =>
-      sortOrder === "newest" ? b.createdAt - a.createdAt : a.createdAt - b.createdAt,
-    )
+    return [...entries].sort((a, b) => (sortOrder === "newest" ? b.createdAt - a.createdAt : a.createdAt - b.createdAt))
   }, [entriesByDate, selectedDay, sortOrder])
 
   useEffect(() => {
@@ -448,7 +439,7 @@ const ArchivesPage = () => {
         }
       })
     }
-        setSelectedEntry(null)
+    setSelectedEntry(null)
   }
 
   const selectedLetter = selectedEntry?.section === "self-love" ? selectedEntry.selfLoveLetter ?? null : null
@@ -479,7 +470,7 @@ const ArchivesPage = () => {
 
       <header className="archives-header">
         <div className="archives-intro">
-          <p>Retrouvez vos Ã©crits par date.</p>
+          <p>Retrouvez vos écrits par date.</p>
         </div>
         <div className="archives-controls">
           <label className="archives-control">
@@ -538,7 +529,7 @@ const ArchivesPage = () => {
       </header>
 
       {archiveYears.length === 0 ? (
-        <p className="archives-empty">Aucun Ã©crit pour le moment.</p>
+        <p className="archives-empty">Aucun écrit pour le moment.</p>
       ) : (
         <div className="archives-layout">
           <div className="archives-nav">
@@ -555,7 +546,7 @@ const ArchivesPage = () => {
                   }}
                 >
                   <span className="archives-year">{group.year}</span>
-                  <span className="archives-count">{group.total} Ã©crits</span>
+                  <span className="archives-count">{group.total} écrits</span>
                 </button>
               ))}
             </div>
@@ -566,8 +557,9 @@ const ArchivesPage = () => {
                   <button
                     key={month.monthKey}
                     type="button"
-                    className={`archives-month-card${selectedMonth === month.monthKey ? " is-active" : ""}${month.total === 0 ? " is-empty" : ""
-                      }`}
+                    className={`archives-month-card${selectedMonth === month.monthKey ? " is-active" : ""}${
+                      month.total === 0 ? " is-empty" : ""
+                    }`}
                     onClick={() => {
                       setSelectedMonth(month.monthKey)
                       setSelectedDay(null)
@@ -579,7 +571,7 @@ const ArchivesPage = () => {
                 ))}
               </div>
             ) : (
-              <p className="archives-hint">Choisis une annÃ©e pour voir les mois.</p>
+              <p className="archives-hint">Choisis une année pour voir les mois.</p>
             )}
 
             {selectedMonth ? (
@@ -609,20 +601,21 @@ const ArchivesPage = () => {
                     const preview = dayEntries
                       .slice(0, 2)
                       .map((entry) => entry.title)
-                      .join(" Â· ")
-                    const tooltip = `${cell.count} Ã©crit(s)${preview ? ` â€” ${preview}` : ""}`
+                      .join(" · ")
+                    const tooltip = `${cell.count} écrit(s)${preview ? ` — ${preview}` : ""}`
                     return (
                       <button
                         key={cell.key}
                         type="button"
-                        className={`archives-day archives-day-button${selectedDay === cell.dateKey ? " is-active" : ""}${cell.isToday ? " is-today" : ""
-                          }`}
+                        className={`archives-day archives-day-button${
+                          selectedDay === cell.dateKey ? " is-active" : ""
+                        }${cell.isToday ? " is-today" : ""}`}
                         onClick={() => setSelectedDay(cell.dateKey)}
                         title={tooltip}
-                        aria-label={`Voir les Ã©crits du ${formatArchiveDate(cell.dateKey)} (${cell.count})`}
+                        aria-label={`Voir les écrits du ${formatArchiveDate(cell.dateKey)} (${cell.count})`}
                       >
                         <span className="archives-day-number">{cell.day}</span>
-                        <span className="archives-day-badge">â€¢ {cell.count}</span>
+                        <span className="archives-day-badge">• {cell.count}</span>
                       </button>
                     )
                   })}
@@ -641,11 +634,11 @@ const ArchivesPage = () => {
                       onClick={() => setSelectedDay(day.dateKey)}
                     >
                       <span>{day.label}</span>
-                      <span className="archives-day-badge">â€¢ {day.total}</span>
+                      <span className="archives-day-badge">• {day.total}</span>
                     </button>
                   ))
                 ) : (
-                  <p className="archives-empty">Aucun Ã©crit sur ce mois.</p>
+                  <p className="archives-empty">Aucun écrit sur ce mois.</p>
                 )}
               </div>
             ) : null}
@@ -656,7 +649,7 @@ const ArchivesPage = () => {
               <>
                 <div className="archives-detail-header">
                   <div>
-                    <span className="archives-detail-eyebrow">DÃ©tails du jour</span>
+                    <span className="archives-detail-eyebrow">Détails du jour</span>
                     <h3>{formatArchiveDate(selectedDay)}</h3>
                   </div>
                   <label className="archives-control">
@@ -665,7 +658,7 @@ const ArchivesPage = () => {
                       value={sortOrder}
                       onChange={(event) => setSortOrder(event.target.value as "newest" | "oldest")}
                     >
-                      <option value="newest">Plus rÃ©cent</option>
+                      <option value="newest">Plus récent</option>
                       <option value="oldest">Plus ancien</option>
                     </select>
                   </label>
@@ -692,11 +685,11 @@ const ArchivesPage = () => {
                     ))}
                   </ul>
                 ) : (
-                  <p className="archives-empty">Aucun Ã©crit pour ce jour.</p>
+                  <p className="archives-empty">Aucun écrit pour ce jour.</p>
                 )}
               </>
             ) : (
-              <div className="archives-empty">Choisis un jour pour voir tes Ã©crits.</div>
+              <div className="archives-empty">Choisis un jour pour voir tes écrits.</div>
             )}
           </aside>
         </div>
@@ -719,12 +712,7 @@ const ArchivesPage = () => {
                   <h3>{formatArchiveDate(selectedEntry.dateKey)}</h3>
                 </div>
               )}
-              <button
-                type="button"
-                className="modal__close"
-                aria-label="Fermer"
-                onClick={() => setSelectedEntry(null)}
-              >
+              <button type="button" className="modal__close" aria-label="Fermer" onClick={() => setSelectedEntry(null)}>
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                 </svg>
@@ -762,11 +750,7 @@ const ArchivesPage = () => {
                     </div>
                     <div className="self-love-letter__body self-love-future-letter__body">
                       <p className="self-love-letter__salutation">Cher moi,</p>
-                      <textarea
-                        value={selectedLetterLocked ? "" : selectedLetter.body}
-                        placeholder="Lettre scellée."
-                        readOnly
-                      />
+                      <textarea value={selectedLetterLocked ? "" : selectedLetter.body} placeholder="Lettre scellée." readOnly />
                       {selectedLetterLocked && selectedLetterOpenDate ? (
                         <div className="self-love-future-letter__lock">
                           <div className="self-love-future-letter__lock-body">
@@ -838,7 +822,7 @@ const ArchivesPage = () => {
                       ))}
                     </div>
                   ) : (
-                    <p>Aucun detail disponible.</p>
+                    <p>Aucun détail disponible.</p>
                   )}
                 </>
               )}
@@ -856,18 +840,3 @@ const ArchivesPage = () => {
 }
 
 export default ArchivesPage
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

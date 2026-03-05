@@ -69,11 +69,6 @@
   display: flex;
 }
 
-.self-love-letter__card--kitty {
-  width: 100%;
-  justify-content: center;
-}
-
 .self-love-letter__save {
   border: none;
   border-radius: 999px;
@@ -506,51 +501,6 @@
   cursor: pointer;
 }
 
-.self-love-affirmations__list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1rem;
-}
-
-.self-love-affirmations__item {
-  background: #fff;
-  border-radius: 24px;
-  padding: 1rem;
-  border: 1px dashed rgba(236, 72, 153, 0.4);
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.self-love-affirmations__item label {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  font-weight: 600;
-  color: #db2777;
-}
-
-.self-love-affirmations__textarea {
-  min-height: 80px;
-  border-radius: 16px;
-  border: none;
-  background: rgba(251, 207, 232, 0.3);
-  padding: 0.7rem 0.9rem;
-  font-family: 'Playfair Display', 'Times New Roman', serif;
-  line-height: 1.5;
-  color: #7a1b2f;
-  resize: vertical;
-}
-
-.self-love-affirmations__textarea:focus {
-  outline: none;
-  border-color: #ec4899;
-  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
-}
-
 .self-love-saved-letters__list {
   list-style: none;
   margin: 0;
@@ -955,7 +905,7 @@
 }
 
 .self-love-archive__detail-eyebrow {
-  font-size: 0.7rem;
+  font-size: 0.6rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: rgba(71, 21, 49, 0.6);
@@ -963,8 +913,11 @@
 
 .self-love-archive__detail h3 {
   margin: 0.35rem 0 0;
-  font-size: 1.35rem;
+  font-size: 1.1rem;
   color: #1f1a2f;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .self-love-archive__detail-empty {
@@ -1389,131 +1342,6 @@
   text-align: center;
   font-size: 1rem;
   color: rgba(71, 21, 49, 0.55);
-}
-
-.self-love-kitty-letter {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
-
-.self-love-kitty-letter__card {
-  width: 100%;
-  max-width: 700px;
-  background: linear-gradient(180deg, #fff5fb 0%, #ffe4f2 60%, #ffd6ec 100%);
-  border-radius: 40px;
-  padding: clamp(1.8rem, 4vw, 2.8rem);
-  border: 2px solid rgba(236, 72, 153, 0.3);
-  box-shadow: 0 40px 90px rgba(236, 72, 153, 0.25);
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.self-love-kitty-letter__card::after {
-  content: '';
-  position: absolute;
-  inset: 16px;
-  border-radius: 32px;
-  border: 1px dashed rgba(244, 114, 182, 0.5);
-  pointer-events: none;
-}
-
-.self-love-kitty-letter__art {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  padding: 1rem 0 2.2rem;
-}
-
-.self-love-kitty-letter__cat {
-  width: clamp(180px, 42vw, 240px);
-  height: auto;
-  filter: drop-shadow(0 25px 45px rgba(244, 114, 182, 0.35));
-  z-index: 1;
-}
-
-.self-love-kitty-letter__floating-hearts {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.self-love-kitty-letter__floating-hearts span {
-  position: absolute;
-  color: #fb7185;
-  font-size: clamp(1.1rem, 4vw, 1.6rem);
-  opacity: 0.8;
-}
-
-.self-love-kitty-letter__floating-hearts span:nth-child(1) {
-  top: 0.5rem;
-  left: 18%;
-}
-
-.self-love-kitty-letter__floating-hearts span:nth-child(2) {
-  top: 1rem;
-  right: 16%;
-  font-size: clamp(1.4rem, 5vw, 2rem);
-}
-
-.self-love-kitty-letter__floating-hearts span:nth-child(3) {
-  bottom: 3.5rem;
-  left: 10%;
-}
-
-.self-love-kitty-letter__floating-hearts span:nth-child(4) {
-  bottom: 1.5rem;
-  right: 12%;
-}
-
-.self-love-kitty-letter__floating-hearts span:nth-child(5) {
-  top: 40%;
-  right: 6%;
-}
-
-.self-love-kitty-letter__subtitle {
-  margin: 0 auto 1rem;
-  max-width: 380px;
-  font-size: 1.2rem;
-  line-height: 1.5;
-  color: #be123c;
-  font-family: 'Playfair Display', 'Times New Roman', serif;
-}
-
-.self-love-kitty-letter__textarea {
-  width: 100%;
-  min-height: 180px;
-  border: none;
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 28px;
-  padding: 1.2rem 1.4rem;
-  font-size: 1.05rem;
-  line-height: 1.7;
-  color: #a31641;
-  font-family: 'Playfair Display', 'Times New Roman', serif;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
-  resize: vertical;
-}
-
-.self-love-kitty-letter__textarea:focus {
-  outline: none;
-  border-color: #ec4899;
-  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
-}
-
-.self-love-kitty-letter__footer {
-  margin-top: 1.4rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-family: 'Playfair Display', serif;
-  color: #db2777;
-  font-size: 0.95rem;
-}
-
-.self-love-kitty-letter__sparkles {
-  letter-spacing: 0.4em;
 }
 
 
@@ -2235,128 +2063,6 @@
   background: rgba(255, 255, 255, 0.85);
 }
 
-.self-love-section--certificate {
-  background: none;
-  padding: 0;
-}
-
-.self-love-certificate {
-  border-radius: 34px;
-  padding: clamp(2.4rem, 5vw, 3.4rem);
-  background: linear-gradient(135deg, rgba(244, 114, 182, 0.16) 0%, rgba(59, 130, 246, 0.12) 100%);
-  box-shadow: 0 46px 120px rgba(244, 114, 182, 0.28);
-  display: flex;
-  flex-direction: column;
-  gap: 1.6rem;
-  align-items: center;
-  text-align: center;
-}
-
-.self-love-certificate h2 {
-  margin: 0;
-  font-size: clamp(2rem, 6vw, 3rem);
-  color: #1f1a2f;
-}
-
-.self-love-certificate__subtitle {
-  margin: 0;
-  max-width: 520px;
-  color: rgba(30, 41, 59, 0.68);
-  font-size: 1.05rem;
-  line-height: 1.6;
-}
-
-.self-love-certificate__canvas {
-  width: min(680px, 100%);
-  border-radius: 30px;
-  overflow: hidden;
-  box-shadow: 0 38px 110px rgba(15, 23, 42, 0.16);
-  background: rgba(255, 255, 255, 0.85);
-  position: relative;
-}
-
-.self-love-certificate__canvas img {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-.self-love-certificate__placeholder {
-  padding: clamp(3rem, 6vw, 4rem);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  color: rgba(30, 41, 59, 0.6);
-  font-size: 1.1rem;
-}
-
-.self-love-certificate__share {
-  border: none;
-  border-radius: 999px;
-  padding: 0.9rem 2.4rem;
-  background: linear-gradient(135deg, #ec4899 0%, #f97316 100%);
-  color: #fff;
-  font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
-  box-shadow: 0 30px 60px rgba(236, 72, 153, 0.4);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.self-love-certificate__share:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 34px 70px rgba(236, 72, 153, 0.45);
-}
-
-.self-love-certificate__share:focus-visible {
-  outline: 3px solid rgba(236, 72, 153, 0.5);
-  outline-offset: 3px;
-}
-
-.self-love-certificate__controls {
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: 1.2rem;
-  gap: 0.9rem;
-  justify-content: center;
-  align-items: center;
-}
-
-.self-love-certificate__upload {
-  position: relative;
-  overflow: hidden;
-  border-radius: 999px;
-  background: rgba(236, 72, 153, 0.18);
-  color: #be185d;
-  font-weight: 600;
-  font-size: 0.85rem;
-  padding: 0.6rem 1.4rem;
-  cursor: pointer;
-  box-shadow: 0 18px 36px rgba(236, 72, 153, 0.28);
-}
-
-.self-love-certificate__upload input {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-
-.self-love-certificate__upload span {
-  pointer-events: none;
-}
-
-.self-love-certificate__controls button {
-  border: none;
-  border-radius: 999px;
-  padding: 0.55rem 1.3rem;
-  background: rgba(15, 23, 42, 0.08);
-  color: rgba(15, 23, 42, 0.72);
-  font-weight: 600;
-  cursor: pointer;
-}
-
 @media (min-width: 768px) and (max-width: 1023px) {
   .self-love-page {
     gap: 2.6rem;
@@ -2389,10 +2095,6 @@
 
   .self-love-archive__years {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .self-love-certificate__controls {
-    flex-direction: column;
   }
 }
 
@@ -2526,24 +2228,12 @@
     grid-template-columns: 1fr;
   }
 
-  .self-love-affirmations__list {
-    grid-template-columns: 1fr;
-  }
-
   .self-love-extras {
     grid-template-columns: 1fr;
   }
 
   .self-love-card--journal button {
     align-self: stretch;
-  }
-
-  .self-love-certificate {
-    padding: 2rem;
-  }
-
-  .self-love-certificate__controls {
-    flex-direction: column;
   }
 
   .self-love-saved-letters__list li {
@@ -2744,16 +2434,11 @@ body.self-love-page--lux .self-love-archive__detail,
 body.self-love-page--lux .self-love-saved-letters__list li,
 body.self-love-page--lux .self-love-section.self-love-saved-letters.journaling-history,
 body.self-love-page--lux .self-love-card,
-body.self-love-page--lux .self-love-certificate,
 body.self-love-page--lux .self-love-letter__frame {
   background: #ffffff;
   border: 1px solid rgba(15, 23, 42, 0.14);
   border-radius: 0;
   box-shadow: none;
-}
-
-body.self-love-page--lux .self-love-section--certificate {
-  background: transparent;
 }
 
 body.self-love-page--lux .self-love-letter__frame::after,
@@ -2766,8 +2451,6 @@ body.self-love-page--lux .self-love-form-row button,
 body.self-love-page--lux .self-love-photo-card button,
 body.self-love-page--lux .self-love-exercise__save,
 body.self-love-page--lux .self-love-letter__save,
-body.self-love-page--lux .self-love-certificate__share,
-body.self-love-page--lux .self-love-certificate__controls button,
 body.self-love-page--lux .self-love-archive__toggle,
 body.self-love-page--lux .self-love-saved-letters__list button,
 body.self-love-page--lux .self-love-list li button {
@@ -2804,7 +2487,6 @@ body.self-love-page--lux .self-love-list__heart {
 }
 
 body.self-love-page--lux .self-love-exercise__textarea,
-body.self-love-page--lux .self-love-affirmations__textarea,
 body.self-love-page--lux .self-love-card--journal textarea,
 body.self-love-page--lux .self-love-letter__body textarea,
 body.self-love-page--lux .self-love-letter__addresses input,
@@ -2854,18 +2536,6 @@ body.self-love-page--lux .journaling-history__day-card {
 body.self-love-page--lux .self-love-letter__stamp {
   border: 1px solid rgba(15, 23, 42, 0.2);
   background: #fff;
-}
-
-body.self-love-page--lux .self-love-certificate__share {
-  border: 1px solid rgba(15, 23, 42, 0.85);
-}
-
-body.self-love-page--lux .self-love-certificate__upload {
-  border-radius: 0;
-  background: #fff;
-  border: 1px solid rgba(15, 23, 42, 0.2);
-  box-shadow: none;
-  color: #1f1a2f;
 }
 
 body.self-love-page--lux .self-love-future-letter__status {
