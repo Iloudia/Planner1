@@ -910,7 +910,7 @@ function HomePage() {
         {/* ? Moodboard (fix) */}
         <section className="home-moodboard">
           <div className="home-moodboard__top">
-            <h2>Mon moodboard</h2>
+            <h2>Mon visionboard</h2>
             <div className="home-moodboard__top-actions">
               <button type="button" className="home-moodboard__button" onClick={() => moodboardInputRef.current?.click()}>
                 Changer l'image

@@ -1,0 +1,122 @@
+﻿.admin-products-manage-page {
+  gap: clamp(1.6rem, 4vw, 3rem);
+}
+
+.admin-products-empty {
+  text-align: center;
+  color: var(--ink-soft);
+}
+
+.admin-products-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.admin-products-card {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr) auto;
+  gap: 1.2rem;
+  align-items: center;
+  border: 1px solid var(--line);
+  background: #ffffff;
+  padding: 1.2rem;
+}
+
+.admin-products-card__media {
+  width: 120px;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: #f8f6f1;
+}
+
+.admin-products-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.admin-products-card__body h2 {
+  margin: 0.2rem 0 0.4rem;
+  font-size: 1.05rem;
+}
+
+.admin-products-card__body p {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.admin-products-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+}
+
+.admin-products-card__actions {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.admin-products-edit {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.admin-products-edit__grid {
+  display: grid;
+  gap: 1.6rem;
+  grid-template-columns: 220px minmax(0, 1fr);
+}
+
+.admin-products-edit__media {
+  display: grid;
+  gap: 0.8rem;
+  align-content: start;
+}
+
+.admin-products-edit__preview {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border: 1px dashed var(--line);
+  background: #f8f6f1;
+  display: grid;
+  place-items: center;
+  color: var(--ink-soft);
+  overflow: hidden;
+}
+
+.admin-products-edit__preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.admin-products-edit__media input[type="file"] {
+  display: none;
+}
+
+.admin-products-edit__fields {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.admin-products-edit__actions {
+  justify-content: flex-end;
+}
+
+@media (max-width: 900px) {
+  .admin-products-card {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-products-card__actions {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+
+  .admin-products-edit__grid {
+    grid-template-columns: 1fr;
+  }
+}

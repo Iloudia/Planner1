@@ -1,14 +1,24 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import "./Boutique.css"
 
 import { products } from "./boutiqueData"
+import { loadCustomProducts, PRODUCTS_UPDATED_EVENT } from "./boutiqueStorage"
+import { addToCart } from "./cartStorage"
 
 const BoutiqueProductPage = () => {
   const { productId } = useParams()
-  const product = useMemo(() => products.find((item) => item.id === productId) ?? null, [productId])
+  const [customProducts, setCustomProducts] = useState(() => loadCustomProducts())
+  const product = useMemo(
+    () => [...products, ...customProducts].find((item) => item.id === productId) ?? null,
+    [productId, customProducts],
+  )
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false)
   const [checkoutError, setCheckoutError] = useState<string | null>(null)
+  const [isCartAnimating, setIsCartAnimating] = useState(false)
+  const [isCartToastVisible, setIsCartToastVisible] = useState(false)
+  const cartAnimationTimeoutRef = useRef<number | null>(null)
+  const cartToastTimeoutRef = useRef<number | null>(null)
 
   const gallery = product?.gallery ?? []
   const thumbnails = gallery.slice(1, 6)
@@ -24,6 +34,46 @@ const BoutiqueProductPage = () => {
       document.body.classList.remove("boutique-page--tone")
     }
   }, [])
+
+  useEffect(() => {
+    return () => {
+      if (cartAnimationTimeoutRef.current) {
+        window.clearTimeout(cartAnimationTimeoutRef.current)
+      }
+      if (cartToastTimeoutRef.current) {
+        window.clearTimeout(cartToastTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    const handleStorage = () => setCustomProducts(loadCustomProducts())
+    window.addEventListener("storage", handleStorage)
+    window.addEventListener(PRODUCTS_UPDATED_EVENT, handleStorage as EventListener)
+    return () => {
+      window.removeEventListener("storage", handleStorage)
+      window.removeEventListener(PRODUCTS_UPDATED_EVENT, handleStorage as EventListener)
+    }
+  }, [])
+
+  const handleAddToCart = () => {
+    if (!product) return
+    addToCart(product, 1)
+    if (cartAnimationTimeoutRef.current) {
+      window.clearTimeout(cartAnimationTimeoutRef.current)
+    }
+    setIsCartAnimating(false)
+    window.requestAnimationFrame(() => {
+      setIsCartAnimating(true)
+      cartAnimationTimeoutRef.current = window.setTimeout(() => setIsCartAnimating(false), 650)
+    })
+
+    if (cartToastTimeoutRef.current) {
+      window.clearTimeout(cartToastTimeoutRef.current)
+    }
+    setIsCartToastVisible(true)
+    cartToastTimeoutRef.current = window.setTimeout(() => setIsCartToastVisible(false), 6000)
+  }
 
   const handleCheckout = async () => {
     if (!product) {
@@ -59,7 +109,7 @@ const BoutiqueProductPage = () => {
       <div className="boutique-page boutique-detail">
         <section className="boutique-detail__header">
           <Link to="/boutique" className="boutique-link-button">
-            Retour boutique
+            &lt; Retour boutique
           </Link>
           <h1>Produit introuvable</h1>
           <p>Le produit demandé n'existe pas encore.</p>
@@ -70,9 +120,21 @@ const BoutiqueProductPage = () => {
 
   return (
     <div className="boutique-page boutique-detail">
+      <div className={`boutique-cart-toast${isCartToastVisible ? " is-visible" : ""}`} role="status" aria-live="polite">
+        <span className="boutique-cart-toast__eyebrow">Ajouté à votre panier</span>
+        {product ? (
+          <div className="boutique-cart-toast__content">
+            <img src={product.image} alt="" className="boutique-cart-toast__image" loading="lazy" decoding="async" />
+            <div>
+              <h1 className="boutique-cart-toast__title">{product.title}</h1>
+              <p className="boutique-cart-toast__price">{product.price}</p>
+            </div>
+          </div>
+        ) : null}
+      </div>
       <section className="boutique-detail__header">
         <Link to="/boutique" className="boutique-link-button">
-          Retour boutique
+          &lt; Retour boutique
         </Link>
       </section>
 
@@ -121,9 +183,16 @@ const BoutiqueProductPage = () => {
             >
               {isCheckoutLoading ? "Redirection..." : "Acheter maintenant"}
             </button>
+            <button
+              type="button"
+              className={`boutique-button boutique-button--ghost${isCartAnimating ? " is-animating" : ""}`}
+              onClick={handleAddToCart}
+            >
+              Ajouter au panier
+            </button>
             {checkoutError ? <p className="boutique-checkout-error">{checkoutError}</p> : null}
             <div className="boutique-detail__features">
-              <h2>Ce que tu reçois</h2>
+              <h2>Infos de livraison</h2>
               <ul>
                 {product.features.map((feature) => (
                   <li key={feature}>{feature}</li>

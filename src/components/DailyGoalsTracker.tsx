@@ -4,12 +4,12 @@ import "./DailyGoalsTracker.css"
 
 const HABIT_ROWS_DEFAULT = [
   "Workout",
-  "5k+ steps",
-  "Drinking 2 Litres of Water",
-  "Healthy meals",
-  "No junk/sugar",
-  "1 Fruit",
-  "8 Hours of Sleep",
+  "5k+ pas",
+  "Boire 2 litres d'eau",
+  "Repas sains",
+  "Pas de Fastfood",
+  "1 fruit",
+  "8 heures de sommeil",
 ]
 
 const HABIT_DAYS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"]
@@ -99,6 +99,7 @@ const DailyGoalsTracker = () => {
   const [rewardDay, setRewardDay] = useState<number | null>(null)
   const [showReward, setShowReward] = useState(false)
   const previousCompleted = useRef<boolean[]>(completedDays)
+  const rewardTimeoutRef = useRef<number | null>(null)
 
   useEffect(() => {
     const nextCompleted = completedDays
@@ -114,6 +115,22 @@ const DailyGoalsTracker = () => {
       setShowReward(true)
     }
   }, [completedDays])
+
+  useEffect(() => {
+    if (!showReward) return
+    if (rewardTimeoutRef.current) {
+      window.clearTimeout(rewardTimeoutRef.current)
+    }
+    rewardTimeoutRef.current = window.setTimeout(() => setShowReward(false), 6000)
+  }, [showReward, rewardDay])
+
+  useEffect(() => {
+    return () => {
+      if (rewardTimeoutRef.current) {
+        window.clearTimeout(rewardTimeoutRef.current)
+      }
+    }
+  }, [])
 
   const toggleHabit = (rowIndex: number, dayIndex: number) => {
     setHabitData((previous) => ({

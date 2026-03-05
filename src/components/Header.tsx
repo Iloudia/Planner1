@@ -358,6 +358,16 @@ function Header() {
                     </button>
                     <button
                       type="button"
+                      className="account-menu__item"
+                      onClick={() => {
+                        handleNavigate("/admin/produits/publies")
+                        setIsAccountOpen(false)
+                      }}
+                    >
+                      Produits publies
+                    </button>
+                    <button
+                      type="button"
                       className="account-menu__item account-menu__item--danger"
                       onClick={async () => {
                         await handleLogout()
@@ -379,6 +389,9 @@ function Header() {
           </Link>
           <Link to="/boutique" className="site-header__nav-link">
             Boutique
+          </Link>
+          <Link to="/panier" className="site-header__nav-link">
+            Panier
           </Link>
           <Link to="/a-propos" className="site-header__nav-link">
             À propos

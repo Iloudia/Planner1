@@ -3,7 +3,7 @@ import { Link } from "react-router-dom"
 import "./Boutique.css"
 
 import { benefits, boutiqueHeroBackdrop, categories, products } from "./boutiqueData"
-import { loadCustomProducts } from "./boutiqueStorage"
+import { loadCustomProducts, PRODUCTS_UPDATED_EVENT } from "./boutiqueStorage"
 
 const BoutiquePage = () => {
   const [activeFilter, setActiveFilter] = useState("all")
@@ -46,8 +46,15 @@ const BoutiquePage = () => {
         setCustomProducts(loadCustomProducts())
       }
     }
+    const handleProductsUpdated = () => {
+      setCustomProducts(loadCustomProducts())
+    }
     window.addEventListener("storage", handleStorage)
-    return () => window.removeEventListener("storage", handleStorage)
+    window.addEventListener(PRODUCTS_UPDATED_EVENT, handleProductsUpdated as EventListener)
+    return () => {
+      window.removeEventListener("storage", handleStorage)
+      window.removeEventListener(PRODUCTS_UPDATED_EVENT, handleProductsUpdated as EventListener)
+    }
   }, [])
 
   const allProducts = useMemo(() => [...products, ...customProducts], [customProducts])

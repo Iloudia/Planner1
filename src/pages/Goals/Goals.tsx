@@ -5,7 +5,7 @@ import goalsHero from "../../assets/olivia-roberts-dupe.webp";
 import "./Goals.css";
 
 const BODY_GOALS_STORAGE_KEY = "goals:bodyPhotos";
-const DEFAULT_BODY_GOALS: Array<string | null> = [null, null, null, null];
+const DEFAULT_BODY_GOALS: Array<string | null> = [null, null, null, null, null, null];
 
 const GoalsPage = () => {
   const [bodyGoals, setBodyGoals] = useState<Array<string | null>>(DEFAULT_BODY_GOALS);

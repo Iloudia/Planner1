@@ -1,4 +1,4 @@
-import "dotenv/config"
+﻿import "dotenv/config"
 import crypto from "node:crypto"
 import fs from "node:fs"
 import path from "node:path"
@@ -125,7 +125,7 @@ const verifyDownloadToken = (token) => {
   return payload
 }
 
-const sendDownloadEmail = async ({ to, productName, downloadUrl }) => {
+const sendDownloadEmail = async ({ to, items }) => {
   const resendApiKey = process.env.RESEND_API_KEY
   const from = process.env.EMAIL_FROM || "Boutique <no-reply@example.com>"
   if (!resendApiKey) {
@@ -133,15 +133,19 @@ const sendDownloadEmail = async ({ to, productName, downloadUrl }) => {
     return
   }
 
-  const subject = `Ton lien de téléchargement : ${productName}`
+  const subject = "Tes liens de telechargement"
+  const list = items
+    .map(
+      (item) =>
+        `<li style="margin-bottom: 10px;"><strong>${item.productName}</strong><br /><a href="${item.downloadUrl}" style="color: #1f1b16;">Telecharger</a></li>`,
+    )
+    .join("")
   const html = `
     <div style="font-family: Inter, Arial, sans-serif; line-height: 1.6;">
       <h2 style="margin: 0 0 12px;">Merci pour ton achat</h2>
-      <p style="margin: 0 0 16px;">Voici ton lien sécurisé pour télécharger <strong>${productName}</strong> :</p>
-      <p style="margin: 0 0 16px;">
-        <a href="${downloadUrl}" style="display: inline-block; padding: 10px 18px; background: #1f1b16; color: #ffffff; text-decoration: none; font-weight: 600;">Télécharger</a>
-      </p>
-      <p style="margin: 0;">Ce lien expire dans 48 heures.</p>
+      <p style="margin: 0 0 16px;">Voici tes liens securises de telechargement :</p>
+      <ul style="padding-left: 18px; margin: 0 0 16px;">${list}</ul>
+      <p style="margin: 0;">Ces liens expirent dans 48 heures.</p>
     </div>
   `
 
@@ -159,33 +163,59 @@ const sendDownloadEmail = async ({ to, productName, downloadUrl }) => {
     }),
   })
 }
-
 app.post("/api/create-checkout-session", async (req, res) => {
   try {
-    const { productId } = req.body || {}
-    const product = productById.get(productId)
-    if (!product) {
+    const { productId, items } = req.body || {}
+    const normalizedItems = Array.isArray(items)
+      ? items
+          .map((item) => ({
+            productId: String(item?.productId || ""),
+            quantity: Number(item?.quantity || 1),
+          }))
+          .filter((item) => item.productId && Number.isFinite(item.quantity) && item.quantity > 0)
+      : []
+
+    if (!productId && normalizedItems.length === 0) {
       return res.status(400).json({ error: "Produit introuvable." })
     }
+
+    const cartItems =
+      normalizedItems.length > 0
+        ? normalizedItems
+        : [
+            {
+              productId,
+              quantity: 1,
+            },
+          ]
+
+    const lineItems = cartItems.map((item) => {
+      const product = productById.get(item.productId)
+      if (!product) {
+        throw new Error(`Produit introuvable: ${item.productId}`)
+      }
+      return {
+        price_data: {
+          currency: "eur",
+          unit_amount: product.priceCents,
+          product_data: {
+            name: product.name,
+          },
+        },
+        quantity: item.quantity,
+      }
+    })
+
+    const cancelUrl =
+      normalizedItems.length > 0 ? `${appBaseUrl}/panier` : `${appBaseUrl}/boutique/produit/${productId}`
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       success_url: `${appBaseUrl}/merci?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${appBaseUrl}/boutique/produit/${product.id}`,
-      line_items: [
-        {
-          price_data: {
-            currency: "eur",
-            unit_amount: product.priceCents,
-            product_data: {
-              name: product.name,
-            },
-          },
-          quantity: 1,
-        },
-      ],
+      cancel_url: cancelUrl,
+      line_items: lineItems,
       metadata: {
-        productId: product.id,
+        items: JSON.stringify(cartItems),
       },
       allow_promotion_codes: true,
     })
@@ -193,10 +223,9 @@ app.post("/api/create-checkout-session", async (req, res) => {
     return res.json({ url: session.url })
   } catch (error) {
     console.error("Checkout session error:", error)
-    return res.status(500).json({ error: "Impossible de créer la session de paiement." })
+    return res.status(500).json({ error: "Impossible de creer la session de paiement." })
   }
 })
-
 app.get("/api/checkout-session", async (req, res) => {
   try {
     const sessionId = req.query.session_id
@@ -209,26 +238,41 @@ app.get("/api/checkout-session", async (req, res) => {
       return res.status(200).json({ paid: false })
     }
 
-    const productId = session.metadata?.productId
-    const product = productById.get(productId)
-    if (!product) {
+    const rawItems = session.metadata?.items
+    const parsedItems = rawItems ? JSON.parse(rawItems) : null
+    const cartItems = Array.isArray(parsedItems)
+      ? parsedItems
+          .map((item) => ({ productId: item?.productId, quantity: item?.quantity ?? 1 }))
+          .filter((item) => typeof item.productId === "string")
+      : []
+
+    if (cartItems.length === 0) {
       return res.status(404).json({ error: "Produit introuvable." })
     }
 
-    const token = createDownloadToken({ productId, sessionId })
-    const downloadUrl = `${appBaseUrl}/api/download?token=${token}`
+    const downloads = cartItems
+      .map((item) => productById.get(item.productId))
+      .filter(Boolean)
+      .map((product) => {
+        const token = createDownloadToken({ productId: product.id, sessionId })
+        const downloadUrl = `${appBaseUrl}/api/download?token=${token}`
+        return { downloadUrl, productName: product.name }
+      })
+
+    if (downloads.length === 0) {
+      return res.status(404).json({ error: "Produit introuvable." })
+    }
+
     return res.status(200).json({
       paid: true,
-      downloadUrl,
-      productName: product.name,
+      downloads,
       customerEmail: session.customer_details?.email ?? null,
     })
   } catch (error) {
     console.error("Checkout session lookup error:", error)
-    return res.status(500).json({ error: "Impossible de vérifier le paiement." })
+    return res.status(500).json({ error: "Impossible de verifier le paiement." })
   }
 })
-
 app.get("/api/download", (req, res) => {
   const token = req.query.token
   if (typeof token !== "string") {
@@ -236,7 +280,7 @@ app.get("/api/download", (req, res) => {
   }
   const payload = verifyDownloadToken(token)
   if (!payload) {
-    return res.status(403).send("Lien expiré ou invalide.")
+    return res.status(403).send("Lien expirÃ© ou invalide.")
   }
   const product = productById.get(payload.productId)
   if (!product) {
@@ -260,25 +304,39 @@ app.post("/api/stripe-webhook", async (req, res) => {
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object
-    const productId = session.metadata?.productId
-    const product = productById.get(productId)
-    if (product) {
-      const token = createDownloadToken({ productId, sessionId: session.id })
-      const downloadUrl = `${appBaseUrl}/api/download?token=${token}`
-      const email = session.customer_details?.email
-      if (email) {
-        await sendDownloadEmail({
-          to: email,
-          productName: product.name,
-          downloadUrl,
-        })
-      }
+    const rawItems = session.metadata?.items
+    const parsedItems = rawItems ? JSON.parse(rawItems) : null
+    const cartItems = Array.isArray(parsedItems)
+      ? parsedItems
+          .map((item) => ({ productId: item?.productId, quantity: item?.quantity ?? 1 }))
+          .filter((item) => typeof item.productId === "string")
+      : []
+
+    const downloads = cartItems
+      .map((item) => productById.get(item.productId))
+      .filter(Boolean)
+      .map((product) => {
+        const token = createDownloadToken({ productId: product.id, sessionId: session.id })
+        const downloadUrl = `${appBaseUrl}/api/download?token=${token}`
+        return { downloadUrl, productName: product.name }
+      })
+
+    const email = session.customer_details?.email
+    if (email && downloads.length > 0) {
+      await sendDownloadEmail({
+        to: email,
+        items: downloads,
+      })
     }
   }
 
   res.json({ received: true })
 })
-
 app.listen(port, () => {
   console.log(`Boutique server listening on http://localhost:${port}`)
 })
+
+
+
+
+

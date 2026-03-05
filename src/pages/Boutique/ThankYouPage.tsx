@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react"
+﻿import { useEffect, useState } from "react"
 import { Link, useSearchParams } from "react-router-dom"
 import "./Boutique.css"
 
 type CheckoutStatus = {
   paid: boolean
-  downloadUrl?: string
-  productName?: string
+  downloads?: Array<{ downloadUrl: string; productName: string }>
   customerEmail?: string | null
   error?: string
 }
@@ -33,13 +32,13 @@ const ThankYouPage = () => {
         const apiBase = import.meta.env.VITE_API_BASE || ""
         const response = await fetch(`${apiBase}/api/checkout-session?session_id=${sessionId}`)
         if (!response.ok) {
-          throw new Error("Impossible de vÃ©rifier le paiement.")
+          throw new Error("Impossible de verifier le paiement.")
         }
         const data = await response.json()
         setStatus(data)
       } catch (error) {
         console.error(error)
-        setStatus({ paid: false, error: "Impossible de vÃ©rifier le paiement." })
+        setStatus({ paid: false, error: "Impossible de verifier le paiement." })
       }
     }
 
@@ -49,8 +48,8 @@ const ThankYouPage = () => {
   const isPaid = status?.paid
   const title = isPaid ? "Merci pour ton achat" : "Paiement en attente"
   const message = isPaid
-    ? "Ton paiement est confirmÃ©. Tu peux tÃ©lÃ©charger ton produit ci-dessous."
-    : status?.error || "Nous n'avons pas encore reÃ§u la confirmation du paiement."
+    ? "Ton paiement est confirme. Tu peux telecharger ton produit ci-dessous."
+    : status?.error || "Nous n'avons pas encore recu la confirmation du paiement."
 
   return (
     <div className="boutique-page boutique-thankyou">
@@ -59,11 +58,13 @@ const ThankYouPage = () => {
         <h1>{title}</h1>
         <p>{message}</p>
 
-        {isPaid && status?.downloadUrl ? (
+        {isPaid && status?.downloads?.length ? (
           <div className="boutique-thankyou__actions">
-            <a href={status.downloadUrl} className="boutique-button boutique-button--primary">
-              TÃ©lÃ©charger maintenant
-            </a>
+            {status.downloads.map((item) => (
+              <a key={item.downloadUrl} href={item.downloadUrl} className="boutique-button boutique-button--primary">
+                Telecharger {item.productName}
+              </a>
+            ))}
             <Link to="/boutique" className="boutique-button boutique-button--ghost">
               Retour boutique
             </Link>
@@ -71,11 +72,11 @@ const ThankYouPage = () => {
         ) : (
           <div className="boutique-thankyou__actions">
             <Link to="/boutique" className="boutique-button boutique-button--primary">
-              Revenir Ã  la boutique
+              Revenir a la boutique
             </Link>
             {sessionId ? (
               <p className="boutique-thankyou__help">
-                Si tu ne reÃ§ois pas d'email d'ici quelques minutes, contacte-moi via la page Contact.
+                Si tu ne recois pas d'email d'ici quelques minutes, contacte-moi via la page Contact.
               </p>
             ) : null}
           </div>

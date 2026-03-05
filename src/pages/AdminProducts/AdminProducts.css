@@ -94,6 +94,7 @@
   color: var(--ink-soft);
   font-size: 0.78rem;
   padding: 0;
+  cursor: pointer;
 }
 
 .admin-products-preview img,
@@ -101,6 +102,21 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.admin-products-preview__delete {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 30px;
+  height: 30px;
+  border-radius: 0;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.92);
+  display: grid;
+  place-items: center;
+  font-size: 0.9rem;
+  cursor: pointer;
 }
 
 .admin-products-preview__label {

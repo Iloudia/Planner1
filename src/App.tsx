@@ -29,6 +29,7 @@ import CookieBanner from "./components/CookieBanner"
 import CookiePreferencesModal from "./components/CookiePreferencesModal"
 import AdminPage from "./pages/Admin/AdminPage"
 import AdminProductsPage from "./pages/AdminProducts/AdminProductsPage"
+import AdminProductsManagePage from "./pages/AdminProducts/AdminProductsManagePage"
 import AdminRoute from "./components/AdminRoute"
 import SettingsLayout from "./pages/Settings/SettingsLayout"
 import SettingsAccount from "./pages/Settings/SettingsAccount"
@@ -43,6 +44,7 @@ import BoutiquePage from "./pages/Boutique/Boutique"
 import BoutiqueCategoryPage from "./pages/Boutique/BoutiqueCategory"
 import BoutiqueProductPage from "./pages/Boutique/BoutiqueProduct"
 import ThankYouPage from "./pages/Boutique/ThankYouPage"
+import CartPage from "./pages/Cart/CartPage"
 
 function NotFound() {
   return (
@@ -127,8 +129,10 @@ function App() {
           <Route path="/boutique" element={<BoutiquePage />} />
           <Route path="/boutique/:categoryId" element={<BoutiqueCategoryPage />} />
           <Route path="/boutique/produit/:productId" element={<BoutiqueProductPage />} />
+          <Route path="/panier" element={<CartPage />} />
           <Route path="/merci" element={<ThankYouPage />} />
           <Route path="/admin/produits" element={<AdminProductsPage />} />
+          <Route path="/admin/produits/publies" element={<AdminProductsManagePage />} />
           <Route path="/confidentialite" element={<ConfidentialitePage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/cookies" element={<GestionCookiesPage />} />

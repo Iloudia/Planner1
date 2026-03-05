@@ -2,14 +2,14 @@
 import "./AdminProducts.css"
 import "../Boutique/Boutique.css"
 import placeholderProduct from "../../assets/kalina-wolf-dupe.webp"
-import { saveCustomProduct } from "../Boutique/boutiqueStorage"
+import { compactCustomProducts, saveCustomProduct } from "../Boutique/boutiqueStorage"
 import type { BoutiqueProduct } from "../Boutique/boutiqueData"
 
 type MediaFile = { name: string; url: string; type: "image" | "video"; dataUrl?: string }
 
 const mockCategories = ["Ebook", "Templates", "Carrousels", "Bundles"]
 const CATEGORY_PLACEHOLDER = "Choisir une catégorie"
-const MAX_IMAGES = 4
+const MAX_IMAGES = 6
 
 const AdminProductsPage = () => {
   const [images, setImages] = useState<MediaFile[]>([])
@@ -26,6 +26,7 @@ const AdminProductsPage = () => {
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle")
   const [digitalFiles, setDigitalFiles] = useState<File[]>([])
   const digitalFilesInputRef = useRef<HTMLInputElement | null>(null)
+  const mediaInputRef = useRef<HTMLInputElement | null>(null)
   const imageInputRef = useRef<HTMLInputElement | null>(null)
   const videoInputRef = useRef<HTMLInputElement | null>(null)
   const pendingImageSlotRef = useRef<number | null>(null)
@@ -65,7 +66,7 @@ const AdminProductsPage = () => {
       reader.readAsDataURL(file)
     })
 
-  const addImages = async (selected: FileList | null) => {
+  const addImages = async (selected: FileList | File[] | null) => {
     if (!selected) return
 
     const nextFiles = Array.from(selected).filter((file) => file.type.startsWith("image/"))
@@ -100,7 +101,7 @@ const AdminProductsPage = () => {
     })
   }
 
-  const setVideoFile = (selected: FileList | null) => {
+  const setVideoFile = (selected: FileList | File[] | null) => {
     if (!selected || selected.length === 0) return
     const file = Array.from(selected).find((item) => item.type.startsWith("video/"))
     if (!file) return
@@ -121,13 +122,45 @@ const AdminProductsPage = () => {
     event.target.value = ""
   }
 
+  const handleMediaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files
+    if (!files || files.length === 0) return
+    void addImages(files)
+    setVideoFile(files)
+    event.target.value = ""
+  }
+
   const handleImageBrowse = (slotIndex?: number) => {
     pendingImageSlotRef.current = typeof slotIndex === "number" ? slotIndex : null
     imageInputRef.current?.click()
   }
 
+  const handleMediaBrowse = (slotIndex?: number) => {
+    pendingImageSlotRef.current = typeof slotIndex === "number" ? slotIndex : null
+    mediaInputRef.current?.click()
+  }
+
   const handleVideoBrowse = () => {
     videoInputRef.current?.click()
+  }
+
+  const handleRemoveImage = (index: number) => {
+    setImages((prev) => {
+      const next = [...prev]
+      const removed = next[index]
+      if (removed) {
+        URL.revokeObjectURL(removed.url)
+        next.splice(index, 1)
+      }
+      return next
+    })
+  }
+
+  const handleRemoveVideo = () => {
+    if (video) {
+      URL.revokeObjectURL(video.url)
+    }
+    setVideo(null)
   }
 
   const handleDigitalFilesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -195,6 +228,10 @@ const AdminProductsPage = () => {
       window.alert("Ajoute un prix pour enregistrer la fiche produit.")
       return
     }
+    if (!category) {
+      window.alert("Choisis une catégorie pour enregistrer la fiche produit.")
+      return
+    }
 
     setSaveStatus("saving")
     const mockup = getMockupForCategory(category)
@@ -223,9 +260,47 @@ const AdminProductsPage = () => {
       features: features.length > 0 ? features : ["Ressource digitale", "Accès immédiat", "Usage commercial autorisé"],
     }
 
-    saveCustomProduct(product)
-    setSaveStatus("saved")
-    window.setTimeout(() => setSaveStatus("idle"), 2000)
+    try {
+      saveCustomProduct(product)
+      setSaveStatus("saved")
+      window.setTimeout(() => setSaveStatus("idle"), 2000)
+    } catch (error) {
+      console.error("Save product error:", error)
+      try {
+        const reducedProduct: BoutiqueProduct = {
+          ...product,
+          image: mainImage,
+          gallery: [mainImage],
+        }
+        saveCustomProduct(reducedProduct)
+        setSaveStatus("saved")
+        window.setTimeout(() => setSaveStatus("idle"), 2000)
+        window.alert("Les images sont trop lourdes. La fiche a été enregistrée avec l'image principale uniquement.")
+      } catch (fallbackError) {
+        console.error("Save product fallback error:", fallbackError)
+        try {
+          compactCustomProducts()
+          const compactProduct: BoutiqueProduct = {
+            ...product,
+            image: placeholderProduct,
+            gallery: [placeholderProduct],
+          }
+          saveCustomProduct(compactProduct)
+          setSaveStatus("saved")
+          window.setTimeout(() => setSaveStatus("idle"), 2000)
+          window.alert(
+            "La mémoire locale était saturée. Les anciennes fiches ont été allégées et la nouvelle fiche a été publiée.",
+          )
+          return
+        } catch (compactError) {
+          console.error("Save product compact error:", compactError)
+          setSaveStatus("idle")
+          window.alert(
+            "Impossible d'enregistrer la fiche. La mémoire locale est saturée. Supprime des fiches publiées puis réessaie.",
+          )
+        }
+      }
+    }
   }
 
   const shouldShowDropzone = images.length === 0 && !video
@@ -245,8 +320,17 @@ const AdminProductsPage = () => {
             <div>
               <p>Photo et vidéo</p>
             </div>
-            <p className="admin-products-helper">Ajoutez jusqu'à 4 photos et 1 vidéo.</p>
+            <p className="admin-products-helper">Ajoutez jusqu'à 6 photos et 1 vidéo.</p>
           </header>
+
+          <input
+            ref={mediaInputRef}
+            type="file"
+            accept="image/*,video/*"
+            multiple
+            onChange={handleMediaChange}
+            style={{ display: "none" }}
+          />
 
           <div className="admin-products-previews" aria-label="Aperçu des médias">
             {imageSlots.map((file, index) => {
@@ -256,7 +340,7 @@ const AdminProductsPage = () => {
                     key={`image-empty-${index}`}
                     type="button"
                     className="admin-products-preview admin-products-preview--empty"
-                    onClick={() => handleImageBrowse(index)}
+                    onClick={() => handleMediaBrowse(index)}
                   >
                     <span>+ Photo</span>
                   </button>
@@ -268,23 +352,45 @@ const AdminProductsPage = () => {
                   key={file.url}
                   type="button"
                   className="admin-products-preview"
-                  onClick={() => handleImageBrowse(index)}
+                  onClick={() => handleMediaBrowse(index)}
                 >
                   <img src={file.url} alt={file.name} />
+                  <button
+                    type="button"
+                    className="admin-products-preview__delete"
+                    aria-label="Supprimer la photo"
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      handleRemoveImage(index)
+                    }}
+                  >
+                    🗑️
+                  </button>
                 </button>
               )
             })}
 
             {video ? (
-              <button type="button" className="admin-products-preview" onClick={handleVideoBrowse}>
+              <button type="button" className="admin-products-preview" onClick={() => handleMediaBrowse()}>
                 <video src={video.url} muted playsInline />
                 <span className="admin-products-preview__label">Vidéo</span>
+                <button
+                  type="button"
+                  className="admin-products-preview__delete"
+                  aria-label="Supprimer la vidéo"
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    handleRemoveVideo()
+                  }}
+                >
+                  🗑️
+                </button>
               </button>
             ) : (
               <button
                 type="button"
                 className="admin-products-preview admin-products-preview--empty admin-products-preview--video"
-                onClick={handleVideoBrowse}
+                onClick={() => handleMediaBrowse()}
               >
                 <span>+ Vidéo</span>
               </button>

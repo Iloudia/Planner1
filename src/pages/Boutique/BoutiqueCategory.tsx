@@ -35,7 +35,7 @@ const BoutiqueCategoryPage = () => {
       <div className="boutique-page boutique-detail">
         <section className="boutique-detail__header">
           <Link to="/boutique" className="boutique-link-button">
-            Retour boutique
+            &lt; Retour boutique
           </Link>
           <h1>Catégorie introuvable</h1>
           <p>La catégorie demandée n'existe pas encore.</p>
@@ -48,7 +48,7 @@ const BoutiqueCategoryPage = () => {
     <div className="boutique-page boutique-detail">
       <section className="boutique-detail__header">
         <Link to="/boutique" className="boutique-link-button">
-          Retour boutique
+          &lt; Retour boutique
         </Link>
         <div>
           <span className="boutique-eyebrow">Catégorie {category.title}</span>
