@@ -140,15 +140,15 @@
 /* Luxury overrides (match boutique design) */
 body.legal-page--lux {
   background: #f8f6f1;
-}
-
-body.legal-page--lux .legal-page {
   --lux-ink: #1f1b16;
   --lux-ink-soft: #5b5249;
   --lux-accent: #b8a99a;
   --lux-accent-strong: #9b8976;
   --lux-line: rgba(31, 27, 22, 0.18);
   --lux-paper: #ffffff;
+}
+
+body.legal-page--lux .legal-page {
   background: var(--lux-paper);
   border: 1px solid var(--lux-line);
   border-radius: 0;

@@ -570,39 +570,6 @@ body.boutique-page--tone {
   z-index: 1;
 }
 
-.boutique-legal {
-  padding-bottom: 1rem;
-}
-
-.boutique-legal__content {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  align-items: center;
-  justify-content: space-between;
-  border-top: 1px solid var(--line);
-  padding-top: 1.2rem;
-  font-size: 0.74rem;
-  color: var(--accent-strong);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-}
-
-.boutique-legal__links {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.boutique-legal__links a {
-  color: var(--ink);
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.boutique-legal__links a:hover {
-  color: var(--accent-strong);
-}
 
 .reveal {
   opacity: 0;

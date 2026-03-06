@@ -198,6 +198,10 @@
   display: flex;
   flex-direction: column;
   gap: clamp(1.5rem, 3vw, 2.5rem);
+  background: #ffffff;
+  border: 1px solid rgba(236, 72, 153, 0.14);
+  border-radius: 30px;
+  padding: clamp(1.8rem, 4vw, 2.8rem);
 }
 
 .landing-carousel {
@@ -780,6 +784,12 @@ body.landing-page--lux .landing-carousel__arrow {
 body.landing-page--lux .landing-carousel__arrow:hover {
   transform: translateY(-50%) translateY(-1px);
   box-shadow: 0 12px 24px rgba(31, 27, 22, 0.12);
+}
+
+body.landing-page--lux .landing-daily-hub {
+  border-radius: 0;
+  background: var(--lux-paper);
+  border: 1px solid var(--lux-line);
 }
 
 body.landing-page--lux .landing-differentiator {

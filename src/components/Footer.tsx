@@ -62,7 +62,7 @@ const Footer = () => {
       </div>
 
       <div className="site-footer__bottom">
-        <span>© 2025 Planner.</span>
+        <span>© 2025 Me&rituals.</span>
         <span>Tous droits réservés. 4 décembre 2025</span>
       </div>
     </footer>

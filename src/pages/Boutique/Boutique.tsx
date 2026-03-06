@@ -78,7 +78,7 @@ const BoutiquePage = () => {
       <section className="boutique-hero reveal" aria-labelledby="boutique-hero-title">
         <div className="boutique-hero__media" style={{ backgroundImage: `url(${boutiqueHeroBackdrop})` }}>
           <div className="boutique-hero__content">
-            <span className="boutique-eyebrow">Boutique digitale</span>
+            <span className="boutique-eyebrow">Boutique</span>
             <h1 id="boutique-hero-title">Des ressources prêtes à vendre pour les créateurs ambitieux.</h1>
             <p className="boutique-hero__subtitle">
               Ebooks PDF, templates Canva, carrousels Instagram : tout est pensé pour booster tes ventes, ta visibilité et ton
@@ -165,7 +165,7 @@ const BoutiquePage = () => {
       <section className="boutique-section reveal" id="produits" aria-labelledby="boutique-products-title">
         <div className="boutique-section__header">
           <span className="boutique-eyebrow">Produits</span>
-          <h2 id="boutique-products-title">Toute la boutique digitale.</h2>
+          <h2 id="boutique-products-title">Toute la Boutique.</h2>
           <p>Fais ton choix, personnalise et publie. Les CTA sont pensés pour la conversion.</p>
         </div>
         <div className="boutique-filters" role="list">
@@ -257,16 +257,7 @@ const BoutiquePage = () => {
         </a>
       </section>
 
-      <section className="boutique-legal">
-        <div className="boutique-legal__content">
-          <span>Paiement sécurisé | Accès immédiat | Support sous 48h</span>
-          <div className="boutique-legal__links">
-            <a href="/mentions-legales">Mentions légales</a>
-            <a href="/confidentialite">Confidentialité</a>
-            <a href="/contact">Contact</a>
-          </div>
-        </div>
-      </section>
+      <section className="boutique-legal"></section>
     </div>
   )
 }

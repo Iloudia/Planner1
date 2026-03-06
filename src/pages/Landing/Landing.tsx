@@ -108,7 +108,7 @@ const LandingPage = () => {
           </p>
           <div className="landing-hero__actions">
             <button type="button" className="landing-cta-button" onClick={() => navigate("/login")}>
-              Commencer mon organisation positive
+              Commencer mon organisation
             </button>
             {isAuthenticated ? (
               <button type="button" className="landing-secondary-button" onClick={() => navigate("/home")}>
@@ -181,7 +181,7 @@ const LandingPage = () => {
           Tu n’as pas besoin d’en faire davantage. Tu as besoin d’un espace qui te laisse respirer, te guide et soutienne ton épanouissement.
         </p>
         <button type="button" className="landing-cta-button" onClick={() => navigate("/register")}>
-          Je commence mon organisation positive dès maintenant
+          Je commence mon organisation dès maintenant
         </button>
       </section>
 </div>

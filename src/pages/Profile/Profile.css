@@ -346,10 +346,10 @@
 
 .account-danger__toggle {
   border: none;
-  background: transparent;
-  padding: 0;
+  background: var(--color-caramel);
+  padding: 0.35rem 0.7rem;
   font-weight: 700;
-  color: #be185d;
+  color: #000000;
   cursor: pointer;
 }
 
@@ -621,9 +621,13 @@ body.profile-page--lux .account-info-arrow {
 
 body.profile-page--lux .account-info-value,
 body.profile-page--lux .account-info-actions button,
-body.profile-page--lux .account-danger__toggle,
 body.profile-page--lux .account-danger__submit {
   color: var(--lux-ink);
+}
+
+body.profile-page--lux .account-danger__toggle {
+  background: var(--color-caramel);
+  color: #000000;
 }
 
 body.profile-page--lux .account-avatar,

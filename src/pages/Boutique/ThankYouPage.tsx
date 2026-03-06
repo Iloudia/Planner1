@@ -54,7 +54,7 @@ const ThankYouPage = () => {
   return (
     <div className="boutique-page boutique-thankyou">
       <section className="boutique-thankyou__card">
-        <span className="boutique-eyebrow">Boutique digitale</span>
+        <span className="boutique-eyebrow">Boutique</span>
         <h1>{title}</h1>
         <p>{message}</p>
 

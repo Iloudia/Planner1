@@ -69,13 +69,15 @@
 
 .home-moodboard__top {
   display: flex;
-  justify-content: flex-end;
-  align-items: flex-start;
+  justify-content: flex-start;
+  align-items: center;
   width: 100%;
   margin-bottom: 0;
   padding: 0;
   position: relative;
   z-index: 1;
+  flex-wrap: nowrap;
+  gap: 0.8rem;
 }
 
 .home-moodboard__top h2 {
@@ -87,13 +89,15 @@
 .home-moodboard__button {
   border: none;
   border-radius: 999px;
-  padding: 0.45rem 0.95rem;
+  padding: clamp(0.3rem, 1vw, 0.45rem) clamp(0.55rem, 1.6vw, 0.9rem);
   font-weight: 600;
   background: var(--color-caramel);
   color: var(--color-chocolate);
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: clamp(0.72rem, 1.4vw, 0.9rem);
   margin: 0 0 0.5rem auto;
+  max-width: 100%;
+  white-space: nowrap;
 }
 
 .home-moodboard__preview {
@@ -658,7 +662,8 @@
   }
 
   .page.home-page .aside-right {
-    display: none;
+    display: block;
+    order: 1;
   }
 
   .page.home-page .board {
@@ -723,6 +728,12 @@
     gap: 0.5rem;
   }
 
+  .home-moodboard__button {
+    width: 100%;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.8rem;
+  }
+
   .home-moodboard__reset {
     position: static;
     align-self: flex-end;
@@ -762,6 +773,8 @@
 @media (max-width: 375px) {
   .home-moodboard__button {
     width: 100%;
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
   }
 
   .card-menu-popover {
@@ -778,7 +791,8 @@
   }
 
   .page.home-page .aside-right {
-    display: none;
+    display: block;
+    order: 1;
   }
 
   .page.home-page .board {
@@ -828,6 +842,24 @@
 }
 
 /* Ordinateur */
+@media (min-width: 1024px) and (max-width: 1240px) {
+  .page.home-page .aside-right {
+    order: 1;
+  }
+
+  .page.home-page .board {
+    order: 2;
+  }
+
+  .page.home-page .aside-left {
+    order: 3;
+  }
+
+  .page.home-page .home-moodboard {
+    order: 4;
+  }
+}
+
 @media (min-width: 1024px) {
   .home-page .card-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1036,7 +1068,7 @@ body.home-page--lux {
   color: var(--lux-ink);
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  font-size: 0.7rem;
+  font-size: clamp(0.62rem, 1vw, 0.72rem);
 }
 
 body.home-page--lux .account-menu__panel {

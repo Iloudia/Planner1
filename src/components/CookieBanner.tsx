@@ -1,44 +1,44 @@
-﻿import { useLocation } from "react-router-dom"
 import { useCookieConsent } from "../context/CookieConsentContext"
 
 const CookieBanner = () => {
-  const location = useLocation()
   const { shouldShowBanner, acceptAll, rejectAll, openPreferences } = useCookieConsent()
-  const forceShow = import.meta.env.DEV && location.pathname === "/"
 
-  if (!shouldShowBanner && !forceShow) {
+  if (!shouldShowBanner) {
     return null
   }
 
   return (
-    <section className="cookie-banner" role="region" aria-label="Consentement aux cookies">
-      <div className="cookie-banner__content">
-        <h2>Cookies & confidentialite</h2>
-        <p>
-          Nous utilisons des cookies essentiels pour faire fonctionner Me&rituals. Nous aimerions egalement activer les
-          cookies de preferences (pour garder tes choix visuels). Rien n'est depose sans ton accord.
-        </p>
-        <ul className="cookie-banner__list">
-          <li>
-            <strong>Essentiels :</strong> connexion securisee, sauvegarde, navigation.
-          </li>
-          <li>
-            <strong>Preferences :</strong> garder ton theme, ta langue, tes vues favorites.
-          </li>
-        </ul>
-      </div>
-      <div className="cookie-banner__actions">
-        <button type="button" className="cookie-banner__action cookie-banner__action--ghost" onClick={rejectAll}>
-          Refuser
-        </button>
-        <button type="button" className="cookie-banner__action cookie-banner__action--outline" onClick={openPreferences}>
-          Personnaliser
-        </button>
-        <button type="button" className="cookie-banner__action cookie-banner__action--primary" onClick={acceptAll}>
-          Accepter
-        </button>
-      </div>
-    </section>
+    <>
+      <div className="cookie-banner__backdrop" aria-hidden="true" />
+      <section className="cookie-banner" role="region" aria-label="Consentement aux cookies">
+        <div className="cookie-banner__content">
+          <h2>Cookies & confidentialite</h2>
+          <p>
+            Nous utilisons des cookies essentiels pour faire fonctionner Me&rituals. Nous aimerions egalement activer les
+            cookies de preferences (pour garder tes choix visuels). Rien n'est depose sans ton accord.
+          </p>
+          <ul className="cookie-banner__list">
+            <li>
+              <strong>Essentiels :</strong> connexion securisee, sauvegarde, navigation.
+            </li>
+            <li>
+              <strong>Preferences :</strong> garder ton theme, ta langue, tes vues favorites.
+            </li>
+          </ul>
+        </div>
+        <div className="cookie-banner__actions">
+          <button type="button" className="cookie-banner__action cookie-banner__action--ghost" onClick={rejectAll}>
+            Refuser
+          </button>
+          <button type="button" className="cookie-banner__action cookie-banner__action--outline" onClick={openPreferences}>
+            Personnaliser
+          </button>
+          <button type="button" className="cookie-banner__action cookie-banner__action--primary" onClick={acceptAll}>
+            Accepter
+          </button>
+        </div>
+      </section>
+    </>
   )
 }
 
