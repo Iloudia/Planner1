@@ -14,7 +14,7 @@ const firstStoryPart = [
 
 const secondStoryPart = [
   "Ce site est né d'une envie d'aider les autres à mieux organiser leurs journées, à penser un peu plus positivement et à essayer de se réconcilier avec soi-même grâce à quelques exercices simples.",
-  "Aimez-vous tel que vous êtes, prenez du temps pour sculpter votre corps, prenez du temps pour faire du journaling et poser toutes vos pensées, négatives comme positives, et vous pourrez observer un grand changement dans votre vie.",
+  "Prenez du temps pour sculpter votre corps, prenez du temps pour faire du journaling et poser toutes vos pensées, négatives comme positives, et vous pourrez observer un grand changement dans votre vie.",
   "Dans ma vie, je me suis longtemps cherchée. Mais s'il y a une chose que je sais avec certitude aujourd'hui, c'est que j'aime aider les gens, et j'espère que ce site en sera la preuve.",
 ]
 
@@ -64,9 +64,8 @@ const AboutPage = () => {
           <article className="about-article" aria-label="À propos">
             <div className="about-feature">
               <div className="about-feature__copy">
-                <span className="about-feature__eyebrow">Pourquoi j'ai créé ce site ? </span>
                 <h2 className="about-feature__title">
-                  J'ai voulu créer un espace simple, doux et organisé pour avancer en paix.
+                  Pourquoi j'ai créé ce site ?
                 </h2>
                 <div className="about-feature__text">
                   {firstStoryPart.map((text) => (
@@ -85,9 +84,31 @@ const AboutPage = () => {
               </figure>
             </div>
           </article>
+          <section className="about-feature__summary" aria-label="Public et proposition">
+            <div className="about-feature__summary-block">
+              <h3>À qui s'adresse Me&rituals ?</h3>
+              <p>
+                À celles et ceux qui souhaitent retrouver une organisation plus simple, se recentrer sur l’essentiel et avancer pas à pas vers leurs objectifs personnels.
+
+                Me&rituals s’adresse aux personnes qui veulent mieux structurer leur quotidien, développer de bonnes habitudes et rester motivées dans leurs projets. Grâce à des pages dédiées à l’organisation, au suivi du sport, aux objectifs personnels ou encore aux wishlists, la plateforme aide chacun à clarifier ses priorités et à progresser à son rythme.
+
+                Que ce soit pour améliorer sa productivité, suivre ses routines ou simplement mettre plus d’intention dans son quotidien, Me&rituals accompagne celles et ceux qui veulent construire un mode de vie plus organisé et aligné avec leurs envies.
+              </p>
+            </div>
+            <div className="about-feature__summary-block">
+              <h3>Ce que propose le site</h3>
+              <p>
+                Me&rituals propose des ressources digitales pensées pour t’aider au quotidien : des templates prêts à
+                l’emploi pour t’organiser, des supports de journaling pour clarifier tes idées, des guides pratiques pour
+                avancer avec méthode, et des produits à télécharger que tu peux utiliser à ton rythme. Tout est conçu
+                pour te faire gagner du temps, structurer tes priorités et t’accompagner dans tes projets personnels avec
+                simplicité.
+              </p>
+            </div>
+          </section>
         </div>
         <section className="about-values" aria-label="Valeurs du site">
-          <p className="values-intro">Les valeurs du site sont :</p>
+          <h3 className="values-intro">Les valeurs du site sont :</h3>
           <div className="values-stack">
             {siteValues.map((value) => (
               <article className="value-block" key={value.title}>
@@ -98,6 +119,20 @@ const AboutPage = () => {
                 ))}
               </article>
             ))}
+          </div>
+        </section>
+        <section className="about-details" aria-label="À propos en bref">
+          <div className="about-details__grid">
+            <article className="about-details__card">
+              <h3>Me contacter</h3>
+              <p>
+                Une question ou une idée ? Écris-moi via la page{" "}
+                <a className="legal-link" href="/contact">
+                  Contact
+                </a>
+                .
+              </p>
+            </article>
           </div>
         </section>
       </div>

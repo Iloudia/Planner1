@@ -1,5 +1,6 @@
 ﻿import { useEffect } from "react"
 import PageHeading from "../../components/PageHeading"
+import { Link } from "react-router-dom"
 import { useCookieConsent } from "../../context/CookieConsentContext"
 import "./GestionCookiesPage.css"
 
@@ -18,13 +19,13 @@ const GestionCookiesPage = () => {
         <PageHeading eyebrow="Cookies" title="Gestion des cookies" className="cookies-page__header" />
       <div className="legal-page">
         <p className="legal-page__intro">
-          Lors de la consultation de ce site, des cookies peuvent être déposés sur votre appareil (ordinateur, mobile ou
-          tablette).
+          Lors de la consultation de ce site, des cookies et traceurs locaux peuvent être déposés sur votre appareil
+          (ordinateur, mobile ou tablette).
         </p>
         <h2 className="legal-section__title">Qu'est-ce qu'un cookie ?</h2>
         <p className="legal-section__text">
-          Un cookie est un petit fichier texte qui permet au site de fonctionner correctement, d’améliorer votre
-          expérience et, si vous l’acceptez, de mesurer la fréquentation.
+          Un cookie est un petit fichier texte qui permet au site de fonctionner correctement et d’améliorer votre
+          expérience.
         </p>
         <section className="legal-section">
           <h2 className="legal-section__title">Cookies utilisés</h2>
@@ -35,18 +36,58 @@ const GestionCookiesPage = () => {
               désactivés.
             </li>
             <li>
-              <strong>Cookies de mesure d’audience (optionnels)</strong> – permettent de comprendre l’usage du site afin
-              d’améliorer son contenu et ses performances.
-            </li>
-            <li>
               <strong>Cookies de personnalisation (optionnels)</strong> – retiennent vos choix (ex. langue, préférences)
               pour personnaliser l’expérience.
             </li>
           </ul>
           <p className="legal-section__text">
-            Aucun cookie non essentiel n’est déposé sans votre consentement. Certains cookies peuvent être émis par des
-            services tiers (ex. outils de mesure d’audience) uniquement si vous les acceptez.
+            Aucun cookie non essentiel n’est déposé sans votre consentement.
           </p>
+        </section>
+
+        <section className="legal-section">
+          <h2 className="legal-section__title">Liste des cookies et traceurs</h2>
+          <p className="legal-section__text">
+            Ce tableau liste les principaux cookies et stockages locaux utilisés sur le site.
+          </p>
+          <div className="legal-table__wrap">
+            <table className="legal-table">
+              <thead>
+                <tr>
+                  <th>Nom</th>
+                  <th>Finalité</th>
+                  <th>Durée</th>
+                  <th>Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>planner.cookieConsent (stockage local)</td>
+                  <td>Mémoriser vos choix de cookies</td>
+                  <td>13 mois</td>
+                  <td>Nécessaire</td>
+                </tr>
+                <tr>
+                  <td>boutique.cart.v1 (stockage local)</td>
+                  <td>Conserver le contenu du panier</td>
+                  <td>Jusqu’à suppression</td>
+                  <td>Nécessaire</td>
+                </tr>
+                <tr>
+                  <td>planner.language.preference (stockage local)</td>
+                  <td>Mémoriser la langue choisie</td>
+                  <td>Jusqu’à suppression</td>
+                  <td>Personnalisation</td>
+                </tr>
+                <tr>
+                  <td>googtrans (cookie)</td>
+                  <td>Préférences de traduction (Google Translate)</td>
+                  <td>Session</td>
+                  <td>Personnalisation</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </section>
 
         <section className="legal-section">
@@ -60,7 +101,9 @@ const GestionCookiesPage = () => {
         <section className="legal-section">
           <h2 className="legal-section__title">Durée de conservation</h2>
           <p className="legal-section__text">
-            Les cookies sont conservés pour une durée maximale de 13 mois, conformément à la réglementation en vigueur.
+            Le choix exprimé via le bandeau cookies est conservé pour une durée maximale de 13 mois. Les cookies et
+            traceurs strictement nécessaires ou de personnalisation sont conservés le temps nécessaire à leur finalité
+            ou jusqu’à suppression par l’utilisateur.
           </p>
         </section>
 
@@ -68,6 +111,13 @@ const GestionCookiesPage = () => {
           <h2 className="legal-section__title">Gestion des cookies</h2>
           <p className="legal-section__text">
             Pour modifier vos choix, utilisez le bouton "Personnaliser" du bandeau cookies ou cliquez sur "Personnaliser" présent en bas de page. Vos préférences sont appliquées immédiatement.
+          </p>
+          <p className="legal-section__text">
+            Pour plus d’informations sur le traitement des données personnelles, consultez la{" "}
+            <Link to="/confidentialite" className="legal-link">
+              politique de confidentialité
+            </Link>
+            .
           </p>
         </section>
 

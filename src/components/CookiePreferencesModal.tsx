@@ -1,18 +1,16 @@
-import { useEffect, useState } from "react"
+﻿import { useEffect, useState } from "react"
 import { useCookieConsent } from "../context/CookieConsentContext"
 
 const CookiePreferencesModal = () => {
   const { isPreferenceCenterOpen, closePreferences, preferences, saveCustomPreferences, acceptAll, rejectAll } =
     useCookieConsent()
-  const [analyticsEnabled, setAnalyticsEnabled] = useState(preferences.analytics)
   const [preferencesEnabled, setPreferencesEnabled] = useState(preferences.preferences)
 
   useEffect(() => {
     if (isPreferenceCenterOpen) {
-      setAnalyticsEnabled(preferences.analytics)
       setPreferencesEnabled(preferences.preferences)
     }
-  }, [isPreferenceCenterOpen, preferences.analytics, preferences.preferences])
+  }, [isPreferenceCenterOpen, preferences.preferences])
 
   useEffect(() => {
     if (!isPreferenceCenterOpen) return
@@ -30,7 +28,7 @@ const CookiePreferencesModal = () => {
   }
 
   const handleSave = () => {
-    saveCustomPreferences({ analytics: analyticsEnabled, preferences: preferencesEnabled })
+    saveCustomPreferences({ preferences: preferencesEnabled })
   }
 
   return (
@@ -39,9 +37,9 @@ const CookiePreferencesModal = () => {
       <div className="cookie-modal__panel">
         <header className="cookie-modal__header">
           <div>
-            <p className="cookie-modal__eyebrow">Centre de préférences</p>
+            <p className="cookie-modal__eyebrow">Centre de preferences</p>
             <h2 id="cookie-modal-title">Choisis les cookies que tu acceptes</h2>
-            <p>Les cookies essentiels sont toujours actifs pour des raisons de sécurité.</p>
+            <p>Les cookies essentiels sont toujours actifs pour des raisons de securite.</p>
           </div>
           <button type="button" className="modal__close" aria-label="Fermer" onClick={closePreferences}>
             ×
@@ -53,7 +51,7 @@ const CookiePreferencesModal = () => {
             <div>
               <p className="cookie-modal__group-title">Essentiels (toujours actifs)</p>
               <p className="cookie-modal__group-text">
-                Accès sécurisé, authentification, conservation de tes paramètres système. Impossible de les désactiver.
+                Acces securise, authentification, conservation de tes parametres systeme. Impossible de les desactiver.
               </p>
             </div>
             <div className="cookie-modal__switch cookie-modal__switch--locked">
@@ -63,26 +61,9 @@ const CookiePreferencesModal = () => {
 
           <article className="cookie-modal__group">
             <div>
-              <p className="cookie-modal__group-title">Statistiques anonymes</p>
+              <p className="cookie-modal__group-title">Preferences</p>
               <p className="cookie-modal__group-text">
-                Aident à comprendre comment Planner est utilisé afin d’améliorer les fonctionnalités.
-              </p>
-            </div>
-            <label className="cookie-modal__switch">
-              <input
-                type="checkbox"
-                checked={analyticsEnabled}
-                onChange={(event) => setAnalyticsEnabled(event.target.checked)}
-              />
-              <span>{analyticsEnabled ? "Actif" : "Désactivé"}</span>
-            </label>
-          </article>
-
-          <article className="cookie-modal__group">
-            <div>
-              <p className="cookie-modal__group-title">Préférences</p>
-              <p className="cookie-modal__group-text">
-                Retiennent tes thèmes, ta langue et les dernières vues consultées pour personnaliser ton espace.
+                Retiennent tes themes, ta langue et les dernieres vues consultees pour personnaliser ton espace.
               </p>
             </div>
             <label className="cookie-modal__switch">
@@ -91,7 +72,7 @@ const CookiePreferencesModal = () => {
                 checked={preferencesEnabled}
                 onChange={(event) => setPreferencesEnabled(event.target.checked)}
               />
-              <span>{preferencesEnabled ? "Actif" : "Désactivé"}</span>
+              <span>{preferencesEnabled ? "Actif" : "Desactive"}</span>
             </label>
           </article>
         </div>

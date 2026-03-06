@@ -89,7 +89,7 @@ const THEME_OPTIONS: { id: ThemeTone; label: string; description: string }[] = [
 const MS_IN_DAY = 1000 * 60 * 60 * 24
 
 const ProfilePage = () => {
-  const { userEmail, changePassword, deactivateAccount, deleteAccount } = useAuth()
+  const { userEmail, changePassword, deactivateAccount, deleteAccount, verifyPassword } = useAuth()
   const [activeId, setActiveId] = useState("account")
   const [profileData, setProfileData] = useState<ProfileData>({})
   const [avatarSrc, setAvatarSrc] = useState<string>("")
@@ -108,7 +108,7 @@ const ProfilePage = () => {
   const [dangerOpen, setDangerOpen] = useState(false)
   const [dangerChoice, setDangerChoice] = useState<"disable" | "delete" | "">("")
   const [dangerReason, setDangerReason] = useState("")
-  const [dangerConfirm, setDangerConfirm] = useState(false)
+  const [dangerPassword, setDangerPassword] = useState("")
   const [dangerError, setDangerError] = useState("")
   const [displayPrefs, setDisplayPrefs] = useState<DisplayPreferences>({
     fontScale: 1,
@@ -378,8 +378,14 @@ const ProfilePage = () => {
 
   const handleDangerSubmit = async () => {
     setDangerError("")
-    if (!dangerConfirm || !dangerChoice || !dangerReason.trim()) {
-      setDangerError("Merci de choisir une option, expliquer la raison et confirmer.")
+    if (!dangerChoice || !dangerReason.trim() || !dangerPassword.trim()) {
+      setDangerError("Merci de choisir une option, expliquer la raison et saisir le mot de passe.")
+      return
+    }
+
+    const isPasswordValid = await verifyPassword(dangerPassword)
+    if (!isPasswordValid) {
+      setDangerError("Mot de passe incorrect.")
       return
     }
 
@@ -391,8 +397,11 @@ const ProfilePage = () => {
       return
     }
 
+    setDangerPassword("")
     navigate("/login")
   }
+
+  const isDangerReady = Boolean(dangerChoice && dangerReason.trim() && dangerPassword.trim())
 
   const getDisplayValue = (key: EditableKey) => {
     const personal = profileData.personalInfo ?? {}
@@ -637,18 +646,30 @@ const ProfilePage = () => {
                       </div>
                       <label className="account-danger__label">
                         Pourquoi souhaitez-vous le faire ?
-                        <textarea value={dangerReason} onChange={(event) => setDangerReason(event.target.value)} rows={3} />
+                        <textarea
+                          value={dangerReason}
+                          onChange={(event) => setDangerReason(event.target.value)}
+                          rows={3}
+                          required
+                          aria-required="true"
+                        />
                       </label>
                       <label className="account-danger__confirm">
+                        Mot de passe du compte
                         <input
-                          type="checkbox"
-                          checked={dangerConfirm}
-                          onChange={(event) => setDangerConfirm(event.target.checked)}
+                          type="password"
+                          value={dangerPassword}
+                          onChange={(event) => setDangerPassword(event.target.value)}
+                          placeholder="Mot de passe"
                         />
-                        Je confirme mon choix
                       </label>
                       {dangerError ? <span className="account-info-error">{dangerError}</span> : null}
-                      <button type="button" className="account-danger__submit" onClick={handleDangerSubmit}>
+                      <button
+                        type="button"
+                        className="account-danger__submit"
+                        onClick={handleDangerSubmit}
+                        disabled={!isDangerReady}
+                      >
                         Confirmer
                       </button>
                     </div>

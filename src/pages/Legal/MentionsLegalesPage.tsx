@@ -15,7 +15,7 @@ const MentionsLegalesPage = () => {
       <PageHeading eyebrow="Mentions légales" title="Mentions légales" className="mentions-legales__header" />
     <div className="legal-page">
       <p className="legal-page__intro">
-        Mentions légales complètes, incluant l'éditeur, l'hébergeur, la propriété intellectuelle et les règles d'utilisation du site Planner.
+        Mentions légales complètes, incluant l'éditeur, l'hébergeur, la propriété intellectuelle et les règles d'utilisation du site Me&rituals.
       </p>
 
       <section className="legal-section">
@@ -25,7 +25,9 @@ const MentionsLegalesPage = () => {
           <br />
           Statut : Auto-entrepreneur
           <br />
-          Email : cantact@meandrituals.com
+          Email : contact@meandrituals.com
+          <br />
+          SIRET : 95166317800022
         </p>
       </section>
 

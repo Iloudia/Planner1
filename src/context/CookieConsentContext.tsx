@@ -4,7 +4,6 @@ type CookieConsentStatus = "unknown" | "accepted" | "rejected" | "custom"
 
 export type CookiePreferences = {
   essential: boolean
-  analytics: boolean
   preferences: boolean
 }
 
@@ -21,7 +20,7 @@ type CookieConsentContextValue = {
   isPreferenceCenterOpen: boolean
   acceptAll: () => void
   rejectAll: () => void
-  saveCustomPreferences: (preferences: Pick<CookiePreferences, "analytics" | "preferences">) => void
+  saveCustomPreferences: (preferences: Pick<CookiePreferences, "preferences">) => void
   openPreferences: () => void
   closePreferences: () => void
 }
@@ -32,8 +31,14 @@ const NON_ESSENTIAL_COOKIES = ["googtrans"]
 
 const defaultPreferences: CookiePreferences = {
   essential: true,
-  analytics: false,
   preferences: false,
+}
+
+const isConsentExpired = (decidedAt?: number) => {
+  if (!decidedAt) return false
+  const limit = new Date()
+  limit.setMonth(limit.getMonth() - 13)
+  return decidedAt < limit.getTime()
 }
 
 const CookieConsentContext = createContext<CookieConsentContextValue | undefined>(undefined)
@@ -51,11 +56,15 @@ const readStoredPreferences = (): CookieConsentState => {
     if (!parsed || !parsed.preferences) {
       return { status: "unknown", preferences: defaultPreferences }
     }
+    if (isConsentExpired(parsed.decidedAt)) {
+      return { status: "unknown", preferences: defaultPreferences }
+    }
+    const incoming = parsed.preferences as Partial<CookiePreferences> & { analytics?: boolean }
     return {
       status: parsed.status ?? "unknown",
       preferences: {
         ...defaultPreferences,
-        ...parsed.preferences,
+        preferences: Boolean(incoming.preferences),
         essential: true,
       },
       decidedAt: parsed.decidedAt,
@@ -99,7 +108,7 @@ export const CookieConsentProvider = ({ children }: PropsWithChildren) => {
   const acceptAll = () => {
     persist({
       status: "accepted",
-      preferences: { essential: true, analytics: true, preferences: true },
+      preferences: { essential: true, preferences: true },
       decidedAt: Date.now(),
     })
     setIsPreferenceCenterOpen(false)
@@ -108,13 +117,13 @@ export const CookieConsentProvider = ({ children }: PropsWithChildren) => {
   const rejectAll = () => {
     persist({
       status: "rejected",
-      preferences: { ...defaultPreferences, analytics: false, preferences: false },
+      preferences: { ...defaultPreferences, preferences: false },
       decidedAt: Date.now(),
     })
     setIsPreferenceCenterOpen(false)
   }
 
-  const saveCustomPreferences = (preferences: Pick<CookiePreferences, "analytics" | "preferences">) => {
+  const saveCustomPreferences = (preferences: Pick<CookiePreferences, "preferences">) => {
     persist({
       status: "custom",
       preferences: { ...defaultPreferences, ...preferences },

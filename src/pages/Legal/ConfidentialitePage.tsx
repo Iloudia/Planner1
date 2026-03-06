@@ -1,5 +1,6 @@
 ﻿import { useEffect } from "react"
 import PageHeading from "../../components/PageHeading"
+import { Link } from "react-router-dom"
 import "./ConfidentialitePage.css"
 
 const ConfidentialitePage = () => {
@@ -22,8 +23,8 @@ const ConfidentialitePage = () => {
       <section className="legal-section">
         <h2 className="legal-section__title">Responsable du traitement</h2>
         <p className="legal-section__text">
-          Le responsable du traitement des données est [Ton nom / Prénom], éditrice du site [Nom du site]. Pour toute
-          question relative aux données personnelles, vous pouvez contacter : [email de contact].
+          Le responsable du traitement des données est Vasseur Iloudia, éditrice du site Me&rituals. Pour toute
+          question relative aux données personnelles, vous pouvez contacter : contact@meandrituals.com.
         </p>
       </section>
 
@@ -44,6 +45,16 @@ const ConfidentialitePage = () => {
           collectées à des fins de gestion de commande. Les données bancaires ne sont jamais stockées par le site et sont
           traitées exclusivement par des prestataires de paiement sécurisés.
         </p>
+        <p className="legal-section__text">
+          Les données sont fournies par l’utilisateur ou générées par l’usage du site (cookies, journaux techniques).
+        </p>
+        <p className="legal-section__text">
+          Pour plus d’informations sur les cookies utilisés, consultez notre page{" "}
+          <Link to="/cookies" className="legal-link">
+            Cookies
+          </Link>
+          .
+        </p>
       </section>
 
       <section className="legal-section">
@@ -52,11 +63,11 @@ const ConfidentialitePage = () => {
           Les données personnelles sont collectées pour :
         </p>
         <ul className="legal-list">
-          <li>permettre l’accès et l’utilisation du site</li>
-          <li>répondre aux messages et demandes</li>
-          <li>envoyer des contenus ou informations liées au projet</li>
-          <li>gérer les commandes et la facturation</li>
-          <li>améliorer le fonctionnement du site</li>
+          <li>permettre l’accès et l’utilisation du site → intérêt légitime</li>
+          <li>répondre aux messages et demandes → intérêt légitime</li>
+          <li>envoyer des contenus ou informations liées au projet → consentement</li>
+          <li>gérer les commandes et la facturation → exécution du contrat et obligations légales</li>
+          <li>améliorer le fonctionnement du site → intérêt légitime</li>
         </ul>
       </section>
 
@@ -75,16 +86,38 @@ const ConfidentialitePage = () => {
       <section className="legal-section">
         <h2 className="legal-section__title">Durée de conservation</h2>
         <p className="legal-section__text">
-          Les données sont conservées uniquement pendant la durée nécessaire aux finalités pour lesquelles elles sont
-          collectées, et conformément aux obligations légales en vigueur.
+          Les durées de conservation varient selon le type de données :
         </p>
+        <ul className="legal-list">
+          <li>
+            données stockées localement dans votre navigateur (préférences, panier, contenus enregistrés) : conservées
+            jusqu’à suppression par l’utilisateur ou nettoyage du navigateur
+          </li>
+          <li>
+            messages et échanges de contact : conservés le temps nécessaire au suivi de votre demande, puis supprimés
+            lorsque cela n’est plus utile
+          </li>
+          <li>
+            données liées aux commandes et à la facturation : conservées par les prestataires de paiement et selon les
+            obligations légales applicables
+          </li>
+        </ul>
       </section>
 
       <section className="legal-section">
         <h2 className="legal-section__title">Partage des données</h2>
         <p className="legal-section__text">
-          Les données peuvent être transmises à des prestataires techniques (hébergement, outils d’emailing, paiement,
-          statistiques) uniquement dans le cadre du fonctionnement du site.
+          Les données peuvent être transmises à des prestataires techniques uniquement dans le cadre du fonctionnement
+          du site, par exemple :
+        </p>
+        <ul className="legal-list">
+          <li>hébergeur du site</li>
+          <li>prestataire de paiement (Stripe)</li>
+          <li>service d’emailing (Resend)</li>
+        </ul>
+        <p className="legal-section__text">
+          Certains de ces prestataires peuvent être situés en dehors de l’Union européenne. Dans ce cas, les transferts
+          de données sont encadrés par des garanties appropriées (ex. clauses contractuelles types).
         </p>
         <p className="legal-section__text">Aucune donnée personnelle n’est vendue ou cédée à des tiers.</p>
       </section>
@@ -95,6 +128,7 @@ const ConfidentialitePage = () => {
           Le site met en œuvre des mesures de sécurité pour protéger les données personnelles contre tout accès non
           autorisé, perte ou divulgation.
         </p>
+        <p className="legal-section__text">Aucune décision automatisée ni profilage n’est mis en œuvre.</p>
       </section>
 
       <section className="legal-section">
@@ -108,11 +142,16 @@ const ConfidentialitePage = () => {
           <li>droit de suppression</li>
           <li>droit d’opposition</li>
           <li>droit à la limitation du traitement</li>
+          <li>droit à la portabilité</li>
+          <li>droit de retirer son consentement</li>
+          <li>droit d’introduire une réclamation auprès de la CNIL</li>
         </ul>
         <p className="legal-section__text">
           Pour exercer ces droits, il suffit d’envoyer un email à : contact@meandrituals.com
         </p>
+
       </section>
+      <p className="legal-page__footer">Dernière mise à jour : 6 mars 2026.</p>
     </div>
 </>
   )

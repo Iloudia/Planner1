@@ -450,11 +450,13 @@
   display: flex;
   align-items: center;
   gap: 0.6rem;
+  width: 100%;
 }
 
 .todo-add {
   width: 36px;
   height: 36px;
+  flex: 0 0 36px;
   border-radius: 12px;
   border: none;
   background: #000000;
@@ -465,7 +467,8 @@
 }
 
 .todo-input input {
-  flex: 1;
+  flex: 1 1 0;
+  min-width: 0;
   border: 1px solid rgba(148, 163, 184, 0.35);
   border-radius: 12px;
   padding: 0.7rem 0.9rem;
@@ -989,6 +992,11 @@ body.home-page--lux {
   border: 1px solid var(--lux-line);
   box-shadow: none;
   background: #ffffff;
+}
+
+.page.home-page .todo-input input {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .page.home-page .todo-add {

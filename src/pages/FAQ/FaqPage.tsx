@@ -29,6 +29,11 @@ const faqItems: FaqItem[] = [
     answer:
       "Oui. Les pages restent accessibles même sans connexion, car les données sont gardées dans ton navigateur. Reviens en ligne régulièrement pour profiter des mises à jour.",
   },
+  {
+    question: "Mes achats sont-ils securises ?",
+    answer:
+      "Le paiement est geré par Stripe, les données bancaires ne sont jamais stockées sur le site.",
+  },
 ]
 
 const FAQPage = () => {
