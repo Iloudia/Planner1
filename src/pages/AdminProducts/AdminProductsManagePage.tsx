@@ -6,6 +6,7 @@ import "../Boutique/Boutique.css"
 import type { BoutiqueProduct } from "../Boutique/boutiqueData"
 import {
   deleteCustomProduct,
+  fetchCustomProducts,
   loadCustomProducts,
   PRODUCTS_UPDATED_EVENT,
   updateCustomProduct,
@@ -37,10 +38,15 @@ const AdminProductsManagePage = () => {
   }, [])
 
   useEffect(() => {
+    let active = true
+    fetchCustomProducts().then((items) => {
+      if (active) setProducts(items)
+    })
     const handleUpdate = () => setProducts(loadCustomProducts())
     window.addEventListener("storage", handleUpdate)
     window.addEventListener(PRODUCTS_UPDATED_EVENT, handleUpdate as EventListener)
     return () => {
+      active = false
       window.removeEventListener("storage", handleUpdate)
       window.removeEventListener(PRODUCTS_UPDATED_EVENT, handleUpdate as EventListener)
     }

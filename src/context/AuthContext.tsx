@@ -28,9 +28,8 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore"
-import { deleteObject, ref, uploadBytes } from "firebase/storage"
 import { type FirebaseUserDocument } from "../models/firebase"
-import { auth, db, storage } from "../utils/firebase"
+import { auth, db } from "../utils/firebase"
 const THIRTY_DAYS_MS = 1000 * 60 * 60 * 24 * 30
 
 export type AccountStatus = "actif" | "desactive"
@@ -124,17 +123,6 @@ const buildUserDocument = (
   }
 
   return payload
-}
-
-const uploadProfileSnapshot = async (uid: string, payload: FirebaseUserDocument) => {
-  try {
-    const snapshotRef = ref(storage, `users/${uid}/profile.json`)
-    const body = JSON.stringify(payload, null, 2)
-    const blob = new Blob([body], { type: "application/json" })
-    await uploadBytes(snapshotRef, blob, { contentType: "application/json" })
-  } catch (error) {
-    console.error("Profile snapshot upload failed", error)
-  }
 }
 
 const ensureUserDocument = async (user: User, profile?: RegistrationProfile) => {
@@ -292,8 +280,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         // Create the profile document without blocking onboarding navigation.
         void (async () => {
           try {
-            const data = await ensureUserDocument(result.user, profile)
-            await uploadProfileSnapshot(result.user.uid, data)
+            await ensureUserDocument(result.user, profile)
           } catch (error) {
             console.error("Post-register profile setup failed", error)
           }
@@ -315,9 +302,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         const googleCredential = GoogleAuthProvider.credential(credential)
         const result: UserCredential = await signInWithCredential(auth, googleCredential)
         const data = await ensureUserDocument(result.user)
-        if (result.additionalUserInfo?.isNewUser) {
-          await uploadProfileSnapshot(result.user.uid, data)
-        }
         if (data.status === "desactive") {
           await signOut(auth)
           return false
@@ -408,12 +392,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
 
     try {
-      await deleteObject(ref(storage, `users/${currentUser.uid}/profile.json`))
-    } catch {
-      // ignore missing snapshot
-    }
-
-    try {
       await deleteUser(currentUser)
       return { success: true }
     } catch (error) {
@@ -484,11 +462,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return { success: false, error: "Utilisateur introuvable." }
       }
       await deleteDoc(targetDoc.ref)
-      try {
-        await deleteObject(ref(storage, `users/${targetDoc.id}/profile.json`))
-      } catch {
-        // ignore missing snapshot or permission errors
-      }
       return { success: true }
     } catch (error) {
       console.error("Admin delete failed", error)

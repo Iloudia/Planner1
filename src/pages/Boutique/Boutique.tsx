@@ -3,7 +3,7 @@ import { Link } from "react-router-dom"
 import "./Boutique.css"
 
 import { benefits, boutiqueHeroBackdrop, categories, products } from "./boutiqueData"
-import { loadCustomProducts, PRODUCTS_UPDATED_EVENT } from "./boutiqueStorage"
+import { fetchCustomProducts, loadCustomProducts, PRODUCTS_UPDATED_EVENT } from "./boutiqueStorage"
 
 const BoutiquePage = () => {
   const [activeFilter, setActiveFilter] = useState("all")
@@ -13,6 +13,16 @@ const BoutiquePage = () => {
     document.body.classList.add("boutique-page--tone")
     return () => {
       document.body.classList.remove("boutique-page--tone")
+    }
+  }, [])
+
+  useEffect(() => {
+    let active = true
+    fetchCustomProducts().then((items) => {
+      if (active) setCustomProducts(items)
+    })
+    return () => {
+      active = false
     }
   }, [])
 

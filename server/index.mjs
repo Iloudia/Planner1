@@ -73,6 +73,31 @@ const products = [
 
 const productById = new Map(products.map((product) => [product.id, product]))
 
+const customProductsFile = path.resolve(process.cwd(), "server", "data", "custom-products.json")
+
+const readCustomProducts = () => {
+  try {
+    if (!fs.existsSync(customProductsFile)) {
+      return []
+    }
+    const raw = fs.readFileSync(customProductsFile, "utf-8")
+    const parsed = JSON.parse(raw)
+    return Array.isArray(parsed) ? parsed : []
+  } catch (error) {
+    console.error("Failed to read custom products:", error)
+    return []
+  }
+}
+
+const writeCustomProducts = (items) => {
+  try {
+    fs.mkdirSync(path.dirname(customProductsFile), { recursive: true })
+    fs.writeFileSync(customProductsFile, JSON.stringify(items, null, 2), "utf-8")
+  } catch (error) {
+    console.error("Failed to write custom products:", error)
+  }
+}
+
 const parseOrigins = () => {
   const raw = process.env.CORS_ORIGINS || appBaseUrl
   return raw
@@ -100,6 +125,31 @@ app.use((req, res, next) => {
 
 app.use("/api/stripe-webhook", express.raw({ type: "application/json" }))
 app.use(express.json())
+
+app.get("/api/custom-products", (req, res) => {
+  const items = readCustomProducts()
+  return res.json(items)
+})
+
+app.post("/api/custom-products", (req, res) => {
+  const { action, product, productId } = req.body || {}
+  const items = readCustomProducts()
+
+  if (action === "delete" && productId) {
+    const next = items.filter((item) => item?.id !== productId)
+    writeCustomProducts(next)
+    return res.json(next)
+  }
+
+  if (product && product.id) {
+    const next = items.filter((item) => item?.id !== product.id)
+    next.unshift(product)
+    writeCustomProducts(next)
+    return res.json(next)
+  }
+
+  return res.status(400).json({ error: "Requete invalide." })
+})
 
 const createDownloadToken = ({ productId, sessionId, expiresInHours = 48 }) => {
   const exp = Date.now() + expiresInHours * 60 * 60 * 1000

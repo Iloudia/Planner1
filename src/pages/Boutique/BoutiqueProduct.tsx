@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom"
 import "./Boutique.css"
 
 import { products } from "./boutiqueData"
-import { loadCustomProducts, PRODUCTS_UPDATED_EVENT } from "./boutiqueStorage"
+import { fetchCustomProducts, loadCustomProducts, PRODUCTS_UPDATED_EVENT } from "./boutiqueStorage"
 import { addToCart } from "./cartStorage"
 
 const BoutiqueProductPage = () => {
@@ -47,10 +47,15 @@ const BoutiqueProductPage = () => {
   }, [])
 
   useEffect(() => {
+    let active = true
+    fetchCustomProducts().then((items) => {
+      if (active) setCustomProducts(items)
+    })
     const handleStorage = () => setCustomProducts(loadCustomProducts())
     window.addEventListener("storage", handleStorage)
     window.addEventListener(PRODUCTS_UPDATED_EVENT, handleStorage as EventListener)
     return () => {
+      active = false
       window.removeEventListener("storage", handleStorage)
       window.removeEventListener(PRODUCTS_UPDATED_EVENT, handleStorage as EventListener)
     }
