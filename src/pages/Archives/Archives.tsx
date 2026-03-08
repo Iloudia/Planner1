@@ -1,20 +1,10 @@
 ﻿import { useEffect, useMemo, useRef, useState } from "react"
 import PageHeading from "../../components/PageHeading"
-import usePersistentState from "../../hooks/usePersistentState"
-import stampLove from "../../assets/Timbre-1.png"
-import stampKey from "../../assets/Timbre-2.png"
+import useUserJournalEntries from "../../hooks/useUserJournalEntries"
+import useUserSelfLove from "../../hooks/useUserSelfLove"
+import stampLove from "../../assets/Timbre-1.webp"
+import stampKey from "../../assets/Timbre-2.webp"
 import "./Archives.css"
-
-type JournalingEntry = {
-  id: string
-  date: string
-  keyword?: string
-  question?: string
-  questionAnswer?: string
-  content?: string
-  positiveAnchor?: string
-  createdAt?: number
-}
 
 type SelfLoveSavedLetter = {
   id: string
@@ -30,10 +20,6 @@ type SelfLoveSavedLetter = {
   entryType: "letter" | "innerChild" | "bestFriend"
 }
 
-type SelfLoveState = {
-  savedLetters?: SelfLoveSavedLetter[]
-}
-
 type ArchiveEntry = {
   id: string
   dateKey: string
@@ -46,9 +32,6 @@ type ArchiveEntry = {
   tags: string[]
   selfLoveLetter?: SelfLoveSavedLetter
 }
-
-const JOURNAL_KEY = "planner.journal.entries"
-const SELF_LOVE_KEY = "planner.selfLove"
 
 const weekDays = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"]
 const SECTION_OPTIONS: Array<{ value: "all" | "journaling" | "self-love"; label: string }> = [
@@ -146,10 +129,18 @@ const getSelfLoveExcerpt = (letter: SelfLoveSavedLetter) => {
 }
 
 const ArchivesPage = () => {
-  const [journalEntries, setJournalEntries] = usePersistentState<JournalingEntry[]>(JOURNAL_KEY, () => [])
-  const [selfLoveState, setSelfLoveState] = usePersistentState<SelfLoveState>(SELF_LOVE_KEY, () => ({
-    savedLetters: [],
-  }))
+  const {
+    entries: journalEntries,
+    isLoading: isJournalLoading,
+    error: journalError,
+    deleteEntry,
+  } = useUserJournalEntries()
+  const {
+    archiveEntries: selfLoveFirestoreEntries,
+    isLoading: isSelfLoveLoading,
+    error: selfLoveError,
+    deleteArchiveEntry,
+  } = useUserSelfLove()
   const [sectionFilter, setSectionFilter] = useState<"all" | "journaling" | "self-love">("all")
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedYear, setSelectedYear] = useState<string | null>(null)
@@ -209,7 +200,19 @@ const ArchivesPage = () => {
   }, [journalEntries])
 
   const selfLoveArchiveEntries = useMemo<ArchiveEntry[]>(() => {
-    const letters = selfLoveState.savedLetters ?? []
+    const letters: SelfLoveSavedLetter[] = selfLoveFirestoreEntries.map((entry) => ({
+      id: entry.id,
+      template: entry.template ?? "classic",
+      to: entry.to,
+      from: entry.from,
+      body: entry.body ?? "",
+      createdAt: new Date(entry.createdAt ?? Date.now()).toISOString(),
+      openDate: entry.openDate,
+      sealedAt: entry.sealedAt,
+      innerChild: entry.innerChild,
+      bestFriend: entry.bestFriend,
+      entryType: entry.entryType,
+    }))
     return letters.map((letter) => {
       const dateKey = letter.createdAt.slice(0, 10)
       const createdAt = new Date(letter.createdAt).getTime()
@@ -261,7 +264,7 @@ const ArchivesPage = () => {
         selfLoveLetter: letter,
       }
     })
-  }, [selfLoveState.savedLetters])
+  }, [selfLoveFirestoreEntries])
 
   const filteredEntries = useMemo(() => {
     const query = searchQuery.trim().toLowerCase()
@@ -425,19 +428,20 @@ const ArchivesPage = () => {
     }
   }, [isSectionMenuOpen])
 
-  const handleDeleteSelectedEntry = () => {
+  const handleDeleteSelectedEntry = async () => {
     if (!selectedEntry) return
     if (selectedEntry.section === "journaling") {
-      setJournalEntries((previous) => previous.filter((entry) => entry.id !== selectedEntry.id))
+      try {
+        await deleteEntry(selectedEntry.id)
+      } catch {
+        return
+      }
     } else {
-      setSelfLoveState((previous) => {
-        const safePrevious = previous ?? { savedLetters: [] }
-        const savedLetters = safePrevious.savedLetters ?? []
-        return {
-          ...safePrevious,
-          savedLetters: savedLetters.filter((letter) => letter.id !== selectedEntry.id),
-        }
-      })
+      try {
+        await deleteArchiveEntry(selectedEntry.id)
+      } catch {
+        return
+      }
     }
     setSelectedEntry(null)
   }
@@ -527,9 +531,15 @@ const ArchivesPage = () => {
           </label>
         </div>
       </header>
+      {journalError ? <p className="archives-empty">{journalError}</p> : null}
+      {selfLoveError ? <p className="archives-empty">{selfLoveError}</p> : null}
 
       {archiveYears.length === 0 ? (
-        <p className="archives-empty">Aucun écrit pour le moment.</p>
+        isJournalLoading || isSelfLoveLoading ? (
+          <p className="archives-empty">Chargement de vos écrits...</p>
+        ) : (
+          <p className="archives-empty">Aucun écrit pour le moment.</p>
+        )
       ) : (
         <div className="archives-layout">
           <div className="archives-nav">

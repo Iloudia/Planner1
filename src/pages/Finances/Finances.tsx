@@ -10,10 +10,11 @@ import HighchartsAccessibility from 'highcharts/modules/accessibility'
 import HighchartsAdaptiveTheme from 'highcharts/themes/adaptive'
 import PageHero from '../../components/PageHero'
 import PageHeading from '../../components/PageHeading'
-import usePersistentState from '../../hooks/usePersistentState'
+import useUserFinanceData from '../../hooks/useUserFinanceData'
 import financeMood01 from '../../assets/katie-huber-rhoades-dupe (2).webp'
 import financeMood02 from '../../assets/jade-rideout-dupe.webp'
-import financeMood03 from '../../assets/Moodboard.png'
+import financeMood03 from '../../assets/MoodBoard.webp'
+import type { ExpenseCategory, FinanceEntry, FinanceEntryInput, FlowDirection, MonthlySnapshot } from '../../types/personalization'
 import './FinancePage.css'
 
 type HighchartsModuleLoader = ((chart: typeof Highcharts) => typeof Highcharts) & {
@@ -46,46 +47,12 @@ const ensureHighchartsModules = () => {
 
 ensureHighchartsModules()
 
-type ExpenseCategory =
-  | 'food'
-  | 'housing'
-  | 'transport'
-  | 'clothing'
-  | 'beauty'
-  | 'leisure'
-  | 'health'
-  | 'friends'
-
-type FlowDirection = 'in' | 'out'
-
-type StoredFinanceEntry = {
-  id: string
-  label: string
-  amount: number
-  date: string
-  category?: ExpenseCategory
-  direction?: FlowDirection
-}
-
-type FinanceEntry = {
-  id: string
-  label: string
-  amount: number
-  date: string
-  direction: FlowDirection
-  category?: ExpenseCategory
-}
-
 type FinanceDraft = {
   label: string
   amount: string
   category: ExpenseCategory
   date: string
   direction: FlowDirection
-}
-
-type MonthlySnapshot = {
-  startingAmount: number
 }
 
 type PieSegment = {
@@ -344,15 +311,17 @@ const createEmptyCategoryTotals = (): Record<ExpenseCategory, number> => ({
   friends: 0,
 })
 
-const EXPENSES_STORAGE_KEY = 'planner.finance.expenses'
-const MONTHLY_SNAPSHOT_STORAGE_KEY = 'planner.finance.monthlySnapshots'
-
 const FinancePage = () => {
-  const [storedEntries, setStoredEntries] = usePersistentState<StoredFinanceEntry[]>(EXPENSES_STORAGE_KEY, () => [])
-  const [monthlySnapshots, setMonthlySnapshots] = usePersistentState<Record<string, MonthlySnapshot>>(
-    MONTHLY_SNAPSHOT_STORAGE_KEY,
-    () => ({}),
-  )
+  const {
+    entries,
+    monthlySnapshots,
+    isLoading,
+    error,
+    addEntry,
+    deleteEntry,
+    saveMonthlySnapshot,
+    deleteMonthlySnapshot,
+  } = useUserFinanceData()
 
   const [draft, setDraft] = useState<FinanceDraft>(() => ({
     label: '',
@@ -419,15 +388,6 @@ const FinancePage = () => {
       setIsCategoryMenuOpen(false)
     }
   }, [draft.direction])
-
-  const entries = useMemo<FinanceEntry[]>(
-    () =>
-      storedEntries.map((entry) => ({
-        ...entry,
-        direction: entry.direction ?? 'out',
-      })),
-    [storedEntries],
-  )
 
   const currentDate = useMemo(() => new Date(), [])
   const currentMonthKey = useMemo(() => getMonthKeyFromDate(currentDate), [currentDate])
@@ -653,6 +613,7 @@ const FinancePage = () => {
   const groupedHistoryPreview = useMemo(() => groupHistoryByMonth(previewHistory), [previewHistory])
   const groupedHistoryFull = useMemo(() => groupHistoryByMonth(selectedMonthEntries), [selectedMonthEntries])
   const hasAdditionalHistory = selectedMonthEntries.length > previewHistory.length
+  const isInitialFinanceLoading = isLoading && entries.length === 0 && Object.keys(monthlySnapshots).length === 0
 
   const handleDraftChange = <Field extends keyof FinanceDraft>(field: Field, value: FinanceDraft[Field]) => {
     setDraft((previous) => ({
@@ -661,7 +622,7 @@ const FinancePage = () => {
     }))
   }
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const amountValue = parseFloat(draft.amount.replace(',', '.'))
     if (!Number.isFinite(amountValue) || amountValue <= 0) {
@@ -669,8 +630,7 @@ const FinancePage = () => {
     }
 
     const trimmedLabel = draft.label.trim()
-    const nextEntry: StoredFinanceEntry = {
-      id: `finance-${Date.now()}`,
+    const nextEntry: FinanceEntryInput = {
       label: trimmedLabel.length > 0 ? trimmedLabel : draft.direction === 'in' ? 'Revenus' : 'Dépense',
       amount: roundCurrency(amountValue),
       date: draft.date,
@@ -678,35 +638,35 @@ const FinancePage = () => {
       ...(draft.direction === 'out' ? { category: draft.category } : {}),
     }
 
-    setStoredEntries((previous) => {
-      const nextEntries = [nextEntry, ...previous]
-      return nextEntries.sort((a, b) => {
-        if (a.date === b.date) {
-          return b.id.localeCompare(a.id)
-        }
-        return b.date.localeCompare(a.date)
-      })
-    })
-    setDraft((previous) => ({
-      ...previous,
-      label: '',
-      amount: '',
-    }))
+    try {
+      await addEntry(nextEntry)
+      setDraft((previous) => ({
+        ...previous,
+        label: '',
+        amount: '',
+      }))
+    } catch {
+      // Error is surfaced by the hook state.
+    }
   }
 
-  const handleDeleteEntry = (entryId: string) => {
-    setStoredEntries((previous) => previous.filter((entry) => entry.id !== entryId))
+  const handleDeleteEntry = async (entryId: string) => {
+    try {
+      await deleteEntry(entryId)
+    } catch {
+      // Error is surfaced by the hook state.
+    }
   }
 
-  const handleStartingAmountSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleStartingAmountSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const normalizedValue = startingAmountDraft.replace(',', '.').trim()
     if (normalizedValue.length === 0) {
-      setMonthlySnapshots((previous) => {
-        const next = { ...previous }
-        delete next[selectedMonthKey]
-        return next
-      })
+      try {
+        await deleteMonthlySnapshot(selectedMonthKey)
+      } catch {
+        // Error is surfaced by the hook state.
+      }
       return
     }
     const parsed = parseFloat(normalizedValue)
@@ -714,12 +674,11 @@ const FinancePage = () => {
       return
     }
     const rounded = roundCurrency(parsed)
-    setMonthlySnapshots((previous) => ({
-      ...previous,
-      [selectedMonthKey]: {
-        startingAmount: rounded,
-      },
-    }))
+    try {
+      await saveMonthlySnapshot(selectedMonthKey, rounded)
+    } catch {
+      // Error is surfaced by the hook state.
+    }
   }
 
   return (
@@ -744,6 +703,8 @@ const FinancePage = () => {
           </button>
         </div>
       </div>
+      {error ? <p className="finance-history__empty">{error}</p> : null}
+      {isInitialFinanceLoading ? <p className="finance-history__empty">Chargement de vos données financières...</p> : null}
 
 
       <section className="finance-dashboard">
@@ -917,7 +878,9 @@ const FinancePage = () => {
               </div>
             </header>
             {selectedMonthEntries.length === 0 ? (
-              <p className="finance-history__empty">Aucun mouvement enregistré pour {selectedMonthLabel}.</p>
+              <p className="finance-history__empty">
+                {isInitialFinanceLoading ? 'Chargement des mouvements...' : `Aucun mouvement enregistré pour ${selectedMonthLabel}.`}
+              </p>
             ) : (
               <div className="finance-history__groups">
                 {groupedHistoryPreview.map((group) => (
@@ -1031,7 +994,9 @@ const FinancePage = () => {
                 </ul>
               </div>
             ) : (
-              <p className="finance-balance__empty">Ajoute une dépense pour visualiser la répartition.</p>
+              <p className="finance-balance__empty">
+                {isInitialFinanceLoading ? 'Chargement de la répartition...' : 'Ajoute une dépense pour visualiser la répartition.'}
+              </p>
             )}
           </div>
         </aside>
@@ -1040,6 +1005,10 @@ const FinancePage = () => {
       {trendSeries ? (
         <section className="finance-trend dashboard-panel">
           <FinanceTrendChart series={trendSeries} />
+        </section>
+      ) : isInitialFinanceLoading ? (
+        <section className="finance-trend dashboard-panel">
+          <p className="finance-history__empty">Chargement de la tendance...</p>
         </section>
       ) : null}
 
@@ -1062,7 +1031,9 @@ const FinancePage = () => {
             </header>
             <div className="finance-history-modal__content">
               {selectedMonthEntries.length === 0 ? (
-                <p className="finance-history__empty">Aucun mouvement enregistré pour {selectedMonthLabel}.</p>
+                <p className="finance-history__empty">
+                  {isInitialFinanceLoading ? 'Chargement des mouvements...' : `Aucun mouvement enregistré pour ${selectedMonthLabel}.`}
+                </p>
               ) : (
                 groupedHistoryFull.map((group) => (
                   <div key={group.monthKey} className="finance-history__group">

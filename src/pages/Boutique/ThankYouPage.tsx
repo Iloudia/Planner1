@@ -1,6 +1,7 @@
 ﻿import { useEffect, useState } from "react"
 import { Link, useSearchParams } from "react-router-dom"
 import "./Boutique.css"
+import { buildApiUrl } from "../../utils/apiUrl"
 
 type CheckoutStatus = {
   paid: boolean
@@ -29,8 +30,7 @@ const ThankYouPage = () => {
 
     const fetchStatus = async () => {
       try {
-        const apiBase = import.meta.env.VITE_API_BASE || ""
-        const response = await fetch(`${apiBase}/api/checkout-session?session_id=${sessionId}`)
+        const response = await fetch(buildApiUrl(`/api/checkout-session?session_id=${encodeURIComponent(sessionId)}`))
         if (!response.ok) {
           throw new Error("Impossible de verifier le paiement.")
         }

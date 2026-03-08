@@ -1,0 +1,17 @@
+[Unit]
+Description=Planner API server
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/var/www/planner/current
+Environment=NODE_ENV=production
+EnvironmentFile=/etc/planner/planner.env
+ExecStart=/usr/bin/npm run start:server
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

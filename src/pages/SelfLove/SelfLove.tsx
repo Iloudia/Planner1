@@ -1,235 +1,55 @@
-﻿import type { ChangeEvent, FormEvent } from 'react'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import stampLove from '../../assets/Timbre-1.png'
-import stampKey from '../../assets/Timbre-2.png'
-import PageHeading from '../../components/PageHeading'
-import usePersistentState from '../../hooks/usePersistentState'
-import './SelfLove.css'
-type SelfLovePhotoSlot = {
-  id: string
-  dataUrl: string | null
-}
-type SelfLoveQuality = {
-  id: string
-  text: string
-}
-type SelfLoveThought = {
-  id: string
-  text: string
-}
-type SelfLoveJournalEntry = {
-  id: string
-  text: string
-  createdAt: string
-}
-type SelfLoveInnerChildSnapshot = {
-  message: string
-  reassurance: string
-  neededWords: string
-}
-type SelfLoveBestFriendSnapshot = {
-  advice: string
-  selfTalk: string
-}
-type SelfLoveSavedLetter = {
-  id: string
-  template: 'classic' | 'kitty'
-  to?: string
-  from?: string
-  body: string
-  createdAt: string
-  openDate?: string
-  sealedAt?: string
-  innerChild?: SelfLoveInnerChildSnapshot
-  bestFriend?: SelfLoveBestFriendSnapshot
-  entryType: 'letter' | 'innerChild' | 'bestFriend'
-}
-type SelfLoveState = {
-  photos: SelfLovePhotoSlot[]
-  qualities: SelfLoveQuality[]
-  thoughts: SelfLoveThought[]
-  journal: SelfLoveJournalEntry[]
-  letterTo: string
-  letterFrom: string
-  letterBody: string
-  kittyLetterBody: string
-  futureLetterTo: string
-  futureLetterFrom: string
-  futureLetterBody: string
-  futureLetterOpenDate: string
-  innerChildMessage: string
-  innerChildReassurance: string
-  innerChildNeededWords: string
-  bestFriendAdvice: string
-  bestFriendSelfTalk: string
-  savedLetters: SelfLoveSavedLetter[]
-}
-const PHOTO_SLOT_COUNT = 6
-const getDefaultFutureOpenDate = () => {
+import type { ChangeEvent, FormEvent } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
+import stampLove from "../../assets/Timbre-1.webp"
+import stampKey from "../../assets/Timbre-2.webp"
+import PageHeading from "../../components/PageHeading"
+import { useAuth } from "../../context/AuthContext"
+import useUserSelfLove from "../../hooks/useUserSelfLove"
+import { deleteMedia, uploadImage } from "../../services/media/api"
+import "./SelfLove.css"
+
+const buildDefaultFutureOpenDate = () => {
   const date = new Date()
   date.setMonth(date.getMonth() + 3)
   return date.toISOString().slice(0, 10)
 }
-const createDefaultState = (): SelfLoveState => ({
-  photos: Array.from({ length: PHOTO_SLOT_COUNT }, (_, index) => ({
-    id: `photo-${index}`,
-    dataUrl: null,
-  })),
-  qualities: [
-    { id: "quality-1", text: "Mon sourire illumine les gens." },
-    { id: "quality-2", text: "J'ai une force tranquille." },
-    { id: "quality-3", text: "Je sais écouter avec le cœur." },
-  ],
-  thoughts: [
-    { id: "thought-1", text: "Je ne suis pas assez." },
-    { id: "thought-2", text: "Je dois tout contrôler." },
-    { id: "thought-3", text: "Je ne mérite pas ce que j'ai." },
-  ],
-  journal: [],
-  letterTo: "Moi du futur",
-  letterFrom: "Moi du présent",
-  letterBody: "Cher moi, merci de continuer à te choisir chaque jour...",
-  kittyLetterBody:
-    "Je suis si fier/fière de toi. Merci de te relever, de rire, de pleurer et de croire en toi-même quand c'est compliqué. Tu es doux/douce, courageux/courageuse et tellement lumineux/lumineuse.",
-  futureLetterTo: "Moi du futur",
-  futureLetterFrom: "Moi du présent",
-  futureLetterBody:
-    "Si tu lis ces mots, c'est que tu as tenu bon. J'espère que tu te souviens de nos promesses : continuer à te respecter, à protéger ta paix et à célébrer tes petites victoires.",
-  futureLetterOpenDate: getDefaultFutureOpenDate(),
-  innerChildMessage: "",
-  innerChildReassurance: "",
-  innerChildNeededWords: "",
-  bestFriendAdvice: "",
-  bestFriendSelfTalk: "",
-  savedLetters: [],
-})
-const STORAGE_KEY = "planner.selfLove"
-const normalizeState = (value: unknown): SelfLoveState => {
-  const base = createDefaultState()
-  if (!value || typeof value !== "object") {
-    return base
-  }
-  const source = value as Partial<SelfLoveState>
-  const photos = Array.isArray(source.photos)
-    ? source.photos.slice(0, PHOTO_SLOT_COUNT).map((photo, index) => ({
-        id: typeof photo?.id === "string" ? photo.id : `photo-${index}`,
-        dataUrl: typeof photo?.dataUrl === "string" ? photo.dataUrl : null,
-      }))
-    : base.photos
-  const qualities = Array.isArray(source.qualities)
-    ? source.qualities
-        .filter((item): item is SelfLoveQuality => !!item && typeof item.id === "string" && typeof item.text === "string")
-        .map((item) => ({ id: item.id, text: item.text }))
-    : base.qualities
-  const thoughts = Array.isArray(source.thoughts)
-    ? source.thoughts
-        .filter((item): item is SelfLoveThought => !!item && typeof item.id === "string" && typeof item.text === "string")
-        .map((item) => ({ id: item.id, text: item.text }))
-    : base.thoughts
-  const journal = Array.isArray(source.journal)
-    ? source.journal
-        .filter(
-          (item): item is SelfLoveJournalEntry =>
-            !!item && typeof item.id === "string" && typeof item.text === "string" && typeof item.createdAt === "string",
-        )
-        .map((item) => ({ id: item.id, text: item.text, createdAt: item.createdAt }))
-    : base.journal
-  let letterTo = typeof source.letterTo === "string" ? source.letterTo : base.letterTo
-  let letterFrom = typeof source.letterFrom === "string" ? source.letterFrom : base.letterFrom
-  if (letterTo === "Moi du futur" && letterFrom === "Moi du present") {
-    letterTo = "Moi du présent"
-    letterFrom = "Moi du futur"
-  }
-  const futureLetterTo =
-    typeof source.futureLetterTo === "string" ? source.futureLetterTo : letterTo || base.futureLetterTo
-  const futureLetterFrom =
-    typeof source.futureLetterFrom === "string" ? source.futureLetterFrom : letterFrom || base.futureLetterFrom
-  const futureLetterBody =
-    typeof source.futureLetterBody === "string" ? source.futureLetterBody : source.letterBody || base.futureLetterBody
-  const futureLetterOpenDate =
-    typeof source.futureLetterOpenDate === "string" ? source.futureLetterOpenDate : base.futureLetterOpenDate
-  const savedLetters = Array.isArray(source.savedLetters)
-    ? source.savedLetters
-        .filter(
-          (item): item is SelfLoveSavedLetter =>
-            !!item &&
-            (item.template === "classic" || item.template === "kitty") &&
-            typeof item.id === "string" &&
-            typeof item.body === "string" &&
-            typeof item.createdAt === "string",
-        )
-        .map((item) => ({
-          id: item.id,
-          template: item.template,
-          to: typeof item.to === "string" ? item.to : undefined,
-          from: typeof item.from === "string" ? item.from : undefined,
-          body: item.body,
-          createdAt: item.createdAt,
-          openDate: typeof item.openDate === "string" ? item.openDate : undefined,
-          sealedAt: typeof item.sealedAt === "string" ? item.sealedAt : undefined,
-          innerChild:
-            item.innerChild &&
-            typeof item.innerChild === "object" &&
-            typeof item.innerChild.message === "string" &&
-            typeof item.innerChild.reassurance === "string" &&
-            typeof item.innerChild.neededWords === "string"
-              ? {
-                  message: item.innerChild.message,
-                  reassurance: item.innerChild.reassurance,
-                  neededWords: item.innerChild.neededWords,
-                }
-              : undefined,
-          bestFriend:
-            item.bestFriend &&
-            typeof item.bestFriend === "object" &&
-            typeof item.bestFriend.advice === "string" &&
-            typeof item.bestFriend.selfTalk === "string"
-              ? {
-                  advice: item.bestFriend.advice,
-                  selfTalk: item.bestFriend.selfTalk,
-                }
-              : undefined,
-          entryType: item.entryType === "innerChild" || item.entryType === "bestFriend" ? item.entryType : "letter",
-        }))
-    : base.savedLetters
-  return {
+
+const SelfLovePage = () => {
+  const { userId } = useAuth()
+  const {
+    draft,
     photos,
     qualities,
     thoughts,
-    journal,
-    letterTo,
-    letterFrom,
-    letterBody: typeof source.letterBody === "string" ? source.letterBody : base.letterBody,
-    kittyLetterBody: typeof source.kittyLetterBody === "string" ? source.kittyLetterBody : base.kittyLetterBody,
-    futureLetterTo,
-    futureLetterFrom,
-    futureLetterBody,
-    futureLetterOpenDate,
-    innerChildMessage: typeof source.innerChildMessage === "string" ? source.innerChildMessage : base.innerChildMessage,
-    innerChildReassurance:
-      typeof source.innerChildReassurance === "string" ? source.innerChildReassurance : base.innerChildReassurance,
-    innerChildNeededWords:
-      typeof source.innerChildNeededWords === "string" ? source.innerChildNeededWords : base.innerChildNeededWords,
-    bestFriendAdvice: typeof source.bestFriendAdvice === "string" ? source.bestFriendAdvice : base.bestFriendAdvice,
-    bestFriendSelfTalk:
-      typeof source.bestFriendSelfTalk === "string" ? source.bestFriendSelfTalk : base.bestFriendSelfTalk,
-    savedLetters,
-  }
-}
-const SelfLovePage = () => {
-  const [state, setState] = usePersistentState<SelfLoveState>(STORAGE_KEY, createDefaultState)
+    isLoading,
+    error,
+    updateDraft,
+    replacePhoto,
+    clearPhoto,
+    addQuality,
+    removeQuality,
+    addThought,
+    removeThought,
+    saveInnerChildArchive,
+    saveBestFriendArchive,
+    saveLetterArchive,
+    saveFutureLetterArchive,
+    sealFutureLetter,
+  } = useUserSelfLove()
+  const canEdit = Boolean(userId)
+
   const [qualityDraft, setQualityDraft] = useState("")
   const [thoughtDraft, setThoughtDraft] = useState("")
-  const [journalDraft, setJournalDraft] = useState("")
   const [releasingThoughtIds, setReleasingThoughtIds] = useState<Set<string>>(new Set())
   const [letterTemplate, setLetterTemplate] = useState<"classic" | "kitty">("classic")
   const [letterSaveConfirmationVisible, setLetterSaveConfirmationVisible] = useState(false)
-  const letterSaveConfirmationTimeout = useRef<number | null>(null)
   const [futureSealConfirmationVisible, setFutureSealConfirmationVisible] = useState(false)
-  const futureSealConfirmationTimeout = useRef<number | null>(null)
   const [exerciseSaveConfirmationVisible, setExerciseSaveConfirmationVisible] = useState(false)
+  const [draftState, setDraftState] = useState(draft)
+  const letterSaveConfirmationTimeout = useRef<number | null>(null)
+  const futureSealConfirmationTimeout = useRef<number | null>(null)
   const exerciseSaveConfirmationTimeout = useRef<number | null>(null)
-  const safeState = useMemo(() => normalizeState(state), [state])
+
   useEffect(() => {
     document.body.classList.add("self-love-page--lux")
     return () => {
@@ -245,249 +65,12 @@ const SelfLovePage = () => {
       }
     }
   }, [])
-  const handlePhotoChange = (slotId: string, event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) {
-      return
-    }
-    const reader = new FileReader()
-    reader.onload = () => {
-      const result = typeof reader.result === "string" ? reader.result : null
-      setState((previous) => {
-        const current = normalizeState(previous)
-        return {
-          ...current,
-          photos: current.photos.map((photo) => (photo.id === slotId ? { ...photo, dataUrl: result } : photo)),
-        }
-      })
-    }
-    reader.readAsDataURL(file)
-  }
-  const handleClearPhoto = (slotId: string) => {
-    setState((previous) => {
-      const current = normalizeState(previous)
-      return {
-        ...current,
-        photos: current.photos.map((photo) => (photo.id === slotId ? { ...photo, dataUrl: null } : photo)),
-      }
-    })
-  }
-  const handleAddQuality = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const trimmed = qualityDraft.trim()
-    if (trimmed.length === 0) {
-      return
-    }
-    setState((previous) => {
-      const current = normalizeState(previous)
-      return {
-        ...current,
-        qualities: [{ id: `quality-${Date.now()}`, text: trimmed }, ...current.qualities],
-      }
-    })
-    setQualityDraft("")
-  }
-  const handleRemoveQuality = (qualityId: string) => {
-    setState((previous) => {
-      const current = normalizeState(previous)
-      return {
-        ...current,
-        qualities: current.qualities.filter((quality) => quality.id !== qualityId),
-      }
-    })
-  }
-  const handleAddThought = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const trimmed = thoughtDraft.trim()
-    if (trimmed.length === 0) {
-      return
-    }
-    setState((previous) => {
-      const current = normalizeState(previous)
-      return {
-        ...current,
-        thoughts: [...current.thoughts, { id: `thought-${Date.now()}`, text: trimmed }],
-      }
-    })
-    setThoughtDraft("")
-  }
-  const handleReleaseThought = (thoughtId: string) => {
-    setReleasingThoughtIds((previous) => new Set(previous).add(thoughtId))
-    window.setTimeout(() => {
-      setState((previous) => {
-        const current = normalizeState(previous)
-        return {
-          ...current,
-          thoughts: current.thoughts.filter((thought) => thought.id !== thoughtId),
-        }
-      })
-      setReleasingThoughtIds((previous) => {
-        const next = new Set(previous)
-        next.delete(thoughtId)
-        return next
-      })
-    }, 620)
-  }
-  const handleAddJournalEntry = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const trimmed = journalDraft.trim()
-    if (trimmed.length === 0) {
-      return
-    }
-    const entry: SelfLoveJournalEntry = {
-      id: `entry-${Date.now()}`,
-      text: trimmed,
-      createdAt: new Date().toISOString(),
-    }
-    setState((previous) => {
-      const current = normalizeState(previous)
-      return {
-        ...current,
-        journal: [entry, ...current.journal].slice(0, 12),
-      }
-    })
-    setJournalDraft("")
-  }
-  const handleLetterChange = (field: "letterTo" | "letterFrom" | "letterBody" | "kittyLetterBody", value: string) => {
-    setState((previous) => {
-      const current = normalizeState(previous)
-      return {
-        ...current,
-        [field]: value,
-      }
-    })
-  }
-  const handleFutureLetterChange = (
-    field: "futureLetterTo" | "futureLetterFrom" | "futureLetterBody" | "futureLetterOpenDate",
-    value: string,
-  ) => {
-    setState((previous) => {
-      const current = normalizeState(previous)
-      return {
-        ...current,
-        [field]: value,
-      }
-    })
-  }
-  const handleInnerChildChange = (
-    field: "innerChildMessage" | "innerChildReassurance" | "innerChildNeededWords",
-    value: string,
-  ) => {
-    setState((previous) => {
-      const current = normalizeState(previous)
-      return { ...current, [field]: value }
-    })
-  }
-  const handleBestFriendChange = (field: "bestFriendAdvice" | "bestFriendSelfTalk", value: string) => {
-    setState((previous) => {
-      const current = normalizeState(previous)
-      return { ...current, [field]: value }
-    })
-  }
-  const handleSaveInnerChildExercise = () => {
-    const snapshot: SelfLoveInnerChildSnapshot = {
-      message: safeState.innerChildMessage.trim(),
-      reassurance: safeState.innerChildReassurance.trim(),
-      neededWords: safeState.innerChildNeededWords.trim(),
-    }
-    if (!Object.values(snapshot).some((value) => value.length > 0)) {
-      window.alert("Commence par écrire quelques phrases avant d'ajouter cet exercice.")
-      return
-    }
-    const entry: SelfLoveSavedLetter = {
-      id: `exercise-inner-child-${Date.now()}`,
-      template: "classic",
-      body: [snapshot.message, snapshot.reassurance, snapshot.neededWords].filter((value) => value.length > 0).join("\n\n"),
-      createdAt: new Date().toISOString(),
-      innerChild: snapshot,
-      entryType: "innerChild",
-    }
-    setState((previous) => {
-      const current = normalizeState(previous)
-      return {
-        ...current,
-        savedLetters: [entry, ...current.savedLetters].slice(0, 30),
-      }
-    })
-    setExerciseSaveConfirmationVisible(true)
-    if (exerciseSaveConfirmationTimeout.current !== null) {
-      window.clearTimeout(exerciseSaveConfirmationTimeout.current)
-    }
-    exerciseSaveConfirmationTimeout.current = window.setTimeout(() => {
-      setExerciseSaveConfirmationVisible(false)
-      exerciseSaveConfirmationTimeout.current = null
-    }, 2000)
-  }
-  const handleSaveBestFriendExercise = () => {
-    const snapshot: SelfLoveBestFriendSnapshot = {
-      advice: safeState.bestFriendAdvice.trim(),
-      selfTalk: safeState.bestFriendSelfTalk.trim(),
-    }
-    if (!Object.values(snapshot).some((value) => value.length > 0)) {
-      window.alert("Commence par écrire quelques phrases avant d'ajouter cet exercice.")
-      return
-    }
-    const entry: SelfLoveSavedLetter = {
-      id: `exercise-best-friend-${Date.now()}`,
-      template: "kitty",
-      body: [snapshot.advice, snapshot.selfTalk].filter((value) => value.length > 0).join("\n\n"),
-      createdAt: new Date().toISOString(),
-      bestFriend: snapshot,
-      entryType: "bestFriend",
-    }
 
-    setState((previous) => {
-      const current = normalizeState(previous)
-      return {
-        ...current,
-        savedLetters: [entry, ...current.savedLetters].slice(0, 30),
-      }
-    })
-    setExerciseSaveConfirmationVisible(true)
-    if (exerciseSaveConfirmationTimeout.current !== null) {
-      window.clearTimeout(exerciseSaveConfirmationTimeout.current)
-    }
-    exerciseSaveConfirmationTimeout.current = window.setTimeout(() => {
-      setExerciseSaveConfirmationVisible(false)
-      exerciseSaveConfirmationTimeout.current = null
-    }, 2000)
-  }
-  const handleSaveLetter = (template: "classic" | "kitty") => {
-    const body = template === "classic" ? safeState.letterBody : safeState.kittyLetterBody
-    const trimmed = body.trim()
-    if (trimmed.length === 0) {
-      window.alert("Commence par écrire ta lettre avant de l'enregistrer.")
-      return
-    }
-    const innerChildSnapshot: SelfLoveInnerChildSnapshot = {
-      message: safeState.innerChildMessage.trim(),
-      reassurance: safeState.innerChildReassurance.trim(),
-      neededWords: safeState.innerChildNeededWords.trim(),
-    }
-    const hasInnerChild = Object.values(innerChildSnapshot).some((value) => value.length > 0)
-    const bestFriendSnapshot: SelfLoveBestFriendSnapshot = {
-      advice: safeState.bestFriendAdvice.trim(),
-      selfTalk: safeState.bestFriendSelfTalk.trim(),
-    }
-    const hasBestFriend = Object.values(bestFriendSnapshot).some((value) => value.length > 0)
-    const entry: SelfLoveSavedLetter = {
-      id: `saved-letter-${Date.now()}`,
-      template,
-      to: template === "classic" ? safeState.letterTo : undefined,
-      from: template === "classic" ? safeState.letterFrom : undefined,
-      body: trimmed,
-      createdAt: new Date().toISOString(),
-      innerChild: hasInnerChild ? innerChildSnapshot : undefined,
-      bestFriend: hasBestFriend ? bestFriendSnapshot : undefined,
-      entryType: "letter",
-    }
-    setState((previous) => {
-      const current = normalizeState(previous)
-      return {
-        ...current,
-        savedLetters: [entry, ...current.savedLetters].slice(0, 30),
-      }
-    })
+  useEffect(() => {
+    setDraftState(draft)
+  }, [draft])
+
+  const showLetterConfirmation = () => {
     setLetterSaveConfirmationVisible(true)
     if (letterSaveConfirmationTimeout.current !== null) {
       window.clearTimeout(letterSaveConfirmationTimeout.current)
@@ -497,45 +80,8 @@ const SelfLovePage = () => {
       letterSaveConfirmationTimeout.current = null
     }, 2000)
   }
-  const handleSealFutureLetter = () => {
-    const trimmed = safeState.futureLetterBody.trim()
-    if (trimmed.length === 0) {
-      window.alert("Écris quelques lignes avant de sceller ta lettre.")
-      return
-    }
-    if (!safeState.futureLetterOpenDate) {
-      window.alert("Choisis une date d'ouverture pour sceller ta lettre.")
-      return
-    }
-    const openDate = new Date(`${safeState.futureLetterOpenDate}T00:00:00`)
-    if (Number.isNaN(openDate.getTime())) {
-      window.alert("Choisis une date d'ouverture valide.")
-      return
-    }
-    if (openDate.getTime() <= Date.now()) {
-      window.alert("Choisis une date future pour que la lettre puisse se verrouiller.")
-      return
-    }
-    const entry: SelfLoveSavedLetter = {
-      id: `saved-letter-future-${Date.now()}`,
-      template: "classic",
-      to: safeState.futureLetterTo,
-      from: safeState.futureLetterFrom,
-      body: trimmed,
-      createdAt: new Date().toISOString(),
-      openDate: safeState.futureLetterOpenDate || undefined,
-      sealedAt: new Date().toISOString(),
-      entryType: "letter",
-    }
-    setState((previous) => {
-      const current = normalizeState(previous)
-      return {
-        ...current,
-        savedLetters: [entry, ...current.savedLetters].slice(0, 30),
-        futureLetterBody: "",
-        futureLetterOpenDate: getDefaultFutureOpenDate(),
-      }
-    })
+
+  const showFutureConfirmation = () => {
     setFutureSealConfirmationVisible(true)
     if (futureSealConfirmationTimeout.current !== null) {
       window.clearTimeout(futureSealConfirmationTimeout.current)
@@ -545,46 +91,164 @@ const SelfLovePage = () => {
       futureSealConfirmationTimeout.current = null
     }, 2200)
   }
-  const handleSaveFutureLetter = () => {
-    const trimmed = safeState.futureLetterBody.trim()
-    if (trimmed.length === 0) {
-      window.alert("Commence par écrire ta lettre avant de l'enregistrer.")
-      return
+
+  const showExerciseConfirmation = () => {
+    setExerciseSaveConfirmationVisible(true)
+    if (exerciseSaveConfirmationTimeout.current !== null) {
+      window.clearTimeout(exerciseSaveConfirmationTimeout.current)
     }
-    const entry: SelfLoveSavedLetter = {
-      id: `saved-letter-future-${Date.now()}`,
-      template: "classic",
-      to: safeState.futureLetterTo,
-      from: safeState.futureLetterFrom,
-      body: trimmed,
-      createdAt: new Date().toISOString(),
-      openDate: safeState.futureLetterOpenDate || undefined,
-      entryType: "letter",
-    }
-    setState((previous) => {
-      const current = normalizeState(previous)
-      return {
-        ...current,
-        savedLetters: [entry, ...current.savedLetters].slice(0, 30),
-      }
-    })
-    setLetterSaveConfirmationVisible(true)
-    if (letterSaveConfirmationTimeout.current !== null) {
-      window.clearTimeout(letterSaveConfirmationTimeout.current)
-    }
-    letterSaveConfirmationTimeout.current = window.setTimeout(() => {
-      setLetterSaveConfirmationVisible(false)
-      letterSaveConfirmationTimeout.current = null
+    exerciseSaveConfirmationTimeout.current = window.setTimeout(() => {
+      setExerciseSaveConfirmationVisible(false)
+      exerciseSaveConfirmationTimeout.current = null
     }, 2000)
   }
 
-  const today = useMemo(() => {
-    const date = new Date()
-    return {
-      iso: date.toISOString().slice(0, 10),
+  const persistDraftField = async (field: keyof typeof draftState) => {
+    await updateDraft({ [field]: draftState[field] })
+  }
+
+  const handlePhotoChange = async (slotId: string, event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) {
+      return
     }
-  }, [])
-  const futureOpenDate = safeState.futureLetterOpenDate
+    const previousPhoto = photos.find((photo) => photo.id === slotId)
+    const uploaded = await uploadImage(file, "self-love-photo", slotId)
+    try {
+      await replacePhoto(slotId, { url: uploaded.url, path: uploaded.path })
+      if (previousPhoto?.imagePath) {
+        void deleteMedia(previousPhoto.imagePath).catch(() => undefined)
+      }
+    } catch {
+      void deleteMedia(uploaded.path).catch(() => undefined)
+    }
+  }
+
+  const handleClearPhoto = async (slotId: string) => {
+    const previousPhoto = photos.find((photo) => photo.id === slotId)
+    await clearPhoto(slotId)
+    if (previousPhoto?.imagePath) {
+      void deleteMedia(previousPhoto.imagePath).catch(() => undefined)
+    }
+  }
+
+  const handleAddQuality = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const trimmed = qualityDraft.trim()
+    if (!trimmed) return
+    await addQuality(trimmed)
+    setQualityDraft("")
+  }
+
+  const handleAddThought = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const trimmed = thoughtDraft.trim()
+    if (!trimmed) return
+    await addThought(trimmed)
+    setThoughtDraft("")
+  }
+
+  const handleReleaseThought = (thoughtId: string) => {
+    setReleasingThoughtIds((previous) => new Set(previous).add(thoughtId))
+    window.setTimeout(() => {
+      void removeThought(thoughtId)
+      setReleasingThoughtIds((previous) => {
+        const next = new Set(previous)
+        next.delete(thoughtId)
+        return next
+      })
+    }, 620)
+  }
+
+  const handleSaveInnerChildExercise = async () => {
+    const snapshot = {
+      message: draftState.innerChildMessage.trim(),
+      reassurance: draftState.innerChildReassurance.trim(),
+      neededWords: draftState.innerChildNeededWords.trim(),
+    }
+    if (!Object.values(snapshot).some((value) => value.length > 0)) {
+      window.alert("Commence par ecrire quelques phrases avant d'ajouter cet exercice.")
+      return
+    }
+    await saveInnerChildArchive(snapshot)
+    showExerciseConfirmation()
+  }
+
+  const handleSaveBestFriendExercise = async () => {
+    const snapshot = {
+      advice: draftState.bestFriendAdvice.trim(),
+      selfTalk: draftState.bestFriendSelfTalk.trim(),
+    }
+    if (!Object.values(snapshot).some((value) => value.length > 0)) {
+      window.alert("Commence par ecrire quelques phrases avant d'ajouter cet exercice.")
+      return
+    }
+    await saveBestFriendArchive(snapshot)
+    showExerciseConfirmation()
+  }
+
+  const handleSaveLetter = async () => {
+    const body = letterTemplate === "classic" ? draftState.letterBody : draftState.kittyLetterBody
+    const trimmed = body.trim()
+    if (!trimmed) {
+      window.alert("Commence par ecrire ta lettre avant de l'enregistrer.")
+      return
+    }
+    await saveLetterArchive({
+      template: letterTemplate,
+      to: letterTemplate === "classic" ? draftState.letterTo : undefined,
+      from: letterTemplate === "classic" ? draftState.letterFrom : undefined,
+      body: trimmed,
+    })
+    showLetterConfirmation()
+  }
+
+  const handleSaveFutureLetter = async () => {
+    const trimmed = draftState.futureLetterBody.trim()
+    if (!trimmed) {
+      window.alert("Commence par ecrire ta lettre avant de l'enregistrer.")
+      return
+    }
+    await saveFutureLetterArchive({
+      to: draftState.futureLetterTo,
+      from: draftState.futureLetterFrom,
+      body: trimmed,
+      openDate: draftState.futureLetterOpenDate || undefined,
+    })
+    showLetterConfirmation()
+  }
+
+  const handleSealFutureLetter = async () => {
+    const trimmed = draftState.futureLetterBody.trim()
+    if (!trimmed) {
+      window.alert("Ecris quelques lignes avant de sceller ta lettre.")
+      return
+    }
+    if (!draftState.futureLetterOpenDate) {
+      window.alert("Choisis une date d'ouverture.")
+      return
+    }
+    const openDate = new Date(`${draftState.futureLetterOpenDate}T00:00:00`)
+    if (Number.isNaN(openDate.getTime()) || openDate.getTime() <= Date.now()) {
+      window.alert("Choisis une date future valide.")
+      return
+    }
+    await sealFutureLetter({
+      to: draftState.futureLetterTo,
+      from: draftState.futureLetterFrom,
+      body: trimmed,
+      openDate: draftState.futureLetterOpenDate,
+    })
+    showFutureConfirmation()
+  }
+
+  const today = useMemo(
+    () => ({
+      iso: new Date().toISOString().slice(0, 10),
+    }),
+    [],
+  )
+  const futureOpenDate = draftState.futureLetterOpenDate
   const openDateTimestamp = futureOpenDate ? new Date(`${futureOpenDate}T00:00:00`).getTime() : NaN
   const openDateLabel =
     futureOpenDate && !Number.isNaN(openDateTimestamp)
@@ -594,24 +258,30 @@ const SelfLovePage = () => {
           month: "long",
           year: "numeric",
         })
-      : "Date d'ouverture à définir"
+      : "Date d'ouverture a definir"
+
   return (
     <div className="self-love-page">
+      <PageHeading eyebrow="Self love" title="S'aimer soi-meme" />
+      {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer ton espace self-love.</p> : null}
+      {error ? <p className="routine-note__composer-hint">{error}</p> : null}
+      {isLoading ? <p className="routine-note__composer-hint">Chargement de ton espace self-love...</p> : null}
+      <fieldset disabled={!canEdit} style={{ border: 0, margin: 0, padding: 0, minInlineSize: 0 }}>
 
-      <PageHeading eyebrow="Self love" title="S'aimer soi-même" />
-      
       <section className="self-love-section self-love-section--photos">
         <div className="self-love-photos__intro">
-          <h2 className="self-love-chocolate self-love-photos__title">Aime-toi !</h2>
-          <p className="self-love-chocolate self-love-photos__subtitle">Regarde-toi avec bienveillance et choisis 6 photos où tu rayonnes.</p>
+          <h2 className="self-love-chocolate self-love-photos__title">Aime-toi</h2>
+          <p className="self-love-chocolate self-love-photos__subtitle">
+            Regarde-toi avec bienveillance et choisis 6 photos ou tu rayonnes.
+          </p>
         </div>
         <div className="self-love-photos-frame">
           <div className="self-love-photos">
-            {safeState.photos.map((photo, index) => (
+            {photos.map((photo, index) => (
               <div key={photo.id} className="self-love-photo-card">
                 <label className="self-love-photo-card__drop">
-                  {photo.dataUrl ? (
-                    <img src={photo.dataUrl} alt={`Souvenir ${index + 1}`} loading="lazy" decoding="async" />
+                  {photo.imageUrl ? (
+                    <img src={photo.imageUrl} alt={`Souvenir ${index + 1}`} loading="lazy" decoding="async" />
                   ) : (
                     <span className="self-love-photo-card__placeholder">
                       <span className="body-goal-slot__upload">
@@ -619,10 +289,10 @@ const SelfLovePage = () => {
                       </span>
                     </span>
                   )}
-                  <input type="file" accept="image/*" onChange={(event) => handlePhotoChange(photo.id, event)} />
+                  <input type="file" accept="image/*" onChange={(event) => void handlePhotoChange(photo.id, event)} />
                 </label>
-                {photo.dataUrl ? (
-                  <button type="button" onClick={() => handleClearPhoto(photo.id)}>
+                {photo.imageUrl ? (
+                  <button type="button" onClick={() => void handleClearPhoto(photo.id)}>
                     Changer la photo
                   </button>
                 ) : null}
@@ -631,103 +301,111 @@ const SelfLovePage = () => {
           </div>
         </div>
       </section>
+
       <div className="self-love-sections-row">
-      <section className="self-love-section self-love-section--qualities">
-        <h2 className="self-love-chocolate">Liste tes qualités</h2>
-        <form className="self-love-form-row" onSubmit={handleAddQuality}>
-          <textarea
-            className="self-love-exercise__textarea"
-            placeholder="Ex : Je sais écouter avec le cœur."
-            value={qualityDraft}
-            onChange={(event) => setQualityDraft(event.target.value)}
-          />
-          <button type="submit">+ Ajouter une qualité</button>
-        </form>
-        <div className="self-love-list-pad">
-          <div className="self-love-list-pad__bow">
-            <span aria-hidden="true" />
-            <div>
-              <strong>Ce que j'aime chez moi</strong>
+        <section className="self-love-section self-love-section--qualities">
+          <h2 className="self-love-chocolate">Liste tes qualites</h2>
+          <form className="self-love-form-row" onSubmit={handleAddQuality}>
+            <textarea
+              className="self-love-exercise__textarea"
+              placeholder="Ex : Je sais ecouter avec le coeur."
+              value={qualityDraft}
+              onChange={(event) => setQualityDraft(event.target.value)}
+            />
+            <button type="submit">+ Ajouter une qualite</button>
+          </form>
+          <div className="self-love-list-pad">
+            <div className="self-love-list-pad__bow">
+              <span aria-hidden="true" />
+              <div>
+                <strong>Ce que j'aime chez moi</strong>
+              </div>
             </div>
+            <ul className="self-love-list">
+              {qualities.map((quality) => (
+                <li key={quality.id}>
+                  <span className="self-love-list__heart" aria-hidden="true">
+                    *
+                  </span>
+                  <span className="self-love-list__text">{quality.text}</span>
+                  <button
+                    type="button"
+                    className="modal__close"
+                    onClick={() => void removeQuality(quality.id)}
+                    aria-label="Retirer cette qualite"
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                    </svg>
+                  </button>
+                </li>
+              ))}
+              {qualities.length === 0 ? (
+                <li className="self-love-list__empty">
+                  <span className="self-love-list__heart" aria-hidden="true">
+                    *
+                  </span>
+                  <span className="self-love-list__text">Commence par noter une seule phrase douce.</span>
+                </li>
+              ) : null}
+            </ul>
           </div>
-          <ul className="self-love-list">
-            {safeState.qualities.map((quality) => (
-              <li key={quality.id}>
-                <span className="self-love-list__heart" aria-hidden="true">*</span>
-                <span className="self-love-list__text">{quality.text}</span>
+        </section>
+
+        <section className="self-love-section self-love-section--thoughts">
+          <div>
+            <h2 className="self-love-chocolate">Pensees negatives a laisser derriere toi</h2>
+            <p className="self-love-chocolate">Clique sur une pensee pour la laisser s'envoler.</p>
+          </div>
+          <form className="self-love-form-row" onSubmit={handleAddThought}>
+            <textarea
+              className="self-love-exercise__textarea"
+              placeholder="Ex. Je dois etre parfait(e)."
+              value={thoughtDraft}
+              onChange={(event) => setThoughtDraft(event.target.value)}
+            />
+            <button type="submit">Ajouter</button>
+          </form>
+          <div className="self-love-thoughts">
+            {thoughts.map((thought) => {
+              const releasing = releasingThoughtIds.has(thought.id)
+              return (
                 <button
                   type="button"
-                  className="modal__close"
-                  onClick={() => handleRemoveQuality(quality.id)}
-                  aria-label="Retirer cette qualité"
+                  key={thought.id}
+                  className={releasing ? "self-love-thought self-love-thought--releasing" : "self-love-thought"}
+                  onClick={() => handleReleaseThought(thought.id)}
                 >
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
+                  <span>{thought.text}</span>
+                  <em>Clique pour la dissoudre</em>
                 </button>
-              </li>
-            ))}
-            {safeState.qualities.length === 0 ? (
-              <li className="self-love-list__empty">
-                <span className="self-love-list__heart" aria-hidden="true">*</span>
-                <span className="self-love-list__text">
-                  Commence par noter une seule phrase douce. Le reste suivra.
-                </span>
-              </li>
+              )
+            })}
+            {thoughts.length === 0 ? (
+              <div className="self-love-thought self-love-thought--empty">
+                <span>Plus aucune pensee limitante ici.</span>
+              </div>
             ) : null}
-          </ul>
-        </div>
-      </section>
-      <section className="self-love-section self-love-section--thoughts">
-        <div>
-          <h2 className="self-love-chocolate">Pensées négatives à laisser derrière toi</h2>
-          <p className="self-love-chocolate">Clique sur une pensée pour la laisser s'envoler.</p>
-        </div>
-        <form className="self-love-form-row" onSubmit={handleAddThought}>
-          <textarea
-            className="self-love-exercise__textarea"
-            placeholder="Ex. Je dois être parfait(e)."
-            value={thoughtDraft}
-            onChange={(event) => setThoughtDraft(event.target.value)}
-          />
-          <button type="submit">Ajouter</button>
-        </form>
-        <div className="self-love-thoughts">
-          {safeState.thoughts.map((thought) => {
-            const releasing = releasingThoughtIds.has(thought.id)
-            return (
-              <button
-                type="button"
-                key={thought.id}
-                className={releasing ? "self-love-thought self-love-thought--releasing" : "self-love-thought"}
-                onClick={() => handleReleaseThought(thought.id)}
-              >
-                <span>{thought.text}</span>
-                <em>Clique pour la dissoudre</em>
-              </button>
-            )
-          })}
-          {safeState.thoughts.length === 0 ? (
-            <div className="self-love-thought self-love-thought--empty">
-              <span>Plus aucune pensée limitante ici. Bravo !</span>
-            </div>
-          ) : null}
-        </div>
-      </section>
+          </div>
+        </section>
       </div>
+
       <section className="self-love-section self-love-exercises">
         <div />
         <div className="self-love-exercise__grid">
           <article className="self-love-exercise__card">
-            <div className="self-love-exercise__eyebrow">L'enfant intérieur</div>
-            <h3 className="self-love-chocolate">Dialogue doux avec ton passé</h3>
-            <p className="self-love-chocolate">Imagine une situation difficile de ton enfance et offre-toi aujourd'hui les mots qui avaient manqué.</p>
+            <div className="self-love-exercise__eyebrow">L'enfant interieur</div>
+            <h3 className="self-love-chocolate">Dialogue doux avec ton passe</h3>
+            <p className="self-love-chocolate">
+              Offre a ton enfant interieur les mots qui avaient manque.
+            </p>
             <label className="self-love-exercise__prompt">
               <span>Que souhaiterais-tu lui dire maintenant ?</span>
               <textarea
                 className="self-love-exercise__textarea"
-                value={safeState.innerChildMessage}
-                onChange={(event) => handleInnerChildChange("innerChildMessage", event.target.value)}
+                value={draftState.innerChildMessage}
+                onChange={(event) => setDraftState((previous) => ({ ...previous, innerChildMessage: event.target.value }))}
+                onBlur={() => void persistDraftField("innerChildMessage")}
                 placeholder="Je te dirais..."
               />
             </label>
@@ -735,8 +413,9 @@ const SelfLovePage = () => {
               <span>Comment pourrais-tu le rassurer ?</span>
               <textarea
                 className="self-love-exercise__textarea"
-                value={safeState.innerChildReassurance}
-                onChange={(event) => handleInnerChildChange("innerChildReassurance", event.target.value)}
+                value={draftState.innerChildReassurance}
+                onChange={(event) => setDraftState((previous) => ({ ...previous, innerChildReassurance: event.target.value }))}
+                onBlur={() => void persistDraftField("innerChildReassurance")}
                 placeholder="Je te rassure en..."
               />
             </label>
@@ -744,39 +423,47 @@ const SelfLovePage = () => {
               <span>De quoi aurait-il eu besoin d'entendre ?</span>
               <textarea
                 className="self-love-exercise__textarea"
-                value={safeState.innerChildNeededWords}
-                onChange={(event) => handleInnerChildChange("innerChildNeededWords", event.target.value)}
+                value={draftState.innerChildNeededWords}
+                onChange={(event) => setDraftState((previous) => ({ ...previous, innerChildNeededWords: event.target.value }))}
+                onBlur={() => void persistDraftField("innerChildNeededWords")}
                 placeholder="Tu avais besoin d'entendre..."
               />
             </label>
-            <button type="button" className="self-love-exercise__save" onClick={handleSaveInnerChildExercise}>
+            <button type="button" className="self-love-exercise__save" onClick={() => void handleSaveInnerChildExercise()}>
               Ajouter aux archives
             </button>
           </article>
+
           <article className="self-love-exercise__card">
-            <div className="self-love-exercise__eyebrow">Jeu de rôles</div>
+            <div className="self-love-exercise__eyebrow">Jeu de roles</div>
             <h3 className="self-love-chocolate">Le meilleur ami comme boussole</h3>
-            <p className="self-love-chocolate">Imagine qu'un ami cher vive exactement la même situation que toi. Quelles paroles lui offrirais-tu ?</p>
+            <p className="self-love-chocolate">
+              Imagine qu'un ami vive exactement la meme situation que toi.
+            </p>
             <label className="self-love-exercise__prompt">
               <span>Que lui dirais-tu ?</span>
               <textarea
                 className="self-love-exercise__textarea"
-                value={safeState.bestFriendAdvice}
-                onChange={(event) => handleBestFriendChange("bestFriendAdvice", event.target.value)}
+                value={draftState.bestFriendAdvice}
+                onChange={(event) => setDraftState((previous) => ({ ...previous, bestFriendAdvice: event.target.value }))}
+                onBlur={() => void persistDraftField("bestFriendAdvice")}
                 placeholder="Je lui dirais..."
               />
             </label>
             <label className="self-love-exercise__prompt">
-              <span>Quelle est la différence avec ce que tu te dis à toi-même ?</span>
+              <span>Quelle est la difference avec ce que tu te dis a toi-meme ?</span>
               <textarea
                 className="self-love-exercise__textarea"
-                value={safeState.bestFriendSelfTalk}
-                onChange={(event) => handleBestFriendChange("bestFriendSelfTalk", event.target.value)}
+                value={draftState.bestFriendSelfTalk}
+                onChange={(event) => setDraftState((previous) => ({ ...previous, bestFriendSelfTalk: event.target.value }))}
+                onBlur={() => void persistDraftField("bestFriendSelfTalk")}
                 placeholder="Je remarque que..."
               />
             </label>
-            <p className="self-love-exercise__hint">Cet exercice casse l'auto-critique et rappelle que tu mérites la même douceur.</p>
-            <button type="button" className="self-love-exercise__save" onClick={handleSaveBestFriendExercise}>
+            <p className="self-love-exercise__hint">
+              Cet exercice casse l'auto-critique et rappelle que tu merites la meme douceur.
+            </p>
+            <button type="button" className="self-love-exercise__save" onClick={() => void handleSaveBestFriendExercise()}>
               Ajouter aux archives
             </button>
           </article>
@@ -786,27 +473,95 @@ const SelfLovePage = () => {
           aria-live="polite"
         >
           <span aria-hidden="true">✓</span>
-          <strong>Page ajoutée !</strong>
+          <strong>Page ajoutee !</strong>
         </div>
       </section>
+
       <section className="self-love-section self-love-letter">
         <div className="self-love-letter__cards">
-          <div
-            className={`self-love-letter__frame self-love-letter__card self-love-letter__card--classic${
-              letterTemplate === "classic" ? " is-active" : ""
-            }`}
-            aria-hidden={letterTemplate !== "classic"}
-            style={letterTemplate === "classic" ? undefined : { display: "none" }}
-          >
+          <div className="self-love-letter__frame self-love-letter__card self-love-letter__card--classic is-active">
             <div className="self-love-future-letter__head">
               <div>
-                <p className="self-love-letter__title">Lettre à mon moi du futur</p>
+                <p className="self-love-letter__title">Lettre libre</p>
                 <p className="self-love-future-letter__subtitle">
-                  Écris-la aujourd'hui, laisse le temps faire le reste.
+                  Ecris pour toi, archive-la, relis-la quand tu en auras besoin.
                 </p>
               </div>
+              <div className="self-love-future-letter__actions">
+                <button type="button" className="sport-chip" onClick={() => setLetterTemplate("classic")}>
+                  Classique
+                </button>
+                <button type="button" className="sport-chip" onClick={() => setLetterTemplate("kitty")}>
+                  Kitty
+                </button>
+              </div>
+            </div>
+            {letterTemplate === "classic" ? (
+              <>
+                <div className="self-love-letter__addresses self-love-future-letter__addresses">
+                  <label>
+                    <span>De</span>
+                    <input
+                      type="text"
+                      value={draftState.letterFrom}
+                      onChange={(event) => setDraftState((previous) => ({ ...previous, letterFrom: event.target.value }))}
+                      onBlur={() => void persistDraftField("letterFrom")}
+                      placeholder="Moi du present"
+                    />
+                  </label>
+                  <label>
+                    <span>A</span>
+                    <input
+                      type="text"
+                      value={draftState.letterTo}
+                      onChange={(event) => setDraftState((previous) => ({ ...previous, letterTo: event.target.value }))}
+                      onBlur={() => void persistDraftField("letterTo")}
+                      placeholder="Moi du futur"
+                    />
+                  </label>
+                </div>
+                <div className="self-love-letter__body self-love-future-letter__body">
+                  <p className="self-love-letter__salutation">Cher moi,</p>
+                  <textarea
+                    value={draftState.letterBody}
+                    onChange={(event) => setDraftState((previous) => ({ ...previous, letterBody: event.target.value }))}
+                    onBlur={() => void persistDraftField("letterBody")}
+                    placeholder="Ecris ce que tu as besoin d'entendre aujourd'hui."
+                  />
+                </div>
+              </>
+            ) : (
+              <div className="self-love-letter__body self-love-future-letter__body">
+                <p className="self-love-letter__salutation">Mon petit coeur,</p>
+                <textarea
+                  value={draftState.kittyLetterBody}
+                  onChange={(event) => setDraftState((previous) => ({ ...previous, kittyLetterBody: event.target.value }))}
+                  onBlur={() => void persistDraftField("kittyLetterBody")}
+                  placeholder="Version douce et reconfortante."
+                />
+              </div>
+            )}
+            <div className="self-love-future-letter__footer">
+              <div className="self-love-future-letter__stamp">
+                <img src={stampLove} alt="Timbre souvenir" loading="lazy" decoding="async" />
+                <img src={stampKey} alt="Timbre secret" loading="lazy" decoding="async" />
+              </div>
+              <div className="self-love-future-letter__actions">
+                <button type="button" className="self-love-letter__save" onClick={() => void handleSaveLetter()}>
+                  Ajouter aux archives
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="self-love-letter__frame self-love-letter__card self-love-letter__card--classic is-active">
+            <div className="self-love-future-letter__head">
+              <div>
+                <p className="self-love-letter__title">Lettre a mon moi du futur</p>
+                <p className="self-love-future-letter__subtitle">Ecris-la aujourd'hui, laisse le temps faire le reste.</p>
+              </div>
               <div className="self-love-future-letter__status">
-                <span>Prête à sceller</span>
+                <span>Prete a sceller</span>
                 <strong>{openDateLabel}</strong>
               </div>
             </div>
@@ -815,17 +570,19 @@ const SelfLovePage = () => {
                 <span>De</span>
                 <input
                   type="text"
-                  value={safeState.futureLetterFrom}
-                  onChange={(event) => handleFutureLetterChange("futureLetterFrom", event.target.value)}
-                  placeholder="Ta version présente"
+                  value={draftState.futureLetterFrom}
+                  onChange={(event) => setDraftState((previous) => ({ ...previous, futureLetterFrom: event.target.value }))}
+                  onBlur={() => void persistDraftField("futureLetterFrom")}
+                  placeholder="Ta version presente"
                 />
               </label>
               <label>
-                <span>À</span>
+                <span>A</span>
                 <input
                   type="text"
-                  value={safeState.futureLetterTo}
-                  onChange={(event) => handleFutureLetterChange("futureLetterTo", event.target.value)}
+                  value={draftState.futureLetterTo}
+                  onChange={(event) => setDraftState((previous) => ({ ...previous, futureLetterTo: event.target.value }))}
+                  onBlur={() => void persistDraftField("futureLetterTo")}
                   placeholder="Ton moi futur"
                 />
               </label>
@@ -834,17 +591,19 @@ const SelfLovePage = () => {
                 <input
                   type="date"
                   min={today.iso}
-                  value={safeState.futureLetterOpenDate}
-                  onChange={(event) => handleFutureLetterChange("futureLetterOpenDate", event.target.value)}
+                  value={draftState.futureLetterOpenDate || buildDefaultFutureOpenDate()}
+                  onChange={(event) => setDraftState((previous) => ({ ...previous, futureLetterOpenDate: event.target.value }))}
+                  onBlur={() => void persistDraftField("futureLetterOpenDate")}
                 />
               </label>
             </div>
             <div className="self-love-letter__body self-love-future-letter__body">
               <p className="self-love-letter__salutation">Cher moi,</p>
               <textarea
-                value={safeState.futureLetterBody}
-                onChange={(event) => handleFutureLetterChange("futureLetterBody", event.target.value)}
-                placeholder="Parle-lui de tes rêves, de tes peurs, de ce que tu espères garder vivant."
+                value={draftState.futureLetterBody}
+                onChange={(event) => setDraftState((previous) => ({ ...previous, futureLetterBody: event.target.value }))}
+                onBlur={() => void persistDraftField("futureLetterBody")}
+                placeholder="Parle-lui de tes reves, de tes peurs, de ce que tu esperes garder vivant."
               />
             </div>
             <div className="self-love-future-letter__footer">
@@ -853,36 +612,35 @@ const SelfLovePage = () => {
                 <img src={stampKey} alt="Timbre secret" loading="lazy" decoding="async" />
               </div>
               <div className="self-love-future-letter__actions">
-                <button type="button" className="self-love-letter__save" onClick={handleSaveFutureLetter}>
+                <button type="button" className="self-love-letter__save" onClick={() => void handleSaveFutureLetter()}>
                   Enregistrer une copie
                 </button>
-                <button
-                  type="button"
-                  className="self-love-future-letter__seal"
-                  onClick={handleSealFutureLetter}
-                >
+                <button type="button" className="self-love-future-letter__seal" onClick={() => void handleSealFutureLetter()}>
                   Sceller la lettre
                 </button>
               </div>
             </div>
           </div>
         </div>
+
         <div
           className={`journaling-save__confirmation self-love-letter__confirmation${futureSealConfirmationVisible ? " is-visible" : ""}`}
           aria-live="polite"
         >
           <span aria-hidden="true">✓</span>
-          <strong>Lettre scellée &amp; archivée !</strong>
+          <strong>Lettre scellee et archivee !</strong>
         </div>
         <div
           className={`journaling-save__confirmation self-love-letter__confirmation${letterSaveConfirmationVisible ? " is-visible" : ""}`}
           aria-live="polite"
         >
           <span aria-hidden="true">✓</span>
-          <strong>Page ajoutée !</strong>
+          <strong>Page ajoutee !</strong>
         </div>
       </section>
-</div>
+      </fieldset>
+    </div>
   )
 }
+
 export default SelfLovePage

@@ -3,13 +3,19 @@ import crypto from "node:crypto"
 import fs from "node:fs"
 import path from "node:path"
 import express from "express"
+import multer from "multer"
 import Stripe from "stripe"
+import { isFirebaseTokenVerificationConfigured, verifyFirebaseIdToken } from "./firebaseTokenVerifier.mjs"
+import { deleteMediaFile, isAllowedImageScope, storeImage } from "./mediaStorage.mjs"
 
 const app = express()
 const port = Number(process.env.PORT || 4242)
+const host = process.env.HOST || process.env.SERVER_HOST || "127.0.0.1"
 
 const appBaseUrl = process.env.APP_BASE_URL || "http://localhost:5173"
 const downloadsDir = process.env.DOWNLOADS_DIR || path.resolve(process.cwd(), "server", "downloads")
+const mediaRootDir = process.env.MEDIA_ROOT_DIR || path.resolve(process.cwd(), "server", "media")
+const mediaPublicBaseUrl = process.env.MEDIA_PUBLIC_BASE_URL || "/media"
 const downloadTokenSecret = process.env.DOWNLOAD_TOKEN_SECRET || "replace-me"
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY || ""
 const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET || ""
@@ -19,6 +25,12 @@ if (!stripeSecretKey) {
 }
 
 const stripe = new Stripe(stripeSecretKey, { apiVersion: "2024-06-20" })
+const mediaUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 8 * 1024 * 1024,
+  },
+})
 
 const products = [
   {
@@ -108,13 +120,15 @@ const parseOrigins = () => {
 
 const allowedOrigins = parseOrigins()
 
+app.set("trust proxy", process.env.TRUST_PROXY === "1" || process.env.TRUST_PROXY === "true")
+
 app.use((req, res, next) => {
   const origin = req.headers.origin
   if (origin && allowedOrigins.includes(origin)) {
     res.header("Access-Control-Allow-Origin", origin)
     res.header("Vary", "Origin")
     res.header("Access-Control-Allow-Credentials", "true")
-    res.header("Access-Control-Allow-Headers", "Content-Type")
+    res.header("Access-Control-Allow-Headers", "Authorization,Content-Type")
     res.header("Access-Control-Allow-Methods", "GET,POST,OPTIONS")
   }
   if (req.method === "OPTIONS") {
@@ -125,6 +139,83 @@ app.use((req, res, next) => {
 
 app.use("/api/stripe-webhook", express.raw({ type: "application/json" }))
 app.use(express.json())
+app.use("/media", express.static(mediaRootDir))
+
+const mediaAuth = async (req, res, next) => {
+  if (!isFirebaseTokenVerificationConfigured) {
+    return res.status(503).json({ error: "Firebase Auth n'est pas configure cote serveur." })
+  }
+
+  const authorization = req.headers.authorization || ""
+  const [scheme, token] = authorization.split(" ")
+  if (scheme !== "Bearer" || !token) {
+    return res.status(401).json({ error: "Authentification requise." })
+  }
+
+  try {
+    const decoded = await verifyFirebaseIdToken(token)
+    req.user = decoded
+    next()
+  } catch (error) {
+    console.error("Media auth failed:", error)
+    return res.status(401).json({ error: "Jeton Firebase invalide." })
+  }
+}
+
+app.post("/api/media/upload-image", mediaAuth, mediaUpload.single("file"), async (req, res) => {
+  try {
+    const scope = String(req.body?.scope || "")
+    const entityId = String(req.body?.entityId || "")
+    const uid = req.user?.uid
+    const file = req.file
+
+    if (!uid) {
+      return res.status(401).json({ error: "Utilisateur introuvable." })
+    }
+    if (!file || !file.buffer) {
+      return res.status(400).json({ error: "Aucun fichier image recu." })
+    }
+    if (!isAllowedImageScope(scope)) {
+      return res.status(400).json({ error: "Scope media invalide." })
+    }
+    if (!file.mimetype?.startsWith("image/")) {
+      return res.status(400).json({ error: "Seules les images sont acceptees." })
+    }
+
+    const payload = await storeImage({
+      buffer: file.buffer,
+      uid,
+      scope,
+      entityId,
+      mediaRootDir,
+      publicBaseUrl: mediaPublicBaseUrl,
+    })
+
+    return res.json(payload)
+  } catch (error) {
+    console.error("Media upload failed:", error)
+    return res.status(500).json({ error: "Impossible de televerser cette image." })
+  }
+})
+
+app.post("/api/media/delete", mediaAuth, async (req, res) => {
+  try {
+    const uid = req.user?.uid
+    const relativePath = String(req.body?.path || "")
+    if (!uid) {
+      return res.status(401).json({ error: "Utilisateur introuvable." })
+    }
+    if (!relativePath) {
+      return res.status(400).json({ error: "Chemin media manquant." })
+    }
+
+    await deleteMediaFile({ uid, relativePath, mediaRootDir })
+    return res.json({ ok: true })
+  } catch (error) {
+    console.error("Media delete failed:", error)
+    return res.status(400).json({ error: "Impossible de supprimer ce media." })
+  }
+})
 
 app.get("/api/custom-products", (req, res) => {
   const items = readCustomProducts()
@@ -382,8 +473,8 @@ app.post("/api/stripe-webhook", async (req, res) => {
 
   res.json({ received: true })
 })
-app.listen(port, () => {
-  console.log(`Boutique server listening on http://localhost:${port}`)
+app.listen(port, host, () => {
+  console.log(`Boutique server listening on http://${host}:${port}`)
 })
 
 

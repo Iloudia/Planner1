@@ -31,6 +31,7 @@ import AdminPage from "./pages/Admin/AdminPage"
 import AdminProductsPage from "./pages/AdminProducts/AdminProductsPage"
 import AdminProductsManagePage from "./pages/AdminProducts/AdminProductsManagePage"
 import AdminRoute from "./components/AdminRoute"
+import AdminProductsRoute from "./components/AdminProductsRoute"
 import SettingsLayout from "./pages/Settings/SettingsLayout"
 import SettingsAccount from "./pages/Settings/SettingsAccount"
 import SettingsAccessibility from "./pages/Settings/SettingsAccessibility"
@@ -131,8 +132,6 @@ function App() {
           <Route path="/boutique/produit/:productId" element={<BoutiqueProductPage />} />
           <Route path="/panier" element={<CartPage />} />
           <Route path="/merci" element={<ThankYouPage />} />
-          <Route path="/admin/produits" element={<AdminProductsPage />} />
-          <Route path="/admin/produits/publies" element={<AdminProductsManagePage />} />
           <Route path="/confidentialite" element={<ConfidentialitePage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/cookies" element={<GestionCookiesPage />} />
@@ -165,6 +164,11 @@ function App() {
 
           <Route element={<AdminRoute />}>
             <Route path="/admin" element={<AdminPage />} />
+          </Route>
+
+          <Route element={<AdminProductsRoute />}>
+            <Route path="/admin/produits" element={<AdminProductsPage />} />
+            <Route path="/admin/produits/publies" element={<AdminProductsManagePage />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />

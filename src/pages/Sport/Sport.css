@@ -148,6 +148,12 @@
   box-shadow: 0 10px 26px rgba(0, 0, 0, 0.15);
 }
 
+.sport-board-card__feedback {
+  font-size: 0.78rem;
+  color: #2f7a4b;
+  font-weight: 600;
+}
+
 .sport-board-card__checkbox {
   display: flex;
   align-items: center;
@@ -309,87 +315,6 @@
 
 .sport-life-card:hover::after {
   opacity: 1;
-}
-
-.sport-life-card__menu {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  background: rgba(255, 255, 255, 0.9);
-  color: #0f172a;
-  font-weight: 700;
-  font-size: 1rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-  padding: 0;
-  cursor: pointer;
-  z-index: 2;
-  transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
-  
-}
-
-.sport-life-card__menu span {
-  display: block;
-  line-height: 1;
-  position: relative;
-  top: -4px;
-}
-
-
-
-.sport-life-card__menu:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.12);
-  border-color: rgba(236, 72, 153, 0.35);
-}
-
-.sport-life-card__menu:focus-visible {
-  outline: 2px solid var(--accent-2);
-  outline-offset: 2px;
-}
-
-.sport-life-card__menu-wrapper {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 3;
-}
-
-.sport-life-card__menu-popover {
-  position: absolute;
-  top: 46px;
-  right: 0;
-  background: #ffffff;
-  border: 1px solid #e6e1d9;
-  border-radius: 0;
-  padding: 0.4rem 0;
-  display: flex;
-  flex-direction: column;
-  min-width: 220px;
-  box-shadow: none;
-  z-index: 4;
-}
-
-.sport-life-card__menu-item {
-  background: none;
-  border: none;
-  text-align: left;
-  padding: 0.6rem 1rem;
-  border-radius: 0;
-  font-size: 1rem;
-  color: #000000;
-  cursor: pointer;
-}
-
-.sport-life-card__menu-item:hover {
-  background: #f1ece4;
-  color: #000000;
 }
 
 .sport-life-card__media {
@@ -607,24 +532,6 @@ body.sport-page--lux {
 .sport-hero-image {
   border-radius: 0;
   box-shadow: none;
-}
-
-.sport-life-card__menu {
-  border-radius: 50%;
-  border: 1px solid var(--lux-line);
-  background: #ffffff;
-  color: var(--lux-ink);
-}
-
-.sport-life-card__menu-popover {
-  border-radius: 0;
-  border: 1px solid #e6e1d9;
-  box-shadow: none;
-  padding: 0.4rem 0;
-}
-
-.sport-life-card__menu-item {
-  border-radius: 0;
 }
 
 

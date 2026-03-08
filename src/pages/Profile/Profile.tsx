@@ -2,13 +2,13 @@
 import { useNavigate } from "react-router-dom"
 import { sendEmailVerification, sendPasswordResetEmail } from "firebase/auth"
 import { useAuth } from "../../context/AuthContext"
-import { buildUserScopedKey, normalizeUserEmail } from "../../utils/userScopedKey"
+import { useUserProfilePhoto } from "../../hooks/useUserProfilePhoto"
+import { buildUserScopedKey } from "../../utils/userScopedKey"
 import { auth } from "../../utils/firebase"
+import defaultProfilePhoto from "../../assets/katie-huber-rhoades-dupe (1).webp"
 import PageHeading from "../../components/PageHeading"
 import "./Profile.css"
 
-const PROFILE_STORAGE_KEY = "planner.profile.preferences.v1"
-const PROFILE_PHOTO_SUFFIX = "profile-photo"
 const CHANGE_LIMITS_KEY = "planner.profile.changeLimits.v1"
 const DISPLAY_STORAGE_KEY = "planner.display.preferences"
 
@@ -89,10 +89,9 @@ const THEME_OPTIONS: { id: ThemeTone; label: string; description: string }[] = [
 const MS_IN_DAY = 1000 * 60 * 60 * 24
 
 const ProfilePage = () => {
-  const { userEmail, changePassword, deactivateAccount, deleteAccount, verifyPassword } = useAuth()
+  const { userEmail, userProfile, updateUserProfile, changePassword, deactivateAccount, deleteAccount, verifyPassword } = useAuth()
   const [activeId, setActiveId] = useState("account")
   const [profileData, setProfileData] = useState<ProfileData>({})
-  const [avatarSrc, setAvatarSrc] = useState<string>("")
   const [editingKey, setEditingKey] = useState<EditableKey | null>(null)
   const [pendingValue, setPendingValue] = useState("")
   const [editError, setEditError] = useState("")
@@ -118,12 +117,20 @@ const ProfilePage = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const panelRef = useRef<HTMLDivElement | null>(null)
   const navigate = useNavigate()
+  const {
+    photoSrc: avatarSrc,
+    hasCustomPhoto,
+    error: avatarError,
+    isBusy: isAvatarBusy,
+    uploadPhoto,
+    clearPhoto,
+  } = useUserProfilePhoto({
+    fallbackSrc: defaultProfilePhoto,
+  })
 
   const safeEmail = userEmail ?? "anonymous"
-  const profileDataKey = useMemo(() => buildUserScopedKey(normalizeUserEmail(safeEmail), PROFILE_STORAGE_KEY), [safeEmail])
-  const profilePhotoKey = useMemo(() => buildUserScopedKey(safeEmail, PROFILE_PHOTO_SUFFIX), [safeEmail])
-  const changeLimitsKey = useMemo(() => buildUserScopedKey(normalizeUserEmail(safeEmail), CHANGE_LIMITS_KEY), [safeEmail])
-  const displayPrefsKey = useMemo(() => buildUserScopedKey(normalizeUserEmail(safeEmail), DISPLAY_STORAGE_KEY), [safeEmail])
+  const changeLimitsKey = useMemo(() => buildUserScopedKey(safeEmail, CHANGE_LIMITS_KEY), [safeEmail])
+  const displayPrefsKey = useMemo(() => buildUserScopedKey(safeEmail, DISPLAY_STORAGE_KEY), [safeEmail])
 
   const activeSection = useMemo(
     () => settingsSections.find((section) => section.id === activeId) ?? settingsSections[0],
@@ -131,20 +138,11 @@ const ProfilePage = () => {
   )
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(profileDataKey)
-      if (raw) {
-        setProfileData(JSON.parse(raw) as ProfileData)
-      }
-    } catch {
-      setProfileData({})
-    }
-  }, [profileDataKey])
-
-  useEffect(() => {
-    const stored = localStorage.getItem(profilePhotoKey) ?? localStorage.getItem("profile-photo") ?? ""
-    setAvatarSrc(stored)
-  }, [profilePhotoKey])
+    setProfileData({
+      personalInfo: userProfile.personalInfo ?? {},
+      identityInfo: userProfile.identityInfo ?? {},
+    })
+  }, [userProfile])
 
   useEffect(() => {
     try {
@@ -245,13 +243,12 @@ const ProfilePage = () => {
     return { ok: true }
   }
 
-  const persistProfileData = (next: ProfileData) => {
+  const persistProfileData = async (next: ProfileData) => {
     setProfileData(next)
-    try {
-      localStorage.setItem(profileDataKey, JSON.stringify(next))
-    } catch {
-      // ignore
-    }
+    await updateUserProfile({
+      personalInfo: next.personalInfo ?? {},
+      identityInfo: next.identityInfo ?? {},
+    })
   }
 
   const startEdit = (key: EditableKey) => {
@@ -320,27 +317,24 @@ const ProfilePage = () => {
       identity.username = pendingValue.trim()
     }
 
-    persistProfileData({ personalInfo: personal, identityInfo: identity })
+    try {
+      await persistProfileData({ personalInfo: personal, identityInfo: identity })
+    } catch {
+      setEditError("Impossible d'enregistrer ces informations.")
+      return
+    }
     writeLimits(limits)
     setEditingKey(null)
     setPendingValue("")
   }
 
-  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
-    if (!file) return
-    const reader = new FileReader()
-    reader.onload = () => {
-      const result = typeof reader.result === "string" ? reader.result : ""
-      setAvatarSrc(result)
-      try {
-        localStorage.setItem(profilePhotoKey, result)
-        localStorage.setItem("profile-photo", result)
-      } catch {
-        // ignore
-      }
+    if (!file) {
+      event.target.value = ""
+      return
     }
-    reader.readAsDataURL(file)
+    await uploadPhoto(file)
     event.target.value = ""
   }
 
@@ -453,23 +447,26 @@ const ProfilePage = () => {
                 <div className="account-block">
                   <h2>Informations de base</h2>
                   <div className="account-avatar-row">
-                    <button type="button" className="account-avatar" onClick={() => fileInputRef.current?.click()}>
+                    <button type="button" className="account-avatar" onClick={() => fileInputRef.current?.click()} disabled={isAvatarBusy}>
                       {avatarSrc ? <img src={avatarSrc} alt="Profil" loading="eager" decoding="async" width={64} height={64} /> : null}
                     </button>
                     <div className="account-avatar-actions">
-                      <button type="button" onClick={() => fileInputRef.current?.click()}>
+                      <button type="button" onClick={() => fileInputRef.current?.click()} disabled={isAvatarBusy}>
                         Modifier la photo
                       </button>
-                      <button type="button" className="is-danger" onClick={() => setAvatarSrc("")}>Supprimer</button>
+                      <button type="button" className="is-danger" onClick={() => void clearPhoto()} disabled={isAvatarBusy || !hasCustomPhoto}>
+                        Supprimer
+                      </button>
                     </div>
                     <input
                       ref={fileInputRef}
                       type="file"
                       accept="image/*"
                       className="account-avatar-input"
-                      onChange={handleAvatarChange}
+                      onChange={(event) => void handleAvatarChange(event)}
                     />
                   </div>
+                  {avatarError ? <p className="account-info-error">{avatarError}</p> : null}
                   {editError ? <p className="account-info-error">{editError}</p> : null}
                   {editInfo ? <p className="account-info-success">{editInfo}</p> : null}
                   <div className="account-info-list">

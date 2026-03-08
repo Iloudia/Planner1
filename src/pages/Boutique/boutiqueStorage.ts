@@ -1,9 +1,9 @@
-﻿import type { BoutiqueProduct } from "./boutiqueData"
+import type { BoutiqueProduct } from "./boutiqueData"
+import { buildApiUrl } from "../../utils/apiUrl"
 
 const CUSTOM_PRODUCTS_KEY = "boutique.customProducts.v1"
 const CUSTOM_PRODUCTS_EVENT = "products:updated"
-const API_BASE = import.meta.env.VITE_API_BASE || ""
-const CUSTOM_PRODUCTS_ENDPOINT = `${API_BASE}/api/custom-products`
+const CUSTOM_PRODUCTS_ENDPOINT = buildApiUrl("/api/custom-products")
 
 type StoredProduct = BoutiqueProduct & { createdAt: string; updatedAt?: string }
 

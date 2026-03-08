@@ -3,7 +3,8 @@ import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react"
 import { useAuth } from "../context/AuthContext"
 
 function Header() {
-  const { isAuthenticated, isAdmin, logout } = useAuth()
+  const { isAuthenticated, isAdmin, userEmail, logout } = useAuth()
+  const canAccessAdminProducts = (userEmail ?? "").toLowerCase() === "iloudiav@gmail.com"
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState("")
   const [searchSuggestionsOpen, setSearchSuggestionsOpen] = useState(false)
@@ -346,26 +347,30 @@ function Header() {
                     >
                       Archives
                     </button>
-                    <button
-                      type="button"
-                      className="account-menu__item"
-                      onClick={() => {
-                        handleNavigate("/admin/produits")
-                        setIsAccountOpen(false)
-                      }}
-                    >
-                      Fiche produit
-                    </button>
-                    <button
-                      type="button"
-                      className="account-menu__item"
-                      onClick={() => {
-                        handleNavigate("/admin/produits/publies")
-                        setIsAccountOpen(false)
-                      }}
-                    >
-                      Produits publies
-                    </button>
+                    {canAccessAdminProducts ? (
+                      <>
+                        <button
+                          type="button"
+                          className="account-menu__item"
+                          onClick={() => {
+                            handleNavigate("/admin/produits")
+                            setIsAccountOpen(false)
+                          }}
+                        >
+                          Fiche produit
+                        </button>
+                        <button
+                          type="button"
+                          className="account-menu__item"
+                          onClick={() => {
+                            handleNavigate("/admin/produits/publies")
+                            setIsAccountOpen(false)
+                          }}
+                        >
+                          Produits publies
+                        </button>
+                      </>
+                    ) : null}
                     <button
                       type="button"
                       className="account-menu__item account-menu__item--danger"

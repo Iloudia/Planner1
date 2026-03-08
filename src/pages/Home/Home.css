@@ -262,115 +262,17 @@
   color: var(--color-chocolate);
 }
 
-.card-title-input {
-  width: 100%;
-  border: 1px solid rgba(148, 163, 184, 0.35);
-  border-radius: 12px;
-  padding: 0.5rem 0.65rem;
-  font-size: 16px;
-  font-weight: 600;
-  background: #ffffff;
-}
-
-.card-title-input:focus {
-  outline: none;
-  border-color: #ec4899;
-  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
-}
-
 .card p {
   margin: 0;
   color: var(--muted);
   line-height: 1.4;
 }
 
-.card-menu {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  background: rgba(255, 255, 255, 0.9);
-  color: #0f172a;
-  font-weight: 700;
-  font-size: 1rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-  padding: 0;
-  cursor: pointer;
-  z-index: 2;
-  transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
-}
-
-.card-menu span {
-  display: block;
-  line-height: 1;
-  position: relative;
-  top: -4px;
-}
-
-.card-menu:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.12);
-  border-color: rgba(236, 72, 153, 0.35);
-}
-
-.card-menu:focus-visible {
-  outline: 2px solid var(--accent-2);
-  outline-offset: 2px;
-}
-
-.card-menu-wrapper {
-  position: absolute;
-  top: 1px;
-  right: 10px;
-  z-index: 3;
-}
-
-.card-menu-popover {
-  position: absolute;
-  top: 46px;
-  right: 0;
-  background: #ffffff;
-  border: 1px solid #e6e1d9;
-  border-radius: 0;
-  padding: 0.4rem 0;
-  display: flex;
-  flex-direction: column;
-  min-width: 220px;
-  box-shadow: none;
-  z-index: 4;
-}
-
-.card-menu-popover__item {
-  background: none;
-  border: none;
-  text-align: left;
-  padding: 0.6rem 1rem;
-  border-radius: 0;
-  font-size: 1rem;
-  color: #000000;
-  cursor: pointer;
-}
-
-.card-menu-popover__item:hover {
-  background: #f1ece4;
-  color: #000000;
-}
-
-.card-file-input {
-  display: none;
-}
-
 .profile-photo {
   position: relative;
   width: min(220px, 100%);
   height: 220px;
-  overflow: hidden;
+  overflow: visible;
   background: rgba(15, 23, 42, 0.06);
   margin: 0 auto;
   box-shadow: 0 16px 50px rgba(15, 23, 42, 0.12);
@@ -382,6 +284,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: inherit;
 }
 
 .profile-menu {
@@ -406,6 +309,47 @@
   line-height: 1;
   position: relative;
   top: -4px;
+}
+
+.home-profile-card__menu {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+}
+
+.home-profile-card__menu .profile-menu {
+  position: static;
+}
+
+.home-profile-card__menu-popover {
+  position: absolute;
+  top: 46px;
+  right: 0;
+  min-width: 220px;
+  padding: 0.4rem 0;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid #e6e1d9;
+  border-radius: 0;
+  box-shadow: none;
+  z-index: 20;
+}
+
+.home-profile-card__menu-item {
+  border: none;
+  background: none;
+  padding: 0.6rem 1rem;
+  text-align: left;
+  font-size: 1rem;
+  color: #000000;
+  cursor: pointer;
+}
+
+.home-profile-card__menu-item:hover {
+  background: #f1ece4;
+  color: #000000;
 }
 
 .profile-file-input {
@@ -489,6 +433,14 @@
   box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
 }
 
+.todo-limit-message {
+  margin: 0.55rem 0 0;
+  font-size: 0.66rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  color: #b45309;
+}
+
 .todo-list {
   list-style: none;
   padding: 0;
@@ -525,7 +477,7 @@
 .todo-item button {
   border: none;
   background: transparent;
-  color: #dc2626;
+  color: #000000;
   cursor: pointer;
   font-weight: 700;
 }
@@ -776,12 +728,6 @@
     font-size: 0.75rem;
     padding: 0.3rem 0.6rem;
   }
-
-  .card-menu-popover {
-    right: -36px;
-    min-width: 200px;
-    max-width: calc(100vw - 24px);
-  }
 }
 
 /* Tablette */
@@ -961,29 +907,11 @@ body.home-page--lux {
   color: var(--lux-ink);
 }
 
-.page.home-page .card-title-input {
-  border-radius: 0;
-  border: 1px solid var(--lux-line);
-  font-family: "Playfair Display", "Times New Roman", serif;
-}
-
-.page.home-page .card-menu {
-  border-radius: 0;
-  background: #ffffff;
-  border: 1px solid var(--lux-line);
-  color: var(--lux-ink);
-}
-
 .page.home-page .profile-menu {
   border-radius: 50%;
   background: #ffffff;
   border: 1px solid var(--lux-line);
   color: var(--lux-ink);
-}
-
-.page.home-page .card-menu:hover {
-  border-color: rgba(31, 27, 22, 0.4);
-  box-shadow: 0 12px 24px rgba(31, 27, 22, 0.12);
 }
 
 .page.home-page .profile-photo {

@@ -2,6 +2,7 @@
 import { Link } from "react-router-dom"
 import "../Boutique/Boutique.css"
 import "./Cart.css"
+import { buildApiUrl } from "../../utils/apiUrl"
 
 import { products } from "../Boutique/boutiqueData"
 import { loadCustomProducts } from "../Boutique/boutiqueStorage"
@@ -67,12 +68,11 @@ const CartPage = () => {
     setIsCheckoutLoading(true)
     setCheckoutError(null)
     try {
-      const apiBase = import.meta.env.VITE_API_BASE || ""
       const payloadItems = lineItems.map(({ item }) => ({
         productId: item.productId,
         quantity: item.quantity,
       }))
-      const response = await fetch(`${apiBase}/api/create-checkout-session`, {
+      const response = await fetch(buildApiUrl("/api/create-checkout-session"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ items: payloadItems }),

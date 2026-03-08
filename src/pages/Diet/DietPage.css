@@ -25,8 +25,8 @@
 }
 
 .diet-toggle button.is-active {
-  background: rgba(236, 72, 153, 0.12);
-  color: #831843;
+  background: var(--color-caramel);
+  color: #000000;
 }
 
 .diet-blog {
@@ -76,7 +76,7 @@
   text-transform: uppercase;
   letter-spacing: 0.12em;
   font-size: 0.75rem;
-  color: #000000;
+  color: var(--color-chocolate);
   font-weight: 700;
 }
 
@@ -381,9 +381,10 @@
   flex-direction: column;
   gap: 0.75rem;
   padding: 1rem 1.1rem;
-  border-radius: 18px;
-  border: 1px solid rgba(236, 72, 153, 0.18);
-  background: rgba(252, 231, 243, 0.35);
+  margin-bottom: 1rem;
+  border-radius: 0;
+  border: 1px solid #e6e1d9;
+  background: #ffffff;
 }
 
 .diet-recipe-plan__row {
@@ -401,7 +402,7 @@
 }
 
 .diet-recipe-plan input {
-  border: 1px solid rgba(148, 163, 184, 0.45);
+  border: 1px solid #000000;
   border-radius: 12px;
   padding: 0.6rem 0.75rem;
   font-size: 0.95rem;
@@ -501,8 +502,8 @@
   justify-content: flex-end;
   align-items: center;
   gap: 0.8rem;
-  padding: 1.1rem 1.6rem;
-  background: rgba(15, 23, 42, 0.06);
+  padding: 1.5rem 1.8rem;
+  background: #ffffff;
   border-top: 1px solid rgba(15, 23, 42, 0.08);
 }
 
@@ -516,6 +517,32 @@
   cursor: pointer;
 }
 
+.diet-recipe-modal__actions button:first-child {
+  border-radius: 0;
+  border: 1px solid #000000;
+  background: #ffffff;
+  color: #000000;
+}
+
+.diet-recipe-modal__actions button:last-child {
+  border-radius: 0;
+  border: 1px solid #000000;
+  background: #000000;
+  color: #ffffff;
+}
+
+.diet-recipe-modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.diet-recipe-modal__body section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
 .diet-recipe-modal__body h4 {
   margin: 0 0 0.3rem;
   color: var(--color-chocolate);
@@ -526,6 +553,14 @@
   margin: 0;
   padding-left: 1.2rem;
   color: var(--color-chocolate);
+}
+
+.diet-plan-modal__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #000000;
 }
 
 @media (max-width: 900px) {
@@ -740,6 +775,20 @@ body.diet-page--lux {
   color: var(--lux-ink);
 }
 
+.diet-recipe-modal__actions button:first-child {
+  border-radius: 0;
+  border: 1px solid #000000;
+  background: #ffffff;
+  color: #000000;
+}
+
+.diet-recipe-modal__actions button:last-child {
+  border-radius: 0;
+  border: 1px solid #000000;
+  background: #000000;
+  color: #ffffff;
+}
+
 .diet-recipe-modal__body input,
 .diet-recipe-modal__body textarea,
 .diet-recipe-form input,
@@ -750,4 +799,30 @@ body.diet-page--lux {
   border-radius: 0;
   border: 1px solid var(--lux-line);
   box-shadow: none;
+}
+
+.diet-recipe-modal__panel,
+.diet-recipe-modal__panel h1,
+.diet-recipe-modal__panel h2,
+.diet-recipe-modal__panel h3,
+.diet-recipe-modal__panel h4,
+.diet-recipe-modal__panel p,
+.diet-recipe-modal__panel ul,
+.diet-recipe-modal__panel ol,
+.diet-recipe-modal__panel li,
+.diet-recipe-modal__panel span,
+.diet-recipe-modal__panel strong,
+.diet-recipe-modal__panel em,
+.diet-recipe-modal__panel small,
+.diet-recipe-modal__panel label {
+  color: #000000;
+}
+
+.diet-recipe-modal__panel li::marker {
+  color: #000000;
+}
+
+.diet-recipe-modal__panel .diet-plan-modal__meta,
+.diet-recipe-modal__panel .diet-plan-modal__meta span {
+  color: #6b7280;
 }

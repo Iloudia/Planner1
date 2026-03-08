@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { Link } from "react-router-dom"
 import { useAuth } from "../../context/AuthContext"
-import { buildUserScopedKey } from "../../utils/userScopedKey"
+import useUserDietData from "../../hooks/useUserDietData"
+import { deleteMedia, uploadImage } from "../../services/media/api"
+import { getWeekKey } from "../../utils/weekKey"
 import wrapPouletImg from "../../assets/wrap-poulet.webp"
 import pancakesProteineImg from "../../assets/Pancakes-proteine.webp"
 import butterChickenImg from "../../assets/butter-chicken.webp"
@@ -32,7 +34,7 @@ import bowlPouletImg from "../../assets/bowl-poulet.webp"
 import PageHeading from "../../components/PageHeading"
 import "./DietPage.css"
 
-type Recipe = {
+export type Recipe = {
   id: string
   title: string
   flavor: "sucre" | "sale"
@@ -43,6 +45,11 @@ type Recipe = {
   steps: string[]
   toppings?: string[]
   tips?: string[]
+}
+
+type RenderRecipe = Recipe & {
+  source: "builtin" | "custom"
+  imagePath?: string
 }
 
 type RecipeSnapshot = {
@@ -58,7 +65,7 @@ type RecipeSnapshot = {
   tips?: string[]
 }
 
-const massRecipes: Recipe[] = [
+export const massRecipes: Recipe[] = [
   {
   id: "mass-pancakes",
   title: "Pancake protéiné",
@@ -522,7 +529,7 @@ const massRecipes: Recipe[] = [
 },
 ]
 
-const healthyRecipes: Recipe[] = [
+export const healthyRecipes: Recipe[] = [
 {
   id: "healthy-parfait",
   title: "Burrito bowl healthy",
@@ -1023,13 +1030,17 @@ const CUSTOM_RECIPES_KEY = "planner.diet.customRecipes"
 const DIET_WEEKLY_PLAN_KEY = "planner.diet.weeklyPlan"
 const DIET_WEEKLY_PLAN_RECIPES_KEY = "planner.diet.weeklyPlanRecipes"
 
-const weekDays = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"] as const
-type MealSlotId = "morning" | "midday" | "evening"
-const mealSlots: { id: MealSlotId; label: string }[] = [
+export const builtinDietRecipes: Recipe[] = [...massRecipes, ...healthyRecipes]
+
+export const dietWeekDays = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"] as const
+export type MealSlotId = "morning" | "midday" | "evening"
+export const dietMealSlots: { id: MealSlotId; label: string }[] = [
   { id: "morning", label: "Matin" },
   { id: "midday", label: "Midi" },
   { id: "evening", label: "Soir" },
 ]
+const weekDays = dietWeekDays
+const mealSlots = dietMealSlots
 const FLAVOR_OPTIONS: Array<{ value: "sucre" | "sale"; label: string }> = [
   { value: "sale", label: "Salé" },
   { value: "sucre", label: "Sucré" },
@@ -1037,50 +1048,41 @@ const FLAVOR_OPTIONS: Array<{ value: "sucre" | "sale"; label: string }> = [
 const FLAVOR_PLACEHOLDER = "Sélectionner un type"
 const PLAN_DAY_PLACEHOLDER = "Sélectionner un jour"
 const PLAN_SLOT_PLACEHOLDER = "Sélectionner un moment"
-type WeeklyPlan = Record<typeof weekDays[number], Record<MealSlotId, string>>
+type WeeklyPlan = Record<typeof dietWeekDays[number], Record<MealSlotId, string>>
 
 const buildDefaultWeeklyPlan = (): WeeklyPlan => {
   const plan = {} as WeeklyPlan
-  weekDays.forEach((day) => {
+  dietWeekDays.forEach((day) => {
     plan[day] = { morning: "", midday: "", evening: "" }
   })
   return plan
 }
 const DietClassicPage = () => {
-  const { userEmail } = useAuth()
+  const { userId } = useAuth()
+  const weekKey = getWeekKey()
+  const {
+    customRecipes: persistedCustomRecipes,
+    favoriteRecipes: favoriteRecipeRefs,
+    isLoading,
+    error,
+    assignRecipeToSlot,
+    toggleFavoriteRecipe,
+    createCustomRecipe,
+    updateCustomRecipe,
+    deleteCustomRecipe,
+  } = useUserDietData(weekKey)
+  const canEdit = Boolean(userId)
   useEffect(() => {
     document.body.classList.add("diet-page--lux")
     return () => {
       document.body.classList.remove("diet-page--lux")
     }
   }, [])
-  const favoritesKey = useMemo(() => buildUserScopedKey(userEmail, RECIPE_FAVORITES_KEY), [userEmail])
-  const weeklyPlanKey = useMemo(() => buildUserScopedKey(userEmail, DIET_WEEKLY_PLAN_KEY), [userEmail])
-  const weeklyPlanRecipesKey = useMemo(() => buildUserScopedKey(userEmail, DIET_WEEKLY_PLAN_RECIPES_KEY), [userEmail])
-  const customRecipesKey = useMemo(() => buildUserScopedKey(userEmail, CUSTOM_RECIPES_KEY), [userEmail])
   const [tab, setTab] = useState<"sweet" | "savory" | "favorites" | "custom">("sweet")
-  const [favoriteIds, setFavoriteIds] = useState<Set<string>>(() => {
-    if (typeof window === "undefined") return new Set()
-    try {
-      const stored = window.localStorage.getItem(favoritesKey)
-      return stored ? new Set(JSON.parse(stored)) : new Set()
-    } catch {
-      return new Set()
-    }
-  })
-  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
+  const [selectedRecipe, setSelectedRecipe] = useState<RenderRecipe | null>(null)
   const [planDay, setPlanDay] = useState<typeof weekDays[number]>(weekDays[0])
   const [planSlot, setPlanSlot] = useState<MealSlotId>("midday")
   const [planMealName, setPlanMealName] = useState("")
-  const [customRecipes, setCustomRecipes] = useState<Recipe[]>(() => {
-    if (typeof window === "undefined") return []
-    try {
-      const stored = window.localStorage.getItem(customRecipesKey)
-      return stored ? (JSON.parse(stored) as Recipe[]) : []
-    } catch {
-      return []
-    }
-  })
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [customMenuOpenId, setCustomMenuOpenId] = useState<string | null>(null)
@@ -1089,6 +1091,7 @@ const DietClassicPage = () => {
   const [draftPrepTime, setDraftPrepTime] = useState("")
   const [draftServings, setDraftServings] = useState("")
   const [draftImage, setDraftImage] = useState<string | null>(null)
+  const [draftImageFile, setDraftImageFile] = useState<File | null>(null)
   const [draftIngredients, setDraftIngredients] = useState("")
   const [draftSteps, setDraftSteps] = useState("")
   const [draftToppings, setDraftToppings] = useState("")
@@ -1099,6 +1102,7 @@ const DietClassicPage = () => {
   const [editPrepTime, setEditPrepTime] = useState("")
   const [editServings, setEditServings] = useState("")
   const [editImage, setEditImage] = useState<string | null>(null)
+  const [editImageFile, setEditImageFile] = useState<File | null>(null)
   const [editIngredients, setEditIngredients] = useState("")
   const [editSteps, setEditSteps] = useState("")
   const [editToppings, setEditToppings] = useState("")
@@ -1111,14 +1115,41 @@ const DietClassicPage = () => {
   const flavorMenuRef = useRef<HTMLDivElement | null>(null)
   const planDayMenuRef = useRef<HTMLDivElement | null>(null)
   const planSlotMenuRef = useRef<HTMLDivElement | null>(null)
-  const allRecipes = useMemo(() => [...massRecipes, ...healthyRecipes], [])
+  const customMenuRef = useRef<HTMLDivElement | null>(null)
+  const customRecipes = useMemo<RenderRecipe[]>(
+    () =>
+      persistedCustomRecipes.map((recipe) => ({
+        id: recipe.id,
+        title: recipe.title,
+        flavor: recipe.flavor,
+        prepTime: recipe.prepTime,
+        servings: recipe.servings,
+        image: recipe.imageUrl || wrapPouletImg,
+        ingredients: recipe.ingredients,
+        steps: recipe.steps,
+        toppings: recipe.toppings,
+        tips: recipe.tips,
+        source: "custom",
+        imagePath: recipe.imagePath,
+      })),
+    [persistedCustomRecipes],
+  )
+  const customRecipeIdSet = useMemo(() => new Set(customRecipes.map((recipe) => recipe.id)), [customRecipes])
+  const favoriteIds = useMemo(() => new Set(favoriteRecipeRefs.map((recipe) => recipe.recipeId)), [favoriteRecipeRefs])
+  const allRecipes = useMemo<RenderRecipe[]>(
+    () => [
+      ...builtinDietRecipes.map((recipe) => ({ ...recipe, source: "builtin" as const })),
+      ...customRecipes,
+    ],
+    [customRecipes],
+  )
   const currentHeading = tab === "favorites" || tab === "custom" ? null : DIET_HEADINGS[tab]
   const favoriteRecipes = useMemo(() => allRecipes.filter((recipe) => favoriteIds.has(recipe.id)), [allRecipes, favoriteIds])
   const filteredRecipes = useMemo(() => {
     if (tab === "favorites") return favoriteRecipes
     const flavor = tab === "sweet" ? "sucre" : "sale"
-    return allRecipes.filter((recipe) => recipe.flavor === flavor)
-  }, [allRecipes, favoriteRecipes, tab])
+    return builtinDietRecipes.filter((recipe) => recipe.flavor === flavor)
+  }, [favoriteRecipes, tab])
 
   useEffect(() => {
     if (!selectedRecipe) return
@@ -1152,91 +1183,46 @@ const DietClassicPage = () => {
   }, [isFlavorMenuOpen, isPlanDayMenuOpen, isPlanSlotMenuOpen])
 
   useEffect(() => {
-    if (typeof window === "undefined") return
-    try {
-      window.localStorage.setItem(favoritesKey, JSON.stringify(Array.from(favoriteIds)))
-    } catch {
-      // ignore
+    if (!customMenuOpenId) return
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node
+      if (customMenuRef.current?.contains(target)) return
+      setCustomMenuOpenId(null)
     }
-  }, [favoriteIds, favoritesKey])
-
-  useEffect(() => {
-    if (typeof window === "undefined") return
-    try {
-      window.localStorage.setItem(customRecipesKey, JSON.stringify(customRecipes))
-    } catch {
-      // ignore
-    }
-  }, [customRecipes, customRecipesKey])
-
-  const toggleFavorite = (recipeId: string) => {
-    setFavoriteIds((previous) => {
-      const next = new Set(previous)
-      if (next.has(recipeId)) {
-        next.delete(recipeId)
-      } else {
-        next.add(recipeId)
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setCustomMenuOpenId(null)
       }
-      return next
+    }
+    window.addEventListener("mousedown", handleClickOutside)
+    window.addEventListener("keydown", handleKeyDown)
+    return () => {
+      window.removeEventListener("mousedown", handleClickOutside)
+      window.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [customMenuOpenId])
+
+  const toggleFavorite = async (recipeId: string) => {
+    if (!canEdit) return
+    await toggleFavoriteRecipe({
+      source: customRecipeIdSet.has(recipeId) ? "custom" : "builtin",
+      recipeId,
     })
   }
-  const addRecipeToPlan = () => {
-    if (!selectedRecipe) return
+  const addRecipeToPlan = async () => {
+    if (!selectedRecipe || !canEdit) return
     const mealName = planMealName.trim() || selectedRecipe.title
     if (!mealName) return
-    try {
-      const raw = window.localStorage.getItem(weeklyPlanKey)
-      let plan = buildDefaultWeeklyPlan()
-      if (raw) {
-        const parsed = JSON.parse(raw)
-        if (parsed && typeof parsed === "object") {
-          plan = { ...plan, ...parsed }
-        }
-      }
-      const dayPlan = plan[planDay] ?? { morning: "", midday: "", evening: "" }
-      const nextPlan = {
-        ...plan,
-        [planDay]: { ...dayPlan, [planSlot]: mealName },
-      }
-      window.localStorage.setItem(weeklyPlanKey, JSON.stringify(nextPlan))
-      const recipeRaw = window.localStorage.getItem(weeklyPlanRecipesKey)
-      let recipeMap: Record<string, Record<MealSlotId, RecipeSnapshot>> = {}
-      if (recipeRaw) {
-        try {
-          const parsed = JSON.parse(recipeRaw)
-          if (parsed && typeof parsed === "object") {
-            recipeMap = parsed as Record<string, Record<MealSlotId, RecipeSnapshot>>
-          }
-        } catch {
-          recipeMap = {}
-        }
-      }
-      const dayRecipes = recipeMap[planDay] ?? {}
-      const recipeSnapshot: RecipeSnapshot = {
-        id: selectedRecipe.id,
-        title: selectedRecipe.title,
-        flavor: selectedRecipe.flavor,
-        prepTime: selectedRecipe.prepTime,
-        servings: selectedRecipe.servings,
-        image: selectedRecipe.image,
-        ingredients: selectedRecipe.ingredients,
-        steps: selectedRecipe.steps,
-        toppings: selectedRecipe.toppings,
-        tips: selectedRecipe.tips,
-      }
-      recipeMap = {
-        ...recipeMap,
-        [planDay]: { ...dayRecipes, [planSlot]: recipeSnapshot },
-      }
-      window.localStorage.setItem(weeklyPlanRecipesKey, JSON.stringify(recipeMap))
-      setSelectedRecipe(null)
-    } catch {
-      // ignore
-    }
+    await assignRecipeToSlot(planDay, planSlot, mealName, {
+      source: selectedRecipe.source,
+      recipeId: selectedRecipe.id,
+    })
+    setSelectedRecipe(null)
   }
   const handleDraftImageChange = (file?: File) => {
     if (!file) return
     if (!file.type.startsWith("image/")) return
+    setDraftImageFile(file)
     const reader = new FileReader()
     reader.onload = () => {
       const result = typeof reader.result === "string" ? reader.result : null
@@ -1259,6 +1245,7 @@ const DietClassicPage = () => {
     setDraftPrepTime("")
     setDraftServings("")
     setDraftImage(null)
+    setDraftImageFile(null)
     setDraftIngredients("")
     setDraftSteps("")
     setDraftToppings("")
@@ -1272,44 +1259,67 @@ const DietClassicPage = () => {
     setEditPrepTime("")
     setEditServings("")
     setEditImage(null)
+    setEditImageFile(null)
     setEditIngredients("")
     setEditSteps("")
     setEditToppings("")
     setEditTips("")
   }
 
-  const handleCreateRecipe = () => {
+  const handleCreateRecipe = async () => {
+    if (!canEdit) return
     const title = draftTitle.trim()
     if (!title) return
     const ingredients = parseLines(draftIngredients)
     const steps = parseLines(draftSteps)
-    if (ingredients.length === 0 || steps.length === 0) return
-    const recipe: Recipe = {
-      id: `custom-${Date.now()}`,
+    let imageUrl = ""
+    let imagePath: string | undefined
+    if (draftImageFile) {
+      const uploaded = await uploadImage(draftImageFile, "diet-custom-recipe-image", title)
+      imageUrl = uploaded.url
+      imagePath = uploaded.path
+    }
+    const recipeInput = {
       title,
       flavor: draftFlavor,
       prepTime: draftPrepTime.trim() || "-",
       servings: draftServings.trim() || "-",
-      image: draftImage || wrapPouletImg,
+      imageUrl,
+      imagePath,
       ingredients,
       steps,
       toppings: parseLines(draftToppings),
       tips: parseLines(draftTips),
     }
-    setCustomRecipes((prev) => [recipe, ...prev])
+    const createdId = await createCustomRecipe(recipeInput)
+    const recipe: RenderRecipe = {
+      id: createdId ?? `custom-${Date.now()}`,
+      title: recipeInput.title,
+      flavor: recipeInput.flavor,
+      prepTime: recipeInput.prepTime,
+      servings: recipeInput.servings,
+      image: recipeInput.imageUrl || wrapPouletImg,
+      ingredients: recipeInput.ingredients,
+      steps: recipeInput.steps,
+      toppings: recipeInput.toppings,
+      tips: recipeInput.tips,
+      source: "custom",
+      imagePath: recipeInput.imagePath,
+    }
     setSelectedRecipe(recipe)
     setPlanMealName(recipe.title)
     setIsCreateOpen(false)
     resetDraft()
   }
 
-  const openEditRecipe = (recipe: Recipe) => {
+  const openEditRecipe = (recipe: RenderRecipe) => {
     setEditId(recipe.id)
     setEditTitle(recipe.title)
     setEditFlavor(recipe.flavor)
     setEditPrepTime(recipe.prepTime)
     setEditServings(recipe.servings)
     setEditImage(recipe.image)
+    setEditImageFile(null)
     setEditIngredients(recipe.ingredients.join("\n"))
     setEditSteps(recipe.steps.join("\n"))
     setEditToppings(recipe.toppings ? recipe.toppings.join("\n") : "")
@@ -1320,6 +1330,7 @@ const DietClassicPage = () => {
   const handleEditImageChange = (file?: File) => {
     if (!file) return
     if (!file.type.startsWith("image/")) return
+    setEditImageFile(file)
     const reader = new FileReader()
     reader.onload = () => {
       const result = typeof reader.result === "string" ? reader.result : null
@@ -1330,26 +1341,50 @@ const DietClassicPage = () => {
     reader.readAsDataURL(file)
   }
 
-  const handleUpdateRecipe = () => {
+  const handleUpdateRecipe = async () => {
+    if (!canEdit) return
     if (!editId) return
     const title = editTitle.trim()
     if (!title) return
     const ingredients = parseLines(editIngredients)
     const steps = parseLines(editSteps)
-    if (ingredients.length === 0 || steps.length === 0) return
-    const updatedRecipe: Recipe = {
+    const current = persistedCustomRecipes.find((recipe) => recipe.id === editId)
+    let imageUrl = current?.imageUrl || ""
+    let imagePath = current?.imagePath
+    if (editImageFile) {
+      const uploaded = await uploadImage(editImageFile, "diet-custom-recipe-image", editId)
+      imageUrl = uploaded.url
+      imagePath = uploaded.path
+      if (current?.imagePath && current.imagePath !== uploaded.path) {
+        void deleteMedia(current.imagePath).catch(() => undefined)
+      }
+    }
+    const updatedRecipe: RenderRecipe = {
       id: editId,
       title,
       flavor: editFlavor,
       prepTime: editPrepTime.trim() || "-",
       servings: editServings.trim() || "-",
-      image: editImage || wrapPouletImg,
+      image: imageUrl || editImage || wrapPouletImg,
       ingredients,
       steps,
       toppings: parseLines(editToppings),
       tips: parseLines(editTips),
+      source: "custom",
+      imagePath,
     }
-    setCustomRecipes((prev) => prev.map((recipe) => (recipe.id === editId ? updatedRecipe : recipe)))
+    await updateCustomRecipe(editId, {
+      title: updatedRecipe.title,
+      flavor: updatedRecipe.flavor,
+      prepTime: updatedRecipe.prepTime,
+      servings: updatedRecipe.servings,
+      imageUrl,
+      imagePath,
+      ingredients: updatedRecipe.ingredients,
+      steps: updatedRecipe.steps,
+      toppings: updatedRecipe.toppings,
+      tips: updatedRecipe.tips,
+    })
     if (selectedRecipe?.id === editId) {
       setSelectedRecipe(updatedRecipe)
     }
@@ -1357,14 +1392,16 @@ const DietClassicPage = () => {
     resetEdit()
   }
 
-  const handleDeleteRecipe = (recipeId: string) => {
-    setCustomRecipes((prev) => prev.filter((recipe) => recipe.id !== recipeId))
-    setFavoriteIds((prev) => {
-      if (!prev.has(recipeId)) return prev
-      const next = new Set(prev)
-      next.delete(recipeId)
-      return next
-    })
+  const handleDeleteRecipe = async (recipeId: string) => {
+    if (!canEdit) return
+    const current = persistedCustomRecipes.find((recipe) => recipe.id === recipeId)
+    if (favoriteIds.has(recipeId)) {
+      await toggleFavoriteRecipe({ source: "custom", recipeId })
+    }
+    await deleteCustomRecipe(recipeId)
+    if (current?.imagePath) {
+      void deleteMedia(current.imagePath).catch(() => undefined)
+    }
     if (selectedRecipe?.id === recipeId) {
       setSelectedRecipe(null)
     }
@@ -1396,6 +1433,9 @@ const DietClassicPage = () => {
     
 
     <main className="diet-gymgirl-page">
+      {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer tes recettes et favoris.</p> : null}
+      {error ? <p className="routine-note__composer-hint">{error}</p> : null}
+      {isLoading ? <p className="routine-note__composer-hint">Chargement de ton espace diet...</p> : null}
       <article className="diet-blog">
         {currentHeading ? (
           <>
@@ -1482,9 +1522,10 @@ const DietClassicPage = () => {
                         }
                         onClick={(event) => {
                           event.stopPropagation()
-                          toggleFavorite(recipe.id)
+                          void toggleFavorite(recipe.id)
                         }}
                         aria-label="Ajouter aux favoris"
+                        disabled={!canEdit}
                       >
                         {renderHeartIcon(favoriteIds.has(recipe.id))}
                       </button>
@@ -1516,7 +1557,7 @@ const DietClassicPage = () => {
               <div>
                 <h3>Mes recettes</h3>
               </div>
-              <button type="button" className="pill pill--diet" onClick={() => setIsCreateOpen(true)}>
+              <button type="button" className="pill pill--diet" onClick={() => setIsCreateOpen(true)} disabled={!canEdit}>
                 Créer une recette
               </button>
             </div>
@@ -1536,7 +1577,10 @@ const DietClassicPage = () => {
                       </div>
                       <div className="diet-recipe-card__overlay" />
                       <div className="diet-recipe-card__content">
-                        <div className="diet-recipe-card__header">
+                        <div
+                          ref={customMenuOpenId === recipe.id ? customMenuRef : null}
+                          className="diet-recipe-card__header"
+                        >
                           <button
                             type="button"
                             className="diet-recipe-card__menu"
@@ -1568,7 +1612,7 @@ const DietClassicPage = () => {
                                 type="button"
                                 onClick={() => {
                                   setCustomMenuOpenId(null)
-                                  handleDeleteRecipe(recipe.id)
+                                  void handleDeleteRecipe(recipe.id)
                                 }}
                               >
                                 Supprimer
@@ -1580,9 +1624,10 @@ const DietClassicPage = () => {
                             className={favoriteIds.has(recipe.id) ? "diet-favorite is-active" : "diet-favorite"}
                             onClick={(event) => {
                               event.stopPropagation()
-                            toggleFavorite(recipe.id)
+                            void toggleFavorite(recipe.id)
                           }}
                           aria-label="Ajouter aux favoris"
+                          disabled={!canEdit}
                         >
                           {renderHeartIcon(favoriteIds.has(recipe.id))}
                         </button>
@@ -1628,9 +1673,10 @@ const DietClassicPage = () => {
                       className={favoriteIds.has(recipe.id) ? "diet-favorite is-active" : "diet-favorite"}
                       onClick={(event) => {
                         event.stopPropagation()
-                        toggleFavorite(recipe.id)
+                        void toggleFavorite(recipe.id)
                       }}
                       aria-label="Ajouter aux favoris"
+                      disabled={!canEdit}
                     >
                       {renderHeartIcon(favoriteIds.has(recipe.id))}
                     </button>
@@ -1797,7 +1843,7 @@ const DietClassicPage = () => {
                 <button type="button" onClick={() => setIsCreateOpen(false)}>
                   Annuler
                 </button>
-                <button type="button" onClick={handleCreateRecipe}>
+                <button type="button" onClick={() => void handleCreateRecipe()} disabled={!canEdit}>
                   Enregistrer
                 </button>
               </footer>
@@ -1915,7 +1961,7 @@ const DietClassicPage = () => {
                 >
                   Annuler
                 </button>
-                <button type="button" onClick={handleUpdateRecipe}>
+                <button type="button" onClick={() => void handleUpdateRecipe()} disabled={!canEdit}>
                   Enregistrer
                 </button>
               </footer>
@@ -1942,6 +1988,11 @@ const DietClassicPage = () => {
                 <header className="diet-recipe-modal__header">
                   <div>
                     <h3>{selectedRecipe.title}</h3>
+                    <div className="diet-plan-modal__meta">
+                      <span>{selectedRecipe.flavor === "sucre" ? "Sucré" : "Salé"}</span>
+                      <span>{selectedRecipe.prepTime}</span>
+                      <span>{selectedRecipe.servings}</span>
+                    </div>
                   </div>
                 </header>
                 <div className="diet-recipe-modal__body">
@@ -2052,27 +2103,31 @@ const DietClassicPage = () => {
                         placeholder="Écris ton plat"
                       />
                     </label>
-                    <button type="button" className="diet-recipe-plan__add" onClick={addRecipeToPlan}>
+                    <button type="button" className="diet-recipe-plan__add" onClick={() => void addRecipeToPlan()} disabled={!canEdit}>
                       Ajouter au planning
                     </button>
                   </section>
-                  <section>
-                    <h4>Ingrédients</h4>
-                    <ul>
-                      {selectedRecipe.ingredients.map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
-                  </section>
-                  <section>
-                    <h4>Étapes</h4>
-                    <ol>
-                      {selectedRecipe.steps.map((step) => (
-                        <li key={step}>{step}</li>
-                      ))}
-                    </ol>
-                  </section>
-                  {selectedRecipe.toppings ? (
+                  {selectedRecipe.ingredients.length > 0 ? (
+                    <section>
+                      <h4>Ingrédients</h4>
+                      <ul>
+                        {selectedRecipe.ingredients.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </section>
+                  ) : null}
+                  {selectedRecipe.steps.length > 0 ? (
+                    <section>
+                      <h4>Étapes</h4>
+                      <ol>
+                        {selectedRecipe.steps.map((step) => (
+                          <li key={step}>{step}</li>
+                        ))}
+                      </ol>
+                    </section>
+                  ) : null}
+                  {selectedRecipe.toppings && selectedRecipe.toppings.length > 0 ? (
                     <section>
                       <h4>{"Idées de toppings (optionnel)"}</h4>
                       <ul>
@@ -2082,9 +2137,9 @@ const DietClassicPage = () => {
                       </ul>
                     </section>
                   ) : null}
-                  {selectedRecipe.tips ? (
+                  {selectedRecipe.tips && selectedRecipe.tips.length > 0 ? (
                     <section>
-                      <h4>{"💡 Astuce"}</h4>
+                      <h4>{"Astuces"}</h4>
                       <ul>
                         {selectedRecipe.tips.map((item) => (
                           <li key={item}>{item}</li>

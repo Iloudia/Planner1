@@ -2,6 +2,14 @@
 
 Page d'accueil du planner avec 12 cartes, un carrousel de tâches à gauche, et à droite un panneau profil + progression (année/mois/journée) + bloc-notes persisté en localStorage. L'UI tourne en React/TSX via Vite.
 
+## Données utilisateur
+- `/calendrier` : données personnalisées par utilisateur via Firestore dans `users/{uid}/calendarEvents`
+- `/journaling` : entrées personnalisées par utilisateur via Firestore dans `users/{uid}/journalEntries`
+- `/archives` : la section journaling lit désormais Firestore ; la section self-love reste sur le stockage local actuel
+- `/finances` : mouvements et snapshots mensuels personnalisés par utilisateur via Firestore dans `users/{uid}/financeEntries` et `users/{uid}/financeMonthlySnapshots`
+- Aucun import automatique des anciennes données `localStorage` n'est effectué pour ces modules
+- Règles Firestore versionnées dans `firestore.rules`
+
 ## Prérequis
 - Node.js 18+ (et npm).
 
@@ -16,11 +24,24 @@ npm run dev
 ```
 Vite ouvre l'app (par défaut sur http://localhost:5173). Ajoute `-- --host` si tu veux tester depuis un mobile sur le réseau local.
 
+Dans un second terminal :
+```bash
+npm run dev:server
+```
+
+En local, Vite proxifie `/api` et `/media` vers le serveur Node (`127.0.0.1:4242` par défaut). `VITE_API_BASE` reste optionnel pour viser une autre cible.
+
 ## Build et prévisualisation
 ```bash
 npm run build
 npm run preview
 ```
+
+## Production
+- Front statique servi par Nginx
+- API Node derrière Nginx sur `/api`
+- Médias servis sur `/media`
+- Référence de déploiement : `deploy/DEPLOY_VPS.md`
 
 ## Où modifier le contenu
 - UI principale : `src/App.tsx`

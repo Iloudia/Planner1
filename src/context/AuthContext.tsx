@@ -30,7 +30,11 @@ import {
 } from "firebase/firestore"
 import { type FirebaseUserDocument } from "../models/firebase"
 import { auth, db } from "../utils/firebase"
+import { buildUserScopedKey, normalizeUserEmail } from "../utils/userScopedKey"
 const THIRTY_DAYS_MS = 1000 * 60 * 60 * 24 * 30
+const PROFILE_STORAGE_KEY = "planner.profile.preferences.v1"
+
+type UserProfileData = Pick<FirebaseUserDocument, "personalInfo" | "identityInfo">
 
 export type AccountStatus = "actif" | "desactive"
 
@@ -65,8 +69,12 @@ export type AuthContextValue = {
   isAuthReady: boolean
   isAuthenticated: boolean
   isAdmin: boolean
+  userId: string | null
   userEmail: string | null
+  username: string | null
+  userProfile: UserProfileData
   createdAt: string | null
+  updateUserProfile: (profile: UserProfileData) => Promise<void>
   login: (credentials: { email: string; password: string; remember?: boolean }) => Promise<boolean>
   register: (credentials: { email: string; password: string; remember?: boolean; profile?: RegistrationProfile }) => Promise<boolean>
   loginWithGoogle: (credential: string) => Promise<boolean>
@@ -86,6 +94,73 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 const normalizeEmail = (value: string) => String(value ?? "").trim().toLowerCase()
 
 const nowIso = () => new Date().toISOString()
+
+const emptyUserProfile: UserProfileData = {
+  personalInfo: {},
+  identityInfo: {},
+}
+
+const readLocalProfile = (email: string | null | undefined): UserProfileData => {
+  if (typeof window === "undefined") {
+    return emptyUserProfile
+  }
+
+  const keys = [buildUserScopedKey(normalizeUserEmail(email), PROFILE_STORAGE_KEY), PROFILE_STORAGE_KEY]
+
+  for (const key of keys) {
+    try {
+      const raw = window.localStorage.getItem(key)
+      if (!raw) continue
+      const parsed = JSON.parse(raw) as UserProfileData
+      return {
+        personalInfo: parsed.personalInfo ?? {},
+        identityInfo: parsed.identityInfo ?? {},
+      }
+    } catch {
+      // ignore malformed storage entries
+    }
+  }
+
+  return emptyUserProfile
+}
+
+const writeLocalProfile = (email: string | null | undefined, profile: UserProfileData) => {
+  if (typeof window === "undefined") {
+    return
+  }
+
+  const key = buildUserScopedKey(normalizeUserEmail(email), PROFILE_STORAGE_KEY)
+  try {
+    window.localStorage.setItem(
+      key,
+      JSON.stringify({
+        personalInfo: profile.personalInfo ?? {},
+        identityInfo: profile.identityInfo ?? {},
+      }),
+    )
+  } catch {
+    // ignore storage failures
+  }
+}
+
+const mergeProfileData = (base: UserProfileData, fallback?: UserProfileData, email?: string | null): UserProfileData => {
+  const personalInfo = {
+    firstName: base.personalInfo?.firstName?.trim() || fallback?.personalInfo?.firstName?.trim() || "",
+    lastName: base.personalInfo?.lastName?.trim() || fallback?.personalInfo?.lastName?.trim() || "",
+    email: base.personalInfo?.email?.trim() || fallback?.personalInfo?.email?.trim() || email || "",
+  }
+
+  const identityInfo = {
+    username: base.identityInfo?.username?.trim() || fallback?.identityInfo?.username?.trim() || "",
+    birthday: base.identityInfo?.birthday?.trim() || fallback?.identityInfo?.birthday?.trim() || "",
+    gender: base.identityInfo?.gender?.trim() || fallback?.identityInfo?.gender?.trim() || "",
+  }
+
+  return { personalInfo, identityInfo }
+}
+
+const hasProfileDiff = (left: UserProfileData, right: UserProfileData) =>
+  JSON.stringify(mergeProfileData(left)) !== JSON.stringify(mergeProfileData(right))
 
 const buildUserDocument = (
   user: User,
@@ -208,7 +283,37 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
 
       try {
-        const data = await ensureUserDocument(nextUser)
+        let data = await ensureUserDocument(nextUser)
+        const localProfile = readLocalProfile(nextUser.email)
+        const mergedProfile = mergeProfileData(
+          {
+            personalInfo: data.personalInfo,
+            identityInfo: data.identityInfo,
+          },
+          localProfile,
+          nextUser.email,
+        )
+
+        if (
+          hasProfileDiff({ personalInfo: data.personalInfo, identityInfo: data.identityInfo }, mergedProfile)
+        ) {
+          const updates: Partial<FirebaseUserDocument> = {
+            personalInfo: mergedProfile.personalInfo,
+            identityInfo: mergedProfile.identityInfo,
+            updatedAt: nowIso(),
+          }
+          await setDoc(doc(db, "users", nextUser.uid), updates, { merge: true })
+          data = {
+            ...data,
+            ...updates,
+          }
+        }
+
+        writeLocalProfile(nextUser.email, {
+          personalInfo: data.personalInfo ?? {},
+          identityInfo: data.identityInfo ?? {},
+        })
+
         setUserDoc(data)
         setAccountCreatedAt(data.createdAt ?? nextUser.metadata.creationTime ?? null)
         setScheduledDeletionDate(data.deletionPlannedAt ?? null)
@@ -322,6 +427,27 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       console.error("Logout failed", error)
     }
   }, [])
+
+  const updateUserProfile = useCallback(
+    async (profile: UserProfileData) => {
+      const currentUser = auth.currentUser
+      if (!currentUser) {
+        throw new Error("Utilisateur non connecte.")
+      }
+
+      const mergedProfile = mergeProfileData(profile, undefined, currentUser.email)
+      const updates: Partial<FirebaseUserDocument> = {
+        personalInfo: mergedProfile.personalInfo,
+        identityInfo: mergedProfile.identityInfo,
+        updatedAt: nowIso(),
+      }
+
+      await setDoc(doc(db, "users", currentUser.uid), updates, { merge: true })
+      writeLocalProfile(currentUser.email, mergedProfile)
+      setUserDoc((prev) => (prev ? { ...prev, ...updates } : ({ ...updates } as FirebaseUserDocument)))
+    },
+    [],
+  )
 
   const verifyPassword = useCallback(async (input: string) => {
     if (!auth.currentUser?.email) return false
@@ -469,15 +595,30 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }, [])
 
+  const userId = authUser?.uid ?? null
+
   const value = useMemo<AuthContextValue>(() => {
     const email = authUser?.email ?? null
     const isAdmin = Boolean(userDoc?.admin)
+    const username = userDoc?.identityInfo?.username?.trim() || null
+    const userProfile = mergeProfileData(
+      {
+        personalInfo: userDoc?.personalInfo,
+        identityInfo: userDoc?.identityInfo,
+      },
+      undefined,
+      email,
+    )
     return {
       isAuthReady: authReady,
       isAuthenticated: Boolean(authUser),
       isAdmin,
+      userId,
       userEmail: email,
+      username,
+      userProfile,
       createdAt: accountCreatedAt,
+      updateUserProfile,
       login,
       register,
       loginWithGoogle,
@@ -506,7 +647,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     logout,
     register,
     scheduledDeletionDate,
+    updateUserProfile,
     userDoc?.admin,
+    userDoc?.identityInfo,
+    userDoc?.personalInfo,
+    userId,
     verifyPassword,
   ])
 

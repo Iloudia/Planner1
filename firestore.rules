@@ -1,0 +1,45 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isPlannerCollection(collectionName) {
+      return collectionName == "calendarEvents" ||
+        collectionName == "journalEntries" ||
+        collectionName == "financeEntries" ||
+        collectionName == "financeMonthlySnapshots" ||
+        collectionName == "wishlistCategories" ||
+        collectionName == "wishlistItems" ||
+        collectionName == "sportDashboard" ||
+        collectionName == "sportWeeklyBoards" ||
+        collectionName == "workoutExercises" ||
+        collectionName == "workoutSeries" ||
+        collectionName == "workoutVideos" ||
+        collectionName == "workoutSettings" ||
+        collectionName == "selfLoveDraft" ||
+        collectionName == "selfLovePhotos" ||
+        collectionName == "selfLoveQualities" ||
+        collectionName == "selfLoveThoughts" ||
+        collectionName == "selfLoveArchiveEntries" ||
+        collectionName == "routineItems" ||
+        collectionName == "dietWeeklyPlans" ||
+        collectionName == "dietCustomRecipes" ||
+        collectionName == "dietPreferences";
+    }
+
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+
+      match /{collectionName}/{docId} {
+        allow read, write: if isOwner(userId) && isPlannerCollection(collectionName);
+      }
+    }
+  }
+}

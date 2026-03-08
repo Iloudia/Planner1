@@ -429,8 +429,8 @@
 }
 
 .calendar-weekly__day-header.is-today {
-  background: rgba(244, 114, 182, 0.15);
-  box-shadow: 0 12px 24px rgba(244, 114, 182, 0.2);
+  background: var(--color-caramel);
+  box-shadow: 0 12px 24px rgba(227, 215, 202, 0.35);
 }
 
 .calendar-weekly__day-header:hover {

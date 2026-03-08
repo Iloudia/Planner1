@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react"
 import { useAuth } from "./AuthContext"
 import { buildUserScopedKey } from "../utils/userScopedKey"
-import defaultMoodboard from "../assets/MoodBoard.png"
+import defaultMoodboard from "../assets/MoodBoard.webp"
 
 const STORAGE_KEY = "planner.custom.moodboard"
 

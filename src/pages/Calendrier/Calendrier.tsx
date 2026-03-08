@@ -124,7 +124,7 @@ const parseTimeToMinutes = (value: string) => {
 }
 
 const CalendrierPage = () => {
-  const { tasks, addTask, updateTask, removeTask } = useTasks()
+  const { tasks, isLoading, error, addTask, updateTask, removeTask } = useTasks()
   useEffect(() => {
     document.body.classList.add('calendar-page--lux')
     return () => {
@@ -266,6 +266,8 @@ const CalendrierPage = () => {
     return startLabel === endLabel ? startLabel : `${startLabel} -> ${endLabel}`
   }, [newTaskForm.repeatStart, newTaskForm.repeatEnd])
 
+  const isInitialAgendaLoading = isLoading && tasks.length === 0
+
   const handleWeekChange = (delta: number) => {
     setWeekAnchorDate((previous) => {
       const next = new Date(previous)
@@ -355,7 +357,7 @@ const CalendrierPage = () => {
     setDuplicateError(null)
   }
 
-  const handleConfirmDuplicate = () => {
+  const handleConfirmDuplicate = async () => {
     if (!duplicateTask) {
       return
     }
@@ -366,19 +368,26 @@ const CalendrierPage = () => {
     }
     const [yearValue, monthValue, dayValue] = duplicateTask.date.split('-').map(Number)
     const baseDate = new Date(yearValue, (monthValue ?? 1) - 1, dayValue ?? 1)
-    for (let offset = 1; offset <= days; offset += 1) {
-      const nextDate = new Date(baseDate)
-      nextDate.setDate(baseDate.getDate() + offset)
-      const dateKey = getDateKey(nextDate)
-      addTask({
-        id: `task-${dateKey}-${Math.random().toString(36).slice(2, 8)}`,
-        title: duplicateTask.title,
-        start: duplicateTask.start,
-        end: duplicateTask.end,
-        date: dateKey,
-        color: duplicateTask.color,
-        tag: duplicateTask.tag,
-      })
+    try {
+      await Promise.all(
+        Array.from({ length: days }, (_, index) => {
+          const nextDate = new Date(baseDate)
+          nextDate.setDate(baseDate.getDate() + index + 1)
+          const dateKey = getDateKey(nextDate)
+          return addTask({
+            id: `task-${dateKey}-${Math.random().toString(36).slice(2, 8)}`,
+            title: duplicateTask.title,
+            start: duplicateTask.start,
+            end: duplicateTask.end,
+            date: dateKey,
+            color: duplicateTask.color,
+            tag: duplicateTask.tag,
+          })
+        }),
+      )
+    } catch {
+      setDuplicateError("Impossible de dupliquer cet événement.")
+      return
     }
     setDuplicateTask(null)
     setDuplicateDays('3')
@@ -395,7 +404,11 @@ const CalendrierPage = () => {
   }
 
   const handleDaySelect = (dateKey: string, options?: { presetForm?: boolean }) => {
+    const selectedDate = parseDateKey(dateKey)
     setActiveDateKey(dateKey)
+    setWeekAnchorDate(selectedDate)
+    setMobileSelectedDateKey(dateKey)
+    setCurrentMonthDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1))
     setDayModalOpen(true)
     setEditingTaskId(null)
     if (options?.presetForm) {
@@ -466,7 +479,7 @@ const CalendrierPage = () => {
     })
   }
 
-  const handleSubmitNewTask = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmitNewTask = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setNewTaskError(null)
     const title = newTaskForm.title.trim()
@@ -524,24 +537,35 @@ for (let cursor = new Date(startDate); cursor.getTime() <= endDate.getTime(); cu
 const endTime = newTaskForm.end.trim().length > 0 ? newTaskForm.end : "10:00"
 const color = legendColors[newTaskForm.category] ?? (newTaskForm.color || newTaskColors[0])
 
-dateKeys.forEach((dateKey) => {
-  addTask({
-    id: `task-${dateKey}-${Math.random().toString(36).slice(2, 8)}`,
-    title,
-    start: startTime,
-    end: endTime,
-    date: dateKey,
-    color,
-    tag: newTaskForm.category,
-  })
-})
+    try {
+      await Promise.all(
+        dateKeys.map((dateKey) =>
+          addTask({
+            id: `task-${dateKey}-${Math.random().toString(36).slice(2, 8)}`,
+            title,
+            start: startTime,
+            end: endTime,
+            date: dateKey,
+            color,
+            tag: newTaskForm.category,
+          }),
+        ),
+      )
+    } catch {
+      setNewTaskError("Impossible d'ajouter cet événement au calendrier.")
+      return
+    }
 
-setNewTaskForm((previous) => ({
-  ...previous,
-  title: "",
-}))
-setNewTaskError(null)
-}
+    setWeekAnchorDate(startDate)
+    setMobileSelectedDateKey(newTaskForm.repeatStart)
+    setCurrentMonthDate(new Date(startDate.getFullYear(), startDate.getMonth(), 1))
+
+    setNewTaskForm((previous) => ({
+      ...previous,
+      title: "",
+    }))
+    setNewTaskError(null)
+  }
 
 const handleDayKeyDown = (event: KeyboardEvent<HTMLDivElement>, dateKey: string) => {
   if (event.key === "Enter" || event.key === " ") {
@@ -595,8 +619,19 @@ const viewToggle = (
   </div>
 )
 
+if (isInitialAgendaLoading) {
+  return (
+    <div className="calendar-page">
+      <section className="calendar-monthly-preview">
+        <p className="calendar-modal__empty">Chargement de votre agenda...</p>
+      </section>
+    </div>
+  )
+}
+
 return (
   <div className="calendar-page">
+    {error ? <p className="calendar-modal__empty">{error}</p> : null}
     {calendarView === 'weekly' ? (
     <section className="calendar-weekly">
       {isCompact ? (

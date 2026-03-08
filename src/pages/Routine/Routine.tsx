@@ -1,25 +1,19 @@
-import type { FormEvent } from 'react'
-import { useEffect, useMemo, useState } from 'react'
-import type { RoutineItem } from '../../data/sampleData'
-import { eveningRoutine as defaultEveningRoutine, morningRoutine as defaultMorningRoutine } from '../../data/sampleData'
-import usePersistentState from '../../hooks/usePersistentState'
-import PageHeading from '../../components/PageHeading'
-import morningIllustration from '../../assets/evening-note.svg'
-import eveningIllustration from '../../assets/evening-note.svg'
-import routineHeroImage from '../../assets/kalen-mcdonald-dupe.webp'
-import './RoutinePage.css'
+import type { FormEvent } from "react"
+import { useEffect, useMemo, useState } from "react"
+import type { RoutineItem } from "../../data/sampleData"
+import { useAuth } from "../../context/AuthContext"
+import useUserRoutine from "../../hooks/useUserRoutine"
+import PageHeading from "../../components/PageHeading"
+import "./RoutinePage.css"
 
 type RoutineId = string
-type RoutinePeriod = 'morning' | 'evening'
+type RoutinePeriod = "morning" | "evening"
 type RoutineDraft = {
   title: string
   detail: string
 }
 
 const ROUTINE_FIELD_MAX_LENGTH = 67
-const COMPLETED_STORAGE_KEY = 'planner.routines.completed'
-const MORNING_ROUTINE_STORAGE_KEY = 'planner.routines.morning'
-const EVENING_ROUTINE_STORAGE_KEY = 'planner.routines.evening'
 
 const truncateText = (value: string, max = ROUTINE_FIELD_MAX_LENGTH) =>
   value.length > max ? `${value.slice(0, max - 3).trimEnd()}...` : value
@@ -29,29 +23,26 @@ type RoutineChecklistProps = {
   completedSet: Set<RoutineId>
   toggleRoutine: (id: RoutineId) => void
   onRemoveItem?: (id: RoutineId) => void
+  disabled?: boolean
 }
 
-const RoutineChecklist = ({
-  items,
-  completedSet,
-  toggleRoutine,
-  onRemoveItem,
-}: RoutineChecklistProps) => (
+const RoutineChecklist = ({ items, completedSet, toggleRoutine, onRemoveItem, disabled = false }: RoutineChecklistProps) => (
   <ul className="routine-note__list">
     {items.map((item, index) => (
       <li className="routine-note__item" key={item.id}>
         <div className="routine-note__row">
           <label className="routine-note__label">
-            <span className="routine-note__index">{String(index + 1).padStart(2, '0')}</span>
+            <span className="routine-note__index">{String(index + 1).padStart(2, "0")}</span>
             <input
               className="routine-note__checkbox"
               type="checkbox"
               checked={completedSet.has(item.id)}
               onChange={() => toggleRoutine(item.id)}
+              disabled={disabled}
             />
             <span className="routine-note__text">
               <span className="routine-note__item-title">{truncateText(item.title)}</span>
-              {item.detail && <span className="routine-note__item-detail">{item.detail}</span>}
+              {item.detail ? <span className="routine-note__item-detail">{item.detail}</span> : null}
             </span>
           </label>
           {onRemoveItem ? (
@@ -61,8 +52,9 @@ const RoutineChecklist = ({
                 className="routine-note__remove"
                 onClick={() => onRemoveItem(item.id)}
                 aria-label={`Supprimer ${item.title}`}
+                disabled={disabled}
               >
-                ×
+                x
               </button>
             </div>
           ) : null}
@@ -75,10 +67,11 @@ const RoutineChecklist = ({
 type RoutineComposerProps = {
   draft: RoutineDraft
   onDraftChange: (field: keyof RoutineDraft, value: string) => void
-  onSubmit: (event: FormEvent<HTMLFormElement>) => void
+  onSubmit: (event: FormEvent<HTMLFormElement>) => void | Promise<void>
   buttonLabel: string
   placeholderTitle: string
   placeholderDetail: string
+  disabled?: boolean
 }
 
 const RoutineComposer = ({
@@ -88,6 +81,7 @@ const RoutineComposer = ({
   buttonLabel,
   placeholderTitle,
   placeholderDetail,
+  disabled = false,
 }: RoutineComposerProps) => (
   <form className="routine-note__composer" onSubmit={onSubmit}>
     <label>
@@ -95,54 +89,68 @@ const RoutineComposer = ({
       <input
         type="text"
         value={draft.title}
-        onChange={(event) => onDraftChange('title', event.target.value.slice(0, ROUTINE_FIELD_MAX_LENGTH))}
+        onChange={(event) => onDraftChange("title", event.target.value.slice(0, ROUTINE_FIELD_MAX_LENGTH))}
         placeholder={placeholderTitle}
         required
         maxLength={ROUTINE_FIELD_MAX_LENGTH}
+        disabled={disabled}
       />
       {draft.title.length >= ROUTINE_FIELD_MAX_LENGTH ? (
-        <span className="routine-note__composer-hint">Limite de 67 caractères atteinte.</span>
+        <span className="routine-note__composer-hint">Limite de 67 caracteres atteinte.</span>
       ) : null}
     </label>
     <label>
-      <span>Détail (optionnel)</span>
+      <span>Detail (optionnel)</span>
       <textarea
         value={draft.detail}
-        onChange={(event) => onDraftChange('detail', event.target.value.slice(0, ROUTINE_FIELD_MAX_LENGTH))}
+        onChange={(event) => onDraftChange("detail", event.target.value.slice(0, ROUTINE_FIELD_MAX_LENGTH))}
         placeholder={placeholderDetail}
         rows={2}
         maxLength={ROUTINE_FIELD_MAX_LENGTH}
+        disabled={disabled}
       />
       {draft.detail.length >= ROUTINE_FIELD_MAX_LENGTH ? (
-        <span className="routine-note__composer-hint">Limite de 67 caractères atteinte.</span>
+        <span className="routine-note__composer-hint">Limite de 67 caracteres atteinte.</span>
       ) : null}
     </label>
-    <button type="submit" className="routine-note__composer-submit">
-      {buttonLabel}
+    <button type="submit" className="routine-note__composer-submit" disabled={disabled}>
+      {disabled ? "Connecte-toi pour modifier" : buttonLabel}
     </button>
   </form>
 )
 
 const RoutinePage = () => {
-  const [completedIds, setCompletedIds] = usePersistentState<RoutineId[]>(COMPLETED_STORAGE_KEY, () => [])
-  const [morningRoutines, setMorningRoutines] = usePersistentState<RoutineItem[]>(
-    MORNING_ROUTINE_STORAGE_KEY,
-    () => defaultMorningRoutine,
-  )
-  const [eveningRoutines, setEveningRoutines] = usePersistentState<RoutineItem[]>(
-    EVENING_ROUTINE_STORAGE_KEY,
-    () => defaultEveningRoutine,
-  )
+  const { userId } = useAuth()
+  const { items, isLoading, error, addItem, removeItem, toggleItem } = useUserRoutine()
+  const canEdit = Boolean(userId)
   const [routineDrafts, setRoutineDrafts] = useState<Record<RoutinePeriod, RoutineDraft>>({
-    morning: { title: '', detail: '' },
-    evening: { title: '', detail: '' },
+    morning: { title: "", detail: "" },
+    evening: { title: "", detail: "" },
   })
-  const completedSet = useMemo(() => new Set<RoutineId>(completedIds), [completedIds])
+
+  const morningRoutines = useMemo<RoutineItem[]>(
+    () =>
+      items
+        .filter((item) => item.period === "morning")
+        .map((item) => ({ id: item.id, title: item.title, detail: item.detail })),
+    [items],
+  )
+  const eveningRoutines = useMemo<RoutineItem[]>(
+    () =>
+      items
+        .filter((item) => item.period === "evening")
+        .map((item) => ({ id: item.id, title: item.title, detail: item.detail })),
+    [items],
+  )
+  const completedSet = useMemo(
+    () => new Set<RoutineId>(items.filter((item) => item.isCompleted).map((item) => item.id)),
+    [items],
+  )
 
   useEffect(() => {
-    document.body.classList.add('routine-page--lux')
+    document.body.classList.add("routine-page--lux")
     return () => {
-      document.body.classList.remove('routine-page--lux')
+      document.body.classList.remove("routine-page--lux")
     }
   }, [])
 
@@ -156,53 +164,60 @@ const RoutinePage = () => {
     }))
   }
 
-  const handleRoutineSubmit = (period: RoutinePeriod) => (event: FormEvent<HTMLFormElement>) => {
+  const handleRoutineSubmit = (period: RoutinePeriod) => async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const draft = routineDrafts[period]
-    const trimmedTitle = draft.title.trim()
-    if (trimmedTitle.length === 0) {
+    if (!canEdit) {
       return
     }
-    const trimmedDetail = draft.detail.trim()
-    const newItem: RoutineItem = {
-      id: `${period}-${Date.now()}`,
-      title: trimmedTitle,
-      ...(trimmedDetail.length > 0 ? { detail: trimmedDetail } : {}),
+    const draft = routineDrafts[period]
+    const trimmedTitle = draft.title.trim()
+    if (!trimmedTitle) {
+      return
     }
-    if (period === 'morning') {
-      setMorningRoutines((previous) => [...previous, newItem])
-    } else {
-      setEveningRoutines((previous) => [...previous, newItem])
+
+    try {
+      await addItem({
+        period,
+        title: trimmedTitle,
+        detail: draft.detail.trim() || undefined,
+      })
+      setRoutineDrafts((previous) => ({
+        ...previous,
+        [period]: { title: "", detail: "" },
+      }))
+    } catch {
+      return
     }
-    setRoutineDrafts((previous) => ({
-      ...previous,
-      [period]: { title: '', detail: '' },
-    }))
   }
 
-  const handleRoutineRemoval = (period: RoutinePeriod, id: RoutineId) => {
-    if (period === 'morning') {
-      setMorningRoutines((previous) => previous.filter((item) => item.id !== id))
-    } else {
-      setEveningRoutines((previous) => previous.filter((item) => item.id !== id))
+  const handleRoutineRemoval = async (id: RoutineId) => {
+    if (!canEdit) {
+      return
     }
-    setCompletedIds((previous) => previous.filter((value) => value !== id))
+    try {
+      await removeItem(id)
+    } catch {
+      return
+    }
   }
 
-  const toggleRoutine = (id: RoutineId) => {
-    setCompletedIds((previous) => {
-      if (previous.includes(id)) {
-        return previous.filter((value) => value !== id)
-      }
-      return [...previous, id]
-    })
+  const handleRoutineToggle = async (id: RoutineId) => {
+    if (!canEdit) {
+      return
+    }
+    try {
+      await toggleItem(id)
+    } catch {
+      return
+    }
   }
 
   return (
     <div className="routine-page aesthetic-page">
-
       <PageHeading eyebrow="Routine" title="Mes Routines" />
-      
+      {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer tes routines.</p> : null}
+      {error ? <p className="routine-note__composer-hint">{error}</p> : null}
+      {isLoading ? <p className="routine-note__composer-hint">Chargement de tes routines...</p> : null}
 
       <div className="routine-notes">
         <section className="routine-note routine-note--morning">
@@ -219,16 +234,18 @@ const RoutinePage = () => {
             <RoutineChecklist
               items={morningRoutines}
               completedSet={completedSet}
-              toggleRoutine={toggleRoutine}
-              onRemoveItem={(id) => handleRoutineRemoval('morning', id)}
+              toggleRoutine={handleRoutineToggle}
+              onRemoveItem={handleRoutineRemoval}
+              disabled={!canEdit}
             />
             <RoutineComposer
               draft={routineDrafts.morning}
-              onDraftChange={(field, value) => handleRoutineDraftChange('morning', field, value)}
-              onSubmit={handleRoutineSubmit('morning')}
-              buttonLabel="Ajouter à ma routine du matin"
-              placeholderTitle="Ex : Boire un verre d’eau tiède citronné"
-              placeholderDetail="Ex : Durée, intention..."
+              onDraftChange={(field, value) => handleRoutineDraftChange("morning", field, value)}
+              onSubmit={handleRoutineSubmit("morning")}
+              buttonLabel="Ajouter a ma routine du matin"
+              placeholderTitle="Ex : Boire un verre d'eau tiede citronnee"
+              placeholderDetail="Ex : Duree, intention..."
+              disabled={!canEdit}
             />
           </div>
         </section>
@@ -247,25 +264,24 @@ const RoutinePage = () => {
             <RoutineChecklist
               items={eveningRoutines}
               completedSet={completedSet}
-              toggleRoutine={toggleRoutine}
-              onRemoveItem={(id) => handleRoutineRemoval('evening', id)}
+              toggleRoutine={handleRoutineToggle}
+              onRemoveItem={handleRoutineRemoval}
+              disabled={!canEdit}
             />
             <RoutineComposer
               draft={routineDrafts.evening}
-              onDraftChange={(field, value) => handleRoutineDraftChange('evening', field, value)}
-              onSubmit={handleRoutineSubmit('evening')}
-              buttonLabel="Ajouter à ma routine du soir"
-              placeholderTitle="Ex : Préparer mes vêtements pour demain"
-              placeholderDetail="Ex : Durée, intention..."
+              onDraftChange={(field, value) => handleRoutineDraftChange("evening", field, value)}
+              onSubmit={handleRoutineSubmit("evening")}
+              buttonLabel="Ajouter a ma routine du soir"
+              placeholderTitle="Ex : Preparer mes vetements pour demain"
+              placeholderDetail="Ex : Duree, intention..."
+              disabled={!canEdit}
             />
           </div>
         </section>
       </div>
-</div>
+    </div>
   )
 }
 
 export default RoutinePage
-
-
-

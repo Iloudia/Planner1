@@ -1,95 +1,25 @@
-import { useEffect, useMemo, useRef, useState } from "react"
-import type { FormEvent } from "react"
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react"
 import PageHeading from "../../components/PageHeading"
-import usePersistentState from "../../hooks/usePersistentState"
-import workoutHero from "../../assets/tuany-kohler-dupe.webp"
+import useUserWorkoutData from "../../hooks/useUserWorkoutData"
+import { deleteMedia, uploadImage } from "../../services/media/api"
 import backdayImage from "../../assets/Backday.webp"
 import legdayImage from "../../assets/legday.webp"
 import "./Workout.css"
 
-type ExerciseCard = {
-  id: string
+type ExerciseFormState = {
   title: string
   muscle: string
   category: string
-  image: string
 }
 
-type VideoCard = {
-  id: string
+type VideoFormState = {
   title: string
   url: string
-  thumbnail: string
-  duration?: string
 }
 
-type SeriesItem = {
-  id: string
-  label: string
-  completed: boolean
-  weight?: string
-}
-
-const STORAGE_KEYS = {
-  exercises: "planner.workout.exercises",
-  videos: "planner.workout.videos",
-  series: "planner.workout.series",
-  notes: "planner.workout.notes",
-}
-
-const SPORT_BOARD_STORAGE_KEY = "planner.sportBoard.v2"
-const WORKOUT_RESET_KEY = "planner.workout.lastReset"
-
-const DEFAULT_EXERCISES: ExerciseCard[] = [
-  {
-    id: "ex-1",
-    title: "Backday",
-    muscle: "Dos",
-    category: "Renforcement musculaire",
-    image: backdayImage,
-  },
-  {
-    id: "ex-2",
-    title: "Legday",
-    muscle: "Jambes",
-    category: "Renforcement musculaire",
-    image: legdayImage,
-  },
-]
-
-const DEFAULT_VIDEOS: VideoCard[] = [
-  {
-    id: "vid-1",
-    title: "Exercices leg day",
-    url: "https://youtu.be/gcIqwTuaP4o?si=WzujDHWfFJwP0WlW",
-    thumbnail: "https://img.youtube.com/vi/gcIqwTuaP4o/hqdefault.jpg",
-  },
-  {
-    id: "vid-2",
-    title: "Entraînement Pilates complet",
-    url: "https://youtu.be/354ezj2UHdM?si=LObxLx7v79fzZ9np",
-    thumbnail: "https://img.youtube.com/vi/354ezj2UHdM/hqdefault.jpg",
-  },
-]
-
-const DEFAULT_SERIES: Record<string, SeriesItem[]> = {
-  "ex-1": [
-    { id: "serie-1", label: "3x12 incline dumbbell row", completed: false },
-    { id: "serie-2", label: "4x10 Lat pull downs", completed: false },
-    { id: "serie-3", label: "3x10 Cable rows", completed: false },
-    { id: "serie-4", label: "Pull up (jusqu'à épuisement)", completed: false },
-    { id: "serie-5", label: "3x10 Seated cable rows", completed: false },
-    { id: "serie-6", label: "3x10 Bent over rows", completed: false },
-  ],
-  "ex-2": [
-    { id: "serie-7", label: "3x10 hip/leg press", completed: false },
-    { id: "serie-8", label: "3x10 Hip thrust", completed: false },
-    { id: "serie-9", label: "3x10 RDLs", completed: false },
-    { id: "serie-10", label: "3x12 Leg extension", completed: false },
-    { id: "serie-11", label: "Leg curls (jusqu'à épuisement)", completed: false },
-    { id: "serie-12", label: "3x10 Squats", completed: false },
-    { id: "serie-13", label: "3x12 Reverse lunges", completed: false },
-  ],
+const defaultExerciseImages: Record<string, string> = {
+  backday: backdayImage,
+  legday: legdayImage,
 }
 
 const MUSCLE_OPTIONS = [
@@ -98,7 +28,7 @@ const MUSCLE_OPTIONS = [
   "Biceps",
   "Bras",
   "Dos",
-  "Épaules",
+  "Epaules",
   "Fessiers",
   "Ischios",
   "Jambes",
@@ -111,15 +41,8 @@ const MUSCLE_OPTIONS = [
   "Triceps",
 ]
 
-const MUSCLE_PLACEHOLDER = "Sélectionner un muscle"
+const MUSCLE_PLACEHOLDER = "Selectionner un muscle"
 const YOUTUBE_API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY as string | undefined
-
-const formatLocalISODate = (date: Date) => {
-  const year = date.getFullYear()
-  const month = `${date.getMonth() + 1}`.padStart(2, "0")
-  const day = `${date.getDate()}`.padStart(2, "0")
-  return `${year}-${month}-${day}`
-}
 
 const parseIsoDuration = (value: string) => {
   const match = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/.exec(value)
@@ -163,24 +86,39 @@ const extractYoutubeId = (url: string) => {
       return parsed.pathname.split("/embed/")[1]
     }
     return null
-  } catch (error) {
+  } catch {
     return null
   }
 }
 
 const WorkoutPage = () => {
-  const [exercises, setExercises] = usePersistentState<ExerciseCard[]>(STORAGE_KEYS.exercises, () => DEFAULT_EXERCISES)
-  const [videos, setVideos] = usePersistentState<VideoCard[]>(STORAGE_KEYS.videos, () => DEFAULT_VIDEOS)
-  const [form, setForm] = useState({ title: "", muscle: "", category: "", image: "" })
-  const [videoForm, setVideoForm] = useState({ title: "", url: "" })
+  const {
+    exercises,
+    videos,
+    seriesByExercise,
+    isLoading,
+    error,
+    createExercise,
+    updateExercise,
+    deleteExercise,
+    updateExerciseNote,
+    createVideo,
+    deleteVideo,
+    createSeries,
+    updateSeries,
+    deleteSeries,
+  } = useUserWorkoutData()
+
+  const [form, setForm] = useState<ExerciseFormState>({ title: "", muscle: "", category: "" })
+  const [formImageFile, setFormImageFile] = useState<File | null>(null)
+  const [formImagePreview, setFormImagePreview] = useState("")
+  const [videoForm, setVideoForm] = useState<VideoFormState>({ title: "", url: "" })
   const [selectedExerciseId, setSelectedExerciseId] = useState<string | null>(null)
-  const [seriesByExercise, setSeriesByExercise] = usePersistentState<Record<string, SeriesItem[]>>(STORAGE_KEYS.series, () => DEFAULT_SERIES)
-  const [notesByExercise, setNotesByExercise] = usePersistentState<Record<string, string>>(STORAGE_KEYS.notes, () => ({}))
   const [seriesInput, setSeriesInput] = useState("")
   const [seriesWeightInput, setSeriesWeightInput] = useState("")
+  const [noteDraft, setNoteDraft] = useState("")
   const [isMuscleMenuOpen, setIsMuscleMenuOpen] = useState(false)
   const [openExerciseMenuId, setOpenExerciseMenuId] = useState<string | null>(null)
-  const [openVideoMenuId, setOpenVideoMenuId] = useState<string | null>(null)
   const [isModalMenuOpen, setIsModalMenuOpen] = useState(false)
   const muscleMenuRef = useRef<HTMLDivElement | null>(null)
 
@@ -196,6 +134,7 @@ const WorkoutPage = () => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setSelectedExerciseId(null)
+        setIsModalMenuOpen(false)
       }
     }
     window.addEventListener("keydown", handleKeyDown)
@@ -203,15 +142,9 @@ const WorkoutPage = () => {
   }, [selectedExerciseId])
 
   useEffect(() => {
-    setSeriesInput("")
-    setSeriesWeightInput("")
-  }, [selectedExerciseId])
-
-  useEffect(() => {
     if (!isMuscleMenuOpen) return
     const handleClickOutside = (event: MouseEvent) => {
-      if (!muscleMenuRef.current) return
-      if (muscleMenuRef.current.contains(event.target as Node)) return
+      if (muscleMenuRef.current?.contains(event.target as Node)) return
       setIsMuscleMenuOpen(false)
     }
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -234,62 +167,139 @@ const WorkoutPage = () => {
         return
       }
       setOpenExerciseMenuId(null)
-      setOpenVideoMenuId(null)
       setIsModalMenuOpen(false)
     }
     window.addEventListener("pointerdown", handleOutsideMenu)
     return () => window.removeEventListener("pointerdown", handleOutsideMenu)
   }, [])
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const selectedExercise = useMemo(
+    () => exercises.find((exercise) => exercise.id === selectedExerciseId) ?? null,
+    [exercises, selectedExerciseId],
+  )
+  const selectedSeries = useMemo(
+    () => (selectedExerciseId ? seriesByExercise[selectedExerciseId] ?? [] : []),
+    [selectedExerciseId, seriesByExercise],
+  )
+  const completedSeriesCount = useMemo(
+    () => selectedSeries.filter((item) => item.completed).length,
+    [selectedSeries],
+  )
+
+  useEffect(() => {
+    setSeriesInput("")
+    setSeriesWeightInput("")
+    setNoteDraft(selectedExercise?.note ?? "")
+  }, [selectedExercise])
+
+  const resolveExerciseImage = (exercise: (typeof exercises)[number]) => {
+    if (exercise.imageMode === "custom" && exercise.imageUrl) {
+      return exercise.imageUrl
+    }
+    if (exercise.defaultKey && defaultExerciseImages[exercise.defaultKey]) {
+      return defaultExerciseImages[exercise.defaultKey]
+    }
+    return exercise.imageUrl || "https://images.unsplash.com/photo-1579758629938-03607ccdbaba?auto=format&fit=crop&w=800&q=80"
+  }
+
+  const resetExerciseForm = () => {
+    setForm({ title: "", muscle: "", category: "" })
+    setFormImageFile(null)
+    setFormImagePreview("")
+  }
+
+  const handleImageChange = (file?: File | null) => {
+    if (!file) {
+      setFormImageFile(null)
+      setFormImagePreview("")
+      return
+    }
+    setFormImageFile(file)
+    setFormImagePreview(URL.createObjectURL(file))
+  }
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const title = form.title.trim()
     if (!title) return
-    const newCard: ExerciseCard = {
-      id: `ex-${Date.now()}`,
-      title,
-      muscle: form.muscle.trim() || "Muscle",
-      category: form.category.trim() || "",
-      image:
-        form.image.trim() ||
-        "https://images.unsplash.com/photo-1579758629938-03607ccdbaba?auto=format&fit=crop&w=800&q=80",
+
+    let media: { url: string; path: string } | null = null
+    if (formImageFile) {
+      media = await uploadImage(formImageFile, "workout-exercise-image", title)
     }
-    setExercises((prev) => [newCard, ...prev])
-    setForm({ title: "", muscle: "", category: "", image: "" })
+
+    try {
+      await createExercise({
+        title,
+        muscle: form.muscle.trim() || "Muscle",
+        category: form.category.trim() || "",
+        note: "",
+        imageMode: media ? "custom" : "default",
+        imageUrl: media?.url,
+        imagePath: media?.path,
+      })
+      resetExerciseForm()
+    } catch {
+      if (media?.path) {
+        void deleteMedia(media.path).catch(() => undefined)
+      }
+    }
   }
 
   const handleVideoSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const title = videoForm.title.trim() || "Session vidéo"
+    const title = videoForm.title.trim() || "Session video"
     const id = extractYoutubeId(videoForm.url.trim())
     if (!id) return
     const duration = await fetchYoutubeDuration(id)
-    const nextVideo: VideoCard = {
-      id: `vid-${Date.now()}`,
+    await createVideo({
       title,
       url: `https://www.youtube.com/watch?v=${id}`,
-      thumbnail: `https://img.youtube.com/vi/${id}/hqdefault.jpg`,
+      thumbnailMode: "default",
+      thumbnailUrl: `https://img.youtube.com/vi/${id}/hqdefault.jpg`,
       duration: duration ?? undefined,
-    }
-    setVideos((prev) => [nextVideo, ...prev])
+    })
     setVideoForm({ title: "", url: "" })
   }
 
-  const handleDeleteExercise = (exerciseId: string) => {
-    setExercises((previous) => previous.filter((item) => item.id !== exerciseId))
-    setSeriesByExercise((previous) => {
-      if (!previous[exerciseId]) return previous
-      const next = { ...previous }
-      delete next[exerciseId]
-      return next
-    })
+  const handleReplaceExerciseImage = async (exerciseId: string, file?: File | null) => {
+    if (!file) return
+    const current = exercises.find((item) => item.id === exerciseId)
+    if (!current) return
+    const uploaded = await uploadImage(file, "workout-exercise-image", exerciseId)
+    try {
+      await updateExercise(exerciseId, {
+        imageMode: "custom",
+        imageUrl: uploaded.url,
+        imagePath: uploaded.path,
+      })
+      if (current.imagePath) {
+        void deleteMedia(current.imagePath).catch(() => undefined)
+      }
+    } catch {
+      void deleteMedia(uploaded.path).catch(() => undefined)
+    }
+  }
+
+  const handleDeleteExercise = async (exerciseId: string) => {
+    const current = exercises.find((item) => item.id === exerciseId)
+    if (!current) return
+    await deleteExercise(exerciseId)
+    if (current.imagePath) {
+      void deleteMedia(current.imagePath).catch(() => undefined)
+    }
     if (selectedExerciseId === exerciseId) {
       setSelectedExerciseId(null)
     }
   }
 
-  const handleDeleteVideo = (videoId: string) => {
-    setVideos((previous) => previous.filter((item) => item.id !== videoId))
+  const handleDeleteVideo = async (videoId: string) => {
+    const current = videos.find((item) => item.id === videoId)
+    if (!current) return
+    await deleteVideo(videoId)
+    if (current.thumbnailPath) {
+      void deleteMedia(current.thumbnailPath).catch(() => undefined)
+    }
   }
 
   const handleOpenVideo = (url: string) => {
@@ -299,7 +309,6 @@ const WorkoutPage = () => {
   const handleOpenPlanner = (exerciseId: string) => {
     setSelectedExerciseId(exerciseId)
     setOpenExerciseMenuId(null)
-    setOpenVideoMenuId(null)
     setIsModalMenuOpen(false)
   }
 
@@ -308,136 +317,28 @@ const WorkoutPage = () => {
     setIsModalMenuOpen(false)
   }
 
-  const handleAddSeries = (exerciseId: string) => {
+  const handleAddSeries = async (exerciseId: string) => {
     const label = seriesInput.trim()
     if (!label) return
-    const weight = seriesWeightInput.trim()
-    setSeriesByExercise((previous) => {
-      const current = previous[exerciseId] ?? []
-      const nextItem: SeriesItem = {
-        id: `série-${Date.now()}`,
-        label,
-        completed: false,
-        weight: weight.length > 0 ? weight : undefined,
-      }
-      return {
-        ...previous,
-        [exerciseId]: [...current, nextItem],
-      }
+    await createSeries(exerciseId, {
+      label,
+      weight: seriesWeightInput.trim() || undefined,
     })
     setSeriesInput("")
     setSeriesWeightInput("")
   }
 
-  const toggleSeriesItem = (exerciseId: string, seriesId: string) => {
-    setSeriesByExercise((previous) => {
-      const current = previous[exerciseId] ?? []
-      return {
-        ...previous,
-        [exerciseId]: current.map((item) =>
-          item.id === seriesId ? { ...item, completed: !item.completed } : item,
-        ),
-      }
-    })
+  const handleSaveNote = async () => {
+    if (!selectedExerciseId) return
+    await updateExerciseNote(selectedExerciseId, noteDraft)
   }
-
-  const updateSeriesWeight = (exerciseId: string, seriesId: string, value: string) => {
-    setSeriesByExercise((previous) => {
-      const current = previous[exerciseId] ?? []
-      return {
-        ...previous,
-        [exerciseId]: current.map((item) =>
-          item.id === seriesId ? { ...item, weight: value.trim() || undefined } : item,
-        ),
-      }
-    })
-  }
-
-  const handleDeleteSeries = (exerciseId: string, seriesId: string) => {
-    setSeriesByExercise((previous) => {
-      const current = previous[exerciseId] ?? []
-      return {
-        ...previous,
-        [exerciseId]: current.filter((item) => item.id !== seriesId),
-      }
-    })
-  }
-
-  const handleImageChange = (file: File | undefined | null) => {
-    if (!file) {
-      setForm((prev) => ({ ...prev, image: "" }))
-      return
-    }
-    const reader = new FileReader()
-    reader.onload = () => {
-      const result = typeof reader.result === "string" ? reader.result : ""
-      setForm((prev) => ({ ...prev, image: result }))
-    }
-    reader.readAsDataURL(file)
-  }
-
-  const updateExerciseImage = (exerciseId: string, file: File | undefined | null) => {
-    if (!file) return
-    const reader = new FileReader()
-    reader.onload = () => {
-      const result = typeof reader.result === "string" ? reader.result : ""
-      if (!result) return
-      setExercises((previous) =>
-        previous.map((item) => (item.id === exerciseId ? { ...item, image: result } : item)),
-      )
-    }
-    reader.readAsDataURL(file)
-  }
-
-  const updateVideoThumbnail = (videoId: string, file: File | undefined | null) => {
-    if (!file) return
-    const reader = new FileReader()
-    reader.onload = () => {
-      const result = typeof reader.result === "string" ? reader.result : ""
-      if (!result) return
-      setVideos((previous) =>
-        previous.map((item) => (item.id === videoId ? { ...item, thumbnail: result } : item)),
-      )
-    }
-    reader.readAsDataURL(file)
-  }
-
-  const selectedExercise = useMemo(
-    () => exercises.find((exercise) => exercise.id === selectedExerciseId) ?? null,
-    [exercises, selectedExerciseId],
-  )
-
-  const selectedSeries = useMemo(() => {
-    if (!selectedExerciseId) return []
-    return seriesByExercise[selectedExerciseId] ?? []
-  }, [seriesByExercise, selectedExerciseId])
-
-  const completedSeriesCount = useMemo(
-    () => selectedSeries.filter((item) => item.completed).length,
-    [selectedSeries],
-  )
-
-  const currentNote = selectedExerciseId ? notesByExercise[selectedExerciseId] ?? "" : ""
-
-  useEffect(() => {
-    if (typeof window === "undefined") return
-    const today = formatLocalISODate(new Date())
-    const lastReset = window.localStorage.getItem(WORKOUT_RESET_KEY)
-    if (lastReset === today) return
-    setSeriesByExercise((previous) => {
-      const next: Record<string, SeriesItem[]> = {}
-      Object.entries(previous).forEach(([key, items]) => {
-        next[key] = items.map((item) => ({ ...item, completed: false }))
-      })
-      return next
-    })
-    window.localStorage.setItem(WORKOUT_RESET_KEY, today)
-  }, [setSeriesByExercise])
 
   return (
     <div className="workout-page">
       <div className="workout-page__accent-bar" aria-hidden="true" />
       <PageHeading eyebrow="Routine active" title="Workout" />
+      {error ? <p className="routine-note__composer-hint">{error}</p> : null}
+      {isLoading ? <p className="routine-note__composer-hint">Chargement de ton espace workout...</p> : null}
 
       <div className="workout-layout">
         <section className="workout-exercises">
@@ -454,20 +355,20 @@ const WorkoutPage = () => {
                 <input
                   type="text"
                   value={form.title}
-                  onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))}
+                  onChange={(event) => setForm((previous) => ({ ...previous, title: event.target.value }))}
                   placeholder="Ex : Deadlift"
                   required
                 />
               </label>
               <label>
-                <span>Muscle ciblé</span>
+                <span>Muscle cible</span>
                 <div className="workout-form__select" ref={muscleMenuRef}>
                   <button
                     type="button"
                     className={form.muscle ? "workout-form__select-trigger" : "workout-form__select-trigger is-placeholder"}
                     aria-haspopup="listbox"
                     aria-expanded={isMuscleMenuOpen}
-                    onClick={() => setIsMuscleMenuOpen((prev) => !prev)}
+                    onClick={() => setIsMuscleMenuOpen((previous) => !previous)}
                   >
                     <span>{form.muscle || MUSCLE_PLACEHOLDER}</span>
                     <svg className="workout-form__select-chevron" viewBox="0 0 20 20" aria-hidden="true">
@@ -485,7 +386,7 @@ const WorkoutPage = () => {
                           className={form.muscle === option ? "is-selected" : undefined}
                           onMouseDown={(event) => {
                             event.preventDefault()
-                            setForm((prev) => ({ ...prev, muscle: option }))
+                            setForm((previous) => ({ ...previous, muscle: option }))
                             setIsMuscleMenuOpen(false)
                           }}
                         >
@@ -501,22 +402,20 @@ const WorkoutPage = () => {
                 <input
                   type="text"
                   value={form.category}
-                  onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value }))}
+                  onChange={(event) => setForm((previous) => ({ ...previous, category: event.target.value }))}
                   placeholder="Ex : HIIT, cardio, stretching..."
                 />
               </label>
             </div>
             <div className="workout-form__photo-compact">
-              <div
-                className={`workout-form__photo-preview${form.image ? " workout-form__photo-preview--has-image" : ""}`}
-              >
-                {form.image ? (
-                  <img className="workout-form__photo-img" src={form.image} alt="Aperçu de la photo sélectionnée" loading="lazy" decoding="async" />
+              <div className={`workout-form__photo-preview${formImagePreview ? " workout-form__photo-preview--has-image" : ""}`}>
+                {formImagePreview ? (
+                  <img className="workout-form__photo-img" src={formImagePreview} alt="Apercu de la photo selectionnee" loading="lazy" decoding="async" />
                 ) : (
                   <p>Ajoute une image depuis ton ordinateur.</p>
                 )}
                 <div className="workout-form__photo-actions">
-                  {!form.image ? (
+                  {!formImagePreview ? (
                     <label>
                       <input
                         type="file"
@@ -529,13 +428,13 @@ const WorkoutPage = () => {
                       Choisir une photo
                     </label>
                   ) : null}
-                  {form.image ? (
-                    <button type="button" onClick={() => setForm((prev) => ({ ...prev, image: "" }))}>
+                  {formImagePreview ? (
+                    <button type="button" onClick={() => handleImageChange(null)}>
                       Retirer
                     </button>
                   ) : null}
                 </div>
-                <span className="workout-form__photo-hint">Formats d'image acceptés (JPG, PNG, GIF).</span>
+                <span className="workout-form__photo-hint">Formats d'image acceptes (JPG, PNG, GIF).</span>
               </div>
             </div>
             <button type="submit">Ajouter la carte</button>
@@ -567,7 +466,6 @@ const WorkoutPage = () => {
                       onClick={(event) => {
                         event.stopPropagation()
                         setOpenExerciseMenuId((previous) => (previous === exercise.id ? null : exercise.id))
-                        setOpenVideoMenuId(null)
                       }}
                     >
                       <span aria-hidden="true">...</span>
@@ -579,7 +477,7 @@ const WorkoutPage = () => {
                             type="file"
                             accept="image/*"
                             onChange={(event) => {
-                              updateExerciseImage(exercise.id, event.target.files?.[0])
+                              void handleReplaceExerciseImage(exercise.id, event.target.files?.[0])
                               event.target.value = ""
                               setOpenExerciseMenuId(null)
                             }}
@@ -591,7 +489,7 @@ const WorkoutPage = () => {
                           className="workout-card__menu-item workout-card__menu-item--danger"
                           onClick={(event) => {
                             event.stopPropagation()
-                            handleDeleteExercise(exercise.id)
+                            void handleDeleteExercise(exercise.id)
                             setOpenExerciseMenuId(null)
                           }}
                         >
@@ -601,7 +499,7 @@ const WorkoutPage = () => {
                     ) : null}
                   </div>
                   <div className="workout-card__media">
-                    <img src={exercise.image} alt={exercise.title} loading="lazy" decoding="async" />
+                    <img src={resolveExerciseImage(exercise)} alt={exercise.title} loading="lazy" decoding="async" />
                   </div>
                   <div className="workout-card__body">
                     <h3>{exercise.title}</h3>
@@ -624,8 +522,8 @@ const WorkoutPage = () => {
                 id="workout-video-title"
                 type="text"
                 value={videoForm.title}
-                onChange={(e) => setVideoForm((prev) => ({ ...prev, title: e.target.value }))}
-                placeholder="Nom de la vidéo"
+                onChange={(event) => setVideoForm((previous) => ({ ...previous, title: event.target.value }))}
+                placeholder="Nom de la video"
               />
             </label>
             <label>
@@ -633,18 +531,16 @@ const WorkoutPage = () => {
               <input
                 type="url"
                 value={videoForm.url}
-                onChange={(e) => setVideoForm((prev) => ({ ...prev, url: e.target.value }))}
+                onChange={(event) => setVideoForm((previous) => ({ ...previous, url: event.target.value }))}
                 placeholder="https://www.youtube.com/watch?v=..."
                 required
               />
             </label>
-            <button type="submit">Ajouter la vidéo</button>
+            <button type="submit">Ajouter la video</button>
           </form>
           {videos.length === 0 ? (
             <div className="workout-video-empty">
-              <p className="wishlist-modal__empty">
-                Aucune vidéo ajoutée pour le moment. Commence en ajoutant ta première vidéo.
-              </p>
+              <p className="wishlist-modal__empty">Aucune video ajoutee pour le moment.</p>
             </div>
           ) : (
             <div className="workout-video-grid">
@@ -665,56 +561,25 @@ const WorkoutPage = () => {
                   <div className="workout-card__menu">
                     <button
                       type="button"
-                      className="modal__close"
+                      className="modal__close workout-video-card__delete"
                       aria-label={`Supprimer ${video.title}`}
                       onClick={(event) => {
                         event.stopPropagation()
-                        handleDeleteVideo(video.id)
-                        setOpenVideoMenuId(null)
-                        setOpenExerciseMenuId(null)
+                        void handleDeleteVideo(video.id)
                       }}
                     >
                       <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                       </svg>
                     </button>
-                    {openVideoMenuId === video.id ? (
-                      <div className="workout-card__menu-panel" role="menu" onClick={(event) => event.stopPropagation()}>
-                        <label className="workout-card__menu-item">
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(event) => {
-                              updateVideoThumbnail(video.id, event.target.files?.[0])
-                              event.target.value = ""
-                              setOpenVideoMenuId(null)
-                            }}
-                          />
-                          Modifier la photo
-                        </label>
-                        <button
-                          type="button"
-                          className="workout-card__menu-item workout-card__menu-item--danger"
-                          onClick={(event) => {
-                            event.stopPropagation()
-                            handleDeleteVideo(video.id)
-                            setOpenVideoMenuId(null)
-                          }}
-                        >
-                          Supprimer
-                        </button>
-                      </div>
-                    ) : null}
                   </div>
                   <div className="workout-video-thumb">
-                    <img src={video.thumbnail} alt={video.title} loading="lazy" decoding="async" />
+                    <img src={video.thumbnailUrl} alt={video.title} loading="lazy" decoding="async" />
                   </div>
                   <div className="workout-video-card__body">
                     <div className="workout-video-card__title-row">
                       <p>{video.title}</p>
-                      {video.duration ? (
-                        <span className="workout-video-card__duration">{video.duration}</span>
-                      ) : null}
+                      {video.duration ? <span className="workout-video-card__duration">{video.duration}</span> : null}
                     </div>
                     <span className="workout-video-card__source">youtube.com</span>
                   </div>
@@ -726,7 +591,7 @@ const WorkoutPage = () => {
       </div>
       <div className="workout-page__footer-bar" aria-hidden="true" />
 
-      {selectedExercise && (
+      {selectedExercise ? (
         <div
           className="workout-modal"
           role="dialog"
@@ -736,12 +601,10 @@ const WorkoutPage = () => {
         >
           <div className="workout-modal__panel" onClick={(event) => event.stopPropagation()}>
             <div className="workout-modal__menu">
-              <button
-                type="button"
-                className="modal__close"
-                aria-label="Fermer"
-                onClick={handleClosePlanner}
-              >
+              <button type="button" className="profile-menu" aria-label="Options" onClick={() => setIsModalMenuOpen((previous) => !previous)}>
+                <span aria-hidden="true">...</span>
+              </button>
+              <button type="button" className="modal__close" aria-label="Fermer" onClick={handleClosePlanner}>
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                 </svg>
@@ -753,7 +616,7 @@ const WorkoutPage = () => {
                       type="file"
                       accept="image/*"
                       onChange={(event) => {
-                        updateExerciseImage(selectedExerciseId, event.target.files?.[0])
+                        void handleReplaceExerciseImage(selectedExerciseId, event.target.files?.[0])
                         event.target.value = ""
                         setIsModalMenuOpen(false)
                       }}
@@ -764,7 +627,7 @@ const WorkoutPage = () => {
                     type="button"
                     className="workout-card__menu-item workout-card__menu-item--danger"
                     onClick={() => {
-                      handleDeleteExercise(selectedExerciseId)
+                      void handleDeleteExercise(selectedExerciseId)
                       setIsModalMenuOpen(false)
                     }}
                   >
@@ -774,7 +637,7 @@ const WorkoutPage = () => {
               ) : null}
             </div>
             <div className="workout-modal__cover">
-              <img src={selectedExercise.image} alt={selectedExercise.title} loading="lazy" decoding="async" />
+              <img src={resolveExerciseImage(selectedExercise)} alt={selectedExercise.title} loading="lazy" decoding="async" />
             </div>
             <div className="workout-modal__body">
               <header className="workout-modal__header">
@@ -789,7 +652,7 @@ const WorkoutPage = () => {
                   onSubmit={(event) => {
                     event.preventDefault()
                     if (selectedExerciseId) {
-                      handleAddSeries(selectedExerciseId)
+                      void handleAddSeries(selectedExerciseId)
                     }
                   }}
                 >
@@ -806,30 +669,22 @@ const WorkoutPage = () => {
                     placeholder="Charge (kg)"
                     className="workout-modal__series-weight-input"
                   />
-                  <button type="submit">Ajouter une série</button>
+                  <button type="submit">Ajouter une serie</button>
                 </form>
                 <div className="workout-modal__note">
                   <label>
-                    <span>Notes de séance</span>
+                    <span>Notes de seance</span>
                     <textarea
                       rows={3}
-                      value={currentNote}
-                      onChange={(event) => {
-                        if (!selectedExerciseId) return
-                        const next = event.target.value
-                        setNotesByExercise((previous) => ({
-                          ...previous,
-                          [selectedExerciseId]: next,
-                        }))
-                      }}
+                      value={noteDraft}
+                      onChange={(event) => setNoteDraft(event.target.value)}
+                      onBlur={() => void handleSaveNote()}
                       placeholder="Ressenti, charge, remarque..."
                     />
                   </label>
                 </div>
                 {selectedSeries.length === 0 ? (
-                  <p className="workout-modal__empty">
-                    Aucun élément pour le moment. Clique sur "Ajouter une série" pour enregistrer tes exercices dans cette catégorie.
-                  </p>
+                  <p className="workout-modal__empty">Aucun element pour le moment.</p>
                 ) : (
                   <ul className="workout-modal__series-list">
                     {selectedSeries.map((serie) => (
@@ -838,25 +693,19 @@ const WorkoutPage = () => {
                           <input
                             type="checkbox"
                             checked={serie.completed}
-                            onChange={() => selectedExerciseId && toggleSeriesItem(selectedExerciseId, serie.id)}
+                            onChange={() => void updateSeries(serie.id, { completed: !serie.completed })}
                           />
                           <span>{serie.label}</span>
                         </label>
-                        {serie.weight ? (
-                          <input
-                            type="text"
-                            className="workout-modal__series-weight"
-                            value={serie.weight}
-                            onChange={(event) => selectedExerciseId && updateSeriesWeight(selectedExerciseId, serie.id, event.target.value)}
-                            placeholder="kg"
-                            aria-label={`Poids pour ${serie.label}`}
-                          />
-                        ) : null}
-                        <button
-                          type="button"
-                          aria-label={`Supprimer ${serie.label}`}
-                          onClick={() => selectedExerciseId && handleDeleteSeries(selectedExerciseId, serie.id)}
-                        >
+                        <input
+                          type="text"
+                          className="workout-modal__series-weight"
+                          value={serie.weight ?? ""}
+                          onChange={(event) => void updateSeries(serie.id, { weight: event.target.value.trim() || undefined })}
+                          placeholder="kg"
+                          aria-label={`Poids pour ${serie.label}`}
+                        />
+                        <button type="button" aria-label={`Supprimer ${serie.label}`} onClick={() => void deleteSeries(serie.id)}>
                           &times;
                         </button>
                       </li>
@@ -867,12 +716,12 @@ const WorkoutPage = () => {
             </div>
             <footer className="workout-modal__footer">
               <div className="workout-modal__summary">
-                {completedSeriesCount}/{selectedSeries.length} séries cochées
+                {completedSeriesCount}/{selectedSeries.length} series cochees
               </div>
             </footer>
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   )
 }

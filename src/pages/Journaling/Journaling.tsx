@@ -1,30 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ChangeEvent } from 'react'
-import usePersistentState from '../../hooks/usePersistentState'
+import useUserJournalEntries from '../../hooks/useUserJournalEntries'
 import journalingMoodSecondary from '../../assets/livre.webp'
 import journalingMoodTertiary from '../../assets/mallika-jain-dupe.webp'
 import PageHeading from '../../components/PageHeading'
+import type { AnchorType, EnergyLevel, JournalEntryInput, MoodValue, PostFeeling } from '../../types/personalization'
 import './Journaling.css'
-
-type MoodValue = 'bright' | 'good' | 'neutral' | 'low' | 'overwhelmed'
-type EnergyLevel = 'low' | 'medium' | 'high'
-type PostFeeling = 'better' | 'same' | 'clearer' | 'tiredRelieved'
-type AnchorType = 'gratitude' | 'victory'
-
-type JournalEntry = {
-  id: string
-  date: string
-  mood?: MoodValue | string
-  energy?: EnergyLevel
-  keyword?: string
-  question?: string
-  questionAnswer?: string
-  content?: string
-  postFeeling?: PostFeeling
-  positiveAnchor?: string
-  positiveAnchorType?: AnchorType
-  createdAt?: number
-}
 
 const moodOptions = [
   { value: 'bright', label: 'Légère', emoji: '✨' },
@@ -137,7 +118,7 @@ const limitKeywordWords = (value: string) => {
 }
 
 const JournalingPage = () => {
-  const [, setEntries] = usePersistentState<JournalEntry[]>('planner.journal.entries', () => [])
+  const { createEntry, error } = useUserJournalEntries()
   useEffect(() => {
     document.body.classList.add('journaling-page--lux')
     return () => {
@@ -156,6 +137,7 @@ const JournalingPage = () => {
     positiveAnchorType: 'gratitude' as AnchorType,
   })
   const [saveConfirmationVisible, setSaveConfirmationVisible] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
   const saveConfirmationTimeout = useRef<number | null>(null)
 
   useEffect(() => {
@@ -169,9 +151,8 @@ const JournalingPage = () => {
   const dailyQuestion = useMemo(() => getDailyQuestion(draft.date, draft.mood), [draft.date, draft.mood])
   const displayDate = useMemo(() => formatEntryDate(draft.date), [draft.date])
 
-  const handleSubmit = () => {
-    const newEntry: JournalEntry = {
-      id: `entry-${Date.now()}`,
+  const handleSubmit = async () => {
+    const newEntry: JournalEntryInput = {
       date: draft.date,
       mood: draft.mood,
       energy: draft.energy,
@@ -182,29 +163,33 @@ const JournalingPage = () => {
       postFeeling: draft.postFeeling || undefined,
       positiveAnchor: draft.positiveAnchor.trim() || undefined,
       positiveAnchorType: draft.positiveAnchorType,
-      createdAt: Date.now(),
     }
 
-    setEntries((previous) => [newEntry, ...previous])
-    setDraft((previous) => ({
-      ...previous,
-      date: getTodayISO(),
-      keyword: '',
-      content: '',
-      questionAnswer: '',
-      postFeeling: '' as PostFeeling | '',
-      positiveAnchor: '',
-      positiveAnchorType: 'gratitude',
-    }))
+    try {
+      setSaveError(null)
+      await createEntry(newEntry)
+      setDraft((previous) => ({
+        ...previous,
+        date: getTodayISO(),
+        keyword: '',
+        content: '',
+        questionAnswer: '',
+        postFeeling: '' as PostFeeling | '',
+        positiveAnchor: '',
+        positiveAnchorType: 'gratitude',
+      }))
 
-    setSaveConfirmationVisible(true)
-    if (saveConfirmationTimeout.current !== null) {
-      window.clearTimeout(saveConfirmationTimeout.current)
+      setSaveConfirmationVisible(true)
+      if (saveConfirmationTimeout.current !== null) {
+        window.clearTimeout(saveConfirmationTimeout.current)
+      }
+      saveConfirmationTimeout.current = window.setTimeout(() => {
+        setSaveConfirmationVisible(false)
+        saveConfirmationTimeout.current = null
+      }, 2000)
+    } catch {
+      setSaveError("Impossible d'enregistrer cette page pour le moment.")
     }
-    saveConfirmationTimeout.current = window.setTimeout(() => {
-      setSaveConfirmationVisible(false)
-      saveConfirmationTimeout.current = null
-    }, 2000)
   }
 
   return (
@@ -379,6 +364,7 @@ const JournalingPage = () => {
         <button type="button" className="journaling-save__button" onClick={handleSubmit}>
           Sauvegarder cette page
         </button>
+        {saveError || error ? <p className="journaling-helper">{saveError ?? error}</p> : null}
         <div
           className={`journaling-save__confirmation${saveConfirmationVisible ? ' is-visible' : ''}`}
           aria-live="polite"

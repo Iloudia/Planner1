@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import "./Boutique.css"
+import { buildApiUrl } from "../../utils/apiUrl"
 
 import { products } from "./boutiqueData"
 import { fetchCustomProducts, loadCustomProducts, PRODUCTS_UPDATED_EVENT } from "./boutiqueStorage"
@@ -87,8 +88,7 @@ const BoutiqueProductPage = () => {
     setIsCheckoutLoading(true)
     setCheckoutError(null)
     try {
-      const apiBase = import.meta.env.VITE_API_BASE || ""
-      const response = await fetch(`${apiBase}/api/create-checkout-session`, {
+      const response = await fetch(buildApiUrl("/api/create-checkout-session"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ productId: product.id }),

@@ -1,8 +1,5 @@
-import { FormEvent, useEffect, useMemo, useState } from "react"
+import { FormEvent, useMemo, useState } from "react"
 import { useAuth } from "../../context/AuthContext"
-import { buildUserScopedKey } from "../../utils/userScopedKey"
-
-const PROFILE_STORAGE_KEY = "planner.profile.preferences.v1"
 
 const accountOptions = [
   {
@@ -99,12 +96,10 @@ const computeAge = (birthday?: string) => {
 }
 
 const SettingsAccount = () => {
-  const { userEmail, createdAt, verifyPassword, changePassword, deactivateAccount, deleteAccount, scheduledDeletionDate } = useAuth()
-  const profileStorageKey = useMemo(() => buildUserScopedKey(userEmail, PROFILE_STORAGE_KEY), [userEmail])
+  const { userEmail, userProfile, createdAt, verifyPassword, changePassword, deactivateAccount, deleteAccount, scheduledDeletionDate } = useAuth()
   const [step, setStep] = useState<"list" | "password" | "details" | "change-password" | "deactivate">("list")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
-  const [profileData, setProfileData] = useState<{ personal?: Record<string, unknown>; identity?: Record<string, unknown> }>({})
   const [passwordForm, setPasswordForm] = useState({ current: "", next: "", confirm: "" })
   const [passwordChangeError, setPasswordChangeError] = useState<string | null>(null)
   const [passwordChangeSuccess, setPasswordChangeSuccess] = useState<string | null>(null)
@@ -118,21 +113,11 @@ const SettingsAccount = () => {
 
   const passwordInputType = (field: PasswordField) => (passwordVisibility[field] ? "text" : "password")
 
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(profileStorageKey)
-      if (!raw) return
-      const parsed = JSON.parse(raw)
-      setProfileData({ personal: parsed.personalInfo ?? {}, identity: parsed.identityInfo ?? {} })
-    } catch {
-      setProfileData({})
-    }
-  }, [profileStorageKey])
 
-  const personal = profileData.personal ?? {}
-  const identity = profileData.identity ?? {}
+  const personal = userProfile.personalInfo ?? {}
+  const identity = userProfile.identityInfo ?? {}
 
-  const username = (identity.username as string) ?? (userEmail?.split("@")[0] ?? "Non renseigné")
+  const username = (identity.username as string) || "Non renseigné"
   const phone = (personal.phone as string) ?? "Non renseigné"
   const email = (personal.email as string) ?? userEmail ?? "Non renseigné"
   const country = (identity.country as string) ?? "Non renseigné"

@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react"
 import { Link } from "react-router-dom"
 import { useAuth } from "../../context/AuthContext"
-import { buildUserScopedKey } from "../../utils/userScopedKey"
-import usePersistentState from "../../hooks/usePersistentState"
+import useUserDietData from "../../hooks/useUserDietData"
+import { getWeekKey } from "../../utils/weekKey"
+import { builtinDietRecipes } from "../Diet/DietPage"
 import PageHeading from "../../components/PageHeading"
 import photo1 from "../../assets/food.webp"
 import photo2 from "../../assets/food2.webp"
@@ -286,23 +287,69 @@ const shuffle = <T,>(items: T[]) => {
 }
 
 function DietPage() {
-  const { userEmail } = useAuth()
+  const { userId } = useAuth()
+  const weekKey = getWeekKey()
+  const {
+    weekPlan,
+    customRecipes,
+    isLoading,
+    error,
+    updateMeal,
+    saveShoppingNotes,
+    saveCuisineGoals,
+    saveFillOnlyEmpty,
+    removeRecipeFromSlot,
+    saveWeekPlan,
+  } = useUserDietData(weekKey)
+  const canEdit = Boolean(userId)
   useEffect(() => {
     document.body.classList.add("alimentation-page--lux")
     return () => {
       document.body.classList.remove("alimentation-page--lux")
     }
   }, [])
-  const weeklyRecipesKey = useMemo(() => buildUserScopedKey(userEmail, DIET_WEEKLY_PLAN_RECIPES_KEY), [userEmail])
   const [selectedRecipe, setSelectedRecipe] = useState<RecipeSnapshot | null>(null)
   const [selectedRecipeSlot, setSelectedRecipeSlot] = useState<{ day: typeof weekDays[number]; slot: MealSlotId } | null>(
     null,
   )
-  const [weeklyPlan, setWeeklyPlan] = usePersistentState<WeeklyPlan>("planner.diet.weeklyPlan", buildDefaultWeeklyPlan)
-  const [shoppingNotes, setShoppingNotes] = usePersistentState<string>("planner.diet.groceriesNotes", "")
-  const [cuisineGoals, setCuisineGoals] = usePersistentState<CuisineGoalId[]>("planner.diet.cuisineGoals", ["equilibre"])
-  const [fillOnlyEmpty, setFillOnlyEmpty] = usePersistentState<boolean>("planner.diet.generator.fillOnlyEmpty", true)
   const [generatorStatus, setGeneratorStatus] = useState<string | null>(null)
+  const weeklyPlan = weekPlan.meals as WeeklyPlan
+  const shoppingNotes = weekPlan.shoppingNotes
+  const cuisineGoals = weekPlan.cuisineGoalIds as CuisineGoalId[]
+  const fillOnlyEmpty = weekPlan.fillOnlyEmpty
+
+  const recipeLookup = useMemo(() => {
+    const map = new Map<string, RecipeSnapshot>()
+    builtinDietRecipes.forEach((recipe) => {
+      map.set(`builtin:${recipe.id}`, {
+        id: recipe.id,
+        title: recipe.title,
+        flavor: recipe.flavor,
+        prepTime: recipe.prepTime,
+        servings: recipe.servings,
+        image: recipe.image,
+        ingredients: recipe.ingredients,
+        steps: recipe.steps,
+        toppings: recipe.toppings,
+        tips: recipe.tips,
+      })
+    })
+    customRecipes.forEach((recipe) => {
+      map.set(`custom:${recipe.id}`, {
+        id: recipe.id,
+        title: recipe.title,
+        flavor: recipe.flavor,
+        prepTime: recipe.prepTime,
+        servings: recipe.servings,
+        image: recipe.imageUrl || photo5,
+        ingredients: recipe.ingredients,
+        steps: recipe.steps,
+        toppings: recipe.toppings,
+        tips: recipe.tips,
+      })
+    })
+    return map
+  }, [customRecipes])
 
   const weekRangeLabel = useMemo(() => {
     const today = new Date()
@@ -320,58 +367,17 @@ function DietPage() {
     return `Semaine du ${format(monday)} - ${format(sunday)}`
   }, [])
 
-  const handleMealChange = (day: typeof weekDays[number], slot: MealSlotId, value: string) => {
-    setWeeklyPlan((previous) => {
-      const previousValue = previous[day]?.[slot] ?? ""
-      if (previousValue !== value) {
-        try {
-          const stored = localStorage.getItem(weeklyRecipesKey)
-          if (stored) {
-            const parsed = JSON.parse(stored) as Record<string, Record<MealSlotId, RecipeSnapshot>>
-            if (parsed?.[day]?.[slot]) {
-              const { [slot]: _removed, ...restSlots } = parsed[day]
-              const next = { ...parsed, [day]: restSlots }
-              localStorage.setItem(weeklyRecipesKey, JSON.stringify(next))
-            }
-          }
-        } catch {
-          // ignore
-        }
-      }
-      return {
-        ...previous,
-        [day]: { ...previous[day], [slot]: value },
-      }
-    })
+  const handleMealChange = async (day: typeof weekDays[number], slot: MealSlotId, value: string) => {
+    if (!canEdit) return
+    await updateMeal(day, slot, value)
   }
 
-  const pruneRecipeMappings = (changes: { day: typeof weekDays[number]; slot: MealSlotId }[]) => {
-    if (changes.length === 0) return
-    try {
-      const stored = localStorage.getItem(weeklyRecipesKey)
-      if (!stored) return
-      const parsed = JSON.parse(stored) as Record<string, Record<MealSlotId, RecipeSnapshot>>
-      const next = { ...parsed }
-      let updated = false
-      changes.forEach(({ day, slot }) => {
-        if (next?.[day]?.[slot]) {
-          const { [slot]: _removed, ...restSlots } = next[day]
-          next[day] = restSlots
-          updated = true
-        }
-      })
-      if (updated) {
-        localStorage.setItem(weeklyRecipesKey, JSON.stringify(next))
-      }
-    } catch {
-      // ignore
-    }
-  }
-
-  const toggleCuisineGoal = (goalId: CuisineGoalId) => {
-    setCuisineGoals((previous) =>
-      previous.includes(goalId) ? previous.filter((goal) => goal !== goalId) : [...previous, goalId],
-    )
+  const toggleCuisineGoal = async (goalId: CuisineGoalId) => {
+    if (!canEdit) return
+    const nextGoals = cuisineGoals.includes(goalId)
+      ? cuisineGoals.filter((goal) => goal !== goalId)
+      : [...cuisineGoals, goalId]
+    await saveCuisineGoals(nextGoals)
   }
 
   const previewIdeas = useMemo(() => {
@@ -383,7 +389,8 @@ function DietPage() {
     return shuffle(unique).slice(0, 5)
   }, [cuisineGoals])
 
-  const generatePlan = () => {
+  const generatePlan = async () => {
+    if (!canEdit) return
     const selectedGoals = new Set(cuisineGoals)
     const getPoolForSlot = (slot: MealSlotId) => {
       const base = MEAL_IDEAS.filter((idea) => idea.slot === slot)
@@ -421,8 +428,17 @@ function DietPage() {
       nextPlan[day] = dayPlan
     })
 
-    setWeeklyPlan(nextPlan)
-    pruneRecipeMappings(changes)
+    const nextRecipeRefs = { ...weekPlan.recipeRefs }
+    changes.forEach(({ day, slot }) => {
+      const nextDayRefs = { ...(nextRecipeRefs[day] ?? {}) }
+      delete nextDayRefs[slot]
+      nextRecipeRefs[day] = nextDayRefs
+    })
+    await saveWeekPlan({
+      ...weekPlan,
+      meals: nextPlan,
+      recipeRefs: nextRecipeRefs,
+    })
 
     const goalLabels =
       cuisineGoals.length === 0
@@ -432,34 +448,14 @@ function DietPage() {
   }
 
   const getRecipeForSlot = (day: typeof weekDays[number], slot: MealSlotId) => {
-    try {
-      const stored = localStorage.getItem(weeklyRecipesKey)
-      if (!stored) return null
-      const parsed = JSON.parse(stored) as Record<string, Record<MealSlotId, RecipeSnapshot>>
-      return parsed?.[day]?.[slot] ?? null
-    } catch {
-      return null
-    }
+    const ref = weekPlan.recipeRefs[day]?.[slot]
+    if (!ref) return null
+    return recipeLookup.get(`${ref.source}:${ref.recipeId}`) ?? null
   }
 
-  const removeRecipeFromPlan = (day: typeof weekDays[number], slot: MealSlotId) => {
-    setWeeklyPlan((previous) => ({
-      ...previous,
-      [day]: { ...previous[day], [slot]: "" },
-    }))
-    try {
-      const stored = localStorage.getItem(weeklyRecipesKey)
-      if (stored) {
-        const parsed = JSON.parse(stored) as Record<string, Record<MealSlotId, RecipeSnapshot>>
-        if (parsed?.[day]?.[slot]) {
-          const { [slot]: _removed, ...restSlots } = parsed[day]
-          const next = { ...parsed, [day]: restSlots }
-          localStorage.setItem(weeklyRecipesKey, JSON.stringify(next))
-        }
-      }
-    } catch {
-      // ignore
-    }
+  const removeRecipeFromPlan = async (day: typeof weekDays[number], slot: MealSlotId) => {
+    if (!canEdit) return
+    await removeRecipeFromSlot(day, slot)
     setSelectedRecipe(null)
     setSelectedRecipeSlot(null)
   }
@@ -467,6 +463,9 @@ function DietPage() {
   return (
     <>
       <PageHeading eyebrow="Alimentation" title="Cuisine" />
+      {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer ton espace alimentation.</p> : null}
+      {error ? <p className="routine-note__composer-hint">{error}</p> : null}
+      {isLoading ? <p className="routine-note__composer-hint">Chargement de ton espace alimentation...</p> : null}
         <section className="page-section diet-crosslink">
           <div>
             <p className="diet-crosslink__label">Besoin d'idées ?</p>
@@ -485,7 +484,7 @@ function DietPage() {
               <p>Choisis tes objectifs cuisine et génère une semaine équilibrée selon tes préférences.</p>
             </div>
             <div className="diet-generator__actions">
-              <button type="button" className="diet-generator__primary" onClick={generatePlan}>
+              <button type="button" className="diet-generator__primary" onClick={() => void generatePlan()} disabled={!canEdit}>
                 Générer mon plan
               </button>
               {generatorStatus ? <span className="diet-generator__status">{generatorStatus}</span> : null}
@@ -502,8 +501,9 @@ function DietPage() {
                       key={goal.id}
                       type="button"
                       className={`diet-goal-chip${isActive ? " is-active" : ""}`}
-                      onClick={() => toggleCuisineGoal(goal.id)}
+                      onClick={() => void toggleCuisineGoal(goal.id)}
                       aria-pressed={isActive}
+                      disabled={!canEdit}
                     >
                       <span>{goal.label}</span>
                       <small>{goal.description}</small>
@@ -518,7 +518,8 @@ function DietPage() {
                 <input
                   type="checkbox"
                   checked={fillOnlyEmpty}
-                  onChange={(event) => setFillOnlyEmpty(event.target.checked)}
+                  onChange={(event) => void saveFillOnlyEmpty(event.target.checked)}
+                  disabled={!canEdit}
                 />
                 Remplir uniquement les cases vides
               </label>
@@ -571,7 +572,8 @@ function DietPage() {
                     type="text"
                     value={weeklyPlan[day][slot.id]}
                     placeholder={`Ton plat du ${slot.label.toLowerCase()}`}
-                    onChange={(event) => handleMealChange(day, slot.id, event.target.value)}
+                    onChange={(event) => void handleMealChange(day, slot.id, event.target.value)}
+                    disabled={!canEdit}
                   />
                 </div>
                 ))}
@@ -586,7 +588,8 @@ function DietPage() {
             <textarea
               className="diet-shopping__textarea"
               value={shoppingNotes}
-              onChange={(event) => setShoppingNotes(event.target.value)}
+              onChange={(event) => void saveShoppingNotes(event.target.value)}
+              disabled={!canEdit}
               placeholder="Écris ta liste comme dans un carnet..."
             />
           </div>
@@ -680,8 +683,9 @@ function DietPage() {
                   type="button"
                   onClick={() => {
                     if (!selectedRecipeSlot) return
-                    removeRecipeFromPlan(selectedRecipeSlot.day, selectedRecipeSlot.slot)
+                    void removeRecipeFromPlan(selectedRecipeSlot.day, selectedRecipeSlot.slot)
                   }}
+                  disabled={!canEdit}
                 >
                   Supprimer la recette du planning
                 </button>

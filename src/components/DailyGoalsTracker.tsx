@@ -289,7 +289,7 @@ const DailyGoalsTracker = () => {
                 <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
               </svg>
             </button>
-            <h4>Journée validée 🎉</h4>
+            <h4>Journée validée</h4>
             <p>Bravo, tu as tout coché pour {HABIT_DAYS_FULL[rewardDay]}.</p>
           </div>
         </div>
