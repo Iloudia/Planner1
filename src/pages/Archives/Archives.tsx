@@ -446,7 +446,9 @@ const ArchivesPage = () => {
     setSelectedEntry(null)
   }
 
-  const selectedLetter = selectedEntry?.section === "self-love" ? selectedEntry.selfLoveLetter ?? null : null
+  const selectedSelfLoveEntry = selectedEntry?.section === "self-love" ? selectedEntry.selfLoveLetter ?? null : null
+  const selectedLetter = selectedSelfLoveEntry?.entryType === "letter" ? selectedSelfLoveEntry : null
+  const selectedExercise = selectedSelfLoveEntry && selectedSelfLoveEntry.entryType !== "letter" ? selectedSelfLoveEntry : null
   const selectedLetterLocked = selectedLetter ? isFutureLetterLocked(selectedLetter) : false
   const selectedLetterDate = selectedLetter
     ? new Date(selectedLetter.createdAt).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" })
@@ -819,6 +821,55 @@ const ArchivesPage = () => {
                     </div>
                   </div>
                 )
+              ) : selectedExercise ? (
+                <div className="archives-exercise-card">
+                  <h3>{selectedEntry.title}</h3>
+                  {selectedExercise.entryType === "bestFriend" ? (
+                    <div className="archives-exercise-card__content">
+                      <section className="archives-exercise-card__section archives-exercise-card__section--intro">
+                        <h4>Le meilleur ami comme boussole</h4>
+                        <p>Imagine qu'un ami vive exactement la meme situation que toi.</p>
+                      </section>
+                      {selectedExercise.bestFriend?.advice ? (
+                        <section className="archives-exercise-card__section archives-exercise-card__section--qa">
+                          <h4>Que lui dirais-tu ?</h4>
+                          <p className="archives-exercise-card__answer">{selectedExercise.bestFriend.advice}</p>
+                        </section>
+                      ) : null}
+                      {selectedExercise.bestFriend?.selfTalk ? (
+                        <section className="archives-exercise-card__section archives-exercise-card__section--qa">
+                          <h4>Quelle est la difference avec ce que tu te dis a toi-meme ?</h4>
+                          <p className="archives-exercise-card__answer">{selectedExercise.bestFriend.selfTalk}</p>
+                        </section>
+                      ) : null}
+                    </div>
+                  ) : (
+                    <div className="archives-exercise-card__content">
+                      <section className="archives-exercise-card__section archives-exercise-card__section--intro">
+                        <h4>Dialogue doux avec ton passe</h4>
+                        <p>Offre a ton enfant interieur les mots qui avaient manque.</p>
+                      </section>
+                      {selectedExercise.innerChild?.message ? (
+                        <section className="archives-exercise-card__section archives-exercise-card__section--qa">
+                          <h4>Que souhaiterais-tu lui dire maintenant ?</h4>
+                          <p className="archives-exercise-card__answer">{selectedExercise.innerChild.message}</p>
+                        </section>
+                      ) : null}
+                      {selectedExercise.innerChild?.reassurance ? (
+                        <section className="archives-exercise-card__section archives-exercise-card__section--qa">
+                          <h4>Comment pourrais-tu le rassurer ?</h4>
+                          <p className="archives-exercise-card__answer">{selectedExercise.innerChild.reassurance}</p>
+                        </section>
+                      ) : null}
+                      {selectedExercise.innerChild?.neededWords ? (
+                        <section className="archives-exercise-card__section archives-exercise-card__section--qa">
+                          <h4>De quoi aurait-il eu besoin d'entendre ?</h4>
+                          <p className="archives-exercise-card__answer">{selectedExercise.innerChild.neededWords}</p>
+                        </section>
+                      ) : null}
+                    </div>
+                  )}
+                </div>
               ) : (
                 <>
                   <h4>{selectedEntry.title}</h4>

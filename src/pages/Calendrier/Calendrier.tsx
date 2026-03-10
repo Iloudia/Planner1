@@ -3,7 +3,6 @@ import type { CSSProperties, FormEvent, KeyboardEvent } from 'react'
 import { getDateKey } from '../../data/sampleData'
 import type { ScheduledTask } from '../../data/sampleData'
 import { useTasks } from '../../context/TasksContext'
-import PageHeading from '../../components/PageHeading'
 import './CalendarPage.css'
 const weekDays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
 const hours = Array.from({ length: 18 }, (_, index) => index + 6)
@@ -274,16 +273,12 @@ const CalendrierPage = () => {
       next.setDate(previous.getDate() + delta * 7)
       return next
     })
+    setMobileSelectedDateKey((previous) => {
+      const next = parseDateKey(previous)
+      next.setDate(next.getDate() + delta * 7)
+      return getDateKey(next)
+    })
   }
-
-  const handleDayChange = (delta: number) => {
-    const base = parseDateKey(mobileSelectedDateKey)
-    base.setDate(base.getDate() + delta)
-    const nextKey = getDateKey(base)
-    setMobileSelectedDateKey(nextKey)
-    setWeekAnchorDate(base)
-  }
-
   const handleMonthChange = (delta: number) => {
     setCurrentMonthDate((previous) => {
       const next = new Date(previous)
@@ -605,7 +600,7 @@ const viewToggle = (
       className={`calendar-view-toggle__button${calendarView === 'weekly' ? ' is-active' : ''}`}
       onClick={() => setCalendarView('weekly')}
     >
-      Hebdomadaire
+      Calendrier Hebdomadaire
     </button>
     <button
       type="button"
@@ -614,7 +609,7 @@ const viewToggle = (
       className={`calendar-view-toggle__button${calendarView === 'monthly' ? ' is-active' : ''}`}
       onClick={() => setCalendarView('monthly')}
     >
-      Mensuel
+      Calendrier mensuel
     </button>
   </div>
 )
@@ -636,7 +631,31 @@ return (
     <section className="calendar-weekly">
       {isCompact ? (
         <div className="calendar-weekly__mobile calendar-mobile" role="region" aria-label="Calendrier mobile">
-          <div className="calendar-mobile__panel">
+                    <div className="calendar-weekly__toolbar calendar-mobile__toolbar" aria-label="Navigation semaine">
+            {viewToggle}
+          </div>
+
+
+                    <div className="calendar-mobile__panel">
+            <h1 className="calendar-heading__title calendar-heading__title--mobile">
+              <button
+                type="button"
+                className="calendar-heading__arrow"
+                onClick={() => handleWeekChange(-1)}
+                aria-label="Semaine prÈcÈdente"
+              >
+                {'<'}
+              </button>
+              <span>{`Semaine du ${weekRangeLabel}`}</span>
+              <button
+                type="button"
+                className="calendar-heading__arrow"
+                onClick={() => handleWeekChange(1)}
+                aria-label="Semaine suivante"
+              >
+                {'>'}
+              </button>
+            </h1>
             <span className="calendar-mobile__month">{formatMonthTitle(weekStartDate)}</span>
             <div className="calendar-mobile__week" role="list">
               {weekDates.map((date, index) => {
@@ -664,17 +683,8 @@ return (
 
           <div className="calendar-mobile__today-row">
             <span>{mobileSelectedLabel}</span>
-            <div className="calendar-mobile__toggle">{viewToggle}</div>
           </div>
 
-          <div className="calendar-mobile__nav calendar-month-nav" aria-label="Navigation semaine">
-            <button type="button" onClick={() => handleDayChange(-1)} aria-label="Jour pr√©c√©dent">
-              &lt;
-            </button>
-            <button type="button" onClick={() => handleDayChange(1)} aria-label="Jour suivant">
-              &gt;
-            </button>
-          </div>
 
           <div className="calendar-mobile__agenda" role="list">
             {mobileSelectedTasks.length === 0 ? (
@@ -705,29 +715,34 @@ return (
         </div>
       ) : (
         <>
-          <header className="calendar-weekly__header">
-        <PageHeading eyebrow="calendrier hebdomadaire" title={`Semaine du ${weekRangeLabel}`} />
-        {viewToggle}
-      </header>
+                    <header className="calendar-weekly__header">
+            <div className="calendar-heading">
+              <span className="calendar-heading__eyebrow">Calendrier hebdomadaire</span>
+              <h1 className="calendar-heading__title">
+                <button
+                  type="button"
+                  className="calendar-heading__arrow"
+                  onClick={() => handleWeekChange(-1)}
+                  aria-label="Semaine prÈcÈdente"
+                >
+                  {'<'}
+                </button>
+                <span>{`Semaine du ${weekRangeLabel}`}</span>
+                <button
+                  type="button"
+                  className="calendar-heading__arrow"
+                  onClick={() => handleWeekChange(1)}
+                  aria-label="Semaine suivante"
+                >
+                  {'>'}
+                </button>
+              </h1>
+            </div>
+          </header>
       <div className="calendar-weekly__layout">
         <div className="calendar-weekly__toolbar">
-          <button
-            type="button"
-            className="calendar-weekly__create"
-            onClick={() => handlePlanForDate(getDateKey(today))}
-          >
-            <span className="calendar-weekly__create-plus">+</span>
-            Cr√©er un √©v√©nement
-          </button>
-          <div className="calendar-month-nav">
-            <button type="button" onClick={() => handleWeekChange(-1)} aria-label="Semaine pr√©c√©dente">
-              &lt;
-            </button>
-            <button type="button" onClick={() => handleWeekChange(1)} aria-label="Semaine suivante">
-              &gt;
-            </button>
-          </div>
-        </div>
+          {viewToggle}
+                    </div>
         <div
           className="calendar-weekly__grid"
           style={{
@@ -824,18 +839,31 @@ return (
 
     {calendarView === 'monthly' ? (
     <section className="calendar-monthly-preview">
-      <header className="calendar-header calendar-header--compact">
-        <PageHeading eyebrow="aper√ßu mensuel" title={formatMonthTitle(currentMonthDate)} />
-        <div className="calendar-monthly__controls">
+            <header className="calendar-header calendar-header--compact">
+        <div className="calendar-heading">
+          <span className="calendar-heading__eyebrow">AperÁu mensuel</span>
+          <h1 className="calendar-heading__title">
+            <button
+              type="button"
+              className="calendar-heading__arrow"
+              onClick={() => handleMonthChange(-1)}
+              aria-label="Mois prÈcÈdent"
+            >
+              {'<'}
+            </button>
+            <span>{formatMonthTitle(currentMonthDate)}</span>
+            <button
+              type="button"
+              className="calendar-heading__arrow"
+              onClick={() => handleMonthChange(1)}
+              aria-label="Mois suivant"
+            >
+              {'>'}
+            </button>
+          </h1>
+        </div>
+        <div className="calendar-weekly__toolbar calendar-monthly__controls">
           {viewToggle}
-          <div className="calendar-month-nav">
-            <button type="button" onClick={() => handleMonthChange(-1)} aria-label="Mois pr√©c√©dent">
-              &lt;
-            </button>
-            <button type="button" onClick={() => handleMonthChange(1)} aria-label="Mois suivant">
-              &gt;
-            </button>
-          </div>
         </div>
       </header>
 <div className="calendar-grid calendar-grid--preview">
@@ -1218,78 +1246,3 @@ return (
 }
 
 export default CalendrierPage
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

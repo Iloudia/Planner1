@@ -56,9 +56,9 @@
 }
 
 .routine-note {
-  --note-accent: #ec4899;
-  --note-accent-soft: rgba(236, 72, 153, 0.18);
-  --note-line: rgba(244, 114, 182, 0.25);
+  --note-accent: #725c3f;
+  --note-accent-soft: rgba(114, 92, 63, 0.18);
+  --note-line: rgba(227, 215, 202, 0.25);
   --note-ink: #9d174d;
   position: relative;
   padding: 2.4rem 2.3rem 2.8rem;
@@ -210,7 +210,7 @@
 
 .routine-note__checkbox:checked {
   transform: scale(1.05);
-  box-shadow: 0 10px 26px rgba(244, 114, 182, 0.18);
+  box-shadow: 0 10px 26px rgba(227, 215, 202, 0.18);
 }
 
 .routine-note__text {
@@ -276,7 +276,7 @@
   font-size: 1rem;
   line-height: 1;
   border-color: var(--note-accent-soft);
-  background: rgba(236, 72, 153, 0.15);
+  background: rgba(114, 92, 63, 0.15);
 }
 
 .routine-note__move:disabled {
@@ -318,8 +318,8 @@
 .routine-note__composer input:focus,
 .routine-note__composer textarea:focus {
   outline: none;
-  border-color: #ec4899;
-  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
+  border-color: #725c3f;
+  box-shadow: 0 10px 26px rgba(114, 92, 63, 0.15);
 }
 
 .routine-note__composer input[type="text"] {

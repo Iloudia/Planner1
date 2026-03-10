@@ -277,6 +277,17 @@ const buildDefaultWeeklyPlan = (): WeeklyPlan => {
   return plan
 }
 
+const getNextMondayMidnight = (reference: Date) => {
+  const next = new Date(reference)
+  next.setHours(0, 0, 0, 0)
+  const day = next.getDay()
+  const daysUntilNextMonday = day === 0 ? 1 : 8 - day
+  next.setDate(next.getDate() + daysUntilNextMonday)
+  return next
+}
+
+const normalizeMealTitle = (value: string) => value.trim().toLowerCase()
+
 const shuffle = <T,>(items: T[]) => {
   const next = [...items]
   for (let i = next.length - 1; i > 0; i -= 1) {
@@ -288,7 +299,7 @@ const shuffle = <T,>(items: T[]) => {
 
 function DietPage() {
   const { userId } = useAuth()
-  const weekKey = getWeekKey()
+  const [weekKey, setWeekKey] = useState(() => getWeekKey())
   const {
     weekPlan,
     customRecipes,
@@ -306,6 +317,39 @@ function DietPage() {
     document.body.classList.add("alimentation-page--lux")
     return () => {
       document.body.classList.remove("alimentation-page--lux")
+    }
+  }, [])
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return
+    }
+
+    let timeoutId: number | null = null
+
+    const scheduleWeeklyRollover = () => {
+      const now = new Date()
+      const nextMondayMidnight = getNextMondayMidnight(now)
+      const delay = Math.max(1000, nextMondayMidnight.getTime() - now.getTime())
+
+      timeoutId = window.setTimeout(() => {
+        setWeekKey(getWeekKey())
+        scheduleWeeklyRollover()
+      }, delay)
+    }
+
+    scheduleWeeklyRollover()
+
+    const syncOnVisibilityChange = () => {
+      setWeekKey(getWeekKey())
+    }
+
+    window.addEventListener("visibilitychange", syncOnVisibilityChange)
+    return () => {
+      if (timeoutId) {
+        window.clearTimeout(timeoutId)
+      }
+      window.removeEventListener("visibilitychange", syncOnVisibilityChange)
     }
   }, [])
   const [selectedRecipe, setSelectedRecipe] = useState<RecipeSnapshot | null>(null)
@@ -350,6 +394,29 @@ function DietPage() {
     })
     return map
   }, [customRecipes])
+
+  const recipeLookupByTitle = useMemo(() => {
+    const map = new Map<string, RecipeSnapshot>()
+    const duplicateTitles = new Set<string>()
+
+    recipeLookup.forEach((recipe) => {
+      const normalizedTitle = normalizeMealTitle(recipe.title)
+      if (!normalizedTitle) {
+        return
+      }
+      if (map.has(normalizedTitle)) {
+        duplicateTitles.add(normalizedTitle)
+        return
+      }
+      map.set(normalizedTitle, recipe)
+    })
+
+    duplicateTitles.forEach((title) => {
+      map.delete(title)
+    })
+
+    return map
+  }, [recipeLookup])
 
   const weekRangeLabel = useMemo(() => {
     const today = new Date()
@@ -449,8 +516,19 @@ function DietPage() {
 
   const getRecipeForSlot = (day: typeof weekDays[number], slot: MealSlotId) => {
     const ref = weekPlan.recipeRefs[day]?.[slot]
-    if (!ref) return null
-    return recipeLookup.get(`${ref.source}:${ref.recipeId}`) ?? null
+    if (ref) {
+      const recipeFromRef = recipeLookup.get(`${ref.source}:${ref.recipeId}`)
+      if (recipeFromRef) {
+        return recipeFromRef
+      }
+    }
+
+    const mealName = weeklyPlan[day]?.[slot] ?? ""
+    if (!mealName.trim()) {
+      return null
+    }
+
+    return recipeLookupByTitle.get(normalizeMealTitle(mealName)) ?? null
   }
 
   const removeRecipeFromPlan = async (day: typeof weekDays[number], slot: MealSlotId) => {
@@ -548,35 +626,38 @@ function DietPage() {
                 <div className="diet-week__card-head">
                   <span className="diet-week__day">{day}</span>
                 </div>
-                {mealSlots.map((slot) => (
-                <div
-                  key={slot.id}
-                  className={`diet-week__slot${getRecipeForSlot(day, slot.id) ? " has-recipe" : ""}`}
-                >
-                  <span>
-                    {slot.label}
-                    {getRecipeForSlot(day, slot.id) ? (
-                      <button
-                        type="button"
-                        className="diet-week__recipe-badge"
-                        onClick={() => {
-                          setSelectedRecipe(getRecipeForSlot(day, slot.id))
-                          setSelectedRecipeSlot({ day, slot: slot.id })
-                        }}
-                      >
-                        Voir recette
-                      </button>
-                    ) : null}
-                  </span>
-                  <input
-                    type="text"
-                    value={weeklyPlan[day][slot.id]}
-                    placeholder={`Ton plat du ${slot.label.toLowerCase()}`}
-                    onChange={(event) => void handleMealChange(day, slot.id, event.target.value)}
-                    disabled={!canEdit}
-                  />
-                </div>
-                ))}
+                {mealSlots.map((slot) => {
+                  const slotRecipe = getRecipeForSlot(day, slot.id)
+                  return (
+                    <div
+                      key={slot.id}
+                      className={`diet-week__slot${slotRecipe ? " has-recipe" : ""}`}
+                    >
+                      <span>
+                        {slot.label}
+                        {slotRecipe ? (
+                          <button
+                            type="button"
+                            className="diet-week__recipe-badge"
+                            onClick={() => {
+                              setSelectedRecipe(slotRecipe)
+                              setSelectedRecipeSlot({ day, slot: slot.id })
+                            }}
+                          >
+                            Voir la recette
+                          </button>
+                        ) : null}
+                      </span>
+                      <input
+                        type="text"
+                        value={weeklyPlan[day][slot.id]}
+                        placeholder={`Ton plat du ${slot.label.toLowerCase()}`}
+                        onChange={(event) => void handleMealChange(day, slot.id, event.target.value)}
+                        disabled={!canEdit}
+                      />
+                    </div>
+                  )
+                })}
               </article>
             ))}
           </div>

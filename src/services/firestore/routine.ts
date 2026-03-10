@@ -23,7 +23,7 @@ export const subscribeToRoutineItems = (
   onItems: (items: RoutineRecord[]) => void,
   onError: (error: FirestoreError) => void,
 ): Unsubscribe => {
-  const routineQuery = query(routineItemsCollectionRef(userId), orderBy("period", "asc"), orderBy("sortOrder", "asc"))
+  const routineQuery = query(routineItemsCollectionRef(userId), orderBy("sortOrder", "asc"))
   return onSnapshot(
     routineQuery,
     (snapshot) => {

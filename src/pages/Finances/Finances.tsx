@@ -9,7 +9,6 @@ import HighchartsExportData from 'highcharts/modules/export-data'
 import HighchartsAccessibility from 'highcharts/modules/accessibility'
 import HighchartsAdaptiveTheme from 'highcharts/themes/adaptive'
 import PageHero from '../../components/PageHero'
-import PageHeading from '../../components/PageHeading'
 import useUserFinanceData from '../../hooks/useUserFinanceData'
 import financeMood01 from '../../assets/katie-huber-rhoades-dupe (2).webp'
 import financeMood02 from '../../assets/jade-rideout-dupe.webp'
@@ -683,25 +682,31 @@ const FinancePage = () => {
 
   return (
     <div className="finance-page aesthetic-page">
-
       <div className="finance-heading-row">
-        <PageHeading eyebrow="Finances" title={selectedMonthLabel} />
-        <div className="calendar-month-nav finance-hero__month-nav">
-          <button
-            type="button"
-            onClick={() => handleFinanceMonthNav('prev')}
-            aria-label="Mois précédent"
-          >
-            &lt;
-          </button>
-          <button
-            type="button"
-            onClick={() => handleFinanceMonthNav('next')}
-            aria-label="Mois suivant"
-          >
-            &gt;
-          </button>
-        </div>
+        <header className="sport-header finance-heading">
+          <div>
+            <span className="sport-header__eyebrow">Finances</span>
+            <h1 className="finance-heading-row__month-title">
+              <button
+                type="button"
+                className="finance-heading-row__month-arrow"
+                onClick={() => handleFinanceMonthNav('prev')}
+                aria-label="Mois précédent"
+              >
+                {'<'}
+              </button>
+              <span>{selectedMonthLabel}</span>
+              <button
+                type="button"
+                className="finance-heading-row__month-arrow"
+                onClick={() => handleFinanceMonthNav('next')}
+                aria-label="Mois suivant"
+              >
+                {'>'}
+              </button>
+            </h1>
+          </div>
+        </header>
       </div>
       {error ? <p className="finance-history__empty">{error}</p> : null}
       {isInitialFinanceLoading ? <p className="finance-history__empty">Chargement de vos données financières...</p> : null}
@@ -724,10 +729,10 @@ const FinancePage = () => {
                   <article
                     key={categoryKey}
                     className="finance-summary__card"
-                    style={{ borderColor: definition.color, boxShadow: `0 32px 60px ${definition.color}33` }}
+                    style={{ borderColor: definition.color }}
                   >
                     <span className="finance-summary__label">{definition.label}</span>
-                    <strong className="finance-summary__value">{euroFormatter.format(amount)}</strong>
+                    <span className="finance-summary__value">{euroFormatter.format(amount)}</span>
                   </article>
                 )
               })}
@@ -890,7 +895,7 @@ const FinancePage = () => {
                       {group.entries.map((entry) => {
                         const definition = entry.category ? categoryDefinitions[entry.category] : undefined
                         const amountValue = entry.direction === 'out' ? -entry.amount : entry.amount
-                        const amountColor = entry.direction === 'in' ? '#db2777' : definition?.color ?? '#1e1b4b'
+                        const amountColor = entry.direction === 'in' ? '#725c3f' : definition?.color ?? '#1e1b4b'
                         const categoryLabel = entry.direction === 'in' ? 'Revenus' : definition?.label ?? 'Dépense'
                         const formattedDate = formatHistoryDate(entry.date)
                         const directionLabel = entry.direction === 'in' ? 'Entrée' : 'Sortie'
@@ -902,7 +907,9 @@ const FinancePage = () => {
                             </div>
                             <div className="finance-history__details">
                               <div className="finance-history__row">
-                                <span className="finance-history__label">{entry.label}</span>
+                                <div className="finance-history__headline">
+                                  <span className="finance-history__label">{entry.label}</span>
+                                </div>
                                 <span className="finance-history__amount" style={{ color: amountColor }}>
                                   {formatSignedCurrency(amountValue)}
                                 </span>
@@ -912,15 +919,14 @@ const FinancePage = () => {
                                   onClick={() => handleDeleteEntry(entry.id)}
                                   aria-label={`Supprimer ${entry.label}`}
                                 >
-                                  
+                                  <span aria-hidden="true">×</span>
                                 </button>
                               </div>
                               <div className="finance-history__meta">
                                 <span className="finance-history__category-chip">
                                   {categoryLabel}
                                 </span>
-                                <span className="finance-history__direction">{directionLabel}</span>
-                                <span className="finance-history__date">{formattedDate}</span>
+                                <span className="finance-history__date">{`${directionLabel} le ${formattedDate}`}</span>
                               </div>
                             </div>
                           </li>
@@ -961,19 +967,19 @@ const FinancePage = () => {
             <div className="finance-balance__stats">
               <article className="finance-balance__stat">
                 <span>Argent au début</span>
-                <strong>{euroFormatter.format(startingAmountValue)}</strong>
+                <span className="finance-balance__stat-value">{euroFormatter.format(startingAmountValue)}</span>
               </article>
               <article className="finance-balance__stat">
                 <span>Revenus</span>
-                <strong>{formatSignedCurrency(totalIncome)}</strong>
+                <span className="finance-balance__stat-value">{formatSignedCurrency(totalIncome)}</span>
               </article>
               <article className="finance-balance__stat">
                 <span>Dépenses</span>
-                <strong>{formatSignedCurrency(-totalSpent)}</strong>
+                <span className="finance-balance__stat-value">{formatSignedCurrency(-totalSpent)}</span>
               </article>
               <article className="finance-balance__stat">
                 <span>Argent à la fin</span>
-                <strong>{euroFormatter.format(endingAmount)}</strong>
+                <span className="finance-balance__stat-value">{euroFormatter.format(endingAmount)}</span>
               </article>
             </div>
           </section>
@@ -1042,7 +1048,7 @@ const FinancePage = () => {
                       {group.entries.map((entry) => {
                         const definition = entry.category ? categoryDefinitions[entry.category] : undefined
                         const amountValue = entry.direction === 'out' ? -entry.amount : entry.amount
-                        const amountColor = entry.direction === 'in' ? '#db2777' : definition?.color ?? '#1e1b4b'
+                        const amountColor = entry.direction === 'in' ? '#725c3f' : definition?.color ?? '#1e1b4b'
                         const categoryLabel = entry.direction === 'in' ? 'Revenus' : definition?.label ?? 'Dépense'
                         const formattedDate = formatHistoryDate(entry.date)
                         const directionLabel = entry.direction === 'in' ? 'Entrée' : 'Sortie'
@@ -1054,7 +1060,9 @@ const FinancePage = () => {
                             </div>
                             <div className="finance-history__details">
                               <div className="finance-history__row">
-                                <span className="finance-history__label">{entry.label}</span>
+                                <div className="finance-history__headline">
+                                  <span className="finance-history__label">{entry.label}</span>
+                                </div>
                                 <span className="finance-history__amount" style={{ color: amountColor }}>
                                   {formatSignedCurrency(amountValue)}
                                 </span>
@@ -1064,15 +1072,14 @@ const FinancePage = () => {
                                   onClick={() => handleDeleteEntry(entry.id)}
                                   aria-label={`Supprimer ${entry.label}`}
                                 >
-                                  
+                                  <span aria-hidden="true">×</span>
                                 </button>
                               </div>
                               <div className="finance-history__meta">
                                 <span className="finance-history__category-chip">
                                   {categoryLabel}
                                 </span>
-                                <span className="finance-history__direction">{directionLabel}</span>
-                                <span className="finance-history__date">{formattedDate}</span>
+                                <span className="finance-history__date">{`${directionLabel} le ${formattedDate}`}</span>
                               </div>
                             </div>
                           </li>
@@ -1208,12 +1215,12 @@ const FinanceTrendChart = ({ series }: FinanceTrendChartProps) => {
           type: 'areaspline',
           name: 'Mois en cours',
           data: series.current,
-          color: '#f472b6',
+          color: '#e3d7ca',
           fillColor: {
             linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
             stops: [
-              [0, 'rgba(244, 114, 182, 0.32)'],
-              [1, 'rgba(244, 114, 182, 0.02)'],
+              [0, 'rgba(227, 215, 202, 0.32)'],
+              [1, 'rgba(227, 215, 202, 0.02)'],
             ],
           },
         },
@@ -1260,5 +1267,6 @@ const FinanceTrendChart = ({ series }: FinanceTrendChartProps) => {
     </div>
   )
 }
+
 
 

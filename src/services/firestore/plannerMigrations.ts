@@ -194,7 +194,7 @@ export const importLegacyWishlistIfNeeded = async (
       id: categoryId,
       title: entry.title?.trim() || "Nouvelle categorie",
       blurb: entry.blurb?.trim() || "Ta categorie personnalisee.",
-      accent: entry.accent?.trim() || "#f6a6c1",
+      accent: entry.accent?.trim() || "#e3d7ca",
       note: entry.note?.trim() || "",
       isFavorite: Boolean(entry.isFavorite),
       isBase: baseWishlistCategoryIds.has(categoryId),
@@ -257,11 +257,16 @@ const migrateLegacyDietImage = async (recipe: LegacyDietRecipe) => {
   if (!recipe.image) {
     return { imageUrl: "", imagePath: undefined }
   }
-  const uploaded = await maybeUploadLegacyImage(recipe.image, "diet-custom-recipe-image", recipe.id)
-  if (!uploaded) {
+  try {
+    const uploaded = await maybeUploadLegacyImage(recipe.image, "diet-custom-recipe-image", recipe.id)
+    if (!uploaded) {
+      return { imageUrl: "", imagePath: undefined }
+    }
+    return { imageUrl: uploaded.url, imagePath: uploaded.path }
+  } catch (error) {
+    console.error("Legacy diet image upload failed", error)
     return { imageUrl: "", imagePath: undefined }
   }
-  return { imageUrl: uploaded.url, imagePath: uploaded.path }
 }
 
 const resolveFavoriteRefs = (favoriteIds: string[], customRecipeIds: Set<string>): DietFavoriteRecipeRef[] =>
@@ -269,6 +274,14 @@ const resolveFavoriteRefs = (favoriteIds: string[], customRecipeIds: Set<string>
     source: customRecipeIds.has(recipeId) ? "custom" : "builtin",
     recipeId,
   }))
+
+const normalizeLegacyStringList = (value: unknown) =>
+  Array.isArray(value)
+    ? value
+        .filter((entry): entry is string => typeof entry === "string")
+        .map((entry) => entry.trim())
+        .filter(Boolean)
+    : []
 
 export const importLegacyDietIfNeeded = async (
   userId: string,
@@ -298,21 +311,32 @@ export const importLegacyDietIfNeeded = async (
   }
 
   const customRecipeIds = new Set<string>()
-  for (const recipe of customRecipesRaw) {
-    const media = await migrateLegacyDietImage(recipe)
-    customRecipeIds.add(recipe.id)
+  for (let index = 0; index < customRecipesRaw.length; index += 1) {
+    const recipe = customRecipesRaw[index]
+    if (!recipe || typeof recipe !== "object") {
+      continue
+    }
+    const recipeId =
+      typeof recipe.id === "string" && recipe.id.trim().length > 0 ? recipe.id : `legacy-diet-recipe-${Date.now()}-${index}`
+    const flavor = recipe.flavor === "sucre" ? "sucre" : "sale"
+    const media = await migrateLegacyDietImage({
+      ...recipe,
+      id: recipeId,
+      flavor,
+    })
+    customRecipeIds.add(recipeId)
     const nextRecipe: DietCustomRecipe = {
-      id: recipe.id,
+      id: recipeId,
       title: recipe.title?.trim() || "Recette perso",
-      flavor: recipe.flavor,
+      flavor,
       prepTime: recipe.prepTime?.trim() || "-",
       servings: recipe.servings?.trim() || "-",
       imageUrl: media.imageUrl,
       imagePath: media.imagePath,
-      ingredients: Array.isArray(recipe.ingredients) ? recipe.ingredients : [],
-      steps: Array.isArray(recipe.steps) ? recipe.steps : [],
-      toppings: Array.isArray(recipe.toppings) ? recipe.toppings : [],
-      tips: Array.isArray(recipe.tips) ? recipe.tips : [],
+      ingredients: normalizeLegacyStringList(recipe.ingredients),
+      steps: normalizeLegacyStringList(recipe.steps),
+      toppings: normalizeLegacyStringList(recipe.toppings),
+      tips: normalizeLegacyStringList(recipe.tips),
       createdAt: Date.now(),
     }
     await saveDietCustomRecipe(userId, nextRecipe)
@@ -351,8 +375,12 @@ export const importLegacyDietIfNeeded = async (
     fillOnlyEmpty,
   })
 
+  const normalizedFavoriteIds = Array.isArray(favoriteIdsRaw)
+    ? favoriteIdsRaw.filter((recipeId): recipeId is string => typeof recipeId === "string" && recipeId.trim().length > 0)
+    : []
+
   await saveDietPreferences(userId, {
-    favoriteRecipes: resolveFavoriteRefs(Array.isArray(favoriteIdsRaw) ? favoriteIdsRaw : [], customRecipeIds),
+    favoriteRecipes: resolveFavoriteRefs(normalizedFavoriteIds, customRecipeIds),
   })
 
   await markMigrationComplete(userId, "diet")

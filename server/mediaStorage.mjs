@@ -8,6 +8,7 @@ const scopeDirectoryMap = {
   "wishlist-category-cover": "wishlist/categories",
   "wishlist-item-image": "wishlist/items",
   "sport-life-card": "sport/life-cards",
+  "boutique-product-image": "boutique/products",
   "workout-exercise-image": "sport/workout/exercises",
   "workout-video-thumbnail": "sport/workout/video-thumbnails",
   "self-love-photo": "self-love/photos",

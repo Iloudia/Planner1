@@ -138,7 +138,7 @@ app.use((req, res, next) => {
 })
 
 app.use("/api/stripe-webhook", express.raw({ type: "application/json" }))
-app.use(express.json())
+app.use(express.json({ limit: "50mb" }))
 app.use("/media", express.static(mediaRootDir))
 
 const mediaAuth = async (req, res, next) => {
@@ -473,6 +473,14 @@ app.post("/api/stripe-webhook", async (req, res) => {
 
   res.json({ received: true })
 })
+
+app.use((error, req, res, next) => {
+  if (error?.type === "entity.too.large") {
+    return res.status(413).json({ error: "Payload trop volumineux pour cette requete." })
+  }
+  return next(error)
+})
+
 app.listen(port, host, () => {
   console.log(`Boutique server listening on http://${host}:${port}`)
 })

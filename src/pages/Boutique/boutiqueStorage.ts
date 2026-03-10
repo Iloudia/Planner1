@@ -6,6 +6,7 @@ const CUSTOM_PRODUCTS_EVENT = "products:updated"
 const CUSTOM_PRODUCTS_ENDPOINT = buildApiUrl("/api/custom-products")
 
 type StoredProduct = BoutiqueProduct & { createdAt: string; updatedAt?: string }
+let inMemoryProducts: StoredProduct[] | null = null
 
 const safeParse = (raw: string | null) => {
   if (!raw) return [] as StoredProduct[]
@@ -18,9 +19,25 @@ const safeParse = (raw: string | null) => {
   }
 }
 
+const normalizeProducts = (value: unknown) => {
+  if (!Array.isArray(value)) return [] as StoredProduct[]
+  return value.filter((item) => item && typeof item === "object") as StoredProduct[]
+}
+
+const readLocalProducts = () => {
+  try {
+    const raw = window.localStorage.getItem(CUSTOM_PRODUCTS_KEY)
+    return safeParse(raw)
+  } catch {
+    return [] as StoredProduct[]
+  }
+}
+
 export const loadCustomProducts = () => {
-  const raw = window.localStorage.getItem(CUSTOM_PRODUCTS_KEY)
-  return safeParse(raw)
+  if (inMemoryProducts === null) {
+    inMemoryProducts = readLocalProducts()
+  }
+  return [...inMemoryProducts]
 }
 
 const emitProductsUpdated = () => {
@@ -28,46 +45,98 @@ const emitProductsUpdated = () => {
 }
 
 const writeProducts = (products: StoredProduct[]) => {
-  window.localStorage.setItem(CUSTOM_PRODUCTS_KEY, JSON.stringify(products))
+  inMemoryProducts = [...products]
+  try {
+    window.localStorage.setItem(CUSTOM_PRODUCTS_KEY, JSON.stringify(products))
+  } catch {
+    // local cache write can fail (quota/privacy), keep in-memory + server data
+  }
   emitProductsUpdated()
 }
 
 const pushRemoteUpdate = async (payload: Record<string, unknown>) => {
   try {
-    await fetch(CUSTOM_PRODUCTS_ENDPOINT, {
+    const response = await fetch(CUSTOM_PRODUCTS_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     })
+    if (!response.ok) {
+      return null
+    }
+    const data = (await response.json()) as unknown
+    return normalizeProducts(data)
   } catch {
-    // ignore remote sync errors, local storage remains the source of truth for now
+    return null
   }
 }
 
 export const saveCustomProduct = (product: BoutiqueProduct) => {
+  const timestamp = new Date().toISOString()
+  const productWithDates: StoredProduct = {
+    ...product,
+    createdAt: timestamp,
+    updatedAt: timestamp,
+  }
   const existing = loadCustomProducts()
   const next: StoredProduct[] = [
-    { ...product, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-    ...existing,
+    productWithDates,
+    ...existing.filter((item) => item.id !== product.id),
   ]
   writeProducts(next)
-  void pushRemoteUpdate({ action: "upsert", product })
+  void (async () => {
+    const synced = await pushRemoteUpdate({ action: "upsert", product: productWithDates })
+    if (synced) {
+      writeProducts(synced)
+    }
+  })()
+}
+
+export const publishCustomProduct = async (product: BoutiqueProduct) => {
+  const timestamp = new Date().toISOString()
+  const productWithDates: StoredProduct = {
+    ...product,
+    createdAt: timestamp,
+    updatedAt: timestamp,
+  }
+  const synced = await pushRemoteUpdate({ action: "upsert", product: productWithDates })
+  if (!synced) {
+    throw new Error("Serveur boutique inaccessible. Verifie que le serveur est demarre puis reessaie.")
+  }
+  writeProducts(synced)
+  return synced
 }
 
 export const updateCustomProduct = (product: BoutiqueProduct) => {
   const existing = loadCustomProducts()
+  const current = existing.find((item) => item.id === product.id)
+  const productWithDates: StoredProduct = {
+    ...product,
+    createdAt: current?.createdAt ?? new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  }
   const next = existing.map((item) =>
-    item.id === product.id ? { ...item, ...product, updatedAt: new Date().toISOString() } : item,
+    item.id === product.id ? productWithDates : item,
   )
-  writeProducts(next)
-  void pushRemoteUpdate({ action: "upsert", product })
+  writeProducts(next.length > 0 ? next : [productWithDates, ...existing])
+  void (async () => {
+    const synced = await pushRemoteUpdate({ action: "upsert", product: productWithDates })
+    if (synced) {
+      writeProducts(synced)
+    }
+  })()
 }
 
 export const deleteCustomProduct = (productId: string) => {
   const existing = loadCustomProducts()
   const next = existing.filter((item) => item.id !== productId)
   writeProducts(next)
-  void pushRemoteUpdate({ action: "delete", productId })
+  void (async () => {
+    const synced = await pushRemoteUpdate({ action: "delete", productId })
+    if (synced) {
+      writeProducts(synced)
+    }
+  })()
 }
 
 export const compactCustomProducts = () => {
@@ -87,12 +156,13 @@ export const fetchCustomProducts = async () => {
     if (!response.ok) {
       return loadCustomProducts()
     }
-    const data = (await response.json()) as StoredProduct[]
+    const data = (await response.json()) as unknown
     if (!Array.isArray(data)) {
       return loadCustomProducts()
     }
-    writeProducts(data)
-    return data
+    const normalized = normalizeProducts(data)
+    writeProducts(normalized)
+    return normalized
   } catch {
     return loadCustomProducts()
   }

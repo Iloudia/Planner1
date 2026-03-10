@@ -365,18 +365,18 @@ const JournalingPage = () => {
           Sauvegarder cette page
         </button>
         {saveError || error ? <p className="journaling-helper">{saveError ?? error}</p> : null}
-        <div
-          className={`journaling-save__confirmation${saveConfirmationVisible ? ' is-visible' : ''}`}
-          aria-live="polite"
-        >
-          <span aria-hidden="true">✓</span>
-          <strong>Page enregistrée</strong>
-        </div>
+        {saveConfirmationVisible ? (
+          <div className="journaling-save__confirmation-card" role="status" aria-live="polite">
+            <h4>Page enregistree</h4>
+            <p>Ton journaling a bien ete enregistre.</p>
+          </div>
+        ) : null}
       </section>
 </div>
   )
 }
 
 export default JournalingPage
+
 
 

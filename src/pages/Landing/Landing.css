@@ -40,7 +40,7 @@
   display: inline-block;
   padding: 0.6rem 1.2rem;
   border-radius: 999px;
-  background: rgba(244, 114, 182, 0.14);
+  background: rgba(227, 215, 202, 0.14);
   color: #9d174d;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -70,9 +70,9 @@
 .landing-hero__accent {
   margin-top: -0.3rem;
   padding: 1rem 1.2rem;
-  border-left: 3px solid #f472b6;
+  border-left: 3px solid #e3d7ca;
   border-radius: 0;
-  background: rgba(244, 114, 182, 0.12);
+  background: rgba(227, 215, 202, 0.12);
   color: #9d174d;
   font-weight: 600;
 }
@@ -121,7 +121,7 @@
   gap: 0.75rem;
   padding: 0.75rem 1rem;
   border-radius: 16px;
-  background: rgba(244, 114, 182, 0.12);
+  background: rgba(227, 215, 202, 0.12);
   color: #9d174d;
   font-size: 0.95rem;
   flex-wrap: wrap;
@@ -199,7 +199,7 @@
   flex-direction: column;
   gap: clamp(1.5rem, 3vw, 2.5rem);
   background: #ffffff;
-  border: 1px solid rgba(236, 72, 153, 0.14);
+  border: 1px solid rgba(114, 92, 63, 0.14);
   border-radius: 30px;
   padding: clamp(1.8rem, 4vw, 2.8rem);
 }
@@ -223,7 +223,7 @@
 
 .landing-carousel__card {
   background: rgba(255, 255, 255, 0.96);
-  border: 1px solid rgba(236, 72, 153, 0.14);
+  border: 1px solid rgba(114, 92, 63, 0.14);
   border-radius: 20px;
   box-shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
   overflow: hidden;
@@ -283,19 +283,19 @@
   border-radius: 50%;
   border: 1px solid rgba(148, 163, 184, 0.4);
   background: #ffffff;
-  color: #ec4899;
+  color: #725c3f;
   font-size: 1.4rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 14px 30px rgba(236, 72, 153, 0.16);
+  box-shadow: 0 14px 30px rgba(114, 92, 63, 0.16);
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .landing-carousel__arrow:hover {
   transform: translateY(-50%) translateY(-1px);
-  box-shadow: 0 18px 38px rgba(236, 72, 153, 0.22);
+  box-shadow: 0 18px 38px rgba(114, 92, 63, 0.22);
 }
 
 .landing-carousel__arrow--left {
@@ -312,7 +312,7 @@
   gap: clamp(1.2rem, 3vw, 2rem);
   padding: clamp(2rem, 4vw, 3rem);
   border-radius: 38px;
-  background: linear-gradient(135deg, #ffffff, #fce7f3 60%, #f03db4);
+  background: linear-gradient(135deg, #ffffff, #f1ece4 60%, #725c3f);
 }
 
 .landing-differentiator__list {
@@ -386,7 +386,7 @@
   padding: clamp(1.8rem, 4vw, 2.6rem);
   border-radius: 32px;
   background: linear-gradient(135deg, #fdf2f8, #eef2ff);
-  box-shadow: 0 28px 80px rgba(244, 114, 182, 0.16);
+  box-shadow: 0 28px 80px rgba(227, 215, 202, 0.16);
 }
 
 .landing-duo__gallery {
@@ -511,8 +511,8 @@
 
 .landing-auth-form input:focus {
   outline: none;
-  border-color: #ec4899;
-  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
+  border-color: #725c3f;
+  box-shadow: 0 10px 26px rgba(114, 92, 63, 0.15);
 }
 
 .landing-auth-form__error {

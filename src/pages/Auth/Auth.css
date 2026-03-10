@@ -51,7 +51,7 @@
 
 .auth-status {
   margin: 0;
-  background: rgba(244, 114, 182, 0.12);
+  background: rgba(227, 215, 202, 0.12);
   padding: 0.6rem 0.9rem;
   border-radius: 12px;
   color: #9d174d;
@@ -115,7 +115,7 @@
 }
 
 .auth-step.is-active .auth-step__index {
-  background: linear-gradient(135deg, #f472b6 0%, #f472b6 100%);
+  background: linear-gradient(135deg, #e3d7ca 0%, #e3d7ca 100%);
   color: #fff;
 }
 
@@ -153,12 +153,12 @@
 }
 
 .auth-form__select-trigger {
-  border: 1px solid rgba(236, 72, 153, 0.25);
+  border: 1px solid rgba(114, 92, 63, 0.25);
   border-radius: 12px;
   background: #fff;
   padding: 0.8rem 1rem;
   font-size: 1rem;
-  box-shadow: 0 10px 24px rgba(236, 72, 153, 0.08);
+  box-shadow: 0 10px 24px rgba(114, 92, 63, 0.08);
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
   width: 100%;
   text-align: left;
@@ -176,8 +176,8 @@
 
 .auth-form__select-trigger:focus-visible {
   outline: none;
-  border-color: #ec4899;
-  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
+  border-color: #725c3f;
+  box-shadow: 0 10px 26px rgba(114, 92, 63, 0.15);
 }
 
 .auth-form__select-chevron {
@@ -217,7 +217,7 @@
 .auth-form__select-menu button:hover,
 .auth-form__select-menu button:focus-visible,
 .auth-form__select-menu button.is-selected {
-  background: rgba(236, 72, 153, 0.08);
+  background: rgba(114, 92, 63, 0.08);
   color: #be185d;
   outline: none;
 }
@@ -225,8 +225,8 @@
 .auth-form input:focus,
 .auth-form select:focus {
   outline: none;
-  border-color: #ec4899;
-  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
+  border-color: #725c3f;
+  box-shadow: 0 10px 26px rgba(114, 92, 63, 0.15);
 }
 
 .auth-password-hint {
@@ -308,6 +308,10 @@
   border-radius: 12px;
   padding: 0.85rem 1.4rem;
   width: min(240px, 100%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
   align-self: center;
   background: var(--color-caramel);
   color: var(--color-chocolate);

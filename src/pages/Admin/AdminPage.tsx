@@ -52,7 +52,7 @@ const toStringList = (value: unknown) => {
 }
 
 const bumpCount = (bucket: Record<string, number>, label: unknown) => {
-  const key = cleanString(label) || "non renseigné"
+  const key = cleanString(label) || "non renseigne"
   bucket[key] = (bucket[key] ?? 0) + 1
 }
 
@@ -67,7 +67,7 @@ const normalizeGender = (value: unknown) => {
 const toSortedEntries = (bucket: Record<string, number>) =>
   Object.entries(bucket).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
 
-const pieColors = ["#fbcfe8", "#bfdbfe", "#bbf7d0", "#fde68a", "#ddd6fe", "#fed7aa", "#fecaca", "#bae6fd"]
+const pieColors = ["#e3d7ca", "#efe6dc", "#d8d7b2", "#f3ddd4", "#eadfd6", "#f4e7cf", "#e8d9d1", "#dfe7dc"]
 
 const polarToCartesian = (cx: number, cy: number, radius: number, angle: number) => ({
   x: cx + radius * Math.cos(angle - Math.PI / 2),
@@ -143,6 +143,13 @@ const AdminPage = () => {
   const [showAllUsers, setShowAllUsers] = useState(false)
 
   useEffect(() => {
+    document.body.classList.add("admin-page--tone")
+    return () => {
+      document.body.classList.remove("admin-page--tone")
+    }
+  }, [])
+
+  useEffect(() => {
     let isMounted = true
     const loadUsers = async () => {
       try {
@@ -204,26 +211,26 @@ const AdminPage = () => {
       const onboardingKey = buildUserScopedKey(user.email, ONBOARDING_STORAGE_KEY)
       const onboarding = safeReadJson<OnboardingAnswers>(onboardingKey)
 
-      const source = cleanString(onboarding?.source) || "non renseigné"
+      const source = cleanString(onboarding?.source) || "non renseigne"
       bumpCount(sourceCounts, source)
 
       const reasons = toStringList(onboarding?.reasons)
       if (reasons.length === 0) {
-        bumpCount(reasonsCounts, "non renseigné")
+        bumpCount(reasonsCounts, "non renseigne")
       } else {
         reasons.forEach((reason) => bumpCount(reasonsCounts, reason))
       }
 
       const categories = toStringList(onboarding?.categories)
       if (categories.length === 0) {
-        bumpCount(categoryCounts, "non renseigné")
+        bumpCount(categoryCounts, "non renseigne")
       } else {
         categories.forEach((category) => bumpCount(categoryCounts, category))
       }
 
       const priority = toStringList(onboarding?.priority)
       if (priority.length === 0) {
-        bumpCount(priorityCounts, "non renseigné")
+        bumpCount(priorityCounts, "non renseigne")
       } else {
         priority.forEach((item) => bumpCount(priorityCounts, item))
       }
@@ -274,7 +281,7 @@ const AdminPage = () => {
       setAlert({ type: "error", message: result.error ?? "Impossible de supprimer ce compte." })
       return
     }
-    setAlert({ type: "success", message: "Compte supprimÃ© et donnÃ©es nettoyÃ©es." })
+    setAlert({ type: "success", message: "Compte supprime et donnees nettoyees." })
     await refreshUsers()
   }
 
@@ -287,197 +294,239 @@ const AdminPage = () => {
 
   return (
     <div className="admin-page">
-      <div className="admin-page__accent" aria-hidden="true" />
-      <header className="admin-header">
-        <div>
-          <p className="admin-eyebrow">Back-office</p>
-          <h1>Administration des comptes</h1>
-          <p>Connectez-vous en tant quâ€™admin@planner.local.</p>
-          <p>AccÃ¨s rÃ©servÃ© aux administrateurs vÃ©rifiÃ©s.</p>
-        </div>
-        <div className="admin-hero">
-          <article>
-            <span>Total</span>
-            <strong>{stats.total}</strong>
-          </article>
-          <article>
-            <span>Actifs</span>
-            <strong>{stats.active}</strong>
-          </article>
-          <article>
-            <span>DÃ©sactivÃ©s</span>
-            <strong>{stats.disabled}</strong>
-          </article>
-        </div>
-      </header>
+      <div className="admin-shell">
+        <section className="admin-hero">
+          <div className="admin-hero__content">
+            <p className="admin-eyebrow">Back office</p>
+            <h1>Pilote ton espace admin avec une interface plus claire</h1>
+            <p className="admin-hero__lead">
+              Supervision des comptes, moderation rapide et lecture des statistiques dans une mise en page plus
+              propre, plus lisible et mieux espacee.
+            </p>
+            <div className="admin-hero__meta">
+              <span>Session admin</span>
+              <strong>{userEmail ?? "admin@planner.local"}</strong>
+            </div>
+          </div>
 
-      <div className="admin-grid">
-        <section className="admin-panel">
-          <header className="admin-panel__header">
-            <div>
-              <p className="admin-eyebrow">Utilisateurs</p>
-              <h2>Comptes inscrits</h2>
-            </div>
-            <div className="admin-panel__controls">
-              <input
-                type="search"
-                placeholder="Rechercher par e-mail"
-                value={searchTerm}
-                onChange={(event) => setSearchTerm(event.target.value)}
-              />
-              <button type="button" className="admin-action" onClick={() => setShowAllUsers(true)}>
-                Voir tous
-              </button>
-            </div>
-          </header>
-          <div className="admin-table" role="table" aria-label="Utilisateurs inscrits">
-            <div className="admin-table__row admin-table__row--head" role="row">
-              <div role="columnheader">E-mail</div>
-              <div role="columnheader">Inscription</div>
-              <div role="columnheader">Statut</div>
-              <div role="columnheader">Actions</div>
-            </div>
-            <div className="admin-table__body admin-table__body--scroll">
-              {filteredUsers.length === 0 ? (
-                <p className="admin-table__empty">Aucun compte ne correspond Ã  cette adresse e-mail.</p>
-              ) : (
-                filteredUsers.map((user) => (
-                  <div
-                    key={user.email}
-                    className={user.email === selectedEmail ? "admin-table__row is-selected" : "admin-table__row"}
-                    role="row"
-                    tabIndex={0}
-                    onClick={() => setSelectedEmail(user.email)}
-                    onKeyDown={(event) => handleRowKeyDown(event, user.email)}
-                  >
-                    <div className="admin-table__cell">
-                      <strong>{user.email}</strong>
-                    </div>
-                    <div className="admin-table__cell">{formatDate(user.createdAt)}</div>
-                    <div className="admin-table__cell">
-                      <span className={`badge badge--${user.status}`}>
-                        {user.status === "actif" ? "Actif" : "Desactive"}
-                      </span>
-                    </div>
-                    <div className="admin-table__cell admin-table__cell--actions">
-                      <button type="button" className="admin-action" onClick={() => handleStatusToggle(user)}>
-                        {user.status === "actif" ? "Desactiver" : "Re-activer"}
-                      </button>
-                      <button type="button" className="admin-delete" onClick={() => handleDelete(user.email)}>
-                        Supprimer
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
+          <div className="admin-hero__stats" aria-label="Resume des comptes">
+            <article className="admin-metric-card">
+              <span className="admin-metric-card__label">Comptes total</span>
+              <strong>{stats.total}</strong>
+              <p>Vue globale de la base utilisateurs.</p>
+            </article>
+            <article className="admin-metric-card">
+              <span className="admin-metric-card__label">Actifs</span>
+              <strong>{stats.active}</strong>
+              <p>Comptes pouvant encore se connecter.</p>
+            </article>
+            <article className="admin-metric-card">
+              <span className="admin-metric-card__label">Desactives</span>
+              <strong>{stats.disabled}</strong>
+              <p>Acces bloques et sessions coupees.</p>
+            </article>
           </div>
         </section>
 
-        <section className="admin-panel admin-panel--form">
-          <header className="admin-panel__header">
-            <div>
-              <p className="admin-eyebrow">Details</p>
-              <h2>Profil sÃ©lectionnÃ©</h2>
-            </div>
-            <p className="admin-helper">Recherche, sÃ©lection, dÃ©sactivation ou suppression en un clic.</p>
-          </header>
-
-          {alert ? <div className={`admin-alert admin-alert--${alert.type}`}>{alert.message}</div> : null}
-
-          {selectedUser ? (
-            <div className="admin-detail">
-              <dl className="admin-detail__grid">
-                <div>
-                  <dt>E-mail</dt>
-                  <dd>{selectedUser.email}</dd>
-                </div>
-                <div>
-                  <dt>Date d inscription</dt>
-                  <dd>{formatDate(selectedUser.createdAt)}</dd>
-                </div>
-                <div>
-                  <dt>Statut</dt>
-                  <dd>
-                    <span className={`badge badge--${selectedUser.status}`}>
-                      {selectedUser.status === "actif" ? "Actif" : "Desactive"}
-                    </span>
-                  </dd>
-                </div>
-                {selectedUser.deletionPlannedAt ? (
-                  <div>
-                    <dt>Suppression programmee</dt>
-                    <dd>{formatDate(selectedUser.deletionPlannedAt)}</dd>
-                  </div>
-                ) : null}
-              </dl>
-
-              <div className="admin-form__actions">
-                <button type="button" onClick={() => handleStatusToggle(selectedUser)}>
-                  {selectedUser.status === "actif" ? "DÃ©sactiver le compte" : "Re-activer le compte"}
-                </button>
-                <button type="button" className="admin-delete admin-delete--wide" onClick={() => handleDelete(selectedUser.email)}>
-                  Supprimer dÃ©finitivement
+        <section className="admin-workspace">
+          <div className="admin-panel admin-panel--users">
+            <header className="admin-panel__header">
+              <div>
+                <p className="admin-eyebrow">Utilisateurs</p>
+                <h2>Comptes inscrits</h2>
+                <p className="admin-helper">
+                  Recherche instantanee, selection rapide et actions accessibles sans surcharge visuelle.
+                </p>
+              </div>
+              <div className="admin-panel__controls">
+                <label className="admin-search">
+                  <span className="admin-search__label">Recherche</span>
+                  <input
+                    type="search"
+                    placeholder="Rechercher par e-mail"
+                    value={searchTerm}
+                    onChange={(event) => setSearchTerm(event.target.value)}
+                  />
+                </label>
+                <button type="button" className="admin-button admin-button--ghost" onClick={() => setShowAllUsers(true)}>
+                  Voir tous les e-mails
                 </button>
               </div>
+            </header>
+
+            <div className="admin-users-summary">
+              <span>{filteredUsers.length} resultat(s)</span>
+              <span>{selectedUser ? `Selection: ${selectedUser.email}` : "Aucune selection"}</span>
             </div>
-          ) : (
-            <p className="admin-empty-state">Aucun utilisateur Ã  afficher pour le moment.</p>
-          )}
+
+            <div className="admin-user-list" role="table" aria-label="Utilisateurs inscrits">
+              <div className="admin-user-list__head" role="row">
+                <div role="columnheader">Compte</div>
+                <div role="columnheader">Inscription</div>
+                <div role="columnheader">Statut</div>
+                <div role="columnheader">Actions</div>
+              </div>
+
+              <div className="admin-user-list__body">
+                {filteredUsers.length === 0 ? (
+                  <p className="admin-empty-state">Aucun compte ne correspond a cette recherche.</p>
+                ) : (
+                  filteredUsers.map((user) => (
+                    <div
+                      key={user.email}
+                      className={user.email === selectedEmail ? "admin-user-row is-selected" : "admin-user-row"}
+                      role="row"
+                      tabIndex={0}
+                      onClick={() => setSelectedEmail(user.email)}
+                      onKeyDown={(event) => handleRowKeyDown(event, user.email)}
+                    >
+                      <div className="admin-user-row__identity">
+                        <strong>{user.email}</strong>
+                        <span>{user.email === selectedEmail ? "Profil ouvert" : "Cliquer pour afficher le detail"}</span>
+                      </div>
+                      <div className="admin-user-row__date">{formatDate(user.createdAt)}</div>
+                      <div>
+                        <span className={`admin-badge admin-badge--${user.status}`}>
+                          {user.status === "actif" ? "Actif" : "Desactive"}
+                        </span>
+                      </div>
+                      <div className="admin-user-row__actions">
+                        <button type="button" className="admin-button" onClick={() => handleStatusToggle(user)}>
+                          {user.status === "actif" ? "Desactiver" : "Re-activer"}
+                        </button>
+                        <button type="button" className="admin-button admin-button--danger" onClick={() => handleDelete(user.email)}>
+                          Supprimer
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+
+          <aside className="admin-sidebar">
+            <section className="admin-panel admin-panel--detail">
+              <header className="admin-panel__header admin-panel__header--stack">
+                <div>
+                  <p className="admin-eyebrow">Fiche compte</p>
+                  <h2>Profil selectionne</h2>
+                </div>
+                <p className="admin-helper">Toutes les actions sensibles sont centralisees dans ce panneau.</p>
+              </header>
+
+              {alert ? <div className={`admin-alert admin-alert--${alert.type}`}>{alert.message}</div> : null}
+
+              {selectedUser ? (
+                <div className="admin-detail-card">
+                  <div className="admin-detail-card__hero">
+                    <span className={`admin-badge admin-badge--${selectedUser.status}`}>
+                      {selectedUser.status === "actif" ? "Actif" : "Desactive"}
+                    </span>
+                    <h3>{selectedUser.email}</h3>
+                    <p>Compte suivi depuis le tableau admin, avec acces direct aux actions de moderation.</p>
+                  </div>
+
+                  <dl className="admin-detail-list">
+                    <div>
+                      <dt>Adresse e-mail</dt>
+                      <dd>{selectedUser.email}</dd>
+                    </div>
+                    <div>
+                      <dt>Date d inscription</dt>
+                      <dd>{formatDate(selectedUser.createdAt)}</dd>
+                    </div>
+                    <div>
+                      <dt>Etat du compte</dt>
+                      <dd>{selectedUser.status === "actif" ? "Compte actif" : "Compte desactive"}</dd>
+                    </div>
+                    {selectedUser.deletionPlannedAt ? (
+                      <div>
+                        <dt>Suppression programmee</dt>
+                        <dd>{formatDate(selectedUser.deletionPlannedAt)}</dd>
+                      </div>
+                    ) : null}
+                  </dl>
+
+                  <div className="admin-detail-card__actions">
+                    <button type="button" className="admin-button" onClick={() => handleStatusToggle(selectedUser)}>
+                      {selectedUser.status === "actif" ? "Desactiver le compte" : "Re-activer le compte"}
+                    </button>
+                    <button
+                      type="button"
+                      className="admin-button admin-button--danger admin-button--wide"
+                      onClick={() => handleDelete(selectedUser.email)}
+                    >
+                      Supprimer definitivement
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <p className="admin-empty-state">Aucun utilisateur a afficher pour le moment.</p>
+              )}
+            </section>
+
+            <section className="admin-panel admin-panel--safety">
+              <p className="admin-eyebrow">Conformite</p>
+              <h2>Cadre de securite</h2>
+              <ul className="admin-safety-list">
+                <li>Acces limite aux administrateurs verifies via une route protegee.</li>
+                <li>Les desactivations coupent les sessions actives et bloquent les nouvelles connexions.</li>
+                <li>Les suppressions nettoient les donnees locales rattachees au compte.</li>
+              </ul>
+            </section>
+          </aside>
+        </section>
+
+        <section className="admin-panel admin-panel--stats">
+          <header className="admin-panel__header">
+            <div>
+              <p className="admin-eyebrow">Statistiques</p>
+              <h2>Questions d inscription</h2>
+            </div>
+            <p className="admin-helper">Synthese des reponses collectees pour mieux lire le profil des nouveaux inscrits.</p>
+          </header>
+
+          <div className="admin-stats-grid">
+            <article className="admin-stat-card">
+              <h3>Genre</h3>
+              <PieChart entries={surveyStats.gender} />
+            </article>
+            <article className="admin-stat-card">
+              <h3>Source</h3>
+              <PieChart entries={surveyStats.source} />
+            </article>
+            <article className="admin-stat-card">
+              <h3>Raisons</h3>
+              <PieChart entries={surveyStats.reasons} />
+            </article>
+            <article className="admin-stat-card">
+              <h3>Categories</h3>
+              <PieChart entries={surveyStats.categories} />
+            </article>
+            <article className="admin-stat-card">
+              <h3>Priorite</h3>
+              <PieChart entries={surveyStats.priority} />
+            </article>
+          </div>
         </section>
       </div>
 
-      <section className="admin-panel admin-panel--stats">
-        <header className="admin-panel__header">
-          <div>
-            <p className="admin-eyebrow">Statistiques</p>
-            <h2>Questions d inscription</h2>
-          </div>
-          <p className="admin-helper">Synthese des reponses collectees lors de l inscription.</p>
-        </header>
-        <div className="admin-stats-grid">
-          <article className="admin-stat-card">
-            <h3>Genre</h3>
-            <PieChart entries={surveyStats.gender} />
-          </article>
-          <article className="admin-stat-card">
-            <h3>Source</h3>
-            <PieChart entries={surveyStats.source} />
-          </article>
-          <article className="admin-stat-card">
-            <h3>Raisons</h3>
-            <PieChart entries={surveyStats.reasons} />
-          </article>
-          <article className="admin-stat-card">
-            <h3>CatÃ©gories</h3>
-            <PieChart entries={surveyStats.categories} />
-          </article>
-          <article className="admin-stat-card">
-            <h3>Priorite</h3>
-            <PieChart entries={surveyStats.priority} />
-          </article>
-        </div>
-      </section>
-      <section className="admin-safe">
-        <h2>ConformitÃ© et sÃ©curitÃ©</h2>
-        <ul>
-          <li>AccÃ¨s limitÃ© aux administrateurs authentifiÃ©s via une route protÃ©gÃ©e.</li>
-          <li>Les dÃ©sactivations coupent les sessions actives et empÃªchent les nouvelles connexions.</li>
-          <li>Les suppressions nettoient les donnÃ©es locales (identifiants, mÃ©tadonnÃ©es) afin de respecter le droit Ã  lâ€™effacement.</li>
-        </ul>
-      </section>
       {showAllUsers ? (
-        <div className="admin-modal" role="dialog" aria-modal="true">
+        <div className="admin-modal" role="dialog" aria-modal="true" aria-label="Tous les e-mails">
           <div className="admin-modal__card">
             <header className="admin-modal__header">
-              <h3>Tous les e-mails</h3>
-              <button type="button" className="admin-delete" onClick={() => setShowAllUsers(false)}>
+              <div>
+                <p className="admin-eyebrow">Annuaire</p>
+                <h3>Tous les e-mails</h3>
+              </div>
+              <button type="button" className="admin-button admin-button--ghost" onClick={() => setShowAllUsers(false)}>
                 Fermer
               </button>
             </header>
             <div className="admin-modal__body">
               {users.length === 0 ? (
-                <p className="admin-table__empty">Aucun compte Ã  afficher.</p>
+                <p className="admin-empty-state">Aucun compte a afficher.</p>
               ) : (
                 <ul className="admin-modal__list">
                   {users.map((user) => (
@@ -489,10 +538,8 @@ const AdminPage = () => {
           </div>
         </div>
       ) : null}
-</div>
+    </div>
   )
 }
 
 export default AdminPage
-
-

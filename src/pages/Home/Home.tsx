@@ -15,6 +15,7 @@ import planner07 from "../../assets/ebony-forsyth-dupe.webp"
 import planner08 from "../../assets/Routine.webp"
 import planner09 from "../../assets/avocado-toast.webp"
 import noeudPapillon from "../../assets/noeud-papillon.webp"
+import citationImage from "../../assets/Citation.png"
 
 import "./Home.css"
 
@@ -22,7 +23,7 @@ const HOME_MOODBOARD_SUFFIX = "planner.home.moodboard"
 const DEFAULT_HOME_MOODBOARD = planner02
 const ONBOARDING_STORAGE_KEY = "planner.onboarding.answers.v1"
 
-const DEFAULT_PROFILE_PHOTO = planner06
+const DEFAULT_PROFILE_PHOTO = citationImage
 const CARD_USAGE_SUFFIX = "home.card-usage"
 const MAX_TODOS = 3
 
@@ -259,14 +260,12 @@ function HomePage() {
     const preferredIndex = new Map(preferredCardOrder.map((path, index) => [path, index]))
     const base = cards.map((card, index) => {
       const usage = cardUsage[card.path] ?? 0
-      const usageScore = Math.floor(usage / 3)
       const preferredOrderIndex = preferredIndex.get(card.path)
       const isPreferred = preferredOrderIndex !== undefined
-      const score = usageScore + (isPreferred ? 2 : 0)
       return {
         card,
         index,
-        score,
+        usage,
         isPreferred,
         preferredOrderIndex: isPreferred ? preferredOrderIndex : Number.POSITIVE_INFINITY,
       }
@@ -275,9 +274,9 @@ function HomePage() {
     return base
       .sort(
         (a, b) =>
-          (b.score - a.score) ||
           (Number(b.isPreferred) - Number(a.isPreferred)) ||
           (a.preferredOrderIndex - b.preferredOrderIndex) ||
+          (b.usage - a.usage) ||
           (a.index - b.index),
       )
       .map((item) => item.card)
@@ -657,7 +656,7 @@ function HomePage() {
       </main>
 
       <aside className="aside-left">
-        <div className="aside-title">Prochaines tÃ¢ches</div>
+        <div className="aside-title">Prochaines évenement</div>
         <div className="task-window">
           <div className="task-list">
             {tasksError ? (

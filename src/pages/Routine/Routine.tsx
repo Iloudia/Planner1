@@ -121,7 +121,7 @@ const RoutineComposer = ({
 
 const RoutinePage = () => {
   const { userId } = useAuth()
-  const { items, isLoading, error, addItem, removeItem, toggleItem } = useUserRoutine()
+  const { items, completedSet, isLoading, error, addItem, removeItem, toggleItem } = useUserRoutine()
   const canEdit = Boolean(userId)
   const [routineDrafts, setRoutineDrafts] = useState<Record<RoutinePeriod, RoutineDraft>>({
     morning: { title: "", detail: "" },
@@ -140,10 +140,6 @@ const RoutinePage = () => {
       items
         .filter((item) => item.period === "evening")
         .map((item) => ({ id: item.id, title: item.title, detail: item.detail })),
-    [items],
-  )
-  const completedSet = useMemo(
-    () => new Set<RoutineId>(items.filter((item) => item.isCompleted).map((item) => item.id)),
     [items],
   )
 

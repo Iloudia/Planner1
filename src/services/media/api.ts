@@ -6,6 +6,7 @@ export type MediaUploadScope =
   | "wishlist-category-cover"
   | "wishlist-item-image"
   | "sport-life-card"
+  | "boutique-product-image"
   | "workout-exercise-image"
   | "workout-video-thumbnail"
   | "self-love-photo"

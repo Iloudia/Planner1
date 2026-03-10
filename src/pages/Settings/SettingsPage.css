@@ -1,4 +1,4 @@
-﻿.settings-layout {
+.settings-layout {
   display: grid;
   grid-template-columns: minmax(0, 240px) minmax(0, 1fr);
   gap: 1.5rem;
@@ -25,8 +25,8 @@
 
 .settings-nav a.is-active {
   color: #be185d;
-  border-color: rgba(244, 114, 182, 0.4);
-  background: rgba(244, 114, 182, 0.1);
+  border-color: rgba(227, 215, 202, 0.4);
+  background: rgba(227, 215, 202, 0.1);
 }
 
 .settings-panel {
@@ -137,9 +137,9 @@
 }
 
 .font-scale-option.is-active {
-  border-color: rgba(236, 72, 153, 0.6);
+  border-color: rgba(114, 92, 63, 0.6);
   color: var(--text);
-  box-shadow: 0 12px 26px rgba(236, 72, 153, 0.15);
+  box-shadow: 0 12px 26px rgba(114, 92, 63, 0.15);
 }
 
 .color-placeholder {
@@ -249,13 +249,13 @@
 
 .language-row__check.is-checked {
   border-color: transparent;
-  background: linear-gradient(135deg, #f472b6, #ec4899);
+  background: linear-gradient(135deg, #e3d7ca, #725c3f);
   color: #fff;
 }
 
 .language-row.is-selected {
-  border-color: rgba(236, 72, 153, 0.6);
-  box-shadow: 0 16px 34px rgba(236, 72, 153, 0.15);
+  border-color: rgba(114, 92, 63, 0.6);
+  box-shadow: 0 16px 34px rgba(114, 92, 63, 0.15);
 }
 
 .language-empty {
@@ -276,7 +276,7 @@
   border-radius: 14px;
   padding: 0.65rem 1.2rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #f472b6, #ec4899);
+  background: linear-gradient(135deg, #e3d7ca, #725c3f);
   color: #fff;
   cursor: pointer;
 }
@@ -361,7 +361,7 @@
 .settings-password__confirm{
   border:none;
   border-radius:14px;
-  background:linear-gradient(135deg,#f472b6,#ec4899);
+  background:linear-gradient(135deg,#e3d7ca,#725c3f);
   color:#fff;
   font-weight:600;
   padding:.7rem 1rem;
@@ -538,7 +538,7 @@
 }
 
 .cookie-switch input:checked + span {
-  background: linear-gradient(135deg, #f472b6, #ec4899);
+  background: linear-gradient(135deg, #e3d7ca, #725c3f);
 }
 
 .cookie-switch input:checked + span::after {
@@ -575,7 +575,7 @@
 
 .cookie-actions__primary {
   border: none;
-  background: linear-gradient(135deg, #f472b6, #ec4899);
+  background: linear-gradient(135deg, #e3d7ca, #725c3f);
   color: #fff;
 }
 
@@ -585,7 +585,7 @@
 }
 
 .cookie-actions__outline {
-  border: 1px solid rgba(236, 72, 153, 0.35);
+  border: 1px solid rgba(114, 92, 63, 0.35);
   background: #fff;
   color: #be185d;
 }

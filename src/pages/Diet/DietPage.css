@@ -14,7 +14,7 @@
 }
 
 .diet-toggle button {
-  border: 1px solid rgba(236, 72, 153, 0.4);
+  border: 1px solid rgba(114, 92, 63, 0.4);
   background: transparent;
   color: #be185d;
   font-weight: 600;
@@ -66,9 +66,9 @@
   flex-wrap: wrap;
   padding: 1rem 1.2rem;
   border-radius: 20px;
-  border: 1px solid rgba(236, 72, 153, 0.2);
+  border: 1px solid rgba(114, 92, 63, 0.2);
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(252, 231, 243, 0.9));
-  box-shadow: 0 16px 30px rgba(236, 72, 153, 0.12);
+  box-shadow: 0 16px 30px rgba(114, 92, 63, 0.12);
 }
 
 .diet-crosslink__label {
@@ -511,7 +511,7 @@
   border: none;
   border-radius: 14px;
   padding: 0.75rem 1.4rem;
-  background: rgba(236, 72, 153, 0.16);
+  background: rgba(114, 92, 63, 0.16);
   color: #be185d;
   font-weight: 600;
   cursor: pointer;
@@ -668,11 +668,11 @@
   border: none;
   border-radius: 999px;
   padding: 0.6rem 1.2rem;
-  background: #ec4899;
+  background: #725c3f;
   color: #ffffff;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 14px 30px rgba(236, 72, 153, 0.25);
+  box-shadow: 0 14px 30px rgba(114, 92, 63, 0.25);
 }
 
 body.diet-page--lux {
@@ -700,8 +700,8 @@ body.diet-page--lux {
 .diet-gymgirl-page .pill,
 .diet-gymgirl-page .pill--diet {
   border-radius: 0;
-  border: 1px solid #f472b6;
-  background: #f472b6;
+  border: 1px solid #e3d7ca;
+  background: #e3d7ca;
   color: #ffffff;
   box-shadow: none;
   padding: 10px 14px;

@@ -2,10 +2,10 @@
 import "./AdminProducts.css"
 import "../Boutique/Boutique.css"
 import placeholderProduct from "../../assets/kalina-wolf-dupe.webp"
-import { compactCustomProducts, saveCustomProduct } from "../Boutique/boutiqueStorage"
+import { publishCustomProduct } from "../Boutique/boutiqueStorage"
 import type { BoutiqueProduct } from "../Boutique/boutiqueData"
-
-type MediaFile = { name: string; url: string; type: "image" | "video"; dataUrl?: string }
+import { uploadImage } from "../../services/media/api"
+type MediaFile = { name: string; url: string; type: "image" | "video"; file?: File }
 
 const mockCategories = ["Ebook", "Templates", "Carrousels", "Bundles"]
 const CATEGORY_PLACEHOLDER = "Choisir une catégorie"
@@ -57,29 +57,18 @@ const AdminProductsPage = () => {
     document.addEventListener("mousedown", handleOutside)
     return () => document.removeEventListener("mousedown", handleOutside)
   }, [])
-
-  const readAsDataUrl = (file: File) =>
-    new Promise<string>((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onload = () => resolve(String(reader.result))
-      reader.onerror = () => reject(new Error("Impossible de lire le fichier."))
-      reader.readAsDataURL(file)
-    })
-
-  const addImages = async (selected: FileList | File[] | null) => {
+  const addImages = (selected: FileList | File[] | null) => {
     if (!selected) return
 
     const nextFiles = Array.from(selected).filter((file) => file.type.startsWith("image/"))
     if (nextFiles.length === 0) return
 
-    const enriched = await Promise.all(
-      nextFiles.map(async (file) => ({
-        name: file.name,
-        url: URL.createObjectURL(file),
-        type: "image" as const,
-        dataUrl: await readAsDataUrl(file),
-      })),
-    )
+    const enriched = nextFiles.map((file) => ({
+      name: file.name,
+      url: URL.createObjectURL(file),
+      type: "image" as const,
+      file,
+    }))
 
     setImages((prev) => {
       const next = [...prev]
@@ -113,7 +102,7 @@ const AdminProductsPage = () => {
   }
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    void addImages(event.target.files)
+    addImages(event.target.files)
     event.target.value = ""
   }
 
@@ -125,7 +114,7 @@ const AdminProductsPage = () => {
   const handleMediaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files
     if (!files || files.length === 0) return
-    void addImages(files)
+    addImages(files)
     setVideoFile(files)
     event.target.value = ""
   }
@@ -219,7 +208,7 @@ const AdminProductsPage = () => {
     return /\d/.test(numeric) ? `${numeric}€` : trimmed
   }
 
-  const handleSaveProduct = () => {
+  const handleSaveProduct = async () => {
     if (!title.trim()) {
       window.alert("Ajoute un titre pour enregistrer la fiche produit.")
       return
@@ -236,70 +225,51 @@ const AdminProductsPage = () => {
     setSaveStatus("saving")
     const mockup = getMockupForCategory(category)
     const { format, formatLabel } = getFormatForMockup(mockup)
-    const safeGallery = images.length > 0 ? images.map((image) => image.dataUrl ?? image.url) : [placeholderProduct]
-    const mainImage = safeGallery[0]
     const benefitBase = description.trim().split("\n").find(Boolean) ?? ""
     const benefit = benefitBase.length > 0 ? benefitBase.slice(0, 90) : "Nouvelle ressource à découvrir."
     const features = [delivery.trim(), processing.trim(), returnsText.trim()].filter(Boolean)
     const idBase = slugify(title) || "produit"
     const id = `${idBase}-${Date.now()}`
 
-    const product: BoutiqueProduct = {
-      id,
-      title: title.trim(),
-      benefit,
-      price: normalizePrice(price),
-      format,
-      formatLabel,
-      badge: "",
-      mockup,
-      bestSeller: false,
-      image: mainImage,
-      gallery: safeGallery,
-      description: description.trim() || "Description à compléter.",
-      features: features.length > 0 ? features : ["Ressource digitale", "Accès immédiat", "Usage commercial autorisé"],
-    }
-
     try {
-      saveCustomProduct(product)
+      let safeGallery: string[]
+      if (images.length > 0) {
+        const uploaded = await Promise.all(
+          images.map((image, index) => {
+            if (!image.file) {
+              throw new Error("Image source introuvable. Rechoisis tes photos.")
+            }
+            return uploadImage(image.file, "boutique-product-image", `${id}-${index + 1}`)
+          }),
+        )
+        safeGallery = uploaded.map((item) => item.url)
+      } else {
+        safeGallery = [placeholderProduct]
+      }
+
+      const product: BoutiqueProduct = {
+        id,
+        title: title.trim(),
+        benefit,
+        price: normalizePrice(price),
+        format,
+        formatLabel,
+        badge: "",
+        mockup,
+        bestSeller: false,
+        image: safeGallery[0],
+        gallery: safeGallery,
+        description: description.trim() || "Description à compléter.",
+        features: features.length > 0 ? features : ["Ressource digitale", "Accès immédiat", "Usage commercial autorisé"],
+      }
+
+      await publishCustomProduct(product)
       setSaveStatus("saved")
       window.setTimeout(() => setSaveStatus("idle"), 2000)
     } catch (error) {
       console.error("Save product error:", error)
-      try {
-        const reducedProduct: BoutiqueProduct = {
-          ...product,
-          image: mainImage,
-          gallery: [mainImage],
-        }
-        saveCustomProduct(reducedProduct)
-        setSaveStatus("saved")
-        window.setTimeout(() => setSaveStatus("idle"), 2000)
-        window.alert("Les images sont trop lourdes. La fiche a été enregistrée avec l'image principale uniquement.")
-      } catch (fallbackError) {
-        console.error("Save product fallback error:", fallbackError)
-        try {
-          compactCustomProducts()
-          const compactProduct: BoutiqueProduct = {
-            ...product,
-            image: placeholderProduct,
-            gallery: [placeholderProduct],
-          }
-          saveCustomProduct(compactProduct)
-          setSaveStatus("saved")
-          window.setTimeout(() => setSaveStatus("idle"), 2000)
-          window.alert(
-            "La mémoire locale était saturée. Les anciennes fiches ont été allégées et la nouvelle fiche a été publiée.",
-          )
-          return
-        } catch (compactError) {
-          console.error("Save product compact error:", compactError)
-          setSaveStatus("idle")
-          window.alert(
-            "Impossible d'enregistrer la fiche. La mémoire locale est saturée. Supprime des fiches publiées puis réessaie.",
-          )
-        }
-      }
+      setSaveStatus("idle")
+      window.alert(error instanceof Error ? error.message : "Impossible d'enregistrer la fiche produit pour le moment. Réessaie dans quelques instants.")
     }
   }
 
@@ -616,10 +586,10 @@ const AdminProductsPage = () => {
           <button
             type="button"
             className="boutique-button boutique-button--primary"
-            onClick={handleSaveProduct}
+            onClick={() => void handleSaveProduct()}
             disabled={saveStatus === "saving"}
           >
-            {saveStatus === "saving" ? "Enregistrement..." : "Publier"}
+            {saveStatus === "saving" ? "Enregistrement..." : saveStatus === "saved" ? "Publié" : "Publier"}
           </button>
           <button type="button" className="boutique-button boutique-button--ghost">
             Brouillon

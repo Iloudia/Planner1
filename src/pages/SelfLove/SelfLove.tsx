@@ -171,6 +171,13 @@ const SelfLovePage = () => {
       return
     }
     await saveInnerChildArchive(snapshot)
+    const clearedInnerChildDraft = {
+      innerChildMessage: "",
+      innerChildReassurance: "",
+      innerChildNeededWords: "",
+    }
+    setDraftState((previous) => ({ ...previous, ...clearedInnerChildDraft }))
+    await updateDraft(clearedInnerChildDraft)
     showExerciseConfirmation()
   }
 
@@ -184,6 +191,12 @@ const SelfLovePage = () => {
       return
     }
     await saveBestFriendArchive(snapshot)
+    const clearedBestFriendDraft = {
+      bestFriendAdvice: "",
+      bestFriendSelfTalk: "",
+    }
+    setDraftState((previous) => ({ ...previous, ...clearedBestFriendDraft }))
+    await updateDraft(clearedBestFriendDraft)
     showExerciseConfirmation()
   }
 
@@ -468,92 +481,16 @@ const SelfLovePage = () => {
             </button>
           </article>
         </div>
-        <div
-          className={`journaling-save__confirmation self-love-letter__confirmation${exerciseSaveConfirmationVisible ? " is-visible" : ""}`}
-          aria-live="polite"
-        >
-          <span aria-hidden="true">✓</span>
-          <strong>Page ajoutee !</strong>
+        <div className={`self-love-toast self-love-toast--page${exerciseSaveConfirmationVisible ? " is-visible" : ""}`} role="status" aria-live="polite">
+          <div className="self-love-toast__card">
+            <h4>Page ajoutee</h4>
+            <p>Ton contenu a bien ete ajoute dans les archives.</p>
+          </div>
         </div>
       </section>
 
       <section className="self-love-section self-love-letter">
         <div className="self-love-letter__cards">
-          <div className="self-love-letter__frame self-love-letter__card self-love-letter__card--classic is-active">
-            <div className="self-love-future-letter__head">
-              <div>
-                <p className="self-love-letter__title">Lettre libre</p>
-                <p className="self-love-future-letter__subtitle">
-                  Ecris pour toi, archive-la, relis-la quand tu en auras besoin.
-                </p>
-              </div>
-              <div className="self-love-future-letter__actions">
-                <button type="button" className="sport-chip" onClick={() => setLetterTemplate("classic")}>
-                  Classique
-                </button>
-                <button type="button" className="sport-chip" onClick={() => setLetterTemplate("kitty")}>
-                  Kitty
-                </button>
-              </div>
-            </div>
-            {letterTemplate === "classic" ? (
-              <>
-                <div className="self-love-letter__addresses self-love-future-letter__addresses">
-                  <label>
-                    <span>De</span>
-                    <input
-                      type="text"
-                      value={draftState.letterFrom}
-                      onChange={(event) => setDraftState((previous) => ({ ...previous, letterFrom: event.target.value }))}
-                      onBlur={() => void persistDraftField("letterFrom")}
-                      placeholder="Moi du present"
-                    />
-                  </label>
-                  <label>
-                    <span>A</span>
-                    <input
-                      type="text"
-                      value={draftState.letterTo}
-                      onChange={(event) => setDraftState((previous) => ({ ...previous, letterTo: event.target.value }))}
-                      onBlur={() => void persistDraftField("letterTo")}
-                      placeholder="Moi du futur"
-                    />
-                  </label>
-                </div>
-                <div className="self-love-letter__body self-love-future-letter__body">
-                  <p className="self-love-letter__salutation">Cher moi,</p>
-                  <textarea
-                    value={draftState.letterBody}
-                    onChange={(event) => setDraftState((previous) => ({ ...previous, letterBody: event.target.value }))}
-                    onBlur={() => void persistDraftField("letterBody")}
-                    placeholder="Ecris ce que tu as besoin d'entendre aujourd'hui."
-                  />
-                </div>
-              </>
-            ) : (
-              <div className="self-love-letter__body self-love-future-letter__body">
-                <p className="self-love-letter__salutation">Mon petit coeur,</p>
-                <textarea
-                  value={draftState.kittyLetterBody}
-                  onChange={(event) => setDraftState((previous) => ({ ...previous, kittyLetterBody: event.target.value }))}
-                  onBlur={() => void persistDraftField("kittyLetterBody")}
-                  placeholder="Version douce et reconfortante."
-                />
-              </div>
-            )}
-            <div className="self-love-future-letter__footer">
-              <div className="self-love-future-letter__stamp">
-                <img src={stampLove} alt="Timbre souvenir" loading="lazy" decoding="async" />
-                <img src={stampKey} alt="Timbre secret" loading="lazy" decoding="async" />
-              </div>
-              <div className="self-love-future-letter__actions">
-                <button type="button" className="self-love-letter__save" onClick={() => void handleSaveLetter()}>
-                  Ajouter aux archives
-                </button>
-              </div>
-            </div>
-          </div>
-
           <div className="self-love-letter__frame self-love-letter__card self-love-letter__card--classic is-active">
             <div className="self-love-future-letter__head">
               <div>
@@ -612,30 +549,25 @@ const SelfLovePage = () => {
                 <img src={stampKey} alt="Timbre secret" loading="lazy" decoding="async" />
               </div>
               <div className="self-love-future-letter__actions">
-                <button type="button" className="self-love-letter__save" onClick={() => void handleSaveFutureLetter()}>
-                  Enregistrer une copie
-                </button>
                 <button type="button" className="self-love-future-letter__seal" onClick={() => void handleSealFutureLetter()}>
-                  Sceller la lettre
+                  Sceller la lettre dans les archives
                 </button>
               </div>
             </div>
           </div>
-        </div>
 
-        <div
-          className={`journaling-save__confirmation self-love-letter__confirmation${futureSealConfirmationVisible ? " is-visible" : ""}`}
-          aria-live="polite"
-        >
-          <span aria-hidden="true">✓</span>
-          <strong>Lettre scellee et archivee !</strong>
         </div>
-        <div
-          className={`journaling-save__confirmation self-love-letter__confirmation${letterSaveConfirmationVisible ? " is-visible" : ""}`}
-          aria-live="polite"
-        >
-          <span aria-hidden="true">✓</span>
-          <strong>Page ajoutee !</strong>
+        <div className={`self-love-toast self-love-toast--seal${futureSealConfirmationVisible ? " is-visible" : ""}`} role="status" aria-live="polite">
+          <div className="self-love-toast__card">
+            <h4>Lettre scellee</h4>
+            <p>Ta lettre a bien ete scellee et archivee.</p>
+          </div>
+        </div>
+        <div className={`self-love-toast self-love-toast--page${letterSaveConfirmationVisible ? " is-visible" : ""}`} role="status" aria-live="polite">
+          <div className="self-love-toast__card">
+            <h4>Page ajoutee</h4>
+            <p>Ton contenu a bien ete ajoute dans les archives.</p>
+          </div>
         </div>
       </section>
       </fieldset>
@@ -644,3 +576,5 @@ const SelfLovePage = () => {
 }
 
 export default SelfLovePage
+
+

@@ -40,7 +40,6 @@ type CategoryDraft = {
 
 type NewCategoryDraft = {
   title: string
-  blurb: string
   accent: string
 }
 
@@ -65,7 +64,7 @@ const CATEGORY_DEFINITIONS: CategoryDefinition[] = [
   { id: "bag", label: "Sac", accent: "#f3b4c5", cover: wishlistBag, blurb: "Sacs tendance et intemporels pour toutes les occasions." },
 ]
 
-const CUSTOM_ACCENTS = ["#f6a6c1", "#c3d9ff", "#ffe3a7", "#c6eed7", "#fbcfe8", "#d9c5ff"] as const
+const CUSTOM_ACCENTS = ["#e3d7ca", "#c3d9ff", "#ffe3a7", "#c6eed7", "#e3d7ca", "#d9c5ff"] as const
 const CUSTOM_COVER_POOL = [
   wishlistHair,
   wishlistOutfit,
@@ -81,8 +80,7 @@ const CUSTOM_COVER_POOL = [
 
 const emptyNewCategoryDraft = (): NewCategoryDraft => ({
   title: "",
-  blurb: "",
-  accent: CUSTOM_ACCENTS[0] ?? "#f6a6c1",
+  accent: CUSTOM_ACCENTS[0] ?? "#e3d7ca",
 })
 
 const emptyItemDraft = (categoryId = ""): ItemDraft => ({
@@ -186,6 +184,8 @@ const WishlistPage = () => {
   const [isCategorySuggestionsOpen, setIsCategorySuggestionsOpen] = useState(false)
   const [openWishlistGroups, setOpenWishlistGroups] = useState<string[]>([])
   const [activeItemMenuId, setActiveItemMenuId] = useState<string | null>(null)
+  const [activeCardMenuId, setActiveCardMenuId] = useState<string | null>(null)
+  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null)
   const [moveItemDraft, setMoveItemDraft] = useState<{ itemId: string; targetCategoryId: string; targetSubcategory: string } | null>(null)
   const newCategoryCoverRef = useRef<HTMLInputElement | null>(null)
   const categoryCoverRef = useRef<HTMLInputElement | null>(null)
@@ -308,20 +308,24 @@ const WishlistPage = () => {
   }, [selectedCategory])
 
   useEffect(() => {
-    if (!isCategorySuggestionsOpen && !activeItemMenuId) return
+    if (!isCategorySuggestionsOpen && !activeItemMenuId && !activeCardMenuId) return
     const handlePointerDown = (event: MouseEvent) => {
-      if (!categoryFieldRef.current?.contains(event.target as Node)) {
+      const target = event.target as HTMLElement
+      if (!categoryFieldRef.current?.contains(target)) {
         setIsCategorySuggestionsOpen(false)
       }
-      if (!itemMenuRef.current?.contains(event.target as Node)) {
+      if (!target.closest(".wishlist-item__menu")) {
         setActiveItemMenuId(null)
+      }
+      if (!target.closest(".wishlist-card__menu-wrap")) {
+        setActiveCardMenuId(null)
       }
     }
     document.addEventListener("mousedown", handlePointerDown)
     return () => {
       document.removeEventListener("mousedown", handlePointerDown)
     }
-  }, [activeItemMenuId, isCategorySuggestionsOpen])
+  }, [activeCardMenuId, activeItemMenuId, isCategorySuggestionsOpen])
 
   const handlePreviewFile = (file: File | null, onPreview: (value: string) => void, onFile: (value: File | null) => void) => {
     onFile(file)
@@ -348,6 +352,37 @@ const WishlistPage = () => {
     if (!canEdit) return
     const title = newCategoryDraft.title.trim()
     if (!title) return
+    const editingCategory = editingCategoryId ? categoryCards.find((category) => category.id === editingCategoryId) ?? null : null
+
+    if (editingCategory) {
+      let customCoverUrl = editingCategory.customCoverUrl
+      let customCoverPath = editingCategory.customCoverPath
+      if (newCategoryCoverFile) {
+        const uploaded = await uploadImage(newCategoryCoverFile, "wishlist-category-cover", editingCategory.id)
+        customCoverUrl = uploaded.url
+        customCoverPath = uploaded.path
+        if (editingCategory.customCoverPath && editingCategory.customCoverPath !== uploaded.path) {
+          void deleteMedia(editingCategory.customCoverPath).catch(() => undefined)
+        }
+      }
+      await updateCategory(editingCategory.id, {
+        title,
+        accent: newCategoryDraft.accent.trim() || editingCategory.accent,
+        coverMode: customCoverUrl ? "custom" : "default",
+        customCoverUrl,
+        customCoverPath,
+      })
+      setShowCreateCategory(false)
+      setEditingCategoryId(null)
+      setNewCategoryDraft(emptyNewCategoryDraft())
+      setNewCategoryCoverPreview("")
+      setNewCategoryCoverFile(null)
+      if (newCategoryCoverRef.current) {
+        newCategoryCoverRef.current.value = ""
+      }
+      return
+    }
+
     let customCoverUrl: string | undefined
     let customCoverPath: string | undefined
     if (newCategoryCoverFile) {
@@ -357,12 +392,13 @@ const WishlistPage = () => {
     }
     const categoryId = await createCategory({
       title,
-      blurb: newCategoryDraft.blurb.trim() || "Ta categorie personnalisee.",
+      blurb: "Ta categorie personnalisee.",
       accent: newCategoryDraft.accent.trim() || fallbackAccentForId(title),
       customCoverUrl,
       customCoverPath,
     })
     setShowCreateCategory(false)
+    setEditingCategoryId(null)
     setNewCategoryDraft(emptyNewCategoryDraft())
     setNewCategoryCoverPreview("")
     setNewCategoryCoverFile(null)
@@ -422,6 +458,33 @@ const WishlistPage = () => {
     setRemoveItemImage(false)
     setIsCategorySuggestionsOpen(false)
     setActiveItemMenuId(null)
+  }
+
+  const handleStartEditCategory = (category: CategoryCard) => {
+    setEditingCategoryId(category.id)
+    setNewCategoryDraft({
+      title: category.title,
+      accent: category.accent,
+    })
+    setNewCategoryCoverPreview(category.cover)
+    setNewCategoryCoverFile(null)
+    if (newCategoryCoverRef.current) {
+      newCategoryCoverRef.current.value = ""
+    }
+    setShowCreateCategory(true)
+    setActiveCardMenuId(null)
+  }
+
+  const handleDeleteCategoryCard = async (category: CategoryCard) => {
+    if (!canEdit) return
+    if (category.customCoverPath) {
+      void deleteMedia(category.customCoverPath).catch(() => undefined)
+    }
+    await deleteCategory(category.id)
+    setActiveCardMenuId(null)
+    if (selectedCategoryId === category.id) {
+      setSelectedCategoryId(category.isBase ? category.id : null)
+    }
   }
 
   const handleSubmitItem = async (event: FormEvent<HTMLFormElement>) => {
@@ -546,7 +609,13 @@ const WishlistPage = () => {
         <button
           type="button"
           className="wishlist-heading-row__button"
-          onClick={() => setShowCreateCategory((previous) => !previous)}
+          onClick={() => {
+            setEditingCategoryId(null)
+            setNewCategoryDraft(emptyNewCategoryDraft())
+            setNewCategoryCoverPreview("")
+            setNewCategoryCoverFile(null)
+            setShowCreateCategory((previous) => !previous)
+          }}
           disabled={!canEdit}
         >
           Nouvelle categorie
@@ -562,7 +631,7 @@ const WishlistPage = () => {
               onSubmit={handleCreateCategory}
               onClick={(event) => event.stopPropagation()}
             >
-              <h3>Creer une categorie</h3>
+              <h3>{editingCategoryId ? "Modifier la categorie" : "Creer une categorie"}</h3>
               <label className="wishlist-create__title-field">
                 Titre
                 <input
@@ -570,16 +639,6 @@ const WishlistPage = () => {
                   className="wishlist-create__title-input"
                   value={newCategoryDraft.title}
                   onChange={(event) => setNewCategoryDraft((previous) => ({ ...previous, title: event.target.value }))}
-                  disabled={!canEdit}
-                />
-              </label>
-              <label className="wishlist-create__description-field">
-                Description
-                <textarea
-                  className="wishlist-create__description-input"
-                  rows={3}
-                  value={newCategoryDraft.blurb}
-                  onChange={(event) => setNewCategoryDraft((previous) => ({ ...previous, blurb: event.target.value }))}
                   disabled={!canEdit}
                 />
               </label>
@@ -602,11 +661,17 @@ const WishlistPage = () => {
                 </label>
               </div>
               <div className="wishlist-create__actions">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowCreateCategory(false)
+                    setEditingCategoryId(null)
+                  }}
+                >
+                  Annuler
+                </button>
                 <button type="submit" disabled={!canEdit}>
                   Enregistrer
-                </button>
-                <button type="button" onClick={() => setShowCreateCategory(false)}>
-                  Annuler
                 </button>
               </div>
             </form>
@@ -622,6 +687,43 @@ const WishlistPage = () => {
             className="wishlist-card"
             onClick={() => void handleOpenCategory(category.id)}
           >
+            {canEdit ? (
+              <div className="wishlist-card__menu-wrap">
+                <button
+                  type="button"
+                  className="profile-menu wishlist-card__menu"
+                  aria-label="Ouvrir le menu de la categorie"
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    setActiveCardMenuId((previous) => (previous === category.id ? null : category.id))
+                  }}
+                >
+                  <span aria-hidden="true">...</span>
+                </button>
+                {activeCardMenuId === category.id ? (
+                  <div className="wishlist-card__menu-popover">
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        handleStartEditCategory(category)
+                      }}
+                    >
+                      Modifier
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        void handleDeleteCategoryCard(category)
+                      }}
+                    >
+                      Supprimer
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
             <img className="wishlist-card__cover" src={category.cover} alt={category.title} loading="lazy" decoding="async" />
             <div className="wishlist-card__content">
               <strong>{category.title}</strong>
@@ -679,11 +781,11 @@ const WishlistPage = () => {
                     />
                   </label>
                   <div className="wishlist-modal__note-actions">
-                    <button type="submit" disabled={!canEdit}>
-                      Enregistrer
-                    </button>
                     <button type="button" onClick={() => setIsMemoComposerOpen(false)}>
                       Annuler
+                    </button>
+                    <button type="submit" disabled={!canEdit}>
+                      Enregistrer
                     </button>
                   </div>
                 </form>

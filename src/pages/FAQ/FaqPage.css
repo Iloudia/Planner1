@@ -46,7 +46,7 @@
   font-size: 0.85rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(236, 72, 153, 0.65);
+  color: rgba(114, 92, 63, 0.65);
 }
 
 .legal-page__title {
@@ -88,16 +88,16 @@
 
 .faq-item {
   border-radius: 18px;
-  background: linear-gradient(135deg, rgba(249, 168, 212, 0.14), rgba(236, 72, 153, 0.05));
-  border: 1px solid rgba(236, 72, 153, 0.2);
+  background: linear-gradient(135deg, rgba(216, 215, 178, 0.14), rgba(114, 92, 63, 0.05));
+  border: 1px solid rgba(114, 92, 63, 0.2);
   box-shadow: 0 18px 40px rgba(15, 23, 42, 0.1);
   overflow: hidden;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .faq-item.is-open {
-  border-color: rgba(236, 72, 153, 0.4);
-  box-shadow: 0 24px 60px rgba(236, 72, 153, 0.15);
+  border-color: rgba(114, 92, 63, 0.4);
+  box-shadow: 0 24px 60px rgba(114, 92, 63, 0.15);
 }
 
 .faq-item__header {
@@ -122,8 +122,8 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: rgba(236, 72, 153, 0.12);
-  color: #db2777;
+  background: rgba(114, 92, 63, 0.12);
+  color: #725c3f;
   font-size: 1.2rem;
   font-weight: 700;
 }

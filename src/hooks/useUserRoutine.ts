@@ -3,10 +3,20 @@ import { eveningRoutine as defaultEveningRoutine, morningRoutine as defaultMorni
 import { useAuth } from "../context/AuthContext"
 import type { RoutineRecord } from "../types/personalization"
 import { createClientId } from "../utils/clientId"
+import { formatLocalISODate } from "../utils/weekKey"
 import { deleteRoutineItem, saveRoutineItem, subscribeToRoutineItems } from "../services/firestore/routine"
 
 const ROUTINE_LOAD_ERROR = "Impossible de charger vos routines."
 const ROUTINE_MUTATION_ERROR = "Impossible de mettre a jour vos routines."
+
+const getTodayKey = () => formatLocalISODate(new Date())
+
+const isItemCompletedOnDate = (item: RoutineRecord, dateKey: string) => {
+  if (!item.isCompleted || !item.updatedAt) {
+    return false
+  }
+  return formatLocalISODate(new Date(item.updatedAt)) === dateKey
+}
 
 const seededDefaults: RoutineRecord[] = [
   ...defaultMorningRoutine.map((item, index) => ({
@@ -34,7 +44,28 @@ const useUserRoutine = () => {
   const [items, setItems] = useState<RoutineRecord[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [todayKey, setTodayKey] = useState(getTodayKey)
   const seedAttemptRef = useRef(false)
+
+  useEffect(() => {
+    let timeoutId: number | null = null
+    const scheduleNextDayCheck = () => {
+      const now = new Date()
+      const nextMidnight = new Date(now)
+      nextMidnight.setHours(24, 0, 0, 50)
+      timeoutId = window.setTimeout(() => {
+        setTodayKey(getTodayKey())
+        scheduleNextDayCheck()
+      }, Math.max(nextMidnight.getTime() - now.getTime(), 1000))
+    }
+
+    scheduleNextDayCheck()
+    return () => {
+      if (timeoutId !== null) {
+        window.clearTimeout(timeoutId)
+      }
+    }
+  }, [])
 
   useEffect(() => {
     if (!isAuthReady) {
@@ -134,26 +165,33 @@ const useUserRoutine = () => {
       if (!userId) return
       const current = items.find((item) => item.id === itemId)
       if (!current) return
+      const isCompletedToday = isItemCompletedOnDate(current, todayKey)
       await mutate(() =>
         saveRoutineItem(userId, {
           ...current,
-          isCompleted: !current.isCompleted,
+          isCompleted: !isCompletedToday,
         }),
       )
     },
-    [items, mutate, userId],
+    [items, mutate, todayKey, userId],
+  )
+
+  const completedSet = useMemo(
+    () => new Set(items.filter((item) => isItemCompletedOnDate(item, todayKey)).map((item) => item.id)),
+    [items, todayKey],
   )
 
   return useMemo(
     () => ({
       items,
+      completedSet,
       isLoading,
       error,
       addItem,
       removeItem,
       toggleItem,
     }),
-    [addItem, error, isLoading, items, removeItem, toggleItem],
+    [addItem, completedSet, error, isLoading, items, removeItem, toggleItem],
   )
 }
 

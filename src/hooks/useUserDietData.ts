@@ -53,6 +53,63 @@ const buildDefaultWeekPlan = (weekKey: string): DietWeekPlan => ({
   fillOnlyEmpty: true,
 })
 
+const isRecipeSource = (value: unknown): value is DietRecipeRef["source"] => value === "builtin" || value === "custom"
+
+const normalizeWeekPlan = (plan: DietWeekPlan | null | undefined, weekKey: string): DietWeekPlan | null => {
+  if (!plan) {
+    return null
+  }
+
+  const fallback = buildDefaultWeekPlan(weekKey)
+  const meals = buildEmptyMeals()
+  const recipeRefs = buildEmptyRecipeRefs()
+
+  weekDays.forEach((day) => {
+    const dayMeals = plan.meals?.[day]
+    meals[day] = {
+      morning: typeof dayMeals?.morning === "string" ? dayMeals.morning : "",
+      midday: typeof dayMeals?.midday === "string" ? dayMeals.midday : "",
+      evening: typeof dayMeals?.evening === "string" ? dayMeals.evening : "",
+    }
+
+    const dayRecipeRefs = plan.recipeRefs?.[day]
+    if (!dayRecipeRefs) {
+      return
+    }
+
+    mealSlots.forEach((slot) => {
+      const recipeRef = dayRecipeRefs[slot]
+      if (!recipeRef) {
+        return
+      }
+      if (!isRecipeSource(recipeRef.source)) {
+        return
+      }
+      if (typeof recipeRef.recipeId !== "string" || !recipeRef.recipeId.trim()) {
+        return
+      }
+      recipeRefs[day][slot] = {
+        source: recipeRef.source,
+        recipeId: recipeRef.recipeId,
+      }
+    })
+  })
+
+  const cuisineGoalIds = Array.isArray(plan.cuisineGoalIds)
+    ? plan.cuisineGoalIds.filter((goalId): goalId is string => typeof goalId === "string" && goalId.trim().length > 0)
+    : []
+
+  return {
+    weekKey: typeof plan.weekKey === "string" && plan.weekKey ? plan.weekKey : fallback.weekKey,
+    weekStartDate: typeof plan.weekStartDate === "string" && plan.weekStartDate ? plan.weekStartDate : fallback.weekStartDate,
+    meals,
+    recipeRefs,
+    shoppingNotes: typeof plan.shoppingNotes === "string" ? plan.shoppingNotes : "",
+    cuisineGoalIds: cuisineGoalIds.length > 0 ? cuisineGoalIds : fallback.cuisineGoalIds,
+    fillOnlyEmpty: typeof plan.fillOnlyEmpty === "boolean" ? plan.fillOnlyEmpty : fallback.fillOnlyEmpty,
+  }
+}
+
 const emptyPreferences: DietPreferences = {
   favoriteRecipes: [],
 }
@@ -121,7 +178,7 @@ const useUserDietData = (weekKey: string) => {
       weekKey,
       (nextPlan) => {
         planLoaded = true
-        setWeekPlan(nextPlan)
+        setWeekPlan(normalizeWeekPlan(nextPlan, weekKey))
         setError(null)
         syncLoadingState()
       },
@@ -201,22 +258,19 @@ const useUserDietData = (weekKey: string) => {
     if (!userId || isLoading || seedAttemptRef.current || !migrationResolved) {
       return
     }
-    if (weekPlan && preferences) {
+    if (preferences) {
       return
     }
     seedAttemptRef.current = true
     void (async () => {
       try {
-        await Promise.all([
-          weekPlan ? Promise.resolve() : saveDietWeekPlan(userId, buildDefaultWeekPlan(weekKey)),
-          preferences ? Promise.resolve() : saveDietPreferences(userId, emptyPreferences),
-        ])
+        await saveDietPreferences(userId, emptyPreferences)
       } catch (seedError) {
         console.error("Diet seed failed", seedError)
         setError(DIET_MUTATION_ERROR)
       }
     })()
-  }, [isLoading, migrationResolved, preferences, userId, weekKey, weekPlan])
+  }, [isLoading, migrationResolved, preferences, userId])
 
   const mutate = useCallback(
     async (operation: () => Promise<void>) => {
@@ -232,15 +286,19 @@ const useUserDietData = (weekKey: string) => {
     [],
   )
 
-  const activePlan = weekPlan ?? buildDefaultWeekPlan(weekKey)
+  const activePlan = useMemo(
+    () => normalizeWeekPlan(weekPlan, weekKey) ?? buildDefaultWeekPlan(weekKey),
+    [weekKey, weekPlan],
+  )
   const activePreferences = preferences ?? emptyPreferences
 
   const saveWeekPlan = useCallback(
     async (plan: DietWeekPlan) => {
       if (!userId) return
-      await mutate(() => saveDietWeekPlan(userId, plan))
+      const normalizedPlan = normalizeWeekPlan(plan, weekKey) ?? buildDefaultWeekPlan(weekKey)
+      await mutate(() => saveDietWeekPlan(userId, normalizedPlan))
     },
-    [mutate, userId],
+    [mutate, userId, weekKey],
   )
 
   const updateMeal = useCallback(
@@ -290,27 +348,33 @@ const useUserDietData = (weekKey: string) => {
   const assignRecipeToSlot = useCallback(
     async (day: DietWeekDay, slot: DietMealSlotId, mealName: string, recipeRef: DietRecipeRef) => {
       if (!userId) return
-      await mutate(() =>
-        saveDietWeekPlan(userId, {
-          ...activePlan,
-          meals: {
-            ...activePlan.meals,
-            [day]: {
-              ...activePlan.meals[day],
-              [slot]: mealName,
-            },
+      const nextPlan: DietWeekPlan = {
+        ...activePlan,
+        meals: {
+          ...activePlan.meals,
+          [day]: {
+            ...activePlan.meals[day],
+            [slot]: mealName,
           },
-          recipeRefs: {
-            ...activePlan.recipeRefs,
-            [day]: {
-              ...(activePlan.recipeRefs[day] ?? {}),
-              [slot]: recipeRef,
-            },
+        },
+        recipeRefs: {
+          ...activePlan.recipeRefs,
+          [day]: {
+            ...(activePlan.recipeRefs[day] ?? {}),
+            [slot]: recipeRef,
           },
-        }),
-      )
+        },
+      }
+      const previousPlan = weekPlan
+      setWeekPlan(nextPlan)
+      try {
+        await mutate(() => saveDietWeekPlan(userId, nextPlan))
+      } catch (error) {
+        setWeekPlan(previousPlan)
+        throw error
+      }
     },
-    [activePlan, mutate, userId],
+    [activePlan, mutate, userId, weekPlan],
   )
 
   const removeRecipeFromSlot = useCallback(

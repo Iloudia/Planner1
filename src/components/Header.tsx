@@ -1,5 +1,6 @@
 ﻿import { Link, useNavigate } from "react-router-dom"
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react"
+import { NavLink } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
 
 function Header() {
@@ -389,21 +390,25 @@ function Header() {
         </div>
 
         <nav className="site-header__nav" aria-label="Navigation principale">
-          <Link to={isAuthenticated ? "/home" : "/"} className="site-header__nav-link">
+          <NavLink
+            to={isAuthenticated ? "/home" : "/"}
+            end
+            className={({ isActive }) => `site-header__nav-link${isActive ? " is-active" : ""}`}
+          >
             Accueil
-          </Link>
-          <Link to="/boutique" className="site-header__nav-link">
+          </NavLink>
+          <NavLink to="/boutique" className={({ isActive }) => `site-header__nav-link${isActive ? " is-active" : ""}`}>
             Boutique
-          </Link>
-          <Link to="/panier" className="site-header__nav-link">
+          </NavLink>
+          <NavLink to="/panier" className={({ isActive }) => `site-header__nav-link${isActive ? " is-active" : ""}`}>
             Panier
-          </Link>
-          <Link to="/a-propos" className="site-header__nav-link">
+          </NavLink>
+          <NavLink to="/a-propos" className={({ isActive }) => `site-header__nav-link${isActive ? " is-active" : ""}`}>
             À propos
-          </Link>
-          <Link to="/contact" className="site-header__nav-link">
+          </NavLink>
+          <NavLink to="/contact" className={({ isActive }) => `site-header__nav-link${isActive ? " is-active" : ""}`}>
             Contact
-          </Link>
+          </NavLink>
         </nav>
       </div>
     </header>

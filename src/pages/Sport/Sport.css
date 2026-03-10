@@ -12,7 +12,7 @@
   overflow: hidden;
   border-radius: 18px;
   height: var(--hero-visual-height);
-  box-shadow: 0 16px 36px rgba(236, 72, 153, 0.15);
+  box-shadow: 0 16px 36px rgba(114, 92, 63, 0.15);
 }
 
 .sport-hero-image img {
@@ -83,7 +83,7 @@
   border-radius: 18px;
   padding: 1.2rem 1.1rem;
   background: #ffffff;
-  box-shadow: 0 18px 38px rgba(236, 72, 153, 0.14);
+  box-shadow: 0 18px 38px rgba(114, 92, 63, 0.14);
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
@@ -133,12 +133,12 @@
 .sport-board-card__field select,
 .sport-board-card__field input {
   border-radius: 12px;
-  border: 1px solid rgba(236, 72, 153, 0.2);
+  border: 1px solid rgba(114, 92, 63, 0.2);
   padding: 0.6rem 0.75rem;
   font-size: 1rem;
   background: rgba(255, 255, 255, 0.95);
   color: #0f172a;
-  box-shadow: 0 10px 24px rgba(236, 72, 153, 0.12);
+  box-shadow: 0 10px 24px rgba(114, 92, 63, 0.12);
 }
 
 .sport-board-card__field select:focus,
@@ -216,7 +216,7 @@
 }
 
 .sport-chip__inline-editor input {
-  border: 1px solid rgba(236, 72, 153, 0.25);
+  border: 1px solid rgba(114, 92, 63, 0.25);
   border-radius: 12px;
   padding: 0.65rem 0.85rem;
   font-size: 0.95rem;
@@ -226,8 +226,8 @@
 
 .sport-chip__inline-editor input:focus {
   outline: none;
-  border-color: #ec4899;
-  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.15);
+  border-color: #725c3f;
+  box-shadow: 0 10px 26px rgba(114, 92, 63, 0.15);
 }
 
 .sport-chip--add {
@@ -243,7 +243,7 @@
 }
 
 .sport-chip--remove {
-  border: 1px solid rgba(236, 72, 153, 0.25);
+  border: 1px solid rgba(114, 92, 63, 0.25);
   border-radius: 12px;
   width: 44px;
   height: 44px;
@@ -265,7 +265,7 @@
 .sport-chip {
   display: inline-flex;
   align-self: flex-start;
-  border: 1px solid rgba(236, 72, 153, 0.25);
+  border: 1px solid rgba(114, 92, 63, 0.25);
   border-radius: 7px;
   padding: 0.55rem 0.85rem;
   background: #ffffff;
@@ -277,7 +277,7 @@
 
 .sport-chip:hover {
   transform: translateY(-1px);
-  box-shadow: 0 12px 24px rgba(236, 72, 153, 0.16);
+  box-shadow: 0 12px 24px rgba(114, 92, 63, 0.16);
 }
 
 .sport-quick-panel__cards {
@@ -294,7 +294,7 @@
   border-radius: 18px;
   overflow: hidden;
   background: #fff;
-  box-shadow: 0 18px 36px rgba(236, 72, 153, 0.2);
+  box-shadow: 0 18px 36px rgba(114, 92, 63, 0.2);
   transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
 }
 
@@ -302,7 +302,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(120deg, rgba(236, 72, 153, 0.12), rgba(249, 168, 212, 0.08));
+  background: linear-gradient(120deg, rgba(114, 92, 63, 0.12), rgba(216, 215, 178, 0.08));
   opacity: 0;
   transition: opacity 200ms ease;
   pointer-events: none;
@@ -388,7 +388,7 @@
 }
 
 .sport-reminders__title {
-  background: rgba(236, 72, 153, 0.16);
+  background: rgba(114, 92, 63, 0.16);
   color: #9d174d;
   padding: 0.4rem 0.9rem;
   display: inline-block;
@@ -407,8 +407,8 @@
   padding: 0.95rem 1.05rem;
   border-radius: 14px;
   background: #ffffff;
-  border: 1px solid rgba(236, 72, 153, 0.18);
-  box-shadow: 0 14px 32px rgba(236, 72, 153, 0.12);
+  border: 1px solid rgba(114, 92, 63, 0.18);
+  box-shadow: 0 14px 32px rgba(114, 92, 63, 0.12);
   max-width: none;
   width: 100%;
 }

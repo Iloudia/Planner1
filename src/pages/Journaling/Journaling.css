@@ -10,9 +10,9 @@
   --journal-panel-soft: #ffeef5;
   --journal-ink: var(--color-chocolate);
   --journal-muted: #6a5560;
-  --journal-accent: #ec4899;
-  --journal-accent-2: #f472b6;
-  --journal-accent-soft: #fbcfe8;
+  --journal-accent: #725c3f;
+  --journal-accent-2: #e3d7ca;
+  --journal-accent-soft: #e3d7ca;
   --journal-border: transparent;
   --journal-shadow: 0 24px 60px rgba(43, 27, 34, 0.14);
   --journal-shadow-soft: 0 12px 34px rgba(43, 27, 34, 0.1);
@@ -61,7 +61,7 @@
   inset: 0;
   background-image:
     radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.65), transparent 40%),
-    radial-gradient(circle at 90% 75%, rgba(236, 72, 153, 0.08), transparent 50%);
+    radial-gradient(circle at 90% 75%, rgba(114, 92, 63, 0.08), transparent 50%);
   opacity: 0.6;
   pointer-events: none;
 }
@@ -133,12 +133,12 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   font-weight: 700;
-  background: rgba(236, 72, 153, 0.16);
+  background: rgba(114, 92, 63, 0.16);
   color: var(--color-chocolate);
 }
 
 .journaling-tag--premium {
-  background: rgba(244, 114, 182, 0.2);
+  background: rgba(227, 215, 202, 0.2);
   color: var(--color-chocolate);
 }
 
@@ -215,7 +215,8 @@
 }
 
 .journaling-post__options .journaling-choice__content {
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .journaling-choice {
@@ -242,8 +243,9 @@
   text-align: center;
   font-size: 0.85rem;
   color: var(--color-chocolate);
-  box-shadow: 0 10px 22px rgba(236, 72, 153, 0.12);
+  box-shadow: 0 10px 22px rgba(114, 92, 63, 0.12);
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  cursor: pointer;
 }
 
 .journaling-choice__emoji {
@@ -273,8 +275,8 @@
 }
 
 .journaling-choice input:checked + .journaling-choice__content {
-  border-color: rgba(236, 72, 153, 0.6);
-  background: rgba(236, 72, 153, 0.18);
+  border-color: rgba(114, 92, 63, 0.6);
+  background: rgba(114, 92, 63, 0.18);
   color: var(--color-chocolate);
   box-shadow: 0 10px 26px rgba(148, 163, 184, 0.35);
 }
@@ -299,7 +301,7 @@
 }
 
 .journaling-question__card {
-  background: linear-gradient(135deg, rgba(236, 72, 153, 0.12), rgba(244, 114, 182, 0.12));
+  background: linear-gradient(135deg, rgba(114, 92, 63, 0.12), rgba(227, 215, 202, 0.12));
   border-radius: 22px;
   padding: 1.4rem 1.6rem;
   border: none;
@@ -351,7 +353,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  box-shadow: 0 14px 32px rgba(236, 72, 153, 0.14);
+  box-shadow: 0 14px 32px rgba(114, 92, 63, 0.14);
 }
 
 .journaling-closure__block textarea {
@@ -382,7 +384,7 @@
   gap: 0.5rem;
   padding: 0.5rem 0.8rem;
   border-radius: 999px;
-  border: 1px solid rgba(236, 72, 153, 0.35);
+  border: 1px solid rgba(114, 92, 63, 0.35);
   background: rgba(255, 255, 255, 0.85);
   font-size: 0.85rem;
   color: var(--color-chocolate);
@@ -390,14 +392,14 @@
 }
 
 .journaling-toggle input:checked + .journaling-toggle__label {
-  border-color: rgba(236, 72, 153, 0.5);
-  background: rgba(236, 72, 153, 0.16);
+  border-color: rgba(114, 92, 63, 0.5);
+  background: rgba(114, 92, 63, 0.16);
   color: var(--color-chocolate);
   font-weight: 600;
 }
 
 .journaling-closure__block textarea::placeholder {
-  text-shadow: 0 6px 18px rgba(236, 72, 153, 0.35);
+  text-shadow: 0 6px 18px rgba(114, 92, 63, 0.35);
 }
 
 .journaling-save {
@@ -427,46 +429,33 @@
   box-shadow: none;
 }
 
-.journaling-save__confirmation {
-  order: -1;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.35rem 0.9rem;
-  border-radius: 999px;
-  background: rgba(236, 72, 153, 0.16);
-  color: var(--color-chocolate);
-  font-weight: 600;
-  font-size: 0.9rem;
-  opacity: 0;
-  transform: translateY(8px) scale(0.95);
-  transition: opacity 0.25s ease, transform 0.25s ease;
-  pointer-events: none;
+.journaling-save__confirmation-card {
+  position: fixed;
+  top: clamp(7rem, 12vw, 10rem);
+  right: clamp(1rem, 3vw, 2rem);
+  background: #ffffff;
+  border: 1px solid var(--lux-line);
+  border-radius: 0;
+  padding: 1.4rem 1.6rem;
+  text-align: left;
+  max-width: 360px;
+  z-index: 9999;
 }
 
-.journaling-save__confirmation.is-visible {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  animation: journaling-save-pop 0.6s ease;
+.journaling-save__confirmation-card h4 {
+  margin: 0 0 0.4rem;
+  font-size: 1.2rem;
+  color: #000000;
 }
 
-@keyframes journaling-save-pop {
-  0% {
-    transform: translateY(12px) scale(0.85);
-    opacity: 0;
-  }
-  60% {
-    transform: translateY(-2px) scale(1.05);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(0) scale(1);
-  }
+.journaling-save__confirmation-card p {
+  margin: 0;
+  color: #475569;
 }
 
 .journaling-premium {
   background: linear-gradient(135deg, rgba(255, 240, 246, 0.95), rgba(255, 230, 242, 0.95));
-  border: 1px solid rgba(236, 72, 153, 0.18);
+  border: 1px solid rgba(114, 92, 63, 0.18);
 }
 
 .journaling-premium.is-locked {
@@ -825,7 +814,7 @@ body.journaling-page--lux {
 .journaling-checkin__date,
 .journaling-tag,
 .journaling-toggle__label,
-.journaling-save__confirmation,
+.journaling-save__confirmation-card,
 .journaling-save__button,
 .journaling-choice__content {
   border-radius: 0;

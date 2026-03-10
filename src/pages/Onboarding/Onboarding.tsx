@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+﻿import { useEffect, useMemo, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { doc, setDoc } from "firebase/firestore"
 import { useAuth } from "../../context/AuthContext"
@@ -7,6 +7,7 @@ import { auth, db } from "../../utils/firebase"
 import "./Onboarding.css"
 
 const ONBOARDING_STORAGE_KEY = "planner.onboarding.answers.v1"
+const MAX_CATEGORY_SELECTIONS = 3
 
 const SOURCE_OPTIONS = [
   "Instagram",
@@ -14,30 +15,29 @@ const SOURCE_OPTIONS = [
   "Pinterest",
   "Recherche Google",
   "Recommandation d'un proche",
-  "Publicité en ligne",
+  "PublicitÃ© en ligne",
   "Etsy",
   "Autre",
 ]
 
 const REASON_OPTIONS = [
-  "Découvrir du contenu inspirant",
+  "DÃ©couvrir du contenu inspirant",
   "Organiser mon quotidien",
-  "Améliorer mon bien-être",
-  "Mieux gérer mes projets / objectifs",
+  "AmÃ©liorer mon bien-Ãªtre",
+  "Mieux gÃ©rer mes projets et objectifs",
   "Trouver des outils pratiques",
-  "Suivre les nouveautés",
   "Autre raison",
 ]
 
 const CATEGORY_OPTIONS = [
-  { label: "Sport", icon: "🏃" },
-  { label: "Journaling", icon: "📓" },
-  { label: "Self-love", icon: "💖" },
-  { label: "Finances", icon: "💰" },
-  { label: "Routine", icon: "⏰" },
-  { label: "Wishlist", icon: "⭐" },
-  { label: "Calendrier mensuel", icon: "🗓️" },
-  { label: "Cuisine", icon: "🍳" },
+  { label: "Sport", icon: "ðŸƒ" },
+  { label: "Journaling", icon: "ðŸ““" },
+  { label: "Self-love", icon: "ðŸ’–" },
+  { label: "Finances", icon: "ðŸ’°" },
+  { label: "Routine", icon: "â°" },
+  { label: "Wishlist", icon: "â­" },
+  { label: "Calendrier mensuel", icon: "ðŸ—“ï¸" },
+  { label: "Cuisine", icon: "ðŸ³" },
 ]
 
 type OnboardingAnswers = {
@@ -85,7 +85,7 @@ const OnboardingPage = () => {
         ...prev,
         ...parsed,
         reasons: Array.isArray(parsed.reasons) ? parsed.reasons : prev.reasons,
-        categories: Array.isArray(parsed.categories) ? parsed.categories : prev.categories,
+        categories: Array.isArray(parsed.categories) ? parsed.categories.slice(0, MAX_CATEGORY_SELECTIONS) : prev.categories,
       }))
     } catch {
       // ignore
@@ -178,6 +178,9 @@ const OnboardingPage = () => {
   const toggleMulti = (key: "reasons" | "categories", value: string) => {
     setAnswers((prev) => {
       const current = prev[key]
+      if (key === "categories" && !current.includes(value) && current.length >= MAX_CATEGORY_SELECTIONS) {
+        return prev
+      }
       const next = current.includes(value) ? current.filter((item) => item !== value) : [...current, value]
       return {
         ...prev,
@@ -228,14 +231,14 @@ const OnboardingPage = () => {
                       checked={answers.source === option}
                       onChange={() => handleSourceSelect(option)}
                     />
-                    <span className="onboarding-option__label">{option === "Autre" ? "Autre (à préciser)" : option}</span>
+                    <span className="onboarding-option__label">{option === "Autre" ? "Autre (Ã  prÃ©ciser)" : option}</span>
                     <span className="onboarding-option__control" aria-hidden="true" />
                   </label>
                 ))}
               </div>
               {answers.source === "Autre" ? (
                 <label className="onboarding-other">
-                  Précise ta réponse
+                  PrÃ©cise ta rÃ©ponse
                   <input
                     type="text"
                     value={answers.sourceOther}
@@ -249,8 +252,8 @@ const OnboardingPage = () => {
 
           {step === 1 ? (
             <>
-              <h2 className="onboarding-question">Qu'est-ce qui vous a donné envie de créer un compte ?</h2>
-              <p className="onboarding-hint">Plusieurs réponses possibles</p>
+              <h2 className="onboarding-question">Qu'est-ce qui vous a donnÃ© envie de crÃ©er un compte ?</h2>
+              <p className="onboarding-hint">Plusieurs rÃ©ponses possibles</p>
               <div className="onboarding-options">
                 {REASON_OPTIONS.map((option) => (
                   <label key={option} className={`onboarding-option${answers.reasons.includes(option) ? " is-selected" : ""}`}>
@@ -281,8 +284,8 @@ const OnboardingPage = () => {
 
           {step === 2 ? (
             <>
-              <h2 className="onboarding-question">Quelles catégories vous intéressent le plus ?</h2>
-              <p className="onboarding-hint">Plusieurs réponses possibles</p>
+              <h2 className="onboarding-question">Quelles catÃ©gories vous intÃ©ressent le plus ?</h2>
+              <p className="onboarding-hint">Choisis en 3 maximum</p>
               <div className="onboarding-options onboarding-options--grid">
                 {CATEGORY_OPTIONS.map((option) => (
                   <label key={option.label} className={`onboarding-option${answers.categories.includes(option.label) ? " is-selected" : ""}`}>
@@ -290,11 +293,9 @@ const OnboardingPage = () => {
                       type="checkbox"
                       value={option.label}
                       checked={answers.categories.includes(option.label)}
+                      disabled={!answers.categories.includes(option.label) && answers.categories.length >= MAX_CATEGORY_SELECTIONS}
                       onChange={() => toggleMulti("categories", option.label)}
                     />
-                    <span className="onboarding-option__icon" aria-hidden="true">
-                      {option.icon}
-                    </span>
                     <span className="onboarding-option__label">{option.label}</span>
                     <span className="onboarding-option__control" aria-hidden="true" />
                   </label>
@@ -328,4 +329,5 @@ const OnboardingPage = () => {
 }
 
 export default OnboardingPage
+
 

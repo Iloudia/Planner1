@@ -33,6 +33,15 @@ const computeWeekRange = (dateKeys: string[]) => {
   return `${first} - ${last}`
 }
 
+const getNextMondayMidnight = (reference: Date) => {
+  const next = new Date(reference)
+  next.setHours(0, 0, 0, 0)
+  const day = next.getDay()
+  const daysUntilNextMonday = day === 0 ? 1 : 8 - day
+  next.setDate(next.getDate() + daysUntilNextMonday)
+  return next
+}
+
 const lifeCardDefinitions = [
   { id: "life-workout", label: "Workout", route: "/sport/workout", key: "workout" as const, image: heroWorkout },
   { id: "life-diet", label: "Diet", route: "/diet", key: "diet" as const, image: heroDiet },
@@ -43,7 +52,7 @@ const SPORT_BOARD_DRAFTS_STORAGE_KEY = "planner.sport.board.drafts.v1"
 
 const SportPage = () => {
   const { userEmail, userId } = useAuth()
-  const weekKey = getWeekKey()
+  const [weekKey, setWeekKey] = useState(() => getWeekKey())
   const { board, dashboard, isLoading, error, updateBoardDay, saveQuickItems } =
     useUserSportDashboard(weekKey)
   const canEdit = Boolean(userId)
@@ -62,6 +71,36 @@ const SportPage = () => {
     document.body.classList.add("sport-page--lux")
     return () => {
       document.body.classList.remove("sport-page--lux")
+    }
+  }, [])
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return
+    }
+
+    let timeoutId: number | null = null
+
+    const scheduleWeeklyRollover = () => {
+      const now = new Date()
+      const nextMondayMidnight = getNextMondayMidnight(now)
+      const delay = Math.max(1000, nextMondayMidnight.getTime() - now.getTime())
+
+      timeoutId = window.setTimeout(() => {
+        setWeekKey(getWeekKey())
+        scheduleWeeklyRollover()
+      }, delay)
+    }
+
+    scheduleWeeklyRollover()
+    const syncOnVisibility = () => setWeekKey(getWeekKey())
+    window.addEventListener("visibilitychange", syncOnVisibility)
+
+    return () => {
+      if (timeoutId) {
+        window.clearTimeout(timeoutId)
+      }
+      window.removeEventListener("visibilitychange", syncOnVisibility)
     }
   }, [])
 
