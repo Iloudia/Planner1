@@ -5,6 +5,7 @@ import placeholderProduct from "../../assets/kalina-wolf-dupe.webp"
 import { publishCustomProduct } from "../Boutique/boutiqueStorage"
 import type { BoutiqueProduct } from "../Boutique/boutiqueData"
 import { uploadImage } from "../../services/media/api"
+import { uploadDigitalProductFiles } from "../../services/boutique/api"
 type MediaFile = { name: string; url: string; type: "image" | "video"; file?: File }
 
 const mockCategories = ["Ebook", "Templates", "Carrousels", "Bundles"]
@@ -153,7 +154,13 @@ const AdminProductsPage = () => {
   }
 
   const handleDigitalFilesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(event.target.files ?? [])
+    const files = Array.from(event.target.files ?? []).filter(
+      (file) =>
+        file.type === "application/pdf" ||
+        file.type === "application/zip" ||
+        file.type === "application/x-zip-compressed" ||
+        /\.(pdf|zip)$/i.test(file.name),
+    )
     setDigitalFiles(files)
     event.target.value = ""
   }
@@ -172,6 +179,14 @@ const AdminProductsPage = () => {
     }
     return slots
   }, [images])
+
+  const digitalFilesSummary = useMemo(() => {
+    if (digitalFiles.length === 0) {
+      return "Aucun fichier choisi."
+    }
+
+    return digitalFiles.map((file) => file.name).join(" • ")
+  }, [digitalFiles])
 
   const slugify = (value: string) =>
     value
@@ -208,6 +223,27 @@ const AdminProductsPage = () => {
     return /\d/.test(numeric) ? `${numeric}€` : trimmed
   }
 
+  const resetForm = () => {
+    images.forEach((file) => URL.revokeObjectURL(file.url))
+    if (video) {
+      URL.revokeObjectURL(video.url)
+    }
+    setImages([])
+    setVideo(null)
+    setCategory("")
+    setTitle("")
+    setDescription("")
+    setPrice("")
+    setStock("")
+    setDelivery("")
+    setProcessing("")
+    setReturnsText("")
+    setDigitalFiles([])
+    if (digitalFilesInputRef.current) {
+      digitalFilesInputRef.current.value = ""
+    }
+  }
+
   const handleSaveProduct = async () => {
     if (!title.trim()) {
       window.alert("Ajoute un titre pour enregistrer la fiche produit.")
@@ -219,6 +255,10 @@ const AdminProductsPage = () => {
     }
     if (!category) {
       window.alert("Choisis une catégorie pour enregistrer la fiche produit.")
+      return
+    }
+    if (digitalFiles.length === 0) {
+      window.alert("Ajoute au moins un fichier numerique a livrer apres l'achat.")
       return
     }
 
@@ -247,6 +287,8 @@ const AdminProductsPage = () => {
         safeGallery = [placeholderProduct]
       }
 
+      const uploadedDigitalFiles = await uploadDigitalProductFiles(digitalFiles, id)
+
       const product: BoutiqueProduct = {
         id,
         title: title.trim(),
@@ -261,9 +303,11 @@ const AdminProductsPage = () => {
         gallery: safeGallery,
         description: description.trim() || "Description à compléter.",
         features: features.length > 0 ? features : ["Ressource digitale", "Accès immédiat", "Usage commercial autorisé"],
+        digitalFiles: uploadedDigitalFiles,
       }
 
       await publishCustomProduct(product)
+      resetForm()
       setSaveStatus("saved")
       window.setTimeout(() => setSaveStatus("idle"), 2000)
     } catch (error) {
@@ -478,7 +522,7 @@ const AdminProductsPage = () => {
             <div>
               <p>Fichiers numériques</p>
             </div>
-            <p className="admin-products-helper">Ajoutez les fichiers PDF qui seront livrés après l'achat.</p>
+            <p className="admin-products-helper">Ajoutez les fichiers PDF ou ZIP qui seront livrés après l'achat.</p>
           </header>
 
           <div className="admin-products-field">
@@ -488,14 +532,14 @@ const AdminProductsPage = () => {
                 ref={digitalFilesInputRef}
                 id="product-digital-files"
                 type="file"
-                accept="application/pdf"
+                accept=".pdf,.zip,application/pdf,application/zip,application/x-zip-compressed"
                 multiple
                 onChange={handleDigitalFilesChange}
               />
               <span className="admin-products-digital-dropzone__text">
                 Ajouter un fichier
               </span>
-              <span className="admin-products-digital-dropzone__subtext">Aucun fichiers choisis</span>
+              <span className="admin-products-digital-dropzone__subtext">{digitalFilesSummary}</span>
             </label>
             {digitalFiles.length > 0 ? (
               <p className="admin-products-helper">{digitalFiles.length} fichier(s) sélectionné(s).</p>

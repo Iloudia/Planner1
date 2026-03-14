@@ -123,7 +123,7 @@ const BoutiquePage = () => {
           {categories.map((category) => (
             <Link
               key={category.id}
-              to={`/boutique/produit/${categoryProductMap[category.id]}`}
+              to={categoryProductMap[category.id] ? `/boutique/produit/${categoryProductMap[category.id]}` : `/boutique/${category.id}`}
               className="boutique-category-card"
             >
               <div className="boutique-category-card__image">
@@ -220,6 +220,9 @@ const BoutiquePage = () => {
             Bundles
           </button>
         </div>
+        {filteredProducts.length === 0 ? (
+          <p className="boutique-checkout-error">Aucun produit n'est encore publie dans cette categorie.</p>
+        ) : null}
         <div className="boutique-products">
           {filteredProducts.map((product) => (
             <Link key={product.id} to={`/boutique/produit/${product.id}`} className="boutique-product-card">

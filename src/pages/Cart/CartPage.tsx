@@ -20,6 +20,19 @@ const formatCents = (cents: number) => {
   return `${euros}€`
 }
 
+const parseCheckoutError = async (response: Response) => {
+  try {
+    const payload = (await response.json()) as { error?: string }
+    if (payload?.error) {
+      return payload.error
+    }
+  } catch {
+    // ignore malformed JSON payloads
+  }
+
+  return "Impossible de lancer le paiement."
+}
+
 const CartPage = () => {
   const [cartItems, setCartItems] = useState(() => loadCartItems())
   const [customProducts, setCustomProducts] = useState(() => loadCustomProducts())
@@ -63,8 +76,13 @@ const CartPage = () => {
     }, 0)
   }, [lineItems])
 
+  const unavailableItems = useMemo(
+    () => lineItems.filter(({ product }) => product?.checkoutEnabled === false),
+    [lineItems],
+  )
+
   const handleCheckout = async () => {
-    if (lineItems.length === 0) return
+    if (lineItems.length === 0 || unavailableItems.length > 0) return
     setIsCheckoutLoading(true)
     setCheckoutError(null)
     try {
@@ -78,7 +96,7 @@ const CartPage = () => {
         body: JSON.stringify({ items: payloadItems }),
       })
       if (!response.ok) {
-        throw new Error("Impossible de lancer le paiement.")
+        throw new Error(await parseCheckoutError(response))
       }
       const data = await response.json()
       if (!data?.url) {
@@ -87,7 +105,7 @@ const CartPage = () => {
       window.location.href = data.url
     } catch (error) {
       console.error(error)
-      setCheckoutError("Impossible de lancer le paiement. Réessaie dans quelques secondes.")
+      setCheckoutError(error instanceof Error ? error.message : "Impossible de lancer le paiement. Reessaie dans quelques secondes.")
     } finally {
       setIsCheckoutLoading(false)
     }
@@ -132,6 +150,9 @@ const CartPage = () => {
                 <button type="button" className="cart-item__remove" onClick={() => removeFromCart(item.productId)}>
                   Retirer
                 </button>
+                {product?.checkoutEnabled === false ? (
+                  <p className="boutique-checkout-error">Ce produit n'est pas encore pret a la vente.</p>
+                ) : null}
               </article>
             ))}
           </div>
@@ -146,11 +167,15 @@ const CartPage = () => {
                 type="button"
                 className="boutique-button boutique-button--primary"
                 onClick={handleCheckout}
-                disabled={isCheckoutLoading}
+                disabled={isCheckoutLoading || unavailableItems.length > 0}
               >
                 {isCheckoutLoading ? "Redirection..." : "Passer au paiement"}
               </button>
-              {checkoutError ? <p className="boutique-checkout-error">{checkoutError}</p> : null}
+              {unavailableItems.length > 0 ? (
+                <p className="boutique-checkout-error">Retire les produits non configurés avant de payer.</p>
+              ) : checkoutError ? (
+                <p className="boutique-checkout-error">{checkoutError}</p>
+              ) : null}
               <button type="button" className="boutique-button boutique-button--ghost" onClick={() => clearCart()}>
                 Vider le panier
               </button>

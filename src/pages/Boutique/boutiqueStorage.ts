@@ -1,5 +1,7 @@
 import type { BoutiqueProduct } from "./boutiqueData"
 import { buildApiUrl } from "../../utils/apiUrl"
+import { resolvePublicUrl } from "../../utils/apiUrl"
+import { auth } from "../../utils/firebase"
 
 const CUSTOM_PRODUCTS_KEY = "boutique.customProducts.v1"
 const CUSTOM_PRODUCTS_EVENT = "products:updated"
@@ -21,13 +23,28 @@ const safeParse = (raw: string | null) => {
 
 const normalizeProducts = (value: unknown) => {
   if (!Array.isArray(value)) return [] as StoredProduct[]
-  return value.filter((item) => item && typeof item === "object") as StoredProduct[]
+  return value
+    .filter((item) => item && typeof item === "object")
+    .map((item) => {
+      const product = item as StoredProduct
+      const image = typeof product.image === "string" ? resolvePublicUrl(product.image) : ""
+      const gallery = Array.isArray(product.gallery)
+        ? product.gallery.map((entry) => resolvePublicUrl(String(entry || ""))).filter(Boolean)
+        : []
+
+      return {
+        ...product,
+        image,
+        gallery: image ? [image, ...gallery.filter((entry) => entry !== image)] : gallery,
+        checkoutEnabled: product.checkoutEnabled !== false,
+      }
+    }) as StoredProduct[]
 }
 
 const readLocalProducts = () => {
   try {
     const raw = window.localStorage.getItem(CUSTOM_PRODUCTS_KEY)
-    return safeParse(raw)
+    return normalizeProducts(safeParse(raw))
   } catch {
     return [] as StoredProduct[]
   }
@@ -54,11 +71,32 @@ const writeProducts = (products: StoredProduct[]) => {
   emitProductsUpdated()
 }
 
+const buildAuthenticatedJsonHeaders = async () => {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  }
+
+  const user = auth.currentUser
+  if (!user) {
+    return headers
+  }
+
+  try {
+    const token = await user.getIdToken()
+    headers.Authorization = `Bearer ${token}`
+  } catch {
+    // ignore and let the API reject unauthorized requests
+  }
+
+  return headers
+}
+
 const pushRemoteUpdate = async (payload: Record<string, unknown>) => {
   try {
+    const headers = await buildAuthenticatedJsonHeaders()
     const response = await fetch(CUSTOM_PRODUCTS_ENDPOINT, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify(payload),
     })
     if (!response.ok) {

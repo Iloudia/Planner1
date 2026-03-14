@@ -41,17 +41,27 @@ HOST=127.0.0.1
 PORT=4242
 TRUST_PROXY=1
 APP_BASE_URL=https://nomdns.com
+API_PUBLIC_BASE_URL=https://nomdns.com
 CORS_ORIGINS=https://nomdns.com,https://www.nomdns.com
 MEDIA_PUBLIC_BASE_URL=/media
 MEDIA_ROOT_DIR=/var/www/planner/shared/media
 FIREBASE_PROJECT_ID=meandrituals-72041
-STRIPE_SECRET_KEY=...
-STRIPE_WEBHOOK_SECRET=...
-DOWNLOAD_TOKEN_SECRET=...
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+DOWNLOAD_TOKEN_SECRET=<long_random_secret>
+ADMIN_EMAILS=admin1@example.com,admin2@example.com
 RESEND_API_KEY=...
 EMAIL_FROM=...
 DOWNLOADS_DIR=/var/www/planner/shared/downloads
 ```
+
+`DOWNLOAD_TOKEN_SECRET` is mandatory and must not be `replace-me`.
+
+For the current phase, keep Stripe in test mode only:
+- `STRIPE_SECRET_KEY` must start with `sk_test_`
+- `STRIPE_WEBHOOK_SECRET` must come from a Stripe test webhook endpoint or `stripe listen`
+
+`API_PUBLIC_BASE_URL` is required when the frontend and backend do not share the same origin in development. In production behind Nginx, keep it on the public site origin.
 
 ## App release
 ```bash
@@ -92,3 +102,13 @@ curl -I http://127.0.0.1:4242/api/custom-products
 curl -I https://nomdns.com
 curl -I https://nomdns.com/api/custom-products
 ```
+
+## Local Stripe test webhook
+For local dev, run the API locally and use Stripe CLI:
+
+```bash
+stripe login
+stripe listen --forward-to http://127.0.0.1:4242/api/stripe-webhook
+```
+
+Copy the displayed signing secret into `STRIPE_WEBHOOK_SECRET`.

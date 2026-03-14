@@ -36,6 +36,17 @@ export type BoutiqueProduct = {
   gallery: string[]
   description: string
   features: string[]
+  digitalFiles?: BoutiqueDigitalFile[]
+  checkoutEnabled?: boolean
+}
+
+export type BoutiqueDigitalFile = {
+  id: string
+  originalName: string
+  downloadName: string
+  storagePath: string
+  mimeType: string
+  sizeBytes: number
 }
 
 export const categories: BoutiqueCategory[] = [

@@ -1084,6 +1084,7 @@ const DietClassicPage = () => {
   const [planDay, setPlanDay] = useState<typeof weekDays[number]>(weekDays[0])
   const [planSlot, setPlanSlot] = useState<MealSlotId>("midday")
   const [planMealName, setPlanMealName] = useState("")
+  const [planConfirmationVisible, setPlanConfirmationVisible] = useState(false)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [customMenuOpenId, setCustomMenuOpenId] = useState<string | null>(null)
@@ -1117,6 +1118,7 @@ const DietClassicPage = () => {
   const planDayMenuRef = useRef<HTMLDivElement | null>(null)
   const planSlotMenuRef = useRef<HTMLDivElement | null>(null)
   const customMenuRef = useRef<HTMLDivElement | null>(null)
+  const planConfirmationTimeout = useRef<number | null>(null)
   const customRecipes = useMemo<RenderRecipe[]>(
     () =>
       persistedCustomRecipes.map((recipe) => ({
@@ -1203,6 +1205,14 @@ const DietClassicPage = () => {
     }
   }, [customMenuOpenId])
 
+  useEffect(() => {
+    return () => {
+      if (planConfirmationTimeout.current !== null) {
+        window.clearTimeout(planConfirmationTimeout.current)
+      }
+    }
+  }, [])
+
   const toggleFavorite = async (recipeId: string) => {
     if (!canEdit) return
     await toggleFavoriteRecipe({
@@ -1219,6 +1229,14 @@ const DietClassicPage = () => {
       recipeId: selectedRecipe.id,
     })
     setSelectedRecipe(null)
+    setPlanConfirmationVisible(true)
+    if (planConfirmationTimeout.current !== null) {
+      window.clearTimeout(planConfirmationTimeout.current)
+    }
+    planConfirmationTimeout.current = window.setTimeout(() => {
+      setPlanConfirmationVisible(false)
+      planConfirmationTimeout.current = null
+    }, 3000)
   }
   const handleDraftImageChange = (file?: File) => {
     if (!file) return
@@ -1967,6 +1985,12 @@ const DietClassicPage = () => {
                 </button>
               </footer>
             </div>
+          </div>
+        ) : null}
+
+        {planConfirmationVisible ? (
+          <div className="diet-plan__confirmation-card" role="status" aria-live="polite">
+            <p>La recette a bien ete ajoutee sur la page cuisine.</p>
           </div>
         ) : null}
 

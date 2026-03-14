@@ -59,12 +59,6 @@ const EyeIcon = ({ crossed }: { crossed?: boolean }) => (
   </svg>
 )
 
-declare global {
-  interface Window {
-    google?: any
-  }
-}
-
 const AuthPage = ({ mode }: AuthFormProps) => {
   const navigate = useNavigate()
   const location = useLocation()
@@ -100,10 +94,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
   const [isGenderMenuOpen, setIsGenderMenuOpen] = useState(false)
   const [acceptTerms, setAcceptTerms] = useState(false)
   const [registerStep, setRegisterStep] = useState(0)
-  const [isGoogleReady, setIsGoogleReady] = useState(false)
-  const googleButtonRef = useRef<HTMLDivElement | null>(null)
   const genderMenuRef = useRef<HTMLDivElement | null>(null)
-  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
   const skipAutoRedirectRef = useRef(false)
 
   const destinationPath = useMemo(() => {
@@ -130,46 +121,6 @@ const AuthPage = ({ mode }: AuthFormProps) => {
       document.body.classList.remove("auth-page--lux")
     }
   }, [])
-
-  useEffect(() => {
-    const scriptId = "google-client-script"
-    if (document.getElementById(scriptId)) {
-      setIsGoogleReady(true)
-      return
-    }
-    const script = document.createElement("script")
-    script.src = "https://accounts.google.com/gsi/client"
-    script.async = true
-    script.defer = true
-    script.id = scriptId
-    script.onload = () => setIsGoogleReady(true)
-    document.body.appendChild(script)
-  }, [])
-
-  useEffect(() => {
-    if (!isGoogleReady || !googleClientId || !googleButtonRef.current) return
-    if (!window.google) return
-
-    window.google.accounts.id.initialize({
-      client_id: googleClientId,
-      callback: async (response: { credential?: string }) => {
-        if (!response?.credential) return
-        const success = await loginWithGoogle(response.credential)
-        if (success) {
-          navigate(destinationPath, { replace: true })
-        } else {
-          setError("Connexion Google impossible. Merci de réessayer.")
-        }
-      },
-    })
-
-    window.google.accounts.id.renderButton(googleButtonRef.current, {
-      theme: "outline",
-      size: "large",
-      width: "100%",
-      text: "continue_with",
-    })
-  }, [destinationPath, googleClientId, isGoogleReady, loginWithGoogle, navigate])
 
   useEffect(() => {
     if (!isGenderMenuOpen) return
@@ -330,6 +281,16 @@ const AuthPage = ({ mode }: AuthFormProps) => {
     }
     setError("")
     window.alert("Un lien de réinitialisation a été envoyé à " + email + ".")
+  }
+
+  const handleGoogleLogin = async () => {
+    setError("")
+    const success = await loginWithGoogle()
+    if (!success) {
+      setError("Connexion Google impossible. Merci de réessayer.")
+      return
+    }
+    navigate(destinationPath, { replace: true })
   }
 
   const heading = mode === "login" ? "Connexion" : "Création de compte"
@@ -575,8 +536,9 @@ const AuthPage = ({ mode }: AuthFormProps) => {
           </form>
 
           <div className="auth-google">
-            <div ref={googleButtonRef} />
-            {!googleClientId ? <p className="auth-google__hint">Ajoute VITE_GOOGLE_CLIENT_ID pour activer Google.</p> : null}
+            <button type="button" className="auth-secondary auth-google__button" onClick={handleGoogleLogin}>
+              Continuer avec Google
+            </button>
           </div>
         </div>
       </div>

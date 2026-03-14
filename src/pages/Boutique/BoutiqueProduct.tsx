@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+﻿import { useEffect, useMemo, useRef, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import "./Boutique.css"
 import { buildApiUrl } from "../../utils/apiUrl"
@@ -6,6 +6,19 @@ import { buildApiUrl } from "../../utils/apiUrl"
 import { products } from "./boutiqueData"
 import { fetchCustomProducts, loadCustomProducts, PRODUCTS_UPDATED_EVENT } from "./boutiqueStorage"
 import { addToCart } from "./cartStorage"
+
+const parseCheckoutError = async (response: Response) => {
+  try {
+    const payload = (await response.json()) as { error?: string }
+    if (payload?.error) {
+      return payload.error
+    }
+  } catch {
+    // ignore malformed JSON payloads
+  }
+
+  return "Impossible de lancer le paiement."
+}
 
 const BoutiqueProductPage = () => {
   const { productId } = useParams()
@@ -62,8 +75,10 @@ const BoutiqueProductPage = () => {
     }
   }, [])
 
+  const isCheckoutAvailable = product?.checkoutEnabled !== false
+
   const handleAddToCart = () => {
-    if (!product) return
+    if (!product || !isCheckoutAvailable) return
     addToCart(product, 1)
     if (cartAnimationTimeoutRef.current) {
       window.clearTimeout(cartAnimationTimeoutRef.current)
@@ -82,7 +97,7 @@ const BoutiqueProductPage = () => {
   }
 
   const handleCheckout = async () => {
-    if (!product) {
+    if (!product || !isCheckoutAvailable) {
       return
     }
     setIsCheckoutLoading(true)
@@ -94,7 +109,7 @@ const BoutiqueProductPage = () => {
         body: JSON.stringify({ productId: product.id }),
       })
       if (!response.ok) {
-        throw new Error("Impossible de lancer le paiement.")
+        throw new Error(await parseCheckoutError(response))
       }
       const data = await response.json()
       if (!data?.url) {
@@ -103,7 +118,7 @@ const BoutiqueProductPage = () => {
       window.location.href = data.url
     } catch (error) {
       console.error(error)
-      setCheckoutError("Impossible de lancer le paiement. RÃ©essaie dans quelques secondes.")
+      setCheckoutError(error instanceof Error ? error.message : "Impossible de lancer le paiement. Reessaie dans quelques secondes.")
     } finally {
       setIsCheckoutLoading(false)
     }
@@ -117,7 +132,7 @@ const BoutiqueProductPage = () => {
             &lt; Retour boutique
           </Link>
           <h1>Produit introuvable</h1>
-          <p>Le produit demandé n'existe pas encore.</p>
+          <p>Le produit demande n'existe pas encore.</p>
         </section>
       </div>
     )
@@ -126,7 +141,7 @@ const BoutiqueProductPage = () => {
   return (
     <div className="boutique-page boutique-detail">
       <div className={`boutique-cart-toast${isCartToastVisible ? " is-visible" : ""}`} role="status" aria-live="polite">
-        <span className="boutique-cart-toast__eyebrow">Ajouté à votre panier</span>
+        <span className="boutique-cart-toast__eyebrow">Ajoute a votre panier</span>
         {product ? (
           <div className="boutique-cart-toast__content">
             <img src={product.image} alt="" className="boutique-cart-toast__image" loading="lazy" decoding="async" />
@@ -177,24 +192,28 @@ const BoutiqueProductPage = () => {
             <p className="boutique-detail__description">{product.description}</p>
             <div className="boutique-detail__meta">
               <span>{product.format}</span>
-              <span>Accès immédiat</span>
+              <span>Acces immediat</span>
               <span>Licence commerciale incluse</span>
             </div>
             <button
               type="button"
               className="boutique-button boutique-button--primary"
               onClick={handleCheckout}
-              disabled={isCheckoutLoading}
+              disabled={isCheckoutLoading || !isCheckoutAvailable}
             >
-              {isCheckoutLoading ? "Redirection..." : "Acheter maintenant"}
+              {!isCheckoutAvailable ? "Produit bientot disponible" : isCheckoutLoading ? "Redirection..." : "Acheter maintenant"}
             </button>
             <button
               type="button"
               className={`boutique-button boutique-button--ghost${isCartAnimating ? " is-animating" : ""}`}
               onClick={handleAddToCart}
+              disabled={!isCheckoutAvailable}
             >
               Ajouter au panier
             </button>
+            {!isCheckoutAvailable ? (
+              <p className="boutique-checkout-error">Le fichier de telechargement n'est pas encore configure pour ce produit.</p>
+            ) : null}
             {checkoutError ? <p className="boutique-checkout-error">{checkoutError}</p> : null}
             <div className="boutique-detail__features">
               <h2>Infos de livraison</h2>
@@ -212,3 +231,4 @@ const BoutiqueProductPage = () => {
 }
 
 export default BoutiqueProductPage
+

@@ -246,6 +246,12 @@ body.admin-page--tone {
   transform: translateY(-1px);
 }
 
+.admin-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .admin-button--ghost {
   background: transparent;
   color: #1f1b16;

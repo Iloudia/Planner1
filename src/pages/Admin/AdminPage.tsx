@@ -135,12 +135,13 @@ const PieChart = ({ entries }: { entries: [string, number][] }) => {
 }
 
 const AdminPage = () => {
-  const { userEmail, adminListUsers, adminUpdateStatus, adminDeleteUser } = useAuth()
+  const { userEmail, adminListUsers, adminUpdateStatus, adminDeleteUser, adminResendWelcomeEmail } = useAuth()
   const [users, setUsers] = useState<AdminUserRecord[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedEmail, setSelectedEmail] = useState<string | null>(null)
   const [alert, setAlert] = useState<AlertState>(null)
   const [showAllUsers, setShowAllUsers] = useState(false)
+  const [sendingWelcomeEmailTo, setSendingWelcomeEmailTo] = useState<string | null>(null)
 
   useEffect(() => {
     document.body.classList.add("admin-page--tone")
@@ -285,6 +286,25 @@ const AdminPage = () => {
     await refreshUsers()
   }
 
+  const handleResendWelcomeEmail = async (user: AdminUserRecord) => {
+    console.log("Admin UI resend welcome clicked", { email: user.email })
+    setSendingWelcomeEmailTo(user.email)
+    const result = await adminResendWelcomeEmail({ email: user.email })
+    if (!result.success) {
+      console.error("Admin UI resend welcome failed", { email: user.email, error: result.error ?? null })
+      setAlert({ type: "error", message: result.error ?? "Impossible de renvoyer l'e-mail de bienvenue." })
+      setSendingWelcomeEmailTo(null)
+      return
+    }
+
+    console.log("Admin UI resend welcome success", { email: user.email })
+    setAlert({
+      type: "success",
+      message: `${result.message ?? "E-mail de bienvenue renvoye."} Destinataire: ${user.email}.`,
+    })
+    setSendingWelcomeEmailTo(null)
+  }
+
   const handleRowKeyDown = (event: KeyboardEvent<HTMLDivElement>, email: string) => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault()
@@ -393,6 +413,17 @@ const AdminPage = () => {
                       <div className="admin-user-row__actions">
                         <button type="button" className="admin-button" onClick={() => handleStatusToggle(user)}>
                           {user.status === "actif" ? "Desactiver" : "Re-activer"}
+                        </button>
+                        <button
+                          type="button"
+                          className="admin-button admin-button--ghost"
+                          disabled={sendingWelcomeEmailTo === user.email}
+                          onClick={(event) => {
+                            event.stopPropagation()
+                            void handleResendWelcomeEmail(user)
+                          }}
+                        >
+                          {sendingWelcomeEmailTo === user.email ? "Envoi..." : "Renvoyer bienvenue"}
                         </button>
                         <button type="button" className="admin-button admin-button--danger" onClick={() => handleDelete(user.email)}>
                           Supprimer

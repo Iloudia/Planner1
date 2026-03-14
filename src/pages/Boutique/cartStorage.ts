@@ -31,9 +31,9 @@ export const addToCart = (product: BoutiqueProduct, quantity = 1) => {
   const items = readCart()
   const existing = items.find((item) => item.productId === product.id)
   if (existing) {
-    existing.quantity += quantity
+    existing.quantity = 1
   } else {
-    items.unshift({ productId: product.id, quantity, addedAt: new Date().toISOString() })
+    items.unshift({ productId: product.id, quantity: 1, addedAt: new Date().toISOString() })
   }
   writeCart(items)
 }

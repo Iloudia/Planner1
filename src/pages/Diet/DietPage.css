@@ -531,6 +531,24 @@
   color: #ffffff;
 }
 
+.diet-plan__confirmation-card {
+  position: fixed;
+  top: clamp(7rem, 12vw, 10rem);
+  right: clamp(1rem, 3vw, 2rem);
+  max-width: 360px;
+  padding: 1.4rem 1.6rem;
+  background: #ffffff;
+  border: 1px solid var(--lux-line);
+  border-radius: 0;
+  text-align: left;
+  z-index: 9999;
+}
+
+.diet-plan__confirmation-card p {
+  margin: 0;
+  color: #000000;
+}
+
 .diet-recipe-modal__body {
   display: flex;
   flex-direction: column;

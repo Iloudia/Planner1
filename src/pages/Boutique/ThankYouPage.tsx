@@ -2,12 +2,26 @@
 import { Link, useSearchParams } from "react-router-dom"
 import "./Boutique.css"
 import { buildApiUrl } from "../../utils/apiUrl"
+import { clearCart } from "./cartStorage"
 
 type CheckoutStatus = {
   paid: boolean
-  downloads?: Array<{ downloadUrl: string; productName: string }>
+  downloads?: Array<{ downloadUrl: string; productName: string; fileName?: string; label?: string }>
   customerEmail?: string | null
   error?: string
+}
+
+const parseCheckoutError = async (response: Response) => {
+  try {
+    const payload = (await response.json()) as { error?: string }
+    if (payload?.error) {
+      return payload.error
+    }
+  } catch {
+    // ignore malformed JSON payloads
+  }
+
+  return "Impossible de verifier le paiement."
 }
 
 const ThankYouPage = () => {
@@ -32,18 +46,24 @@ const ThankYouPage = () => {
       try {
         const response = await fetch(buildApiUrl(`/api/checkout-session?session_id=${encodeURIComponent(sessionId)}`))
         if (!response.ok) {
-          throw new Error("Impossible de verifier le paiement.")
+          throw new Error(await parseCheckoutError(response))
         }
-        const data = await response.json()
+        const data = (await response.json()) as CheckoutStatus
         setStatus(data)
       } catch (error) {
         console.error(error)
-        setStatus({ paid: false, error: "Impossible de verifier le paiement." })
+        setStatus({ paid: false, error: error instanceof Error ? error.message : "Impossible de verifier le paiement." })
       }
     }
 
-    fetchStatus()
+    void fetchStatus()
   }, [sessionId])
+
+  useEffect(() => {
+    if (status?.paid) {
+      clearCart()
+    }
+  }, [status?.paid])
 
   const isPaid = status?.paid
   const title = isPaid ? "Merci pour ton achat" : "Paiement en attente"
@@ -62,7 +82,7 @@ const ThankYouPage = () => {
           <div className="boutique-thankyou__actions">
             {status.downloads.map((item) => (
               <a key={item.downloadUrl} href={item.downloadUrl} className="boutique-button boutique-button--primary">
-                Telecharger {item.productName}
+                Telecharger {item.label || item.productName}
               </a>
             ))}
             <Link to="/boutique" className="boutique-button boutique-button--ghost">
@@ -87,3 +107,4 @@ const ThankYouPage = () => {
 }
 
 export default ThankYouPage
+

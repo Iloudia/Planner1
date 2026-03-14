@@ -359,6 +359,10 @@
   align-items: stretch;
 }
 
+.auth-google__button {
+  width: 100%;
+}
+
 .auth-google__hint {
   margin: 0;
   font-size: 0.85rem;

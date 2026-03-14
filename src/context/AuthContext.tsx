@@ -13,6 +13,7 @@ import {
   setPersistence,
   signInWithCredential,
   signInWithEmailAndPassword,
+  signInWithPopup,
   signOut,
   updatePassword,
   updateProfile,
@@ -29,6 +30,7 @@ import {
   where,
 } from "firebase/firestore"
 import { type FirebaseUserDocument } from "../models/firebase"
+import { buildApiUrl, getApiTargetLabel } from "../utils/apiUrl"
 import { auth, db } from "../utils/firebase"
 import { buildUserScopedKey, normalizeUserEmail } from "../utils/userScopedKey"
 const THIRTY_DAYS_MS = 1000 * 60 * 60 * 24 * 30
@@ -54,6 +56,7 @@ type AccountActionResult = {
   success: boolean
   error?: string
   deleteAt?: string
+  message?: string
 }
 
 type RegistrationProfile = {
@@ -77,7 +80,7 @@ export type AuthContextValue = {
   updateUserProfile: (profile: UserProfileData) => Promise<void>
   login: (credentials: { email: string; password: string; remember?: boolean }) => Promise<boolean>
   register: (credentials: { email: string; password: string; remember?: boolean; profile?: RegistrationProfile }) => Promise<boolean>
-  loginWithGoogle: (credential: string) => Promise<boolean>
+  loginWithGoogle: (credential?: string) => Promise<boolean>
   logout: () => Promise<void>
   verifyPassword: (input: string) => Promise<boolean>
   changePassword: (currentPassword: string, newPassword: string) => Promise<ChangePasswordResult>
@@ -87,6 +90,7 @@ export type AuthContextValue = {
   adminListUsers: () => Promise<AdminUserRecord[]>
   adminUpdateStatus: (email: string, status: AccountStatus) => Promise<AccountActionResult>
   adminDeleteUser: (email: string) => Promise<AccountActionResult>
+  adminResendWelcomeEmail: (payload: { email: string; firstName?: string }) => Promise<AccountActionResult>
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
@@ -161,6 +165,35 @@ const mergeProfileData = (base: UserProfileData, fallback?: UserProfileData, ema
 
 const hasProfileDiff = (left: UserProfileData, right: UserProfileData) =>
   JSON.stringify(mergeProfileData(left)) !== JSON.stringify(mergeProfileData(right))
+
+const notifyWelcomeEmail = async (firstName?: string) => {
+  const user = auth.currentUser
+  if (!user) return
+  const token = await user.getIdToken()
+  const response = await fetch(buildApiUrl("/api/email/welcome"), {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      firstName: firstName?.trim() || "",
+    }),
+  })
+
+  if (!response.ok) {
+    let reason = `status ${response.status}`
+    try {
+      const payload = (await response.json()) as { error?: string }
+      if (payload?.error) {
+        reason = payload.error
+      }
+    } catch {
+      // ignore malformed payloads
+    }
+    throw new Error(reason)
+  }
+}
 
 const buildUserDocument = (
   user: User,
@@ -390,6 +423,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             console.error("Post-register profile setup failed", error)
           }
         })()
+        // Send welcome email asynchronously to keep signup flow fast and resilient.
+        void notifyWelcomeEmail(profile?.firstName).catch((error) => {
+          if (error instanceof TypeError) {
+            console.warn(`Welcome email skipped: server unreachable (${getApiTargetLabel()})`)
+            return
+          }
+          console.error("Welcome email dispatch failed", error)
+        })
         return true
       } catch (error) {
         console.error("Register failed", error)
@@ -400,12 +441,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   )
 
   const loginWithGoogle = useCallback(
-    async (credential: string) => {
-      if (!credential) return false
+    async (credential?: string) => {
       try {
         await applyPersistence(true)
-        const googleCredential = GoogleAuthProvider.credential(credential)
-        const result: UserCredential = await signInWithCredential(auth, googleCredential)
+        const result: UserCredential = credential
+          ? await signInWithCredential(auth, GoogleAuthProvider.credential(credential))
+          : await signInWithPopup(auth, new GoogleAuthProvider())
         const data = await ensureUserDocument(result.user)
         if (data.status === "desactive") {
           await signOut(auth)
@@ -595,6 +636,82 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }, [])
 
+  const adminResendWelcomeEmail = useCallback(
+    async ({ email, firstName }: { email: string; firstName?: string }): Promise<AccountActionResult> => {
+      const to = normalizeEmail(email)
+      if (!to) {
+        return { success: false, error: "E-mail requis pour renvoyer le message de bienvenue." }
+      }
+
+      const currentUser = auth.currentUser
+      if (!currentUser) {
+        return { success: false, error: "Vous devez etre connecte pour effectuer cette action." }
+      }
+
+      try {
+        console.log("Admin welcome resend started", { to })
+        const token = await currentUser.getIdToken()
+        const response = await fetch(buildApiUrl("/api/email/welcome/admin-resend"), {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: to,
+            firstName: firstName?.trim() || "",
+          }),
+        })
+
+        if (!response.ok) {
+          let reason = `status ${response.status}`
+          try {
+            const payload = (await response.json()) as { error?: string }
+            if (payload?.error) {
+              reason = payload.error
+            }
+          } catch {
+            // ignore malformed response bodies
+          }
+          console.error("Admin welcome resend failed", {
+            to,
+            status: response.status,
+            reason,
+          })
+          return { success: false, error: reason }
+        }
+
+        const payload = (await response.json().catch(() => ({}))) as {
+          message?: string
+          emailId?: string | null
+          to?: string
+        }
+        console.log("Admin welcome resend succeeded", {
+          to,
+          emailId: payload?.emailId ?? null,
+          backendTo: payload?.to ?? null,
+        })
+        return {
+          success: true,
+          message: payload?.emailId
+            ? `E-mail envoye (id: ${payload.emailId}).`
+            : payload?.message || "E-mail de bienvenue envoye.",
+        }
+      } catch (error) {
+        if (error instanceof TypeError) {
+          console.error("Admin welcome resend network error", {
+            to,
+            target: getApiTargetLabel(),
+          })
+          return { success: false, error: `Serveur email inaccessible (${getApiTargetLabel()}).` }
+        }
+        console.error("Admin welcome email resend failed", error)
+        return { success: false, error: "Envoi du mail impossible avec les droits actuels." }
+      }
+    },
+    [],
+  )
+
   const userId = authUser?.uid ?? null
 
   const value = useMemo<AuthContextValue>(() => {
@@ -631,11 +748,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       adminListUsers,
       adminUpdateStatus,
       adminDeleteUser,
+      adminResendWelcomeEmail,
     }
   }, [
     accountCreatedAt,
     adminDeleteUser,
     adminListUsers,
+    adminResendWelcomeEmail,
     adminUpdateStatus,
     authReady,
     authUser,

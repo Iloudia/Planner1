@@ -25,7 +25,8 @@ const FooterLink = ({ href, children }: PropsWithChildren<{ href: string }>) => 
 );
 
 const Footer = () => {
-  const instagramUrl = "https://www.instagram.com/";
+  const instagramUrl =
+    "https://www.instagram.com/meandrituals?igsh=YmdwbmRmbTB1cW4w&utm_source=qr";
   const { openPreferences } = useCookieConsent();
 
   return (

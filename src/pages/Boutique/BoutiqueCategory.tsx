@@ -1,19 +1,22 @@
-import { useEffect, useMemo, useState } from "react"
+﻿import { useEffect, useMemo, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import "./Boutique.css"
 
 import { categories, products } from "./boutiqueData"
+import { fetchCustomProducts, loadCustomProducts, PRODUCTS_UPDATED_EVENT } from "./boutiqueStorage"
 
 const BoutiqueCategoryPage = () => {
   const { categoryId } = useParams()
+  const [customProducts, setCustomProducts] = useState(() => loadCustomProducts())
   const category = useMemo(() => categories.find((item) => item.id === categoryId), [categoryId])
+  const allProducts = useMemo(() => [...products, ...customProducts], [customProducts])
   const product = useMemo(() => {
     if (category) {
-      const match = products.find((item) => item.mockup === category.productType)
-      return match ?? products[0]
+      const match = allProducts.find((item) => item.mockup === category.productType)
+      return match ?? allProducts[0]
     }
-    return products[0]
-  }, [category])
+    return allProducts[0]
+  }, [allProducts, category])
 
   const gallery = product?.gallery ?? []
   const thumbnails = gallery.slice(1, 6)
@@ -30,6 +33,21 @@ const BoutiqueCategoryPage = () => {
     }
   }, [])
 
+  useEffect(() => {
+    let active = true
+    fetchCustomProducts().then((items) => {
+      if (active) setCustomProducts(items)
+    })
+    const handleStorage = () => setCustomProducts(loadCustomProducts())
+    window.addEventListener("storage", handleStorage)
+    window.addEventListener(PRODUCTS_UPDATED_EVENT, handleStorage as EventListener)
+    return () => {
+      active = false
+      window.removeEventListener("storage", handleStorage)
+      window.removeEventListener(PRODUCTS_UPDATED_EVENT, handleStorage as EventListener)
+    }
+  }, [])
+
   if (!category || !product) {
     return (
       <div className="boutique-page boutique-detail">
@@ -37,8 +55,8 @@ const BoutiqueCategoryPage = () => {
           <Link to="/boutique" className="boutique-link-button">
             &lt; Retour boutique
           </Link>
-          <h1>Catégorie introuvable</h1>
-          <p>La catégorie demandée n'existe pas encore.</p>
+          <h1>Categorie introuvable</h1>
+          <p>La categorie demandee n'existe pas encore.</p>
         </section>
       </div>
     )
@@ -51,7 +69,7 @@ const BoutiqueCategoryPage = () => {
           &lt; Retour boutique
         </Link>
         <div>
-          <span className="boutique-eyebrow">Catégorie {category.title}</span>
+          <span className="boutique-eyebrow">Categorie {category.title}</span>
           <h1>{product.title}</h1>
           <p>{product.benefit}</p>
         </div>
@@ -85,14 +103,14 @@ const BoutiqueCategoryPage = () => {
           <p className="boutique-detail__description">{product.description}</p>
           <div className="boutique-detail__meta">
             <span>{product.format}</span>
-            <span>Accès immédiat</span>
+            <span>Acces immediat</span>
             <span>Licence commerciale incluse</span>
           </div>
-          <button type="button" className="boutique-button boutique-button--primary">
-            Acheter maintenant
-          </button>
+          <Link to={`/boutique/produit/${product.id}`} className="boutique-button boutique-button--primary">
+            Voir le produit
+          </Link>
           <div className="boutique-detail__features">
-            <h2>Ce que tu reçois</h2>
+            <h2>Ce que tu recois</h2>
             <ul>
               {product.features.map((feature) => (
                 <li key={feature}>{feature}</li>
@@ -106,3 +124,4 @@ const BoutiqueCategoryPage = () => {
 }
 
 export default BoutiqueCategoryPage
+
