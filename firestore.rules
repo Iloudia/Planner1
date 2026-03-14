@@ -25,10 +25,12 @@ service cloud.firestore {
         collectionName == "workoutSettings" ||
         collectionName == "selfLoveDraft" ||
         collectionName == "selfLovePhotos" ||
+        collectionName == "bodyGoalPhotos" ||
         collectionName == "selfLoveQualities" ||
         collectionName == "selfLoveThoughts" ||
         collectionName == "selfLoveArchiveEntries" ||
         collectionName == "routineItems" ||
+        collectionName == "goalsDailyTrackers" ||
         collectionName == "dietWeeklyPlans" ||
         collectionName == "dietCustomRecipes" ||
         collectionName == "dietPreferences";

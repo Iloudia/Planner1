@@ -52,6 +52,9 @@ export const selfLovePhotoDocRef = (userId: string, slotId: string) => doc(selfL
 export const bodyGoalPhotosCollectionRef = (userId: string) => collection(userDocRef(userId), "bodyGoalPhotos")
 export const bodyGoalPhotoDocRef = (userId: string, slotId: string) => doc(bodyGoalPhotosCollectionRef(userId), slotId)
 
+export const goalsDailyTrackersCollectionRef = (userId: string) => collection(userDocRef(userId), "goalsDailyTrackers")
+export const goalsDailyTrackerDocRef = (userId: string) => doc(goalsDailyTrackersCollectionRef(userId), "current")
+
 export const selfLoveQualitiesCollectionRef = (userId: string) => collection(userDocRef(userId), "selfLoveQualities")
 export const selfLoveQualityDocRef = (userId: string, qualityId: string) =>
   doc(selfLoveQualitiesCollectionRef(userId), qualityId)

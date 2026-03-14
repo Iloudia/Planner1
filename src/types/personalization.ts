@@ -251,6 +251,13 @@ export type RoutineRecord = {
   updatedAt?: number
 }
 
+export type DailyGoalsTrackerRecord = {
+  weekKey: string
+  rows: string[]
+  checks: boolean[][]
+  updatedAt?: number
+}
+
 export type DietWeekDay =
   | "Lundi"
   | "Mardi"
