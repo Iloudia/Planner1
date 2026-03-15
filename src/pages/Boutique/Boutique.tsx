@@ -62,7 +62,15 @@ const BoutiquePage = () => {
 
     elements.forEach((element) => observer.observe(element))
 
-    return () => observer.disconnect()
+    // Safety fallback: avoid a fully blank page if observer callbacks never fire.
+    const revealFallback = window.setTimeout(() => {
+      elements.forEach((element) => element.classList.add("is-visible"))
+    }, 900)
+
+    return () => {
+      window.clearTimeout(revealFallback)
+      observer.disconnect()
+    }
   }, [])
 
   useEffect(() => {
