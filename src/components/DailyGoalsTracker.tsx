@@ -160,7 +160,11 @@ const clearLegacyTracker = (userEmail: string | null) => {
   keys.forEach((key) => window.localStorage.removeItem(key))
 }
 
-const DailyGoalsTracker = () => {
+type DailyGoalsTrackerProps = {
+  onLoadingStateChange?: (isLoading: boolean) => void
+}
+
+const DailyGoalsTracker = ({ onLoadingStateChange }: DailyGoalsTrackerProps) => {
   const { isAuthReady, userEmail, userId } = useAuth()
   const [habitRows, setHabitRows] = useState<string[]>(HABIT_ROWS_DEFAULT)
   const [habitData, setHabitData] = useState<HabitDataState>(() => ({
@@ -176,9 +180,6 @@ const DailyGoalsTracker = () => {
 
   const habitChecks = habitData.checks
   const habitWeekRange = formatWeekRangeFromKey(currentWeekKey)
-  const completedDays = HABIT_DAYS.map(
-    (_, dayIndex) => habitRows.length > 0 && habitChecks.every((row) => row[dayIndex]),
-  )
 
   const persistTracker = useCallback(
     async (rows: string[], data: HabitDataState) => {
@@ -305,24 +306,12 @@ const DailyGoalsTracker = () => {
 
   const [rewardDay, setRewardDay] = useState<number | null>(null)
   const [showReward, setShowReward] = useState(false)
-  const previousCompleted = useRef<boolean[]>(completedDays)
   const rewardTimeoutRef = useRef<number | null>(null)
   const canInteract = Boolean(userId) && !isTrackerLoading
 
   useEffect(() => {
-    const nextCompleted = completedDays
-    let newlyCompleted: number | null = null
-    nextCompleted.forEach((isDone, index) => {
-      if (isDone && !previousCompleted.current[index]) {
-        newlyCompleted = index
-      }
-    })
-    previousCompleted.current = nextCompleted
-    if (newlyCompleted !== null) {
-      setRewardDay(newlyCompleted)
-      setShowReward(true)
-    }
-  }, [completedDays])
+    onLoadingStateChange?.(isTrackerLoading)
+  }, [isTrackerLoading, onLoadingStateChange])
 
   useEffect(() => {
     if (!showReward) return
@@ -367,12 +356,20 @@ const DailyGoalsTracker = () => {
       return
     }
 
+    const wasChecked = habitData.checks[rowIndex]?.[dayIndex] ?? false
+    const wasDayCompleted = habitRows.length > 0 && habitData.checks.every((row) => row[dayIndex])
     const nextData = {
       ...habitData,
       checks: habitData.checks.map((row, rIdx) =>
         row.map((value, dIdx) => (rIdx === rowIndex && dIdx === dayIndex ? !value : value)),
       ),
     }
+    const isDayCompletedNow = habitRows.length > 0 && nextData.checks.every((row) => row[dayIndex])
+    if (!wasChecked && !wasDayCompleted && isDayCompletedNow) {
+      setRewardDay(dayIndex)
+      setShowReward(true)
+    }
+
     setHabitData(nextData)
     void persistTracker(habitRows, nextData)
   }
@@ -427,6 +424,16 @@ const DailyGoalsTracker = () => {
     setIsEditingHabits((prev) => !prev)
   }
 
+  if (isTrackerLoading) {
+    return (
+      <div className="sport-habits__table-wrapper sport-habits__table-wrapper--loading" aria-busy="true" aria-live="polite">
+        <span className="sport-habits__loading-a11y" role="status">
+          Chargement
+        </span>
+      </div>
+    )
+  }
+
   return (
     <div className="sport-habits__table-wrapper">
       <div className="sport-habits__header">
@@ -435,7 +442,6 @@ const DailyGoalsTracker = () => {
           <p className="muted">Coche tes objectifs pour chaque jour.</p>
           {habitWeekRange ? <p className="sport-habits__week">Semaine du {habitWeekRange}</p> : null}
           {trackerError ? <p className="muted">{trackerError}</p> : null}
-          {isTrackerLoading ? <p className="muted">Chargement du tableau...</p> : null}
         </div>
         <div className="sport-habits__actions">
           <button
@@ -444,7 +450,7 @@ const DailyGoalsTracker = () => {
             onClick={handleToggleEdit}
             disabled={!canInteract}
           >
-            {isEditingHabits ? "Terminer" : "Ajouter"}
+            {isEditingHabits ? "Terminer" : "Ajouter un objectif"}
           </button>
         </div>
       </div>

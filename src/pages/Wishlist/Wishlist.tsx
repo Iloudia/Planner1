@@ -146,7 +146,7 @@ const groupItems = (items: WishlistItemRecord[]) => {
 }
 
 const WishlistPage = () => {
-  const { userId } = useAuth()
+  const { isAuthReady, userId } = useAuth()
   const {
     categories,
     items,
@@ -598,12 +598,23 @@ const WishlistPage = () => {
     setMoveItemDraft(null)
   }
 
+  const isWishlistLoading = !isAuthReady || isLoading
+
+  if (isWishlistLoading) {
+    return (
+      <div className="wishlist-page wishlist-page--loading" aria-busy="true" aria-live="polite">
+        <span className="wishlist-loading-a11y" role="status">
+          Chargement
+        </span>
+      </div>
+    )
+  }
+
   return (
     <div className="wishlist-page">
       <PageHeading eyebrow="Wishlist" title="Wishlist" />
       {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer ta wishlist.</p> : null}
       {error ? <p className="routine-note__composer-hint">{error}</p> : null}
-      {isLoading ? <p className="routine-note__composer-hint">Chargement de ta wishlist...</p> : null}
 
       <div className="wishlist-heading-row">
         <button

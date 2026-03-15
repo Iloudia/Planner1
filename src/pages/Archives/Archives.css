@@ -7,6 +7,22 @@
   gap: clamp(1.8rem, 3vw, 2.6rem);
 }
 
+.archives-page--loading {
+  min-height: 60vh;
+  padding: 0;
+}
+
+.archives-loading-a11y {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
 .archives-header {
   display: flex;
   align-items: flex-start;

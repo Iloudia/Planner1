@@ -47,11 +47,12 @@ const dataUrlToFile = async (dataUrl: string, fileName: string) => {
 };
 
 const GoalsPage = () => {
-  const { userId } = useAuth();
+  const { isAuthReady, userId } = useAuth();
   const canEdit = Boolean(userId);
   const [bodyGoalSlots, setBodyGoalSlots] = useState<BodyGoalPhotoSlot[]>([]);
   const [bodyGoalsError, setBodyGoalsError] = useState<string | null>(null);
   const [isBodyGoalsLoading, setIsBodyGoalsLoading] = useState(true);
+  const [isTrackerLoading, setIsTrackerLoading] = useState(true);
   const migratedLegacyUserRef = useRef<string | null>(null);
 
   const bodyGoals = useMemo(
@@ -72,6 +73,7 @@ const GoalsPage = () => {
 
   useEffect(() => {
     migratedLegacyUserRef.current = null;
+    setIsTrackerLoading(true);
 
     if (!userId) {
       setBodyGoalSlots([]);
@@ -208,55 +210,65 @@ const GoalsPage = () => {
     }
   };
 
+  const isGoalsLoading = !isAuthReady || isBodyGoalsLoading || isTrackerLoading;
+
   return (
-    <>
-      <PageHeading eyebrow="Goals" title="Mes Goals" className="goals-page-heading" />
-      <div className="content-page goals-page">
-        <p className="muted goals-page-heading__intro" aria-hidden="true"></p>
+    <div className="goals-page-shell">
+      {isGoalsLoading ? (
+        <div className="goals-page goals-page--loading" aria-busy="true" aria-live="polite">
+          <span className="goals-loading-a11y" role="status">
+            Chargement
+          </span>
+        </div>
+      ) : null}
+      <div className={`goals-page-content${isGoalsLoading ? " goals-page-content--hidden" : ""}`} aria-hidden={isGoalsLoading}>
+        <PageHeading eyebrow="Goals" title="Mes Goals" className="goals-page-heading" />
+        <div className="content-page goals-page">
+          <p className="muted goals-page-heading__intro" aria-hidden="true"></p>
 
-        <section className="goals-daily">
-          <DailyGoalsTracker />
-        </section>
+          <section className="goals-daily">
+            <DailyGoalsTracker onLoadingStateChange={setIsTrackerLoading} />
+          </section>
 
-        <section className="body-goals" aria-label="Body goals">
-          <header className="body-goals__header">
-            <h3>Body goals</h3>
-            <p className="muted">Ajoute des references visuelles pour tes objectifs corps.</p>
-            {bodyGoalsError ? <p className="muted">{bodyGoalsError}</p> : null}
-            {isBodyGoalsLoading ? <p className="muted">Chargement de tes photos...</p> : null}
-          </header>
-          <div className="body-goals__grid">
-            {bodyGoals.map((image, index) => (
-              <div key={index} className="body-goal-slot">
-                {image ? (
-                  <>
-                    <img src={image} alt={`Body goal ${index + 1}`} loading="lazy" decoding="async" />
-                    <button
-                      type="button"
-                      className="body-goal-slot__action"
-                      onClick={() => void handleClearBodyPhoto(index)}
-                      disabled={!canEdit}
-                    >
-                      Retirer
-                    </button>
-                  </>
-                ) : (
-                  <label className="body-goal-slot__upload">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleBodyPhotoChange(index)}
-                      disabled={!canEdit}
-                    />
-                    <span>{canEdit ? "Ajouter une photo" : "Connecte-toi pour ajouter une photo"}</span>
-                  </label>
-                )}
-              </div>
-            ))}
-          </div>
-        </section>
+          <section className="body-goals" aria-label="Body goals">
+            <header className="body-goals__header">
+              <h3>Body goals</h3>
+              <p className="muted">Ajoute des references visuelles pour tes objectifs corps.</p>
+              {bodyGoalsError ? <p className="muted">{bodyGoalsError}</p> : null}
+            </header>
+            <div className="body-goals__grid">
+              {bodyGoals.map((image, index) => (
+                <div key={index} className="body-goal-slot">
+                  {image ? (
+                    <>
+                      <img src={image} alt={`Body goal ${index + 1}`} loading="lazy" decoding="async" />
+                      <button
+                        type="button"
+                        className="body-goal-slot__action"
+                        onClick={() => void handleClearBodyPhoto(index)}
+                        disabled={!canEdit}
+                      >
+                        Retirer
+                      </button>
+                    </>
+                  ) : (
+                    <label className="body-goal-slot__upload">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleBodyPhotoChange(index)}
+                        disabled={!canEdit}
+                      />
+                      <span>{canEdit ? "Ajouter une photo" : "Connecte-toi pour ajouter une photo"}</span>
+                    </label>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

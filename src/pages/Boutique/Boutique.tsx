@@ -8,6 +8,7 @@ import { fetchCustomProducts, loadCustomProducts, PRODUCTS_UPDATED_EVENT } from 
 const BoutiquePage = () => {
   const [activeFilter, setActiveFilter] = useState("all")
   const [customProducts, setCustomProducts] = useState(() => loadCustomProducts())
+  const [isBoutiqueLoading, setIsBoutiqueLoading] = useState(true)
 
   useEffect(() => {
     document.body.classList.add("boutique-page--tone")
@@ -18,11 +19,25 @@ const BoutiquePage = () => {
 
   useEffect(() => {
     let active = true
-    fetchCustomProducts().then((items) => {
-      if (active) setCustomProducts(items)
-    })
+    const loadingTimeout = window.setTimeout(() => {
+      if (active) {
+        setIsBoutiqueLoading(false)
+      }
+    }, 250)
+
+    fetchCustomProducts()
+      .then((items) => {
+        if (active) setCustomProducts(items)
+      })
+      .finally(() => {
+        window.clearTimeout(loadingTimeout)
+        if (active) {
+          setIsBoutiqueLoading(false)
+        }
+      })
     return () => {
       active = false
+      window.clearTimeout(loadingTimeout)
     }
   }, [])
 
@@ -82,6 +97,16 @@ const BoutiquePage = () => {
       return acc
     }, {})
   }, [allProducts])
+
+  if (isBoutiqueLoading) {
+    return (
+      <div className="boutique-page boutique-page--loading" aria-busy="true" aria-live="polite">
+        <span className="boutique-loading-a11y" role="status">
+          Chargement
+        </span>
+      </div>
+    )
+  }
 
   return (
     <div className="boutique-page">

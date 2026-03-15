@@ -298,7 +298,7 @@ const shuffle = <T,>(items: T[]) => {
 }
 
 function DietPage() {
-  const { userId } = useAuth()
+  const { isAuthReady, userId } = useAuth()
   const [weekKey, setWeekKey] = useState(() => getWeekKey())
   const {
     weekPlan,
@@ -313,6 +313,7 @@ function DietPage() {
     saveWeekPlan,
   } = useUserDietData(weekKey)
   const canEdit = Boolean(userId)
+  const isAlimentationLoading = !isAuthReady || isLoading
   useEffect(() => {
     document.body.classList.add("alimentation-page--lux")
     return () => {
@@ -538,12 +539,24 @@ function DietPage() {
     setSelectedRecipeSlot(null)
   }
 
+  if (isAlimentationLoading) {
+    return (
+      <>
+        <PageHeading eyebrow="Alimentation" title="Menu de la semaine" />
+        <div className="diet-page diet-page--loading" aria-busy="true" aria-live="polite">
+          <span className="diet-loading-a11y" role="status">
+            Chargement
+          </span>
+        </div>
+      </>
+    )
+  }
+
   return (
     <>
-      <PageHeading eyebrow="Alimentation" title="Cuisine" />
+      <PageHeading eyebrow="Alimentation" title="Menu de la semaine" />
       {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer ton espace alimentation.</p> : null}
       {error ? <p className="routine-note__composer-hint">{error}</p> : null}
-      {isLoading ? <p className="routine-note__composer-hint">Chargement de ton espace alimentation...</p> : null}
         <section className="page-section diet-crosslink">
           <div>
             <p className="diet-crosslink__label">Besoin d'idées ?</p>

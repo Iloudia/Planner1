@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef, useCallback, type FormEvent } from "react"
+﻿import { useState, useMemo, useEffect, useRef, useCallback, type FormEvent } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../../context/AuthContext"
 import { buildUserScopedKey, normalizeUserEmail } from "../../utils/userScopedKey"
@@ -9,7 +9,7 @@ const REMEMBER_PREFERENCE_KEY = "planner.auth.remember"
 const PROFILE_STORAGE_KEY = "planner.profile.preferences.v1"
 const EMAIL_HISTORY_KEY = "planner.auth.email_history.v1"
 const GENDER_OPTIONS = [
-  { value: "", label: "Ne pas préciser" },
+  { value: "", label: "Ne pas prÃ©ciser" },
   { value: "femme", label: "Femme" },
   { value: "homme", label: "Homme" },
 ]
@@ -18,6 +18,50 @@ type AuthMode = "login" | "register"
 
 type AuthFormProps = {
   mode: AuthMode
+}
+
+const getLoginErrorMessage = (errorCode?: string) => {
+  switch (errorCode) {
+    case "auth/missing-credentials":
+      return "Merci de renseigner un email et un mot de passe."
+    case "auth/invalid-email":
+      return "L'adresse email est invalide."
+    case "auth/invalid-credential":
+    case "auth/wrong-password":
+    case "auth/user-not-found":
+      return "Email ou mot de passe incorrect."
+    case "auth/user-disabled":
+      return "Ce compte est desactive. Contacte l'administrateur."
+    case "auth/too-many-requests":
+      return "Trop de tentatives. Reessaie dans quelques minutes."
+    case "auth/network-request-failed":
+      return "Connexion reseau impossible. Verifie Internet puis reessaie."
+    case "auth/operation-not-allowed":
+      return "La connexion email/mot de passe est desactivee sur Firebase."
+    case "app/account-deleted":
+      return "Ce compte n'est plus accessible."
+    default:
+      return "Connexion impossible pour le moment. Reessaie."
+  }
+}
+
+const getRegisterErrorMessage = (errorCode?: string) => {
+  switch (errorCode) {
+    case "auth/missing-credentials":
+      return "Merci de renseigner un email et un mot de passe."
+    case "auth/invalid-email":
+      return "L'adresse email est invalide."
+    case "auth/email-already-in-use":
+      return "Un compte existe deja avec cet email."
+    case "auth/weak-password":
+      return "Le mot de passe est trop faible."
+    case "auth/network-request-failed":
+      return "Connexion reseau impossible. Verifie Internet puis reessaie."
+    case "auth/operation-not-allowed":
+      return "L'inscription email/mot de passe est desactivee sur Firebase."
+    default:
+      return "Creation de compte impossible pour le moment. Reessaie."
+  }
 }
 
 const EyeIcon = ({ crossed }: { crossed?: boolean }) => (
@@ -62,7 +106,7 @@ const EyeIcon = ({ crossed }: { crossed?: boolean }) => (
 const AuthPage = ({ mode }: AuthFormProps) => {
   const navigate = useNavigate()
   const location = useLocation()
-  const { isAuthenticated, login, register, userEmail, loginWithGoogle } = useAuth()
+  const { isAuthReady, isAuthenticated, login, register, userEmail, loginWithGoogle } = useAuth()
   const { moodboardSrc } = useMoodboard()
 
   const [email, setEmail] = useState("")
@@ -102,7 +146,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
     return fromRoute?.from?.pathname ?? "/home"
   }, [location.state])
   const genderLabel = useMemo(
-    () => GENDER_OPTIONS.find((option) => option.value === gender)?.label ?? "Ne pas préciser",
+    () => GENDER_OPTIONS.find((option) => option.value === gender)?.label ?? "Ne pas prÃ©ciser",
     [gender],
   )
 
@@ -204,6 +248,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setError("")
+    const normalizedEmail = email.trim()
 
     if (mode === "register") {
       const hasMinLength = password.trim().length >= 6
@@ -213,7 +258,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
       const hasSpecial = /[!@#$%^&*\-_?]/.test(password)
 
       if (registerStep === 0) {
-        if (!email.trim()) {
+        if (!normalizedEmail) {
           setError("Merci de renseigner un email.")
           return
         }
@@ -222,18 +267,18 @@ const AuthPage = ({ mode }: AuthFormProps) => {
       }
       if (registerStep === 1) {
         if (!firstName.trim() || !lastName.trim() || !username.trim()) {
-          setError("Merci de renseigner le prénom, le nom et le pseudo.")
+          setError("Merci de renseigner le prÃ©nom, le nom et le pseudo.")
           return
         }
         setRegisterStep(2)
         return
       }
       if (!password.trim() || !hasMinLength || !hasUpper || !hasLower || !hasDigit || !hasSpecial) {
-        setError("Le mot de passe doit avoir au moins 6 caractères, 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial.")
+        setError("Le mot de passe doit avoir au moins 6 caractÃ¨res, 1 majuscule, 1 minuscule, 1 chiffre et 1 caractÃ¨re spÃ©cial.")
         return
       }
       if (!acceptTerms) {
-        setError("Merci d’accepter les conditions générales.")
+        setError("Merci dâ€™accepter les conditions gÃ©nÃ©rales.")
         return
       }
     }
@@ -241,11 +286,11 @@ const AuthPage = ({ mode }: AuthFormProps) => {
     if (mode === "register") {
       skipAutoRedirectRef.current = true
     }
-    const success =
+    const attempt =
       mode === "login"
-        ? await login({ email, password, remember })
+        ? await login({ email: normalizedEmail, password, remember })
         : await register({
-          email,
+          email: normalizedEmail,
           password,
           remember,
           profile: {
@@ -257,15 +302,17 @@ const AuthPage = ({ mode }: AuthFormProps) => {
             acceptTerms,
           },
         })
-    if (!success) {
+    if (!attempt.success) {
       skipAutoRedirectRef.current = false
-      setError(mode === "register" ? "Un compte existe déjà avec cet email." : "Merci de renseigner un email et un mot de passe valides.")
+      setError(
+        mode === "register" ? getRegisterErrorMessage(attempt.errorCode) : getLoginErrorMessage(attempt.errorCode),
+      )
       return
     }
     if (mode === "register") {
-      persistProfileData(email)
+      persistProfileData(normalizedEmail)
     }
-    rememberEmail(email)
+    rememberEmail(normalizedEmail)
     setError("")
     if (mode === "register") {
       navigate("/bienvenue", { replace: true, state: { from: destinationPath } })
@@ -275,31 +322,43 @@ const AuthPage = ({ mode }: AuthFormProps) => {
   }
 
   const handleForgot = () => {
-    if (!email.trim()) {
-      setError("Renseigne ton email pour recevoir un lien de réinitialisation.")
+    const normalizedEmail = email.trim()
+    if (!normalizedEmail) {
+      setError("Renseigne ton email pour recevoir un lien de rÃ©initialisation.")
       return
     }
     setError("")
-    window.alert("Un lien de réinitialisation a été envoyé à " + email + ".")
+    window.alert("Un lien de rÃ©initialisation a Ã©tÃ© envoyÃ© Ã  " + normalizedEmail + ".")
   }
 
   const handleGoogleLogin = async () => {
     setError("")
-    const success = await loginWithGoogle()
-    if (!success) {
-      setError("Connexion Google impossible. Merci de réessayer.")
+    const attempt = await loginWithGoogle()
+    if (!attempt.success) {
+      setError(getLoginErrorMessage(attempt.errorCode))
       return
     }
     navigate(destinationPath, { replace: true })
   }
 
-  const heading = mode === "login" ? "Connexion" : "Création de compte"
-  const switchLabel = mode === "login" ? "Pas encore de compte ?" : "Déjà un compte ?"
+  const heading = mode === "login" ? "Connexion" : "CrÃ©ation de compte"
+  const switchLabel = mode === "login" ? "Pas encore de compte ?" : "DÃ©jÃ  un compte ?"
   const switchTo = mode === "login" ? "/register" : "/login"
+  const ctaLabel = mode === "login" ? "Se connecter" : registerStep < 2 ? "Continuer" : "CrÃ©er mon compte"
   const isRegister = mode === "register"
-  const registerSteps = ["Email", "Identité", "Sécurité"]
-  const ctaLabel = mode === "login" ? "Se connecter" : registerStep >= registerSteps.length - 1 ? "Créer mon compte" : "Continuer"
+  const registerSteps = ["Email", "IdentitÃ©", "SÃ©curitÃ©"]
+  
+  const isAuthPageLoading = !isAuthReady
 
+  if (isAuthPageLoading) {
+    return (
+      <div className="auth-page auth-page--loading" aria-busy="true" aria-live="polite">
+        <span className="auth-loading-a11y" role="status">
+          Chargement
+        </span>
+      </div>
+    )
+  }
   return (
     <div className="auth-page">
 
@@ -311,18 +370,18 @@ const AuthPage = ({ mode }: AuthFormProps) => {
           <h1 className="auth-title">{heading}</h1>
           <div className="auth-switch">
             <span>{switchLabel}</span>
-            <Link to={switchTo}>{mode === "login" ? "Créer un compte" : "Se connecter"}</Link>
+            <Link to={switchTo}>{mode === "login" ? "CrÃ©er un compte" : "Se connecter"}</Link>
           </div>
 
           {isAuthenticated && mode !== "register" ? (
             <p className="auth-status">
-              Connecté en tant que <strong>{userEmail}</strong>
+              ConnectÃ© en tant que <strong>{userEmail}</strong>
             </p>
           ) : null}
 
           <form className="auth-form" onSubmit={handleSubmit}>
             {isRegister ? (
-              <div className="auth-steps" aria-label="Progression de création de compte">
+              <div className="auth-steps" aria-label="Progression de crÃ©ation de compte">
                 {registerSteps.map((label, index) => (
                   <div key={label} className={`auth-step${registerStep === index ? " is-active" : registerStep > index ? " is-done" : ""}`}>
                     <span className="auth-step__index">{index + 1}</span>
@@ -361,8 +420,8 @@ const AuthPage = ({ mode }: AuthFormProps) => {
                   <>
                     <div className="auth-form__row">
                       <label>
-                        Prénom
-                        <input type="text" value={firstName} onChange={(event) => setFirstName(event.target.value)} placeholder="Prénom" required />
+                        PrÃ©nom
+                        <input type="text" value={firstName} onChange={(event) => setFirstName(event.target.value)} placeholder="PrÃ©nom" required />
                       </label>
                       <label>
                         Nom
@@ -400,7 +459,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
                         </button>
                       </div>
                       <p className="auth-password-hint">
-                        6 caractères minimum, avec 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial.
+                        6 caractÃ¨res minimum, avec 1 majuscule, 1 minuscule, 1 chiffre et 1 caractÃ¨re spÃ©cial.
                       </p>
                     </label>
                     <div className="auth-form__row">
@@ -454,7 +513,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
                     </div>
                     <label className="auth-terms">
                       <input type="checkbox" checked={acceptTerms} onChange={(event) => setAcceptTerms(event.target.checked)} required />
-                      J’accepte les conditions générales.
+                      Jâ€™accepte les conditions gÃ©nÃ©rales.
                     </label>
                   </>
                 ) : null}
@@ -518,7 +577,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
                   {ctaLabel}
                 </button>
                 <button type="button" className="auth-forgot" onClick={handleForgot}>
-                  Mot de passe oublié ?
+                  Mot de passe oubliÃ© ?
                 </button>
               </>
             ) : (
@@ -547,3 +606,5 @@ const AuthPage = ({ mode }: AuthFormProps) => {
 }
 
 export default AuthPage
+
+

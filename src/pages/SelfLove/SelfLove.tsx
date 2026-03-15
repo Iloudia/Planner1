@@ -15,7 +15,7 @@ const buildDefaultFutureOpenDate = () => {
 }
 
 const SelfLovePage = () => {
-  const { userId } = useAuth()
+  const { isAuthReady, userId } = useAuth()
   const {
     draft,
     photos,
@@ -37,6 +37,7 @@ const SelfLovePage = () => {
     sealFutureLetter,
   } = useUserSelfLove()
   const canEdit = Boolean(userId)
+  const isSelfLoveLoading = !isAuthReady || isLoading
 
   const [qualityDraft, setQualityDraft] = useState("")
   const [thoughtDraft, setThoughtDraft] = useState("")
@@ -273,12 +274,21 @@ const SelfLovePage = () => {
         })
       : "Date d'ouverture a definir"
 
+  if (isSelfLoveLoading) {
+    return (
+      <div className="self-love-page self-love-page--loading" aria-busy="true" aria-live="polite">
+        <span className="self-love-loading-a11y" role="status">
+          Chargement
+        </span>
+      </div>
+    )
+  }
+
   return (
     <div className="self-love-page">
-      <PageHeading eyebrow="Self love" title="S'aimer soi-meme" />
+      <PageHeading eyebrow="Self love" title="mindset" />
       {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer ton espace self-love.</p> : null}
       {error ? <p className="routine-note__composer-hint">{error}</p> : null}
-      {isLoading ? <p className="routine-note__composer-hint">Chargement de ton espace self-love...</p> : null}
       <fieldset disabled={!canEdit} style={{ border: 0, margin: 0, padding: 0, minInlineSize: 0 }}>
 
       <section className="self-love-section self-love-section--photos">
@@ -305,8 +315,8 @@ const SelfLovePage = () => {
                   <input type="file" accept="image/*" onChange={(event) => void handlePhotoChange(photo.id, event)} />
                 </label>
                 {photo.imageUrl ? (
-                  <button type="button" onClick={() => void handleClearPhoto(photo.id)}>
-                    Changer la photo
+                  <button className="body-goal-slot__action" onClick={() => void handleClearPhoto(photo.id)}>
+                    Retirer
                   </button>
                 ) : null}
               </div>
@@ -325,7 +335,7 @@ const SelfLovePage = () => {
               value={qualityDraft}
               onChange={(event) => setQualityDraft(event.target.value)}
             />
-            <button type="submit">+ Ajouter une qualite</button>
+            <button type="submit">Ajouter</button>
           </form>
           <div className="self-love-list-pad">
             <div className="self-love-list-pad__bow">

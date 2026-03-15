@@ -36,7 +36,7 @@ const differentiatorHighlights = [
 const LandingPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const { isAuthenticated, userEmail, logout } = useAuth()
+  const { isAuthReady, isAuthenticated, userEmail, logout } = useAuth()
   const [carouselIndex, setCarouselIndex] = useState(0)
 
   const [cardsPerView, setCardsPerView] = useState(1)
@@ -94,6 +94,18 @@ const LandingPage = () => {
       navigate(destinationPath, { replace: true })
     }
   }, [destinationPath, isAuthenticated, navigate])
+
+  const isLandingLoading = !isAuthReady
+
+  if (isLandingLoading) {
+    return (
+      <div className="landing-page landing-page--loading" aria-busy="true" aria-live="polite">
+        <span className="landing-loading-a11y" role="status">
+          Chargement
+        </span>
+      </div>
+    )
+  }
 
   return (
     <div className="landing-page">

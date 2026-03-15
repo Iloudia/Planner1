@@ -1,5 +1,21 @@
 @import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@500;600;700&display=swap");
 
+.faq-page--loading {
+  min-height: 60vh;
+  padding: 0;
+}
+
+.faq-loading-a11y {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
 .faq-wrapper {
   --faq-card-size: clamp(420px, 48vw, 760px);
   max-width: min(100%, 1600px);

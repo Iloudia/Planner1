@@ -18,6 +18,22 @@
   --journal-shadow-soft: 0 12px 34px rgba(43, 27, 34, 0.1);
 }
 
+.journaling-page--loading {
+  min-height: 60vh;
+  padding: 0;
+}
+
+.journaling-loading-a11y {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
 @import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@500;600;700&display=swap");
 
 .journaling-page::before {

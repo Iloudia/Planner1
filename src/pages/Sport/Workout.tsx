@@ -333,12 +333,23 @@ const WorkoutPage = () => {
     await updateExerciseNote(selectedExerciseId, noteDraft)
   }
 
+  const isWorkoutLoading = isLoading
+
+  if (isWorkoutLoading) {
+    return (
+      <div className="workout-page workout-page--loading" aria-busy="true" aria-live="polite">
+        <span className="workout-loading-a11y" role="status">
+          Chargement
+        </span>
+      </div>
+    )
+  }
+
   return (
     <div className="workout-page">
       <div className="workout-page__accent-bar" aria-hidden="true" />
-      <PageHeading eyebrow="Routine active" title="Workout" />
+      <PageHeading eyebrow="Routine active" title="Exercices" />
       {error ? <p className="routine-note__composer-hint">{error}</p> : null}
-      {isLoading ? <p className="routine-note__composer-hint">Chargement de ton espace workout...</p> : null}
 
       <div className="workout-layout">
         <section className="workout-exercises">

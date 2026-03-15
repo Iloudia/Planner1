@@ -18,7 +18,6 @@ import RoutinePage from "./pages/Routine/Routine"
 import GoalsPage from "./pages/Goals/Goals"
 import CuisinePage from "./pages/Alimentation/Alimentation"
 import DietClassicPage from "./pages/Diet/DietPage"
-import VoyagePage from "./pages/Voyage/Voyage"
 import SportWorkoutPage from "./pages/Sport/Workout"
 import FAQPage from "./pages/FAQ/FaqPage"
 import ConfidentialitePage from "./pages/Legal/ConfidentialitePage"
@@ -151,7 +150,6 @@ function App() {
             <Route path="/goals" element={<GoalsPage />} />
             <Route path="/diet" element={<DietClassicPage />} />
             <Route path="/alimentation" element={<CuisinePage />} />
-            <Route path="/voyage" element={<VoyagePage />} />
             <Route path="/profil" element={<ProfilePage />} />
             <Route path="/archives" element={<ArchivesPage />} />
             <Route path="/parametres" element={<SettingsLayout />}>

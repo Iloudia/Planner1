@@ -120,9 +120,10 @@ const RoutineComposer = ({
 )
 
 const RoutinePage = () => {
-  const { userId } = useAuth()
+  const { isAuthReady, userId } = useAuth()
   const { items, completedSet, isLoading, error, addItem, removeItem, toggleItem } = useUserRoutine()
   const canEdit = Boolean(userId)
+  const isRoutineLoading = !isAuthReady || isLoading
   const [routineDrafts, setRoutineDrafts] = useState<Record<RoutinePeriod, RoutineDraft>>({
     morning: { title: "", detail: "" },
     evening: { title: "", detail: "" },
@@ -208,12 +209,21 @@ const RoutinePage = () => {
     }
   }
 
+  if (isRoutineLoading) {
+    return (
+      <div className="routine-page aesthetic-page routine-page--loading" aria-busy="true" aria-live="polite">
+        <span className="routine-loading-a11y" role="status">
+          Chargement
+        </span>
+      </div>
+    )
+  }
+
   return (
     <div className="routine-page aesthetic-page">
       <PageHeading eyebrow="Routine" title="Mes Routines" />
       {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer tes routines.</p> : null}
       {error ? <p className="routine-note__composer-hint">{error}</p> : null}
-      {isLoading ? <p className="routine-note__composer-hint">Chargement de tes routines...</p> : null}
 
       <div className="routine-notes">
         <section className="routine-note routine-note--morning">

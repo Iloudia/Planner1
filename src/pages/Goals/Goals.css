@@ -9,6 +9,33 @@
   background: #ffffff;
 }
 
+.goals-page-shell {
+  position: relative;
+}
+
+.goals-page-content--hidden {
+  visibility: hidden;
+}
+
+.goals-page--loading {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  min-height: 60vh;
+  padding: 0;
+}
+
+.goals-loading-a11y {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
 .content-page.goals-page {
   box-shadow: none;
 }
@@ -166,6 +193,12 @@ body.goals-page--lux {
 .body-goals__header p,
 .goals-page .muted {
   color: var(--lux-ink-soft);
+}
+
+.goals-page .sport-habits__edit-toggle {
+  background: #ffffff;
+  padding: 0.6rem 1.2rem;
+  min-height: 46px;
 }
 
 

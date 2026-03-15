@@ -26,6 +26,22 @@
   font-family: "Inter", "Times New Roman", sans-serif;
 }
 
+.contact-page--loading {
+  min-height: 60vh;
+  padding: 0;
+}
+
+.contact-loading-a11y {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
 .legal-page__header {
   display: flex;
   flex-direction: column;

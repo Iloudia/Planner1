@@ -32,4 +32,6 @@ export type FirebaseUserDocument = {
     dietImportedAt?: string
     selfLoveArchivesImportedAt?: string
   }
+  homeCardOrder?: string[]
+  homeCardClickProgress?: Record<string, number>
 }

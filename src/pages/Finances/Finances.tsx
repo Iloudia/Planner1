@@ -9,6 +9,7 @@ import HighchartsExportData from 'highcharts/modules/export-data'
 import HighchartsAccessibility from 'highcharts/modules/accessibility'
 import HighchartsAdaptiveTheme from 'highcharts/themes/adaptive'
 import PageHero from '../../components/PageHero'
+import { useAuth } from '../../context/AuthContext'
 import useUserFinanceData from '../../hooks/useUserFinanceData'
 import financeMood01 from '../../assets/katie-huber-rhoades-dupe (2).webp'
 import financeMood02 from '../../assets/jade-rideout-dupe.webp'
@@ -311,6 +312,7 @@ const createEmptyCategoryTotals = (): Record<ExpenseCategory, number> => ({
 })
 
 const FinancePage = () => {
+  const { isAuthReady } = useAuth()
   const {
     entries,
     monthlySnapshots,
@@ -612,7 +614,7 @@ const FinancePage = () => {
   const groupedHistoryPreview = useMemo(() => groupHistoryByMonth(previewHistory), [previewHistory])
   const groupedHistoryFull = useMemo(() => groupHistoryByMonth(selectedMonthEntries), [selectedMonthEntries])
   const hasAdditionalHistory = selectedMonthEntries.length > previewHistory.length
-  const isInitialFinanceLoading = isLoading && entries.length === 0 && Object.keys(monthlySnapshots).length === 0
+  const isFinanceLoading = !isAuthReady || isLoading
 
   const handleDraftChange = <Field extends keyof FinanceDraft>(field: Field, value: FinanceDraft[Field]) => {
     setDraft((previous) => ({
@@ -680,6 +682,16 @@ const FinancePage = () => {
     }
   }
 
+  if (isFinanceLoading) {
+    return (
+      <div className="finance-page aesthetic-page finance-page--loading" aria-busy="true" aria-live="polite">
+        <span className="finance-loading-a11y" role="status">
+          Chargement
+        </span>
+      </div>
+    )
+  }
+
   return (
     <div className="finance-page aesthetic-page">
       <div className="finance-heading-row">
@@ -709,7 +721,6 @@ const FinancePage = () => {
         </header>
       </div>
       {error ? <p className="finance-history__empty">{error}</p> : null}
-      {isInitialFinanceLoading ? <p className="finance-history__empty">Chargement de vos données financières...</p> : null}
 
 
       <section className="finance-dashboard">
@@ -884,7 +895,7 @@ const FinancePage = () => {
             </header>
             {selectedMonthEntries.length === 0 ? (
               <p className="finance-history__empty">
-                {isInitialFinanceLoading ? 'Chargement des mouvements...' : `Aucun mouvement enregistré pour ${selectedMonthLabel}.`}
+                {`Aucun mouvement enregistré pour ${selectedMonthLabel}.`}
               </p>
             ) : (
               <div className="finance-history__groups">
@@ -1001,7 +1012,7 @@ const FinancePage = () => {
               </div>
             ) : (
               <p className="finance-balance__empty">
-                {isInitialFinanceLoading ? 'Chargement de la répartition...' : 'Ajoute une dépense pour visualiser la répartition.'}
+                {'Ajoute une dépense pour visualiser la répartition.'}
               </p>
             )}
           </div>
@@ -1011,10 +1022,6 @@ const FinancePage = () => {
       {trendSeries ? (
         <section className="finance-trend dashboard-panel">
           <FinanceTrendChart series={trendSeries} />
-        </section>
-      ) : isInitialFinanceLoading ? (
-        <section className="finance-trend dashboard-panel">
-          <p className="finance-history__empty">Chargement de la tendance...</p>
         </section>
       ) : null}
 
@@ -1038,7 +1045,7 @@ const FinancePage = () => {
             <div className="finance-history-modal__content">
               {selectedMonthEntries.length === 0 ? (
                 <p className="finance-history__empty">
-                  {isInitialFinanceLoading ? 'Chargement des mouvements...' : `Aucun mouvement enregistré pour ${selectedMonthLabel}.`}
+                  {`Aucun mouvement enregistré pour ${selectedMonthLabel}.`}
                 </p>
               ) : (
                 groupedHistoryFull.map((group) => (

@@ -6,6 +6,22 @@
   gap: 2.5rem;
 }
 
+.routine-page--loading {
+  min-height: 60vh;
+  padding: 0;
+}
+
+.routine-loading-a11y {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
 .routine-header {
   position: relative;
   overflow: hidden;
@@ -358,7 +374,8 @@
   margin-right: auto;
   border: none;
   border-radius: 999px;
-  padding: 0.55rem 1.4rem;
+  padding: 0.6rem 1.2rem;
+  min-height: 46px;
   background-color: var(--color-caramel);
   color: var(--color-chocolate);
   font-size: 0.78rem;

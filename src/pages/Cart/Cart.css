@@ -5,6 +5,22 @@
   padding: clamp(2.4rem, 6vw, 4.2rem) clamp(1.2rem, 4vw, 3rem) clamp(3rem, 8vw, 5rem);
 }
 
+.cart-page--loading {
+  min-height: 60vh;
+  padding: 0;
+}
+
+.cart-loading-a11y {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
 .cart-hero {
   display: flex;
   flex-wrap: wrap;

@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import PageHeading from "../../components/PageHeading"
 import portrait from "../../assets/Fleurs-blanches.webp"
 import valuePhotoTwo from "../../assets/Ballons-coeur.webp"
@@ -49,12 +49,33 @@ const siteValues = [
 ]
 
 const AboutPage = () => {
+  const [isAboutLoading, setIsAboutLoading] = useState(true)
+
   useEffect(() => {
     document.body.classList.add("about-page--lux")
     return () => {
       document.body.classList.remove("about-page--lux")
     }
   }, [])
+
+  useEffect(() => {
+    const frameId = window.requestAnimationFrame(() => {
+      setIsAboutLoading(false)
+    })
+    return () => {
+      window.cancelAnimationFrame(frameId)
+    }
+  }, [])
+
+  if (isAboutLoading) {
+    return (
+      <div className="about-page about-page--loading" aria-busy="true" aria-live="polite">
+        <span className="about-loading-a11y" role="status">
+          Chargement
+        </span>
+      </div>
+    )
+  }
 
   return (
     <>

@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type KeyboardEvent } from "react"
 import { useNavigate } from "react-router-dom"
 import { useTasks } from "../../context/TasksContext"
 import { useAuth } from "../../context/AuthContext"
 import { useUserProfilePhoto } from "../../hooks/useUserProfilePhoto"
+import { saveHomeCardsState, subscribeToHomeCardsState } from "../../services/firestore/homeCards"
 import { buildUserScopedKey, normalizeUserEmail } from "../../utils/userScopedKey"
 
 import planner01 from "../../assets/sport.webp"
@@ -24,7 +25,10 @@ const DEFAULT_HOME_MOODBOARD = planner02
 const ONBOARDING_STORAGE_KEY = "planner.onboarding.answers.v1"
 
 const DEFAULT_PROFILE_PHOTO = citationImage
-const CARD_USAGE_SUFFIX = "home.card-usage"
+const CARD_ORDER_SUFFIX = "home.card-order.v1"
+const CARD_PROGRESS_SUFFIX = "home.card-progress.v1"
+const LEGACY_CARD_USAGE_SUFFIX = "home.card-usage"
+const CARD_CLICK_THRESHOLD = 3
 const MAX_TODOS = 3
 
 type CardItem = {
@@ -45,14 +49,17 @@ type TaskDisplay = {
 
 const cards: CardItem[] = [
   { image: planner01, alt: "Sport", kicker: "Ã‰nergie", title: "Sport", path: "/sport" },
-  { image: planner06, alt: "Calendrier", kicker: "Vue globale", title: "Calendrier mensuel", path: "/calendrier" },
+  { image: planner06, alt: "Calendrier", kicker: "Vue globale", title: "Calendrier", path: "/calendrier" },
   { image: planner05, alt: "Wishlist", kicker: "Envies", title: "Wishlist", path: "/wishlist" },
   { image: planner03, alt: "Journaling", kicker: "Reflet", title: "Journaling", path: "/journaling" },
-  { image: planner04, alt: "Self-love", kicker: "Soin", title: "S'aimer soi-mÃªme", path: "/self-love" },
+  { image: planner04, alt: "Self-love", kicker: "Soin", title: "Mindset", path: "/self-love" },
   { image: planner07, alt: "Finances", kicker: "Budget", title: "Finances", path: "/finances" },
   { image: planner08, alt: "Routine", kicker: "Rythme", title: "Routine", path: "/routine" },
-  { image: planner09, alt: "Cuisine", kicker: "Saveurs", title: "Cuisine", path: "/alimentation" },
+  { image: planner09, alt: "Courses & menus", kicker: "Saveurs", title: "Menu de la semaine", path: "/alimentation" },
 ]
+
+const CARD_PATHS = cards.map((card) => card.path)
+const CARD_PATH_SET = new Set(CARD_PATHS)
 
 const CATEGORY_TO_PATH: Record<string, string> = {
   sport: "/sport",
@@ -133,6 +140,150 @@ function safeRemoveStorage(key: string) {
   }
 }
 
+const normalizeCardOrderPaths = (value: unknown) => {
+  if (!Array.isArray(value)) {
+    return []
+  }
+
+  const seen = new Set<string>()
+  const normalized: string[] = []
+  value.forEach((entry) => {
+    if (typeof entry !== "string") {
+      return
+    }
+    const path = entry.trim()
+    if (!CARD_PATH_SET.has(path) || seen.has(path)) {
+      return
+    }
+    seen.add(path)
+    normalized.push(path)
+  })
+
+  return normalized
+}
+
+const normalizeCardClickProgress = (value: unknown) => {
+  if (!value || typeof value !== "object") {
+    return {}
+  }
+
+  const normalized: Record<string, number> = {}
+  Object.entries(value).forEach(([path, count]) => {
+    if (!CARD_PATH_SET.has(path) || typeof count !== "number" || !Number.isFinite(count)) {
+      return
+    }
+    const remainder = Math.floor(count) % CARD_CLICK_THRESHOLD
+    if (remainder > 0) {
+      normalized[path] = remainder
+    }
+  })
+  return normalized
+}
+
+const buildBaseCardOrder = (preferredCardOrder: string[]) => {
+  const preferred = preferredCardOrder.filter((path) => CARD_PATH_SET.has(path))
+  const seen = new Set(preferred)
+  const remaining = CARD_PATHS.filter((path) => !seen.has(path))
+  return [...preferred, ...remaining]
+}
+
+const deriveOrderFromLegacyUsage = (legacyUsage: Record<string, number>, preferredCardOrder: string[]) => {
+  const preferredIndex = new Map(preferredCardOrder.map((path, index) => [path, index]))
+  return cards
+    .map((card, index) => {
+      const usage = Number.isFinite(legacyUsage[card.path]) ? legacyUsage[card.path] : 0
+      const preferredOrderIndex = preferredIndex.get(card.path)
+      const isPreferred = preferredOrderIndex !== undefined
+      return {
+        path: card.path,
+        index,
+        usage,
+        isPreferred,
+        preferredOrderIndex: isPreferred ? preferredOrderIndex : Number.POSITIVE_INFINITY,
+      }
+    })
+    .sort(
+      (a, b) =>
+        (Number(b.isPreferred) - Number(a.isPreferred)) ||
+        (a.preferredOrderIndex - b.preferredOrderIndex) ||
+        (b.usage - a.usage) ||
+        (a.index - b.index),
+    )
+    .map((item) => item.path)
+}
+
+const readCardOrderFromStorage = (storageKey: string) => {
+  try {
+    const raw = localStorage.getItem(storageKey)
+    if (!raw) {
+      return []
+    }
+    const parsed = JSON.parse(raw)
+    return normalizeCardOrderPaths(parsed)
+  } catch {
+    return []
+  }
+}
+
+const readCardClickProgressFromStorage = (storageKey: string) => {
+  try {
+    const raw = localStorage.getItem(storageKey)
+    if (!raw) {
+      return {}
+    }
+    const parsed = JSON.parse(raw)
+    return normalizeCardClickProgress(parsed)
+  } catch {
+    return {}
+  }
+}
+
+const readLegacyCardUsageFromStorage = (storageKey: string) => {
+  try {
+    const raw = localStorage.getItem(storageKey)
+    if (!raw) {
+      return {}
+    }
+    const parsed = JSON.parse(raw)
+    if (!parsed || typeof parsed !== "object") {
+      return {}
+    }
+
+    const normalized: Record<string, number> = {}
+    Object.entries(parsed).forEach(([path, usage]) => {
+      if (!CARD_PATH_SET.has(path) || typeof usage !== "number" || !Number.isFinite(usage)) {
+        return
+      }
+      normalized[path] = usage
+    })
+    return normalized
+  } catch {
+    return {}
+  }
+}
+
+const deriveClickProgressFromLegacyUsage = (legacyUsage: Record<string, number>) => {
+  const progress: Record<string, number> = {}
+  Object.entries(legacyUsage).forEach(([path, usage]) => {
+    const remainder = Math.floor(usage) % CARD_CLICK_THRESHOLD
+    if (remainder > 0) {
+      progress[path] = remainder
+    }
+  })
+  return progress
+}
+
+const buildOrderedCardsFromPaths = (paths: string[]) => {
+  const order = normalizeCardOrderPaths(paths)
+  const byPath = new Map(cards.map((card) => [card.path, card]))
+  const ordered = order.map((path) => byPath.get(path)).filter((card): card is CardItem => Boolean(card))
+  const includedPaths = new Set(ordered.map((card) => card.path))
+  const remaining = cards.filter((card) => !includedPaths.has(card.path))
+  return [...ordered, ...remaining]
+}
+
+const toFullCardOrder = (paths: string[]) => buildOrderedCardsFromPaths(paths).map((card) => card.path)
+
 async function fileToCompressedFitDataUrl(
   file: File,
   opts?: { maxSide?: number; quality?: number },
@@ -182,14 +333,16 @@ async function fileToCompressedFitDataUrl(
 function HomePage() {
   const navigate = useNavigate()
   const { tasks, isLoading: isTasksLoading, error: tasksError } = useTasks()
-  const { userEmail, username } = useAuth()
+  const { isAuthReady, userEmail, userId, username } = useAuth()
 
   const safeEmail = userEmail ?? "anonymous"
   const scopedKey = useCallback((suffix: string) => buildUserScopedKey(safeEmail, suffix), [safeEmail])
 
   const homeMoodboardKey = useMemo(() => scopedKey(HOME_MOODBOARD_SUFFIX), [scopedKey])
   const todosKey = useMemo(() => scopedKey("todos"), [scopedKey])
-  const cardUsageKey = useMemo(() => scopedKey(CARD_USAGE_SUFFIX), [scopedKey])
+  const cardOrderKey = useMemo(() => scopedKey(CARD_ORDER_SUFFIX), [scopedKey])
+  const cardProgressKey = useMemo(() => scopedKey(CARD_PROGRESS_SUFFIX), [scopedKey])
+  const legacyCardUsageKey = useMemo(() => scopedKey(LEGACY_CARD_USAGE_SUFFIX), [scopedKey])
   const onboardingKey = useMemo(
     () => buildUserScopedKey(normalizeUserEmail(safeEmail), ONBOARDING_STORAGE_KEY),
     [safeEmail],
@@ -197,7 +350,7 @@ function HomePage() {
 
   const [now, setNow] = useState(() => new Date())
 
-  const { photoSrc: profileSrc, error: profileError, uploadPhoto } = useUserProfilePhoto({
+  const { photoSrc: profileSrc, error: profileError, isLoaded: isProfilePhotoLoaded, uploadPhoto } = useUserProfilePhoto({
     fallbackSrc: DEFAULT_PROFILE_PHOTO,
   })
   const fileInputRef = useRef<HTMLInputElement | null>(null)
@@ -229,17 +382,9 @@ function HomePage() {
   const isTodoLimitReached = todos.length >= MAX_TODOS
   const [showTodoLimitMessage, setShowTodoLimitMessage] = useState(false)
   const [isProfilePhotoMenuOpen, setIsProfilePhotoMenuOpen] = useState(false)
-
-  const [cardUsage, setCardUsage] = useState<Record<string, number>>(() => {
-    const saved = safeReadStorage(cardUsageKey)
-    if (!saved) return {}
-    try {
-      const parsed = JSON.parse(saved)
-      return parsed && typeof parsed === "object" ? (parsed as Record<string, number>) : {}
-    } catch {
-      return {}
-    }
-  })
+  const [cardOrder, setCardOrder] = useState<string[]>([])
+  const [cardClickProgress, setCardClickProgress] = useState<Record<string, number>>({})
+  const [isHomeCardsLoaded, setIsHomeCardsLoaded] = useState(false)
 
   const preferredCardOrder = useMemo(() => {
     try {
@@ -256,31 +401,12 @@ function HomePage() {
     }
   }, [onboardingKey])
 
-  const orderedCards = useMemo(() => {
-    const preferredIndex = new Map(preferredCardOrder.map((path, index) => [path, index]))
-    const base = cards.map((card, index) => {
-      const usage = cardUsage[card.path] ?? 0
-      const preferredOrderIndex = preferredIndex.get(card.path)
-      const isPreferred = preferredOrderIndex !== undefined
-      return {
-        card,
-        index,
-        usage,
-        isPreferred,
-        preferredOrderIndex: isPreferred ? preferredOrderIndex : Number.POSITIVE_INFINITY,
-      }
-    })
+  const baseCardOrder = useMemo(() => buildBaseCardOrder(preferredCardOrder), [preferredCardOrder])
 
-    return base
-      .sort(
-        (a, b) =>
-          (Number(b.isPreferred) - Number(a.isPreferred)) ||
-          (a.preferredOrderIndex - b.preferredOrderIndex) ||
-          (b.usage - a.usage) ||
-          (a.index - b.index),
-      )
-      .map((item) => item.card)
-  }, [cardUsage, preferredCardOrder])
+  const orderedCards = useMemo(() => {
+    const effectiveOrder = cardOrder.length > 0 ? cardOrder : baseCardOrder
+    return buildOrderedCardsFromPaths(effectiveOrder)
+  }, [baseCardOrder, cardOrder])
 
   useEffect(() => {
     const current = safeReadStorage(homeMoodboardKey)
@@ -320,8 +446,58 @@ function HomePage() {
   }, [todosKey, todos])
 
   useEffect(() => {
-    safeWriteStorage(cardUsageKey, JSON.stringify(cardUsage))
-  }, [cardUsageKey, cardUsage])
+    if (!isAuthReady) {
+      setIsHomeCardsLoaded(false)
+      return
+    }
+
+    setIsHomeCardsLoaded(false)
+    const localOrder = readCardOrderFromStorage(cardOrderKey)
+    const localProgress = readCardClickProgressFromStorage(cardProgressKey)
+    const legacyUsage = readLegacyCardUsageFromStorage(legacyCardUsageKey)
+    const legacyOrder =
+      Object.keys(legacyUsage).length > 0 ? deriveOrderFromLegacyUsage(legacyUsage, preferredCardOrder) : []
+    const legacyProgress = deriveClickProgressFromLegacyUsage(legacyUsage)
+    const fallbackOrder = toFullCardOrder(localOrder.length > 0 ? localOrder : legacyOrder.length > 0 ? legacyOrder : baseCardOrder)
+    const fallbackProgress = normalizeCardClickProgress(
+      Object.keys(localProgress).length > 0 ? localProgress : legacyProgress,
+    )
+
+    if (!userId) {
+      setCardOrder(fallbackOrder)
+      setCardClickProgress(fallbackProgress)
+      setIsHomeCardsLoaded(true)
+      return
+    }
+
+    return subscribeToHomeCardsState(
+      userId,
+      (remoteState) => {
+        const nextOrder = toFullCardOrder(remoteState.order.length > 0 ? remoteState.order : fallbackOrder)
+        const nextProgress = normalizeCardClickProgress(
+          Object.keys(remoteState.clickProgress).length > 0 ? remoteState.clickProgress : fallbackProgress,
+        )
+        setCardOrder(nextOrder)
+        setCardClickProgress(nextProgress)
+        setIsHomeCardsLoaded(true)
+        safeWriteStorage(cardOrderKey, JSON.stringify(nextOrder))
+        safeWriteStorage(cardProgressKey, JSON.stringify(nextProgress))
+        safeRemoveStorage(legacyCardUsageKey)
+
+        if (remoteState.order.length === 0 && Object.keys(remoteState.clickProgress).length === 0) {
+          void saveHomeCardsState(userId, { order: nextOrder, clickProgress: nextProgress }).catch((error) => {
+            console.error("Home cards state seed failed", error)
+          })
+        }
+      },
+      (error) => {
+        console.error("Home cards state load failed", error)
+        setCardOrder(fallbackOrder)
+        setCardClickProgress(fallbackProgress)
+        setIsHomeCardsLoaded(true)
+      },
+    )
+  }, [baseCardOrder, cardOrderKey, cardProgressKey, isAuthReady, legacyCardUsageKey, preferredCardOrder, userId])
 
   useEffect(() => {
     // Remove any old per-card customization so the default home cards are always shown.
@@ -436,26 +612,54 @@ function HomePage() {
     }
   }
 
-  const bumpCardUsage = useCallback(
+  const handleCardOpen = useCallback(
     (path: string) => {
-      const stored = safeReadStorage(cardUsageKey)
-      let base: Record<string, number> = {}
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored)
-          if (parsed && typeof parsed === "object") {
-            base = parsed as Record<string, number>
-          }
-        } catch {
-          base = {}
+      const currentOrder = cardOrder.length > 0 ? cardOrder : baseCardOrder
+      const currentProgress = normalizeCardClickProgress(cardClickProgress)
+      const nextProgress = { ...currentProgress }
+      const nextCount = (nextProgress[path] ?? 0) + 1
+
+      let nextOrder = toFullCardOrder(currentOrder)
+      if (nextCount >= CARD_CLICK_THRESHOLD) {
+        delete nextProgress[path]
+        const index = currentOrder.indexOf(path)
+        if (index > 0) {
+          const reordered = [...currentOrder]
+          ;[reordered[index - 1], reordered[index]] = [reordered[index], reordered[index - 1]]
+          nextOrder = toFullCardOrder(reordered)
         }
+      } else {
+        nextProgress[path] = nextCount
       }
 
-      const next = { ...base, [path]: (base[path] ?? 0) + 1 }
-      safeWriteStorage(cardUsageKey, JSON.stringify(next))
-      setCardUsage(next)
+      setCardOrder(nextOrder)
+      setCardClickProgress(nextProgress)
+      safeWriteStorage(cardOrderKey, JSON.stringify(nextOrder))
+      safeWriteStorage(cardProgressKey, JSON.stringify(nextProgress))
+
+      if (userId) {
+        void saveHomeCardsState(userId, { order: nextOrder, clickProgress: nextProgress }).catch((error) => {
+          console.error("Home cards state save failed", error)
+        })
+      }
+
+      navigate(path)
     },
-    [cardUsageKey],
+    [baseCardOrder, cardClickProgress, cardOrder, cardOrderKey, cardProgressKey, navigate, userId],
+  )
+
+  const handleCalendarOpen = useCallback(() => {
+    navigate("/calendrier")
+  }, [navigate])
+
+  const handleCalendarCardKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLElement>) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault()
+        handleCalendarOpen()
+      }
+    },
+    [handleCalendarOpen],
   )
 
   const upcomingTasks = useMemo(() => {
@@ -485,6 +689,16 @@ function HomePage() {
 
     return normalized.map(({ startTs: _startTs, endTs: _endTs, ...task }) => task)
   }, [now, tasks])
+
+  const isHomeLoading = !isAuthReady || !isProfilePhotoLoaded || !isHomeCardsLoaded
+
+  if (isHomeLoading) {
+    return (
+      <div className="page home-page home-page--loading" aria-busy="true" aria-live="polite">
+        <span className="home-loading-a11y" role="status">Chargement</span>
+      </div>
+    )
+  }
 
   return (
     <div className="page home-page">
@@ -629,14 +843,10 @@ function HomePage() {
               className="card"
               role="button"
               tabIndex={0}
-              onClick={() => {
-                bumpCardUsage(card.path)
-                navigate(card.path)
-              }}
+              onClick={() => handleCardOpen(card.path)}
               onKeyDown={(event) => {
                 if (event.key === "Enter") {
-                  bumpCardUsage(card.path)
-                  navigate(card.path)
+                  handleCardOpen(card.path)
                 }
               }}
             >
@@ -660,18 +870,33 @@ function HomePage() {
         <div className="task-window">
           <div className="task-list">
             {tasksError ? (
-              <article className="task-card">
+              <article className="task-card" role="button" tabIndex={0} onClick={handleCalendarOpen} onKeyDown={handleCalendarCardKeyDown}>
                 <p className="task-title">Agenda indisponible</p>
                 <p className="task-note">{tasksError}</p>
               </article>
             ) : isTasksLoading ? (
-              <article className="task-card">
-                <p className="task-title">Chargement de l'agenda</p>
-                <p className="task-note">Tes prochains Ã©vÃ©nements arrivent...</p>
+              <article
+                className="task-card"
+                aria-busy="true"
+                role="button"
+                tabIndex={0}
+                onClick={handleCalendarOpen}
+                onKeyDown={handleCalendarCardKeyDown}
+              >
+                <span className="home-loading-a11y" role="status" aria-live="polite">
+                  Chargement de l'agenda
+                </span>
               </article>
             ) : upcomingTasks.length > 0 ? (
               upcomingTasks.map((task) => (
-                <article key={`${task.title}-${task.date}`} className="task-card">
+                <article
+                  key={`${task.title}-${task.date}`}
+                  className="task-card"
+                  role="button"
+                  tabIndex={0}
+                  onClick={handleCalendarOpen}
+                  onKeyDown={handleCalendarCardKeyDown}
+                >
                   <div className="task-card__header">
                     <p className="task-date">{formatDate(task.date)}</p>
                   </div>
@@ -686,7 +911,7 @@ function HomePage() {
                 </article>
               ))
             ) : (
-              <article className="task-card">
+              <article className="task-card" role="button" tabIndex={0} onClick={handleCalendarOpen} onKeyDown={handleCalendarCardKeyDown}>
                 <p className="task-title">Aucune tÃ¢che prÃ©vue</p>
                 <p className="task-note">Ajoute une tÃ¢che dans le calendrier.</p>
               </article>
@@ -724,3 +949,4 @@ function HomePage() {
 }
 
 export default HomePage
+

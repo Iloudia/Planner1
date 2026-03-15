@@ -202,6 +202,7 @@ export const useUserProfilePhoto = ({ fallbackSrc }: UseUserProfilePhotoOptions)
   return {
     photoSrc,
     hasCustomPhoto: Boolean(photoPath || (photoSrc && photoSrc !== fallbackSrc)),
+    isLoaded: isAuthReady && remoteLoaded,
     isBusy,
     error,
     uploadPhoto,

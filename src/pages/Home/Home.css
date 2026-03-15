@@ -3,6 +3,22 @@
   outline-offset: 3px;
 }
 
+.home-page--loading {
+  min-height: 60vh;
+  padding: 0;
+}
+
+.home-loading-a11y {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
 .home-accent-bar {
   height: 0.5rem;
   border-radius: 999px;
@@ -892,6 +908,11 @@ body.home-page--lux {
 .page.home-page .card-grid .card:nth-child(-n+3) {
   box-shadow: none;
   border-color: var(--lux-line);
+}
+
+.page.home-page .card-grid .card:nth-child(-n+3):hover {
+  border-color: rgba(31, 27, 22, 0.4);
+  box-shadow: 0 12px 26px rgba(31, 27, 22, 0.12);
 }
 
 .page.home-page .card-grid .card:nth-child(-n+3) img {

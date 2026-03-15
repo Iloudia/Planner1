@@ -37,6 +37,7 @@ const faqItems: FaqItem[] = [
 ]
 
 const FAQPage = () => {
+  const [isFaqLoading, setIsFaqLoading] = useState(true)
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   useEffect(() => {
@@ -45,6 +46,25 @@ const FAQPage = () => {
       document.body.classList.remove("faq-page--lux")
     }
   }, [])
+
+  useEffect(() => {
+    const frameId = window.requestAnimationFrame(() => {
+      setIsFaqLoading(false)
+    })
+    return () => {
+      window.cancelAnimationFrame(frameId)
+    }
+  }, [])
+
+  if (isFaqLoading) {
+    return (
+      <div className="faq-page faq-page--loading" aria-busy="true" aria-live="polite">
+        <span className="faq-loading-a11y" role="status">
+          Chargement
+        </span>
+      </div>
+    )
+  }
 
   return (
     <>

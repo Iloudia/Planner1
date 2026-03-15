@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react"
+import { FirebaseError } from "firebase/app"
 import {
   type User,
   type UserCredential,
@@ -52,6 +53,11 @@ type ChangePasswordResult = {
   error?: string
 }
 
+type AuthAttemptResult = {
+  success: boolean
+  errorCode?: string
+}
+
 type AccountActionResult = {
   success: boolean
   error?: string
@@ -78,9 +84,9 @@ export type AuthContextValue = {
   userProfile: UserProfileData
   createdAt: string | null
   updateUserProfile: (profile: UserProfileData) => Promise<void>
-  login: (credentials: { email: string; password: string; remember?: boolean }) => Promise<boolean>
-  register: (credentials: { email: string; password: string; remember?: boolean; profile?: RegistrationProfile }) => Promise<boolean>
-  loginWithGoogle: (credential?: string) => Promise<boolean>
+  login: (credentials: { email: string; password: string; remember?: boolean }) => Promise<AuthAttemptResult>
+  register: (credentials: { email: string; password: string; remember?: boolean; profile?: RegistrationProfile }) => Promise<AuthAttemptResult>
+  loginWithGoogle: (credential?: string) => Promise<AuthAttemptResult>
   logout: () => Promise<void>
   verifyPassword: (input: string) => Promise<boolean>
   changePassword: (currentPassword: string, newPassword: string) => Promise<ChangePasswordResult>
@@ -379,26 +385,30 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = useCallback(
     async (credentials: { email: string; password: string; remember?: boolean }) => {
       const { email, password, remember = false } = credentials
-      if (!email || !password) return false
+      const trimmedEmail = email.trim()
+      if (!trimmedEmail || !password) return { success: false, errorCode: "auth/missing-credentials" }
       try {
         await applyPersistence(remember)
-        const result = await signInWithEmailAndPassword(auth, email, password)
+        const result = await signInWithEmailAndPassword(auth, trimmedEmail, password)
         const data = await ensureUserDocument(result.user)
         if (data.status === "desactive") {
           await signOut(auth)
-          return false
+          return { success: false, errorCode: "auth/user-disabled" }
         }
         if (data.deletionPlannedAt) {
           const deleteAtTime = new Date(data.deletionPlannedAt).getTime()
           if (Number.isFinite(deleteAtTime) && deleteAtTime <= Date.now()) {
             await signOut(auth)
-            return false
+            return { success: false, errorCode: "app/account-deleted" }
           }
         }
-        return true
+        return { success: true }
       } catch (error) {
         console.error("Login failed", error)
-        return false
+        return {
+          success: false,
+          errorCode: error instanceof FirebaseError ? error.code : "auth/unknown",
+        }
       }
     },
     [applyPersistence],
@@ -407,10 +417,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const register = useCallback(
     async (credentials: { email: string; password: string; remember?: boolean; profile?: RegistrationProfile }) => {
       const { email, password, remember = false, profile } = credentials
-      if (!email || !password) return false
+      const trimmedEmail = email.trim()
+      if (!trimmedEmail || !password) return { success: false, errorCode: "auth/missing-credentials" }
       try {
         await applyPersistence(remember)
-        const result = await createUserWithEmailAndPassword(auth, email, password)
+        const result = await createUserWithEmailAndPassword(auth, trimmedEmail, password)
         const displayName = profile?.username || [profile?.firstName, profile?.lastName].filter(Boolean).join(" ")
         if (displayName) {
           await updateProfile(result.user, { displayName })
@@ -431,10 +442,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           }
           console.error("Welcome email dispatch failed", error)
         })
-        return true
+        return { success: true }
       } catch (error) {
         console.error("Register failed", error)
-        return false
+        return {
+          success: false,
+          errorCode: error instanceof FirebaseError ? error.code : "auth/unknown",
+        }
       }
     },
     [applyPersistence],
@@ -450,12 +464,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         const data = await ensureUserDocument(result.user)
         if (data.status === "desactive") {
           await signOut(auth)
-          return false
+          return { success: false, errorCode: "auth/user-disabled" }
         }
-        return true
+        return { success: true }
       } catch (error) {
         console.error("Google login failed", error)
-        return false
+        return {
+          success: false,
+          errorCode: error instanceof FirebaseError ? error.code : "auth/unknown",
+        }
       }
     },
     [applyPersistence],

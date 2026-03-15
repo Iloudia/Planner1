@@ -21,6 +21,22 @@
   padding: 2rem clamp(1rem, 4vw, 3rem) 3rem;
 }
 
+.diet-page--loading {
+  min-height: 60vh;
+  padding: 0;
+}
+
+.diet-loading-a11y {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
 .content-page.diet-page {
   border: none;
   background: #ffffff;
@@ -845,15 +861,35 @@ body.alimentation-page--lux .diet-recipe-close-icon {
 }
 
 body.alimentation-page--lux .pill--diet {
-  background: #000000;
-  border-color: #000000;
-  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-transform: none;
+  letter-spacing: normal;
+  font-family: "Playfair Display", "Times New Roman", serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.2;
+  background: #ffffff;
+  border: 1px solid var(--lux-line);
+  color: #000000;
+  padding: 0.6rem 1.2rem;
+  min-height: 46px;
 }
 
 body.alimentation-page--lux input,
 body.alimentation-page--lux textarea {
   border-radius: 0;
   box-shadow: none;
+}
+
+body.alimentation-page--lux input[type="text"]:focus {
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.15);
+}
+
+body.alimentation-page--lux .diet-shopping__textarea:focus {
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.15);
 }
 
 body.alimentation-page--lux .diet-generator__panel {
@@ -925,4 +961,5 @@ body.alimentation-page--lux .diet-recipe-modal__panel .diet-plan-modal__meta,
 body.alimentation-page--lux .diet-recipe-modal__panel .diet-plan-modal__meta span {
   color: #6b7280;
 }
+
 

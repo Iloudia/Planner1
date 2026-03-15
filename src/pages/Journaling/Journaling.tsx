@@ -118,7 +118,7 @@ const limitKeywordWords = (value: string) => {
 }
 
 const JournalingPage = () => {
-  const { createEntry, error } = useUserJournalEntries()
+  const { createEntry, error, isLoading } = useUserJournalEntries()
   useEffect(() => {
     document.body.classList.add('journaling-page--lux')
     return () => {
@@ -190,6 +190,16 @@ const JournalingPage = () => {
     } catch {
       setSaveError("Impossible d'enregistrer cette page pour le moment.")
     }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="journaling-page aesthetic-page journaling-page--loading" aria-busy="true" aria-live="polite">
+        <span className="journaling-loading-a11y" role="status">
+          Chargement
+        </span>
+      </div>
+    )
   }
 
   return (

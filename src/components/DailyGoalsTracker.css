@@ -15,6 +15,23 @@
   -webkit-overflow-scrolling: touch;
 }
 
+.sport-habits__table-wrapper--loading {
+  min-height: 320px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.sport-habits__loading-a11y {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
 .sport-habits__table-wrapper::-webkit-scrollbar {
   height: 10px;
 }

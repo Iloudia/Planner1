@@ -89,7 +89,7 @@ const THEME_OPTIONS: { id: ThemeTone; label: string; description: string }[] = [
 const MS_IN_DAY = 1000 * 60 * 60 * 24
 
 const ProfilePage = () => {
-  const { userEmail, userProfile, updateUserProfile, changePassword, deactivateAccount, deleteAccount, verifyPassword } = useAuth()
+  const { isAuthReady, userEmail, userProfile, updateUserProfile, changePassword, deactivateAccount, deleteAccount, verifyPassword } = useAuth()
   const [activeId, setActiveId] = useState("account")
   const [profileData, setProfileData] = useState<ProfileData>({})
   const [editingKey, setEditingKey] = useState<EditableKey | null>(null)
@@ -120,6 +120,7 @@ const ProfilePage = () => {
   const {
     photoSrc: avatarSrc,
     hasCustomPhoto,
+    isLoaded: isProfilePhotoLoaded,
     error: avatarError,
     isBusy: isAvatarBusy,
     uploadPhoto,
@@ -419,6 +420,18 @@ const ProfilePage = () => {
     const option = FONT_SCALE_OPTIONS.find((choice) => choice.value === displayPrefs.fontScale)
     return option?.label ?? "M"
   }, [displayPrefs.fontScale])
+
+  const isProfileLoading = !isAuthReady || !isProfilePhotoLoaded
+
+  if (isProfileLoading) {
+    return (
+      <div className="profile-page profile-page--loading" aria-busy="true" aria-live="polite">
+        <span className="profile-loading-a11y" role="status">
+          Chargement
+        </span>
+      </div>
+    )
+  }
 
   return (
     <>

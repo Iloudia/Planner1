@@ -6,6 +6,12 @@
   gap: 2.75rem;
   padding: clamp(1.2rem, 3vw, 2rem);
 }
+
+.finance-page--loading {
+  min-height: 60vh;
+  padding: 0;
+}
+
 .finance-page span {
   font-family: "Inter", "Times New Roman", sans-serif;
 }
@@ -709,6 +715,17 @@
   font-style: italic;
   font-weight: 400;
   color: rgba(15, 23, 42, 0.6);
+}
+
+.finance-loading-a11y {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
 }
 
 .finance-history__item {

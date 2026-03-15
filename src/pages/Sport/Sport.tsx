@@ -43,7 +43,7 @@ const getNextMondayMidnight = (reference: Date) => {
 }
 
 const lifeCardDefinitions = [
-  { id: "life-workout", label: "Workout", route: "/sport/workout", key: "workout" as const, image: heroWorkout },
+  { id: "life-workout", label: "Exercices", route: "/sport/workout", key: "workout" as const, image: heroWorkout },
   { id: "life-diet", label: "Diet", route: "/diet", key: "diet" as const, image: heroDiet },
   { id: "life-goals", label: "Goals", route: "/goals", key: "goals" as const, image: heroGoals },
 ]
@@ -51,11 +51,12 @@ const lifeCardDefinitions = [
 const SPORT_BOARD_DRAFTS_STORAGE_KEY = "planner.sport.board.drafts.v1"
 
 const SportPage = () => {
-  const { userEmail, userId } = useAuth()
+  const { isAuthReady, userEmail, userId } = useAuth()
   const [weekKey, setWeekKey] = useState(() => getWeekKey())
   const { board, dashboard, isLoading, error, updateBoardDay, saveQuickItems } =
     useUserSportDashboard(weekKey)
   const canEdit = Boolean(userId)
+  const isSportLoading = !isAuthReady || isLoading
   const [isEditingQuick, setIsEditingQuick] = useState(false)
   const [activityDrafts, setActivityDrafts] = useState<Record<string, string>>({})
   const [savedActivityDayId, setSavedActivityDayId] = useState<string | null>(null)
@@ -370,12 +371,21 @@ const SportPage = () => {
     await updateBoardDay(dayId, { done: event.target.checked })
   }
 
+  if (isSportLoading) {
+    return (
+      <div className="sport-page sport-page--loading" aria-busy="true" aria-live="polite">
+        <span className="sport-loading-a11y" role="status">
+          Chargement
+        </span>
+      </div>
+    )
+  }
+
   return (
     <div className="sport-page">
       <PageHeading eyebrow="Routine active" title="Sport" />
       {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer ton espace sport.</p> : null}
       {error ? <p className="routine-note__composer-hint">{error}</p> : null}
-      {isLoading ? <p className="routine-note__composer-hint">Chargement de ton espace sport...</p> : null}
 
       <section className="sport-quick-panels">
         <div className="sport-quick-panel">

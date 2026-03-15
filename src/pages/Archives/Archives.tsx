@@ -1,5 +1,6 @@
 ﻿import { useEffect, useMemo, useRef, useState } from "react"
 import PageHeading from "../../components/PageHeading"
+import { useAuth } from "../../context/AuthContext"
 import useUserJournalEntries from "../../hooks/useUserJournalEntries"
 import useUserSelfLove from "../../hooks/useUserSelfLove"
 import stampLove from "../../assets/Timbre-1.webp"
@@ -129,6 +130,7 @@ const getSelfLoveExcerpt = (letter: SelfLoveSavedLetter) => {
 }
 
 const ArchivesPage = () => {
+  const { isAuthReady } = useAuth()
   const {
     entries: journalEntries,
     isLoading: isJournalLoading,
@@ -470,6 +472,18 @@ const ArchivesPage = () => {
         : "ARCHIVÉE"
     : ""
 
+  const isArchivesLoading = !isAuthReady || isJournalLoading || isSelfLoveLoading
+
+  if (isArchivesLoading) {
+    return (
+      <div className="archives-page archives-page--loading" aria-busy="true" aria-live="polite">
+        <span className="archives-loading-a11y" role="status">
+          Chargement
+        </span>
+      </div>
+    )
+  }
+
   return (
     <div className="archives-page aesthetic-page boutique-page">
       <PageHeading eyebrow="Archives" title="Archives" />
@@ -537,11 +551,7 @@ const ArchivesPage = () => {
       {selfLoveError ? <p className="archives-empty">{selfLoveError}</p> : null}
 
       {archiveYears.length === 0 ? (
-        isJournalLoading || isSelfLoveLoading ? (
-          <p className="archives-empty">Chargement de vos écrits...</p>
-        ) : (
-          <p className="archives-empty">Aucun écrit pour le moment.</p>
-        )
+        <p className="archives-empty">Aucun écrit pour le moment.</p>
       ) : (
         <div className="archives-layout">
           <div className="archives-nav">

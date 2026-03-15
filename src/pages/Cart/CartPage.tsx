@@ -34,6 +34,7 @@ const parseCheckoutError = async (response: Response) => {
 }
 
 const CartPage = () => {
+  const [isCartLoading, setIsCartLoading] = useState(true)
   const [cartItems, setCartItems] = useState(() => loadCartItems())
   const [customProducts, setCustomProducts] = useState(() => loadCustomProducts())
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false)
@@ -57,6 +58,10 @@ const CartPage = () => {
       window.removeEventListener("storage", handleUpdate)
       window.removeEventListener("cart:updated", handleUpdate as EventListener)
     }
+  }, [])
+
+  useEffect(() => {
+    setIsCartLoading(false)
   }, [])
 
   const allProducts = useMemo(() => [...products, ...customProducts], [customProducts])
@@ -109,6 +114,16 @@ const CartPage = () => {
     } finally {
       setIsCheckoutLoading(false)
     }
+  }
+
+  if (isCartLoading) {
+    return (
+      <div className="cart-page cart-page--loading" aria-busy="true" aria-live="polite">
+        <span className="cart-loading-a11y" role="status">
+          Chargement
+        </span>
+      </div>
+    )
   }
 
   return (
