@@ -618,11 +618,105 @@
   color: var(--color-chocolate);
 }
 
+.diet-recipe-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.6rem;
+}
+
+.diet-recipe-section__toggle {
+  border: none;
+  background: transparent;
+  color: #000000;
+  width: auto;
+  height: auto;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.diet-recipe-section__toggle.is-open {
+  transform: rotate(180deg);
+}
+
 .diet-recipe-modal__body ul,
 .diet-recipe-modal__body ol {
   margin: 0;
   padding-left: 1.2rem;
   color: var(--color-chocolate);
+}
+
+.diet-ingredient-visuals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.8rem;
+}
+
+.diet-ingredient-visuals__section {
+  margin: 0;
+  grid-column: 1 / -1;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #000000;
+}
+
+.diet-ingredient-visual {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  align-items: center;
+  text-align: center;
+}
+
+.diet-ingredient-visual img {
+  width: 100%;
+  height: 110px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: #fff8f3;
+  border: 1px solid var(--lux-line);
+  padding: 0.5rem;
+}
+
+.diet-ingredient-visual p {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.35;
+  color: var(--color-chocolate);
+}
+
+.diet-step-item--title {
+  list-style: none;
+  margin-left: -1.2rem;
+  margin-top: 0.7rem;
+  font-family: "Playfair Display", serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #000000;
+}
+
+.diet-step-item--sub {
+  list-style: none;
+  margin-left: 0.4rem;
+}
+
+.diet-step-item--sub::before {
+  content: "\2022 ";
+}
+
+.diet-step-item--plain {
+  list-style: none;
+  margin-left: -1.2rem;
+}
+
+.diet-steps-list li + li {
+  margin-top: 0.35rem;
 }
 
 .diet-plan-modal__meta {
