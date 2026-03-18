@@ -524,7 +524,7 @@ const DailyGoalsTracker = ({ onLoadingStateChange }: DailyGoalsTrackerProps) => 
             type="text"
             value={newHabitLabel}
             onChange={(event) => setNewHabitLabel(event.target.value)}
-            placeholder="Ajouter un objectif quotidien"
+            placeholder="Ex : S’étirer après chaque séance..."
             className="sport-habits__add-input"
             disabled={!canInteract}
           />

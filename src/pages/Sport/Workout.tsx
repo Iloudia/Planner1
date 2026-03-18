@@ -422,9 +422,7 @@ const WorkoutPage = () => {
               <div className={`workout-form__photo-preview${formImagePreview ? " workout-form__photo-preview--has-image" : ""}`}>
                 {formImagePreview ? (
                   <img className="workout-form__photo-img" src={formImagePreview} alt="Apercu de la photo selectionnee" loading="lazy" decoding="async" />
-                ) : (
-                  <p>Ajoute une image depuis ton ordinateur.</p>
-                )}
+                ) : null}
                 <div className="workout-form__photo-actions">
                   {!formImagePreview ? (
                     <label>
@@ -534,7 +532,7 @@ const WorkoutPage = () => {
                 type="text"
                 value={videoForm.title}
                 onChange={(event) => setVideoForm((previous) => ({ ...previous, title: event.target.value }))}
-                placeholder="Nom de la video"
+                placeholder="Ex : 30 min pilate full body..."
               />
             </label>
             <label>
@@ -677,7 +675,7 @@ const WorkoutPage = () => {
                     type="text"
                     value={seriesWeightInput}
                     onChange={(event) => setSeriesWeightInput(event.target.value)}
-                    placeholder="Charge (kg)"
+                    placeholder="Ex : Charge (kg)"
                     className="workout-modal__series-weight-input"
                   />
                   <button type="submit">Ajouter une serie</button>
@@ -690,7 +688,7 @@ const WorkoutPage = () => {
                       value={noteDraft}
                       onChange={(event) => setNoteDraft(event.target.value)}
                       onBlur={() => void handleSaveNote()}
-                      placeholder="Ressenti, charge, remarque..."
+                      placeholder="Ex : Ressenti, charge, remarque..."
                     />
                   </label>
                 </div>

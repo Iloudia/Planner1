@@ -571,7 +571,7 @@ function DietPage() {
         <section className="page-section diet-generator">
           <header className="diet-generator__header">
             <div>
-              <h3>Générateur de plan repas</h3>
+              <h2>Générateur de plan repas</h2>
               <p>Choisis tes objectifs cuisine et génère une semaine équilibrée selon tes préférences.</p>
             </div>
             <div className="diet-generator__actions">
@@ -628,7 +628,7 @@ function DietPage() {
         <section className="page-section diet-week">
           <header className="diet-week__header">
             <div>
-              <h3>Planning des repas de la semaine</h3>
+              <h2>Planning des repas de la semaine</h2>
               
             </div>
             <p className="diet-week__range">{weekRangeLabel}</p>
@@ -678,7 +678,7 @@ function DietPage() {
 
         <section className="page-section diet-shopping">
           <div className="diet-shopping__panel">
-            <h3>Liste de courses</h3>
+            <h2>Liste de courses</h2>
             <textarea
               className="diet-shopping__textarea"
               value={shoppingNotes}
@@ -689,7 +689,7 @@ function DietPage() {
           </div>
 
           <div className="diet-ideas">
-            <p className="diet-section__intro">Idées à garder sous la main</p>
+            <h2 className="diet-section__intro">Idées à garder sous la main</h2>
             <div className="diet-ideas__tips">
               <article>
                 <h4>Batch cooking</h4>

@@ -55,7 +55,6 @@
 .landing-hero__tagline {
   display: inline-block;
   padding: 0.6rem 1.2rem;
-  border-radius: 999px;
   background: rgba(227, 215, 202, 0.14);
   color: #9d174d;
   font-weight: 600;
@@ -103,7 +102,6 @@
 .landing-cta-button,
 .landing-secondary-button {
   border: none;
-  border-radius: 999px;
   padding: 0.95rem 1.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -136,7 +134,6 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1rem;
-  border-radius: 16px;
   background: rgba(227, 215, 202, 0.12);
   color: #9d174d;
   font-size: 0.95rem;
@@ -158,7 +155,6 @@
 }
 
 .landing-hero__visual img {
-  border-radius: 30px;
   box-shadow: none;
   width: min(520px, 100%);
 }
@@ -180,7 +176,6 @@
 
 .landing-top-visual__image {
   width: 100%;
-  border-radius: 28px;
   overflow: hidden;
   box-shadow: 0 30px 90px rgba(15, 23, 42, 0.2);
 }
@@ -216,7 +211,6 @@
   gap: clamp(1.5rem, 3vw, 2.5rem);
   background: #ffffff;
   border: 1px solid rgba(114, 92, 63, 0.14);
-  border-radius: 30px;
   padding: clamp(1.8rem, 4vw, 2.8rem);
 }
 
@@ -240,12 +234,18 @@
 .landing-carousel__card {
   background: rgba(255, 255, 255, 0.96);
   border: 1px solid rgba(114, 92, 63, 0.14);
-  border-radius: 20px;
   box-shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
   overflow: hidden;
   flex-direction: column;
   height: 100%;
   min-height: 320px;
+  transition: border-color 220ms ease, box-shadow 220ms ease, transform 220ms ease;
+}
+
+.landing-carousel__card:hover {
+  border-color: #000000;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
 }
 
 .landing-carousel__image {
@@ -327,7 +327,6 @@
   grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
   gap: clamp(1.2rem, 3vw, 2rem);
   padding: clamp(2rem, 4vw, 3rem);
-  border-radius: 38px;
   background: linear-gradient(135deg, #ffffff, #f1ece4 60%, #725c3f);
 }
 
@@ -345,7 +344,6 @@
   align-items: center;
   gap: 0.6rem;
   padding: 0.85rem 1rem;
-  border-radius: 16px;
   background: rgba(255, 255, 255, 0.7);
   color: #9d174d;
   font-weight: 600;
@@ -355,7 +353,6 @@
   position: relative;
   overflow: hidden;
   padding: clamp(2.4rem, 5vw, 3.4rem);
-  border-radius: 40px;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -400,7 +397,6 @@
   gap: clamp(1.6rem, 4vw, 2.6rem);
   align-items: center;
   padding: clamp(1.8rem, 4vw, 2.6rem);
-  border-radius: 32px;
   background: linear-gradient(135deg, #fdf2f8, #eef2ff);
   box-shadow: 0 28px 80px rgba(227, 215, 202, 0.16);
 }
@@ -482,7 +478,6 @@
 .landing-auth-modal__content {
   position: relative;
   background: #ffffff;
-  border-radius: 28px;
   padding: clamp(2rem, 4vw, 2.6rem);
   width: min(420px, calc(100% - 2.5rem));
   box-shadow: 0 36px 110px rgba(30, 64, 175, 0.28);
@@ -519,7 +514,6 @@
 
 .landing-auth-form input {
   border: 1px solid rgba(148, 163, 184, 0.35);
-  border-radius: 14px;
   padding: 0.85rem 1rem;
   font-size: 1rem;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -547,7 +541,6 @@
 
 .landing-auth-form__actions button {
   border: none;
-  border-radius: 12px;
   padding: 0.75rem 1.4rem;
   font-weight: 600;
   cursor: pointer;
@@ -774,6 +767,11 @@ body.landing-page--lux .landing-carousel__card {
   background: var(--lux-paper);
   border: 1px solid var(--lux-line);
   box-shadow: none;
+}
+
+body.landing-page--lux .landing-carousel__card:hover {
+  border-color: #000000;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.15);
 }
 
 body.landing-page--lux .landing-carousel__image {

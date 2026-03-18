@@ -642,9 +642,9 @@ const WishlistPage = () => {
               onSubmit={handleCreateCategory}
               onClick={(event) => event.stopPropagation()}
             >
-              <h3>{editingCategoryId ? "Modifier la categorie" : "Creer une categorie"}</h3>
+              <h2>{editingCategoryId ? "Modifier la categorie" : "Creer une categorie"}</h2>
               <label className="wishlist-create__title-field">
-                Titre
+                <p>Titre</p>
                 <input
                   type="text"
                   className="wishlist-create__title-input"
@@ -654,22 +654,49 @@ const WishlistPage = () => {
                 />
               </label>
               <div className="wishlist-create__cover-field">
-                <span className="wishlist-create__cover-label">Couverture</span>
-                <label className={`wishlist-create__cover-slot${newCategoryCoverPreview ? " wishlist-create__cover-slot--filled" : ""}`}>
-                  <input
-                    className="wishlist-create__cover-input"
-                    ref={newCategoryCoverRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={(event) => handlePreviewFile(event.target.files?.[0] ?? null, setNewCategoryCoverPreview, setNewCategoryCoverFile)}
-                    disabled={!canEdit}
-                  />
+                <p className="wishlist-create__cover-label">Image de couverture</p>
+                <div className={`wishlist-create__cover-preview-panel${newCategoryCoverPreview ? " wishlist-create__cover-preview-panel--has-image" : ""}`}>
                   {newCategoryCoverPreview ? (
-                    <img className="wishlist-create__cover-preview" src={newCategoryCoverPreview} alt="Apercu couverture" />
-                  ) : (
-                    <span>Ajouter une photo</span>
-                  )}
-                </label>
+                    <img
+                      className="wishlist-create__cover-preview"
+                      src={newCategoryCoverPreview}
+                      alt="Apercu de la photo selectionnee"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : null}
+                  <div className="wishlist-create__cover-actions">
+                    {!newCategoryCoverPreview ? (
+                      <label>
+                        <input
+                          className="wishlist-create__cover-input"
+                          ref={newCategoryCoverRef}
+                          type="file"
+                          accept="image/*"
+                          onChange={(event) => {
+                            handlePreviewFile(event.target.files?.[0] ?? null, setNewCategoryCoverPreview, setNewCategoryCoverFile)
+                            event.target.value = ""
+                          }}
+                          disabled={!canEdit}
+                        />
+                        Choisir une photo
+                      </label>
+                    ) : null}
+                    {newCategoryCoverPreview ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setNewCategoryCoverPreview("")
+                          setNewCategoryCoverFile(null)
+                        }}
+                        disabled={!canEdit}
+                      >
+                        Retirer
+                      </button>
+                    ) : null}
+                  </div>
+                  <span className="wishlist-create__cover-hint">Formats d'image acceptes (JPG, PNG, GIF).</span>
+                </div>
               </div>
               <div className="wishlist-create__actions">
                 <button
@@ -760,7 +787,7 @@ const WishlistPage = () => {
             <div className="wishlist-modal__body">
               <header className="wishlist-modal__header">
                 <div>
-                  <h3>{selectedCategory.title}</h3>
+                  <h2>{selectedCategory.title}</h2>
                 </div>
                 <span className="wishlist-modal__badge">{selectedCategory.items.length} element(s)</span>
               </header>
@@ -809,7 +836,7 @@ const WishlistPage = () => {
 
               {!moveItemDraft && (isItemComposerOpen || Boolean(editingItemId)) ? (
               <form className="wishlist-modal__form" onSubmit={handleSubmitItem}>
-                <h4>{editingItemId ? "Modifier un element" : "Ajouter un element"}</h4>
+                <h3>{editingItemId ? "Modifier un element" : "Ajouter un element"}</h3>
                 <div className="wishlist-modal__form-top">
                   <div className="wishlist-modal__form-photo">
                     <label className={`wishlist-modal__photo-slot${itemPreview ? " wishlist-modal__photo-slot--filled" : ""}`}>
@@ -956,7 +983,7 @@ const WishlistPage = () => {
                       return (
                         <div key={group.key} className={`wishlist-modal__group${isOpen ? " is-open" : ""}`}>
                           <button type="button" className="wishlist-modal__group-toggle" onClick={() => toggleWishlistGroup(group.key)}>
-                            <h4>{group.label}</h4>
+                            <h3>{group.label}</h3>
                             <span className="wishlist-modal__group-chevron" aria-hidden="true">
                               v
                             </span>
@@ -1033,14 +1060,14 @@ const WishlistPage = () => {
                       )
                     })
                   ) : (
-                    <p className="wishlist-modal__empty">Aucun element dans cette categorie.</p>
+                    <p className="wishlist-modal__empty">Clique sur + pour ajouter un produit que tu aimerais acheter plus tard.</p>
                   )}
                 </div>
               ) : null}
 
               {moveItemDraft ? (
                 <div className="wishlist-move">
-                  <h3>Deplacer vers une autre carte</h3>
+                  <h2>Deplacer vers une autre carte</h2>
                   <div className="wishlist-move__grid">
                     {categoryCards
                       .filter((category) => category.id !== items.find((item) => item.id === moveItemDraft.itemId)?.categoryId)

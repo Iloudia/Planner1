@@ -40,38 +40,6 @@
   box-shadow: none;
 }
 
-.goals-hero {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.2rem;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.goals-hero h2 {
-  margin: 0.2rem 0 0;
-}
-
-.goals-hero p {
-  margin: 0.25rem 0 0;
-}
-
-.goals-hero-image {
-  width: 100%;
-  overflow: hidden;
-  border-radius: 18px;
-  height: var(--hero-visual-height);
-  box-shadow: 0 16px 36px rgba(114, 92, 63, 0.15);
-  margin-bottom: 1.2rem;
-}
-
-.goals-hero-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
 .goals-daily {
   display: flex;
   justify-content: flex-start;
@@ -104,7 +72,6 @@
 .body-goal-slot {
   position: relative;
   border: 1px dashed rgba(114, 92, 63, 0.4);
-  border-radius: 14px;
   width: 240px;
   height: 360px;
   background: rgba(227, 215, 202, 0.2);
@@ -127,7 +94,6 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 0.6rem 1rem;
-  border-radius: 10px;
   background: #ffffff;
   color: #0f172a;
   font-weight: 600;
@@ -143,7 +109,6 @@
   bottom: 0.6rem;
   right: 0.6rem;
   border: none;
-  border-radius: 8px;
   padding: 0.4rem 0.8rem;
   background: rgba(15, 23, 42, 0.8);
   color: #ffffff;

@@ -26,7 +26,6 @@
 .workout-hero-image {
   width: 100%;
   overflow: hidden;
-  border-radius: 18px;
   height: var(--hero-visual-height);
   box-shadow: 0 16px 36px rgba(114, 92, 63, 0.15);
 }
@@ -40,14 +39,12 @@
 
 .workout-page__accent-bar {
   height: 0.55rem;
-  border-radius: 999px;
   background: linear-gradient(90deg, #f1ece4 0%, #e3d7ca 50%, #d8d7b2 100%);
   box-shadow: 0 12px 40px rgba(99, 102, 241, 0.22);
 }
 
 .workout-page__footer-bar {
   height: 2.2rem;
-  border-radius: 28px;
   background: linear-gradient(90deg, #f1ece4 0%, #e3d7ca 50%, #d8d7b2 100%);
   box-shadow: 0 24px 80px rgba(99, 102, 241, 0.18);
 }
@@ -62,7 +59,6 @@
 .workout-library,
 .workout-videos {
   background: linear-gradient(135deg, #fff 0%, #fdf2f8 100%);
-  border-radius: 28px;
   box-shadow: none;
   padding: 2.5rem 2rem;
   display: flex;
@@ -159,7 +155,6 @@
   background: #fff;
   padding: 1rem;
   border: 1px dashed rgba(114, 92, 63, 0.3);
-  border-radius: 14px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -178,7 +173,6 @@
 
 .workout-form__photo-img {
   max-width: 125px;
-  border-radius: 16px;
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
 }
 
@@ -192,7 +186,6 @@
 .workout-form__photo-actions label {
   background: rgba(227, 215, 202, 0.2);
   color: #725c3f;
-  border-radius: 999px;
   border: 1px dashed rgba(114, 92, 63, 0.4);
   padding: 0.6rem 1.3rem;
   cursor: pointer;
@@ -219,7 +212,6 @@
 .workout-form__photo-preview button {
   background: rgba(227, 215, 202, 0.2);
   color: #725c3f;
-  border-radius: 999px;
   border: 1px solid rgba(114, 92, 63, 0.3);
   padding: 0.5rem 1.2rem;
   cursor: pointer;
@@ -238,7 +230,6 @@
 .workout-form input,
 .workout-form select {
   border: 1px solid rgba(114, 92, 63, 0.25);
-  border-radius: 12px;
   background: #fff;
   padding: 0.8rem 1rem;
   font-size: 1rem;
@@ -266,7 +257,6 @@
 
 .workout-form__select-trigger {
   border: 1px solid rgba(114, 92, 63, 0.25);
-  border-radius: 12px;
   background: #fff;
   padding: 0.8rem 1rem;
   font-size: 1rem;
@@ -344,7 +334,6 @@
   padding: 0.9rem 2rem;
   font-weight: 700;
   color: var(--color-chocolate);
-  border-radius: 14px;
   font-size: 1.05rem;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.3s ease;
@@ -382,7 +371,6 @@
 .workout-card {
   position: relative;
   width: 100%;
-  border-radius: 18px;
   overflow: hidden;
   border: 1px solid #e5e7eb;
   background: #f9fafb;
@@ -414,7 +402,6 @@
   border: none;
   background: rgba(15, 23, 42, 0.32);
   color: #fff;
-  border-radius: 50%;
   width: 34px;
   height: 34px;
   display: inline-flex;
@@ -499,7 +486,6 @@
   right: 8px;
   width: 32px;
   height: 32px;
-  border-radius: 50%;
   border: none;
   background: rgba(255, 255, 255, 0.92);
   color: #111827;
@@ -545,7 +531,6 @@
 
 .workout-card__meta span {
   padding: 0.25rem 0.6rem;
-  border-radius: 999px;
   background: #e5e7eb;
   border: 1px solid transparent;
 }
@@ -587,7 +572,6 @@
 }
 
 .workout-video-form input {
-  border-radius: 12px;
   border: 1px solid rgba(114, 92, 63, 0.25);
   padding: 0.8rem 1rem;
   font-size: 1rem;
@@ -616,7 +600,6 @@
 .workout-video-form button {
   justify-self: start;
   border: none;
-  border-radius: 10px;
   padding: 0.85rem 1.7rem;
   background: var(--color-caramel);
   color: var(--color-chocolate);
@@ -631,7 +614,6 @@
   align-items: center;
   gap: 0.8rem;
   background: #ffffff;
-  border-radius: 18px;
   padding: 1rem 1.2rem;
 }
 
@@ -645,7 +627,6 @@
 
 .workout-video-card {
   width: 100%;
-  border-radius: 18px;
   overflow: hidden;
   border: 1px solid #e5e7eb;
   background: #fff;
@@ -704,7 +685,6 @@
 .workout-video-card__duration {
   margin-left: auto;
   padding: 0.15rem 0.5rem;
-  border-radius: 999px;
   background: rgba(15, 23, 42, 0.08);
   color: #0f172a;
   font-size: 0.8rem;
@@ -727,7 +707,6 @@
   position: relative;
   width: min(900px, 100%);
   max-height: calc(100vh - 3rem);
-  border-radius: 30px;
   overflow: hidden;
   background: #fdf4ff;
   box-shadow: 0 40px 120px rgba(15, 23, 42, 0.28);
@@ -770,7 +749,6 @@
 
 .workout-modal__body {
   background: #ffffff;
-  border-radius: 28px 28px 0 0;
   margin-top: -2rem;
   padding: clamp(1.8rem, 3vw, 2.4rem);
   display: flex;
@@ -808,7 +786,6 @@
 .workout-modal__series-form input {
   flex: 1;
   min-width: 220px;
-  border-radius: 12px;
   border: 1px solid #d1d5db;
   padding: 0.6rem 0.8rem;
   font-size: 0.95rem;
@@ -831,7 +808,7 @@
 
 .workout-modal__note {
   border: 1px solid #e5e7eb;
-  border-radius: 16px;
+
   padding: 0.9rem 1rem;
   background: rgba(253, 242, 248, 0.6);
 }
@@ -853,7 +830,6 @@
 }
 
 .workout-modal__note textarea {
-  border-radius: 12px;
   border: 1px solid rgba(114, 92, 63, 0.2);
   padding: 0.7rem 0.9rem;
   font-size: 0.95rem;
@@ -875,7 +851,6 @@
 
 .workout-modal__series-form button {
   border: none;
-  border-radius: 12px;
   padding: 0.6rem 1.1rem;
   background: var(--color-caramel);
   color: var(--color-chocolate);
@@ -898,7 +873,6 @@
   justify-content: space-between;
   gap: 0.75rem;
   padding: 0.65rem 0.8rem;
-  border-radius: 12px;
   border: 1px solid #e5e7eb;
   background: #f9fafb;
 }
@@ -925,7 +899,6 @@
 
 .workout-modal__series-weight {
   width: 90px;
-  border-radius: 10px;
   border: 1px solid rgba(114, 92, 63, 0.2);
   padding: 0.35rem 0.5rem;
   font-size: 0.85rem;
@@ -945,7 +918,6 @@
 .workout-modal__empty {
   margin: 0;
   padding: 1.4rem;
-  border-radius: 18px;
   background: rgba(248, 250, 252, 0.86);
   font-style: italic;
   font-weight: 400;
@@ -1102,7 +1074,6 @@ body.workout-page--lux {
 .workout-page .profile-menu,
 .workout-card__menu .workout-video-card__delete,
 .workout-modal__menu .modal__close {
-  border-radius: 50%;
   border: 1px solid var(--lux-line);
   background: #ffffff;
   color: var(--lux-ink);

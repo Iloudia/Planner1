@@ -1,19 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@400;600;700&display=swap');
 
-.diet-hero-photo {
-  padding: 2rem clamp(1rem, 3vw, 2rem);
-  border-radius: 28px;
-  overflow: hidden;
-}
-
-.diet-hero-photo img {
-  width: 100%;
-  height: clamp(220px, 40vw, 360px);
-  object-fit: cover;
-  display: block;
-  border-radius: 28px;
-}
-
 .diet-page {
   display: flex;
   flex-direction: column;
@@ -44,7 +30,6 @@
 
 .page-section {
   background: #ffffff;
-  border-radius: 24px;
   padding: 2rem;
   box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
 }
@@ -113,14 +98,12 @@
   color: #c2185b;
   background: rgba(194, 24, 91, 0.12);
   padding: 0.4rem 0.85rem;
-  border-radius: 999px;
   white-space: nowrap;
 }
 
 .diet-week__group {
   margin-top: 1.5rem;
   background: linear-gradient(135deg, rgba(255, 245, 250, 0.85), rgba(252, 231, 243, 0.95));
-  border-radius: 20px;
   padding: 1.2rem;
 }
 
@@ -132,7 +115,6 @@
 }
 
 .diet-week__card {
-  border-radius: 18px;
   padding: 1.1rem;
   display: flex;
   flex-direction: column;
@@ -177,7 +159,6 @@
 
 .diet-week__slot input {
   border: 1px solid rgba(114, 92, 63, 0.2);
-  border-radius: 12px;
   padding: 0.5rem 0.75rem;
   font-size: 0.95rem;
   background: rgba(255, 255, 255, 0.95);
@@ -199,7 +180,6 @@
 
 .diet-shopping__panel {
   border: none;
-  border-radius: 20px;
   padding: 1.5rem;
   background: #fdf2f8;
   display: flex;
@@ -214,7 +194,6 @@
 .diet-shopping__textarea {
   width: 100%;
   min-height: 220px;
-  border-radius: 18px;
   border: 1px solid rgba(15, 23, 42, 0.12);
   padding: 1.1rem;
   font-size: 1rem;
@@ -247,7 +226,6 @@
 .diet-shopping__input input {
   flex: 1;
   border: 1px solid rgba(15, 23, 42, 0.2);
-  border-radius: 999px;
   padding: 0.6rem 1rem;
 }
 
@@ -263,7 +241,6 @@
   color: #fff;
   width: 44px;
   height: 44px;
-  border-radius: 50%;
   font-size: 1.3rem;
   cursor: pointer;
 }
@@ -282,7 +259,6 @@
   justify-content: space-between;
   align-items: center;
   background: #fff;
-  border-radius: 14px;
   padding: 0.5rem 0.8rem;
   border: 1px solid rgba(15, 23, 42, 0.08);
 }
@@ -315,7 +291,6 @@
 
 .diet-ideas {
   border: 1px dashed rgba(15, 23, 42, 0.2);
-  border-radius: 20px;
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
@@ -323,10 +298,13 @@
 }
 
 .diet-section__intro {
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-size: 0.8rem;
-  color: #94a3b8;
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: var(--font-size-h2);
+  line-height: var(--leading-heading);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--color-contrast);
   margin: 0;
 }
 
@@ -340,7 +318,6 @@
 }
 
 .diet-ideas__chips li {
-  border-radius: 999px;
   border: 1px solid rgba(15, 23, 42, 0.15);
   padding: 0.35rem 0.85rem;
   font-size: 0.85rem;
@@ -356,7 +333,6 @@
 
 .diet-ideas__tips article {
   background: #fff;
-  border-radius: 16px;
   border: 1px solid rgba(15, 23, 42, 0.08);
   padding: 1rem;
 }
@@ -483,7 +459,6 @@
   color: #ffffff;
   width: 36px;
   height: 36px;
-  border-radius: 50%;
   cursor: pointer;
   font-size: 1.1rem;
   display: flex;
@@ -496,7 +471,6 @@
   background: rgba(15, 23, 42, 0.4);
   width: 38px;
   height: 38px;
-  border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -584,7 +558,6 @@
 
 .diet-recipe-modal__actions button {
   border: none;
-  border-radius: 14px;
   padding: 0.75rem 1.4rem;
   background: rgba(114, 92, 63, 0.16);
   color: #be185d;
@@ -599,7 +572,6 @@
 .diet-week__recipe-badge {
   margin-left: 0.6rem;
   border: none;
-  border-radius: 999px;
   padding: 0.15rem 0.6rem;
   font-size: 0.62rem;
   font-weight: 700;
@@ -630,7 +602,6 @@
   background: #0f172a;
   color: #ffffff;
   padding: 0.7rem 1.4rem;
-  border-radius: 999px;
   font-weight: 600;
   cursor: pointer;
 }
@@ -649,7 +620,6 @@
 }
 
 .diet-generator__panel {
-  border-radius: 18px;
   padding: 1.2rem;
   border: 1px solid rgba(15, 23, 42, 0.08);
   background: rgba(248, 250, 252, 0.7);
@@ -675,7 +645,6 @@
 
 .diet-goal-chip {
   border: 1px solid rgba(15, 23, 42, 0.16);
-  border-radius: 16px;
   padding: 0.6rem 0.8rem;
   background: #ffffff;
   cursor: pointer;
@@ -730,7 +699,6 @@
 }
 
 .diet-generator__ideas span {
-  border-radius: 999px;
   background: #ffffff;
   border: 1px solid rgba(15, 23, 42, 0.12);
   padding: 0.3rem 0.75rem;
@@ -852,7 +820,6 @@ body.alimentation-page--lux .diet-shopping__input button {
 }
 
 body.alimentation-page--lux .diet-recipe-close-icon {
-  border-radius: 50%;
   box-shadow: none;
   background: rgba(15, 23, 42, 0.4);
   border: none;

@@ -26,7 +26,7 @@ const ONBOARDING_STORAGE_KEY = "planner.onboarding.answers.v1"
 
 const DEFAULT_PROFILE_PHOTO = citationImage
 const CARD_ORDER_SUFFIX = "home.card-order.v1"
-const CARD_PROGRESS_SUFFIX = "home.card-progress.v1"
+const CARD_PROGRESS_SUFFIX = "home.card-progress.v2"
 const LEGACY_CARD_USAGE_SUFFIX = "home.card-usage"
 const CARD_CLICK_THRESHOLD = 3
 const MAX_TODOS = 3
@@ -284,6 +284,18 @@ const buildOrderedCardsFromPaths = (paths: string[]) => {
 
 const toFullCardOrder = (paths: string[]) => buildOrderedCardsFromPaths(paths).map((card) => card.path)
 
+const areOrdersEqual = (left: string[], right: string[]) =>
+  left.length === right.length && left.every((path, index) => path === right[index])
+
+const areClickProgressEqual = (left: Record<string, number>, right: Record<string, number>) => {
+  const leftKeys = Object.keys(left)
+  const rightKeys = Object.keys(right)
+  if (leftKeys.length !== rightKeys.length) {
+    return false
+  }
+  return leftKeys.every((key) => right[key] === left[key])
+}
+
 async function fileToCompressedFitDataUrl(
   file: File,
   opts?: { maxSide?: number; quality?: number },
@@ -457,15 +469,13 @@ function HomePage() {
     const legacyUsage = readLegacyCardUsageFromStorage(legacyCardUsageKey)
     const legacyOrder =
       Object.keys(legacyUsage).length > 0 ? deriveOrderFromLegacyUsage(legacyUsage, preferredCardOrder) : []
-    const legacyProgress = deriveClickProgressFromLegacyUsage(legacyUsage)
     const fallbackOrder = toFullCardOrder(localOrder.length > 0 ? localOrder : legacyOrder.length > 0 ? legacyOrder : baseCardOrder)
-    const fallbackProgress = normalizeCardClickProgress(
-      Object.keys(localProgress).length > 0 ? localProgress : legacyProgress,
-    )
+    const fallbackProgress = normalizeCardClickProgress(localProgress)
 
     if (!userId) {
       setCardOrder(fallbackOrder)
       setCardClickProgress(fallbackProgress)
+      safeRemoveStorage(legacyCardUsageKey)
       setIsHomeCardsLoaded(true)
       return
     }
@@ -474,9 +484,9 @@ function HomePage() {
       userId,
       (remoteState) => {
         const nextOrder = toFullCardOrder(remoteState.order.length > 0 ? remoteState.order : fallbackOrder)
-        const nextProgress = normalizeCardClickProgress(
-          Object.keys(remoteState.clickProgress).length > 0 ? remoteState.clickProgress : fallbackProgress,
-        )
+        // Keep local click progress as source of truth to avoid stale remote counters
+        // causing a card to move on every visit.
+        const nextProgress = fallbackProgress
         setCardOrder(nextOrder)
         setCardClickProgress(nextProgress)
         setIsHomeCardsLoaded(true)
@@ -484,7 +494,9 @@ function HomePage() {
         safeWriteStorage(cardProgressKey, JSON.stringify(nextProgress))
         safeRemoveStorage(legacyCardUsageKey)
 
-        if (remoteState.order.length === 0 && Object.keys(remoteState.clickProgress).length === 0) {
+        const remoteOrder = toFullCardOrder(remoteState.order)
+        const remoteProgress = normalizeCardClickProgress(remoteState.clickProgress)
+        if (!areOrdersEqual(remoteOrder, nextOrder) || !areClickProgressEqual(remoteProgress, nextProgress)) {
           void saveHomeCardsState(userId, { order: nextOrder, clickProgress: nextProgress }).catch((error) => {
             console.error("Home cards state seed failed", error)
           })

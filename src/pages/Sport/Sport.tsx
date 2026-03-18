@@ -3,22 +3,12 @@ import { Link } from "react-router-dom"
 import PageHeading from "../../components/PageHeading"
 import { useAuth } from "../../context/AuthContext"
 import useUserSportDashboard from "../../hooks/useUserSportDashboard"
-import { createClientId } from "../../utils/clientId"
 import { getWeekKey } from "../../utils/weekKey"
 import { buildUserScopedKey, normalizeUserEmail } from "../../utils/userScopedKey"
 import heroWorkout from "../../assets/tuany-kohler-dupe.webp"
 import heroDiet from "../../assets/thayna-queiroz-dupe.webp"
 import heroGoals from "../../assets/sport-1.webp"
 import "./Sport.css"
-
-const QUICK_DEFAULTS = [
-  "+ Nouvel evenement",
-  "+ Nouvel exercice",
-  "+ Routine du jour",
-  "+ Nouvelle nourriture",
-  "+ Daily meal",
-  "+ Nouvel objectif",
-]
 
 const formatBoardDate = (isoDate: string) =>
   new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "short" }).format(new Date(isoDate))
@@ -53,11 +43,9 @@ const SPORT_BOARD_DRAFTS_STORAGE_KEY = "planner.sport.board.drafts.v1"
 const SportPage = () => {
   const { isAuthReady, userEmail, userId } = useAuth()
   const [weekKey, setWeekKey] = useState(() => getWeekKey())
-  const { board, dashboard, isLoading, error, updateBoardDay, saveQuickItems } =
-    useUserSportDashboard(weekKey)
+  const { board, dashboard, isLoading, error, updateBoardDay } = useUserSportDashboard(weekKey)
   const canEdit = Boolean(userId)
   const isSportLoading = !isAuthReady || isLoading
-  const [isEditingQuick, setIsEditingQuick] = useState(false)
   const [activityDrafts, setActivityDrafts] = useState<Record<string, string>>({})
   const [savedActivityDayId, setSavedActivityDayId] = useState<string | null>(null)
   const activityDraftsRef = useRef<Record<string, string>>({})
@@ -104,17 +92,6 @@ const SportPage = () => {
       window.removeEventListener("visibilitychange", syncOnVisibility)
     }
   }, [])
-
-  useEffect(() => {
-    if (dashboard.quickItems.some((item) => item.text.trim().length > 0)) {
-      setIsEditingQuick(true)
-    }
-  }, [dashboard.quickItems])
-
-  useEffect(() => {
-    if (canEdit) return
-    setIsEditingQuick(false)
-  }, [canEdit])
 
   useEffect(() => {
     activityDraftsRef.current = activityDrafts
@@ -194,90 +171,7 @@ const SportPage = () => {
     })
   }, [activityDrafts, board.days, canEdit])
 
-  const quickItems = dashboard.quickItems
   const weekRange = useMemo(() => computeWeekRange(board.days.map((day) => day.dateISO)), [board.days])
-
-  const persistQuickItems = async (items: typeof dashboard.quickItems) => {
-    if (!canEdit) return
-    const normalized = items
-      .map((item, index) => ({
-        id: item.id,
-        text: item.text,
-        sortOrder: item.sortOrder ?? index,
-      }))
-      .filter((item) => item.text.trim().length > 0 || isEditingQuick)
-    await saveQuickItems(normalized)
-  }
-
-  const addQuickItem = async () => {
-    if (!canEdit) return
-    const nextItems = [
-      ...quickItems,
-      {
-        id: createClientId("sport-chip"),
-        text: "",
-        sortOrder: quickItems.length,
-      },
-    ]
-    setIsEditingQuick(true)
-    await saveQuickItems(nextItems)
-  }
-
-  const updateQuickItem = async (id: string, text: string) => {
-    if (!canEdit) return
-    const nextItems = quickItems.map((item) => (item.id === id ? { ...item, text } : item))
-    await saveQuickItems(nextItems)
-  }
-
-  const removeQuickItem = async (id: string) => {
-    if (!canEdit) return
-    const nextItems = quickItems
-      .filter((item) => item.id !== id)
-      .map((item, index) => ({ ...item, sortOrder: index }))
-    if (nextItems.length === 0) {
-      setIsEditingQuick(false)
-    }
-    await saveQuickItems(nextItems)
-  }
-
-  const startEditingQuickFromLabel = async () => {
-    if (!canEdit) return
-    if (quickItems.length === 0) {
-      await addQuickItem()
-      return
-    }
-    setIsEditingQuick(true)
-  }
-
-  const finalizeQuickItems = async () => {
-    if (!canEdit) return
-    const trimmedItems = quickItems
-      .map((item, index) => ({
-        ...item,
-        text: item.text.trim(),
-        sortOrder: index,
-      }))
-      .filter((item) => item.text.length > 0)
-    setIsEditingQuick(trimmedItems.length > 0)
-    await saveQuickItems(trimmedItems)
-  }
-
-  useEffect(() => {
-    if (!isEditingQuick) return
-    const handleClickOutsideQuick = (event: MouseEvent) => {
-      const target = event.target as HTMLElement
-      if (
-        target.closest(".sport-chip__inline-editor") ||
-        target.closest(".sport-chip--add") ||
-        target.closest(".sport-chip--remove")
-      ) {
-        return
-      }
-      void finalizeQuickItems()
-    }
-    document.addEventListener("mousedown", handleClickOutsideQuick)
-    return () => document.removeEventListener("mousedown", handleClickOutsideQuick)
-  }, [dashboard.quickItems, isEditingQuick])
 
   const clearActivitySaveTimeout = (dayId: string) => {
     const timeoutId = activitySaveTimeoutsRef.current[dayId]
@@ -390,56 +284,7 @@ const SportPage = () => {
       <section className="sport-quick-panels">
         <div className="sport-quick-panel">
           <div className="sport-quick-panel__header">
-            <span className="sport-quick-panel__title">Ajouts rapides</span>
-          </div>
-          <div className="sport-quick-panel__chips">
-            {isEditingQuick && quickItems.length > 0 ? (
-              <>
-                {quickItems.map((item) => (
-                  <div key={item.id} className="sport-chip__inline-editor">
-                    <input
-                      type="text"
-                      value={item.text}
-                      onChange={(event) => void updateQuickItem(item.id, event.target.value)}
-                      placeholder="Ajoute ton idee de seance"
-                      maxLength={40}
-                      disabled={!canEdit}
-                    />
-                    <button
-                      type="button"
-                      className="sport-chip sport-chip--remove"
-                      onClick={() => void removeQuickItem(item.id)}
-                      disabled={!canEdit}
-                    >
-                      -
-                    </button>
-                  </div>
-                ))}
-                <div className="sport-chip__add-row">
-                  <button type="button" className="sport-chip sport-chip--add" onClick={() => void addQuickItem()} disabled={!canEdit}>
-                    +
-                  </button>
-                </div>
-              </>
-            ) : (
-              QUICK_DEFAULTS.map((label) => (
-                <button
-                  key={label}
-                  type="button"
-                  className="sport-chip"
-                  onClick={() => void startEditingQuickFromLabel()}
-                  disabled={!canEdit}
-                >
-                  {label}
-                </button>
-              ))
-            )}
-          </div>
-        </div>
-
-        <div className="sport-quick-panel">
-          <div className="sport-quick-panel__header">
-            <span className="sport-quick-panel__title">My Life</span>
+            <h2 className="sport-quick-panel__title">My Life</h2>
           </div>
           <div className="sport-quick-panel__cards">
             {lifeCardDefinitions.map((card) => {
@@ -490,7 +335,7 @@ const SportPage = () => {
                       void commitActivityValue(day.id, event.currentTarget.value)
                     }}
                     onKeyDown={(event) => void handleActivityKeyDown(day.id)(event)}
-                    placeholder="Ecris le sport prevu"
+                    placeholder="Ex : Legday"
                     enterKeyHint="done"
                     disabled={!canEdit}
                   />

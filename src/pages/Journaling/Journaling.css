@@ -60,7 +60,6 @@
 .journaling-section {
   background: var(--journal-panel);
   border: 1px solid var(--journal-border);
-  border-radius: 28px;
   padding: clamp(1.6rem, 3vw, 2.2rem);
   box-shadow: var(--journal-shadow-soft);
   display: flex;
@@ -144,7 +143,6 @@
   align-items: center;
   gap: 0.35rem;
   padding: 0.25rem 0.75rem;
-  border-radius: 999px;
   font-size: 0.7rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -158,15 +156,8 @@
   color: var(--color-chocolate);
 }
 
-.journaling-helper {
-  margin: 0.4rem 0 0;
-  color: var(--color-chocolate);
-  font-size: 0.9rem;
-}
-
 .journaling-checkin__date {
   padding: 0.4rem 0.9rem;
-  border-radius: 999px;
   background: rgba(194, 24, 91, 0.12);
   color: #c2185b;
   font-weight: 600;
@@ -188,7 +179,6 @@
 
 .journaling-checkin__block {
   background: var(--journal-panel-soft);
-  border-radius: 22px;
   padding: 1.1rem 1.2rem;
   border: none;
   display: flex;
@@ -226,7 +216,6 @@
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 0.6rem;
   box-shadow: none;
-  border-radius: 18px;
   padding: 0.6rem;
 }
 
@@ -248,7 +237,6 @@
 }
 
 .journaling-choice__content {
-  border-radius: 16px;
   border: none;
   background: rgba(255, 255, 255, 0.9);
   padding: 0.65rem 0.7rem;
@@ -267,13 +255,6 @@
 .journaling-choice__emoji {
   font-size: 1.4rem;
   line-height: 1;
-}
-
-.journaling-choice__dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  background: linear-gradient(120deg, var(--journal-accent), var(--journal-accent-2));
 }
 
 .journaling-choice--pill .journaling-choice__content {
@@ -299,7 +280,6 @@
 
 .journaling-input,
 .journaling-section textarea {
-  border-radius: 16px;
   border: none;
   padding: 0.8rem 1rem;
   font-size: 1rem;
@@ -318,7 +298,6 @@
 
 .journaling-question__card {
   background: linear-gradient(135deg, rgba(114, 92, 63, 0.12), rgba(227, 215, 202, 0.12));
-  border-radius: 22px;
   padding: 1.4rem 1.6rem;
   border: none;
   position: relative;
@@ -363,7 +342,6 @@
 
 .journaling-closure__block {
   background: rgba(255, 255, 255, 0.85);
-  border-radius: 20px;
   padding: 1.1rem 1.2rem;
   border: none;
   display: flex;
@@ -399,7 +377,6 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 0.8rem;
-  border-radius: 999px;
   border: 1px solid rgba(114, 92, 63, 0.35);
   background: rgba(255, 255, 255, 0.85);
   font-size: 0.85rem;
@@ -428,7 +405,6 @@
 .journaling-save__button {
   margin-left: auto;
   border: none;
-  border-radius: 999px;
   padding: 0.9rem 2.2rem;
   background: var(--color-caramel);
   color: var(--color-chocolate);
@@ -491,7 +467,6 @@
   width: 44px;
   height: 24px;
   appearance: none;
-  border-radius: 999px;
   background: rgba(31, 42, 51, 0.2);
   position: relative;
   transition: background 0.2s ease;
@@ -504,7 +479,6 @@
   left: 4px;
   width: 18px;
   height: 18px;
-  border-radius: 999px;
   background: #fff;
   transition: transform 0.2s ease;
 }
@@ -527,7 +501,6 @@
 
 .journaling-premium__card {
   background: rgba(255, 255, 255, 0.9);
-  border-radius: 20px;
   padding: 1.1rem 1.2rem;
   border: none;
   display: flex;
@@ -567,7 +540,6 @@
 .journaling-archive__toggle {
   border: none;
   background: rgba(255, 255, 255, 0.95);
-  border-radius: 999px;
   padding: 0.35rem 1.1rem;
   font-weight: 600;
   cursor: pointer;
@@ -651,7 +623,6 @@
   position: relative;
   width: min(900px, 100%);
   max-height: calc(100vh - 3rem);
-  border-radius: 30px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -696,7 +667,6 @@
 
 .journaling-modal__body {
   background: #ffffff;
-  border-radius: 28px 28px 0 0;
   margin-top: -2rem;
   padding: clamp(1.8rem, 3vw, 2.4rem);
   overflow-y: auto;
@@ -838,10 +808,6 @@ body.journaling-page--lux {
   background: #ffffff;
   color: var(--lux-ink);
   box-shadow: none;
-}
-
-.journaling-choice__dot {
-  background: var(--lux-ink);
 }
 
 .journaling-input,

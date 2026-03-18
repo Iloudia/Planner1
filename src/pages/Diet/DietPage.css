@@ -35,7 +35,6 @@
   color: #be185d;
   font-weight: 600;
   padding: 0.5rem 1.3rem;
-  border-radius: 999px;
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease;
 }
@@ -81,7 +80,6 @@
   gap: 1.2rem;
   flex-wrap: wrap;
   padding: 1rem 1.2rem;
-  border-radius: 20px;
   border: 1px solid rgba(114, 92, 63, 0.2);
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(252, 231, 243, 0.9));
   box-shadow: 0 16px 30px rgba(114, 92, 63, 0.12);
@@ -115,10 +113,13 @@
   gap: 1rem;
 }
 
+.diet-favorites-empty-message {
+  font-style: italic;
+}
+
 .diet-recipe-card {
   position: relative;
   min-height: 260px;
-  border-radius: 24px;
   overflow: hidden;
   cursor: pointer;
 }
@@ -134,6 +135,50 @@
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+.diet-recipe-card__img--butter-chicken {
+  object-position: center 78%;
+}
+
+.diet-recipe-card__img--alfredo {
+  object-position: center 78%;
+}
+
+.diet-recipe-card__img--focus-top {
+  object-position: center 35%;
+}
+
+.diet-recipe-card__img--matcha {
+  object-position: center 62%;
+}
+
+.diet-recipe-card__img--pamplemousse {
+  object-position: center 62%;
+}
+
+.diet-recipe-card__img--boisson-avoine {
+  object-position: center 47%;
+}
+
+.diet-recipe-card__img--smoothie-gain {
+  object-position: center 40%;
+}
+
+.diet-recipe-card__img--smoothie-fraise-banane {
+  object-position: center 58%;
+}
+
+.diet-recipe-card__img--cafe-latte {
+  object-position: center 45%;
+}
+
+.diet-recipe-card__img--smoothie-glow {
+  object-position: center 35%;
+}
+
+.diet-recipe-card__img--focaccia {
+  object-position: center 30%;
 }
 
 .diet-recipe-card__overlay {
@@ -173,7 +218,6 @@
 .diet-recipe-card__menu {
   width: 34px;
   height: 34px;
-  border-radius: 50%;
   background: rgba(15, 23, 42, 0.32);
   border: none;
   display: inline-flex;
@@ -193,7 +237,6 @@
   display: block;
   width: 4px;
   height: 4px;
-  border-radius: 50%;
   background: #ffffff;
 }
 
@@ -258,7 +301,6 @@
 .diet-info-pill {
   background: rgba(255, 255, 255, 0.7);
   padding: 0.2rem 0.65rem;
-  border-radius: 999px;
   font-size: 0.85rem;
   display: inline-flex;
   align-items: center;
@@ -289,7 +331,6 @@
   position: relative;
   z-index: 1;
   background: #fdf4ff;
-  border-radius: 30px;
   border: none;
   width: min(900px, calc(100% - 2rem));
   max-height: calc(100vh - 3rem);
@@ -314,7 +355,6 @@
 
 .diet-recipe-modal__content {
   background: #ffffff;
-  border-radius: 28px 28px 0 0;
   margin-top: -2rem;
   padding: clamp(1.8rem, 3vw, 2.4rem);
   position: relative;
@@ -342,7 +382,6 @@
   background: rgba(15, 23, 42, 0.4);
   width: 38px;
   height: 38px;
-  border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -419,7 +458,6 @@
 
 .diet-recipe-plan input {
   border: 1px solid #000000;
-  border-radius: 12px;
   padding: 0.6rem 0.75rem;
   font-size: 0.95rem;
   font-family: inherit;
@@ -506,7 +544,6 @@
 .diet-recipe-plan__add {
   align-self: flex-end;
   border: none;
-  border-radius: 999px;
   padding: 0.6rem 1.2rem;
   background: var(--color-caramel);
   color: var(--color-chocolate);
@@ -525,7 +562,6 @@
 
 .diet-recipe-modal__actions button {
   border: none;
-  border-radius: 14px;
   padding: 0.75rem 1.4rem;
   background: rgba(114, 92, 63, 0.16);
   color: #be185d;
@@ -612,7 +648,6 @@
 @media (max-width: 640px) {
 
   .diet-recipe-modal__panel {
-    border-radius: 22px;
     max-height: calc(100vh - 1.5rem);
     margin: 0 auto;
   }
@@ -624,7 +659,6 @@
   .diet-recipe-modal__content {
     margin-top: -1rem;
     padding: 1.2rem;
-    border-radius: 20px 20px 0 0;
   }
 
   .diet-recipe-modal__header {
@@ -684,7 +718,6 @@
 .diet-recipe-form textarea,
 .diet-recipe-form select {
   border: 1px solid rgba(148, 163, 184, 0.45);
-  border-radius: 12px;
   padding: 0.6rem 0.75rem;
   font-size: 0.95rem;
   font-family: inherit;
@@ -710,7 +743,6 @@
 .diet-recipe-form__file-button {
   align-self: flex-start;
   border: none;
-  border-radius: 999px;
   padding: 0.6rem 1.2rem;
   background: #725c3f;
   color: #ffffff;

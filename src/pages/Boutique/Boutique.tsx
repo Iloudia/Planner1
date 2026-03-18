@@ -42,6 +42,10 @@ const BoutiquePage = () => {
   }, [])
 
   useEffect(() => {
+    if (isBoutiqueLoading) {
+      return
+    }
+
     const elements = Array.from(document.querySelectorAll<HTMLElement>(".reveal"))
     if (!("IntersectionObserver" in window)) {
       elements.forEach((element) => element.classList.add("is-visible"))
@@ -71,7 +75,7 @@ const BoutiquePage = () => {
       window.clearTimeout(revealFallback)
       observer.disconnect()
     }
-  }, [])
+  }, [isBoutiqueLoading])
 
   useEffect(() => {
     const handleStorage = (event: StorageEvent) => {

@@ -55,7 +55,6 @@
 
 .calendar-mobile__week::-webkit-scrollbar-thumb {
   background: rgba(15, 23, 42, 0.2);
-  border-radius: 999px;
 }
 
 .calendar-mobile__day-card {
@@ -176,7 +175,6 @@
   grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.9fr);
   gap: 2rem;
   padding: 2.5rem;
-  border-radius: 36px;
   background: linear-gradient(125deg, rgba(255, 255, 255, 0.95) 0%, rgba(224, 231, 255, 0.95) 45%, rgba(250, 232, 255, 0.9) 100%);
   box-shadow: 0 40px 120px rgba(79, 70, 229, 0.16);
   position: relative;
@@ -220,7 +218,6 @@
 
 .calendar-hero__cta {
   border: none;
-  border-radius: 999px;
   padding: 0.85rem 1.4rem;
   font-size: 0.9rem;
   font-weight: 600;
@@ -260,7 +257,6 @@
 
 .calendar-hero__stats article {
   padding: 1rem 1.25rem;
-  border-radius: 20px;
   background: rgba(255, 255, 255, 0.92);
   box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
   display: flex;
@@ -284,7 +280,6 @@
   position: relative;
   z-index: 1;
   padding: 1.8rem;
-  border-radius: 28px;
   background: linear-gradient(150deg, rgba(152, 12, 89, 0.88) 0%, rgba(152, 12, 89, 0.88) 60%, rgba(152, 12, 89, 0.88) 100%);
   color: rgba(248, 250, 252, 0.92);
   display: flex;
@@ -295,7 +290,6 @@
 
 .calendar-next {
   background: rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
   padding: 1.3rem;
   display: flex;
   flex-direction: column;
@@ -321,7 +315,6 @@
 .calendar-next__tag {
   align-self: flex-start;
   padding: 0.25rem 0.75rem;
-  border-radius: 999px;
   font-size: 0.75rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -478,7 +471,6 @@
   grid-template-rows: auto 1fr;
   gap: 0.5rem;
   padding: 1rem;
-  border-radius: 28px;
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(15, 23, 42, 0.08);
   box-shadow: none;
@@ -548,7 +540,6 @@
 .calendar-weekly__day-column {
   grid-row: 2;
   position: relative;
-  border-radius: 18px;
   background: rgba(248, 250, 252, 0.75);
   overflow: hidden;
   border: 1px solid rgba(15, 23, 42, 0.06);
@@ -571,7 +562,6 @@
   left: 0;
   right: 0;
   border: none;
-  border-radius: 8px;
   padding: 0.35rem 0.5rem;
   display: flex;
   flex-direction: column;
@@ -614,7 +604,6 @@
 
 .calendar-weekly__create {
   border: none;
-  border-radius: 999px;
   padding: 0.5rem 1rem;
   align-self: flex-start;
   width: auto;
@@ -674,7 +663,6 @@
   padding: 0.8rem;
   min-height: 0;
   height: auto;
-  border-radius: 20px;
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(15, 23, 42, 0.08);
   box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
@@ -698,7 +686,6 @@
   flex-direction: column;
   gap: 0.5rem;
   padding: 0.7rem 0.85rem;
-  border-radius: 20px;
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(15, 23, 42, 0.08);
   box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
@@ -728,7 +715,6 @@
 .calendar-legend__swatch {
   width: 22px;
   height: 22px;
-  border-radius: 6px;
   box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.12), 0 6px 12px rgba(15, 23, 42, 0.08);
 }
 
@@ -761,7 +747,6 @@
 .calendar-day--mini {
   min-height: 22px;
   padding: 0.12rem;
-  border-radius: 8px;
   background: rgba(248, 250, 252, 0.9);
   box-shadow: none;
   border: 1px solid rgba(15, 23, 42, 0.06);
@@ -827,7 +812,6 @@
 
 .calendar-day {
   background-color: rgba(255, 255, 255, 0.92);
-  border-radius: 18px;
   padding: 0.85rem;
   min-height: 140px;
   display: flex;
@@ -882,7 +866,6 @@
   color: #4338ca;
   width: clamp(14px, 4vw, 26px);
   height: clamp(14px, 4vw, 26px);
-  border-radius: 999px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -902,7 +885,6 @@
 .calendar-day__preview {
   position: relative;
   overflow: hidden;
-  border-radius: 16px;
   padding: 0.8rem 1rem;
   display: flex;
   flex-direction: column;
@@ -963,7 +945,6 @@
 }
 
 .calendar-task {
-  border-radius: 12px;
   padding: 0.55rem 0.65rem;
   color: #0f172a;
   font-size: 0.8rem;
@@ -1005,7 +986,6 @@
 
 .calendar-task__status {
   padding: 0.15rem 0.45rem;
-  border-radius: 999px;
   font-size: 0.65rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -1017,7 +997,6 @@
   border: none;
   background: rgba(15, 23, 42, 0.08);
   color: #1d1b4b;
-  border-radius: 8px;
   padding: 0.25rem;
   display: inline-flex;
   align-items: center;
@@ -1066,18 +1045,10 @@
 
 .calendar-task__field input {
   border: 1px solid rgba(15, 23, 42, 0.12);
-  border-radius: 8px;
   padding: 0.35rem 0.45rem;
   font-size: 1rem;
   font-family: inherit;
   background-color: rgba(255, 255, 255, 0.9);
-}
-
-
-.calendar-modal__panel .calendar-task__field input,
-.calendar-modal__panel .calendar-task__field select,
-.calendar-modal__panel .calendar-select__trigger {
-  border-radius: 18px;
 }
 
 .calendar-modal__panel .calendar-task__field input[type="text"] {
@@ -1141,7 +1112,6 @@
   height: 44px;
   padding: 0;
   border: none;
-  border-radius: 50%;
   box-shadow: 0 14px 30px rgba(15, 23, 42, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.4);
   cursor: pointer;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(0, 0, 0, 0.05));
@@ -1149,12 +1119,10 @@
 
 .calendar-task__field--color input[type='color']::-webkit-color-swatch-wrapper {
   padding: 0;
-  border-radius: 50%;
 }
 
 .calendar-task__field--color input[type='color']::-webkit-color-swatch {
   border: none;
-  border-radius: 50%;
 }
 
 .calendar-select {
@@ -1164,7 +1132,6 @@
 
 .calendar-select__trigger {
   padding: 0.8rem 1rem;
-  border-radius: 14px;
   border: 1px solid rgba(15, 23, 42, 0.12);
   font-size: 1rem;
   background: rgba(248, 250, 252, 0.95);
@@ -1246,7 +1213,6 @@
 }
 
 .calendar-task__type-button {
-  border-radius: 999px;
   border: 1px solid rgba(15, 23, 42, 0.18);
   padding: 0.35rem 0.9rem;
   font-size: 0.78rem;
@@ -1270,7 +1236,6 @@
 }
 
 .calendar-task__button {
-  border-radius: 999px;
   padding: 0.35rem 0.85rem;
   font-size: 0.75rem;
   font-weight: 600;
@@ -1329,7 +1294,6 @@
   width: min(900px, 94vw);
   max-height: 94vh;
   background: #fff;
-  border-radius: 18px;
   padding: 2.4rem;
   box-shadow: 0 40px 120px rgba(15, 23, 42, 0.25);
   display: flex;
@@ -1565,7 +1529,6 @@
     align-self: flex-start;
     margin-top: 0.35rem;
     padding: 0.1rem 0.45rem;
-    border-radius: 999px;
     background: rgba(114, 92, 63, 0.12);
   }
 }
@@ -1622,7 +1585,6 @@
   .calendar-weekly__grid {
     --hour-height: 42px;
     padding: 0.75rem;
-    border-radius: 22px;
   }
 
   .calendar-weekly__day-header {
@@ -1644,7 +1606,6 @@
   .calendar-hero {
     padding: 1.6rem;
     gap: 1.4rem;
-    border-radius: 26px;
   }
 
   .calendar-hero__actions {
@@ -1664,7 +1625,6 @@
 
   .calendar-hero__panel {
     padding: 1.4rem;
-    border-radius: 22px;
   }
 
   .calendar-header {
@@ -1874,31 +1834,16 @@
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 .calendar-weekly__grid::-webkit-scrollbar {
   height: 10px;
 }
 
 .calendar-weekly__grid::-webkit-scrollbar-track {
   background: rgba(15, 23, 42, 0.08);
-  border-radius: 999px;
 }
 
 .calendar-weekly__grid::-webkit-scrollbar-thumb {
   background: rgba(114, 92, 63, 0.55);
-  border-radius: 999px;
 }
 
 .calendar-weekly__grid::-webkit-scrollbar-thumb:hover {
@@ -1920,7 +1865,6 @@
   content: '';
   width: 8px;
   height: 8px;
-  border-radius: 999px;
   background: #725c3f;
   order: 2;
 }

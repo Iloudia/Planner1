@@ -383,7 +383,7 @@ const SelfLovePage = () => {
           <form className="self-love-form-row" onSubmit={handleAddThought}>
             <textarea
               className="self-love-exercise__textarea"
-              placeholder="Ex. Je dois etre parfait(e)."
+              placeholder="Ex. Je dois etre parfaite..."
               value={thoughtDraft}
               onChange={(event) => setThoughtDraft(event.target.value)}
             />
@@ -417,8 +417,7 @@ const SelfLovePage = () => {
         <div />
         <div className="self-love-exercise__grid">
           <article className="self-love-exercise__card">
-            <div className="self-love-exercise__eyebrow">L'enfant interieur</div>
-            <h3 className="self-love-chocolate">Dialogue doux avec ton passe</h3>
+            <h2 className="self-love-chocolate">Dialogue doux avec ton passe</h2>
             <p className="self-love-chocolate">
               Offre a ton enfant interieur les mots qui avaient manque.
             </p>
@@ -429,7 +428,7 @@ const SelfLovePage = () => {
                 value={draftState.innerChildMessage}
                 onChange={(event) => setDraftState((previous) => ({ ...previous, innerChildMessage: event.target.value }))}
                 onBlur={() => void persistDraftField("innerChildMessage")}
-                placeholder="Je te dirais..."
+                placeholder="Ex : Ne sois pas si dur avec toi...."
               />
             </label>
             <label className="self-love-exercise__prompt">
@@ -439,7 +438,7 @@ const SelfLovePage = () => {
                 value={draftState.innerChildReassurance}
                 onChange={(event) => setDraftState((previous) => ({ ...previous, innerChildReassurance: event.target.value }))}
                 onBlur={() => void persistDraftField("innerChildReassurance")}
-                placeholder="Je te rassure en..."
+                placeholder="Ex : Je suis là pour toi maintenant, et je prendrai soin de toi..."
               />
             </label>
             <label className="self-love-exercise__prompt">
@@ -449,7 +448,7 @@ const SelfLovePage = () => {
                 value={draftState.innerChildNeededWords}
                 onChange={(event) => setDraftState((previous) => ({ ...previous, innerChildNeededWords: event.target.value }))}
                 onBlur={() => void persistDraftField("innerChildNeededWords")}
-                placeholder="Tu avais besoin d'entendre..."
+                placeholder="Ex : Je suis fier de toi..."
               />
             </label>
             <button type="button" className="self-love-exercise__save" onClick={() => void handleSaveInnerChildExercise()}>
@@ -458,8 +457,7 @@ const SelfLovePage = () => {
           </article>
 
           <article className="self-love-exercise__card">
-            <div className="self-love-exercise__eyebrow">Jeu de roles</div>
-            <h3 className="self-love-chocolate">Le meilleur ami comme boussole</h3>
+            <h2 className="self-love-chocolate">Le meilleur ami comme boussole</h2>
             <p className="self-love-chocolate">
               Imagine qu'un ami vive exactement la meme situation que toi.
             </p>
@@ -470,7 +468,7 @@ const SelfLovePage = () => {
                 value={draftState.bestFriendAdvice}
                 onChange={(event) => setDraftState((previous) => ({ ...previous, bestFriendAdvice: event.target.value }))}
                 onBlur={() => void persistDraftField("bestFriendAdvice")}
-                placeholder="Je lui dirais..."
+                placeholder="Ex : Ne sois pas si dur avec toi."
               />
             </label>
             <label className="self-love-exercise__prompt">
@@ -480,7 +478,7 @@ const SelfLovePage = () => {
                 value={draftState.bestFriendSelfTalk}
                 onChange={(event) => setDraftState((previous) => ({ ...previous, bestFriendSelfTalk: event.target.value }))}
                 onBlur={() => void persistDraftField("bestFriendSelfTalk")}
-                placeholder="Je remarque que..."
+                placeholder="Ex : Je suis bien plus dur avec moi-même qu’avec un ami."
               />
             </label>
             <p className="self-love-exercise__hint">
@@ -550,7 +548,7 @@ const SelfLovePage = () => {
                 value={draftState.futureLetterBody}
                 onChange={(event) => setDraftState((previous) => ({ ...previous, futureLetterBody: event.target.value }))}
                 onBlur={() => void persistDraftField("futureLetterBody")}
-                placeholder="Parle-lui de tes reves, de tes peurs, de ce que tu esperes garder vivant."
+                placeholder="Ex : Parle-lui de tes reves, de tes peurs..."
               />
             </div>
             <div className="self-love-future-letter__footer">

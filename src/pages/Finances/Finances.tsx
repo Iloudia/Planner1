@@ -727,7 +727,7 @@ const FinancePage = () => {
         <div className="finance-dashboard__main">
           <section className="finance-summary-categories dashboard-panel">
             <div className="finance-section-chip">
-              <span className="finance-section-chip__title">Répartition par catégorie</span>
+              <h2 className="finance-section-chip__title">Répartition par catégorie</h2>
               <div className="finance-section-chip__divider" aria-hidden="true" />
             </div>
             <header className="finance-section-header">
@@ -752,11 +752,11 @@ const FinancePage = () => {
 
           <section className="finance-form dashboard-panel">
             <div className="finance-section-chip">
-              <span className="finance-section-chip__title">Ajouter une dépense</span>
+              <h2 className="finance-section-chip__title">Ajouter une dépense</h2>
               <div className="finance-section-chip__divider" aria-hidden="true" />
             </div>
             <header className="finance-section-header">
-              <p>Enregistre en un instant les dépenses et les revenus du mois.</p>
+              <p>Enregistre les dépenses et les revenus du mois.</p>
             </header>
             <form onSubmit={handleSubmit} className="finance-form__grid">
               <label className="finance-form__field">
@@ -914,14 +914,14 @@ const FinancePage = () => {
                         return (
                           <li key={entry.id} className="finance-history__item">
                             <div className="finance-history__indicator" style={{ backgroundColor: amountColor }}>
-                              <span aria-hidden="true">{entry.direction === 'in' ? '+' : '-'}</span>
+                              {entry.direction === 'in' ? <span aria-hidden="true">+</span> : null}
                             </div>
                             <div className="finance-history__details">
                               <div className="finance-history__row">
                                 <div className="finance-history__headline">
                                   <span className="finance-history__label">{entry.label}</span>
                                 </div>
-                                <span className="finance-history__amount" style={{ color: amountColor }}>
+                                <span className="finance-history__amount">
                                   {formatSignedCurrency(amountValue)}
                                 </span>
                                 <button
@@ -955,7 +955,7 @@ const FinancePage = () => {
         <aside className="finance-dashboard__aside">
           <section className="finance-balance dashboard-panel">
             <div className="finance-section-chip">
-              <span className="finance-section-chip__title">Balance du mois</span>
+              <h2 className="finance-section-chip__title">Balance du mois</h2>
               <div className="finance-section-chip__divider" aria-hidden="true" />
             </div>
             <header className="finance-section-header finance-section-header--vertical">
@@ -996,7 +996,7 @@ const FinancePage = () => {
           </section>
 
           <div className="finance-balance__chart-card">
-            <h3>Diagramme en camembert</h3>
+            <h2>Diagramme en camembert</h2>
             {hasPieData ? (
               <div className="finance-pie">
                 <div className="finance-pie__figure" style={{ backgroundImage: pieBackground }} />
@@ -1063,14 +1063,14 @@ const FinancePage = () => {
                         return (
                           <li key={entry.id} className="finance-history__item">
                             <div className="finance-history__indicator" style={{ backgroundColor: amountColor }}>
-                              <span aria-hidden="true">{entry.direction === 'in' ? '+' : '-'}</span>
+                              {entry.direction === 'in' ? <span aria-hidden="true">+</span> : null}
                             </div>
                             <div className="finance-history__details">
                               <div className="finance-history__row">
                                 <div className="finance-history__headline">
                                   <span className="finance-history__label">{entry.label}</span>
                                 </div>
-                                <span className="finance-history__amount" style={{ color: amountColor }}>
+                                <span className="finance-history__amount">
                                   {formatSignedCurrency(amountValue)}
                                 </span>
                                 <button

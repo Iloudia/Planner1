@@ -1,4 +1,4 @@
-@import url("../Boutique/Boutique.css");
+﻿@import url("../Boutique/Boutique.css");
 @import url("../SelfLove/SelfLove.css");
 
 .archives-page {
@@ -59,7 +59,6 @@
 
 .archives-control input,
 .archives-control select {
-  border-radius: 999px;
   border: 1px solid rgba(114, 92, 63, 0.22);
   padding: 0.45rem 0.9rem;
   background: rgba(255, 255, 255, 0.95);
@@ -160,7 +159,6 @@
 }
 
 .archives-year-card {
-  border-radius: 20px;
   border: 1px dashed rgba(114, 92, 63, 0.35);
   padding: 0.75rem 0.9rem;
   background: rgba(255, 255, 255, 0.95);
@@ -210,7 +208,6 @@
 }
 
 .archives-month-card {
-  border-radius: 18px;
   border: 1px solid rgba(114, 92, 63, 0.25);
   padding: 0.7rem 0.9rem;
   background: rgba(255, 255, 255, 0.95);
@@ -244,7 +241,6 @@
 
 .archives-calendar {
   background: #ffffff;
-  border-radius: 24px;
   padding: 1.2rem;
   border: 1px solid rgba(114, 92, 63, 0.16);
   box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
@@ -283,7 +279,6 @@
 }
 
 .archives-day {
-  border-radius: 12px;
   min-height: 46px;
   padding: 0.3rem;
   display: flex;
@@ -348,7 +343,6 @@
 }
 
 .archives-day-list-item {
-  border-radius: 16px;
   border: 1px solid rgba(114, 92, 63, 0.2);
   padding: 0.65rem 0.9rem;
   display: flex;
@@ -367,7 +361,6 @@
 
 .archives-detail {
   background: #fff;
-  border-radius: 24px;
   padding: 1.2rem;
   border: 1px solid rgba(114, 92, 63, 0.16);
   box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
@@ -424,7 +417,6 @@
 .archives-entry-button {
   width: 100%;
   text-align: left;
-  border-radius: 18px;
   border: 1px solid rgba(114, 92, 63, 0.18);
   padding: 0.9rem 1rem;
   display: flex;
@@ -472,7 +464,6 @@
 }
 
 .archives-tag {
-  border-radius: 999px;
   padding: 0.2rem 0.6rem;
   background: rgba(114, 92, 63, 0.12);
   color: #9d1d46;
@@ -516,7 +507,6 @@
   position: relative;
   width: min(900px, 100%);
   max-height: calc(100vh - 3rem);
-  border-radius: 28px;
   background: #fff;
   box-shadow: 0 40px 120px rgba(15, 23, 42, 0.3);
   display: flex;
@@ -725,7 +715,6 @@
 
 .archives-modal__delete {
   border: 1px solid rgba(31, 27, 43, 0.7);
-  border-radius: 999px;
   background: transparent;
   color: rgba(31, 27, 43, 0.8);
   font-weight: 700;

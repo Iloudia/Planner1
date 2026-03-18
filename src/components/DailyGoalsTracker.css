@@ -77,9 +77,9 @@
 
 .sport-habits__week {
   margin: 0;
-  color: #1f1b16;
+  color: #000000;
   font-weight: 600;
-  background: rgba(31, 27, 22, 0.08);
+  background: var(--color-caramel);
   padding: 0.4rem 0.85rem;
   border-radius: 0;
   margin-bottom: 1rem;
@@ -308,7 +308,6 @@
   flex: 1;
   min-width: 220px;
   border: 1px solid rgba(31, 27, 22, 0.35);
-  border-radius: 10px;
   padding: 0.5rem 0.8rem;
 }
 
@@ -320,7 +319,6 @@
 
 .sport-habits__add-button {
   border: 1px solid rgba(31, 27, 22, 0.6);
-  border-radius: 999px;
   background: #1f1b16;
   color: #fff;
   padding: 0.5rem 1.2rem;

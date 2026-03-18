@@ -4,6 +4,7 @@
   --color-caramel: #e3d7ca;
   --color-contrast: #1e1b4b;
   --color-muted: #6b7280;
+  --lux-ink-soft: #5b5249;
   --color-border-strong: rgba(15, 23, 42, 0.12);
 
   --bg: #f8f0e6;
@@ -23,6 +24,8 @@
   --font-size-display: 2.5rem;
   --font-size-h1: 2rem;
   --font-size-h2: 1.5rem;
+  --font-weight-h2: 600;
+  --color-h2: #1e1b4b;
   --font-size-h3: 1.25rem;
   --font-size-h4: 1.125rem;
   --font-size-body: 1rem;
@@ -121,8 +124,9 @@ h2,
   font-size: var(--font-size-h2);
   line-height: var(--leading-heading);
   margin: 0 0 var(--space-xs);
-  font-weight: 600;
-  color: var(--color-contrast);
+  font-weight: var(--font-weight-h2);
+  color: var(--color-h2);
+  letter-spacing: normal;
 }
 
 h3,
@@ -144,9 +148,10 @@ h4,
 }
 
 p {
-  font-size: var(--font-size-body);
+  font-family: var(--font-body) !important;
+  font-size: var(--font-size-body) !important;
   line-height: var(--leading-body);
-  color: var(--color-muted);
+  color: var(--lux-ink-soft) !important;
 }
 .planner-page--white {
   background: #ffffff;
@@ -305,7 +310,6 @@ p {
   border: none;
   background: rgba(114, 92, 63, 0.12);
   color: #9d174d;
-  border-radius: 999px;
   padding: 0.5rem 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -361,7 +365,6 @@ p {
 
 .site-nav__link {
   padding: 0.6rem 1.1rem;
-  border-radius: 999px;
   font-size: 0.95rem;
   font-weight: 600;
   color: rgba(15, 23, 42, 0.7);
@@ -407,7 +410,6 @@ p {
   justify-content: center;
   width: 42px;
   height: 42px;
-  border-radius: 50%;
   background: linear-gradient(135deg, #725c3f, #6366f1);
   color: #fff;
   font-weight: 700;
@@ -435,7 +437,6 @@ p {
 .brand-dot {
   width: 12px;
   height: 12px;
-  border-radius: 12px;
   background: #e3d7ca;
   box-shadow: 0 0 0 6px rgba(88, 208, 195, 0.12);
 }
@@ -452,7 +453,6 @@ p {
   align-items: center;
   gap: 8px;
   padding: 0.25rem 0.4rem;
-  border-radius: 9px;
   border: none;
   background: transparent;
   position: relative;
@@ -462,7 +462,6 @@ p {
   padding: 0.35rem 0.5rem 0.25rem;
   background: transparent;
   border: none;
-  border-radius: 999px;
   box-shadow: none;
 }
 
@@ -581,7 +580,6 @@ p {
 
 .admin-button {
   border: none;
-  border-radius: 12px;
   padding: 0.5rem 1rem;
   font-weight: 800;
   background: #000000;
@@ -598,7 +596,6 @@ p {
 .profile-circle {
   width: 44px;
   height: 44px;
-  border-radius: 50%;
   border: 1px solid var(--border);
   background: linear-gradient(140deg, rgba(255, 255, 255, 0.9), rgba(216, 215, 178, 0.25));
   display: inline-flex;
@@ -688,7 +685,6 @@ p {
 
 .site-footer__social-link {
   padding: 0.4rem 0.9rem;
-  border-radius: 999px;
   background: var(--color-caramel);
 }
 
@@ -762,7 +758,6 @@ p {
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: 40px;
   pointer-events: none;
 }
 
@@ -782,7 +777,6 @@ p {
 .board {
   background: linear-gradient(145deg, var(--panel), var(--panel-alt));
   border: 1px solid var(--border);
-  border-radius: 28px;
   padding: 22px 32px;
   box-shadow: none;
 }
@@ -822,7 +816,6 @@ p {
 
 .today {
   padding: 12px 16px;
-  border-radius: 14px;
   background: rgba(114, 92, 63, 0.06);
   border: 1px solid var(--border);
   font-weight: 600;
@@ -857,7 +850,6 @@ p {
 .dot {
   width: 10px;
   height: 10px;
-  border-radius: 10px;
   background: #e3d7ca;
   box-shadow: 0 0 0 6px rgba(114, 92, 63, 0.12);
 }
@@ -889,7 +881,6 @@ p {
   inset: -10% auto auto -16%;
   width: 120px;
   height: 120px;
-  border-radius: 50%;
   background: radial-gradient(circle, rgba(114, 92, 63, 0.14), transparent 60%);
   filter: blur(6px);
   pointer-events: none;
@@ -927,7 +918,6 @@ p {
   align-items: center;
   gap: 6px;
   padding: 12px 16px;
-  border-radius: 999px;
   background: rgba(114, 92, 63, 0.08);
   color: #9d174d;
   font-weight: 700;
@@ -948,7 +938,6 @@ p {
   align-items: center;
   gap: 6px;
   padding: 14px 18px;
-  border-radius: 18px;
   background: var(--color-caramel);
   color: var(--color-chocolate);
   font-weight: 700;
@@ -960,7 +949,6 @@ p {
 .task-meta-dot {
   width: 8px;
   height: 8px;
-  border-radius: 50%;
   background: linear-gradient(120deg, #725c3f, #d8d7b2);
   box-shadow: 0 0 0 6px rgba(114, 92, 63, 0.1);
 }
@@ -976,7 +964,6 @@ p {
   background: rgba(114, 92, 63, 0.12);
   color: var(--text);
   border: 1px solid var(--border);
-  border-radius: 12px;
   padding: 10px 14px;
   cursor: pointer;
   transition: background 150ms ease, border-color 150ms ease;
@@ -1008,7 +995,6 @@ p {
   position: relative;
   width: 64px;
   height: 64px;
-  border-radius: 18px;
   overflow: hidden;
   border: 1px solid var(--border);
 }
@@ -1023,7 +1009,6 @@ p {
 .status-dot {
   width: 12px;
   height: 12px;
-  border-radius: 12px;
   background: #e3d7ca;
   position: absolute;
   bottom: 6px;
@@ -1036,7 +1021,6 @@ p {
   background: var(--color-caramel);
   color: #ffffff;
   padding: 10px 14px;
-  border-radius: 999px;
   font-weight: 700;
   cursor: pointer;
   text-decoration: none;
@@ -1065,7 +1049,6 @@ p {
 
 .page-hero-banner {
   width: 100%;
-  border-radius: 34px;
   overflow: hidden;
   box-shadow: 0 30px 70px rgba(15, 23, 42, 0.18);
   background: radial-gradient(circle at 20% 20%, rgba(114, 92, 63, 0.12), transparent 50%),
@@ -1082,7 +1065,6 @@ p {
 
 .progress-panel {
   border: 1px solid rgba(114, 92, 63, 0.25);
-  border-radius: 16px;
   padding: 14px;
   background: rgba(255, 255, 255, 0.9);
   display: flex;
@@ -1110,7 +1092,6 @@ p {
 .progress-bar {
   width: 100%;
   height: 10px;
-  border-radius: 999px;
   background: rgba(114, 92, 63, 0.12);
   overflow: hidden;
   border: 1px solid var(--border);
@@ -1120,13 +1101,11 @@ p {
   height: 100%;
   width: 0%;
   background: var(--color-caramel);
-  border-radius: 999px;
   transition: width 260ms ease;
 }
 
 .notes {
   border: 1px solid rgba(114, 92, 63, 0.25);
-  border-radius: 16px;
   padding: 14px;
   background: linear-gradient(160deg, rgba(255, 255, 255, 0.95), rgba(255, 233, 244, 0.9));
   display: flex;
@@ -1157,7 +1136,6 @@ p {
     rgba(255, 255, 255, 0.8);
   border: 1px solid var(--border);
   color: var(--text);
-  border-radius: 12px;
   padding: 12px;
   font-size: 15px;
   resize: vertical;
@@ -1174,7 +1152,6 @@ p {
   --page-accent: var(--accent);
   --page-glow: rgba(114, 92, 63, 0.12);
   border: 1px solid var(--border);
-  border-radius: 22px;
   padding: 20px;
   box-shadow: var(--shadow);
 }
@@ -1190,7 +1167,6 @@ p {
 .hero-chip {
   align-self: flex-start;
   padding: 8px 12px;
-  border-radius: 12px;
   background: linear-gradient(120deg, var(--page-accent), var(--accent-2));
   color: #0c1017;
   font-weight: 700;
@@ -1211,7 +1187,6 @@ p {
 
 .section-card {
   padding: 14px;
-  border-radius: 16px;
   border: 1px solid var(--border);
   background: linear-gradient(170deg, rgba(255, 255, 255, 0.03), var(--page-glow));
   display: flex;
@@ -1328,7 +1303,6 @@ p {
 
   .nav-search {
     padding: 0.35rem 0.6rem;
-    border-radius: 10px;
     gap: 6px;
   }
 
@@ -1614,7 +1588,6 @@ p {
   width: 42px;
   height: 22px;
   appearance: none;
-  border-radius: 999px;
   background: #e6dfd6;
   border: 1px solid var(--cookie-line);
   position: relative;
@@ -1632,7 +1605,6 @@ p {
   left: 4px;
   width: 16px;
   height: 16px;
-  border-radius: 999px;
   background: #fff;
   transition: transform 0.2s ease;
 }
@@ -1739,7 +1711,6 @@ p {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 999px;
   border: 1px solid rgba(15, 23, 42, 0.14);
   background: #ffffff;
   padding: 0;
@@ -1758,7 +1729,6 @@ p {
 .header-menu__avatar {
   width: 64px;
   height: 64px;
-  border-radius: 999px;
   overflow: hidden;
   display: inline-flex;
   flex-shrink: 0;
@@ -1790,7 +1760,6 @@ p {
 .header-menu__toggle span {
   width: 100%;
   height: 2px;
-  border-radius: 2px;
   background: #0f172a;
   display: block;
 }
@@ -2009,6 +1978,9 @@ h1 {
   font-family: var(--font-heading) !important;
   font-size: calc(var(--font-size-h2) * var(--user-font-scale)) !important;
   line-height: var(--leading-heading) !important;
+  font-weight: var(--font-weight-h2) !important;
+  color: var(--color-h2) !important;
+  letter-spacing: normal !important;
 }
 
 :where(h3, .h3) {

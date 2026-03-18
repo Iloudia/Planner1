@@ -19,7 +19,6 @@
 .settings-page {
   background: linear-gradient(135deg, rgba(255, 241, 245, 0.9), rgba(255, 255, 255, 0.9));
   border: 1px solid rgba(114, 92, 63, 0.12);
-  border-radius: 28px;
   box-shadow: 0 28px 60px rgba(114, 92, 63, 0.12);
   padding: clamp(1.8rem, 3.5vw, 2.6rem);
 }
@@ -33,7 +32,6 @@
 
 .settings-nav {
   background: rgba(255, 255, 255, 0.8);
-  border-radius: 20px;
   padding: 1.1rem;
   box-shadow: inset 0 0 0 1px rgba(114, 92, 63, 0.08), 0 16px 40px rgba(114, 92, 63, 0.08);
 }
@@ -53,7 +51,6 @@
   border: none;
   background: transparent;
   padding: 0.65rem 0.9rem;
-  border-radius: 12px;
   font-weight: 600;
   color: rgba(15, 23, 42, 0.7);
   cursor: pointer;
@@ -73,7 +70,6 @@
 
 .settings-panel {
   background: rgba(255, 255, 255, 0.95);
-  border-radius: 24px;
   border: 1px solid rgba(114, 92, 63, 0.12);
   box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
   padding: clamp(1.4rem, 3vw, 2rem);
@@ -97,7 +93,6 @@
 }
 
 .settings-option {
-  border-radius: 16px;
   padding: 0.85rem 1rem;
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(15, 23, 42, 0.08);
@@ -139,7 +134,6 @@
 .account-avatar {
   width: 64px;
   height: 64px;
-  border-radius: 50%;
   background: linear-gradient(135deg, rgba(114, 92, 63, 0.18), rgba(227, 215, 202, 0.35));
   border: 2px solid rgba(114, 92, 63, 0.2);
   display: inline-flex;
@@ -182,7 +176,6 @@
 }
 
 .account-info-list {
-  border-radius: 16px;
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(15, 23, 42, 0.08);
   overflow: hidden;
@@ -236,7 +229,6 @@
 
 .account-info-edit input {
   border: 1px solid rgba(15, 23, 42, 0.15);
-  border-radius: 12px;
   padding: 0.6rem 0.8rem;
 }
 
@@ -247,7 +239,6 @@
 
 .account-info-actions button {
   border: none;
-  border-radius: 10px;
   padding: 0.5rem 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -289,7 +280,6 @@
 
 .account-select__trigger {
   border: 1px solid rgba(114, 92, 63, 0.25);
-  border-radius: 12px;
   background: #fff;
   padding: 0.8rem 1rem;
   font-size: 1rem;
@@ -327,7 +317,6 @@
   left: 0;
   right: 0;
   background: #ffffff;
-  border-radius: 16px;
   border: 1px solid rgba(114, 92, 63, 0.2);
   box-shadow: 0 18px 36px rgba(114, 92, 63, 0.12);
   padding: 0.4rem;
@@ -342,7 +331,6 @@
   background: transparent;
   text-align: left;
   padding: 0.6rem 0.75rem;
-  border-radius: 12px;
   cursor: pointer;
   font-weight: 600;
   color: #0f172a;
@@ -354,7 +342,6 @@
 }
 
 .account-danger {
-  border-radius: 14px;
   background: rgba(255, 242, 244, 0.85);
   border: 1px solid rgba(114, 92, 63, 0.18);
   padding: 0.8rem 0.9rem;
@@ -391,7 +378,6 @@
 .account-danger__choices button {
   border: 1px solid rgba(114, 92, 63, 0.2);
   background: #fff;
-  border-radius: 999px;
   padding: 0.4rem 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -412,7 +398,6 @@
 
 .account-danger__label textarea {
   border: 1px solid rgba(15, 23, 42, 0.15);
-  border-radius: 12px;
   padding: 0.6rem 0.8rem;
   resize: none;
 }
@@ -426,14 +411,12 @@
 
 .account-danger__confirm input {
   border: 1px solid rgba(15, 23, 42, 0.15);
-  border-radius: 12px;
   padding: 0.6rem 0.8rem;
   font-family: inherit;
 }
 
 .account-danger__submit {
   border: none;
-  border-radius: 12px;
   padding: 0.6rem 1.1rem;
   font-weight: 700;
   background: linear-gradient(135deg, #e3d7ca, #725c3f);
@@ -460,7 +443,6 @@
 
 .settings-display-group {
   border: 1px solid var(--border);
-  border-radius: 20px;
   padding: 1.1rem 1.2rem;
   background: var(--panel);
   display: flex;
@@ -498,7 +480,6 @@
 .font-scale-option {
   flex: 1;
   min-width: 90px;
-  border-radius: 16px;
   border: 1px solid rgba(15, 23, 42, 0.1);
   background: var(--panel);
   padding: 0.6rem 0.4rem;
@@ -533,7 +514,6 @@
 }
 
 .tone-option {
-  border-radius: 16px;
   border: 1px solid rgba(15, 23, 42, 0.1);
   padding: 0.9rem 1rem;
   background: var(--panel);

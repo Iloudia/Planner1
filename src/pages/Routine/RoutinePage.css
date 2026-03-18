@@ -26,7 +26,6 @@
   position: relative;
   overflow: hidden;
   padding: 2.6rem clamp(1.5rem, 3vw, 3.1rem);
-  border-radius: 28px;
   background: linear-gradient(135deg, rgba(255, 247, 252, 0.94) 0%, rgba(241, 246, 255, 0.95) 100%);
 }
 
@@ -78,7 +77,6 @@
   --note-ink: #9d174d;
   position: relative;
   padding: 2.4rem 2.3rem 2.8rem;
-  border-radius: 32px;
   background: linear-gradient(180deg, rgba(255, 245, 250, 0.96) 0%, rgba(253, 242, 248, 0.96) 100%);
   border: none;
   overflow: hidden;
@@ -111,7 +109,6 @@
   display: inline-flex;
   align-items: center;
   padding: 0.75rem 1.5rem;
-  border-radius: 20px;
   background: var(--color-caramel);
 
 }
@@ -134,7 +131,6 @@
   margin-top: 2rem;
   padding: 1.7rem 1.5rem 2rem;
   border: 1px solid var(--lux-line);
-  border-radius: 24px;
   background: rgba(255, 255, 255, 0.72);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35), 0 18px 46px rgba(15, 23, 42, 0.08);
   overflow: hidden;
@@ -157,7 +153,6 @@
 .routine-note__pin {
   width: 16px;
   height: 16px;
-  border-radius: 50%;
   background: var(--note-accent);
   box-shadow: 0 8px 18px rgba(15, 23, 42, 0.22);
   opacity: 0.45;
@@ -178,7 +173,6 @@
 .routine-note__item {
   margin: 0;
   padding: 0.9rem 1rem;
-  border-radius: 16px;
   background: rgba(255, 255, 255, 0.6);
   box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
 }
@@ -202,7 +196,6 @@
   justify-content: center;
   min-width: 36px;
   height: 36px;
-  border-radius: 12px;
   font-weight: 600;
   font-size: 0.9rem;
   color: var(--note-ink);
@@ -215,7 +208,6 @@
   width: 22px;
   height: 22px;
   margin-top: 0.25rem;
-  border-radius: 8px;
   border: 2px solid var(--note-accent-soft);
   background: rgba(255, 255, 255, 0.85);
   box-shadow: 0 10px 20px rgba(99, 102, 241, 0.12);
@@ -274,7 +266,6 @@
 .routine-note__remove {
   width: 30px;
   height: 30px;
-  border-radius: 50%;
   border: 1px solid rgba(79, 70, 229, 0.22);
   background: rgba(255, 255, 255, 0.92);
   color: var(--note-ink);
@@ -304,7 +295,6 @@
 .routine-note__composer {
   margin-top: 1.2rem;
   padding: 1.2rem 1.35rem;
-  border-radius: 18px;
   background: rgba(255, 255, 255, 0.9);
   box-shadow: 0 18px 36px rgba(15, 23, 42, 0.08);
   display: flex;
@@ -322,7 +312,6 @@
 
 .routine-note__composer input,
 .routine-note__composer textarea {
-  border-radius: 14px;
   border: 1px solid rgba(15, 23, 42, 0.12);
   padding: 0.75rem 1rem;
   background: rgba(248, 250, 252, 0.92);
@@ -373,7 +362,6 @@
   align-self: flex-start;
   margin-right: auto;
   border: none;
-  border-radius: 999px;
   padding: 0.6rem 1.2rem;
   min-height: 46px;
   background-color: var(--color-caramel);
@@ -394,7 +382,6 @@
 
 .routine-hero-image {
   width: 100%;
-  border-radius: 32px;
   overflow: hidden;
   height: var(--hero-visual-height);
 }
@@ -408,7 +395,6 @@
 
 .routine-group {
   background: linear-gradient(135deg, #eff6ff 0%, #e0f2fe 100%);
-  border-radius: 20px;
   padding: 1.75rem;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
   display: flex;
@@ -430,7 +416,6 @@
 
 .routine-item {
   background-color: rgba(255, 255, 255, 0.78);
-  border-radius: 14px;
   padding: 0.9rem 1rem;
   font-weight: 500;
   color: rgba(15, 23, 42, 0.85);
