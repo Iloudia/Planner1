@@ -770,10 +770,18 @@
   background: #f7eee5;
   border: 1px solid #d4bda5;
   border-top: none;
+  border-radius: 0;
+}
+
+.diet-step-item--tipbox-item-last {
   border-radius: 0 0 10px 10px;
 }
 
 .diet-steps-list .diet-step-item--tipbox-title + .diet-step-item--tipbox-item {
+  margin-top: 0;
+}
+
+.diet-steps-list .diet-step-item--tipbox-item + .diet-step-item--tipbox-item {
   margin-top: 0;
 }
 
