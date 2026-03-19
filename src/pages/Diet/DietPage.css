@@ -694,11 +694,27 @@
 .diet-step-item--title {
   list-style: none;
   margin-left: -1.2rem;
-  margin-top: 0.7rem;
+  margin-top: 1.2rem;
+  margin-bottom: 0.35rem;
   font-family: "Playfair Display", serif;
   font-weight: 700;
   font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   color: #000000;
+}
+
+.diet-step-item--subtitle {
+  list-style: none;
+  margin-left: -0.8rem;
+  margin-top: 0.7rem;
+  margin-bottom: 0.3rem;
+  padding-left: 0.55rem;
+  border-left: 2px solid #b79b7b;
+  font-family: "Montserrat", "Segoe UI", sans-serif;
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: #7a6247;
 }
 
 .diet-step-item--sub {
@@ -710,9 +726,55 @@
   content: "\2022 ";
 }
 
+.diet-step-item--subplain {
+  list-style: none;
+  margin-left: 0.4rem;
+}
+
+.diet-step-item--note {
+  list-style: none;
+  margin-left: 0.4rem;
+  font-style: italic;
+  color: #5f4f3f;
+}
+
 .diet-step-item--plain {
   list-style: none;
   margin-left: -1.2rem;
+}
+
+.diet-step-item--tipbox-title {
+  list-style: none;
+  margin-left: -1.2rem;
+  margin-top: 1.2rem;
+  margin-bottom: 0;
+  padding: 0.42rem 0.65rem 0.32rem;
+  font-family: "Playfair Display", serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #2d241b;
+  background: #f7eee5;
+  border: 1px solid #d4bda5;
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+}
+
+.diet-step-item--tipbox-item {
+  list-style: none;
+  margin-left: -1.2rem;
+  margin-top: 0;
+  margin-bottom: 0.35rem;
+  padding: 0.32rem 0.65rem 0.45rem;
+  font-size: 0.95rem;
+  color: #3a3128;
+  background: #f7eee5;
+  border: 1px solid #d4bda5;
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+}
+
+.diet-steps-list .diet-step-item--tipbox-title + .diet-step-item--tipbox-item {
+  margin-top: 0;
 }
 
 .diet-steps-list li + li {

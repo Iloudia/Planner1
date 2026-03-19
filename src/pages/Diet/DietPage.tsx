@@ -104,7 +104,9 @@ import burrataIngredientImg from "../../assets/Aliments/Burrata.png"
 import fetaIngredientImg from "../../assets/Aliments/Feta.png"
 import basilicIngredientImg from "../../assets/Aliments/Basilic.png"
 import origanIngredientImg from "../../assets/Aliments/Origan.png"
+import painIngredientImg from "../../assets/Aliments/Pain.png"
 import oignonRougeIngredientImg from "../../assets/Aliments/Oignon rouge.png"
+import oignonJauneIngredientImg from "../../assets/Aliments/Oignon jaune.png"
 import jambonSecIngredientImg from "../../assets/Aliments/Jambon sec.png"
 import saumonFumeIngredientImg from "../../assets/Aliments/Saumon fume.png"
 import anethIngredientImg from "../../assets/Aliments/Aneth.png"
@@ -116,6 +118,8 @@ import ailIngredientImg from "../../assets/Aliments/Ail.png"
 import epinardIngredientImg from "../../assets/Aliments/Epinard.png"
 import saumonIngredientImg from "../../assets/Aliments/Saumon.png"
 import citronIngredientImg from "../../assets/Aliments/Citron.png"
+import citronVertIngredientImg from "../../assets/Aliments/Citron vert.png"
+import beurreIngredientImg from "../../assets/Aliments/Beurre.png"
 import aspergesIngredientImg from "../../assets/Aliments/Asperges.png"
 import eauIngredientImg from "../../assets/Aliments/Eau.png"
 import laitueIngredientImg from "../../assets/Aliments/Laitue.png"
@@ -127,28 +131,44 @@ import croutonsIngredientImg from "../../assets/Aliments/Croutons.png"
 import cubeBouillonIngredientImg from "../../assets/Aliments/Cube bouillon de legume.png"
 import brocolisIngredientImg from "../../assets/Aliments/Brocolis.png"
 import paprikaIngredientImg from "../../assets/Aliments/Paprika.png"
+import cuminIngredientImg from "../../assets/Aliments/Cumin.png"
+import coriandreIngredientImg from "../../assets/Aliments/Coriandre.png"
 import boulgourIngredientImg from "../../assets/Aliments/Boulgour.png"
 import concentreTomateIngredientImg from "../../assets/Aliments/Concentre de tomate.png"
 import edamameIngredientImg from "../../assets/Aliments/Edamame.png"
+import haricotsRougesIngredientImg from "../../assets/Aliments/Haricots rouges.png"
 import floconsPimentIngredientImg from "../../assets/Aliments/Flocons de piment.png"
 import persilIngredientImg from "../../assets/Aliments/Persil.png"
+import pestoIngredientImg from "../../assets/Aliments/Pesto.png"
 import poudreOignonIngredientImg from "../../assets/Aliments/Poudre d'oignon.png"
 import tagliatellesIngredientImg from "../../assets/Aliments/Tagliatelles.png"
 import wrapIngredientImg from "../../assets/Aliments/Wrap.png"
+import foccaciaIngredientImg from "../../assets/Aliments/Foccacia.png"
 import farineIngredientImg from "../../assets/Aliments/Farine.png"
 import laitIngredientImg from "../../assets/Aliments/Lait.png"
 import lardonsIngredientImg from "../../assets/Aliments/Lardons.png"
+import mortadelleIngredientImg from "../../assets/Aliments/Mortadelle.png"
+import roquetteIngredientImg from "../../assets/Aliments/Roquette.png"
+import pistachesIngredientImg from "../../assets/Aliments/Pistaches.png"
 import ailPoudreIngredientImg from "../../assets/Aliments/Ail en poudre.png"
 import comteRapeIngredientImg from "../../assets/Aliments/Comté râpé.png"
 import haricotsVertsIngredientImg from "../../assets/Aliments/Haricots verts.png"
 import herbesProvenceIngredientImg from "../../assets/Aliments/Herbes de provence.png"
 import steakIngredientImg from "../../assets/Aliments/Steak.png"
+import quinoaIngredientImg from "../../assets/Aliments/Quinoa.png"
+import poisChicheIngredientImg from "../../assets/Aliments/pois chiche.png"
 import mayonnaiseIngredientImg from "../../assets/Aliments/Mayonnaise.png"
 import srirachaIngredientImg from "../../assets/Aliments/Sriracha.png"
 import feuilleNoriIngredientImg from "../../assets/Aliments/Feuille de nori.png"
 import sauceSojaIngredientImg from "../../assets/Aliments/Sauce soja.png"
 import huileSesameIngredientImg from "../../assets/Aliments/Huile de sesame.png"
 import gingembrePoudreIngredientImg from "../../assets/Aliments/Gingembre en poudre.png"
+import gingembreIngredientImg from "../../assets/Aliments/Gingembre.png"
+import laitCocoIngredientImg from "../../assets/Aliments/Lait de coco.png"
+import curryIngredientImg from "../../assets/Aliments/Curry.png"
+import garamMassalaIngredientImg from "../../assets/Aliments/Garam massala.png"
+import curcumaIngredientImg from "../../assets/Aliments/Curcuma.png"
+import coriandreFraicheIngredientImg from "../../assets/Aliments/Coriandre fraiche.png"
 import PageHeading from "../../components/PageHeading"
 import "./DietPage.css"
 
@@ -192,7 +212,7 @@ type IngredientVisual = {
 }
 
 const ingredientVisualsByRecipeId: Record<string, IngredientVisual[]> = {
-  "healthy-tartine-avocat": [
+  "healthy-bowl-thon": [
     { id: "thon-cuit", label: "Thon cuit", detail: "1 boite de thon au naturel", image: thonCuitIngredientImg },
     { id: "riz", label: "Riz", detail: "100 g de riz", image: rizIngredientImg },
     { id: "avocat", label: "Avocat", detail: "1/2 avocat", image: avocatIngredientImg },
@@ -224,6 +244,39 @@ const ingredientVisualsByRecipeId: Record<string, IngredientVisual[]> = {
     { id: "miel", label: "Miel", detail: "1 c. a cafe de miel", image: mielIngredientImg, sectionTitle: "Pour l'assaisonnement / sauce" },
     { id: "sel", label: "Sel", detail: "1 pincee de sel", image: selIngredientImg, sectionTitle: "Pour l'assaisonnement / sauce" },
     { id: "poivre", label: "Poivre", detail: "1 pincee de poivre", image: poivreIngredientImg, sectionTitle: "Pour l'assaisonnement / sauce" },
+  ],
+  "healthy-bowl-mediterraneen": [
+    { id: "quinoa", label: "Quinoa", detail: "60 g de quinoa ou riz cru", image: quinoaIngredientImg, sectionTitle: "Base" },
+    { id: "pois-chiche", label: "pois chiche", detail: "100 g de pois chiches cuits (egouttes)", image: poisChicheIngredientImg, sectionTitle: "Base" },
+    { id: "concombre", label: "Concombre", detail: "1/2 concombre", image: concombreIngredientImg, sectionTitle: "Legumes & garnitures" },
+    { id: "tomate", label: "Tomate", detail: "1 tomate", image: tomateIngredientImg, sectionTitle: "Legumes & garnitures" },
+    { id: "oignon-rouge", label: "Oignon rouge", detail: "1/4 d'oignon rouge", image: oignonRougeIngredientImg, sectionTitle: "Legumes & garnitures" },
+    { id: "feta", label: "Feta", detail: "50 g de feta emiettee", image: fetaIngredientImg, sectionTitle: "Legumes & garnitures" },
+    { id: "olives-noires", label: "Olives noires", detail: "Quelques olives noires", image: olivesNoiresIngredientImg, sectionTitle: "Legumes & garnitures" },
+    { id: "basilic", label: "Basilic", detail: "Persil ou basilic frais", image: basilicIngredientImg, sectionTitle: "Legumes & garnitures" },
+    { id: "huile-olive", label: "Huile d'olive", detail: "1 c. a soupe d'huile d'olive", image: huileOliveIngredientImg, sectionTitle: "Assaisonnement" },
+    { id: "citron", label: "Citron", detail: "1 c. a cafe de jus de citron", image: citronIngredientImg, sectionTitle: "Assaisonnement" },
+    { id: "sel", label: "Sel", detail: "Sel", image: selIngredientImg, sectionTitle: "Assaisonnement" },
+    { id: "poivre", label: "Poivre", detail: "Poivre", image: poivreIngredientImg, sectionTitle: "Assaisonnement" },
+  ],
+  "healthy-burrito-bowl": [
+    { id: "riz", label: "Riz", detail: "80 g de riz cru (ou quinoa)", image: rizIngredientImg, sectionTitle: "Base" },
+    { id: "eau", label: "Eau", detail: "160 ml d'eau", image: eauIngredientImg, sectionTitle: "Base" },
+    { id: "poulet", label: "Poulet", detail: "120 g de blanc de poulet", image: pouletIngredientImg, sectionTitle: "Poulet marine" },
+    { id: "huile-olive", label: "Huile d'olive", detail: "1 c. a cafe d'huile d'olive", image: huileOliveIngredientImg, sectionTitle: "Poulet marine" },
+    { id: "paprika", label: "Paprika", detail: "1 c. a cafe de paprika", image: paprikaIngredientImg, sectionTitle: "Poulet marine" },
+    { id: "cumin", label: "Cumin", detail: "1/2 c. a cafe de cumin", image: cuminIngredientImg, sectionTitle: "Poulet marine" },
+    { id: "ail-poudre", label: "Ail en poudre", detail: "1/2 c. a cafe d'ail en poudre", image: ailPoudreIngredientImg, sectionTitle: "Poulet marine" },
+    { id: "citron-vert", label: "Citron vert", detail: "1 c. a cafe de jus de citron vert", image: citronVertIngredientImg, sectionTitle: "Poulet marine" },
+    { id: "sel", label: "Sel", detail: "Sel", image: selIngredientImg, sectionTitle: "Poulet marine" },
+    { id: "poivre", label: "Poivre", detail: "Poivre", image: poivreIngredientImg, sectionTitle: "Poulet marine" },
+    { id: "haricots-rouges", label: "Haricots rouges", detail: "Haricots rouges", image: haricotsRougesIngredientImg, sectionTitle: "Garnitures" },
+    { id: "mais", label: "Mais", detail: "Mais", image: poisChicheIngredientImg, sectionTitle: "Garnitures" },
+    { id: "laitue", label: "Laitue", detail: "Laitue", image: laitueIngredientImg, sectionTitle: "Garnitures" },
+    { id: "tomate", label: "Tomate", detail: "Tomate", image: tomateIngredientImg, sectionTitle: "Garnitures" },
+    { id: "oignons-rouges", label: "Oignons rouges", detail: "Oignons rouges", image: oignonRougeIngredientImg, sectionTitle: "Garnitures" },
+    { id: "avocat", label: "Avocat", detail: "Avocat", image: avocatIngredientImg, sectionTitle: "Garnitures" },
+    { id: "coriandre", label: "Coriandre", detail: "Coriandre", image: coriandreIngredientImg, sectionTitle: "Garnitures" },
   ],
   "mass-salade-grecque": [
     { id: "concombre", label: "Concombre", detail: "1 concombre", image: concombreIngredientImg },
@@ -388,6 +441,22 @@ const ingredientVisualsByRecipeId: Record<string, IngredientVisual[]> = {
     { id: "mayonnaise", label: "Mayonnaise", detail: "1 c. a soupe de mayonnaise", image: mayonnaiseIngredientImg, sectionTitle: "Sauce sriracha mayo" },
     { id: "sriracha", label: "Sriracha", detail: "1 c. a cafe de sauce sriracha", image: srirachaIngredientImg, sectionTitle: "Sauce sriracha mayo" },
   ],
+  "mass-saumon-grille-salsa-riz": [
+    { id: "riz", label: "Riz", detail: "80 g de riz blanc cru", image: rizIngredientImg, sectionTitle: "Base" },
+    { id: "eau", label: "Eau", detail: "160 ml d'eau", image: eauIngredientImg, sectionTitle: "Base" },
+    { id: "saumon", label: "Saumon", detail: "1 pave de saumon (120-150 g)", image: saumonIngredientImg, sectionTitle: "Saumon grille" },
+    { id: "huile-olive", label: "Huile d'olive", detail: "1 c. a cafe d'huile d'olive", image: huileOliveIngredientImg, sectionTitle: "Saumon grille" },
+    { id: "citron", label: "Citron", detail: "1 c. a cafe de jus de citron", image: citronIngredientImg, sectionTitle: "Saumon grille" },
+    { id: "sel", label: "Sel", detail: "sel", image: selIngredientImg, sectionTitle: "Saumon grille" },
+    { id: "poivre", label: "Poivre", detail: "poivre", image: poivreIngredientImg, sectionTitle: "Saumon grille" },
+    { id: "avocat", label: "Avocat", detail: "1/2 avocat", image: avocatIngredientImg, sectionTitle: "Salsa tomate-avocat" },
+    { id: "tomate", label: "Tomate", detail: "1 petite tomate", image: tomateIngredientImg, sectionTitle: "Salsa tomate-avocat" },
+    { id: "oignon-rouge", label: "Oignon rouge", detail: "1 c. a soupe d'oignon rouge finement coupe", image: oignonRougeIngredientImg, sectionTitle: "Salsa tomate-avocat" },
+    { id: "citron-vert-salsa", label: "Citron vert", detail: "1 c. a cafe de jus de citron vert", image: citronVertIngredientImg, sectionTitle: "Salsa tomate-avocat" },
+    { id: "huile-olive-salsa", label: "Huile d'olive", detail: "1 c. a cafe d'huile d'olive", image: huileOliveIngredientImg, sectionTitle: "Salsa tomate-avocat" },
+    { id: "poivre-salsa", label: "Poivre", detail: "poivre", image: poivreIngredientImg, sectionTitle: "Salsa tomate-avocat" },
+    { id: "coriandre-salsa", label: "Coriandre", detail: "coriandre ou persil (optionnel) ", image: coriandreIngredientImg, sectionTitle: "Salsa tomate-avocat" },
+  ],
   "mass-wrap-poulet": [
     { id: "poulet", label: "Poulet", detail: "600 g de blanc de poulet coupe en lanieres", image: pouletIngredientImg, sectionTitle: "Pour le poulet" },
     { id: "ail-poulet", label: "Ail", detail: "3 gousses d'ail hachees", image: ailIngredientImg, sectionTitle: "Pour le poulet" },
@@ -422,6 +491,18 @@ const ingredientVisualsByRecipeId: Record<string, IngredientVisual[]> = {
     { id: "poivre-noir", label: "Poivre", detail: "Poivre noir", image: poivreIngredientImg },
     { id: "persil", label: "Persil", detail: "(Optionnel mais tres bon) persil", image: persilIngredientImg },
   ],
+  "mass-pates-pesto-poulet": [
+    { id: "tagliatelles", label: "Tagliatelles", detail: "80 g de pates (penne, fusilli ou farfalle)", image: tagliatellesIngredientImg },
+    { id: "poulet", label: "Poulet", detail: "120 g de blanc de poulet", image: pouletIngredientImg },
+    { id: "tomates-cerises", label: "Tomates cerises", detail: "80 g de tomates cerises", image: tomatesCerisesIngredientImg },
+    { id: "pesto", label: "Pesto", detail: "2 c. a soupe de pesto", image: pestoIngredientImg },
+    { id: "parmesan", label: "Parmesan", detail: "20 g de parmesan rape", image: parmesanIngredientImg },
+    { id: "ail", label: "Ail", detail: "1 gousse d'ail", image: ailIngredientImg },
+    { id: "huile-olive", label: "Huile d'olive", detail: "1 c. a cafe d'huile d'olive", image: huileOliveIngredientImg },
+    { id: "poivre", label: "Poivre", detail: "Poivre noir", image: poivreIngredientImg },
+    { id: "sel", label: "Sel", detail: "Sel", image: selIngredientImg },
+    { id: "basilic", label: "Basilic", detail: "(optionnel mais excellent) quelques feuilles de basilic", image: basilicIngredientImg },
+  ],
   "mass-salade-burrata-jambon": [
     { id: "burrata", label: "Burrata", detail: "1 burrata (environ 100-125 g)", image: burrataIngredientImg },
     { id: "jambon-sec", label: "Jambon sec", detail: "40 g de jambon sec (type prosciutto ou jambon cru)", image: jambonSecIngredientImg },
@@ -433,6 +514,36 @@ const ingredientVisualsByRecipeId: Record<string, IngredientVisual[]> = {
     { id: "moutarde", label: "Moutarde", detail: "1/2 c. a cafe de moutarde", image: moutardeIngredientImg, sectionTitle: "Vinaigrette" },
     { id: "miel", label: "Miel", detail: "1/2 c. a cafe de miel", image: mielIngredientImg, sectionTitle: "Vinaigrette" },
     { id: "poivre-noir", label: "Poivre", detail: "Poivre noir", image: poivreIngredientImg, sectionTitle: "Vinaigrette" },
+  ],
+  "mass-focaccia-burrata-mortadelle": [
+    { id: "foccacia", label: "Foccacia", detail: "1 morceau de focaccia (environ 120 g)", image: foccaciaIngredientImg },
+    { id: "mortadelle", label: "Mortadelle", detail: "60-80 g de mortadelle tranchee fine", image: mortadelleIngredientImg },
+    { id: "burrata", label: "Burrata", detail: "1 petite burrata (80-100 g)", image: burrataIngredientImg },
+    { id: "roquette", label: "Roquette", detail: "1 poignee de roquette", image: roquetteIngredientImg },
+    { id: "huile-olive", label: "Huile d'olive", detail: "1 c. a cafe d'huile d'olive extra vierge", image: huileOliveIngredientImg },
+    { id: "poivre", label: "Poivre", detail: "Poivre noir", image: poivreIngredientImg },
+    { id: "sel", label: "Sel", detail: "Sel", image: selIngredientImg },
+    { id: "pesto", label: "Pesto", detail: "1 c. a cafe de pesto", image: pestoIngredientImg, sectionTitle: "Optionnel mais excellent" },
+    { id: "vinaigre-balsamique", label: "Vinaigre balsamique", detail: "Un filet de creme balsamique", image: vinaigreBalsamiqueIngredientImg, sectionTitle: "Optionnel mais excellent" },
+    { id: "pistaches", label: "Pistaches", detail: "Quelques pistaches concassees", image: pistachesIngredientImg, sectionTitle: "Optionnel mais excellent" },
+  ],
+  "mass-quinoa-bowl": [
+    { id: "riz", label: "Riz", detail: "80 g de riz basmati cru", image: rizIngredientImg, sectionTitle: "Base" },
+    { id: "eau", label: "Eau", detail: "160 ml d'eau", image: eauIngredientImg, sectionTitle: "Base" },
+    { id: "brocolis", label: "Brocolis", detail: "120 g de brocolis", image: brocolisIngredientImg, sectionTitle: "Base" },
+    { id: "poulet", label: "Poulet", detail: "150 g de blanc de poulet", image: pouletIngredientImg, sectionTitle: "Poulet marine" },
+    { id: "yaourt-grecque", label: "Yaourt grecque", detail: "2 c. a soupe de yaourt grec", image: yaourtGrecIngredientImg, sectionTitle: "Poulet marine" },
+    { id: "paprika", label: "Paprika", detail: "1 c. a cafe de paprika", image: paprikaIngredientImg, sectionTitle: "Poulet marine" },
+    { id: "curry", label: "Curry", detail: "1/2 c. a cafe de curry", image: curryIngredientImg, sectionTitle: "Poulet marine" },
+    { id: "cumin", label: "Cumin", detail: "1/2 c. a cafe de cumin", image: cuminIngredientImg, sectionTitle: "Poulet marine" },
+    { id: "garam-massala", label: "Garam massala", detail: "1/2 c. a cafe de garam masala", image: garamMassalaIngredientImg, sectionTitle: "Poulet marine" },
+    { id: "ail", label: "Ail", detail: "1 gousse d'ail rapee", image: ailIngredientImg, sectionTitle: "Poulet marine" },
+    { id: "citron", label: "Citron", detail: "1 c. a cafe de jus de citron", image: citronIngredientImg, sectionTitle: "Poulet marine" },
+    { id: "sel", label: "Sel", detail: "sel", image: selIngredientImg, sectionTitle: "Poulet marine" },
+    { id: "poivre", label: "Poivre", detail: "poivre", image: poivreIngredientImg, sectionTitle: "Poulet marine" },
+    { id: "tomate", label: "Tomate", detail: "200 g de tomates concassees", image: tomateIngredientImg, sectionTitle: "Sauce butter chicken" },
+    { id: "lait-coco", label: "Lait de coco", detail: "50 ml de lait de coco leger", image: laitCocoIngredientImg, sectionTitle: "Sauce butter chicken" },
+    { id: "beurre", label: "Beurre", detail: "1 c. a cafe de beurre ou huile", image: beurreIngredientImg, sectionTitle: "Sauce butter chicken" },
   ],
   "healthy-wrap-legumes": [
     { id: "brocoli", label: "Brocoli", detail: "1 brocoli", image: brocolisIngredientImg },
@@ -446,6 +557,36 @@ const ingredientVisualsByRecipeId: Record<string, IngredientVisual[]> = {
     { id: "ail-poudre", label: "Ail en poudre", detail: "1/2 c. a cafe d'ail en poudre", image: ailPoudreIngredientImg },
     { id: "sel", label: "Sel", detail: "Sel", image: selIngredientImg },
     { id: "poivre", label: "Poivre", detail: "Poivre", image: poivreIngredientImg },
+  ],
+  "mass-patate-bowl": [
+    { id: "pain", label: "Pain", detail: "1 tranche de pain (idealement pain complet ou levain)", image: painIngredientImg },
+    { id: "avocat", label: "Avocat", detail: "1/2 avocat", image: avocatIngredientImg },
+    { id: "oeuf", label: "Oeuf", detail: "1 oeuf", image: oeufIngredientImg },
+    { id: "citron", label: "Citron", detail: "1 c. a cafe de jus de citron", image: citronIngredientImg },
+    { id: "huile-olive", label: "Huile d'olive", detail: "1 c. a cafe d'huile d'olive", image: huileOliveIngredientImg },
+    { id: "sel", label: "Sel", detail: "sel", image: selIngredientImg },
+    { id: "poivre", label: "Poivre", detail: "poivre", image: poivreIngredientImg },
+    { id: "flocons-piment", label: "Flocons de piment", detail: "flocons de piment", image: floconsPimentIngredientImg, sectionTitle: "Optionnel mais tres bon" },
+    { id: "graines-sesame", label: "Graines de sesame", detail: "graines de sesame", image: grainesSesameIngredientImg, sectionTitle: "Optionnel mais tres bon" },
+    { id: "persil", label: "Persil", detail: "ciboulette ou persil", image: persilIngredientImg, sectionTitle: "Optionnel mais tres bon" },
+  ],
+  "mass-curry-coco": [
+    { id: "pois-chiche", label: "Pois chiche", detail: "1 boite de pois chiches (400 g, egouttes)", image: poisChicheIngredientImg },
+    { id: "oignon-jaune", label: "Oignon jaune", detail: "1 oignon jaune", image: oignonJauneIngredientImg },
+    { id: "ail", label: "Ail", detail: "2 gousses d'ail", image: ailIngredientImg },
+    { id: "gingembre", label: "Gingembre", detail: "1 c. a cafe de gingembre rape", image: gingembreIngredientImg },
+    { id: "tomate", label: "Tomate", detail: "200 g de tomates concassees", image: tomateIngredientImg },
+    { id: "lait-coco", label: "Lait de coco", detail: "200 ml de lait de coco", image: laitCocoIngredientImg },
+    { id: "huile-olive", label: "Huile d'olive", detail: "1 c. a soupe d'huile d'olive ou huile de coco", image: huileOliveIngredientImg },
+    { id: "curry", label: "Curry", detail: "1 c. a cafe de curry en poudre", image: curryIngredientImg, sectionTitle: "Epices" },
+    { id: "cumin", label: "Cumin", detail: "1/2 c. a cafe de cumin", image: cuminIngredientImg, sectionTitle: "Epices" },
+    { id: "paprika", label: "Paprika", detail: "1/2 c. a cafe de paprika", image: paprikaIngredientImg, sectionTitle: "Epices" },
+    { id: "curcuma", label: "Curcuma", detail: "1/2 c. a cafe de curcuma", image: curcumaIngredientImg, sectionTitle: "Epices" },
+    { id: "garam-massala", label: "Garam massala", detail: "1/2 c. a cafe de garam masala", image: garamMassalaIngredientImg, sectionTitle: "Epices" },
+    { id: "sel", label: "Sel", detail: "Sel", image: selIngredientImg, sectionTitle: "Epices" },
+    { id: "poivre", label: "Poivre", detail: "Poivre", image: poivreIngredientImg, sectionTitle: "Epices" },
+    { id: "citron-vert", label: "Citron vert", detail: "Jus de citron ou citron vert", image: citronVertIngredientImg, sectionTitle: "Finition" },
+    { id: "coriandre-fraiche", label: "Coriandre fraiche", detail: "Coriandre fraiche (optionnel)", image: coriandreFraicheIngredientImg, sectionTitle: "Finition" },
   ],
   "mass-riz-cajou": [
     { id: "steak", label: "Steak", detail: "1 steak hache (150-200 g)", image: steakIngredientImg },
@@ -953,49 +1094,100 @@ export const massRecipes: Recipe[] = [
   servings: "2 pers",
   image: saumonGrilleSalsaTomateAvocatImg,
   ingredients: [
-    "Pour le saumon",
-    "2 paves de saumon",
-    "1 cuillere a soupe d'huile d'olive",
-    "Sel",
-    "Poivre",
-    "Pour la salsa",
-    "1 avocat",
-    "1 tomate (ou 150 g de tomates cerises)",
-    "1/2 citron (jus)",
-    "1 cuillere a soupe de coriandre ou persil",
-    "Sel",
-    "Poivre",
-    "Pour l'accompagnement",
-    "120 g de riz blanc",
+    "Base",
+    "80 g de riz blanc cru",
+    "160 ml d'eau",
+    "Saumon grille",
+    "1 pave de saumon (120-150 g)",
+    "1 c. a cafe d'huile d'olive",
+    "1 c. a cafe de jus de citron",
+    "sel et poivre",
+    "Salsa tomate-avocat",
+    "1/2 avocat",
+    "1 petite tomate",
+    "1 c. a soupe d'oignon rouge finement coupe",
+    "1 c. a cafe de jus de citron vert",
+    "1 c. a cafe d'huile d'olive",
+    "poivre",
+    "(optionnel mais tres bon) coriandre ou persil",
   ],
   steps: [
     "1. Cuire le riz",
-    "Rince 80 g de riz a l'eau froide.",
-    "Mets-le dans une casserole avec 160 ml d'eau.",
-    "Porte a ebullition.",
-    "Couvre et laisse cuire 12 minutes a feu doux.",
-    "Laisse reposer 5 minutes puis aere avec une fourchette.",
+    "Rincer le riz",
+    "Place le riz dans une passoire fine et rince-le sous l'eau froide pendant quelques secondes.",
+    "Cela permet d'enlever l'exces d'amidon et d'obtenir un riz moins collant.",
+    "Mettre en cuisson",
+    "Verse le riz rince dans une casserole, puis ajoute les 160 ml d'eau.",
+    "Melange legerement pour bien repartir les grains.",
+    "Porter a ebullition",
+    "Fais chauffer a feu moyen jusqu'a ce que l'eau arrive a ebullition.",
+    "Cuire a feu doux",
+    "Des que l'eau bout, couvre la casserole et baisse le feu.",
+    "Laisse cuire a feu doux pendant 12 minutes, sans soulever le couvercle.",
+    "Laisser reposer",
+    "Retire la casserole du feu et laisse reposer 5 minutes, toujours couverte.",
+    "Cette etape permet au riz de finir d'absorber l'humidite.",
+    "Aerer le riz",
+    "A l'aide d'une fourchette, melange delicatement pour separer les grains.",
     "2. Preparer la salsa",
-    "Coupe la tomate en petits des.",
-    "Coupe l'avocat en petits cubes.",
-    "Ajoute l'oignon rouge.",
-    "Ajoute :",
-    "- jus de citron",
-    "- huile d'olive",
-    "- poivre",
-    "Melange delicatement.",
-    "Cette salsa doit rester fraiche et legerement acidulee.",
+    "Preparer les ingredients",
+    "Commence par laver soigneusement la tomate et les herbes si tu en utilises.",
+    "Coupe egalement un petit morceau d'oignon rouge et hache-le tres finement pour qu'il s'integre bien a la salsa sans etre trop fort en bouche.",
+    "Coupe la tomate en petits des reguliers.",
+    "Retire legerement les graines si la tomate est tres juteuse, pour eviter que la salsa ne devienne trop liquide.",
+    "Preparer l'avocat",
+    "Coupe l'avocat en deux, retire le noyau puis recupere la chair a l'aide d'une cuillere.",
+    "Decoupe-le ensuite en petits cubes.",
+    "Il doit etre mur mais encore ferme pour garder une belle texture.",
+    "Assembler les ingredients solides",
+    "Dans un petit bol :",
+    "ajoute les des de tomate",
+    "ajoute les cubes d'avocat",
+    "incorpore l'oignon rouge finement coupe",
+    "Si tu utilises de la coriandre ou du persil, c'est le moment de les ciseler finement et de les ajouter.",
+    "Assaisonner",
+    "Verse ensuite :",
+    "le jus de citron vert",
+    "l'huile d'olive",
+    "un peu de poivre",
+    "Le citron est essentiel : il apporte de la fraicheur et empeche l'avocat de noircir.",
+    "Melanger delicatement",
+    "Melange doucement avec une cuillere.",
+    "Il est important de ne pas ecraser l'avocat, le but est de garder de jolis morceaux pour une texture fraiche et agreable.",
     "3. Cuire le saumon",
-    "Chauffe une poele a feu moyen-fort avec l'huile d'olive.",
-    "Assaisonne le saumon avec sel, poivre et citron.",
-    "Fais cuire 4 minutes cote peau.",
-    "Retourne et cuis 2 a 3 minutes.",
-    "Le saumon doit rester tendre et legerement rose a l'interieur.",
+    "Preparer le saumon",
+    "Sors le saumon du refrigerateur environ 10 minutes avant la cuisson pour qu'il ne soit pas trop froid.",
+    "Eponge-le delicatement avec du papier absorbant, surtout cote peau, cela permet d'obtenir une peau bien croustillante.",
+    "Assaisonner",
+    "Depose le saumon sur une assiette et assaisonne :",
+    "une pincee de sel",
+    "du poivre",
+    "un leger filet de jus de citron",
+    "N'en mets pas trop pour ne pas cuire le poisson avant la cuisson.",
+    "Chauffer la poele",
+    "Fais chauffer une poele a feu moyen-fort.",
+    "Ajoute l'huile d'olive et laisse-la chauffer quelques secondes.",
+    "L'huile doit etre chaude mais pas fumante.",
+    "Cuire cote peau",
+    "Depose le saumon dans la poele cote peau vers le bas.",
+    "Appuie legerement avec une spatule pendant les premieres secondes pour eviter que le poisson ne se retracte.",
+    "Laisse cuire environ 4 minutes sans le toucher.",
+    "La peau doit devenir doree et croustillante.",
+    "Retourner le saumon",
+    "Retourne delicatement le saumon a l'aide d'une spatule.",
+    "Poursuis la cuisson pendant 2 a 3 minutes selon l'epaisseur du pave.",
+    "Verifier la cuisson",
+    "Le saumon est pret lorsque :",
+    "l'exterieur est bien dore",
+    "l'interieur reste tendre et legerement rose",
+    "Il doit se detacher facilement en lamelles a la fourchette.",
     "4. Servir",
     "Mets le riz dans l'assiette.",
     "Ajoute le saumon grille.",
     "Ajoute la salsa tomate-avocat sur le saumon ou a cote.",
-    "Ton saumon grille avec salsa est pret.",
+    "Il ne reste plus qu’à savourer, bon appétit !",
+    "Astuces pour que la recette soit vraiment incroyable",
+    "- mets quelques graines de sesame grillees sur le saumon",
   ],
 },
 {
@@ -1912,23 +2104,19 @@ export const massRecipes: Recipe[] = [
   id: "mass-pates-pesto-poulet",
   title: "Pates pesto, poulet, parmesan & tomates cerises",
   flavor: "sale",
-  prepTime: "25 a 30 min",
-  servings: "2 pers",
+  prepTime: "20 a 25 min",
+  servings: "1 pers",
   image: patesPestoPouletParmesanImg,
   ingredients: [
-    "Pour les pates",
-    "250 g de pates (penne, fusilli ou tagliatelles)",
-    "2 blancs de poulet",
-    "150 g de tomates cerises",
-    "40 g de parmesan rape ou en copeaux",
-    "2 cuilleres a soupe d'huile d'olive",
-    "Sel",
-    "Poivre noir",
-    "Pour la sauce pesto",
-    "3 cuilleres a soupe de pesto",
-    "3 cuilleres a soupe d'eau de cuisson des pates",
-    "1 cuillere a soupe de parmesan rape",
-    "Poivre noir",
+    "80 g de pates (penne, fusilli ou farfalle)",
+    "120 g de blanc de poulet",
+    "80 g de tomates cerises",
+    "2 c. a soupe de pesto",
+    "20 g de parmesan rape",
+    "1 gousse d'ail",
+    "1 c. a cafe d'huile d'olive",
+    "poivre noir",
+    "(optionnel mais excellent) quelques feuilles de basilic",
   ],
   steps: [
     "1. Cuire les pates",
@@ -2015,17 +2203,19 @@ export const massRecipes: Recipe[] = [
   title: "Focaccia garnie burrata, mortadelle & roquette",
   flavor: "sale",
   prepTime: "10 a 15 min",
-  servings: "2 pers",
+  servings: "1 pers",
   image: focacciaBurrataMortadelleRoquetteImg,
   ingredients: [
-    "Pour le sandwich",
-    "1 grande focaccia",
-    "1 grosse burrata",
-    "120 g de mortadelle",
+    "1 morceau de focaccia (environ 120 g)",
+    "60-80 g de mortadelle tranchee fine",
+    "1 petite burrata (80-100 g)",
     "1 poignee de roquette",
-    "Pour l'assaisonnement",
-    "1 a 2 cuilleres a soupe d'huile d'olive",
-    "Poivre noir",
+    "1 c. a cafe d'huile d'olive extra vierge",
+    "poivre noir",
+    "Optionnel mais excellent :",
+    "1 c. a cafe de pesto",
+    "quelques pistaches concassees",
+    "un filet de creme balsamique",
   ],
   steps: [
     "1. Toaster la focaccia",
@@ -2060,22 +2250,27 @@ export const massRecipes: Recipe[] = [
   servings: "1 pers",
   image: butterChickenImg,
   ingredients: [
-    "Pour le poulet",
+    "Base",
+    "80 g de riz basmati cru",
+    "160 ml d'eau",
+    "120 g de brocolis",
+    "Poulet marine",
     "150 g de blanc de poulet",
-    "1 cuillÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¨re ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  cafÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â© dÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢huile dÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢olive",
-    "Sel et poivre",
-    "Pour la sauce butter chicken",
-    "100 g de yaourt grec nature",
-    "1 cuillÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¨re ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  soupe de concentrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â© de tomate",
-    "1 cuillÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¨re ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  cafÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â© de garam masala",
-    "1/2 cuillÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¨re ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  cafÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â© de paprika",
-    "1/2 cuillÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¨re ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  cafÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â© de curry",
-    "1 gousse dÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ail",
-    "1/2 cuillÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¨re ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  cafÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â© de gingembre (pÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢te ou moulu)",
-    "Sel et poivre",
-    "Pour lÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢accompagnement",
-    "60 g de riz cru",
-    "150 g de brocolis",
+    "2 c. a soupe de yaourt grec",
+    "1 c. a cafe de paprika",
+    "1/2 c. a cafe de curry",
+    "1/2 c. a cafe de cumin",
+    "1/2 c. a cafe de garam masala",
+    "1 gousse d'ail rapee",
+    "1 c. a cafe de jus de citron",
+    "sel et poivre",
+    "Sauce butter chicken",
+    "200 g de tomates concassees",
+    "50 ml de lait de coco leger",
+    "1 c. a cafe de beurre ou huile",
+    "1/2 c. a cafe de garam masala",
+    "1/2 c. a cafe de paprika",
+    "sel",
   ],
   steps: [
     "Base",
@@ -2154,13 +2349,16 @@ export const massRecipes: Recipe[] = [
   servings: "1 pers",
   image: avocadoToastImg,
   ingredients: [
-    "1 ou 2 tranches de pain (complet ou au choix)",
-    "1 avocat mÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â»r",
-    "1 ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œuf",
-    "Sel et poivre",
-    "Un filet dÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢huile dÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢olive",
-    "Jus de citron (facultatif)",
-    "Une pincÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©e de flocons de piment ou de paprika",
+    "1 tranche de pain (idealement pain complet ou levain)",
+    "1/2 avocat",
+    "1 oeuf",
+    "1 c. a cafe de jus de citron",
+    "1 c. a cafe d'huile d'olive",
+    "sel et poivre",
+    "Optionnel mais tres bon :",
+    "flocons de piment",
+    "graines de sesame",
+    "ciboulette ou persil",
   ],
   steps: [
     "1. Griller le pain",
@@ -2204,17 +2402,23 @@ export const massRecipes: Recipe[] = [
   servings: "1 pers",
   image: curryPoischicheImg,
   ingredients: [
-    "150 g de pois chiches cuits (ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©gouttÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©s)",
-    "100 ml de lait de coco",
-    "1/2 oignon",
-    "1 gousse dÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ail",
-    "1 cuillÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¨re ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  soupe de concentrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â© de tomate",
-    "1 cuillÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¨re ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  cafÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â© de curry en poudre",
-    "1/2 cuillÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¨re ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  cafÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â© de paprika",
-    "Sel et poivre",
-    "Persil frais",
-    "Pour lÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢accompagnement",
-    "60 g de riz cru",
+    "1 boite de pois chiches (400 g, egouttes)",
+    "1 oignon jaune",
+    "2 gousses d'ail",
+    "1 c. a cafe de gingembre rape",
+    "200 g de tomates concassees",
+    "200 ml de lait de coco",
+    "1 c. a soupe d'huile d'olive ou huile de coco",
+    "Epices",
+    "1 c. a cafe de curry en poudre",
+    "1/2 c. a cafe de cumin",
+    "1/2 c. a cafe de paprika",
+    "1/2 c. a cafe de curcuma",
+    "1/2 c. a cafe de garam masala",
+    "sel et poivre",
+    "Finition",
+    "jus de citron ou citron vert",
+    "coriandre fraiche (optionnel)",
   ],
   steps: [
     "1. Faire revenir la base aromatique",
@@ -3422,7 +3626,7 @@ export const massRecipes: Recipe[] = [
 },
 
  {
-  id: "mass-overnight-prot",
+  id: "mass-overnight-oats",
   title: "Overnight oats protÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©inÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©s",
   flavor: "sucre",
   prepTime: "5 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  7 min",
@@ -3611,6 +3815,148 @@ export const healthyRecipes: Recipe[] = [
     "- ne melange pas trop pendant la cuisson pour garder des clusters",
     "- ajoute un blanc d'oeuf dans le melange pour encore plus de croustillant",
     "- laisse refroidir completement avant de casser les morceaux.",
+  ],
+},
+{
+  id: "healthy-bowl-thon",
+  title: "Bowl au thon",
+  flavor: "sale",
+  prepTime: "20 a 25 min",
+  servings: "1 pers",
+  image: bowlThonImg,
+  ingredients: [
+    "120 g de thon au naturel",
+    "60 g de riz cru",
+    "1/2 avocat",
+    "1/2 concombre",
+    "1 petite tomate",
+    "1 oeuf",
+    "1 c. a cafe de graines de sesame",
+    "Pour la vinaigrette",
+    "1 c. a cafe d'huile d'olive",
+    "1 c. a cafe de vinaigre balsamique",
+    "Sel et poivre",
+  ],
+  steps: [
+    "1. Cuire le riz",
+    "Fais cuire le riz dans l'eau bouillante salee.",
+    "Egoutte puis laisse tiedir.",
+    "2. Cuire l'oeuf",
+    "Fais cuire l'oeuf 9 a 10 minutes pour un oeuf dur.",
+    "Refroidis, ecale et coupe en quartiers.",
+    "3. Preparer les legumes",
+    "Coupe l'avocat, le concombre et la tomate.",
+    "4. Preparer la vinaigrette",
+    "Melange huile d'olive, vinaigre balsamique, sel et poivre.",
+    "5. Assembler",
+    "Dans un bol: riz, thon, legumes, oeuf.",
+    "Ajoute la vinaigrette et les graines de sesame.",
+  ],
+},
+{
+  id: "healthy-bowl-mediterraneen",
+  title: "Bowl mediterraneen",
+  flavor: "sale",
+  prepTime: "20 a 25 min",
+  servings: "1 pers",
+  image: bowlMediteraneenImg,
+  ingredients: [
+    "Base",
+    "60 g de quinoa ou riz cru",
+    "100 g de pois chiches cuits (egouttes)",
+    "Legumes & garnitures",
+    "1/2 concombre",
+    "1 tomate",
+    "1/4 d'oignon rouge",
+    "50 g de feta emiettee",
+    "Quelques olives noires",
+    "Persil ou basilic frais",
+    "Assaisonnement",
+    "1 c. a soupe d'huile d'olive",
+    "1 c. a cafe de jus de citron",
+    "Sel",
+    "Poivre",
+  ],
+  steps: [
+    "1. Cuire la base",
+    "Fais cuire quinoa ou riz, puis laisse tiedir.",
+    "2. Preparer les legumes",
+    "Coupe concombre, tomate et oignon rouge.",
+    "3. Preparer les pois chiches",
+    "Rince les pois chiches.",
+    "4. Assaisonnement",
+    "Melange huile d'olive, citron, sel et poivre.",
+    "5. Assembler",
+    "Mets la base, puis pois chiches, legumes, feta et olives.",
+    "Ajoute l'assaisonnement et les herbes.",
+  ],
+},
+{
+  id: "healthy-burrito-bowl",
+  title: "Burrito bowl healthy",
+  flavor: "sale",
+  prepTime: "30 min",
+  servings: "1 pers",
+  image: bowlPouletImg,
+  ingredients: [
+    "Base",
+    "80 g de riz cru (ou quinoa)",
+    "160 ml d'eau",
+    "Poulet marine",
+    "120 g de blanc de poulet",
+    "1 c. a cafe d'huile d'olive",
+    "1 c. a cafe de paprika",
+    "1/2 c. a cafe de cumin",
+    "1/2 c. a cafe de poudre d'ail",
+    "1 c. a cafe de jus de citron vert",
+    "sel et poivre",
+  ],
+  steps: [
+    "1. Cuire le riz",
+    "Rince 80 g de riz a l'eau froide.",
+    "Mets-le dans une casserole avec 160 ml d'eau.",
+    "Porte a ebullition.",
+    "Couvre et laisse cuire 12 minutes a feu doux.",
+    "Laisse reposer 5 minutes puis aere avec une fourchette.",
+    "2. Mariner le poulet",
+    "Coupe le poulet en petits morceaux.",
+    "Mets-le dans un bol avec :",
+    "huile d'olive",
+    "paprika",
+    "cumin",
+    "ail en poudre",
+    "citron",
+    "sel et poivre",
+    "Melange et laisse mariner 10 minutes.",
+    "3. Cuire le poulet",
+    "Chauffe une poele a feu moyen-fort.",
+    "Fais cuire le poulet 6 a 8 minutes jusqu'a ce qu'il soit dore et bien cuit.",
+    "4. Preparer les legumes",
+    "Coupe la tomate en des.",
+    "Coupe l'oignon rouge en fines lamelles.",
+    "Rince les haricots rouges et le mais.",
+    "5. Faire le guacamole",
+    "Ecrase 1/2 avocat dans un bol.",
+    "Ajoute :",
+    "citron vert",
+    "sel",
+    "poivre",
+    "Melange jusqu'a obtenir un guacamole cremeux.",
+    "6. Monter le burrito bowl",
+    "Mets le riz chaud au fond du bol.",
+    "Ajoute :",
+    "le poulet marine",
+    "les haricots rouges",
+    "le mais",
+    "la salade",
+    "les tomates",
+    "l'oignon rouge",
+    "Ajoute le guacamole sur le dessus.",
+    "Ton burrito bowl healthy est pret.",
+    "Astuces pour qu'il soit vraiment incroyable :",
+    "ajoute un filet de citron vert sur tout le bowl",
+    "mets un peu de coriandre fraiche",
+    "ajoute une sauce yaourt citron vert pour encore plus de gout.",
   ],
 },
 {
@@ -5409,30 +5755,67 @@ const DietClassicPage = () => {
                       <h4>ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°tapes</h4>
                       <ul className="diet-steps-list">
                         {selectedRecipe.steps.map((step) => {
-                          const isStepTitle = /^\d+\.\s/.test(step)
+                          const normalizedStep = step.replace(/\u00A0/g, " ").trim()
+                          const isSpecialTipTitle = normalizedStep === "Astuces pour que la recette soit vraiment incroyable"
+                          const isSpecialTipItem = /^-?\s*mets quelques graines de sesame grillees sur le saumon$/i.test(normalizedStep)
+                          const isStepTitle = /^\d+\.\s/.test(normalizedStep)
                           const isAdviceTitle =
-                            /^Conseils? pour/.test(step) ||
-                            /^Astuces? pour/.test(step) ||
-                            /^Les 3 secrets/.test(step) ||
-                            /^Les secrets/.test(step) ||
-                            /^Secrets pour/.test(step) ||
-                            /^Valeurs approximatives/.test(step)
-                          const isSubItem = /^-\s/.test(step)
-                          const isPlainNoBullet = /^Ces details/.test(step) || /^Ta .+ est prete\./.test(step) || /^Ton .+ est pret[e]?\./.test(step) || /^Tes .+ sont pret[e]s\./.test(step)
+                            /^Conseils? pour/.test(normalizedStep) ||
+                            /^Astuces? pour/.test(normalizedStep) ||
+                            /^Les 3 secrets/.test(normalizedStep) ||
+                            /^Les secrets/.test(normalizedStep) ||
+                            /^Secrets pour/.test(normalizedStep) ||
+                            /^Valeurs approximatives/.test(normalizedStep)
+                          const isStepSubTitle =
+                            /^(Preparer les ingredients|Preparer l'avocat|Assembler les ingredients solides|Assaisonner|Melanger delicatement|Preparer le saumon|Chauffer la poele|Cuire cote peau|Retourner le saumon|Verifier la cuisson|Rincer le riz|Mettre en cuisson|Porter a ebullition|Cuire a feu doux|Laisser reposer|Aerer le riz)$/.test(
+                              normalizedStep
+                            )
+                          const isSubItem = /^-\s/.test(normalizedStep)
+                          const isSubNoBullet =
+                            /^Le saumon est pret lorsque\s*:$/i.test(normalizedStep) ||
+                            /^Depose le saumon sur une assiette et assaisonne\s*:$/i.test(normalizedStep) ||
+                            /^Dans un petit bol\s*:$/i.test(normalizedStep) ||
+                            /^Verse ensuite\s*:$/i.test(normalizedStep)
+                          const isItalicNote =
+                            /^N'en mets pas trop pour ne pas cuire le poisson avant la cuisson\.$/i.test(normalizedStep) ||
+                            /^La peau doit devenir doree et croustillante\.$/i.test(normalizedStep) ||
+                            /^L'huile doit etre chaude mais pas fumante\.$/i.test(normalizedStep) ||
+                            /^Le citron est essentiel : il apporte de la fraicheur et empeche l'avocat de noircir\.$/i.test(normalizedStep) ||
+                            /^Il doit etre mur mais encore ferme pour garder une belle texture\.$/i.test(normalizedStep) ||
+                            /^Retire legerement les graines si la tomate est tres juteuse, pour eviter que la salsa ne devienne trop liquide\.$/i.test(normalizedStep) ||
+                            /^Cela permet d'enlever l'exces d'amidon et d'obtenir un riz moins collant\.$/i.test(normalizedStep) ||
+                            /^Cette etape permet au riz de finir d'absorber l'humidite\.$/i.test(normalizedStep)
+                          const isPlainNoBullet =
+                            /^Ces details/.test(normalizedStep) ||
+                            /^Ta .+ est prete\./.test(normalizedStep) ||
+                            /^Ton .+ est pret[e]?\./.test(normalizedStep) ||
+                            /^Tes .+ sont pret[e]s\./.test(normalizedStep) ||
+                            /^Il ne reste plus qu'a savourer\s*!$/i.test(normalizedStep) ||
+                            /^Il ne reste plus qu['’]a savourer,\s*bon appetit\s*!$/i.test(normalizedStep)
                           return (
                             <li
-                              key={step}
+                              key={`${selectedRecipe.id}-${step}`}
                               className={
-                                isStepTitle || isAdviceTitle
+                                isSpecialTipTitle
+                                  ? "diet-step-item--tipbox-title"
+                                  : isSpecialTipItem
+                                    ? "diet-step-item--tipbox-item"
+                                  : isStepTitle || isAdviceTitle
                                   ? "diet-step-item--title"
+                                  : isStepSubTitle
+                                    ? "diet-step-item--subtitle"
+                                    : isItalicNote
+                                      ? "diet-step-item--note"
                                   : isSubItem
                                     ? "diet-step-item--sub"
+                                    : isSubNoBullet
+                                      ? "diet-step-item--subplain"
                                     : isPlainNoBullet
                                       ? "diet-step-item--plain"
                                       : undefined
                               }
                             >
-                              {isSubItem ? step.replace(/^-\s*/, "") : step}
+                              {isSubItem || isSpecialTipItem ? normalizedStep.replace(/^-?\s*/, "") : normalizedStep}
                             </li>
                           )
                         })}
