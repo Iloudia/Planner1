@@ -122,6 +122,30 @@
   min-height: 260px;
   overflow: hidden;
   cursor: pointer;
+  border: 1px solid rgba(114, 92, 63, 0.25);
+  box-shadow: none;
+  transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+}
+
+.diet-recipe-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(114, 92, 63, 0.12), rgba(216, 215, 178, 0.08));
+  opacity: 0;
+  transition: opacity 200ms ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.diet-recipe-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(114, 92, 63, 0.35);
+  box-shadow: none;
+}
+
+.diet-recipe-card:hover::after {
+  opacity: 1;
 }
 
 .diet-recipe-card__media {
@@ -187,7 +211,7 @@
 
 .diet-recipe-card__content {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -220,6 +244,7 @@
   height: 34px;
   background: rgba(15, 23, 42, 0.32);
   border: none;
+  border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -238,6 +263,7 @@
   width: 4px;
   height: 4px;
   background: #ffffff;
+  border-radius: 50%;
 }
 
 .wishlist-card__menu-popover {
@@ -382,6 +408,7 @@
   background: rgba(15, 23, 42, 0.4);
   width: 38px;
   height: 38px;
+  border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -618,6 +645,22 @@
   color: var(--color-chocolate);
 }
 
+.diet-recipe-tips-box {
+  border: 1px solid #e6e1d9;
+  background: #fff8eb;
+  padding: 1rem 1.1rem;
+  border-radius: 0;
+}
+
+.diet-recipe-tips-box h4 {
+  margin: 0;
+}
+
+.diet-recipe-tips-box ul {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
 .diet-recipe-section__header {
   display: flex;
   align-items: center;
@@ -741,6 +784,10 @@
 .diet-step-item--plain {
   list-style: none;
   margin-left: -1.2rem;
+  margin-top: 0.8rem;
+  padding-top: 1.5rem;
+  padding-bottom: 1.2rem;
+  border-top: 1px solid #e6e1d9;
 }
 
 .diet-step-item--tipbox-title {

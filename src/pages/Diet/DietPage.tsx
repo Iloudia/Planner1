@@ -1229,7 +1229,7 @@ export const massRecipes: Recipe[] = [
   title: "Pancake protÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©inÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©",
   flavor: "sucre",
   prepTime: "10 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  15 min",
-  servings: "1 pers",
+  servings: "3 à 4 pancakes",
   image: pancakesProteineImg,
   ingredients: [
     "1 scoop de whey (30 g)",
@@ -1286,7 +1286,7 @@ export const massRecipes: Recipe[] = [
   title: "Cookies chocolat & fleur de sel",
   flavor: "sucre",
   prepTime: "20 a 25 min",
-  servings: "12 cookies",
+  servings: "10 à 12 cookies",
   image: cookiesChocolatFleurSelImg,
   ingredients: [
     "Pour les cookies",
@@ -1347,8 +1347,8 @@ export const massRecipes: Recipe[] = [
   id: "mass-framboises-chocolat-yaourt",
   title: "Framboises enrobees chocolat & yaourt",
   flavor: "sucre",
-  prepTime: "1 h 30 min",
-  servings: "2 pers",
+  prepTime: "1 h 20 min",
+  servings: "10 à 12 bouchées",
   image: fruitsRougesGranolaImg,
   ingredients: [
     "Pour les bouchees",
@@ -1406,7 +1406,7 @@ export const massRecipes: Recipe[] = [
   title: "Dattes fourrees au beurre de cacahuete",
   flavor: "sucre",
   prepTime: "10 min",
-  servings: "2 pers",
+  servings: "1 à 2 pers",
   image: dattesBeurreCacahueteImg,
   ingredients: [
     "Pour les bouchees",
@@ -1446,8 +1446,8 @@ export const massRecipes: Recipe[] = [
   id: "mass-carrot-cake-cream-cheese",
   title: "Carrot cake moelleux au glacage cream cheese",
   flavor: "sucre",
-  prepTime: "55 min",
-  servings: "8 pers",
+  prepTime: "1 h 10",
+  servings: "8 à 10 parts",
   image: carrotCakeBreadImg,
   ingredients: [
     "Pour le gateau",
@@ -1518,8 +1518,8 @@ export const massRecipes: Recipe[] = [
   id: "mass-barres-snickers-caramel-chocolat",
   title: "Barres type Snickers au caramel, chocolat noir & beurre de cacahuete",
   flavor: "sucre",
-  prepTime: "1 h 45 min",
-  servings: "12 barres",
+  prepTime: "1 h 20 min",
+  servings: "10 à 12 barres",
   image: barresSnickersCaramelImg,
   ingredients: [
     "Base biscuit",
@@ -1711,7 +1711,7 @@ export const massRecipes: Recipe[] = [
     "Ajoute ensuite les algues nori.",
     "Finaliser",
     "Verse la sauce sriracha mayo sur le dessus.",
-    "Ton bowl de saumon marine est pret.",
+    "Ton bowl de saumon marine est pret. Il ne te reste plus qu'à deguster ! ",
   ],
 },
 {
@@ -4382,7 +4382,7 @@ export const massRecipes: Recipe[] = [
   id: "mass-overnight-oats",
   title: "Overnight oats protÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©inÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©s",
   flavor: "sucre",
-  prepTime: "5 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  7 min",
+  prepTime: "5 mi + 4 h (ou une nuit) au frigo",
   servings: "1 pers",
   image: overnightOatsImg,
   ingredients: [
@@ -4434,7 +4434,7 @@ export const massRecipes: Recipe[] = [
   title: "Brownie protÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©inÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©",
   flavor: "sucre",
   prepTime: "30 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  35 min",
-  servings: "1 pers",
+  servings: "9 à 12 parts",
   image: brownieProteineImg,
   ingredients: [
     "200 g de chocolat noir (60-70 %)",
@@ -4540,7 +4540,7 @@ export const healthyRecipes: Recipe[] = [
   title: "Granola croustillant maison",
   flavor: "sucre",
   prepTime: "35 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  45 min",
-  servings: "1 pers",
+  servings: "6 à 8 portions",
   image: granolaMaisonImg,
   ingredients: [
     "250 g de flocons d'avoine",
@@ -4884,8 +4884,8 @@ export const healthyRecipes: Recipe[] = [
   id: "healthy-salade-pates",
   title: "Banana bread",
   flavor: "sucre",
-  prepTime: "55 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  65 min",
-  servings: "1 pers",
+  prepTime: "1 heure",
+  servings: "8 à 10 tranches",
   image: bananaBreadImg,
   ingredients: [
     "3 bananes tres mures",
@@ -5135,7 +5135,7 @@ export const healthyRecipes: Recipe[] = [
   title: "Biscuits croustillants avoine & chocolat",
   flavor: "sucre",
   prepTime: "25 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  30 min",
-  servings: "1 pers",
+  servings: "6 biscuits",
   image: biscuitsAvoineImg,
   ingredients: [
     "1 banane mure ecrasee",
@@ -5256,7 +5256,7 @@ export const healthyRecipes: Recipe[] = [
   id: "healthy-potage-lentilles",
   title: "Pudding de chia coco & fraises",
   flavor: "sucre",
-  prepTime: "5 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  7 min",
+  prepTime: "5 min + 4 h au frigo",
   servings: "1 pers",
   image: puddingChiaCocoFraisesImg,
   ingredients: [
@@ -5360,8 +5360,8 @@ export const healthyRecipes: Recipe[] = [
   id: "healthy-snack-energetique",
   title: "Salade de fruits ananas, framboises, griottes & noix de coco",
   flavor: "sucre",
-  prepTime: "8 a 10 min",
-  servings: "1 pers",
+  prepTime: "10 min",
+  servings: "2 pers",
   image: saladeDeFruitsAnanasImg,
   ingredients: [
     "250 g d'ananas frais",
@@ -6712,7 +6712,43 @@ const DietClassicPage = () => {
                         {selectedRecipe.steps.map((step, index, allSteps) => {
                           const normalizeStep = (value: string) => value.replace(/\u00A0/g, " ").trim()
                           const normalizedStep = normalizeStep(step)
+                          const isLegacyCompletionLine =
+                            /^Ta .+ est prete\./.test(normalizedStep) ||
+                            /^Ton .+ est pret[e]?\./.test(normalizedStep) ||
+                            /^Tes .+ sont pret[e]s\./.test(normalizedStep) ||
+                            /^Il ne reste plus qu'a savourer\s*!$/i.test(normalizedStep) ||
+                            /^Il ne reste plus qu['’]a savourer,\s*bon appetit\s*!$/i.test(normalizedStep)
+                          if (isLegacyCompletionLine) return null
                           const isTipBoxTitle = /^Astuces?\s+pour/i.test(normalizedStep)
+                          const isTipLineAtIndex = (targetIndex: number) => {
+                            const candidate = normalizeStep(allSteps[targetIndex])
+                            if (/^Astuces?\s+pour/i.test(candidate)) return true
+                            if (!/^\-\s/.test(candidate)) return false
+                            let previousNonSub = ""
+                            for (let cursor = targetIndex - 1; cursor >= 0; cursor -= 1) {
+                              const previousCandidate = normalizeStep(allSteps[cursor])
+                              if (!/^\-\s/.test(previousCandidate)) {
+                                previousNonSub = previousCandidate
+                                break
+                              }
+                            }
+                            return /^Astuces?\s+pour/i.test(previousNonSub)
+                          }
+                          const lastRenderableStepIndex = (() => {
+                            for (let cursor = allSteps.length - 1; cursor >= 0; cursor -= 1) {
+                              const candidate = normalizeStep(allSteps[cursor])
+                              const isCompletionCandidate =
+                                /^Ta .+ est prete\./.test(candidate) ||
+                                /^Ton .+ est pret[e]?\./.test(candidate) ||
+                                /^Tes .+ sont pret[e]s\./.test(candidate) ||
+                                /^Il ne reste plus qu'a savourer\s*!$/i.test(candidate) ||
+                                /^Il ne reste plus qu['’]a savourer,\s*bon appetit\s*!$/i.test(candidate)
+                              if (!isCompletionCandidate && !isTipLineAtIndex(cursor)) return cursor
+                            }
+                            return -1
+                          })()
+                          const completionInsertIndex = lastRenderableStepIndex
+                          const shouldInsertCompletion = index === completionInsertIndex
                           const isStepTitle = /^\d+\.\s/.test(normalizedStep)
                           const isAdviceTitle =
                             /^Conseils? pour/.test(normalizedStep) ||
@@ -6734,12 +6770,7 @@ const DietClassicPage = () => {
                             return ""
                           })()
                           const isTipBoxItem = isSubItem && /^Astuces?\s+pour/i.test(previousNonSubStep)
-                          const nextIsTipBoxItem = (() => {
-                            const nextIndex = index + 1
-                            if (nextIndex >= allSteps.length) return false
-                            const nextStep = normalizeStep(allSteps[nextIndex])
-                            return /^\-\s/.test(nextStep)
-                          })()
+                          if (isTipBoxTitle || isTipBoxItem) return null
                           const isSubNoBullet =
                             /^Le saumon est pret lorsque\s*:$/i.test(normalizedStep) ||
                             /^Depose le saumon sur une assiette et assaisonne\s*:$/i.test(normalizedStep) ||
@@ -6982,24 +7013,11 @@ const DietClassicPage = () => {
                             || /^L'huile doit etre chaude mais ne pas fremir fortement\.$/i.test(normalizedStep)
                             || /^Les gousses doivent devenir tres tendres et legerement dorees\.$/i.test(normalizedStep)
                             || /^Utilise aussi l'huile restante pour cuire des legumes, des pates ou de la viande\.$/i.test(normalizedStep)
-                          const isPlainNoBullet =
-                            /^Ces details/.test(normalizedStep) ||
-                            /^Ta .+ est prete\./.test(normalizedStep) ||
-                            /^Ton .+ est pret[e]?\./.test(normalizedStep) ||
-                            /^Tes .+ sont pret[e]s\./.test(normalizedStep) ||
-                            /^Il ne reste plus qu'a savourer\s*!$/i.test(normalizedStep) ||
-                            /^Il ne reste plus qu['’]a savourer,\s*bon appetit\s*!$/i.test(normalizedStep)
-                          return (
+                          const currentStepNode = (
                             <li
                               key={`${selectedRecipe.id}-${step}`}
                               className={
-                                isTipBoxTitle
-                                  ? "diet-step-item--tipbox-title"
-                                  : isTipBoxItem
-                                    ? nextIsTipBoxItem
-                                      ? "diet-step-item--tipbox-item"
-                                      : "diet-step-item--tipbox-item diet-step-item--tipbox-item-last"
-                                  : isStepTitle || isAdviceTitle
+                                isStepTitle || isAdviceTitle
                                   ? "diet-step-item--title"
                                   : isStepSubTitle
                                     ? "diet-step-item--subtitle"
@@ -7009,13 +7027,24 @@ const DietClassicPage = () => {
                                     ? "diet-step-item--sub"
                                     : isSubNoBullet
                                       ? "diet-step-item--subplain"
-                                    : isPlainNoBullet
-                                      ? "diet-step-item--plain"
                                       : undefined
                               }
                             >
-                              {isSubItem || isTipBoxItem ? normalizedStep.replace(/^-?\s*/, "") : normalizedStep}
+                              {isSubItem ? normalizedStep.replace(/^-?\s*/, "") : normalizedStep}
                             </li>
+                          )
+                          const completionNode = (
+                            <li key={`${selectedRecipe.id}-completion`} className="diet-step-item--plain">
+                              Ton {selectedRecipe.title} est pret. Il ne te reste plus qu'a deguster !
+                            </li>
+                          )
+                          if (selectedRecipe.id === "mass-pancakes") return currentStepNode
+                          if (!shouldInsertCompletion) return currentStepNode
+                          return (
+                            <>
+                              {currentStepNode}
+                              {completionNode}
+                            </>
                           )
                         })}
                       </ul>
@@ -7028,19 +7057,45 @@ const DietClassicPage = () => {
                         {selectedRecipe.toppings.map((item) => (
                           <li key={item}>{item}</li>
                         ))}
+                        {selectedRecipe.id === "mass-pancakes" ? (
+                          <li className="diet-step-item--plain">
+                            Ton {selectedRecipe.title} est pret. Il ne te reste plus qu'a deguster !
+                          </li>
+                        ) : null}
                       </ul>
                     </section>
                   ) : null}
-                  {selectedRecipe.tips && selectedRecipe.tips.length > 0 ? (
-                    <section>
-                      <h4>{"Astuces"}</h4>
-                      <ul>
-                        {selectedRecipe.tips.map((item) => (
-                          <li key={item}>{item}</li>
-                        ))}
-                      </ul>
-                    </section>
-                  ) : null}
+                  {(() => {
+                    const normalizeStep = (value: string) => value.replace(/\u00A0/g, " ").trim()
+                    const tipsFromSteps = selectedRecipe.steps.reduce<string[]>((acc, step, index, allSteps) => {
+                      const normalizedStep = normalizeStep(step)
+                      if (!/^\-\s/.test(normalizedStep)) return acc
+                      let previousNonSubStep = ""
+                      for (let cursor = index - 1; cursor >= 0; cursor -= 1) {
+                        const candidate = normalizeStep(allSteps[cursor])
+                        if (!/^\-\s/.test(candidate)) {
+                          previousNonSubStep = candidate
+                          break
+                        }
+                      }
+                      if (!/^Astuces?\s+pour/i.test(previousNonSubStep)) return acc
+                      acc.push(normalizedStep.replace(/^-+\s*/, ""))
+                      return acc
+                    }, [])
+                    const tipsFromRecipe = (selectedRecipe.tips ?? []).map((item) => item.trim()).filter(Boolean)
+                    const allTips = Array.from(new Set([...tipsFromSteps, ...tipsFromRecipe]))
+                    if (!allTips.length) return null
+                    return (
+                      <section className="diet-recipe-tips-box">
+                        <h4>Astuces pour que la recette soit meilleure</h4>
+                        <ul>
+                          {allTips.map((item) => (
+                            <li key={item}>{item}</li>
+                          ))}
+                        </ul>
+                      </section>
+                    )
+                  })()}
                 </div>
               </div>
               <footer className="diet-recipe-modal__actions" />
