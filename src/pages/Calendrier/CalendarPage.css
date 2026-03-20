@@ -472,7 +472,7 @@
   gap: 0.5rem;
   padding: 1rem;
   background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(15, 23, 42, 0.14);
   box-shadow: none;
   min-width: 0;
 }
@@ -1949,7 +1949,7 @@ body.calendar-page--lux .calendar-mobile__day-card.is-today {
 
 body.calendar-page--lux .calendar-weekly__grid,
 body.calendar-page--lux .calendar-monthly-preview {
-  border: none;
+  border: 1px solid rgba(15, 23, 42, 0.14);
 }
 
 body.calendar-page--lux .calendar-new-task {

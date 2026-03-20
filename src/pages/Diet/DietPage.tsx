@@ -5513,14 +5513,7 @@ const DietClassicPage = () => {
       document.body.classList.remove("diet-page--lux")
     }
   }, [])
-  const [tab, setTab] = useState<DietTab>(() => {
-    if (typeof window === "undefined") return "savory"
-    const savedTab = window.localStorage.getItem(DIET_TAB_STORAGE_KEY)
-    if (savedTab && DIET_TABS.includes(savedTab as DietTab)) {
-      return savedTab as DietTab
-    }
-    return "savory"
-  })
+  const [tab, setTab] = useState<DietTab>("savory")
   const [selectedRecipe, setSelectedRecipe] = useState<RenderRecipe | null>(null)
   const [isIngredientsOpen, setIsIngredientsOpen] = useState(true)
   const [planDay, setPlanDay] = useState<typeof weekDays[number]>(weekDays[0])

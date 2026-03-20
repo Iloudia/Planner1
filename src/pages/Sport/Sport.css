@@ -44,19 +44,9 @@
   gap: 1.8rem;
   position: relative;
   z-index: 1;
-  padding: 2rem 0 2.4rem;
-}
-
-.sport-board::before {
-  content: "";
-  position: absolute;
-  top: -1.5rem;
-  bottom: -1.8rem;
-  left: 50%;
-  width: 100vw;
-  transform: translateX(-50%);
+  padding: 1.1rem 1.3rem;
   background: #ffffff;
-  z-index: -1;
+  border: 1px solid var(--lux-line);
 }
 
 .sport-board__range {

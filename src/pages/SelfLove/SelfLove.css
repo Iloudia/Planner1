@@ -54,6 +54,9 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  padding: clamp(1.2rem, 3vw, 2.2rem) clamp(1rem, 2.8vw, 2rem);
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.14);
 }
 
 
@@ -66,17 +69,6 @@
   z-index: 0;
 }
 
-.self-love-letter__cards::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: 100vw;
-  transform: translateX(-50%);
-  background: #ffffff;
-  z-index: -1;
-}
 .self-love-letter__card {
   display: none;
 }
@@ -139,6 +131,11 @@
   display: flex;
   flex-direction: column;
   gap: 1.4rem;
+}
+
+.self-love-letter__card--classic.is-active {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.14);
 }
 
 .self-love-letter__frame::after {
@@ -458,13 +455,17 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  padding: 0 clamp(1rem, 2.8vw, 2rem) clamp(1.2rem, 3vw, 2.2rem);
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  margin-bottom: clamp(1.6rem, 3vw, 2.4rem);
 }
 
 .self-love-exercise__grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: clamp(1rem, 3vw, 1.8rem);
-  margin-bottom: 1.5rem;
+  margin-bottom: 0;
 }
 
 .self-love-exercise__card {
@@ -1585,8 +1586,10 @@
 }
 
 .self-love-section--photos {
-  width: min(100%, 880px);
-  margin: 0 auto 2rem;
+  width: 100%;
+  margin: 0 0 2rem;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 
@@ -1745,20 +1748,11 @@
   grid-template-columns: 1fr;
   gap: clamp(1rem, 3vw, 2rem);
   position: relative;
-  padding: clamp(1.2rem, 3vw, 2.2rem) 0;
-  z-index: 0;
-}
-
-.self-love-sections-row::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: 100vw;
-  transform: translateX(-50%);
+  padding: clamp(1.2rem, 3vw, 2.2rem) clamp(1rem, 2.8vw, 2rem);
   background: #ffffff;
-  z-index: -1;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  margin-bottom: clamp(1.6rem, 3vw, 2.4rem);
+  z-index: 0;
 }
 
 @media (min-width: 1024px) {
@@ -2118,6 +2112,11 @@
   .self-love-section--thoughts,
   .self-love-section--extras {
     padding: 1.6rem;
+  }
+
+  .self-love-section--photos {
+    padding-left: 0;
+    padding-right: 0;
   }
 
   .self-love-profile {

@@ -17,6 +17,16 @@ type VideoFormState = {
   url: string
 }
 
+type CreatorRecommendation = {
+  id: string
+  name: string
+  platform: "YouTube" | "Instagram"
+  focus: string
+  level: string
+  description: string
+  url: string
+}
+
 const defaultExerciseImages: Record<string, string> = {
   backday: backdayImage,
   legday: legdayImage,
@@ -43,6 +53,54 @@ const MUSCLE_OPTIONS = [
 
 const MUSCLE_PLACEHOLDER = "Selectionner un muscle"
 const YOUTUBE_API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY as string | undefined
+
+const CREATOR_RECOMMENDATIONS: CreatorRecommendation[] = [
+  {
+    id: "sissy-mua-youtube",
+    name: "Sissy Mua",
+    platform: "YouTube",
+    focus: "HIIT / Renfo",
+    level: "Tous niveaux",
+    description: "Seances energiques de renfo et HIIT avec un coaching motive et progressif.",
+    url: "https://www.youtube.com/@SissyMUA",
+  },
+  {
+    id: "lidia-mera-youtube",
+    name: "Lidia Mera",
+    platform: "YouTube",
+    focus: "Pilate",
+    level: "Debutant a avance",
+    description: "Routines pilates fluides et full body, parfaites pour tonifier sans impact.",
+    url: "https://www.youtube.com/@lidiavmera",
+  },
+  {
+    id: "madfit-youtube",
+    name: "MadFit",
+    platform: "YouTube",
+    focus: "Home workout",
+    level: "Tous niveaux",
+    description: "Workouts maison courts et efficaces, souvent sans materiel et faciles a suivre.",
+    url: "https://www.youtube.com/@MadFit",
+  },
+  {
+    id: "anisia-martinez-instagram",
+    name: "Anisia Martinez",
+    platform: "Instagram",
+    focus: "Core / Full body",
+    level: "Debutant",
+    description: "Reels orientes core et full body avec idees de seances rapides et accessibles.",
+    url: "https://www.instagram.com/anisiamartinezz_/",
+  },
+  {
+    id: "leila-hopson-instagram",
+    name: "Leila Hopson",
+    platform: "Instagram",
+    focus: "Cardio / Tonicite",
+    level: "Tous niveaux",
+    description: "Contenus cardio et tonicite avec formats courts, repetables et motivants.",
+    url: "https://www.instagram.com/leilafitjourney/",
+  },
+]
 
 const parseIsoDuration = (value: string) => {
   const match = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/.exec(value)
@@ -596,6 +654,33 @@ const WorkoutPage = () => {
               ))}
             </div>
           )}
+        </section>
+
+        <section className="workout-creators workout-section--full" aria-label="Recommandations YouTube et Instagram">
+          <header className="workout-creators__header">
+            <h2>Recommandations YouTube & Instagram</h2>
+            <p>Des comptes efficaces et faciles a integrer dans ta routine.</p>
+          </header>
+          <div className="workout-creators__grid">
+            {CREATOR_RECOMMENDATIONS.map((creator) => (
+              <article key={creator.id} className="workout-creator-card">
+                <div className="workout-creator-card__top">
+                  <span className={`workout-creator-card__platform workout-creator-card__platform--${creator.platform.toLowerCase()}`}>
+                    {creator.platform}
+                  </span>
+                  <h3>{creator.name}</h3>
+                </div>
+                <p className="workout-creator-card__description">{creator.description}</p>
+                <div className="workout-creator-card__meta">
+                  <span>{creator.focus}</span>
+                  <span>{creator.level}</span>
+                </div>
+                <a href={creator.url} target="_blank" rel="noreferrer" className="workout-creator-card__link">
+                  Voir le profil
+                </a>
+              </article>
+            ))}
+          </div>
         </section>
       </div>
       <div className="workout-page__footer-bar" aria-hidden="true" />
