@@ -112,8 +112,7 @@
   padding: 0;
   appearance: none;
   -webkit-appearance: none;
-  transition: transform 0.25s ease;
-  animation: wishlist-card-enter 0.6s ease both;
+  transition: transform 200ms ease;
   will-change: transform;
 }
 
@@ -414,11 +413,11 @@
 
 .wishlist-modal__photo-slot {
   position: relative;
-  border: 1px dashed rgba(114, 92, 63, 0.4);
-  border-radius: 14px;
+  border: 1px solid rgba(114, 92, 63, 0.4);
+  border-radius: 0;
   width: 148px;
   height: 148px;
-  background: rgba(227, 215, 202, 0.16);
+  background: rgba(227, 215, 202, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -428,6 +427,18 @@
   padding: 1rem;
   color: #0f172a;
   font-weight: 600;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.wishlist-modal__photo-slot:hover {
+  border: 1px solid rgba(114, 92, 63, 0.45);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+}
+
+.wishlist-modal__photo-slot > span {
+  border: 1px solid rgba(114, 92, 63, 0.4);
+  color: #000000;
+  padding: 0.45rem 0.7rem;
 }
 
 .wishlist-modal__photo-slot input {
@@ -1674,7 +1685,6 @@
 
 .wishlist-create__actions button {
   flex: 1 1 0;
-  border: none;
   border-radius: 14px;
   padding: 0.7rem 1.4rem;
   font-weight: 600;
@@ -2162,9 +2172,14 @@ body.wishlist-page--lux .wishlist-create input[type="text"]:focus {
 
 body.wishlist-page--lux .wishlist-modal__photo-slot {
   border-radius: 0;
-  border: 1px dashed var(--lux-line);
+  border: 1px solid rgba(15, 23, 42, 0.2);
   background: #ffffff;
   box-shadow: none;
+}
+
+body.wishlist-page--lux .wishlist-modal__photo-slot:hover {
+  border: 1px solid rgba(114, 92, 63, 0.45);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
 }
 
 body.wishlist-page--lux .wishlist-upload__trigger,

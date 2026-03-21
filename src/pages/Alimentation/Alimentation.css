@@ -686,6 +686,10 @@
   color: #0f172a;
 }
 
+.diet-generator__toggle input[type="checkbox"] {
+  accent-color: #000000;
+}
+
 .diet-generator__preview {
   display: flex;
   flex-direction: column;

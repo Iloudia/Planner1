@@ -684,7 +684,7 @@ function DietPage() {
               value={shoppingNotes}
               onChange={(event) => void saveShoppingNotes(event.target.value)}
               disabled={!canEdit}
-              placeholder="Écris ta liste comme dans un carnet..."
+              placeholder="Ex : Carottes rapées..."
             />
           </div>
 

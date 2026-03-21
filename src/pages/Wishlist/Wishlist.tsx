@@ -1137,25 +1137,6 @@ const WishlistPage = () => {
               <button
                 type="button"
                 onClick={() => {
-                  setEditingItemId(null)
-                  setIsMemoComposerOpen(false)
-                  setIsItemComposerOpen(true)
-                  setItemDraft(emptyItemDraft(selectedCategory.id))
-                  setItemPreview("")
-                  setItemImageFile(null)
-                  setRemoveItemImage(false)
-                  setIsCategorySuggestionsOpen(false)
-                  if (itemImageRef.current) {
-                    itemImageRef.current.value = ""
-                  }
-                }}
-                aria-label="Ajouter un element"
-              >
-                +
-              </button>
-              <button
-                type="button"
-                onClick={() => {
                   setIsItemComposerOpen(false)
                   setIsMemoComposerOpen((previous) => !previous)
                 }}
@@ -1171,6 +1152,25 @@ const WishlistPage = () => {
                     strokeLinejoin="round"
                   />
                 </svg>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setEditingItemId(null)
+                  setIsMemoComposerOpen(false)
+                  setIsItemComposerOpen(true)
+                  setItemDraft(emptyItemDraft(selectedCategory.id))
+                  setItemPreview("")
+                  setItemImageFile(null)
+                  setRemoveItemImage(false)
+                  setIsCategorySuggestionsOpen(false)
+                  if (itemImageRef.current) {
+                    itemImageRef.current.value = ""
+                  }
+                }}
+                aria-label="Ajouter un element"
+              >
+                +
               </button>
             </div>
           </section>

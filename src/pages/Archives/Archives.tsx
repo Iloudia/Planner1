@@ -856,8 +856,8 @@ const ArchivesPage = () => {
                   ) : (
                     <div className="archives-exercise-card__content">
                       <section className="archives-exercise-card__section archives-exercise-card__section--intro">
-                        <h4>Dialogue doux avec ton passe</h4>
-                        <p>Offre a ton enfant interieur les mots qui avaient manque.</p>
+                        <h4>Reconnecte-toi avec ton enfant intérieur</h4>
+                        <p>Offre à ton enfant intérieur les mots qu’il aurait eu besoin d’entendre.</p>
                       </section>
                       {selectedExercise.innerChild?.message ? (
                         <section className="archives-exercise-card__section archives-exercise-card__section--qa">

@@ -295,7 +295,7 @@ const SelfLovePage = () => {
         <div className="self-love-photos__intro">
           <h2 className="self-love-chocolate self-love-photos__title">Aime-toi</h2>
           <p className="self-love-chocolate self-love-photos__subtitle">
-            Regarde-toi avec bienveillance et choisis 6 photos ou tu rayonnes.
+            Choisis 6 photos sur lesquelles tu te sens belle
           </p>
         </div>
         <div className="self-love-photos-frame">
@@ -328,10 +328,11 @@ const SelfLovePage = () => {
       <div className="self-love-sections-row">
         <section className="self-love-section self-love-section--qualities">
           <h2 className="self-love-chocolate">Liste tes qualites</h2>
+          <p className="self-love-chocolate">Regarde-toi avec plus de douceur et d'honnetete.</p>
           <form className="self-love-form-row" onSubmit={handleAddQuality}>
             <textarea
               className="self-love-exercise__textarea"
-              placeholder="Ex : Je sais ecouter avec le coeur."
+              placeholder="Ex : Je sais ecouter avec le coeur..."
               value={qualityDraft}
               onChange={(event) => setQualityDraft(event.target.value)}
             />
@@ -368,7 +369,7 @@ const SelfLovePage = () => {
                   <span className="self-love-list__heart" aria-hidden="true">
                     *
                   </span>
-                  <span className="self-love-list__text">Commence par noter une seule phrase douce.</span>
+                  <span className="self-love-list__text">Donne-toi la permission de reconnaître une de tes forces.</span>
                 </li>
               ) : null}
             </ul>
@@ -417,9 +418,9 @@ const SelfLovePage = () => {
         <div />
         <div className="self-love-exercise__grid">
           <article className="self-love-exercise__card">
-            <h2 className="self-love-chocolate">Dialogue doux avec ton passe</h2>
+            <h2 className="self-love-chocolate">Reconnecte-toi avec ton enfant intérieur</h2>
             <p className="self-love-chocolate">
-              Offre a ton enfant interieur les mots qui avaient manque.
+              Offre à ton enfant intérieur les mots qu’il aurait eu besoin d’entendre.
             </p>
             <label className="self-love-exercise__prompt">
               <span>Que souhaiterais-tu lui dire maintenant ?</span>
@@ -451,6 +452,9 @@ const SelfLovePage = () => {
                 placeholder="Ex : Je suis fier de toi..."
               />
             </label>
+            <p className="self-love-exercise__hint">
+              Cet exercice apaise les blessures du passe et t'aide a te donner la douceur que tu n'as pas toujours recue.
+            </p>
             <button type="button" className="self-love-exercise__save" onClick={() => void handleSaveInnerChildExercise()}>
               Ajouter aux archives
             </button>
@@ -498,6 +502,12 @@ const SelfLovePage = () => {
       </section>
 
       <section className="self-love-section self-love-letter">
+        <div className="self-love-photos__intro">
+          <h2 className="self-love-chocolate self-love-photos__title">Ecris a ton futur toi</h2>
+          <p className="self-love-chocolate self-love-photos__subtitle">
+            Tu peux ecrire ce que tu traverses maintenant, ce que tu esperes voir disparaitre dans ta vie ou encore tes peurs actuelles.
+          </p>
+        </div>
         <div className="self-love-letter__cards">
           <div className="self-love-letter__frame self-love-letter__card self-love-letter__card--classic is-active">
             <div className="self-love-future-letter__head">
@@ -548,7 +558,7 @@ const SelfLovePage = () => {
                 value={draftState.futureLetterBody}
                 onChange={(event) => setDraftState((previous) => ({ ...previous, futureLetterBody: event.target.value }))}
                 onBlur={() => void persistDraftField("futureLetterBody")}
-                placeholder="Ex : Parle-lui de tes reves, de tes peurs..."
+                placeholder="Ex : En ce moment je traverse..., j'espere voir disparaitre..., aujourd'hui j'ai peur de..., et je veux me rappeler que..."
               />
             </div>
             <div className="self-love-future-letter__footer">

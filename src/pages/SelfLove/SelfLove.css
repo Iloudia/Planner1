@@ -1592,6 +1592,14 @@
   padding-right: 0;
 }
 
+.self-love-section--qualities > h2.self-love-chocolate {
+  margin: 0;
+}
+
+.self-love-section--qualities > p.self-love-chocolate {
+  margin: 0.35rem 0 0;
+}
+
 
 
 .self-love-section__header h2 {

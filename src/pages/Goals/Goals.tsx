@@ -233,7 +233,7 @@ const GoalsPage = () => {
           <section className="body-goals" aria-label="Body goals">
             <header className="body-goals__header">
               <h3>Body goals</h3>
-              <p className="muted">Ajoute des references visuelles pour tes objectifs corps.</p>
+              <p className="muted">Ajoute des images qui représentent ce que tu veux atteindre.</p>
               {bodyGoalsError ? <p className="muted">{bodyGoalsError}</p> : null}
             </header>
             <div className="body-goals__grid">

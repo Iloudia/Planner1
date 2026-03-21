@@ -378,7 +378,7 @@ const JournalingPage = () => {
         <header className="journaling-section__header">
           <div>
             <h2>Zone d'Ã©criture principale</h2>
-            <p>Ã‰cris librement. Personne ne te lira. Tu peux t'arrÃªter quand tu veux.</p>
+            <p>Écris sans filtre. Tu es libre de t’arrêter quand tu veux.</p>
           </div>
         </header>
         <textarea
@@ -400,24 +400,7 @@ const JournalingPage = () => {
         </header>
         <div className="journaling-closure__grid">
           <div className="journaling-closure__block">
-            <span className="journaling-checkin__label">Comment te sens-tu maintenant ?</span>
-            <div className="journaling-post__options">
-              {postFeelingOptions.map((option) => (
-                <label key={option.value} className="journaling-choice journaling-choice--wide">
-                  <input
-                    type="radio"
-                    name="postFeeling"
-                    value={option.value}
-                    checked={draft.postFeeling === option.value}
-                    onChange={() => setDraft((previous) => ({ ...previous, postFeeling: option.value }))}
-                  />
-                  <span className="journaling-choice__content">{option.label}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-          <div className="journaling-closure__block">
-            <span className="journaling-checkin__label">Ancrage positif optionnel</span>
+            <span className="journaling-checkin__label">Ancrage positif</span>
             <div className="journaling-anchor__options">
               {anchorOptions.map((option) => (
                 <label key={option.value} className="journaling-toggle">
@@ -440,6 +423,23 @@ const JournalingPage = () => {
               placeholder="Ex : Je me suis faite un ami..."
               rows={4}
             />
+          </div>
+          <div className="journaling-closure__block">
+            <span className="journaling-checkin__label">Comment te sens-tu maintenant ?</span>
+            <div className="journaling-post__options">
+              {postFeelingOptions.map((option) => (
+                <label key={option.value} className="journaling-choice journaling-choice--wide">
+                  <input
+                    type="radio"
+                    name="postFeeling"
+                    value={option.value}
+                    checked={draft.postFeeling === option.value}
+                    onChange={() => setDraft((previous) => ({ ...previous, postFeeling: option.value }))}
+                  />
+                  <span className="journaling-choice__content">{option.label}</span>
+                </label>
+              ))}
+            </div>
           </div>
         </div>
       </section>
