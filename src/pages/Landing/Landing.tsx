@@ -15,19 +15,19 @@ import cardKatieHuber from "../../assets/katie-huber-rhoades-dupe (1).webp"
 import cardSport from "../../assets/sport.webp"
 
 const carouselItems = [
-  { title: "Sport", text: "Bouge avec douceur et plaisir.", image: cardSport },
-  { title: "Journaling", text: "Écris, clarifie et te recentre.", image: cardMallika },
-  { title: "S'aimer soi-même", text: "Instants self-love au quotidien.", image: cardSelflove },
+  { title: "Sport", text: "Planifie tes séances de sport.", image: cardSport },
+  { title: "Journaling", text: "Écris et clarifie tes pensées.", image: cardMallika },
+  { title: "Mindset", text: "Apprends à mieux te connaître.", image: cardSelflove },
   { title: "Wishlist", text: "Garde tes envies au même endroit.", image: cardMedhanshi },
-  { title: "Calendrier mensuel", text: "Une vue claire sur le mois.", image: cardKatieHuber },
-  { title: "Finances", text: "Budget et dépenses sans stress.", image: cardEbony },
-  { title: "Routine", text: "Rituels matin et soir qui te ressemblent.", image: cardLB },
-  { title: "Cuisine", text: "Idées repas pour libérer ta charge mentale.", image: cardKatieMansfield },
+  { title: "Calendrier", text: "Organise ton mois.", image: cardKatieHuber },
+  { title: "Finances", text: "Suis ton budget et tes dépenses.", image: cardEbony },
+  { title: "Routine", text: "Structure tes routines du matin et du soir.", image: cardLB },
+  { title: "Menu de la semaine", text: "Planifie tes repas de la semaine.", image: cardKatieMansfield },
 ]
 
 const differentiatorHighlights = [
   "Alléger ta charge mentale",
-  "T’aider à te sentir plus serein·e",
+  "T’aider à te sentir plus sereine",
   "Reprendre le contrôle de ton temps",
   "Créer une vie qui te ressemble",
   "Te reconnecter à toi-même",
@@ -116,7 +116,7 @@ const LandingPage = () => {
             L’espace qui transforme ton quotidien en une vie plus fluide, plus douce et plus alignée.
           </h1>
           <p className="landing-hero__accent">
-            Parce que tu mérites une vie structurée sans pression, productive sans stress, et inspirante au quotidien.
+            Parce que tu mérites une vie sans pression, et où tout est plus simple.
           </p>
           <div className="landing-hero__actions">
             <button type="button" className="landing-cta-button" onClick={() => navigate("/login")}>
@@ -141,7 +141,16 @@ const LandingPage = () => {
 
       <section className="landing-daily-hub" aria-labelledby="landing-daily-hub-title">
         <div className="landing-section-heading">
-          <h2 id="landing-daily-hub-title">Sur ce site tu as accès à :</h2>
+          <h2
+            id="landing-daily-hub-title"
+            style={{
+              fontSize: "clamp(0.78rem, 0.72rem + 0.45vw, 1.35rem)",
+              lineHeight: 1.18,
+              whiteSpace: "nowrap"
+            }}
+          >
+            Sur ce site tu as accès à :
+          </h2>
         </div>
         <div className="landing-carousel">
           <button type="button" className="landing-carousel__arrow landing-carousel__arrow--left" aria-label="Cartes précédentes" onClick={handleCarouselPrev}>
@@ -190,10 +199,10 @@ const LandingPage = () => {
       >
         <h2 id="landing-final-cta-title">Et si tu t'offrais enfin une organisation qui te fait du bien ?</h2>
         <p>
-          Tu n’as pas besoin d’en faire davantage. Tu as besoin d’un espace qui te laisse respirer, te guide et soutienne ton épanouissement.
+          <span style={{ color: "#ffffff" }}>Parfois, tout commence par un espace qui offre de l’air, de la clarté et la possibilité de s’épanouir pleinement.</span>
         </p>
         <button type="button" className="landing-cta-button" onClick={() => navigate("/register")}>
-          Je commence mon organisation dès maintenant
+          Créer mon espace
         </button>
       </section>
 </div>

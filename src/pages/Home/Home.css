@@ -735,6 +735,29 @@
   }
 }
 
+@media (min-width: 1241px) and (max-width: 1340px) {
+  .page.home-page {
+    grid-template-columns: 1fr;
+  }
+
+  .page.home-page .aside-right {
+    display: block;
+    order: 1;
+  }
+
+  .page.home-page .board {
+    order: 2;
+  }
+
+  .page.home-page .aside-left {
+    order: 3;
+  }
+
+  .page.home-page .home-moodboard {
+    order: 4;
+  }
+}
+
 @media (min-width: 1024px) {
   .home-page .card-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -958,4 +981,30 @@ body.home-page--lux .account-menu__item.is-selected {
 
 
 @import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@500;600;700&display=swap");
+
+@media (max-width: 767px) {
+  .page.home-page .card img,
+  .page.home-page .card-grid .card:nth-child(-n+3) img {
+    height: 150px;
+  }
+
+  .page.home-page .card-grid .card:nth-child(-n+3) .card-body {
+    padding: 14px 14px 16px;
+  }
+
+  .page.home-page .card-grid .card:nth-child(-n+3) h3 {
+    font-size: 1.1rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .page.home-page .card img,
+  .page.home-page .card-grid .card:nth-child(-n+3) img {
+    height: 170px;
+  }
+
+  .page.home-page .card-grid .card:nth-child(-n+3) .card-body {
+    padding: 16px 16px 18px;
+  }
+}
 

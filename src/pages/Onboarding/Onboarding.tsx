@@ -32,12 +32,12 @@ const REASON_OPTIONS = [
 const CATEGORY_OPTIONS = [
   { label: "Sport", icon: "ðŸƒ" },
   { label: "Journaling", icon: "ðŸ““" },
-  { label: "Self-love", icon: "ðŸ’–" },
+  { label: "Mindset", icon: "ðŸ’–" },
   { label: "Finances", icon: "ðŸ’°" },
   { label: "Routine", icon: "â°" },
   { label: "Wishlist", icon: "â­" },
-  { label: "Calendrier mensuel", icon: "ðŸ—“ï¸" },
-  { label: "Cuisine", icon: "ðŸ³" },
+  { label: "Calendrier", icon: "ðŸ—“ï¸" },
+  { label: "Menu de la semaine", icon: "ðŸ³" },
 ]
 
 type OnboardingAnswers = {
@@ -219,7 +219,7 @@ const OnboardingPage = () => {
 
           {step === 0 ? (
             <>
-              <h2 className="onboarding-question">Comment avez-vous connu ce site ?</h2>
+              <h2 className="onboarding-question">Comment as-tu connu ce site ?</h2>
               <p className="onboarding-hint">Choix unique</p>
               <div className="onboarding-options">
                 {SOURCE_OPTIONS.map((option) => (
@@ -252,7 +252,7 @@ const OnboardingPage = () => {
 
           {step === 1 ? (
             <>
-              <h2 className="onboarding-question">Qu'est-ce qui vous a donnÃ© envie de crÃ©er un compte ?</h2>
+              <h2 className="onboarding-question">Qu’est-ce qui t’a donné envie de créer ce compte ?</h2>
               <p className="onboarding-hint">Plusieurs rÃ©ponses possibles</p>
               <div className="onboarding-options">
                 {REASON_OPTIONS.map((option) => (
@@ -284,7 +284,7 @@ const OnboardingPage = () => {
 
           {step === 2 ? (
             <>
-              <h2 className="onboarding-question">Quelles catÃ©gories vous intÃ©ressent le plus ?</h2>
+              <h2 className="onboarding-question">Quelles catégories t’intéressent le plus ?</h2>
               <p className="onboarding-hint">Choisis en 3 maximum</p>
               <div className="onboarding-options onboarding-options--grid">
                 {CATEGORY_OPTIONS.map((option) => (

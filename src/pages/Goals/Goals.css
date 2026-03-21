@@ -62,18 +62,19 @@
 
 .body-goals__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, 240px);
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   gap: 1rem;
-  justify-content: center;
   width: 100%;
-  padding: 0 1.5rem;
+  padding: 0;
 }
 
 .body-goal-slot {
   position: relative;
   border: 1px dashed rgba(114, 92, 63, 0.4);
-  width: 240px;
-  height: 360px;
+  width: 100%;
+  height: auto;
+  min-height: 220px;
+  aspect-ratio: 2 / 3;
   background: rgba(227, 215, 202, 0.2);
   display: flex;
   align-items: center;

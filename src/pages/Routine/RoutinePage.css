@@ -127,6 +127,7 @@
 }
 
 .routine-note__body {
+  --routine-content-inset: 0.75rem;
   position: relative;
   margin-top: 2rem;
   padding: 1.7rem 1.5rem 2rem;
@@ -165,6 +166,8 @@
   list-style: none;
   margin: 0;
   padding: 0;
+  width: calc(100% - (var(--routine-content-inset) * 2));
+  margin-inline: auto;
   display: flex;
   flex-direction: column;
   gap: 1.1rem;
@@ -175,6 +178,7 @@
   padding: 0.9rem 1rem;
   background: rgba(255, 255, 255, 0.6);
   box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
 }
 
 .routine-note__label {
@@ -187,7 +191,9 @@
   color: rgba(15, 23, 42, 0.85);
   font-size: 1.03rem;
   flex: 1;
+  width: 100%;
   min-width: 0;
+  max-width: 100%;
 }
 
 .routine-note__index {
@@ -227,12 +233,17 @@
   gap: 0.35rem;
   text-align: left;
   justify-self: stretch;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .routine-note__item-title {
   font-weight: 600;
   color: var(--color-chocolate);
   line-height: 1.4;
+  white-space: normal;
+  max-width: 100%;
   min-width: 0;
   overflow-wrap: anywhere;
   word-break: break-word;
@@ -243,6 +254,7 @@
   color: rgba(15, 23, 42, 0.55);
   line-height: 1.5;
   white-space: pre-line;
+  max-width: 100%;
   min-width: 0;
   overflow-wrap: anywhere;
   word-break: break-word;
@@ -253,6 +265,8 @@
   gap: 0.75rem;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  min-width: 0;
 }
 
 .routine-note__actions {
@@ -300,6 +314,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.9rem;
+  margin-inline: auto;
 }
 
 .routine-note__composer label {
@@ -534,5 +549,141 @@ body.routine-page--lux .routine-note__index {
 body.routine-page--lux .routine-note__item-title,
 body.routine-page--lux .routine-note__item-detail {
   color: #1f1a2f;
+}
+
+@media (max-width: 1160px) {
+  .routine-page {
+    gap: 2rem;
+  }
+
+  .routine-notes {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.75rem;
+    width: 100%;
+    max-width: 760px;
+    margin-inline: auto;
+  }
+
+  .routine-note {
+    padding: 1.6rem 1.35rem 1.8rem;
+  }
+
+  .routine-note::after {
+    display: none;
+  }
+
+  .routine-note__top {
+    justify-content: flex-start;
+  }
+
+  .routine-note__title-band {
+    padding: 0;
+    background: transparent;
+  }
+
+  .routine-note__title-band h2 {
+    font-size: clamp(1.45rem, 3vw, 1.9rem);
+  }
+
+  .routine-note__body {
+    --routine-content-inset: 0.6rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    overflow: visible;
+  }
+
+  .routine-note__list {
+    gap: 0.85rem;
+  }
+
+  .routine-note__item {
+    padding: 0.9rem;
+  }
+
+  .routine-note__row {
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .routine-note__label {
+    grid-template-columns: 36px 22px minmax(0, 1fr);
+    align-items: center;
+    justify-items: start;
+    text-align: left;
+    gap: 0.75rem;
+  }
+
+  .routine-note__checkbox {
+    margin-top: 0;
+  }
+
+  .routine-note__text {
+    min-width: 0;
+  }
+
+  .routine-note__actions {
+    margin-top: 0;
+    flex: 0 0 auto;
+  }
+
+  .routine-note__remove {
+    width: 32px;
+    height: 32px;
+  }
+
+  .routine-note__composer {
+    margin-top: 1rem;
+    padding: 1rem;
+  }
+
+  .routine-note__composer label {
+    font-size: 0.88rem;
+  }
+
+  .routine-note__composer input,
+  .routine-note__composer textarea {
+    font-size: 1rem;
+  }
+
+  .routine-note__composer-submit {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .routine-page {
+    gap: 1.6rem;
+  }
+
+  .routine-notes {
+    gap: 1.3rem;
+  }
+
+  .routine-note {
+    padding: 1.2rem 1rem 1.35rem;
+  }
+
+  .routine-note__body {
+    --routine-content-inset: 0.45rem;
+    padding: 0.85rem;
+  }
+
+  .routine-note__item {
+    padding: 0.8rem 0.75rem;
+  }
+
+  .routine-note__label {
+    grid-template-columns: 34px 20px minmax(0, 1fr);
+    gap: 0.65rem;
+  }
+
+  .routine-note__index {
+    min-width: 34px;
+    height: 34px;
+    font-size: 0.82rem;
+  }
 }
 

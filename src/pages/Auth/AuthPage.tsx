@@ -430,7 +430,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
                     </div>
                     <label>
                       Pseudo
-                      <input type="text" value={username} onChange={(event) => setUsername(event.target.value)} placeholder="Ton pseudo" required />
+                      <input type="text" value={username} onChange={(event) => setUsername(event.target.value)} placeholder="Ton pseudo" maxLength={15} required />
                     </label>
                   </>
                 ) : null}

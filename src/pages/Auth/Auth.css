@@ -164,7 +164,7 @@
 .auth-form__select-trigger {
   border: 1px solid rgba(114, 92, 63, 0.25);
   background: #fff;
-  padding: 0.8rem 1rem;
+  padding: 0.85rem 1rem;
   font-size: 1rem;
   box-shadow: 0 10px 24px rgba(114, 92, 63, 0.08);
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
@@ -326,10 +326,17 @@
 
 .auth-step-actions {
   display: flex;
-  gap: 0.75rem;
+  width: 100%;
+  gap: 0.5rem;
   align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+}
+
+.auth-step-actions .auth-submit {
+  width: auto;
+  min-width: 140px;
+  align-self: auto;
 }
 
 .auth-secondary {
@@ -373,7 +380,7 @@
   text-align: center;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   .auth-visual {
     display: none;
   }
@@ -480,6 +487,8 @@ body.auth-page--lux .auth-form select:focus {
 
 body.auth-page--lux .auth-panel input[type="email"]:focus,
 body.auth-page--lux .auth-panel input[type="password"]:focus,
+body.auth-page--lux .auth-panel input[type="text"]:focus,
+body.auth-page--lux .auth-panel input[type="date"]:focus,
 body.auth-page--lux .auth-panel .auth-password-field input[type="text"]:focus {
   outline: none;
   border-color: #000000;

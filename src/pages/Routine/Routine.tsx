@@ -13,9 +13,10 @@ type RoutineDraft = {
   detail: string
 }
 
-const ROUTINE_FIELD_MAX_LENGTH = 67
+const ROUTINE_TITLE_MAX_LENGTH = 50
+const ROUTINE_DETAIL_MAX_LENGTH = 35
 
-const truncateText = (value: string, max = ROUTINE_FIELD_MAX_LENGTH) =>
+const truncateText = (value: string, max = ROUTINE_TITLE_MAX_LENGTH) =>
   value.length > max ? `${value.slice(0, max - 3).trimEnd()}...` : value
 
 type RoutineChecklistProps = {
@@ -89,28 +90,28 @@ const RoutineComposer = ({
       <input
         type="text"
         value={draft.title}
-        onChange={(event) => onDraftChange("title", event.target.value.slice(0, ROUTINE_FIELD_MAX_LENGTH))}
+        onChange={(event) => onDraftChange("title", event.target.value.slice(0, ROUTINE_TITLE_MAX_LENGTH))}
         placeholder={placeholderTitle}
         required
-        maxLength={ROUTINE_FIELD_MAX_LENGTH}
+        maxLength={ROUTINE_TITLE_MAX_LENGTH}
         disabled={disabled}
       />
-      {draft.title.length >= ROUTINE_FIELD_MAX_LENGTH ? (
-        <span className="routine-note__composer-hint">Limite de 67 caracteres atteinte.</span>
+      {draft.title.length >= ROUTINE_TITLE_MAX_LENGTH ? (
+        <span className="routine-note__composer-hint">Limite de 50 caracteres atteinte.</span>
       ) : null}
     </label>
     <label>
       <span>Detail (optionnel)</span>
       <textarea
         value={draft.detail}
-        onChange={(event) => onDraftChange("detail", event.target.value.slice(0, ROUTINE_FIELD_MAX_LENGTH))}
+        onChange={(event) => onDraftChange("detail", event.target.value.slice(0, ROUTINE_DETAIL_MAX_LENGTH))}
         placeholder={placeholderDetail}
         rows={2}
-        maxLength={ROUTINE_FIELD_MAX_LENGTH}
+        maxLength={ROUTINE_DETAIL_MAX_LENGTH}
         disabled={disabled}
       />
-      {draft.detail.length >= ROUTINE_FIELD_MAX_LENGTH ? (
-        <span className="routine-note__composer-hint">Limite de 67 caracteres atteinte.</span>
+      {draft.detail.length >= ROUTINE_DETAIL_MAX_LENGTH ? (
+        <span className="routine-note__composer-hint">Limite de 35 caracteres atteinte.</span>
       ) : null}
     </label>
     <button type="submit" className="routine-note__composer-submit" disabled={disabled}>

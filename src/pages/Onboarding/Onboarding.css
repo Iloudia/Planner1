@@ -178,14 +178,15 @@
   display: flex;
   justify-content: flex-end;
   gap: 0.8rem;
-  flex-wrap: wrap;
-  margin: 0 clamp(2rem, 6vw, 6rem);
+  flex-wrap: nowrap;
+  margin: 0 clamp(2rem, 9vw, 12rem);
 }
 
 .onboarding-button {
   border: none;
   padding: 0.75rem 1.5rem;
   font-weight: 700;
+  white-space: nowrap;
   cursor: pointer;
   background: #725c3f;
   color: #ffffff;
@@ -217,10 +218,6 @@
 
   .onboarding-options {
     grid-template-columns: 1fr;
-  }
-
-  .onboarding-actions {
-    justify-content: center;
   }
 }
 
@@ -350,4 +347,3 @@ body.onboarding-page--lux .onboarding-button:focus-visible {
   outline: 2px solid var(--lux-accent);
   outline-offset: 2px;
 }
-

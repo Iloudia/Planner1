@@ -80,7 +80,9 @@
 .sport-board-card__header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  gap: 0.55rem;
+  flex-wrap: wrap;
 }
 
 .sport-board-card__header h3 {
@@ -96,12 +98,16 @@
 }
 
 .sport-board-card__status {
-  padding: 0.4rem 0.75rem;
+  padding: clamp(0.3rem, 0.8vw, 0.4rem) clamp(0.45rem, 1.5vw, 0.75rem);
   background: rgba(194, 24, 91, 0.12);
   color: #c2185b;
   font-weight: 700;
-  font-size: 0.85rem;
-  white-space: nowrap;
+  font-size: clamp(0.68rem, 1.2vw, 0.85rem);
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+  line-height: 1.2;
+  max-width: 100%;
 }
 
 .sport-board-card__status.is-done {
@@ -334,9 +340,42 @@
   }
 }
 
+@media (min-width: 413px) and (max-width: 585px) {
+  .sport-quick-panel__cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sport-life-card[href="/goals"] {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+}
+
 @media (min-width: 768px) and (max-width: 1023px) {
   .sport-board__columns {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 768px) and (max-width: 825px) {
+  .sport-board-card__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .sport-board-card__status {
+    align-self: flex-start;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1187px) {
+  .sport-board-card__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .sport-board-card__status {
+    align-self: flex-start;
   }
 }
 

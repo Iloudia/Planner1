@@ -138,13 +138,13 @@ const getGuidedQuestionPlaceholder = (question: string, index: number) => {
     return "Ex : Le parc juste à côté de chez moi.. là bas je me sens libre..."
   }
   if (question.includes("déclenché cette colère aujourd'hui") || question.includes("dÃ©clenchÃ© cette colÃ¨re aujourd'hui")) {
-    return "Ex : Mon manager a annulé notre réunion pour la troisième fois sans prévenir. J'avais préparé des choses importantes et je me suis sentie complètement ignorée..."
+    return "Ex : Mon manager a annulé notre réunion pour la troisième fois sans prévenir..."
   }
   if (question.includes("comment tu décrirais ce que tu as ressenti ?") || question.includes("comment tu dÃ©crirais ce que tu as ressenti ?")) {
     return "Ex : Un mélange de frustration et de tristesse, comme si mon travail ne comptait pas vraiment..."
   }
   if (question.includes("petite chose qui t'a quand même fait du bien aujourd'hui") || question.includes("petite chose qui t'a quand mÃªme fait du bien aujourd'hui")) {
-    return "Ex : Une collègue m'a apporté un café en fin de journée, sans raison. Ça m'a rappelé que je ne suis pas seule..."
+    return "Ex : Une collègue m'a apporté un café en fin de journée, sans raison..."
   }
   if (question.includes("le plus épuisé aujourd'hui") || question.includes("le plus Ã©puisÃ© aujourd'hui")) {
     return "Ex : J'ai eu cinq réunions d'affilée sans pause, et le soir j'avais encore des mails en attente. Je n'ai pas eu un seul moment pour souffler."
@@ -386,7 +386,7 @@ const JournalingPage = () => {
           onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
             setDraft((previous) => ({ ...previous, content: event.target.value }))
           }
-          placeholder="Ex : Aujourd'hui j'ai eu du mal Ã  me lever, mais j'ai aimÃ© mon cafÃ© du matin. J'ai aussi rÃ©ussi Ã  rÃ©gler ce problÃ¨me qui traÃ®nait depuis une semaine, ce qui m'a soulagÃ©. Par contre je me sens un peu tendu Ã  l'idÃ©e de la rÃ©union de demain..."
+          placeholder="Ex : Aujourd'hui j'ai eu du mal Ã  me lever, mais j'ai aimÃ© mon cafÃ© du matin..."
           rows={10}
         />
       </section>
