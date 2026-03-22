@@ -26,6 +26,7 @@ import GestionCookiesPage from "./pages/Legal/GestionCookiesPage"
 import MentionsLegalesPage from "./pages/Legal/MentionsLegalesPage"
 import CookieBanner from "./components/CookieBanner"
 import CookiePreferencesModal from "./components/CookiePreferencesModal"
+import AppUpdateBanner from "./components/AppUpdateBanner"
 import AdminPage from "./pages/Admin/AdminPage"
 import AdminProductsPage from "./pages/AdminProducts/AdminProductsPage"
 import AdminProductsManagePage from "./pages/AdminProducts/AdminProductsManagePage"
@@ -173,6 +174,7 @@ function App() {
         </Routes>
       </main>
       <Footer />
+      <AppUpdateBanner />
       <CookieBanner />
       <CookiePreferencesModal />
     </div>
