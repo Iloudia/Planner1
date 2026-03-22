@@ -144,10 +144,17 @@ const useUserWishlist = () => {
         baseWishlistCategoryDefinitions.map(async (definition, index) => {
           const existing = byId.get(definition.id)
           const next = buildBaseCategory(definition, {
-            ...existing,
             order: existing?.order ?? index,
             coverMode:
               existing?.coverMode ?? (existing?.customCoverUrl || existing?.customCoverPath ? "custom" : "default"),
+            note: existing?.note,
+            isFavorite: existing?.isFavorite,
+            customCoverUrl: existing?.customCoverUrl,
+            customCoverPath: existing?.customCoverPath,
+            usageCount: existing?.usageCount,
+            lastUsedAt: existing?.lastUsedAt,
+            createdAt: existing?.createdAt,
+            updatedAt: existing?.updatedAt,
           })
           const needsCreate = !existing
           const needsSync =

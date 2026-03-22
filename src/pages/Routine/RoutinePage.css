@@ -374,8 +374,8 @@
 }
 
 .routine-note__composer-submit {
-  align-self: flex-start;
-  margin-right: auto;
+  align-self: flex-end;
+  margin-left: auto;
   border: none;
   padding: 0.6rem 1.2rem;
   min-height: 46px;

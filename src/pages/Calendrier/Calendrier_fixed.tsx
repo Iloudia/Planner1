@@ -754,17 +754,6 @@ const CalendrierPage = () => {
                                 >
                                     <div className="calendar-day__header">
                                         <span className="calendar-day__number">{cell.day}</span>
-                                        <button
-                                            type="button"
-                                            className="calendar-day__add"
-                                            onClick={(event) => {
-                                                event.stopPropagation()
-                                                handlePlanForDate(cell.dateKey!)
-                                            }}
-                                            aria-label={`Ajouter une tache le ${cell.dateKey}`}
-                                        >
-                                            +
-                                        </button>
                                     </div>
                                     {cell.tasks[0] ? (
                                         <>

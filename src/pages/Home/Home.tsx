@@ -7,7 +7,7 @@ import { saveHomeCardsState, subscribeToHomeCardsState } from "../../services/fi
 import { buildUserScopedKey, normalizeUserEmail } from "../../utils/userScopedKey"
 
 import planner01 from "../../assets/sport.webp"
-import planner02 from "../../assets/MoodBoard.webp"
+import planner02 from "../../assets/Moodboardsite.png"
 import planner03 from "../../assets/Journaling.webp"
 import planner04 from "../../assets/Aimer.webp"
 import planner05 from "../../assets/Habits.webp"

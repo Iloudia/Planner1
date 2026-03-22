@@ -52,10 +52,10 @@ type ItemDraft = {
 }
 
 const CATEGORY_DEFINITIONS: CategoryDefinition[] = [
-  { id: "hair", label: "Hair essentials", accent: "#f497c0", cover: wishlistHair, blurb: "Brushes, soins et petits accessoires pour une routine cheveux complète." },
-  { id: "outfits", label: "Outfits", accent: "#fcd67d", cover: wishlistOutfit, blurb: "Idées tenues et pièces coup de cœur pour tes looks préférés." },
-  { id: "makeup", label: "Makeup wishlist", accent: "#fbcada", cover: wishlistMakeup, blurb: "Palettes, gloss ou nouveaux blushs à tester absolument." },
-  { id: "electronics", label: "Appareils électroniques", accent: "#c9d9ff", cover: wishlistElectronics, blurb: "Gadgets tech, accessoires photo ou outils de productivité." },
+  { id: "hair", label: "Cheveux", accent: "#f497c0", cover: wishlistHair, blurb: "Brushes, soins et petits accessoires pour une routine cheveux complète." },
+  { id: "outfits", label: "Vêtements", accent: "#fcd67d", cover: wishlistOutfit, blurb: "Idées tenues et pièces coup de cœur pour tes looks préférés." },
+  { id: "makeup", label: "Makeup", accent: "#fbcada", cover: wishlistMakeup, blurb: "Palettes, gloss ou nouveaux blushs à tester absolument." },
+  { id: "electronics", label: "Électronique", accent: "#c9d9ff", cover: wishlistElectronics, blurb: "Gadgets tech, accessoires photo ou outils de productivité." },
   { id: "skincare", label: "Skincare", accent: "#c1e7db", cover: wishlistSkincare, blurb: "Soins cocooning, masques favoris et indispensables glow." },
   { id: "books", label: "Livres", accent: "#b4cfff", cover: wishlistBooks, blurb: "Romans, développement perso et lectures inspirées." },
   { id: "room", label: "Chambre", accent: "#d9c5ff", cover: wishlistRoom, blurb: "Déco, ambiance et petits objets cozy pour ta chambre." },

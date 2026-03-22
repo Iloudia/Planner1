@@ -287,10 +287,6 @@ const CalendrierPage = () => {
     })
   }
 
-  const handlePlanForDate = (dateKey: string) => {
-    handleDaySelect(dateKey, { presetForm: true })
-  }
-
   const handleEditClick = (taskId: string) => {
     const task = tasks.find((item) => item.id === taskId)
     if (!task) {
@@ -873,17 +869,6 @@ return (
                             
               <div className="calendar-day__header">
                 <span className="calendar-day__number">{cell.day}</span>
-                <button
-                  type="button"
-                  className="calendar-day__add"
-                  onClick={(event) => {
-                    event.stopPropagation()
-                    handlePlanForDate(cell.dateKey!)
-                  }}
-                  aria-label={`Ajouter une tâche le ${cell.dateKey}`}
-                >
-                  +
-                </button>
               </div>
               {cell.tasks.length > 0 ? (
                 <span
@@ -943,22 +928,12 @@ return (
             </button>
           </header>
 
-          <div className="calendar-modal__actions">
-            <button
-              type="button"
-              className="calendar-hero__cta calendar-hero__cta--ghost"
-              onClick={handleResetDay}
-            >
-              Réinitialiser la journée
-            </button>
-          </div>
-
           <div className="calendar-modal__columns">
           <section className="calendar-modal__section">
             <div className="calendar-modal__section-header">
               <h3>Programmer un bloc</h3>
             </div>
-            <form className="calendar-new-task" onSubmit={handleSubmitNewTask}>
+            <form id="calendar-new-task-form" className="calendar-new-task" onSubmit={handleSubmitNewTask}>
               <label className="calendar-task__field calendar-task__field--full">
                 <span>Titre</span>
                 <input
@@ -966,6 +941,7 @@ return (
                   value={newTaskForm.title}
                   onChange={(event) => handleNewTaskFieldChange("title", event.target.value)}
                   placeholder="Bloc deep work, rendez-vous, self-care..."
+                  maxLength={40}
                   required
                 />
               </label>
@@ -1053,13 +1029,23 @@ return (
                 </label>
               </div>
               {newTaskError ? <p className="calendar-new-task__error">{newTaskError}</p> : null}
+            </form>
+            <div className="calendar-modal__footer-actions">
               <button
                 type="submit"
+                form="calendar-new-task-form"
                 className="calendar-hero__cta calendar-hero__cta--primary calendar-new-task__submit"
               >
                 Programmer
               </button>
-            </form>
+              <button
+                type="button"
+                className="calendar-hero__cta calendar-hero__cta--ghost"
+                onClick={handleResetDay}
+              >
+                Réinitialiser la journée
+              </button>
+            </div>
           </section>
           <div className="calendar-modal__divider" aria-hidden="true" />
 
@@ -1185,11 +1171,11 @@ return (
                   ))
                 )}
               </div>
-            </section>
-            </div>
+          </section>
           </div>
         </div>
-      ) : null}
+      </div>
+    ) : null}
       {duplicateTask ? (
         <div className="calendar-duplicate" role="dialog" aria-modal="true" aria-labelledby="calendar-duplicate-title">
           <div className="calendar-duplicate__backdrop" onClick={handleCloseDuplicate} aria-hidden="true" />
