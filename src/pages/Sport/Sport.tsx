@@ -321,11 +321,11 @@ const SportPage = () => {
                     <time dateTime={day.dateISO}>{formatBoardDate(day.dateISO)}</time>
                   </div>
                   <span className={`sport-board-card__status${day.done ? " is-done" : ""}`}>
-                    {day.done ? "Fait" : "A planifier"}
+                    {day.done ? "Fait" : "À planifier"}
                   </span>
                 </header>
                 <label className="sport-board-card__field">
-                  <span>Seance</span>
+                  <span>Séance</span>
                   <input
                     type="text"
                     value={activityDrafts[day.id] ?? day.activity}
@@ -339,11 +339,11 @@ const SportPage = () => {
                     enterKeyHint="done"
                     disabled={!canEdit}
                   />
-                  {savedActivityDayId === day.id ? <span className="sport-board-card__feedback">Enregistre</span> : null}
+                  {savedActivityDayId === day.id ? <span className="sport-board-card__feedback">Enregistré</span> : null}
                 </label>
                 <label className="sport-board-card__checkbox">
                   <input type="checkbox" checked={day.done} onChange={handleDoneToggle(day.id)} disabled={!canEdit} />
-                  <span>Seance effectuee</span>
+                  <span>Séance effectuée</span>
                 </label>
               </article>
             ))}

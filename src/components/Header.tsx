@@ -1,6 +1,5 @@
-﻿import { Link, useNavigate } from "react-router-dom"
+﻿import { Link, NavLink, useNavigate } from "react-router-dom"
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react"
-import { NavLink } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
 
 function Header() {
@@ -10,6 +9,7 @@ function Header() {
   const [searchTerm, setSearchTerm] = useState("")
   const [searchSuggestionsOpen, setSearchSuggestionsOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [isMobileSearchPanel, setIsMobileSearchPanel] = useState(() => window.innerWidth <= 768)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isAccountOpen, setIsAccountOpen] = useState(false)
   const searchRef = useRef<HTMLDivElement | null>(null)
@@ -51,6 +51,7 @@ function Header() {
   }, [searchTargets, searchTerm])
 
   const shouldShowSuggestions = searchSuggestionsOpen && filteredSuggestions.length > 0
+  const mobileSearchSuggestions = searchTerm.trim() ? filteredSuggestions : searchTargets.slice(0, 7)
 
   const handleNavigate = (path: string) => {
     navigate(path)
@@ -85,6 +86,10 @@ function Header() {
   }
 
   const handleSearchToggle = () => {
+    if (isMobileSearchPanel) {
+      setIsSearchOpen(true)
+      return
+    }
     if (!isSearchOpen) {
       setIsSearchOpen(true)
       return
@@ -92,12 +97,28 @@ function Header() {
     handleSearchSubmit()
   }
 
-  const handleSuggestionNavigate = (path: string) => {
-    handleNavigate(path)
+  const handleSearchClose = () => {
     setSearchTerm("")
     setSearchSuggestionsOpen(false)
     setIsSearchOpen(false)
   }
+
+  const handleSuggestionNavigate = (path: string) => {
+    handleNavigate(path)
+    handleSearchClose()
+  }
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 768px)")
+    const syncSearchViewport = (matches: boolean) => {
+      setIsMobileSearchPanel(matches)
+    }
+
+    syncSearchViewport(mediaQuery.matches)
+    const listener = (event: MediaQueryListEvent) => syncSearchViewport(event.matches)
+    mediaQuery.addEventListener("change", listener)
+    return () => mediaQuery.removeEventListener("change", listener)
+  }, [])
 
   useEffect(() => {
     const handleClickOutsideSearch = (event: MouseEvent) => {
@@ -254,7 +275,7 @@ function Header() {
                   <line x1="16.65" y1="16.65" x2="21" y2="21" />
                 </svg>
               </button>
-              {isSearchOpen ? (
+              {isSearchOpen && !isMobileSearchPanel ? (
                 <input
                   ref={searchInputRef}
                   className="nav-search__input"
@@ -276,7 +297,7 @@ function Header() {
                   }}
                 />
               ) : null}
-              {shouldShowSuggestions ? (
+              {shouldShowSuggestions && !isMobileSearchPanel ? (
                 <ul className="nav-search__suggestions" role="listbox">
                   {filteredSuggestions.map((target) => (
                     <li key={target.path}>
@@ -291,6 +312,63 @@ function Header() {
                     </li>
                   ))}
                 </ul>
+              ) : null}
+              {isSearchOpen && isMobileSearchPanel ? (
+                <div
+                  className="nav-search__mobile-panel"
+                  role="dialog"
+                  aria-modal="true"
+                  aria-label="Recherche"
+                  onClick={(event) => {
+                    if (event.target === event.currentTarget) {
+                      handleSearchClose()
+                    }
+                  }}
+                >
+                  <div className="nav-search__mobile-sheet">
+                    <div className="nav-search__mobile-input-row">
+                      <input
+                        ref={searchInputRef}
+                        className="nav-search__mobile-input"
+                        type="search"
+                        placeholder="Rechercher..."
+                        aria-label="Rechercher"
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter") {
+                            event.preventDefault()
+                            handleSearchSubmit()
+                          }
+                        }}
+                      />
+                      <button type="button" className="nav-search__mobile-cancel" onClick={handleSearchClose}>
+                        Annuler
+                      </button>
+                    </div>
+                    <div className="nav-search__mobile-content">
+                      <p className="nav-search__mobile-title">Suggestions</p>
+                      {mobileSearchSuggestions.length > 0 ? (
+                        <ul className="nav-search__mobile-suggestions" role="listbox">
+                          {mobileSearchSuggestions.map((target) => (
+                            <li key={`mobile-${target.path}`}>
+                              <button
+                                type="button"
+                                className="nav-search__mobile-suggestion"
+                                role="option"
+                                onClick={() => handleSuggestionNavigate(target.path)}
+                              >
+                                {target.label}
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="nav-search__mobile-empty">Aucune suggestion</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
               ) : null}
             </div>
 

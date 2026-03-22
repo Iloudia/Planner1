@@ -22,7 +22,7 @@ import {
 } from "../services/firestore/diet"
 
 const DIET_LOAD_ERROR = "Impossible de charger votre espace alimentation."
-const DIET_MUTATION_ERROR = "Impossible de mettre a jour vos donnees alimentation."
+const DIET_MUTATION_ERROR = "Impossible de mettre à jour vos données alimentation."
 
 const weekDays: DietWeekDay[] = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
 const mealSlots: DietMealSlotId[] = ["morning", "midday", "evening"]

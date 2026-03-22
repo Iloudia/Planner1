@@ -50,7 +50,7 @@ type DisplayPreferences = {
 }
 
 const basicRows: AccountRow[] = [
-  { key: "firstName", label: "Prenom" },
+  { key: "firstName", label: "Prénom" },
   { key: "lastName", label: "Nom" },
   { key: "birthDate", label: "Date de naissance", type: "date" },
   { key: "gender", label: "Genre", type: "select" },
@@ -62,9 +62,9 @@ const accountRows: AccountRow[] = [
 ]
 
 const settingsSections = [
-  { id: "account", title: "Votre compte", description: "Gerer les informations personnelles et la securite." },
-  { id: "display", title: "Affichage", description: "Modifier la taille de la police et l ambiance visuelle." },
-  { id: "languages", title: "Langues", description: "Choisir la langue principale de l interface." },
+  { id: "account", title: "Votre compte", description: "Gérer les informations personnelles et la sécurité." },
+  { id: "display", title: "Affichage", description: "Modifier la taille de la police et l'ambiance visuelle." },
+  { id: "languages", title: "Langues", description: "Choisir la langue principale de l'interface." },
 ]
 
 const FONT_SCALE_OPTIONS = [
@@ -76,14 +76,14 @@ const FONT_SCALE_OPTIONS = [
 ]
 
 const BACKGROUND_OPTIONS: { id: BackgroundTone; label: string; description: string }[] = [
-  { id: "light", label: "Clair", description: "Fond lumineux et aere" },
+  { id: "light", label: "Clair", description: "Fond lumineux et aéré" },
   { id: "dark", label: "Sombre", description: "Fond doux et contraste" },
 ]
 
 const THEME_OPTIONS: { id: ThemeTone; label: string; description: string }[] = [
   { id: "rose", label: "Rose", description: "Notes douces et romantiques" },
   { id: "caramel", label: "Caramel", description: "Beige chaud et naturel" },
-  { id: "mint", label: "Menthe", description: "Fraicheur et douceur" },
+  { id: "mint", label: "Menthe", description: "Fraîcheur et douceur" },
 ]
 
 const MS_IN_DAY = 1000 * 60 * 60 * 24
@@ -237,7 +237,7 @@ const ProfilePage = () => {
 
     if (key === "birthDate") {
       if (limits.birthDateAt) {
-        return { ok: false, message: "La date d'anniversaire ne peut etre modifiee qu'une seule fois." }
+        return { ok: false, message: "La date d'anniversaire ne peut être modifiée qu'une seule fois." }
       }
     }
 
@@ -308,7 +308,7 @@ const ProfilePage = () => {
       try {
         if (auth.currentUser) {
           await sendEmailVerification(auth.currentUser)
-          setEditInfo("Un email de confirmation a ete envoye.")
+          setEditInfo("Un email de confirmation a été envoyé.")
         }
       } catch {
         setEditError("Impossible d'envoyer l'email de confirmation.")
@@ -348,7 +348,7 @@ const ProfilePage = () => {
       setPasswordError(result.error ?? "Impossible de changer le mot de passe.")
       return
     }
-    setPasswordSuccess("Mot de passe mis a jour.")
+    setPasswordSuccess("Mot de passe mis à jour.")
     setCurrentPassword("")
     setNewPassword("")
     setPasswordEditing(false)
@@ -360,14 +360,14 @@ const ProfilePage = () => {
     setResetInfo("")
     const email = getDisplayValue("email")
     if (!email) {
-      setPasswordError("Aucun email associe au compte.")
+      setPasswordError("Aucun email associé au compte.")
       return
     }
     try {
       await sendPasswordResetEmail(auth, email)
-      setResetInfo("Un lien de reinitialisation a ete envoye par email.")
+      setResetInfo("Un lien de réinitialisation a été envoyé par email.")
     } catch {
-      setPasswordError("Impossible d envoyer le lien de reinitialisation.")
+      setPasswordError("Impossible d'envoyer le lien de réinitialisation.")
     }
   }
 
@@ -503,7 +503,7 @@ const ProfilePage = () => {
                                     aria-expanded={genderMenuOpen}
                                     onClick={() => setGenderMenuOpen((prev) => !prev)}
                                   >
-                                    <span>{pendingValue || "Ne pas preciser"}</span>
+                                    <span>{pendingValue || "Ne pas préciser"}</span>
                                     <svg className="account-select__chevron" viewBox="0 0 20 20" aria-hidden="true">
                                       <path
                                         d="M5 7.5L10 12.5L15 7.5"
@@ -517,7 +517,7 @@ const ProfilePage = () => {
                                   {genderMenuOpen ? (
                                     <div className="account-select__menu" role="listbox">
                                       {[
-                                        { value: "", label: "Ne pas preciser" },
+                                        { value: "", label: "Ne pas préciser" },
                                         { value: "femme", label: "Femme" },
                                         { value: "homme", label: "Homme" },
                                       ].map((option) => (
@@ -633,9 +633,9 @@ const ProfilePage = () => {
 
                 <div className="account-danger">
                   <button type="button" className="account-danger__toggle" onClick={() => setDangerOpen((prev) => !prev)}>
-                    Desactiver ou supprimer le compte
+                    Désactiver ou supprimer le compte
                   </button>
-                  <p>Programmer la desactivation pendant 30 jours ou supprimer immediatement.</p>
+                  <p>Programmer la désactivation pendant 30 jours ou supprimer immédiatement.</p>
                   {dangerOpen ? (
                     <div className="account-danger__panel">
                       <div className="account-danger__choices">
@@ -644,7 +644,7 @@ const ProfilePage = () => {
                           className={dangerChoice === "disable" ? "is-active" : ""}
                           onClick={() => setDangerChoice("disable")}
                         >
-                          Desactiver
+                          Désactiver
                         </button>
                         <button
                           type="button"
@@ -689,7 +689,7 @@ const ProfilePage = () => {
             ) : activeSection?.id === "display" ? (
               <div className="settings-section">
                 <h2>Affichage</h2>
-                <p className="settings-section__intro">Modifier la taille de la police et l ambiance visuelle.</p>
+                <p className="settings-section__intro">Modifier la taille de la police et l'ambiance visuelle.</p>
 
                 <section className="settings-display-group">
                   <header className="settings-display-group__header">
@@ -735,7 +735,7 @@ const ProfilePage = () => {
                 <section className="settings-display-group">
                   <header className="settings-display-group__header">
                     <div>
-                      <h3>Arriere-plan</h3>
+                      <h3>Arrière-plan</h3>
                       <p>Ambiance claire ou plus sombre</p>
                     </div>
                   </header>
@@ -755,7 +755,7 @@ const ProfilePage = () => {
                 </div>
                 <div className="settings-options">
                   <div className="settings-option">
-                    <span className="settings-option__label">Bientot disponible</span>
+                    <span className="settings-option__label">Bientôt disponible</span>
                     <span className="settings-option__description">Cette section sera personnalisable prochainement.</span>
                   </div>
                 </div>

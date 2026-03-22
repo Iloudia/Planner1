@@ -11,7 +11,7 @@ import {
 } from "../services/firestore/sportDashboard"
 
 const SPORT_LOAD_ERROR = "Impossible de charger votre espace sport."
-const SPORT_MUTATION_ERROR = "Impossible de mettre a jour votre espace sport."
+const SPORT_MUTATION_ERROR = "Impossible de mettre à jour votre espace sport."
 
 const DAY_LABELS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"] as const
 

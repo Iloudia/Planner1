@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type KeyboardEvent } from "react"
+﻿import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type KeyboardEvent } from "react"
 import { useNavigate } from "react-router-dom"
 import { useTasks } from "../../context/TasksContext"
 import { useAuth } from "../../context/AuthContext"
@@ -48,7 +48,7 @@ type TaskDisplay = {
 }
 
 const cards: CardItem[] = [
-  { image: planner01, alt: "Sport", kicker: "Ã‰nergie", title: "Sport", path: "/sport" },
+  { image: planner01, alt: "Sport", kicker: "Énergie", title: "Sport", path: "/sport" },
   { image: planner06, alt: "Calendrier", kicker: "Vue globale", title: "Calendrier", path: "/calendrier" },
   { image: planner05, alt: "Wishlist", kicker: "Envies", title: "Wishlist", path: "/wishlist" },
   { image: planner03, alt: "Journaling", kicker: "Reflet", title: "Journaling", path: "/journaling" },
@@ -449,7 +449,7 @@ function HomePage() {
 
   useEffect(() => {
     if (!safeWriteStorage(homeMoodboardKey, homeMoodboardSrc)) {
-      setMoodboardError("Impossible d'enregistrer le moodboard (stockage plein). Choisis une image plus legere.")
+      setMoodboardError("Impossible d'enregistrer le moodboard (stockage plein). Choisis une image plus légère.")
     }
   }, [homeMoodboardKey, homeMoodboardSrc])
 
@@ -609,7 +609,7 @@ function HomePage() {
     if (!file) return
 
     if (!file.type.startsWith("image/")) {
-      setMoodboardError("Format non supporte. Choisis une image.")
+      setMoodboardError("Format non supporté. Choisis une image.")
       event.target.value = ""
       return
     }
@@ -766,7 +766,7 @@ function HomePage() {
         <div className="progress-panel">
           <div className="progress-row">
             <div className="progress-label">
-              <span>AnnÃ©e</span>
+              <span>Année</span>
               <span>{progress.year.toFixed(1)}%</span>
             </div>
             <div className="progress-bar">
@@ -784,7 +784,7 @@ function HomePage() {
           </div>
           <div className="progress-row">
             <div className="progress-label">
-              <span>JournÃ©e</span>
+              <span>Journée</span>
               <span>{progress.day.toFixed(1)}%</span>
             </div>
             <div className="progress-bar">
@@ -811,9 +811,9 @@ function HomePage() {
                   addTodo()
                 }
               }}
-              placeholder="Ajouter une tÃ¢che"
+              placeholder="Ajouter une tâche"
             />
-            <button type="button" className="todo-add" onClick={addTodo} aria-label="Ajouter une tÃ¢che">
+            <button type="button" className="todo-add" onClick={addTodo} aria-label="Ajouter une tâche">
               +
             </button>
           </div>
@@ -831,7 +831,7 @@ function HomePage() {
                   <input type="checkbox" checked={item.done} onChange={() => toggleTodo(item.id)} />
                   <span>{item.text}</span>
                 </label>
-                <button type="button" onClick={() => deleteTodo(item.id)} aria-label="Supprimer la tÃ¢che">
+                <button type="button" onClick={() => deleteTodo(item.id)} aria-label="Supprimer la tâche">
                   x
                 </button>
               </li>
@@ -844,7 +844,7 @@ function HomePage() {
         <section className="home-hero-strip">
           <div className="home-hero-strip__center">
             <div className="today">{todayLabel()}</div>
-            <h1>Organise tes journÃ©es avec intention</h1>
+            <h1>Organise tes journées avec intention</h1>
           </div>
         </section>
 
@@ -878,7 +878,7 @@ function HomePage() {
       </main>
 
       <aside className="aside-left">
-        <div className="aside-title">Prochaines évenement</div>
+        <div className="aside-title">Prochains événements</div>
         <div className="task-window">
           <div className="task-list">
             {tasksError ? (
@@ -924,8 +924,8 @@ function HomePage() {
               ))
             ) : (
               <article className="task-card" role="button" tabIndex={0} onClick={handleCalendarOpen} onKeyDown={handleCalendarCardKeyDown}>
-                <p className="task-title">Aucune tÃ¢che prÃ©vue</p>
-                <p className="task-note">Ajoute une tÃ¢che dans le calendrier.</p>
+                <p className="task-title">Aucune tâche prévue</p>
+                <p className="task-note">Ajoute une tâche dans le calendrier.</p>
               </article>
             )}
           </div>
@@ -953,7 +953,7 @@ function HomePage() {
         {moodboardError ? <p className="home-moodboard__error">{moodboardError}</p> : null}
 
         <div className="home-moodboard__preview">
-          <img src={homeMoodboardSrc} alt="Moodboard personnalisÃ©" loading="lazy" decoding="async" />
+          <img src={homeMoodboardSrc} alt="Moodboard personnalisé" loading="lazy" decoding="async" />
         </div>
       </section>
     </div>
@@ -961,4 +961,5 @@ function HomePage() {
 }
 
 export default HomePage
+
 

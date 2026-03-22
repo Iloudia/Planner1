@@ -302,7 +302,7 @@ const AdminProductsPage = () => {
         image: safeGallery[0],
         gallery: safeGallery,
         description: description.trim() || "Description à compléter.",
-        features: features.length > 0 ? features : ["Ressource digitale", "Accès immédiat", "Usage commercial autorisé"],
+        features: features.length > 0 ? features : ["Ressource digitale", "Accès immédiat",],
         digitalFiles: uploadedDigitalFiles,
       }
 

@@ -106,7 +106,7 @@
   aspect-ratio: 3 / 4;
   display: flex;
   align-items: stretch;
-  border: none;
+  border: 1px solid rgba(114, 92, 63, 0.25);
   box-shadow: none;
   background: transparent;
   padding: 0;
@@ -2116,7 +2116,13 @@ body.wishlist-page--lux .wishlist-modal__header h2 {
   color: var(--lux-ink);
 }
 
-body.wishlist-page--lux .wishlist-card,
+body.wishlist-page--lux .wishlist-card {
+  background: transparent;
+  border: 1px solid rgba(114, 92, 63, 0.25);
+  border-radius: 0;
+  box-shadow: none;
+}
+
 body.wishlist-page--lux .wishlist-note__menu-popover,
 body.wishlist-page--lux .wishlist-category-picker__panel {
   background: transparent;

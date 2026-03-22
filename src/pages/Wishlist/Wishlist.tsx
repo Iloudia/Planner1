@@ -52,15 +52,15 @@ type ItemDraft = {
 }
 
 const CATEGORY_DEFINITIONS: CategoryDefinition[] = [
-  { id: "hair", label: "Hair essentials", accent: "#f497c0", cover: wishlistHair, blurb: "Brushes, soins et petits accessoires pour une routine cheveux complete." },
-  { id: "outfits", label: "Outfits", accent: "#fcd67d", cover: wishlistOutfit, blurb: "Idees tenues et pieces coup de coeur pour tes looks preferes." },
-  { id: "makeup", label: "Makeup wishlist", accent: "#fbcada", cover: wishlistMakeup, blurb: "Palettes, gloss ou nouveaux blushs a tester absolument." },
-  { id: "electronics", label: "Appareils electroniques", accent: "#c9d9ff", cover: wishlistElectronics, blurb: "Gadgets tech, accessoires photo ou outils de productivite." },
+  { id: "hair", label: "Hair essentials", accent: "#f497c0", cover: wishlistHair, blurb: "Brushes, soins et petits accessoires pour une routine cheveux complète." },
+  { id: "outfits", label: "Outfits", accent: "#fcd67d", cover: wishlistOutfit, blurb: "Idées tenues et pièces coup de cœur pour tes looks préférés." },
+  { id: "makeup", label: "Makeup wishlist", accent: "#fbcada", cover: wishlistMakeup, blurb: "Palettes, gloss ou nouveaux blushs à tester absolument." },
+  { id: "electronics", label: "Appareils électroniques", accent: "#c9d9ff", cover: wishlistElectronics, blurb: "Gadgets tech, accessoires photo ou outils de productivité." },
   { id: "skincare", label: "Skincare", accent: "#c1e7db", cover: wishlistSkincare, blurb: "Soins cocooning, masques favoris et indispensables glow." },
-  { id: "books", label: "Livres", accent: "#b4cfff", cover: wishlistBooks, blurb: "Romans, developpement perso et lectures inspirees." },
-  { id: "room", label: "Chambre", accent: "#d9c5ff", cover: wishlistRoom, blurb: "Deco, ambiance et petits objets cozy pour ta chambre." },
-  { id: "travel", label: "Voyages", accent: "#f6b094", cover: wishlistTravel, blurb: "Destinations ou experiences a ajouter a ta bucket list." },
-  { id: "jewelry", label: "Bijoux", accent: "#ffd4a8", cover: wishlistJewelry, blurb: "Bagues, colliers et accessoires brillants a collectionner." },
+  { id: "books", label: "Livres", accent: "#b4cfff", cover: wishlistBooks, blurb: "Romans, développement perso et lectures inspirées." },
+  { id: "room", label: "Chambre", accent: "#d9c5ff", cover: wishlistRoom, blurb: "Déco, ambiance et petits objets cozy pour ta chambre." },
+  { id: "travel", label: "Voyages", accent: "#f6b094", cover: wishlistTravel, blurb: "Destinations ou expériences à ajouter à ta bucket list." },
+  { id: "jewelry", label: "Bijoux", accent: "#ffd4a8", cover: wishlistJewelry, blurb: "Bagues, colliers et accessoires brillants à collectionner." },
   { id: "bag", label: "Sac", accent: "#f3b4c5", cover: wishlistBag, blurb: "Sacs tendance et intemporels pour toutes les occasions." },
 ]
 
@@ -140,7 +140,7 @@ const groupItems = (items: WishlistItemRecord[]) => {
   })
   return Array.from(groups.entries()).map(([key, grouped]) => ({
     key,
-    label: key === "__uncategorized" ? "Sans categorie" : key,
+    label: key === "__uncategorized" ? "Sans catégorie" : key,
     items: grouped,
   }))
 }
@@ -392,7 +392,7 @@ const WishlistPage = () => {
     }
     const categoryId = await createCategory({
       title,
-      blurb: "Ta categorie personnalisee.",
+      blurb: "Ta catégorie personnalisée.",
       accent: newCategoryDraft.accent.trim() || fallbackAccentForId(title),
       customCoverUrl,
       customCoverPath,
@@ -494,7 +494,7 @@ const WishlistPage = () => {
     if (!title) return
     const normalizedLink = itemDraft.link.trim() ? normalizeLink(itemDraft.link) : ""
     if (itemDraft.link.trim() && !normalizedLink) {
-      window.alert("Ajoute un lien valide avant d'enregistrer cet element.")
+      window.alert("Ajoute un lien valide avant d'enregistrer cet élément.")
       return
     }
 
@@ -629,7 +629,7 @@ const WishlistPage = () => {
           }}
           disabled={!canEdit}
         >
-          Nouvelle categorie
+          Nouvelle catégorie
         </button>
       </div>
 
@@ -642,7 +642,7 @@ const WishlistPage = () => {
               onSubmit={handleCreateCategory}
               onClick={(event) => event.stopPropagation()}
             >
-              <h2>{editingCategoryId ? "Modifier la categorie" : "Creer une categorie"}</h2>
+              <h2>{editingCategoryId ? "Modifier la catégorie" : "Créer une catégorie"}</h2>
               <label className="wishlist-create__title-field">
                 <p>Titre</p>
                 <input
@@ -660,7 +660,7 @@ const WishlistPage = () => {
                     <img
                       className="wishlist-create__cover-preview"
                       src={newCategoryCoverPreview}
-                      alt="Apercu de la photo selectionnee"
+                      alt="Aperçu de la photo sélectionnée"
                       loading="lazy"
                       decoding="async"
                     />
@@ -695,7 +695,7 @@ const WishlistPage = () => {
                       </button>
                     ) : null}
                   </div>
-                  <span className="wishlist-create__cover-hint">Formats d'image acceptes (JPG, PNG, GIF).</span>
+                  <span className="wishlist-create__cover-hint">Formats d'image acceptés (JPG, PNG, GIF).</span>
                 </div>
               </div>
               <div className="wishlist-create__actions">
@@ -730,7 +730,7 @@ const WishlistPage = () => {
                 <button
                   type="button"
                   className="profile-menu wishlist-card__menu"
-                  aria-label="Ouvrir le menu de la categorie"
+                  aria-label="Ouvrir le menu de la catégorie"
                   onClick={(event) => {
                     event.stopPropagation()
                     setActiveCardMenuId((previous) => (previous === category.id ? null : category.id))
@@ -765,7 +765,7 @@ const WishlistPage = () => {
             <img className="wishlist-card__cover" src={category.cover} alt={category.title} loading="lazy" decoding="async" />
             <div className="wishlist-card__content">
               <strong>{category.title}</strong>
-              <span>{category.items.length} element(s)</span>
+              <span>{category.items.length} élément(s)</span>
             </div>
           </button>
         ))}
@@ -789,7 +789,7 @@ const WishlistPage = () => {
                 <div>
                   <h2>{selectedCategory.title}</h2>
                 </div>
-                <span className="wishlist-modal__badge">{selectedCategory.items.length} element(s)</span>
+                <span className="wishlist-modal__badge">{selectedCategory.items.length} élément(s)</span>
               </header>
 
               {!moveItemDraft && isMemoComposerOpen && categoryDraft ? (
@@ -806,7 +806,7 @@ const WishlistPage = () => {
                           strokeLinejoin="round"
                         />
                       </svg>
-                      Memo
+                      Mémo
                     </span>
                   </div>
                   <label>
@@ -829,14 +829,14 @@ const WishlistPage = () => {
                 </form>
               ) : !moveItemDraft && categoryDraft?.note ? (
                 <div className="wishlist-modal__note-display">
-                  <strong>Memo</strong>
+                  <strong>Mémo</strong>
                   <p>{categoryDraft.note}</p>
                 </div>
               ) : null}
 
               {!moveItemDraft && (isItemComposerOpen || Boolean(editingItemId)) ? (
               <form className="wishlist-modal__form" onSubmit={handleSubmitItem}>
-                <h3>{editingItemId ? "Modifier un element" : "Ajouter un element"}</h3>
+                <h3>{editingItemId ? "Modifier un élément" : "Ajouter un élément"}</h3>
                 <div className="wishlist-modal__form-top">
                   <div className="wishlist-modal__form-photo">
                     <label className={`wishlist-modal__photo-slot${itemPreview ? " wishlist-modal__photo-slot--filled" : ""}`}>
@@ -851,7 +851,7 @@ const WishlistPage = () => {
                         disabled={!canEdit}
                       />
                       {itemPreview ? (
-                        <img className="wishlist-modal__photo-preview" src={itemPreview} alt="Apercu element" />
+                        <img className="wishlist-modal__photo-preview" src={itemPreview} alt="Aperçu élément" />
                       ) : (
                         <span>Ajouter une photo</span>
                       )}
@@ -910,7 +910,7 @@ const WishlistPage = () => {
                   />
                 </label>
                 <label ref={categoryFieldRef} className="wishlist-modal__category-group">
-                  Categorie
+                  Catégorie
                   <input
                     type="text"
                     className="wishlist-modal__category-input wishlist-modal__category-field"
@@ -1016,7 +1016,7 @@ const WishlistPage = () => {
                                       type="button"
                                       className="profile-menu wishlist-item__menu-toggle"
                                       onClick={() => setActiveItemMenuId((previous) => (previous === item.id ? null : item.id))}
-                                      aria-label="Options de l'element"
+                                      aria-label="Options de l'élément"
                                     >
                                       <span>...</span>
                                     </button>
@@ -1040,10 +1040,10 @@ const WishlistPage = () => {
                                           }}
                                           disabled={!canEdit}
                                         >
-                                          {item.isDone ? "A refaire" : "Marquer comme fait"}
+                                          {item.isDone ? "À refaire" : "Marquer comme fait"}
                                         </button>
                                         <button type="button" onClick={() => handleStartMoveItem(item)} disabled={!canEdit || categoryCards.length < 2}>
-                                          Deplacer vers une autre carte
+                                          Déplacer vers une autre carte
                                         </button>
                                         <button type="button" className="wishlist-item__menu-danger" onClick={() => void handleDeleteItem(item)} disabled={!canEdit}>
                                           Supprimer
@@ -1067,7 +1067,7 @@ const WishlistPage = () => {
 
               {moveItemDraft ? (
                 <div className="wishlist-move">
-                  <h2>Deplacer vers une autre carte</h2>
+                  <h2>Déplacer vers une autre carte</h2>
                   <div className="wishlist-move__grid">
                     {categoryCards
                       .filter((category) => category.id !== items.find((item) => item.id === moveItemDraft.itemId)?.categoryId)
@@ -1094,7 +1094,7 @@ const WishlistPage = () => {
                       ))}
                   </div>
                   <div className="wishlist-move__category">
-                    <span>Sous-categorie cible</span>
+                    <span>Sous-catégorie cible</span>
                     <div className="wishlist-move__choices">
                       {(categoryCards.find((category) => category.id === moveItemDraft.targetCategoryId)?.items ?? [])
                         .map((item) => item.subcategory?.trim() ?? "")
@@ -1114,7 +1114,7 @@ const WishlistPage = () => {
                     <input
                       type="text"
                       className="wishlist-modal__category-input"
-                      placeholder="Nouvelle categorie"
+                      placeholder="Nouvelle catégorie"
                       value={moveItemDraft.targetSubcategory}
                       onChange={(event) =>
                         setMoveItemDraft((previous) => (previous ? { ...previous, targetSubcategory: event.target.value } : previous))
@@ -1126,7 +1126,7 @@ const WishlistPage = () => {
                       Annuler
                     </button>
                     <button type="button" data-primary="true" onClick={() => void handleConfirmMoveItem()}>
-                      Deplacer
+                      Déplacer
                     </button>
                   </div>
                 </div>
@@ -1140,7 +1140,7 @@ const WishlistPage = () => {
                   setIsItemComposerOpen(false)
                   setIsMemoComposerOpen((previous) => !previous)
                 }}
-                aria-label="Ajouter un memo"
+                aria-label="Ajouter un mémo"
               >
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path
@@ -1168,7 +1168,7 @@ const WishlistPage = () => {
                     itemImageRef.current.value = ""
                   }
                 }}
-                aria-label="Ajouter un element"
+                aria-label="Ajouter un élément"
               >
                 +
               </button>

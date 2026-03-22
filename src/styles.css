@@ -548,6 +548,94 @@ p {
   outline: none;
 }
 
+.nav-search__mobile-panel {
+  display: none;
+}
+
+.nav-search__mobile-sheet {
+  background: #f8f8f8;
+  border-radius: 0;
+  overflow: hidden;
+  box-shadow: 0 20px 48px rgba(15, 23, 42, 0.2);
+}
+
+.nav-search__mobile-input-row {
+  padding: 1rem;
+  background: #f1efec;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0;
+}
+
+.nav-search__mobile-input {
+  border: none;
+  outline: none;
+  background: #ffffff;
+  padding: 0.95rem 1rem;
+  color: #475569;
+  font-size: 0.95rem;
+  border-radius: 0;
+}
+
+.nav-search__mobile-input::placeholder {
+  color: #94a3b8;
+}
+
+.nav-search__mobile-cancel {
+  border: none;
+  border-radius: 0;
+  background: #000000;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 0.95rem 1rem;
+  cursor: pointer;
+}
+
+.nav-search__mobile-content {
+  padding: 1rem 1rem 1.2rem;
+  max-height: min(66vh, 520px);
+  overflow-y: auto;
+  background: #ffffff;
+}
+
+.nav-search__mobile-title {
+  margin: 0 0 0.8rem;
+  color: #475569;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.nav-search__mobile-suggestions {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-search__mobile-suggestions li + li {
+  border-top: 1px solid #e5e7eb;
+}
+
+.nav-search__mobile-suggestion {
+  width: 100%;
+  border: none;
+  background: transparent;
+  text-align: left;
+  padding: 0.9rem 0.1rem;
+  color: #475569;
+  cursor: pointer;
+}
+
+.nav-search__mobile-suggestion:hover,
+.nav-search__mobile-suggestion:focus-visible {
+  color: #0f172a;
+  outline: none;
+}
+
+.nav-search__mobile-empty {
+  margin: 0;
+  color: #64748b;
+}
+
 .header-auth {
   display: inline-flex;
   align-items: center;
@@ -1322,6 +1410,22 @@ p {
   }
 }
 
+@media (max-width: 768px) {
+  .nav-search__button {
+    width: 44px;
+    height: 44px;
+  }
+
+  .nav-search__mobile-panel {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.24);
+    z-index: 80;
+    display: block;
+    padding: 88px 14px 1rem;
+  }
+}
+
 @media (min-width: 768px) and (max-width: 1023px) {
   .main-area {
     padding: 28px 32px 42px;
@@ -1856,7 +1960,7 @@ p {
   }
 
   .site-header__top {
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: 1fr auto 1fr;
   }
 }
 

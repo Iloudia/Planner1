@@ -7,7 +7,7 @@ import { formatLocalISODate } from "../utils/weekKey"
 import { deleteRoutineItem, saveRoutineItem, subscribeToRoutineItems } from "../services/firestore/routine"
 
 const ROUTINE_LOAD_ERROR = "Impossible de charger vos routines."
-const ROUTINE_MUTATION_ERROR = "Impossible de mettre a jour vos routines."
+const ROUTINE_MUTATION_ERROR = "Impossible de mettre à jour vos routines."
 
 const getTodayKey = () => formatLocalISODate(new Date())
 

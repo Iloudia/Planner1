@@ -421,7 +421,10 @@
 
 .calendar-heading__title--mobile {
   font-size: clamp(1.3rem, 4.8vw, 1.65rem);
-  align-self: flex-start;
+  align-self: center;
+  justify-content: center;
+  width: 100%;
+  text-align: center;
 }
 
 .calendar-view-toggle {

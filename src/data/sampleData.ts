@@ -1,4 +1,4 @@
-export type ScheduledTask = {
+﻿export type ScheduledTask = {
   id: string
   title: string
   start: string
@@ -60,7 +60,7 @@ export type RoutineItem = {
 }
 
 export const morningRoutine: RoutineItem[] = [
-  { id: 'morning-1', title: "Etirements doux", detail: "5 minutes pour réveiller le corps" },
+  { id: 'morning-1', title: 'Étirements doux', detail: '5 minutes pour réveiller le corps' },
   { id: 'morning-2', title: "Verre d'eau citronnée", detail: 'Hydratation avant écran' },
   { id: 'morning-3', title: 'Revue rapide de la journée', detail: '3 priorités notées' },
 ]

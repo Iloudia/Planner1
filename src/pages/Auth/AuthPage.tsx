@@ -9,7 +9,7 @@ const REMEMBER_PREFERENCE_KEY = "planner.auth.remember"
 const PROFILE_STORAGE_KEY = "planner.profile.preferences.v1"
 const EMAIL_HISTORY_KEY = "planner.auth.email_history.v1"
 const GENDER_OPTIONS = [
-  { value: "", label: "Ne pas prÃ©ciser" },
+  { value: "", label: "Ne pas préciser" },
   { value: "femme", label: "Femme" },
   { value: "homme", label: "Homme" },
 ]
@@ -146,7 +146,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
     return fromRoute?.from?.pathname ?? "/home"
   }, [location.state])
   const genderLabel = useMemo(
-    () => GENDER_OPTIONS.find((option) => option.value === gender)?.label ?? "Ne pas prÃ©ciser",
+    () => GENDER_OPTIONS.find((option) => option.value === gender)?.label ?? "Ne pas préciser",
     [gender],
   )
 
@@ -267,18 +267,18 @@ const AuthPage = ({ mode }: AuthFormProps) => {
       }
       if (registerStep === 1) {
         if (!firstName.trim() || !lastName.trim() || !username.trim()) {
-          setError("Merci de renseigner le prÃ©nom, le nom et le pseudo.")
+          setError("Merci de renseigner le prénom, le nom et le pseudo.")
           return
         }
         setRegisterStep(2)
         return
       }
       if (!password.trim() || !hasMinLength || !hasUpper || !hasLower || !hasDigit || !hasSpecial) {
-        setError("Le mot de passe doit avoir au moins 6 caractÃ¨res, 1 majuscule, 1 minuscule, 1 chiffre et 1 caractÃ¨re spÃ©cial.")
+        setError("Le mot de passe doit avoir au moins 6 caractères, 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial.")
         return
       }
       if (!acceptTerms) {
-        setError("Merci dâ€™accepter les conditions gÃ©nÃ©rales.")
+        setError("Merci d’accepter les conditions générales.")
         return
       }
     }
@@ -324,11 +324,11 @@ const AuthPage = ({ mode }: AuthFormProps) => {
   const handleForgot = () => {
     const normalizedEmail = email.trim()
     if (!normalizedEmail) {
-      setError("Renseigne ton email pour recevoir un lien de rÃ©initialisation.")
+      setError("Renseigne ton email pour recevoir un lien de réinitialisation.")
       return
     }
     setError("")
-    window.alert("Un lien de rÃ©initialisation a Ã©tÃ© envoyÃ© Ã  " + normalizedEmail + ".")
+    window.alert("Un lien de réinitialisation a été envoyé à " + normalizedEmail + ".")
   }
 
   const handleGoogleLogin = async () => {
@@ -341,12 +341,12 @@ const AuthPage = ({ mode }: AuthFormProps) => {
     navigate(destinationPath, { replace: true })
   }
 
-  const heading = mode === "login" ? "Connexion" : "CrÃ©ation de compte"
-  const switchLabel = mode === "login" ? "Pas encore de compte ?" : "DÃ©jÃ  un compte ?"
+  const heading = mode === "login" ? "Connexion" : "Création de compte"
+  const switchLabel = mode === "login" ? "Pas encore de compte ?" : "Déjà un compte ?"
   const switchTo = mode === "login" ? "/register" : "/login"
-  const ctaLabel = mode === "login" ? "Se connecter" : registerStep < 2 ? "Continuer" : "CrÃ©er mon compte"
+  const ctaLabel = mode === "login" ? "Se connecter" : registerStep < 2 ? "Continuer" : "Créer mon compte"
   const isRegister = mode === "register"
-  const registerSteps = ["Email", "IdentitÃ©", "SÃ©curitÃ©"]
+  const registerSteps = ["Email", "Identité", "Sécurité"]
   
   const isAuthPageLoading = !isAuthReady
 
@@ -370,18 +370,18 @@ const AuthPage = ({ mode }: AuthFormProps) => {
           <h1 className="auth-title">{heading}</h1>
           <div className="auth-switch">
             <span>{switchLabel}</span>
-            <Link to={switchTo}>{mode === "login" ? "CrÃ©er un compte" : "Se connecter"}</Link>
+            <Link to={switchTo}>{mode === "login" ? "Créer un compte" : "Se connecter"}</Link>
           </div>
 
           {isAuthenticated && mode !== "register" ? (
             <p className="auth-status">
-              ConnectÃ© en tant que <strong>{userEmail}</strong>
+              Connecté en tant que <strong>{userEmail}</strong>
             </p>
           ) : null}
 
           <form className="auth-form" onSubmit={handleSubmit}>
             {isRegister ? (
-              <div className="auth-steps" aria-label="Progression de crÃ©ation de compte">
+              <div className="auth-steps" aria-label="Progression de création de compte">
                 {registerSteps.map((label, index) => (
                   <div key={label} className={`auth-step${registerStep === index ? " is-active" : registerStep > index ? " is-done" : ""}`}>
                     <span className="auth-step__index">{index + 1}</span>
@@ -420,8 +420,8 @@ const AuthPage = ({ mode }: AuthFormProps) => {
                   <>
                     <div className="auth-form__row">
                       <label>
-                        PrÃ©nom
-                        <input type="text" value={firstName} onChange={(event) => setFirstName(event.target.value)} placeholder="PrÃ©nom" required />
+                        Prénom
+                        <input type="text" value={firstName} onChange={(event) => setFirstName(event.target.value)} placeholder="Prénom" required />
                       </label>
                       <label>
                         Nom
@@ -459,7 +459,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
                         </button>
                       </div>
                       <p className="auth-password-hint">
-                        6 caractÃ¨res minimum, avec 1 majuscule, 1 minuscule, 1 chiffre et 1 caractÃ¨re spÃ©cial.
+                        6 caractères minimum, avec 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial.
                       </p>
                     </label>
                     <div className="auth-form__row">
@@ -513,7 +513,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
                     </div>
                     <label className="auth-terms">
                       <input type="checkbox" checked={acceptTerms} onChange={(event) => setAcceptTerms(event.target.checked)} required />
-                      Jâ€™accepte les conditions gÃ©nÃ©rales.
+                      J’accepte les conditions générales.
                     </label>
                   </>
                 ) : null}
@@ -577,7 +577,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
                   {ctaLabel}
                 </button>
                 <button type="button" className="auth-forgot" onClick={handleForgot}>
-                  Mot de passe oubliÃ© ?
+                  Mot de passe oublié ?
                 </button>
               </>
             ) : (

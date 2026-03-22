@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
+﻿import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import DailyGoalsTracker from "../../components/DailyGoalsTracker";
 import PageHeading from "../../components/PageHeading";
 import { useAuth } from "../../context/AuthContext";
@@ -153,7 +153,7 @@ const GoalsPage = () => {
           window.localStorage.removeItem(BODY_GOALS_STORAGE_KEY);
         }
       } catch {
-        setBodyGoalsError("Impossible de recuperer tes anciennes photos body goals.");
+        setBodyGoalsError("Impossible de récupérer tes anciennes photos body goals.");
       }
     })();
   }, [bodyGoalSlots.length, isBodyGoalsLoading, userId]);
@@ -222,7 +222,7 @@ const GoalsPage = () => {
         </div>
       ) : null}
       <div className={`goals-page-content${isGoalsLoading ? " goals-page-content--hidden" : ""}`} aria-hidden={isGoalsLoading}>
-        <PageHeading eyebrow="Goals" title="Mes Goals" className="goals-page-heading" />
+        <PageHeading eyebrow="Goals" title="Mes objectifs" className="goals-page-heading" />
         <div className="content-page goals-page">
           <p className="muted goals-page-heading__intro" aria-hidden="true"></p>
 
@@ -273,3 +273,4 @@ const GoalsPage = () => {
 };
 
 export default GoalsPage;
+

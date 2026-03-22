@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+ï»¿import { useEffect, useState } from "react"
 import PageHeading from "../../components/PageHeading"
 import "./ContactPage.css"
 
@@ -36,7 +36,7 @@ const ContactPage = () => {
       <PageHeading eyebrow="Contact" title="Contacte-moi" className="contact-page__header" />
       <div className="legal-page contact-page">
         <p className="legal-page__intro">
-          Une idée, une question ou envie de collaborer ? Laisse-moi un message et je te répondrai avec grand plaisir.
+          Une idÃ©e, une question ou envie de collaborer ? Laisse-moi un message et je te rÃ©pondrai avec grand plaisir.
         </p>
 
         <section className="legal-section contact-form">
@@ -44,11 +44,11 @@ const ContactPage = () => {
             className="contact-form__body"
             onSubmit={(event) => {
               event.preventDefault()
-              window.alert("Merci pour ton message ! Je te répondrai très vite.")
+              window.alert("Merci pour ton message ! Je te rÃ©pondrai trÃ¨s vite.")
             }}
           >
             <label>
-              <span>Prénom</span>
+              <span>PrÃ©nom</span>
               <input type="text" name="firstName" placeholder="Ex. Sofia" required />
             </label>
             <label>
@@ -65,7 +65,7 @@ const ContactPage = () => {
             </label>
             <label className="contact-form__field--full">
               <span>Message</span>
-              <textarea name="message" placeholder="Écris ton message ici..." rows={5} required />
+              <textarea name="message" placeholder="Ã‰cris ton message ici..." rows={5} required />
             </label>
             <button type="submit" className="contact-form__submit">
               Envoyer

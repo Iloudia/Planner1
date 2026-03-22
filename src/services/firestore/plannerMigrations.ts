@@ -58,7 +58,7 @@ type LegacySelfLoveLetter = {
   openDate?: string
   sealedAt?: string
   innerChild?: { message: string; reassurance: string; neededWords: string }
-  bestFriend?: { advice: string; selfTalk: string }
+  bestFriend?: { advice: string; selfTalk: string; selfKindness?: string }
   entryType?: "letter" | "innerChild" | "bestFriend"
 }
 

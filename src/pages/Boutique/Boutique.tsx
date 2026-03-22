@@ -143,8 +143,6 @@ const BoutiquePage = () => {
               <span>Accès immédiat</span>
               <span>|</span>
               <span>Mises à jour incluses</span>
-              <span>|</span>
-              <span>Usage commercial autorisé</span>
             </div>
           </div>
         </div>

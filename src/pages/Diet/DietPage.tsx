@@ -1226,9 +1226,9 @@ const ingredientVisualsByRecipeId: Record<string, IngredientVisual[]> = {
 export const massRecipes: Recipe[] = [
 {
   id: "mass-pancakes",
-  title: "Pancake protÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©inÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©",
+  title: "Pancake protéiné",
   flavor: "sucre",
-  prepTime: "10 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  15 min",
+  prepTime: "10 à 15 min",
   servings: "3 à 4 pancakes",
   image: pancakesProteineImg,
   ingredients: [
@@ -1278,7 +1278,7 @@ export const massRecipes: Recipe[] = [
     "A adapter selon ton gout et ton niveau de gourmandise.",
   ],
   tips: [
-    "Astuce : si la pÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢te est trop ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©paisse, ajoute quelques gouttes de lait. Si elle est trop liquide, ajoute un peu de farine.",
+    "Astuce : si la pâte est trop épaisse, ajoute quelques gouttes de lait. Si elle est trop liquide, ajoute un peu de farine.",
   ],
 },
 {
@@ -1643,7 +1643,7 @@ export const massRecipes: Recipe[] = [
 },
 {
   id: "mass-bowl-saumon",
-  title: "Saumon marinÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â© sriracha & riz",
+  title: "Saumon mariné sriracha & riz",
   flavor: "sale",
   prepTime: "30 min",
   servings: "1 pers",
@@ -1866,7 +1866,7 @@ export const massRecipes: Recipe[] = [
   id: "mass-salade-pasteque-feta",
   title: "Salade pasteque & feta",
   flavor: "sale",
-  prepTime: "10 Ã  15 min",
+  prepTime: "10 à 15 min",
   servings: "2 pers",
   image: saladePastequeFetaImg,
   ingredients: [
@@ -2038,9 +2038,9 @@ export const massRecipes: Recipe[] = [
 },
 {
   id: "mass-omelette-power",
-  title: "Omelette power ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  la feta",
+  title: "Omelette power à la feta",
   flavor: "sale",
-  prepTime: "10 Ã  15 min",
+  prepTime: "10 à 15 min",
   servings: "1 pers",
   image: omeletteFetaImg,
   ingredients: [
@@ -2085,7 +2085,7 @@ export const massRecipes: Recipe[] = [
 },
 {
   id: "mass-smoothie-gain",
-  title: "Smoothie banane beurre de cacahuÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¨te",
+  title: "Smoothie banane beurre de cacahuète",
   flavor: "boisson",
   prepTime: "10 min",
   servings: "1 pers",
@@ -2717,7 +2717,7 @@ export const massRecipes: Recipe[] = [
 },
 {
   id: "mass-pates-cremeuses",
-  title: "Alfredo pasta protÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©inÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©",
+  title: "Alfredo pasta protéiné",
   flavor: "sale",
   prepTime: "20 min",
   servings: "1 pers",
@@ -2960,9 +2960,9 @@ export const massRecipes: Recipe[] = [
 },
 {
   id: "mass-quinoa-bowl",
-  title: "Butter chicken protÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©inÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©, riz et brocolis",
+  title: "Butter chicken protéiné, riz et brocolis",
   flavor: "sale",
-  prepTime: "30 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  35 min",
+  prepTime: "30 à 35 min",
   servings: "1 pers",
   image: butterChickenImg,
   ingredients: [
@@ -3085,7 +3085,7 @@ export const massRecipes: Recipe[] = [
   id: "mass-patate-bowl",
   title: "Avocado toast",
   flavor: "sale",
-  prepTime: "10 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  12 min",
+  prepTime: "10 à 12 min",
   servings: "1 pers",
   image: avocadoToastImg,
   ingredients: [
@@ -3141,7 +3141,7 @@ export const massRecipes: Recipe[] = [
   id: "mass-curry-coco",
   title: "Curry coco pois chiches",
   flavor: "sale",
-  prepTime: "25 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  30 min",
+  prepTime: "25 à 30 min",
   servings: "2 pers",
   image: curryPoischicheImg,
   ingredients: [
@@ -4320,7 +4320,7 @@ export const massRecipes: Recipe[] = [
   id: "mass-riz-cajou",
   title: "Steak, pommes de terre & haricots verts",
   flavor: "sale",
-  prepTime: "30 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  35 min",
+  prepTime: "30 à 35 min",
   servings: "1 pers",
   image: steackPommeDeTerreImg,
   ingredients: [
@@ -4380,7 +4380,7 @@ export const massRecipes: Recipe[] = [
 
  {
   id: "mass-overnight-oats",
-  title: "Overnight oats protÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©inÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©s",
+  title: "Overnight oats protéinés",
   flavor: "sucre",
   prepTime: "5 mi + 4 h (ou une nuit) au frigo",
   servings: "1 pers",
@@ -4431,9 +4431,9 @@ export const massRecipes: Recipe[] = [
 },
 {
   id: "mass-brownie-beans",
-  title: "Brownie protÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©inÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©",
+  title: "Brownie protéiné",
   flavor: "sucre",
-  prepTime: "30 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  35 min",
+  prepTime: "30 à 35 min",
   servings: "9 à 12 parts",
   image: brownieProteineImg,
   ingredients: [
@@ -4493,9 +4493,9 @@ export const massRecipes: Recipe[] = [
 },
 {
   id: "mass-salade-pates",
-  title: "Bowl sucrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â© fruits rouges & granola",
+  title: "Bowl sucré fruits rouges & granola",
   flavor: "sucre",
-  prepTime: "5 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  7 min",
+  prepTime: "5 à 7 min",
   servings: "1 pers",
   image: fruitsRougesGranolaImg,
   ingredients: [
@@ -4539,7 +4539,7 @@ export const healthyRecipes: Recipe[] = [
   id: "healthy-granola",
   title: "Granola croustillant maison",
   flavor: "sucre",
-  prepTime: "35 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  45 min",
+  prepTime: "35 à 45 min",
   servings: "6 à 8 portions",
   image: granolaMaisonImg,
   ingredients: [
@@ -4824,9 +4824,9 @@ export const healthyRecipes: Recipe[] = [
 },
 {
   id: "healthy-soupe-verte",
-  title: "Soupe verte dÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©tox",
+  title: "Soupe verte détox",
   flavor: "sale",
-  prepTime: "20 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  25 min",
+  prepTime: "20 à 25 min",
   servings: "1 pers",
   image: soupeDetoxImg,
   ingredients: [
@@ -4947,9 +4947,9 @@ export const healthyRecipes: Recipe[] = [
 },
 {
   id: "healthy-overnight-oats",
-  title: "Brochettes de poulet, salade fraÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â®che & boulghour ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  la tomate",
+  title: "Brochettes de poulet, salade fraîche & boulghour à la tomate",
   flavor: "sale",
-  prepTime: "30 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  35 min",
+  prepTime: "30 à 35 min",
   servings: "1 pers",
   image: brochettesImg,
   ingredients: [
@@ -5061,7 +5061,7 @@ export const healthyRecipes: Recipe[] = [
 },
 {
   id: "healthy-wrap-legumes",
-  title: "Brownie salÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â© au brocoli, feta & lardons",
+  title: "Brownie salé au brocoli, feta & lardons",
   flavor: "sale",
   prepTime: "40 min",
   servings: "4 à 6 parts",
@@ -5134,7 +5134,7 @@ export const healthyRecipes: Recipe[] = [
   id: "healthy-tofu-bowl",
   title: "Biscuits croustillants avoine & chocolat",
   flavor: "sucre",
-  prepTime: "25 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  30 min",
+  prepTime: "25 à 30 min",
   servings: "6 biscuits",
   image: biscuitsAvoineImg,
   ingredients: [
@@ -5302,9 +5302,9 @@ export const healthyRecipes: Recipe[] = [
 },
 {
   id: "healthy-quinoa-menthe",
-  title: "Salade CÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©sar healthy",
+  title: "Salade César healthy",
   flavor: "sale",
-  prepTime: "20 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  25 min",
+  prepTime: "20 à 25 min",
   servings: "2 pers",
   image: saladeCesarImg,
   ingredients: [
@@ -5473,12 +5473,12 @@ export const dietMealSlots: { id: MealSlotId; label: string }[] = [
 const weekDays = dietWeekDays
 const mealSlots = dietMealSlots
 const FLAVOR_OPTIONS: Array<{ value: "sucre" | "sale"; label: string }> = [
-  { value: "sale", label: "SalÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©" },
-  { value: "sucre", label: "SucrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©" },
+  { value: "sale", label: "Salé" },
+  { value: "sucre", label: "Sucré" },
 ]
-const FLAVOR_PLACEHOLDER = "SÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©lectionner un type"
-const PLAN_DAY_PLACEHOLDER = "SÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©lectionner un jour"
-const PLAN_SLOT_PLACEHOLDER = "SÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©lectionner un moment"
+const FLAVOR_PLACEHOLDER = "Sélectionner un type"
+const PLAN_DAY_PLACEHOLDER = "Sélectionner un jour"
+const PLAN_SLOT_PLACEHOLDER = "Sélectionner un moment"
 type WeeklyPlan = Record<typeof dietWeekDays[number], Record<MealSlotId, string>>
 type DietTab = "sweet" | "savory" | "drinks" | "condiments" | "favorites" | "custom"
 const DIET_TAB_STORAGE_KEY = "dietPageActiveTab"
@@ -5583,8 +5583,8 @@ const DietClassicPage = () => {
   )
   const currentHeading = tab === "favorites" || tab === "custom" ? null : DIET_HEADINGS[tab]
   const getFlavorLabel = (flavor: Recipe["flavor"]) => {
-    if (flavor === "sucre") return "SucrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©"
-    if (flavor === "sale") return "SalÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©"
+    if (flavor === "sucre") return "Sucré"
+    if (flavor === "sale") return "Salé"
     return "Boissons"
   }
   const getRecipeImageClass = (recipeId: string) => {
@@ -5978,14 +5978,14 @@ const DietClassicPage = () => {
             className={tab === "savory" ? "is-active" : ""}
             onClick={() => setTab("savory")}
           >
-            SalÃƒÆ’Ã‚Â©
+            Salé
           </button>
           <button
             type="button"
             className={tab === "sweet" ? "is-active" : ""}
             onClick={() => setTab("sweet")}
           >
-            SucrÃƒÆ’Ã‚Â©
+            Sucré
           </button>
           <button
             type="button"
@@ -6083,10 +6083,10 @@ const DietClassicPage = () => {
             <div className="diet-custom-header">
               <div>
                 <h3>Mes recettes</h3>
-                <p className="diet-custom-header__hint">Clique sur "Creer une recette" pour ajouter tes propres recettes en quelques secondes.</p>
+                <p className="diet-custom-header__hint">Clique sur "Créer une recette" pour ajouter tes propres recettes en quelques secondes.</p>
               </div>
               <button type="button" className="pill pill--diet" onClick={() => setIsCreateOpen(true)} disabled={!canEdit}>
-                CrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©er une recette
+                Créer une recette
               </button>
             </div>
             {customRecipes.length > 0 ? (
@@ -6243,14 +6243,14 @@ const DietClassicPage = () => {
       </section>
 
         {isCreateOpen ? (
-          <div className="diet-recipe-modal" role="dialog" aria-label="CrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©er une recette">
+          <div className="diet-recipe-modal" role="dialog" aria-label="Créer une recette">
             <div className="diet-recipe-modal__backdrop" onClick={() => setIsCreateOpen(false)} />
             <div className="diet-recipe-modal__panel">
               {draftImage ? (
                 <div className="diet-recipe-modal__cover">
                   <img
                     src={draftImage}
-                    alt="AperÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§u recette"
+                    alt="Aperçu recette"
                     className="diet-recipe-modal__image"
                     loading="lazy"
                     decoding="async"
@@ -6268,7 +6268,7 @@ const DietClassicPage = () => {
               <div className="diet-recipe-modal__content">
                 <header className="diet-recipe-modal__header">
                   <div>
-                    <h3>CrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©er une recette</h3>
+                    <h3>Créer une recette</h3>
                   </div>
                 </header>
                 <div className="diet-recipe-modal__body">
@@ -6332,7 +6332,7 @@ const DietClassicPage = () => {
                         </div>
                       </label>
                       <label>
-                        PrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©paration
+                        Préparation
                         <input type="text" value={draftPrepTime} onChange={(event) => setDraftPrepTime(event.target.value)} placeholder="Ex : 20 min" />
                       </label>
                       <label>
@@ -6361,11 +6361,11 @@ const DietClassicPage = () => {
                       </button>
                     </label>
                     <label>
-                      IngrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©dients (1 par ligne)
+                      Ingrédients (1 par ligne)
                       <textarea value={draftIngredients} onChange={(event) => setDraftIngredients(event.target.value)} rows={5} />
                     </label>
                     <label>
-                      ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°tapes (1 par ligne)
+                      Étapes (1 par ligne)
                       <textarea value={draftSteps} onChange={(event) => setDraftSteps(event.target.value)} rows={6} />
                     </label>
                     <label>
@@ -6405,7 +6405,7 @@ const DietClassicPage = () => {
                 <div className="diet-recipe-modal__cover">
                   <img
                     src={editImage}
-                    alt="AperÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§u recette"
+                    alt="Aperçu recette"
                     className="diet-recipe-modal__image"
                     loading="lazy"
                     decoding="async"
@@ -6439,12 +6439,12 @@ const DietClassicPage = () => {
                       <label>
                         Type
                         <select value={editFlavor} onChange={(event) => setEditFlavor(event.target.value as "sucre" | "sale")}>
-                          <option value="sale">SalÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©</option>
-                          <option value="sucre">SucrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©</option>
+                          <option value="sale">Salé</option>
+                          <option value="sucre">Sucré</option>
                         </select>
                       </label>
                       <label>
-                        PrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©paration
+                        Préparation
                         <input type="text" value={editPrepTime} onChange={(event) => setEditPrepTime(event.target.value)} placeholder="Ex : 20 min" />
                       </label>
                       <label>
@@ -6473,11 +6473,11 @@ const DietClassicPage = () => {
                       </button>
                     </label>
                     <label>
-                      IngrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©dients (1 par ligne)
+                      Ingrédients (1 par ligne)
                       <textarea value={editIngredients} onChange={(event) => setEditIngredients(event.target.value)} rows={5} />
                     </label>
                     <label>
-                      ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°tapes (1 par ligne)
+                      Étapes (1 par ligne)
                       <textarea value={editSteps} onChange={(event) => setEditSteps(event.target.value)} rows={6} />
                     </label>
                     <label>
@@ -6646,7 +6646,7 @@ const DietClassicPage = () => {
                         type="text"
                         value={planMealName}
                         onChange={(event) => setPlanMealName(event.target.value)}
-                        placeholder="ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°cris ton plat"
+                        placeholder="Écris ton plat"
                       />
                     </label>
                     <button type="button" className="diet-recipe-plan__add" onClick={() => void addRecipeToPlan()} disabled={!canEdit}>
@@ -6656,12 +6656,12 @@ const DietClassicPage = () => {
                   {selectedRecipe.ingredients.length > 0 ? (
                     <section>
                       <div className="diet-recipe-section__header">
-                        <h4>IngrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©dients</h4>
+                        <h4>Ingrédients</h4>
                         <button
                           type="button"
                           className={`diet-recipe-section__toggle${isIngredientsOpen ? " is-open" : ""}`}
                           onClick={() => setIsIngredientsOpen((prev) => !prev)}
-                          aria-label={isIngredientsOpen ? "Masquer les ingredients" : "Afficher les ingredients"}
+                          aria-label={isIngredientsOpen ? "Masquer les ingrédients" : "Afficher les ingrédients"}
                           aria-expanded={isIngredientsOpen}
                         >
                           v
@@ -6700,7 +6700,7 @@ const DietClassicPage = () => {
                   ) : null}
                   {selectedRecipe.steps.length > 0 ? (
                     <section>
-                      <h4>ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â°tapes</h4>
+                      <h4>Étapes</h4>
                       <ul className="diet-steps-list">
                         {selectedRecipe.steps.map((step, index, allSteps) => {
                           const normalizeStep = (value: string) => value.replace(/\u00A0/g, " ").trim()
@@ -7045,7 +7045,7 @@ const DietClassicPage = () => {
                   ) : null}
                   {selectedRecipe.toppings && selectedRecipe.toppings.length > 0 ? (
                     <section>
-                      <h4>{"IdÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©es de toppings (optionnel)"}</h4>
+                      <h4>{"Idées de toppings (optionnel)"}</h4>
                       <ul>
                         {selectedRecipe.toppings.map((item) => (
                           <li key={item}>{item}</li>
@@ -7101,6 +7101,8 @@ const DietClassicPage = () => {
 }
 
 export default DietClassicPage
+
+
 
 
 

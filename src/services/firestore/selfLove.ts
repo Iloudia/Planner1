@@ -65,13 +65,15 @@ export const subscribeToSelfLoveDraft = (
         return
       }
       const data = snapshot.data() as SelfLoveDraftDoc
+      const normalizedLetterFrom = data.letterFrom === "Moi du present" ? "Moi du présent" : data.letterFrom
+      const normalizedFutureLetterFrom = data.futureLetterFrom === "Moi du present" ? "Moi du présent" : data.futureLetterFrom
       onDraft({
         letterTo: data.letterTo,
-        letterFrom: data.letterFrom,
+        letterFrom: normalizedLetterFrom,
         letterBody: data.letterBody,
         kittyLetterBody: data.kittyLetterBody,
         futureLetterTo: data.futureLetterTo,
-        futureLetterFrom: data.futureLetterFrom,
+        futureLetterFrom: normalizedFutureLetterFrom,
         futureLetterBody: data.futureLetterBody,
         futureLetterOpenDate: data.futureLetterOpenDate,
         innerChildMessage: data.innerChildMessage,
@@ -79,6 +81,7 @@ export const subscribeToSelfLoveDraft = (
         innerChildNeededWords: data.innerChildNeededWords,
         bestFriendAdvice: data.bestFriendAdvice,
         bestFriendSelfTalk: data.bestFriendSelfTalk,
+        bestFriendSelfKindness: data.bestFriendSelfKindness ?? "",
       })
     },
     onError,

@@ -19,7 +19,7 @@ import {
 } from "../services/firestore/workout"
 
 const WORKOUT_LOAD_ERROR = "Impossible de charger votre espace workout."
-const WORKOUT_MUTATION_ERROR = "Impossible de mettre a jour votre espace workout."
+const WORKOUT_MUTATION_ERROR = "Impossible de mettre à jour votre espace workout."
 
 const defaultExercises: WorkoutExercise[] = [
   {
@@ -58,7 +58,7 @@ const defaultVideos: WorkoutVideo[] = [
   },
   {
     id: "vid-2",
-    title: "Entrainement Pilates complet",
+    title: "Entraînement Pilates complet",
     url: "https://www.youtube.com/watch?v=354ezj2UHdM",
     thumbnailMode: "default",
     thumbnailUrl: "https://img.youtube.com/vi/354ezj2UHdM/hqdefault.jpg",
@@ -71,14 +71,14 @@ const defaultSeries: WorkoutSeriesItem[] = [
   { id: "serie-1", exerciseId: "ex-1", label: "3x12 incline dumbbell row", completed: false, sortOrder: 0 },
   { id: "serie-2", exerciseId: "ex-1", label: "4x10 Lat pull downs", completed: false, sortOrder: 1 },
   { id: "serie-3", exerciseId: "ex-1", label: "3x10 Cable rows", completed: false, sortOrder: 2 },
-  { id: "serie-4", exerciseId: "ex-1", label: "Pull up (jusqu'a epuisement)", completed: false, sortOrder: 3 },
+  { id: "serie-4", exerciseId: "ex-1", label: "Pull up (jusqu'à épuisement)", completed: false, sortOrder: 3 },
   { id: "serie-5", exerciseId: "ex-1", label: "3x10 Seated cable rows", completed: false, sortOrder: 4 },
   { id: "serie-6", exerciseId: "ex-1", label: "3x10 Bent over rows", completed: false, sortOrder: 5 },
   { id: "serie-7", exerciseId: "ex-2", label: "3x10 hip/leg press", completed: false, sortOrder: 6 },
   { id: "serie-8", exerciseId: "ex-2", label: "3x10 Hip thrust", completed: false, sortOrder: 7 },
   { id: "serie-9", exerciseId: "ex-2", label: "3x10 RDLs", completed: false, sortOrder: 8 },
   { id: "serie-10", exerciseId: "ex-2", label: "3x12 Leg extension", completed: false, sortOrder: 9 },
-  { id: "serie-11", exerciseId: "ex-2", label: "Leg curls (jusqu'a epuisement)", completed: false, sortOrder: 10 },
+  { id: "serie-11", exerciseId: "ex-2", label: "Leg curls (jusqu'à épuisement)", completed: false, sortOrder: 10 },
   { id: "serie-12", exerciseId: "ex-2", label: "3x10 Squats", completed: false, sortOrder: 11 },
   { id: "serie-13", exerciseId: "ex-2", label: "3x12 Reverse lunges", completed: false, sortOrder: 12 },
 ]

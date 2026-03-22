@@ -175,6 +175,7 @@ export type SelfLoveDraft = {
   innerChildNeededWords: string
   bestFriendAdvice: string
   bestFriendSelfTalk: string
+  bestFriendSelfKindness: string
 }
 
 export type SelfLovePhotoSlot = {
@@ -220,6 +221,7 @@ export type SelfLoveInnerChildSnapshot = {
 export type SelfLoveBestFriendSnapshot = {
   advice: string
   selfTalk: string
+  selfKindness?: string
 }
 
 export type SelfLoveArchiveEntry = {

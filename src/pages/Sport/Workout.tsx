@@ -38,7 +38,7 @@ const MUSCLE_OPTIONS = [
   "Biceps",
   "Bras",
   "Dos",
-  "Epaules",
+  "Épaules",
   "Fessiers",
   "Ischios",
   "Jambes",
@@ -51,7 +51,7 @@ const MUSCLE_OPTIONS = [
   "Triceps",
 ]
 
-const MUSCLE_PLACEHOLDER = "Selectionner un muscle"
+const MUSCLE_PLACEHOLDER = "Sélectionner un muscle"
 const YOUTUBE_API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY as string | undefined
 
 const CREATOR_RECOMMENDATIONS: CreatorRecommendation[] = [
@@ -61,15 +61,15 @@ const CREATOR_RECOMMENDATIONS: CreatorRecommendation[] = [
     platform: "YouTube",
     focus: "HIIT / Renfo",
     level: "Tous niveaux",
-    description: "Seances energiques de renfo et HIIT avec un coaching motive et progressif.",
+    description: "Séances énergiques de renfo et HIIT avec un coaching motivé et progressif.",
     url: "https://www.youtube.com/@SissyMUA",
   },
   {
     id: "lidia-mera-youtube",
     name: "Lidia Mera",
     platform: "YouTube",
-    focus: "Pilate",
-    level: "Debutant a avance",
+    focus: "Pilates",
+    level: "Débutant à avancé",
     description: "Routines pilates fluides et full body, parfaites pour tonifier sans impact.",
     url: "https://www.youtube.com/@lidiavmera",
   },
@@ -79,7 +79,7 @@ const CREATOR_RECOMMENDATIONS: CreatorRecommendation[] = [
     platform: "YouTube",
     focus: "Home workout",
     level: "Tous niveaux",
-    description: "Workouts maison courts et efficaces, souvent sans materiel et faciles a suivre.",
+    description: "Workouts maison courts et efficaces, souvent sans matériel et faciles à suivre.",
     url: "https://www.youtube.com/@MadFit",
   },
   {
@@ -87,17 +87,17 @@ const CREATOR_RECOMMENDATIONS: CreatorRecommendation[] = [
     name: "Anisia Martinez",
     platform: "Instagram",
     focus: "Core / Full body",
-    level: "Debutant",
-    description: "Reels orientes core et full body avec idees de seances rapides et accessibles.",
+    level: "Débutant",
+    description: "Reels orientés core et full body avec idées de séances rapides et accessibles.",
     url: "https://www.instagram.com/anisiamartinezz_/",
   },
   {
     id: "leila-hopson-instagram",
     name: "Leila Hopson",
     platform: "Instagram",
-    focus: "Cardio / Tonicite",
+    focus: "Cardio / Tonicité",
     level: "Tous niveaux",
-    description: "Contenus cardio et tonicite avec formats courts, repetables et motivants.",
+    description: "Contenus cardio et tonicité avec formats courts, répétables et motivants.",
     url: "https://www.instagram.com/leilafitjourney/",
   },
 ]
@@ -306,7 +306,7 @@ const WorkoutPage = () => {
 
   const handleVideoSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const title = videoForm.title.trim() || "Session video"
+    const title = videoForm.title.trim() || "Session vidéo"
     const id = extractYoutubeId(videoForm.url.trim())
     if (!id) return
     const duration = await fetchYoutubeDuration(id)
@@ -479,7 +479,7 @@ const WorkoutPage = () => {
             <div className="workout-form__photo-compact">
               <div className={`workout-form__photo-preview${formImagePreview ? " workout-form__photo-preview--has-image" : ""}`}>
                 {formImagePreview ? (
-                  <img className="workout-form__photo-img" src={formImagePreview} alt="Apercu de la photo selectionnee" loading="lazy" decoding="async" />
+                  <img className="workout-form__photo-img" src={formImagePreview} alt="Aperçu de la photo sélectionnée" loading="lazy" decoding="async" />
                 ) : null}
                 <div className="workout-form__photo-actions">
                   {!formImagePreview ? (
@@ -501,7 +501,7 @@ const WorkoutPage = () => {
                     </button>
                   ) : null}
                 </div>
-                <span className="workout-form__photo-hint">Formats d'image acceptes (JPG, PNG, GIF).</span>
+                <span className="workout-form__photo-hint">Formats d'image acceptés (JPG, PNG, GIF).</span>
               </div>
             </div>
             <button type="submit">Ajouter la carte</button>
@@ -590,7 +590,7 @@ const WorkoutPage = () => {
                 type="text"
                 value={videoForm.title}
                 onChange={(event) => setVideoForm((previous) => ({ ...previous, title: event.target.value }))}
-                placeholder="Ex : 30 min pilate full body..."
+                placeholder="Ex : 30 min pilates full body..."
               />
             </label>
             <label>
@@ -603,11 +603,11 @@ const WorkoutPage = () => {
                 required
               />
             </label>
-            <button type="submit">Ajouter la video</button>
+            <button type="submit">Ajouter la vidéo</button>
           </form>
           {videos.length === 0 ? (
             <div className="workout-video-empty">
-              <p className="wishlist-modal__empty">Aucune video ajoutee pour le moment.</p>
+              <p className="wishlist-modal__empty">Aucune vidéo ajoutée pour le moment.</p>
             </div>
           ) : (
             <div className="workout-video-grid">
@@ -659,7 +659,7 @@ const WorkoutPage = () => {
         <section className="workout-creators workout-section--full" aria-label="Recommandations YouTube et Instagram">
           <header className="workout-creators__header">
             <h2>Recommandations YouTube & Instagram</h2>
-            <p>Des comptes efficaces et faciles a integrer dans ta routine.</p>
+            <p>Des comptes efficaces et faciles à intégrer dans ta routine.</p>
           </header>
           <div className="workout-creators__grid">
             {CREATOR_RECOMMENDATIONS.map((creator) => (
@@ -763,11 +763,11 @@ const WorkoutPage = () => {
                     placeholder="Ex : Charge (kg)"
                     className="workout-modal__series-weight-input"
                   />
-                  <button type="submit">Ajouter une serie</button>
+                  <button type="submit">Ajouter une série</button>
                 </form>
                 <div className="workout-modal__note">
                   <label>
-                    <span>Notes de seance</span>
+                    <span>Notes de séance</span>
                     <textarea
                       rows={3}
                       value={noteDraft}
@@ -778,7 +778,7 @@ const WorkoutPage = () => {
                   </label>
                 </div>
                 {selectedSeries.length === 0 ? (
-                  <p className="workout-modal__empty">Aucun element pour le moment.</p>
+                  <p className="workout-modal__empty">Aucun élément pour le moment.</p>
                 ) : (
                   <ul className="workout-modal__series-list">
                     {selectedSeries.map((serie) => (
@@ -810,7 +810,7 @@ const WorkoutPage = () => {
             </div>
             <footer className="workout-modal__footer">
               <div className="workout-modal__summary">
-                {completedSeriesCount}/{selectedSeries.length} series cochees
+                {completedSeriesCount}/{selectedSeries.length} séries cochées
               </div>
             </footer>
           </div>

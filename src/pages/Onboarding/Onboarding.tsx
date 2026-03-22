@@ -15,29 +15,29 @@ const SOURCE_OPTIONS = [
   "Pinterest",
   "Recherche Google",
   "Recommandation d'un proche",
-  "PublicitÃ© en ligne",
+  "Publicité en ligne",
   "Etsy",
   "Autre",
 ]
 
 const REASON_OPTIONS = [
-  "DÃ©couvrir du contenu inspirant",
+  "Découvrir du contenu inspirant",
   "Organiser mon quotidien",
-  "AmÃ©liorer mon bien-Ãªtre",
-  "Mieux gÃ©rer mes projets et objectifs",
+  "Améliorer mon bien-être",
+  "Mieux gérer mes projets et objectifs",
   "Trouver des outils pratiques",
   "Autre raison",
 ]
 
 const CATEGORY_OPTIONS = [
-  { label: "Sport", icon: "ðŸƒ" },
-  { label: "Journaling", icon: "ðŸ““" },
-  { label: "Mindset", icon: "ðŸ’–" },
-  { label: "Finances", icon: "ðŸ’°" },
-  { label: "Routine", icon: "â°" },
-  { label: "Wishlist", icon: "â­" },
-  { label: "Calendrier", icon: "ðŸ—“ï¸" },
-  { label: "Menu de la semaine", icon: "ðŸ³" },
+  { label: "Sport", icon: "Sport" },
+  { label: "Journaling", icon: "Journal" },
+  { label: "Mindset", icon: "Mental" },
+  { label: "Finances", icon: "Budget" },
+  { label: "Routine", icon: "Routine" },
+  { label: "Wishlist", icon: "Envies" },
+  { label: "Calendrier", icon: "Planning" },
+  { label: "Menu de la semaine", icon: "Cuisine" },
 ]
 
 type OnboardingAnswers = {
@@ -231,14 +231,14 @@ const OnboardingPage = () => {
                       checked={answers.source === option}
                       onChange={() => handleSourceSelect(option)}
                     />
-                    <span className="onboarding-option__label">{option === "Autre" ? "Autre (Ã  prÃ©ciser)" : option}</span>
+                    <span className="onboarding-option__label">{option === "Autre" ? "Autre (à préciser)" : option}</span>
                     <span className="onboarding-option__control" aria-hidden="true" />
                   </label>
                 ))}
               </div>
               {answers.source === "Autre" ? (
                 <label className="onboarding-other">
-                  PrÃ©cise ta rÃ©ponse
+                  Précise ta réponse
                   <input
                     type="text"
                     value={answers.sourceOther}
@@ -253,7 +253,7 @@ const OnboardingPage = () => {
           {step === 1 ? (
             <>
               <h2 className="onboarding-question">Qu’est-ce qui t’a donné envie de créer ce compte ?</h2>
-              <p className="onboarding-hint">Plusieurs rÃ©ponses possibles</p>
+              <p className="onboarding-hint">Plusieurs réponses possibles</p>
               <div className="onboarding-options">
                 {REASON_OPTIONS.map((option) => (
                   <label key={option} className={`onboarding-option${answers.reasons.includes(option) ? " is-selected" : ""}`}>

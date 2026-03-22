@@ -61,7 +61,7 @@ export const categories: BoutiqueCategory[] = [
   {
     id: "templates",
     title: "Templates Canva",
-    description: "Designs premium prÃªts Ã  personnaliser pour un rendu pro en minutes.",
+    description: "Designs premium prêts à personnaliser pour un rendu pro en minutes.",
     highlight: "Gagner du temps",
     image: categoryTemplate,
     productType: "template",
@@ -69,7 +69,7 @@ export const categories: BoutiqueCategory[] = [
   {
     id: "carrousels",
     title: "Carrousels Instagram",
-    description: "Storytelling clair, hooks puissants, et call-to-action optimisÃ©s.",
+    description: "Storytelling clair, hooks puissants, et call-to-action optimisés.",
     highlight: "Booster l'engagement",
     image: categoryCarousel,
     productType: "carousel",
@@ -83,21 +83,22 @@ export const products: BoutiqueProduct[] = [
 
 export const benefits = [
   {
-    title: "PensÃ© pour convertir",
-    text: "Chaque ressource est orientÃ©e action, avec des hooks et des CTA prÃªts Ã  l'emploi.",
+    title: "Pensé pour convertir",
+    text: "Chaque ressource est orientée action, avec des hooks et des CTA prêts à l'emploi.",
   },
   {
-    title: "Gain de temps immÃ©diat",
+    title: "Gain de temps immédiat",
     text: "Fini les pages blanches : tu personnalises, tu publies, tu vends.",
   },
   {
     title: "Designs premium",
-    text: "Une esthÃ©tique Ã©lÃ©gante et moderne pour renforcer ta crÃ©dibilitÃ©.",
+    text: "Une esthétique élégante et moderne pour renforcer ta crédibilité.",
   },
   {
-    title: "AccÃ¨s Ã  vie",
-    text: "Tu tÃ©lÃ©charges et tu utilises quand tu veux, oÃ¹ tu veux.",
+    title: "Accès à vie",
+    text: "Tu télécharges et tu utilises quand tu veux, où tu veux.",
   },
 ]
+
 
 

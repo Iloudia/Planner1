@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+Ôªøimport { useEffect, useMemo, useRef, useState } from 'react'
 import type { CSSProperties, FormEvent, KeyboardEvent } from 'react'
 import { getDateKey } from '../../data/sampleData'
 import type { ScheduledTask } from '../../data/sampleData'
@@ -614,6 +614,31 @@ const viewToggle = (
   </div>
 )
 
+const weeklyHeader = (
+  <header className="sport-header calendar-weekly__header">
+    <span className="calendar-heading__eyebrow">Calendrier hebdomadaire</span>
+    <h1 className="calendar-heading__title calendar-heading__title--mobile">
+      <button
+        type="button"
+        className="calendar-heading__arrow"
+        onClick={() => handleWeekChange(-1)}
+        aria-label="Semaine pr√©c√©dente"
+      >
+        {'<'}
+      </button>
+      <span>{`Semaine du ${weekRangeLabel}`}</span>
+      <button
+        type="button"
+        className="calendar-heading__arrow"
+        onClick={() => handleWeekChange(1)}
+        aria-label="Semaine suivante"
+      >
+        {'>'}
+      </button>
+    </h1>
+  </header>
+)
+
 if (isInitialAgendaLoading) {
   return (
     <div className="calendar-page">
@@ -630,115 +655,74 @@ return (
     {calendarView === 'weekly' ? (
     <section className="calendar-weekly">
       {isCompact ? (
-        <div className="calendar-weekly__mobile calendar-mobile" role="region" aria-label="Calendrier mobile">
-                    <div className="calendar-weekly__toolbar calendar-mobile__toolbar" aria-label="Navigation semaine">
-            {viewToggle}
-          </div>
+        <>
+          {weeklyHeader}
+          <div className="calendar-weekly__mobile calendar-mobile" role="region" aria-label="Calendrier mobile">
+            <div className="calendar-weekly__toolbar calendar-mobile__toolbar" aria-label="Navigation semaine">
+              {viewToggle}
+            </div>
 
+            <div className="calendar-mobile__panel">
+              <span className="calendar-mobile__month">{formatMonthTitle(weekStartDate)}</span>
+              <div className="calendar-mobile__week" role="list">
+                {weekDates.map((date, index) => {
+                  const dateKey = getDateKey(date)
+                  const isToday = date.toDateString() === today.toDateString()
+                  return (
+                    <button
+                      key={dateKey}
+                      type="button"
+                      className={`calendar-mobile__day-card${isToday ? " is-today" : ""}`}
+                      onClick={() => {
+                        setMobileSelectedDateKey(dateKey)
+                        handleDaySelect(dateKey)
+                      }}
+                      aria-current={isToday ? "date" : undefined}
+                      aria-label={`Voir la journ√©e du ${dateKey}`}
+                    >
+                      <span className="calendar-mobile__day-name">{weekDays[index].toLowerCase()}</span>
+                      <span className="calendar-mobile__day-number">{date.getDate()}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
 
-                    <div className="calendar-mobile__panel">
-            <h1 className="calendar-heading__title calendar-heading__title--mobile">
-              <button
-                type="button"
-                className="calendar-heading__arrow"
-                onClick={() => handleWeekChange(-1)}
-                aria-label="Semaine prÈcÈdente"
-              >
-                {'<'}
-              </button>
-              <span>{`Semaine du ${weekRangeLabel}`}</span>
-              <button
-                type="button"
-                className="calendar-heading__arrow"
-                onClick={() => handleWeekChange(1)}
-                aria-label="Semaine suivante"
-              >
-                {'>'}
-              </button>
-            </h1>
-            <span className="calendar-mobile__month">{formatMonthTitle(weekStartDate)}</span>
-            <div className="calendar-mobile__week" role="list">
-              {weekDates.map((date, index) => {
-                const dateKey = getDateKey(date)
-                const isToday = date.toDateString() === today.toDateString()
-                return (
-                  <button
-                    key={dateKey}
-                    type="button"
-                    className={`calendar-mobile__day-card${isToday ? " is-today" : ""}`}
-                    onClick={() => {
-                      setMobileSelectedDateKey(dateKey)
-                      handleDaySelect(dateKey)
-                    }}
-                    aria-current={isToday ? "date" : undefined}
-                    aria-label={`Voir la journee du ${dateKey}`}
-                  >
-                    <span className="calendar-mobile__day-name">{weekDays[index].toLowerCase()}</span>
-                    <span className="calendar-mobile__day-number">{date.getDate()}</span>
-                  </button>
-                )
-              })}
+            <div className="calendar-mobile__today-row">
+              <span>{mobileSelectedLabel}</span>
+            </div>
+
+            <div className="calendar-mobile__agenda" role="list">
+              {mobileSelectedTasks.length === 0 ? (
+                <p className="calendar-mobile__empty">Aucun √©v√©nement pour cette journ√©e.</p>
+              ) : (
+                mobileSelectedTasks.map((task) => (
+                  <div key={task.id} className="calendar-mobile__event">
+                    <span className="calendar-mobile__event-time">{task.start}</span>
+                    <div
+                      className="calendar-mobile__event-card"
+                      style={{
+                        background: `linear-gradient(135deg, ${withAlpha(task.color, 0.12)} 0%, ${withAlpha(
+                          task.color,
+                          0.28,
+                        )} 100%)`,
+                        borderColor: withAlpha(task.color, 0.4),
+                      }}
+                    >
+                      <span className="calendar-mobile__event-title">{task.title}</span>
+                      <span className="calendar-mobile__event-hours">
+                        {task.start} - {task.end}
+                      </span>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
-
-          <div className="calendar-mobile__today-row">
-            <span>{mobileSelectedLabel}</span>
-          </div>
-
-
-          <div className="calendar-mobile__agenda" role="list">
-            {mobileSelectedTasks.length === 0 ? (
-              <p className="calendar-mobile__empty">Aucun evenement pour cette journee.</p>
-            ) : (
-              mobileSelectedTasks.map((task) => (
-                <div key={task.id} className="calendar-mobile__event">
-                  <span className="calendar-mobile__event-time">{task.start}</span>
-                  <div
-                    className="calendar-mobile__event-card"
-                    style={{
-                      background: `linear-gradient(135deg, ${withAlpha(task.color, 0.12)} 0%, ${withAlpha(
-                        task.color,
-                        0.28,
-                      )} 100%)`,
-                      borderColor: withAlpha(task.color, 0.4),
-                    }}
-                  >
-                    <span className="calendar-mobile__event-title">{task.title}</span>
-                    <span className="calendar-mobile__event-hours">
-                      {task.start} - {task.end}
-                    </span>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
+        </>
       ) : (
         <>
-                    <header className="calendar-weekly__header">
-            <div className="calendar-heading">
-              <span className="calendar-heading__eyebrow">Calendrier hebdomadaire</span>
-              <h1 className="calendar-heading__title">
-                <button
-                  type="button"
-                  className="calendar-heading__arrow"
-                  onClick={() => handleWeekChange(-1)}
-                  aria-label="Semaine prÈcÈdente"
-                >
-                  {'<'}
-                </button>
-                <span>{`Semaine du ${weekRangeLabel}`}</span>
-                <button
-                  type="button"
-                  className="calendar-heading__arrow"
-                  onClick={() => handleWeekChange(1)}
-                  aria-label="Semaine suivante"
-                >
-                  {'>'}
-                </button>
-              </h1>
-            </div>
-          </header>
+          {weeklyHeader}
       <div className="calendar-weekly__layout">
         <div className="calendar-weekly__toolbar">
           {viewToggle}
@@ -839,15 +823,15 @@ return (
 
     {calendarView === 'monthly' ? (
     <section className="calendar-monthly-preview">
-            <header className="calendar-header calendar-header--compact">
+      <header className="sport-header calendar-header calendar-header--compact">
         <div className="calendar-heading">
-          <span className="calendar-heading__eyebrow">AperÁu mensuel</span>
+          <span className="calendar-heading__eyebrow">Aper√ßu mensuel</span>
           <h1 className="calendar-heading__title">
             <button
               type="button"
               className="calendar-heading__arrow"
               onClick={() => handleMonthChange(-1)}
-              aria-label="Mois prÈcÈdent"
+              aria-label="Mois pr√©c√©dent"
             >
               {'<'}
             </button>
@@ -862,11 +846,11 @@ return (
             </button>
           </h1>
         </div>
-        <div className="calendar-weekly__toolbar calendar-monthly__controls">
-          {viewToggle}
-        </div>
       </header>
-<div className="calendar-grid calendar-grid--preview">
+      <div className="calendar-weekly__toolbar calendar-monthly__controls">
+        {viewToggle}
+      </div>
+      <div className="calendar-grid calendar-grid--preview">
         {weekDays.map((label) => (
           <div key={label} className="calendar-grid__weekday">
             {label}
@@ -1246,3 +1230,5 @@ return (
 }
 
 export default CalendrierPage
+
+

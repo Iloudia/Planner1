@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import PageHeading from "../../components/PageHeading"
 import { useAuth } from "../../context/AuthContext"
 import useUserJournalEntries from "../../hooks/useUserJournalEntries"
@@ -17,7 +17,7 @@ type SelfLoveSavedLetter = {
   openDate?: string
   sealedAt?: string
   innerChild?: { message: string; reassurance: string; neededWords: string }
-  bestFriend?: { advice: string; selfTalk: string }
+  bestFriend?: { advice: string; selfTalk: string; selfKindness?: string }
   entryType: "letter" | "innerChild" | "bestFriend"
 }
 
@@ -124,7 +124,7 @@ const getSelfLoveExcerpt = (letter: SelfLoveSavedLetter) => {
     )
   }
   if (letter.entryType === "bestFriend") {
-    return letter.bestFriend?.advice || letter.bestFriend?.selfTalk || letter.body
+    return letter.bestFriend?.advice || letter.bestFriend?.selfTalk || letter.bestFriend?.selfKindness || letter.body
   }
   return letter.body
 }
@@ -252,6 +252,9 @@ const ArchivesPage = () => {
       }
       if (letter.bestFriend?.selfTalk) {
         details.push({ label: "Jeu de rôles - Auto-discours", value: letter.bestFriend.selfTalk })
+      }
+      if (letter.bestFriend?.selfKindness) {
+        details.push({ label: "Jeu de rôles - Douceur envers soi", value: letter.bestFriend.selfKindness })
       }
       return {
         id: letter.id,
@@ -850,6 +853,12 @@ const ArchivesPage = () => {
                         <section className="archives-exercise-card__section archives-exercise-card__section--qa">
                           <h4>Quelle est la difference avec ce que tu te dis a toi-meme ?</h4>
                           <p className="archives-exercise-card__answer">{selectedExercise.bestFriend.selfTalk}</p>
+                        </section>
+                      ) : null}
+                      {selectedExercise.bestFriend?.selfKindness ? (
+                        <section className="archives-exercise-card__section archives-exercise-card__section--qa">
+                          <h4>Maintenant, sois aussi doux avec toi-même.</h4>
+                          <p className="archives-exercise-card__answer">{selectedExercise.bestFriend.selfKindness}</p>
                         </section>
                       ) : null}
                     </div>

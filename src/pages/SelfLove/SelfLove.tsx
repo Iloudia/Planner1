@@ -168,7 +168,7 @@ const SelfLovePage = () => {
       neededWords: draftState.innerChildNeededWords.trim(),
     }
     if (!Object.values(snapshot).some((value) => value.length > 0)) {
-      window.alert("Commence par ecrire quelques phrases avant d'ajouter cet exercice.")
+      window.alert("Commence par écrire quelques phrases avant d'ajouter cet exercice.")
       return
     }
     await saveInnerChildArchive(snapshot)
@@ -186,15 +186,17 @@ const SelfLovePage = () => {
     const snapshot = {
       advice: draftState.bestFriendAdvice.trim(),
       selfTalk: draftState.bestFriendSelfTalk.trim(),
+      selfKindness: draftState.bestFriendSelfKindness.trim(),
     }
     if (!Object.values(snapshot).some((value) => value.length > 0)) {
-      window.alert("Commence par ecrire quelques phrases avant d'ajouter cet exercice.")
+      window.alert("Commence par écrire quelques phrases avant d'ajouter cet exercice.")
       return
     }
     await saveBestFriendArchive(snapshot)
     const clearedBestFriendDraft = {
       bestFriendAdvice: "",
       bestFriendSelfTalk: "",
+      bestFriendSelfKindness: "",
     }
     setDraftState((previous) => ({ ...previous, ...clearedBestFriendDraft }))
     await updateDraft(clearedBestFriendDraft)
@@ -205,7 +207,7 @@ const SelfLovePage = () => {
     const body = letterTemplate === "classic" ? draftState.letterBody : draftState.kittyLetterBody
     const trimmed = body.trim()
     if (!trimmed) {
-      window.alert("Commence par ecrire ta lettre avant de l'enregistrer.")
+      window.alert("Commence par écrire ta lettre avant de l'enregistrer.")
       return
     }
     await saveLetterArchive({
@@ -220,7 +222,7 @@ const SelfLovePage = () => {
   const handleSaveFutureLetter = async () => {
     const trimmed = draftState.futureLetterBody.trim()
     if (!trimmed) {
-      window.alert("Commence par ecrire ta lettre avant de l'enregistrer.")
+      window.alert("Commence par écrire ta lettre avant de l'enregistrer.")
       return
     }
     await saveFutureLetterArchive({
@@ -235,7 +237,7 @@ const SelfLovePage = () => {
   const handleSealFutureLetter = async () => {
     const trimmed = draftState.futureLetterBody.trim()
     if (!trimmed) {
-      window.alert("Ecris quelques lignes avant de sceller ta lettre.")
+      window.alert("Écris quelques lignes avant de sceller ta lettre.")
       return
     }
     if (!draftState.futureLetterOpenDate) {
@@ -272,7 +274,7 @@ const SelfLovePage = () => {
           month: "long",
           year: "numeric",
         })
-      : "Date d'ouverture a definir"
+      : "Date d'ouverture à définir"
 
   if (isSelfLoveLoading) {
     return (
@@ -327,12 +329,14 @@ const SelfLovePage = () => {
 
       <div className="self-love-sections-row">
         <section className="self-love-section self-love-section--qualities">
-          <h2 className="self-love-chocolate">Liste tes qualites</h2>
-          <p className="self-love-chocolate">Regarde-toi avec plus de douceur et d'honnetete.</p>
+          <div>
+            <h2 className="self-love-chocolate">Liste tes qualités</h2>
+            <p className="self-love-chocolate">Regarde-toi avec plus de douceur et d'honnêteté.</p>
+          </div>
           <form className="self-love-form-row" onSubmit={handleAddQuality}>
             <textarea
               className="self-love-exercise__textarea"
-              placeholder="Ex : Je sais ecouter avec le coeur..."
+              placeholder="Ex : Je sais écouter avec le cœur..."
               value={qualityDraft}
               onChange={(event) => setQualityDraft(event.target.value)}
             />
@@ -378,13 +382,13 @@ const SelfLovePage = () => {
 
         <section className="self-love-section self-love-section--thoughts">
           <div>
-            <h2 className="self-love-chocolate">Pensees negatives a laisser derriere toi</h2>
-            <p className="self-love-chocolate">Clique sur une pensee pour la laisser s'envoler.</p>
+            <h2 className="self-love-chocolate">Pensées négatives à laisser derrière toi</h2>
+            <p className="self-love-chocolate">Clique sur une pensée pour la laisser s'envoler.</p>
           </div>
           <form className="self-love-form-row" onSubmit={handleAddThought}>
             <textarea
               className="self-love-exercise__textarea"
-              placeholder="Ex. Je dois etre parfaite..."
+              placeholder="Ex. Je dois être parfaite..."
               value={thoughtDraft}
               onChange={(event) => setThoughtDraft(event.target.value)}
             />
@@ -407,7 +411,7 @@ const SelfLovePage = () => {
             })}
             {thoughts.length === 0 ? (
               <div className="self-love-thought self-love-thought--empty">
-                <span>Plus aucune pensee limitante ici.</span>
+                <span>Plus aucune pensée limitante ici.</span>
               </div>
             ) : null}
           </div>
@@ -429,7 +433,7 @@ const SelfLovePage = () => {
                 value={draftState.innerChildMessage}
                 onChange={(event) => setDraftState((previous) => ({ ...previous, innerChildMessage: event.target.value }))}
                 onBlur={() => void persistDraftField("innerChildMessage")}
-                placeholder="Ex : Ne sois pas si dur avec toi...."
+                placeholder="Je suis là pour toi..."
               />
             </label>
             <label className="self-love-exercise__prompt">
@@ -439,7 +443,7 @@ const SelfLovePage = () => {
                 value={draftState.innerChildReassurance}
                 onChange={(event) => setDraftState((previous) => ({ ...previous, innerChildReassurance: event.target.value }))}
                 onBlur={() => void persistDraftField("innerChildReassurance")}
-                placeholder="Ex : Je suis là pour toi maintenant, et je prendrai soin de toi..."
+                placeholder="Ex : Je suis là pour toi maintenant..."
               />
             </label>
             <label className="self-love-exercise__prompt">
@@ -453,7 +457,7 @@ const SelfLovePage = () => {
               />
             </label>
             <p className="self-love-exercise__hint">
-              Cet exercice apaise les blessures du passe et t'aide a te donner la douceur que tu n'as pas toujours recue.
+              Cet exercice apaise les blessures du passé et t'aide à te donner la douceur que tu n'as pas toujours reçue.
             </p>
             <button type="button" className="self-love-exercise__save" onClick={() => void handleSaveInnerChildExercise()}>
               Ajouter aux archives
@@ -463,7 +467,7 @@ const SelfLovePage = () => {
           <article className="self-love-exercise__card">
             <h2 className="self-love-chocolate">Le meilleur ami comme boussole</h2>
             <p className="self-love-chocolate">
-              Imagine qu'un ami vive exactement la meme situation que toi.
+              Imagine qu'un ami vive exactement la même situation que toi.
             </p>
             <label className="self-love-exercise__prompt">
               <span>Que lui dirais-tu ?</span>
@@ -476,17 +480,29 @@ const SelfLovePage = () => {
               />
             </label>
             <label className="self-love-exercise__prompt">
-              <span>Quelle est la difference avec ce que tu te dis a toi-meme ?</span>
+              <span>Quelle est la différence avec ce que tu te dis à toi-même ?</span>
               <textarea
                 className="self-love-exercise__textarea"
                 value={draftState.bestFriendSelfTalk}
                 onChange={(event) => setDraftState((previous) => ({ ...previous, bestFriendSelfTalk: event.target.value }))}
                 onBlur={() => void persistDraftField("bestFriendSelfTalk")}
-                placeholder="Ex : Je suis bien plus dur avec moi-même qu’avec un ami."
+                placeholder="Ex : Je suis bien plus dur avec moi-même..."
+              />
+            </label>
+            <label className="self-love-exercise__prompt">
+              <span>Maintenant, sois aussi doux avec toi-même.</span>
+              <textarea
+                className="self-love-exercise__textarea"
+                value={draftState.bestFriendSelfKindness}
+                onChange={(event) =>
+                  setDraftState((previous) => ({ ...previous, bestFriendSelfKindness: event.target.value }))
+                }
+                onBlur={() => void persistDraftField("bestFriendSelfKindness")}
+                placeholder="Ex : Je fais de mon mieux..."
               />
             </label>
             <p className="self-love-exercise__hint">
-              Cet exercice casse l'auto-critique et rappelle que tu merites la meme douceur.
+              Cet exercice casse l'auto-critique et rappelle que tu mérites la même douceur.
             </p>
             <button type="button" className="self-love-exercise__save" onClick={() => void handleSaveBestFriendExercise()}>
               Ajouter aux archives
@@ -495,17 +511,17 @@ const SelfLovePage = () => {
         </div>
         <div className={`self-love-toast self-love-toast--page${exerciseSaveConfirmationVisible ? " is-visible" : ""}`} role="status" aria-live="polite">
           <div className="self-love-toast__card">
-            <h4>Page ajoutee</h4>
-            <p>Ton contenu a bien ete ajoute dans les archives.</p>
+            <h4>Page ajoutée</h4>
+            <p>Ton contenu a bien été ajouté dans les archives.</p>
           </div>
         </div>
       </section>
 
       <section className="self-love-section self-love-letter">
-        <div className="self-love-photos__intro">
-          <h2 className="self-love-chocolate self-love-photos__title">Ecris a ton futur toi</h2>
+        <div className="self-love-photos__intro self-love-photos__intro--tight">
+          <h2 className="self-love-chocolate self-love-photos__title">Écris à ton futur toi</h2>
           <p className="self-love-chocolate self-love-photos__subtitle">
-            Tu peux ecrire ce que tu traverses maintenant, ce que tu esperes voir disparaitre dans ta vie ou encore tes peurs actuelles.
+            Tu peux écrire ce que tu traverses maintenant, ce que tu espères voir disparaître dans ta vie ou encore tes peurs actuelles.
           </p>
         </div>
         <div className="self-love-letter__cards">
@@ -513,10 +529,10 @@ const SelfLovePage = () => {
             <div className="self-love-future-letter__head">
               <div>
                 <p className="self-love-letter__title">Lettre a mon moi du futur</p>
-                <p className="self-love-future-letter__subtitle">Ecris-la aujourd'hui, laisse le temps faire le reste.</p>
+                <p className="self-love-future-letter__subtitle">Écris-la aujourd'hui, laisse le temps faire le reste.</p>
               </div>
               <div className="self-love-future-letter__status">
-                <span>Prete a sceller</span>
+                <span>Prête à sceller</span>
                 <strong>{openDateLabel}</strong>
               </div>
             </div>
@@ -528,7 +544,7 @@ const SelfLovePage = () => {
                   value={draftState.futureLetterFrom}
                   onChange={(event) => setDraftState((previous) => ({ ...previous, futureLetterFrom: event.target.value }))}
                   onBlur={() => void persistDraftField("futureLetterFrom")}
-                  placeholder="Ta version presente"
+                  placeholder="Ta version présente"
                 />
               </label>
               <label>
@@ -577,14 +593,14 @@ const SelfLovePage = () => {
         </div>
         <div className={`self-love-toast self-love-toast--seal${futureSealConfirmationVisible ? " is-visible" : ""}`} role="status" aria-live="polite">
           <div className="self-love-toast__card">
-            <h4>Lettre scellee</h4>
-            <p>Ta lettre a bien ete scellee et archivee.</p>
+            <h4>Lettre scellée</h4>
+            <p>Ta lettre a bien été scellée et archivée.</p>
           </div>
         </div>
         <div className={`self-love-toast self-love-toast--page${letterSaveConfirmationVisible ? " is-visible" : ""}`} role="status" aria-live="polite">
           <div className="self-love-toast__card">
-            <h4>Page ajoutee</h4>
-            <p>Ton contenu a bien ete ajoute dans les archives.</p>
+            <h4>Page ajoutée</h4>
+            <p>Ton contenu a bien été ajouté dans les archives.</p>
           </div>
         </div>
       </section>

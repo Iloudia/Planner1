@@ -14,7 +14,7 @@ import {
 import { baseWishlistCategoryDefinitions, WISHLIST_DEFINITION_VERSION } from "../services/firestore/wishlistDefinitions"
 
 const WISHLIST_LOAD_ERROR = "Impossible de charger votre wishlist."
-const WISHLIST_MUTATION_ERROR = "Impossible de mettre a jour votre wishlist."
+const WISHLIST_MUTATION_ERROR = "Impossible de mettre à jour votre wishlist."
 
 const buildBaseCategory = (
   definition: (typeof baseWishlistCategoryDefinitions)[number],

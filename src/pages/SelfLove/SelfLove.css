@@ -49,6 +49,18 @@
   margin: 0;
 }
 
+.self-love-photos__intro--tight {
+  gap: 0;
+}
+
+.self-love-photos__intro--tight .self-love-photos__title {
+  margin: 0;
+}
+
+.self-love-photos__intro--tight .self-love-photos__subtitle {
+  margin: 1rem 0 0;
+}
+
 
 .self-love-letter {
   display: flex;
@@ -65,7 +77,7 @@
   grid-template-columns: 1fr;
   justify-items: center;
   position: relative;
-  padding: clamp(2rem, 5vw, 3.6rem) 0;
+  padding: clamp(5vw, 3.6rem) 0;
   z-index: 0;
 }
 
@@ -302,7 +314,7 @@
 .self-love-letter__title {
   font-size: clamp(1.4rem, 2.6vw, 2rem);
   color: var(--color-chocolate);
-  text-align: center;
+  text-align: left;
   margin: 0;
   font-family: var(--font-display);
 }
@@ -501,6 +513,10 @@
   color: rgba(67, 20, 51, 0.9);
 }
 
+.self-love-exercise__card .self-love-exercise__prompt > span {
+  color: #000000;
+}
+
 .self-love-exercise__textarea {
   border: 1px solid rgba(227, 215, 202, 0.3);
   padding: 0.6rem 0.75rem;
@@ -527,7 +543,7 @@
 }
 
 .self-love-exercise__save {
-  align-self: flex-start;
+  align-self: flex-end;
   border: none;
   padding: 0.6rem 1.2rem;
   min-height: 46px;
@@ -1771,6 +1787,34 @@
   .self-love-section--qualities,
   .self-love-section--thoughts {
     height: 100%;
+  }
+
+  .self-love-section--thoughts .self-love-form-row {
+    flex-wrap: nowrap;
+  }
+
+  .self-love-section--thoughts .self-love-form-row .self-love-exercise__textarea {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .self-love-section--thoughts .self-love-form-row button {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .self-love-section--qualities .self-love-form-row {
+    flex-wrap: nowrap;
+  }
+
+  .self-love-section--qualities .self-love-form-row .self-love-exercise__textarea {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .self-love-section--qualities .self-love-form-row button {
+    flex: 0 0 auto;
+    white-space: nowrap;
   }
 }
 

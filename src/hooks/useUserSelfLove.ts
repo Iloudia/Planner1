@@ -30,7 +30,7 @@ import {
 } from "../services/firestore/selfLove"
 
 const SELF_LOVE_LOAD_ERROR = "Impossible de charger votre espace self-love."
-const SELF_LOVE_MUTATION_ERROR = "Impossible de mettre a jour votre espace self-love."
+const SELF_LOVE_MUTATION_ERROR = "Impossible de mettre à jour votre espace self-love."
 const PHOTO_SLOT_COUNT = 6
 
 const getDefaultFutureOpenDate = () => {
@@ -41,32 +41,33 @@ const getDefaultFutureOpenDate = () => {
 
 const defaultDraft = (): SelfLoveDraft => ({
   letterTo: "Moi du futur",
-  letterFrom: "Moi du present",
-  letterBody: "Cher moi, merci de continuer a te choisir chaque jour...",
+  letterFrom: "Moi du présent",
+  letterBody: "Cher moi, merci de continuer à te choisir chaque jour...",
   kittyLetterBody:
-    "Je suis fier de toi. Merci de te relever, de rire, de pleurer et de croire encore en toi quand c'est complique.",
+    "Je suis fier de toi. Merci de te relever, de rire, de pleurer et de croire encore en toi quand c'est compliqué.",
   futureLetterTo: "Moi du futur",
-  futureLetterFrom: "Moi du present",
+  futureLetterFrom: "Moi du présent",
   futureLetterBody:
-    "Si tu lis ces mots, c'est que tu as tenu bon. J'espere que tu te souviens de nos promesses et de nos petites victoires.",
+    "Si tu lis ces mots, c'est que tu as tenu bon. J'espère que tu te souviens de nos promesses et de nos petites victoires.",
   futureLetterOpenDate: getDefaultFutureOpenDate(),
   innerChildMessage: "",
   innerChildReassurance: "",
   innerChildNeededWords: "",
   bestFriendAdvice: "",
   bestFriendSelfTalk: "",
+  bestFriendSelfKindness: "",
 })
 
 const defaultQualities: SelfLoveQuality[] = [
   { id: "quality-1", text: "Mon sourire illumine les gens.", sortOrder: 0, isDefault: true },
   { id: "quality-2", text: "J'ai une force tranquille.", sortOrder: 1, isDefault: true },
-  { id: "quality-3", text: "Je sais ecouter avec le coeur.", sortOrder: 2, isDefault: true },
+  { id: "quality-3", text: "Je sais écouter avec le cœur.", sortOrder: 2, isDefault: true },
 ]
 
 const defaultThoughts: SelfLoveThought[] = [
   { id: "thought-1", text: "Je ne suis pas assez.", sortOrder: 0, isDefault: true },
-  { id: "thought-2", text: "Je dois tout controler.", sortOrder: 1, isDefault: true },
-  { id: "thought-3", text: "Je ne merite pas ce que j'ai.", sortOrder: 2, isDefault: true },
+  { id: "thought-2", text: "Je dois tout contrôler.", sortOrder: 1, isDefault: true },
+  { id: "thought-3", text: "Je ne mérite pas ce que j'ai.", sortOrder: 2, isDefault: true },
 ]
 
 const buildPhotoSlots = (items: SelfLovePhotoSlot[]) => {
@@ -399,7 +400,7 @@ const useUserSelfLove = () => {
         id: createClientId("self-love"),
         entryType: "bestFriend",
         template: "kitty",
-        body: [snapshot.advice, snapshot.selfTalk].filter(Boolean).join("\n\n"),
+        body: [snapshot.advice, snapshot.selfTalk, snapshot.selfKindness].filter(Boolean).join("\n\n"),
         bestFriend: snapshot,
         createdAt: Date.now(),
       }

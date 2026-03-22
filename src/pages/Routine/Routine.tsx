@@ -97,11 +97,11 @@ const RoutineComposer = ({
         disabled={disabled}
       />
       {draft.title.length >= ROUTINE_TITLE_MAX_LENGTH ? (
-        <span className="routine-note__composer-hint">Limite de 50 caracteres atteinte.</span>
+        <span className="routine-note__composer-hint">Limite de 50 caractères atteinte.</span>
       ) : null}
     </label>
     <label>
-      <span>Detail (optionnel)</span>
+      <span>Détail (optionnel)</span>
       <textarea
         value={draft.detail}
         onChange={(event) => onDraftChange("detail", event.target.value.slice(0, ROUTINE_DETAIL_MAX_LENGTH))}
@@ -111,7 +111,7 @@ const RoutineComposer = ({
         disabled={disabled}
       />
       {draft.detail.length >= ROUTINE_DETAIL_MAX_LENGTH ? (
-        <span className="routine-note__composer-hint">Limite de 35 caracteres atteinte.</span>
+        <span className="routine-note__composer-hint">Limite de 35 caractères atteinte.</span>
       ) : null}
     </label>
     <button type="submit" className="routine-note__composer-submit" disabled={disabled}>
@@ -249,9 +249,9 @@ const RoutinePage = () => {
               draft={routineDrafts.morning}
               onDraftChange={(field, value) => handleRoutineDraftChange("morning", field, value)}
               onSubmit={handleRoutineSubmit("morning")}
-              buttonLabel="Ajouter a ma routine du matin"
-              placeholderTitle="Ex : Boire un verre d'eau tiede citronnee"
-              placeholderDetail="Ex : Duree, intention..."
+              buttonLabel="Ajouter à ma routine du matin"
+              placeholderTitle="Ex : Boire un verre d'eau tiède citronnée"
+              placeholderDetail="Ex : Durée, intention..."
               disabled={!canEdit}
             />
           </div>
@@ -279,9 +279,9 @@ const RoutinePage = () => {
               draft={routineDrafts.evening}
               onDraftChange={(field, value) => handleRoutineDraftChange("evening", field, value)}
               onSubmit={handleRoutineSubmit("evening")}
-              buttonLabel="Ajouter a ma routine du soir"
-              placeholderTitle="Ex : Preparer mes vetements pour demain"
-              placeholderDetail="Ex : Duree, intention..."
+              buttonLabel="Ajouter à ma routine du soir"
+              placeholderTitle="Ex : Préparer mes vêtements pour demain"
+              placeholderDetail="Ex : Durée, intention..."
               disabled={!canEdit}
             />
           </div>
