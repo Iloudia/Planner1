@@ -3,7 +3,7 @@ import fs from "node:fs/promises"
 import path from "node:path"
 import sharp from "sharp"
 
-const scopeDirectoryMap = {
+const imageScopeDirectoryMap = {
   "profile-photo": "profile/photos",
   "wishlist-category-cover": "wishlist/categories",
   "wishlist-item-image": "wishlist/items",
@@ -15,6 +15,21 @@ const scopeDirectoryMap = {
   "diet-custom-recipe-image": "diet/custom-recipes",
 }
 
+const videoScopeDirectoryMap = {
+  "boutique-product-video": "boutique/products/videos",
+}
+
+const mimeTypeExtensionMap = {
+  "video/mp4": ".mp4",
+  "video/webm": ".webm",
+  "video/ogg": ".ogv",
+  "video/quicktime": ".mov",
+  "video/x-msvideo": ".avi",
+  "video/x-matroska": ".mkv",
+}
+
+const allowedVideoExtensions = new Set(Object.values(mimeTypeExtensionMap))
+
 const ensureForwardSlashes = (value) => value.replace(/\\/g, "/")
 
 const sanitizeSegment = (value, fallback = "media") => {
@@ -25,13 +40,19 @@ const sanitizeSegment = (value, fallback = "media") => {
   return safe || fallback
 }
 
+const sanitizeExtension = (value, fallback = ".bin") => {
+  const normalized = String(value || "").trim().toLowerCase()
+  return allowedVideoExtensions.has(normalized) ? normalized : fallback
+}
+
 const joinPublicUrl = (baseUrl, relativePath) => {
   const normalizedBase = String(baseUrl || "/media").replace(/\/+$/g, "")
   const normalizedRelative = ensureForwardSlashes(relativePath).replace(/^\/+/g, "")
   return `${normalizedBase}/${normalizedRelative}`
 }
 
-export const isAllowedImageScope = (scope) => Object.prototype.hasOwnProperty.call(scopeDirectoryMap, scope)
+export const isAllowedImageScope = (scope) => Object.prototype.hasOwnProperty.call(imageScopeDirectoryMap, scope)
+export const isAllowedVideoScope = (scope) => Object.prototype.hasOwnProperty.call(videoScopeDirectoryMap, scope)
 
 export const storeImage = async ({
   buffer,
@@ -41,7 +62,7 @@ export const storeImage = async ({
   mediaRootDir,
   publicBaseUrl,
 }) => {
-  const scopeDir = scopeDirectoryMap[scope]
+  const scopeDir = imageScopeDirectoryMap[scope]
   if (!scopeDir) {
     throw new Error("invalid-media-scope")
   }
@@ -66,6 +87,41 @@ export const storeImage = async ({
     height: metadata.height ?? null,
     mimeType: "image/webp",
     sizeBytes: transformed.byteLength,
+  }
+}
+
+export const storeVideo = async ({
+  buffer,
+  uid,
+  scope,
+  entityId,
+  mediaRootDir,
+  publicBaseUrl,
+  originalName,
+  mimeType,
+}) => {
+  const scopeDir = videoScopeDirectoryMap[scope]
+  if (!scopeDir) {
+    throw new Error("invalid-media-scope")
+  }
+
+  const safeEntityId = sanitizeSegment(entityId, "asset")
+  const extension =
+    sanitizeExtension(path.extname(String(originalName || "")), mimeTypeExtensionMap[String(mimeType || "").toLowerCase()] || ".mp4")
+  const fileName = `${safeEntityId}-${crypto.randomUUID()}${extension}`
+  const relativePath = ensureForwardSlashes(path.join("users", uid, scopeDir, fileName))
+  const absolutePath = path.resolve(mediaRootDir, relativePath)
+
+  await fs.mkdir(path.dirname(absolutePath), { recursive: true })
+  await fs.writeFile(absolutePath, buffer)
+
+  return {
+    url: joinPublicUrl(publicBaseUrl, relativePath),
+    path: relativePath,
+    width: null,
+    height: null,
+    mimeType: String(mimeType || "video/mp4"),
+    sizeBytes: buffer.byteLength,
   }
 }
 

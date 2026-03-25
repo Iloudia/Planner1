@@ -1,4 +1,4 @@
-﻿import type { BoutiqueProduct } from "./boutiqueData"
+import type { BoutiqueProduct } from "../../models/product.model"
 
 const CART_KEY = "boutique.cart.v1"
 

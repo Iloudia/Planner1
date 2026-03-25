@@ -21,6 +21,7 @@ function Header() {
       { label: "A propos de moi", path: "/a-propos" },
       { label: "Accueil", path: "/home" },
       { label: "Boutique", path: "/boutique" },
+      { label: "Mes achats", path: "/mes-achats" },
       { label: "Mentions legales", path: "/mentions-legales" },
       { label: "Politique de confidentialite", path: "/confidentialite" },
       { label: "Contact", path: "/contact" },
@@ -216,6 +217,13 @@ function Header() {
                         Archives
                       </Link>
                     </li>
+                    {isAuthenticated ? (
+                      <li>
+                        <Link to="/mes-achats" className="header-menu__item" onClick={() => setIsMenuOpen(false)}>
+                          Mes achats
+                        </Link>
+                      </li>
+                    ) : null}
                     {isAuthenticated ? (
                       <>
                         <li>
@@ -420,6 +428,16 @@ function Header() {
                       type="button"
                       className="account-menu__item"
                       onClick={() => {
+                        handleNavigate("/mes-achats")
+                        setIsAccountOpen(false)
+                      }}
+                    >
+                      Mes achats
+                    </button>
+                    <button
+                      type="button"
+                      className="account-menu__item"
+                      onClick={() => {
                         handleNavigate("/archives")
                         setIsAccountOpen(false)
                       }}
@@ -481,6 +499,11 @@ function Header() {
           <NavLink to="/panier" className={({ isActive }) => `site-header__nav-link${isActive ? " is-active" : ""}`}>
             Panier
           </NavLink>
+          {isAuthenticated ? (
+            <NavLink to="/mes-achats" className={({ isActive }) => `site-header__nav-link${isActive ? " is-active" : ""}`}>
+              Mes achats
+            </NavLink>
+          ) : null}
           <NavLink to="/a-propos" className={({ isActive }) => `site-header__nav-link${isActive ? " is-active" : ""}`}>
             À propos
           </NavLink>

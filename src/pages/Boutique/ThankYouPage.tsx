@@ -1,32 +1,16 @@
-ï»¿import { useEffect, useState } from "react"
-import { Link, useSearchParams } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom"
 import "./Boutique.css"
-import { buildApiUrl } from "../../utils/apiUrl"
 import { clearCart } from "./cartStorage"
-
-type CheckoutStatus = {
-  paid: boolean
-  downloads?: Array<{ downloadUrl: string; productName: string; fileName?: string; label?: string }>
-  customerEmail?: string | null
-  error?: string
-}
-
-const parseCheckoutError = async (response: Response) => {
-  try {
-    const payload = (await response.json()) as { error?: string }
-    if (payload?.error) {
-      return payload.error
-    }
-  } catch {
-    // ignore malformed JSON payloads
-  }
-
-  return "Impossible de verifier le paiement."
-}
+import { useAuth } from "../../context/AuthContext"
+import { fetchCheckoutSessionStatus, type CheckoutStatus } from "../../services/boutique/checkout"
 
 const ThankYouPage = () => {
   const [searchParams] = useSearchParams()
   const sessionId = searchParams.get("session_id")
+  const { isAuthReady, isAuthenticated } = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation()
   const [status, setStatus] = useState<CheckoutStatus | null>(null)
 
   useEffect(() => {
@@ -37,18 +21,23 @@ const ThankYouPage = () => {
   }, [])
 
   useEffect(() => {
+    if (!isAuthReady) {
+      return
+    }
+
     if (!sessionId) {
       setStatus({ paid: false, error: "Session de paiement manquante." })
       return
     }
 
+    if (!isAuthenticated) {
+      setStatus({ paid: false, error: "Reconnecte-toi pour retrouver tes téléchargements." })
+      return
+    }
+
     const fetchStatus = async () => {
       try {
-        const response = await fetch(buildApiUrl(`/api/checkout-session?session_id=${encodeURIComponent(sessionId)}`))
-        if (!response.ok) {
-          throw new Error(await parseCheckoutError(response))
-        }
-        const data = (await response.json()) as CheckoutStatus
+        const data = await fetchCheckoutSessionStatus(sessionId)
         setStatus(data)
       } catch (error) {
         console.error(error)
@@ -57,7 +46,7 @@ const ThankYouPage = () => {
     }
 
     void fetchStatus()
-  }, [sessionId])
+  }, [isAuthReady, isAuthenticated, sessionId])
 
   useEffect(() => {
     if (status?.paid) {
@@ -65,10 +54,31 @@ const ThankYouPage = () => {
     }
   }, [status?.paid])
 
+  const handleLoginRedirect = () => {
+    navigate("/login", {
+      state: {
+        from: {
+          pathname: location.pathname,
+          search: location.search,
+        },
+      },
+    })
+  }
+
+  if (!isAuthReady) {
+    return (
+      <div className="boutique-page boutique-page--loading" aria-busy="true" aria-live="polite">
+        <span className="boutique-loading-a11y" role="status">
+          Chargement
+        </span>
+      </div>
+    )
+  }
+
   const isPaid = status?.paid
   const title = isPaid ? "Merci pour ton achat" : "Paiement en attente"
   const message = isPaid
-    ? "Ton paiement est confirme. Tu peux telecharger ton produit ci-dessous."
+    ? "Ton paiement est confirme. Tu peux telecharger ton produit ci-dessous ou le retrouver dans ta bibliothèque." 
     : status?.error || "Nous n'avons pas encore recu la confirmation du paiement."
 
   return (
@@ -85,6 +95,18 @@ const ThankYouPage = () => {
                 Telecharger {item.label || item.productName}
               </a>
             ))}
+            <Link to="/mes-achats" className="boutique-button boutique-button--ghost">
+              Voir mes achats
+            </Link>
+            <Link to="/boutique" className="boutique-button boutique-button--ghost">
+              Retour boutique
+            </Link>
+          </div>
+        ) : !isAuthenticated && sessionId ? (
+          <div className="boutique-thankyou__actions">
+            <button type="button" className="boutique-button boutique-button--primary" onClick={handleLoginRedirect}>
+              Me reconnecter
+            </button>
             <Link to="/boutique" className="boutique-button boutique-button--ghost">
               Retour boutique
             </Link>
@@ -96,7 +118,7 @@ const ThankYouPage = () => {
             </Link>
             {sessionId ? (
               <p className="boutique-thankyou__help">
-                Si tu ne recois pas d'email d'ici quelques minutes, contacte-moi via la page Contact.
+                Si le paiement est validé mais que rien n'apparait, ouvre la page Mes achats ou reconnecte-toi avec le compte utilise pour payer.
               </p>
             ) : null}
           </div>
@@ -107,4 +129,3 @@ const ThankYouPage = () => {
 }
 
 export default ThankYouPage
-

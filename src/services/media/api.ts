@@ -1,7 +1,7 @@
 import { auth } from "../../utils/firebase"
 import { buildApiUrl, getApiTargetLabel, resolvePublicUrl } from "../../utils/apiUrl"
 
-export type MediaUploadScope =
+export type ImageUploadScope =
   | "profile-photo"
   | "wishlist-category-cover"
   | "wishlist-item-image"
@@ -11,6 +11,8 @@ export type MediaUploadScope =
   | "workout-video-thumbnail"
   | "self-love-photo"
   | "diet-custom-recipe-image"
+
+export type VideoUploadScope = "boutique-product-video"
 
 export type MediaUploadResult = {
   url: string
@@ -58,7 +60,7 @@ const buildAuthHeaders = async () => {
   }
 }
 
-export const uploadImage = async (file: File, scope: MediaUploadScope, entityId?: string) => {
+const uploadMedia = async (file: File, scope: string, endpoint: string, fallbackMessage: string, entityId?: string) => {
   const headers = await buildAuthHeaders()
   const formData = new FormData()
   formData.append("file", file)
@@ -68,14 +70,17 @@ export const uploadImage = async (file: File, scope: MediaUploadScope, entityId?
   }
 
   try {
-    const response = await fetch(buildApiUrl("/api/media/upload-image"), {
+    const response = await fetch(buildApiUrl(endpoint), {
       method: "POST",
       headers,
       body: formData,
     })
 
     if (!response.ok) {
-      throw new Error(await parseErrorMessage(response, "Media upload failed"))
+      if (response.status === 404) {
+        throw new Error(`La route ${endpoint} est introuvable sur l'API configuree. Le serveur doit etre redeploye ou redemarre.`)
+      }
+      throw new Error(await parseErrorMessage(response, fallbackMessage))
     }
 
     const payload = (await response.json()) as MediaUploadResult
@@ -90,6 +95,12 @@ export const uploadImage = async (file: File, scope: MediaUploadScope, entityId?
     throw error
   }
 }
+
+export const uploadImage = async (file: File, scope: ImageUploadScope, entityId?: string) =>
+  uploadMedia(file, scope, "/api/media/upload-image", "Media upload failed", entityId)
+
+export const uploadVideo = async (file: File, scope: VideoUploadScope, entityId?: string) =>
+  uploadMedia(file, scope, "/api/media/upload-video", "Video upload failed", entityId)
 
 export const deleteMedia = async (path: string) => {
   const headers = await buildAuthHeaders()

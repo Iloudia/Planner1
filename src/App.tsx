@@ -46,6 +46,7 @@ import BoutiqueCategoryPage from "./pages/Boutique/BoutiqueCategory"
 import BoutiqueProductPage from "./pages/Boutique/BoutiqueProduct"
 import ThankYouPage from "./pages/Boutique/ThankYouPage"
 import CartPage from "./pages/Cart/CartPage"
+import PurchasesPage from "./pages/Purchases/PurchasesPage"
 
 function NotFound() {
   return (
@@ -130,8 +131,8 @@ function App() {
           <Route path="/boutique" element={<BoutiquePage />} />
           <Route path="/boutique/:categoryId" element={<BoutiqueCategoryPage />} />
           <Route path="/boutique/produit/:productId" element={<BoutiqueProductPage />} />
-          <Route path="/panier" element={<CartPage />} />
-          <Route path="/merci" element={<ThankYouPage />} />
+            <Route path="/panier" element={<CartPage />} />
+            <Route path="/merci" element={<ThankYouPage />} />
           <Route path="/confidentialite" element={<ConfidentialitePage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/cookies" element={<GestionCookiesPage />} />
@@ -153,6 +154,7 @@ function App() {
             <Route path="/alimentation" element={<CuisinePage />} />
             <Route path="/profil" element={<ProfilePage />} />
             <Route path="/archives" element={<ArchivesPage />} />
+            <Route path="/mes-achats" element={<PurchasesPage />} />
             <Route path="/parametres" element={<SettingsLayout />}>
               <Route index element={<SettingsAccount />} />
               <Route path="affichage" element={<SettingsDisplay />} />

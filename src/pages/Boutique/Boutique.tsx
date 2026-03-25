@@ -4,11 +4,15 @@ import "./Boutique.css"
 
 import { benefits, boutiqueHeroBackdrop, categories, products } from "./boutiqueData"
 import { fetchCustomProducts, loadCustomProducts, PRODUCTS_UPDATED_EVENT } from "./boutiqueStorage"
+import { useAuth } from "../../context/AuthContext"
+import { fetchOwnedDigitalProducts } from "../../services/boutique/checkout"
 
 const BoutiquePage = () => {
   const [activeFilter, setActiveFilter] = useState("all")
   const [customProducts, setCustomProducts] = useState(() => loadCustomProducts())
   const [isBoutiqueLoading, setIsBoutiqueLoading] = useState(true)
+  const [ownedProductIds, setOwnedProductIds] = useState<string[]>([])
+  const { isAuthReady, isAuthenticated } = useAuth()
 
   useEffect(() => {
     document.body.classList.add("boutique-page--tone")
@@ -94,12 +98,62 @@ const BoutiquePage = () => {
     }
   }, [])
 
+  useEffect(() => {
+    let active = true
+
+    if (!isAuthReady) {
+      return () => {
+        active = false
+      }
+    }
+
+    if (!isAuthenticated) {
+      setOwnedProductIds([])
+      return () => {
+        active = false
+      }
+    }
+
+    const loadOwnedProducts = async () => {
+      try {
+        const items = await fetchOwnedDigitalProducts()
+        if (!active) {
+          return
+        }
+        setOwnedProductIds(items.map((item) => item.productId))
+      } catch (error) {
+        if (!active) {
+          return
+        }
+        console.error(error)
+        setOwnedProductIds([])
+      }
+    }
+
+    void loadOwnedProducts()
+
+    return () => {
+      active = false
+    }
+  }, [isAuthReady, isAuthenticated])
+
   const allProducts = useMemo(() => [...products, ...customProducts], [customProducts])
+  const ownedProductsSet = useMemo(() => new Set(ownedProductIds), [ownedProductIds])
 
   const filteredProducts = useMemo(() => {
-    if (activeFilter === "all") return allProducts
-    return allProducts.filter((product) => product.mockup === activeFilter)
-  }, [activeFilter, allProducts])
+    const nextProducts = activeFilter === "all" ? [...allProducts] : allProducts.filter((product) => product.mockup === activeFilter)
+
+    nextProducts.sort((left, right) => {
+      const leftOwned = ownedProductsSet.has(left.id) ? 1 : 0
+      const rightOwned = ownedProductsSet.has(right.id) ? 1 : 0
+      if (leftOwned !== rightOwned) {
+        return leftOwned - rightOwned
+      }
+      return 0
+    })
+
+    return nextProducts
+  }, [activeFilter, allProducts, ownedProductsSet])
 
   const bestSellers = allProducts.filter((product) => product.bestSeller)
   const categoryProductMap = useMemo(() => {
@@ -135,8 +189,8 @@ const BoutiquePage = () => {
               <a className="boutique-button boutique-button--primary" href="#produits">
                 Voir la boutique
               </a>
-              <a className="boutique-button boutique-button--ghost" href="#best-sellers">
-                Voir les best-sellers
+              <a className="boutique-button boutique-button--ghost" href="#promesse">
+                La promesse
               </a>
             </div>
             <div className="boutique-hero__meta">
@@ -150,9 +204,9 @@ const BoutiquePage = () => {
 
       <section className="boutique-section boutique-section--olive reveal" id="categories" aria-labelledby="boutique-categories-title">
         <div className="boutique-section__header">
-          <span className="boutique-eyebrow">Catégories</span>
-          <h2 id="boutique-categories-title">Choisis le format qui correspond à ta façon de créer.</h2>
-          <p>Chaque format est construit pour simplifier ta production et maximiser tes conversions.</p>
+          <span className="boutique-eyebrow">Favoris</span>
+          <h2 id="boutique-categories-title">Les favoris du moment.</h2>
+          <p>Une sélection de produits repérés pour leur style, leur utilité et leur efficacité immédiate.</p>
         </div>
         <div className="boutique-categories">
           {categories.map((category) => (
@@ -175,43 +229,10 @@ const BoutiquePage = () => {
         </div>
       </section>
 
-      <section className="boutique-section boutique-section--paper reveal" id="best-sellers" aria-labelledby="boutique-best-title">
-        <div className="boutique-section__header">
-          <span className="boutique-eyebrow">Best-sellers</span>
-          <h2 id="boutique-best-title">Les favoris des créateurs en ce moment.</h2>
-          <p>Des ressources ultra efficaces pour vendre, publier et performer sans surcharger ton planning.</p>
-        </div>
-        <div className="boutique-products boutique-products--featured">
-          {bestSellers.map((product) => (
-            <Link
-              key={product.id}
-              to={`/boutique/produit/${product.id}`}
-              className="boutique-product-card boutique-product-card--featured"
-            >
-              <div className={`boutique-product__mockup boutique-product__mockup--${product.mockup}`} aria-hidden="true">
-                <img className="boutique-product__image" src={product.image} alt="" loading="lazy" decoding="async" />
-                <span className="boutique-product__mockup-label">{product.formatLabel}</span>
-              </div>
-              <div className="boutique-product__body">
-                <div className="boutique-product__badge">Best-seller</div>
-                <h3>{product.title}</h3>
-                <p>{product.benefit}</p>
-                <div className="boutique-product__meta">
-                  <span>{product.format}</span>
-                  <span className="boutique-product__price">{product.price}</span>
-                </div>
-                <span className="boutique-button boutique-button--primary">Acheter</span>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
       <section className="boutique-section reveal" id="produits" aria-labelledby="boutique-products-title">
         <div className="boutique-section__header">
           <span className="boutique-eyebrow">Produits</span>
-          <h2 id="boutique-products-title">Toute la Boutique.</h2>
-          <p>Fais ton choix, personnalise et publie. Les CTA sont pensés pour la conversion.</p>
+          <h2 id="boutique-products-title">Toute la Boutique</h2>
         </div>
         <div className="boutique-filters" role="list">
           <button
@@ -260,27 +281,34 @@ const BoutiquePage = () => {
         ) : null}
         <div className="boutique-products">
           {filteredProducts.map((product) => (
-            <Link key={product.id} to={`/boutique/produit/${product.id}`} className="boutique-product-card">
+            <Link
+              key={product.id}
+              to={`/boutique/produit/${product.id}`}
+              className={`boutique-product-card${ownedProductsSet.has(product.id) ? " is-owned" : ""}`}
+            >
               <div className={`boutique-product__mockup boutique-product__mockup--${product.mockup}`} aria-hidden="true">
                 <img className="boutique-product__image" src={product.image} alt="" loading="lazy" decoding="async" />
                 <span className="boutique-product__mockup-label">{product.formatLabel}</span>
               </div>
               <div className="boutique-product__body">
                 {product.badge ? <span className="boutique-product__badge">{product.badge}</span> : null}
+                {ownedProductsSet.has(product.id) ? <span className="boutique-product__owned">Deja achete</span> : null}
                 <h3>{product.title}</h3>
                 <p>{product.benefit}</p>
                 <div className="boutique-product__meta">
                   <span>{product.format}</span>
                   <span className="boutique-product__price">{product.price}</span>
                 </div>
-                <span className="boutique-button boutique-button--primary">Acheter</span>
+                <span className={`boutique-button boutique-button--primary${ownedProductsSet.has(product.id) ? " is-disabled" : ""}`}>
+                  {ownedProductsSet.has(product.id) ? "Disponible dans mes achats" : "Acheter"}
+                </span>
               </div>
             </Link>
           ))}
         </div>
       </section>
 
-      <section className="boutique-section reveal" aria-labelledby="boutique-benefits-title">
+      <section className="boutique-section reveal" id="promesse" aria-labelledby="boutique-benefits-title">
         <div className="boutique-section__header">
           <span className="boutique-eyebrow">Promesse</span>
           <h2 id="boutique-benefits-title">Une boutique qui vend pendant que tu crées.</h2>

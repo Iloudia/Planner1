@@ -142,8 +142,20 @@ const AuthPage = ({ mode }: AuthFormProps) => {
   const skipAutoRedirectRef = useRef(false)
 
   const destinationPath = useMemo(() => {
-    const fromRoute = location.state as { from?: { pathname: string } } | undefined
-    return fromRoute?.from?.pathname ?? "/home"
+    const fromRoute = location.state as
+      | { from?: { pathname?: string; search?: string } | string }
+      | undefined
+    const from = fromRoute?.from
+
+    if (typeof from === "string" && from.trim()) {
+      return from
+    }
+
+    if (from?.pathname) {
+      return `${from.pathname}${from.search ?? ""}`
+    }
+
+    return "/home"
   }, [location.state])
   const genderLabel = useMemo(
     () => GENDER_OPTIONS.find((option) => option.value === gender)?.label ?? "Ne pas préciser",

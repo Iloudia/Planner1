@@ -1,27 +1,22 @@
-﻿import { useEffect, useMemo, useRef, useState } from "react"
-import { Link, useParams } from "react-router-dom"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import "./Boutique.css"
-import { buildApiUrl } from "../../utils/apiUrl"
-
 import { products } from "./boutiqueData"
 import { fetchCustomProducts, loadCustomProducts, PRODUCTS_UPDATED_EVENT } from "./boutiqueStorage"
 import { addToCart } from "./cartStorage"
+import { useAuth } from "../../context/AuthContext"
+import { createCheckoutSession } from "../../services/boutique/checkout"
 
-const parseCheckoutError = async (response: Response) => {
-  try {
-    const payload = (await response.json()) as { error?: string }
-    if (payload?.error) {
-      return payload.error
-    }
-  } catch {
-    // ignore malformed JSON payloads
-  }
-
-  return "Impossible de lancer le paiement."
+type ProductMedia = {
+  type: "image" | "video"
+  url: string
 }
 
 const BoutiqueProductPage = () => {
   const { productId } = useParams()
+  const { isAuthenticated } = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation()
   const [customProducts, setCustomProducts] = useState(() => loadCustomProducts())
   const product = useMemo(
     () => [...products, ...customProducts].find((item) => item.id === productId) ?? null,
@@ -35,12 +30,19 @@ const BoutiqueProductPage = () => {
   const cartToastTimeoutRef = useRef<number | null>(null)
 
   const gallery = product?.gallery ?? []
-  const thumbnails = gallery.slice(1, 6)
-  const [activeImage, setActiveImage] = useState(gallery[0] ?? product?.image ?? "")
+  const mediaItems = useMemo<ProductMedia[]>(
+    () => [
+      ...gallery.map((url) => ({ type: "image" as const, url })),
+      ...(product?.video ? [{ type: "video" as const, url: product.video }] : []),
+    ],
+    [gallery, product?.video],
+  )
+  const thumbnails = mediaItems.slice(1, 7)
+  const [activeMedia, setActiveMedia] = useState<ProductMedia | null>(mediaItems[0] ?? null)
 
   useEffect(() => {
-    setActiveImage(gallery[0] ?? product?.image ?? "")
-  }, [gallery, product?.image, product?.id])
+    setActiveMedia(mediaItems[0] ?? null)
+  }, [mediaItems, product?.id])
 
   useEffect(() => {
     document.body.classList.add("boutique-page--tone")
@@ -76,6 +78,7 @@ const BoutiqueProductPage = () => {
   }, [])
 
   const isCheckoutAvailable = product?.checkoutEnabled !== false
+  const shouldShowDeliveryInfo = product?.mockup === "bundle" && product.features.length > 0
 
   const handleAddToCart = () => {
     if (!product || !isCheckoutAvailable) return
@@ -96,26 +99,33 @@ const BoutiqueProductPage = () => {
     cartToastTimeoutRef.current = window.setTimeout(() => setIsCartToastVisible(false), 6000)
   }
 
+  const handleOpenCart = () => {
+    setIsCartToastVisible(false)
+    navigate("/panier")
+  }
+
   const handleCheckout = async () => {
     if (!product || !isCheckoutAvailable) {
       return
     }
+
+    if (!isAuthenticated) {
+      navigate("/login", {
+        state: {
+          from: {
+            pathname: location.pathname,
+            search: location.search,
+          },
+        },
+      })
+      return
+    }
+
     setIsCheckoutLoading(true)
     setCheckoutError(null)
     try {
-      const response = await fetch(buildApiUrl("/api/create-checkout-session"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId: product.id }),
-      })
-      if (!response.ok) {
-        throw new Error(await parseCheckoutError(response))
-      }
-      const data = await response.json()
-      if (!data?.url) {
-        throw new Error("Lien de paiement manquant.")
-      }
-      window.location.href = data.url
+      const checkoutUrl = await createCheckoutSession({ productId: product.id })
+      window.location.href = checkoutUrl
     } catch (error) {
       console.error(error)
       setCheckoutError(error instanceof Error ? error.message : "Impossible de lancer le paiement. Reessaie dans quelques secondes.")
@@ -140,7 +150,13 @@ const BoutiqueProductPage = () => {
 
   return (
     <div className="boutique-page boutique-detail">
-      <div className={`boutique-cart-toast${isCartToastVisible ? " is-visible" : ""}`} role="status" aria-live="polite">
+      <button
+        type="button"
+        className={`boutique-cart-toast${isCartToastVisible ? " is-visible" : ""}`}
+        role="status"
+        aria-live="polite"
+        onClick={handleOpenCart}
+      >
         <span className="boutique-cart-toast__eyebrow">Ajoute a votre panier</span>
         {product ? (
           <div className="boutique-cart-toast__content">
@@ -151,7 +167,7 @@ const BoutiqueProductPage = () => {
             </div>
           </div>
         ) : null}
-      </div>
+      </button>
       <section className="boutique-detail__header">
         <Link to="/boutique" className="boutique-link-button">
           &lt; Retour boutique
@@ -161,18 +177,29 @@ const BoutiqueProductPage = () => {
       <section className="boutique-detail__layout">
         <div className="boutique-detail__gallery">
           <div className="boutique-detail__main">
-            <img src={activeImage} alt={product.title} loading="lazy" decoding="async" />
+            {activeMedia?.type === "video" ? (
+              <video src={activeMedia.url} controls playsInline preload="metadata" />
+            ) : (
+              <img src={activeMedia?.url ?? product.image} alt={product.title} loading="lazy" decoding="async" />
+            )}
           </div>
           <div className="boutique-detail__thumbs">
             {thumbnails.map((thumb, index) => (
               <button
-                key={`${product.id}-thumb-${index}`}
+                key={`${product.id}-thumb-${thumb.type}-${index}`}
                 type="button"
-                className={`boutique-detail__thumb${thumb === activeImage ? " is-active" : ""}`}
-                onClick={() => setActiveImage(thumb)}
-                aria-label={`Voir la photo ${index + 2}`}
+                className={`boutique-detail__thumb${thumb.url === activeMedia?.url && thumb.type === activeMedia?.type ? " is-active" : ""}`}
+                onClick={() => setActiveMedia(thumb)}
+                aria-label={thumb.type === "video" ? "Voir la video du produit" : `Voir la photo ${index + 2}`}
               >
-                <img src={thumb} alt="" loading="lazy" decoding="async" />
+                {thumb.type === "video" ? (
+                  <>
+                    <video src={thumb.url} muted playsInline preload="metadata" />
+                    <span className="boutique-detail__thumb-badge">Video</span>
+                  </>
+                ) : (
+                  <img src={thumb.url} alt="" loading="lazy" decoding="async" />
+                )}
               </button>
             ))}
           </div>
@@ -193,7 +220,6 @@ const BoutiqueProductPage = () => {
             <div className="boutique-detail__meta">
               <span>{product.format}</span>
               <span>Acces immediat</span>
-              <span>Licence commerciale incluse</span>
             </div>
             <button
               type="button"
@@ -215,14 +241,16 @@ const BoutiqueProductPage = () => {
               <p className="boutique-checkout-error">Le fichier de telechargement n'est pas encore configure pour ce produit.</p>
             ) : null}
             {checkoutError ? <p className="boutique-checkout-error">{checkoutError}</p> : null}
-            <div className="boutique-detail__features">
-              <h2>Infos de livraison</h2>
-              <ul>
-                {product.features.map((feature) => (
-                  <li key={feature}>{feature}</li>
-                ))}
-              </ul>
-            </div>
+            {shouldShowDeliveryInfo ? (
+              <div className="boutique-detail__features">
+                <h2>Infos de livraison</h2>
+                <ul>
+                  {product.features.map((feature) => (
+                    <li key={feature}>{feature}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
           </aside>
         </div>
       </section>
@@ -231,4 +259,5 @@ const BoutiqueProductPage = () => {
 }
 
 export default BoutiqueProductPage
+
 

@@ -1,4 +1,4 @@
-import type { BoutiqueProduct } from "./boutiqueData"
+import type { BoutiqueProduct } from "../../models/product.model"
 import { buildApiUrl } from "../../utils/apiUrl"
 import { resolvePublicUrl } from "../../utils/apiUrl"
 import { auth } from "../../utils/firebase"
@@ -28,6 +28,7 @@ const normalizeProducts = (value: unknown) => {
     .map((item) => {
       const product = item as StoredProduct
       const image = typeof product.image === "string" ? resolvePublicUrl(product.image) : ""
+      const video = typeof product.video === "string" ? resolvePublicUrl(product.video) : ""
       const gallery = Array.isArray(product.gallery)
         ? product.gallery.map((entry) => resolvePublicUrl(String(entry || ""))).filter(Boolean)
         : []
@@ -35,6 +36,7 @@ const normalizeProducts = (value: unknown) => {
       return {
         ...product,
         image,
+        video: video || undefined,
         gallery: image ? [image, ...gallery.filter((entry) => entry !== image)] : gallery,
         checkoutEnabled: product.checkoutEnabled !== false,
       }

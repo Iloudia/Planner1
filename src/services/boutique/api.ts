@@ -1,6 +1,6 @@
 import { auth } from "../../utils/firebase"
 import { buildApiUrl, getApiTargetLabel } from "../../utils/apiUrl"
-import type { BoutiqueDigitalFile } from "../../pages/Boutique/boutiqueData"
+import type { BoutiqueDigitalFile } from "../../models/product.model"
 
 const parseErrorMessage = async (response: Response, fallback: string) => {
   try {

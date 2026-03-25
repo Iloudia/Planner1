@@ -6,7 +6,7 @@ import express from "express"
 import multer from "multer"
 import Stripe from "stripe"
 import { isFirebaseTokenVerificationConfigured, verifyFirebaseIdToken } from "./firebaseTokenVerifier.mjs"
-import { deleteMediaFile, isAllowedImageScope, storeImage } from "./mediaStorage.mjs"
+import { deleteMediaFile, isAllowedImageScope, isAllowedVideoScope, storeImage, storeVideo } from "./mediaStorage.mjs"
 
 const app = express()
 const port = Number(process.env.PORT || 4242)
@@ -16,12 +16,17 @@ const appBaseUrl = String(process.env.APP_BASE_URL || "http://localhost:5173").t
 const apiPublicBaseUrl = String(process.env.API_PUBLIC_BASE_URL || appBaseUrl)
   .trim()
   .replace(/\/+$/g, "")
+const defaultDataDir = path.resolve(process.cwd(), "server", "data")
+const resolveConfiguredPath = (value, fallback) => path.resolve(String(value || fallback).trim() || fallback)
+const customProductsFile = resolveConfiguredPath(process.env.CUSTOM_PRODUCTS_FILE, path.join(defaultDataDir, "custom-products.json"))
+const purchasesFile = resolveConfiguredPath(process.env.PURCHASES_FILE, path.join(defaultDataDir, "purchases.json"))
 const downloadsDir = process.env.DOWNLOADS_DIR || path.resolve(process.cwd(), "server", "downloads")
 const mediaRootDir = process.env.MEDIA_ROOT_DIR || path.resolve(process.cwd(), "server", "media")
 const mediaPublicBaseUrl = process.env.MEDIA_PUBLIC_BASE_URL || "/media"
 const downloadTokenSecret = String(process.env.DOWNLOAD_TOKEN_SECRET || "").trim()
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY || ""
 const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET || ""
+const emailAttachmentMaxBytes = Math.max(Number.parseInt(process.env.EMAIL_ATTACHMENT_MAX_BYTES || "", 10) || 20 * 1024 * 1024, 0)
 const adminEmails = new Set(
   String(process.env.ADMIN_EMAILS || "")
     .split(",")
@@ -46,6 +51,12 @@ const mediaUpload = multer({
   storage: multer.memoryStorage(),
   limits: {
     fileSize: 8 * 1024 * 1024,
+  },
+})
+const mediaVideoUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 50 * 1024 * 1024,
   },
 })
 const digitalDownloadUpload = multer({
@@ -171,7 +182,6 @@ const seedCatalogProducts = [
   },
 ]
 
-const customProductsFile = path.resolve(process.cwd(), "server", "data", "custom-products.json")
 const allowedMockups = new Set(["ebook", "template", "carousel", "bundle"])
 const allowedDigitalMimeTypes = new Set([
   "application/pdf",
@@ -192,6 +202,27 @@ const toSafeSegment = (value, fallback = "asset") =>
     .replace(/^-+|-+$/g, "") || fallback
 const joinBaseUrl = (baseUrl, relativePath) => `${String(baseUrl || "").replace(/\/+$/g, "")}${relativePath}`
 const createHttpError = (statusCode, message) => Object.assign(new Error(message), { statusCode })
+const safeParseJson = (value, fallback = null) => {
+  try {
+    return JSON.parse(String(value || ""))
+  } catch {
+    return fallback
+  }
+}
+
+const writeJsonFileAtomic = (targetFile, payload) => {
+  fs.mkdirSync(path.dirname(targetFile), { recursive: true })
+  const temporaryFile = `${targetFile}.${process.pid}.${crypto.randomUUID()}.tmp`
+  try {
+    fs.writeFileSync(temporaryFile, JSON.stringify(payload, null, 2), "utf-8")
+    fs.renameSync(temporaryFile, targetFile)
+  } catch (error) {
+    if (fs.existsSync(temporaryFile)) {
+      fs.unlinkSync(temporaryFile)
+    }
+    throw error
+  }
+}
 
 const formatPriceFromCents = (value) => {
   const cents = Number(value)
@@ -226,6 +257,23 @@ const parsePriceToCents = (value) => {
 }
 
 const sanitizeText = (value, maxLength = 4000) => String(value || "").trim().slice(0, maxLength)
+const escapeHtml = (value) =>
+  String(value || "").replace(/[&<>"']/g, (character) => {
+    switch (character) {
+      case "&":
+        return "&amp;"
+      case "<":
+        return "&lt;"
+      case ">":
+        return "&gt;"
+      case '"':
+        return "&quot;"
+      case "'":
+        return "&#39;"
+      default:
+        return character
+    }
+  })
 
 const sanitizeStringArray = (value, maxItems = 12, maxLength = 240) => {
   if (!Array.isArray(value)) {
@@ -300,6 +348,7 @@ const normalizeCustomProductPayload = (product, existingProduct) => {
   const rawPrice = sanitizeText(product?.price || existingProduct?.price, 80)
   const priceCents = parsePriceToCents(rawPrice)
   const image = sanitizeText(product?.image || existingProduct?.image, 4000)
+  const video = sanitizeText(product?.video || existingProduct?.video, 4000)
   const gallery = normalizeGallery(product?.gallery ?? existingProduct?.gallery)
   const normalizedGallery = image ? [image, ...gallery.filter((entry) => entry !== image)].slice(0, 6) : gallery.slice(0, 6)
   const digitalFiles = normalizeStoredDigitalFiles(product?.digitalFiles)
@@ -318,6 +367,7 @@ const normalizeCustomProductPayload = (product, existingProduct) => {
     mockup: allowedMockups.has(String(product?.mockup || existingProduct?.mockup)) ? String(product?.mockup || existingProduct?.mockup) : "ebook",
     bestSeller: Boolean(product?.bestSeller ?? existingProduct?.bestSeller),
     image: image || normalizedGallery[0] || "",
+    video,
     gallery: normalizedGallery,
     description: sanitizeText(product?.description || existingProduct?.description, 6000),
     features:
@@ -369,11 +419,10 @@ const readStoredCustomProducts = () => {
 
 const writeCustomProducts = (items) => {
   try {
-    fs.mkdirSync(path.dirname(customProductsFile), { recursive: true })
     const normalizedItems = Array.isArray(items)
       ? items.map((entry) => normalizeCustomProductPayload(entry)).filter((entry) => entry.id)
       : []
-    fs.writeFileSync(customProductsFile, JSON.stringify(normalizedItems, null, 2), "utf-8")
+    writeJsonFileAtomic(customProductsFile, normalizedItems)
   } catch (error) {
     console.error("Failed to write custom products:", error)
   }
@@ -390,6 +439,7 @@ const toPublicCustomProduct = (product) => ({
   mockup: product.mockup,
   bestSeller: product.bestSeller,
   image: product.image,
+  video: product.video || "",
   gallery: product.gallery,
   description: product.description,
   features: product.features,
@@ -405,6 +455,9 @@ const getCatalogProductsById = () => {
       id: product.id,
       name: product.title,
       priceCents: parsePriceToCents(product.price),
+      price: product.price,
+      image: product.image,
+      formatLabel: product.formatLabel,
       digitalFiles: normalizeStoredDigitalFiles(product.digitalFiles),
     })
   }
@@ -433,6 +486,76 @@ const resolveDownloadAbsolutePath = (storagePath) => {
     throw createHttpError(400, "Chemin de telechargement invalide.")
   }
   return absolutePath
+}
+
+const buildProductEmailAttachments = (cartItems) => {
+  const catalog = getCatalogProductsById()
+  const attachments = []
+  let attachedPdfCount = 0
+  let skippedPdfCount = 0
+  let hasNonPdfFiles = false
+  let totalAttachedBytes = 0
+
+  for (const item of cartItems) {
+    const product = catalog.get(item.productId)
+    if (!product) {
+      continue
+    }
+
+    for (const file of normalizeStoredDigitalFiles(product.digitalFiles)) {
+      if (file.mimeType !== "application/pdf") {
+        hasNonPdfFiles = true
+        continue
+      }
+
+      try {
+        const absolutePath = resolveDownloadAbsolutePath(file.storagePath)
+        if (!fs.existsSync(absolutePath)) {
+          skippedPdfCount += 1
+          console.warn("Purchase email attachment skipped: file missing", {
+            productId: product.id,
+            storagePath: file.storagePath,
+          })
+          continue
+        }
+
+        const stats = fs.statSync(absolutePath)
+        const fileSize = Math.max(stats.size || file.sizeBytes || 0, 0)
+        if (!fileSize || totalAttachedBytes + fileSize > emailAttachmentMaxBytes) {
+          skippedPdfCount += 1
+          console.warn("Purchase email attachment skipped: size limit exceeded", {
+            productId: product.id,
+            storagePath: file.storagePath,
+            fileSize,
+            totalAttachedBytes,
+            emailAttachmentMaxBytes,
+          })
+          continue
+        }
+
+        attachments.push({
+          filename: sanitizeFileName(file.downloadName || `${product.id}.pdf`),
+          content: fs.readFileSync(absolutePath).toString("base64"),
+        })
+        totalAttachedBytes += fileSize
+        attachedPdfCount += 1
+      } catch (error) {
+        skippedPdfCount += 1
+        console.warn("Purchase email attachment skipped: unexpected error", {
+          productId: product.id,
+          storagePath: file.storagePath,
+          details: error instanceof Error ? error.message : String(error),
+        })
+      }
+    }
+  }
+
+  return {
+    attachments,
+    attachedPdfCount,
+    skippedPdfCount,
+    hasNonPdfFiles,
+  }
 }
 
 const deleteDownloadFiles = (digitalFiles) => {
@@ -478,27 +601,40 @@ const storeDigitalFile = ({ file, uid, productId }) => {
   }
 }
 
+const normalizeCheckoutQuantity = (value) => {
+  const quantity = Number.parseInt(String(value || "1"), 10)
+  if (!Number.isFinite(quantity) || quantity <= 0) {
+    return 1
+  }
+  return Math.min(quantity, 99)
+}
+
 const normalizeCheckoutItems = ({ productId, items }) => {
   const rawItems = Array.isArray(items)
     ? items
         .map((item) => ({
           productId: sanitizeText(item?.productId, 160),
+          quantity: normalizeCheckoutQuantity(item?.quantity),
         }))
         .filter((item) => item.productId)
     : productId
-      ? [{ productId: sanitizeText(productId, 160) }]
+      ? [{ productId: sanitizeText(productId, 160), quantity: 1 }]
       : []
 
   const uniqueItems = new Map()
   for (const item of rawItems) {
-    uniqueItems.set(item.productId, { productId: item.productId, quantity: 1 })
+    const existingItem = uniqueItems.get(item.productId)
+    uniqueItems.set(item.productId, {
+      productId: item.productId,
+      quantity: existingItem ? normalizeCheckoutQuantity(existingItem.quantity + item.quantity) : item.quantity,
+    })
   }
   return [...uniqueItems.values()]
 }
 
-const createDownloadToken = ({ productId, assetId, sessionId, expiresInHours = 48 }) => {
+const createDownloadToken = ({ productId, assetId, sessionId, uid, expiresInHours = 48 }) => {
   const exp = Date.now() + expiresInHours * 60 * 60 * 1000
-  const payload = JSON.stringify({ productId, assetId, sessionId, exp })
+  const payload = JSON.stringify({ productId, assetId, sessionId, uid, exp })
   const payloadEncoded = Buffer.from(payload).toString("base64url")
   const signature = crypto.createHmac("sha256", downloadTokenSecret).update(payloadEncoded).digest("base64url")
   return `${payloadEncoded}.${signature}`
@@ -531,7 +667,7 @@ const verifyDownloadToken = (token) => {
   }
 }
 
-const buildProductDownloads = (cartItems, sessionId) => {
+const buildProductDownloads = (cartItems, ownerContext) => {
   const catalog = getCatalogProductsById()
   const downloads = []
   for (const item of cartItems) {
@@ -544,7 +680,8 @@ const buildProductDownloads = (cartItems, sessionId) => {
       const token = createDownloadToken({
         productId: product.id,
         assetId: file.id,
-        sessionId,
+        sessionId: ownerContext.sessionId,
+        uid: ownerContext.uid,
       })
       downloads.push({
         downloadUrl: joinBaseUrl(apiPublicBaseUrl, `/api/download?token=${token}`),
@@ -645,6 +782,7 @@ app.use("/api/custom-products", sensitiveApiRateLimit)
 app.use("/api/media", sensitiveApiRateLimit)
 app.use("/api/create-checkout-session", sensitiveApiRateLimit)
 app.use("/api/checkout-session", sensitiveApiRateLimit)
+app.use("/api/my-purchases", sensitiveApiRateLimit)
 app.use("/api/download", sensitiveApiRateLimit)
 app.use("/api/email", sensitiveApiRateLimit)
 
@@ -723,6 +861,44 @@ app.post("/api/media/upload-image", firebaseAuth, mediaUpload.single("file"), as
   } catch (error) {
     console.error("Media upload failed:", error)
     return res.status(500).json({ error: "Impossible de televerser cette image." })
+  }
+})
+
+app.post("/api/media/upload-video", firebaseAuth, mediaVideoUpload.single("file"), async (req, res) => {
+  try {
+    const scope = String(req.body?.scope || "")
+    const entityId = String(req.body?.entityId || "")
+    const uid = req.user?.uid
+    const file = req.file
+
+    if (!uid) {
+      return res.status(401).json({ error: "Utilisateur introuvable." })
+    }
+    if (!file || !file.buffer) {
+      return res.status(400).json({ error: "Aucun fichier video recu." })
+    }
+    if (!isAllowedVideoScope(scope)) {
+      return res.status(400).json({ error: "Scope media invalide." })
+    }
+    if (!file.mimetype?.startsWith("video/")) {
+      return res.status(400).json({ error: "Seules les videos sont acceptees." })
+    }
+
+    const payload = await storeVideo({
+      buffer: file.buffer,
+      uid,
+      scope,
+      entityId,
+      mediaRootDir,
+      publicBaseUrl: mediaPublicBaseUrl,
+      originalName: file.originalname,
+      mimeType: file.mimetype,
+    })
+
+    return res.json(payload)
+  } catch (error) {
+    console.error("Video upload failed:", error)
+    return res.status(500).json({ error: "Impossible de televerser cette video." })
   }
 })
 
@@ -825,7 +1001,7 @@ app.post("/api/custom-products", firebaseAuth, adminOnly, (req, res) => {
   return res.status(400).json({ error: "Requete invalide." })
 })
 
-const sendResendEmail = async ({ to, subject, html }) => {
+const sendResendEmail = async ({ to, subject, html, attachments, idempotencyKey }) => {
   const resendApiKey = process.env.RESEND_API_KEY
   const from = process.env.EMAIL_FROM || "MeAndRituals <no-reply@example.com>"
   if (!resendApiKey) {
@@ -839,12 +1015,14 @@ const sendResendEmail = async ({ to, subject, html }) => {
       headers: {
         Authorization: `Bearer ${resendApiKey}`,
         "Content-Type": "application/json",
+        ...(idempotencyKey ? { "Idempotency-Key": idempotencyKey } : {}),
       },
       body: JSON.stringify({
         from,
         to,
         subject,
         html,
+        ...(Array.isArray(attachments) && attachments.length > 0 ? { attachments } : {}),
       }),
     })
 
@@ -876,28 +1054,281 @@ const sendResendEmail = async ({ to, subject, html }) => {
   }
 }
 
-const sendDownloadEmail = async ({ to, items }) => {
-  const subject = "Tes liens de telechargement"
+const sendDownloadEmail = async ({ to, items, attachments, attachedPdfCount = 0, skippedPdfCount = 0, hasNonPdfFiles = false, sessionId }) => {
+  const subject = "Merci pour ton achat | Tes fichiers MeAndRituals"
+  const purchasesUrl = `${appBaseUrl}/mes-achats`
   const list = items
     .map(
       (item) =>
-        `<li style="margin-bottom: 10px;"><strong>${item.label || item.productName}</strong><br /><a href="${item.downloadUrl}" style="color: #1f1b16;">Telecharger</a></li>`,
+        `
+          <tr>
+            <td style="padding:0 0 14px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border:1px solid #eadfce;border-radius:14px;background:#fcf8f2;">
+                <tr>
+                  <td style="padding:16px 18px;font-family:Arial,sans-serif;color:#2b241c;">
+                    <p style="margin:0 0 6px;font-size:15px;line-height:1.5;font-weight:700;">${escapeHtml(item.label || item.productName)}</p>
+                    <p style="margin:0 0 14px;font-size:13px;line-height:1.6;color:#7c6c5a;">Lien securise valable 48 heures.</p>
+                    <a href="${item.downloadUrl}" style="display:inline-block;padding:10px 16px;border-radius:999px;background:#1f1b16;color:#ffffff;text-decoration:none;font-size:13px;font-weight:700;">
+                      Telecharger
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        `,
     )
     .join("")
+  const attachmentNote =
+    attachedPdfCount > 0
+      ? `<p style="margin:0 0 12px;font-size:14px;line-height:1.7;color:#2b241c;">${attachedPdfCount} PDF ${attachedPdfCount > 1 ? "sont joints" : "est joint"} a cet email pour un acces immediat.</p>`
+      : ""
+  const skippedNote =
+    skippedPdfCount > 0
+      ? `<p style="margin:0 0 12px;font-size:14px;line-height:1.7;color:#7a3d2b;">Certains PDF n'ont pas pu etre joints car ils sont trop volumineux pour un email. Utilise les liens de telechargement ci-dessous.</p>`
+      : ""
+  const zipNote = hasNonPdfFiles
+    ? `<p style="margin:0 0 12px;font-size:14px;line-height:1.7;color:#2b241c;">Les fichiers ZIP ou autres ressources complementaires restent disponibles via les liens securises ci-dessous.</p>`
+    : ""
   const html = `
-    <div style="font-family: Inter, Arial, sans-serif; line-height: 1.6;">
-      <h2 style="margin: 0 0 12px;">Merci pour ton achat</h2>
-      <p style="margin: 0 0 16px;">Voici tes liens securises de telechargement :</p>
-      <ul style="padding-left: 18px; margin: 0 0 16px;">${list}</ul>
-      <p style="margin: 0;">Ces liens expirent dans 48 heures.</p>
+    <div style="margin:0;padding:32px 16px;background:#fff8f1;">
+      <div style="display:none;max-height:0;overflow:hidden;opacity:0;">
+        Merci pour ton achat. Tes fichiers sont prets et tes PDF sont joints a cet email quand leur taille le permet.
+      </div>
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:620px;margin:0 auto;background:#ffffff;border:1px solid #f3e7d7;border-radius:18px;overflow:hidden;">
+        <tr>
+          <td style="padding:24px 28px;background:linear-gradient(135deg,#1f1b16 0%,#3a2f24 100%);">
+            <p style="margin:0;font-family:Arial,sans-serif;font-size:13px;letter-spacing:1px;color:#f8e7d0;text-transform:uppercase;">MeAndRituals</p>
+            <h1 style="margin:8px 0 0;font-family:Georgia,'Times New Roman',serif;font-size:28px;line-height:1.25;color:#ffffff;font-weight:600;">Merci pour ton achat</h1>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:28px 28px 20px;font-family:Arial,sans-serif;color:#2b241c;">
+            <p style="margin:0 0 14px;font-size:18px;line-height:1.4;font-weight:600;">Tes fichiers sont prets.</p>
+            <p style="margin:0 0 14px;font-size:15px;line-height:1.7;">
+              Merci pour ta commande sur MeAndRituals. Tu trouveras ci-dessous tes liens de telechargement securises.
+            </p>
+            ${attachmentNote}
+            ${skippedNote}
+            ${zipNote}
+            <p style="margin:0 0 20px;font-size:14px;line-height:1.7;color:#7c6c5a;">
+              Si besoin, tu peux aussi retrouver tes achats dans ton espace personnel.
+            </p>
+            <a href="${purchasesUrl}" style="display:inline-block;padding:12px 20px;border-radius:999px;background:#d6b98c;color:#1f1b16;text-decoration:none;font-size:14px;font-weight:700;">
+              Ouvrir mes achats
+            </a>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:0 28px 8px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+              ${list}
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:18px 28px 24px;border-top:1px solid #f2ece4;font-family:Arial,sans-serif;color:#7c6c5a;font-size:12px;line-height:1.7;">
+            Les liens ci-dessus expirent dans 48 heures. Si un lien a expire, reconnecte-toi a ton compte et ouvre la page Mes achats.
+          </td>
+        </tr>
+      </table>
     </div>
   `
 
-  await sendResendEmail({ to, subject, html })
+  await sendResendEmail({
+    to,
+    subject,
+    html,
+    attachments,
+    idempotencyKey: sessionId ? `purchase-email:${sessionId}` : undefined,
+  })
 }
 
 const sanitizeName = (value) => String(value || "").replace(/[<>&"']/g, "")
 const normalizeEmailValue = (value) => String(value || "").trim().toLowerCase()
+
+const normalizePurchaseRecord = (entry, existingRecord) => {
+  const sessionId = sanitizeText(entry?.sessionId || existingRecord?.sessionId, 255)
+  const uid = sanitizeText(entry?.uid || existingRecord?.uid, 128)
+  const items = normalizeCheckoutItems({ items: entry?.items ?? existingRecord?.items })
+
+  if (!sessionId || !uid || items.length === 0) {
+    return null
+  }
+
+  return {
+    sessionId,
+    uid,
+    email: normalizeEmailValue(entry?.email || existingRecord?.email || ""),
+    paymentStatus: sanitizeText(entry?.paymentStatus || existingRecord?.paymentStatus || "paid", 80) || "paid",
+    purchasedAt: sanitizeText(entry?.purchasedAt || existingRecord?.purchasedAt, 80) || new Date().toISOString(),
+    items,
+    stripeCustomerId: sanitizeText(entry?.stripeCustomerId || existingRecord?.stripeCustomerId, 255),
+    paymentIntentId: sanitizeText(entry?.paymentIntentId || existingRecord?.paymentIntentId, 255),
+    emailSentAt: sanitizeText(entry?.emailSentAt || existingRecord?.emailSentAt, 80) || null,
+  }
+}
+
+const readPurchaseRecords = () => {
+  try {
+    if (!fs.existsSync(purchasesFile)) {
+      return []
+    }
+    const parsed = safeParseJson(fs.readFileSync(purchasesFile, "utf-8"), [])
+    if (!Array.isArray(parsed)) {
+      return []
+    }
+    return parsed
+      .map((entry) => normalizePurchaseRecord(entry))
+      .filter(Boolean)
+  } catch (error) {
+    console.error("Failed to read purchase records:", error)
+    return []
+  }
+}
+
+const writePurchaseRecords = (records) => {
+  const normalizedRecords = Array.isArray(records)
+    ? records.map((entry) => normalizePurchaseRecord(entry)).filter(Boolean)
+    : []
+  writeJsonFileAtomic(purchasesFile, normalizedRecords)
+}
+
+const findPurchaseRecordBySessionId = (sessionId) =>
+  readPurchaseRecords().find((entry) => entry.sessionId === sanitizeText(sessionId, 255)) || null
+
+const upsertPurchaseRecord = (record) => {
+  const existingRecords = readPurchaseRecords()
+  const existingRecord = existingRecords.find((entry) => entry.sessionId === record?.sessionId)
+  const normalizedRecord = normalizePurchaseRecord(record, existingRecord)
+  if (!normalizedRecord) {
+    throw createHttpError(400, "Enregistrement d'achat invalide.")
+  }
+
+  const nextRecords = [
+    normalizedRecord,
+    ...existingRecords.filter((entry) => entry.sessionId !== normalizedRecord.sessionId),
+  ]
+  writePurchaseRecords(nextRecords)
+  return normalizedRecord
+}
+
+const markPurchaseEmailSent = (sessionId) => {
+  const existingRecord = findPurchaseRecordBySessionId(sessionId)
+  if (!existingRecord || existingRecord.emailSentAt) {
+    return existingRecord
+  }
+
+  return upsertPurchaseRecord({
+    ...existingRecord,
+    emailSentAt: new Date().toISOString(),
+  })
+}
+
+const getSessionOwnerUid = (session) =>
+  sanitizeText(session?.metadata?.uid || session?.client_reference_id, 128)
+
+const getSessionCustomerEmail = (session) =>
+  normalizeEmailValue(session?.customer_details?.email || session?.customer_email || session?.metadata?.email || "")
+
+const getCheckoutItemsFromSession = (session) =>
+  normalizeCheckoutItems({
+    items: safeParseJson(session?.metadata?.items, []),
+  })
+
+const buildPurchaseRecordFromSession = (session, existingRecord) => {
+  const sessionId = sanitizeText(session?.id, 255)
+  const uid = getSessionOwnerUid(session)
+  const items = getCheckoutItemsFromSession(session)
+
+  if (!sessionId || !uid || items.length === 0) {
+    throw createHttpError(400, "Session Stripe incomplete pour cet achat.")
+  }
+
+  return normalizePurchaseRecord(
+    {
+      sessionId,
+      uid,
+      email: getSessionCustomerEmail(session),
+      paymentStatus: sanitizeText(session?.payment_status || "paid", 80) || "paid",
+      purchasedAt: sanitizeText(session?.created ? new Date(session.created * 1000).toISOString() : "", 80) || new Date().toISOString(),
+      items,
+      stripeCustomerId:
+        typeof session?.customer === "string" ? session.customer : sanitizeText(session?.customer?.id, 255),
+      paymentIntentId:
+        typeof session?.payment_intent === "string"
+          ? session.payment_intent
+          : sanitizeText(session?.payment_intent?.id, 255),
+    },
+    existingRecord,
+  )
+}
+
+const upsertPaidPurchaseFromSession = (session) => {
+  if (session?.payment_status !== "paid") {
+    return null
+  }
+
+  const existingRecord = findPurchaseRecordBySessionId(session.id)
+  const nextRecord = buildPurchaseRecordFromSession(session, existingRecord)
+  return upsertPurchaseRecord(nextRecord)
+}
+
+const hasPaidPurchaseAccess = ({ uid, sessionId, productId }) =>
+  readPurchaseRecords().some(
+    (record) =>
+      record.paymentStatus === "paid" &&
+      record.uid === sanitizeText(uid, 128) &&
+      record.sessionId === sanitizeText(sessionId, 255) &&
+      record.items.some((item) => item.productId === sanitizeText(productId, 160)),
+  )
+
+const buildOwnedDigitalProducts = (uid) => {
+  const catalog = getCatalogProductsById()
+  const seenProducts = new Set()
+  const paidRecords = readPurchaseRecords()
+    .filter((record) => record.paymentStatus === "paid" && record.uid === sanitizeText(uid, 128))
+    .sort((left, right) => new Date(right.purchasedAt).getTime() - new Date(left.purchasedAt).getTime())
+
+  const ownedProducts = []
+
+  for (const record of paidRecords) {
+    for (const item of record.items) {
+      if (seenProducts.has(item.productId)) {
+        continue
+      }
+
+      const product = catalog.get(item.productId)
+      if (!product) {
+        continue
+      }
+
+      const downloads = buildProductDownloads([{ productId: item.productId, quantity: 1 }], {
+        sessionId: record.sessionId,
+        uid: record.uid,
+      })
+
+      if (downloads.length === 0) {
+        continue
+      }
+
+      seenProducts.add(item.productId)
+      ownedProducts.push({
+        productId: product.id,
+        title: product.name,
+        image: sanitizeText(product.image, 4000),
+        price: product.price || formatPriceFromCents(product.priceCents),
+        formatLabel:
+          sanitizeText(product.formatLabel, 80) ||
+          (normalizeStoredDigitalFiles(product.digitalFiles)[0]?.mimeType === "application/zip" ? "ZIP" : "PDF"),
+        purchasedAt: record.purchasedAt,
+        downloads,
+      })
+    }
+  }
+
+  return ownedProducts
+}
 
 const sendWelcomeEmail = async ({ to, firstName }) => {
   const safeFirstName = sanitizeName(firstName).trim()
@@ -984,13 +1415,31 @@ app.post("/api/email/welcome/admin-resend", firebaseAuth, adminOnly, async (req,
     return res.status(500).json({ error: "Impossible de renvoyer l'email de bienvenue." })
   }
 })
-app.post("/api/create-checkout-session", async (req, res) => {
+app.post("/api/create-checkout-session", firebaseAuth, async (req, res) => {
   try {
+    const uid = sanitizeText(req.user?.uid, 128)
+    const email = normalizeEmailValue(req.user?.email)
     const isCartCheckout = Array.isArray(req.body?.items)
     const cartItems = normalizeCheckoutItems(req.body || {})
 
+    if (!uid) {
+      return res.status(401).json({ error: "Authentification requise." })
+    }
     if (cartItems.length === 0) {
       return res.status(400).json({ error: "Produit introuvable." })
+    }
+
+    const ownedProductIds = new Set(buildOwnedDigitalProducts(uid).map((item) => item.productId))
+    const alreadyOwnedItems = cartItems.filter((item) => ownedProductIds.has(item.productId))
+
+    if (alreadyOwnedItems.length > 0) {
+      const firstOwnedProduct = getCatalogProductOrThrow(alreadyOwnedItems[0].productId)
+      const errorMessage =
+        alreadyOwnedItems.length > 1
+          ? "Un ou plusieurs produits de ce panier ont deja ete achetes. Retire-les du panier ou ouvre Mes achats."
+          : `${firstOwnedProduct.name} a deja ete achete. Retrouve-le dans Mes achats.`
+
+      return res.status(409).json({ error: errorMessage })
     }
 
     const lineItems = cartItems.map((item) => {
@@ -1003,7 +1452,7 @@ app.post("/api/create-checkout-session", async (req, res) => {
             name: product.name,
           },
         },
-        quantity: 1,
+        quantity: item.quantity,
       }
     })
 
@@ -1014,7 +1463,11 @@ app.post("/api/create-checkout-session", async (req, res) => {
       success_url: `${appBaseUrl}/merci?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: cancelUrl,
       line_items: lineItems,
+      client_reference_id: uid,
+      customer_email: email || undefined,
       metadata: {
+        uid,
+        email,
         items: JSON.stringify(cartItems),
       },
       allow_promotion_codes: true,
@@ -1028,27 +1481,37 @@ app.post("/api/create-checkout-session", async (req, res) => {
     })
   }
 })
-app.get("/api/checkout-session", async (req, res) => {
+app.get("/api/checkout-session", firebaseAuth, async (req, res) => {
   try {
+    const uid = sanitizeText(req.user?.uid, 128)
     const sessionId = req.query.session_id
     if (!sessionId || typeof sessionId !== "string") {
       return res.status(400).json({ error: "Session invalide." })
     }
+    if (!uid) {
+      return res.status(401).json({ error: "Authentification requise." })
+    }
 
     const session = await stripe.checkout.sessions.retrieve(sessionId)
+    const sessionOwnerUid = getSessionOwnerUid(session)
+    if (!sessionOwnerUid || sessionOwnerUid !== uid) {
+      return res.status(403).json({ error: "Cette session de paiement n'appartient pas a ce compte." })
+    }
     if (session.payment_status !== "paid") {
       return res.status(200).json({ paid: false })
     }
 
-    const rawItems = session.metadata?.items
-    const parsedItems = rawItems ? JSON.parse(rawItems) : null
-    const cartItems = normalizeCheckoutItems({ items: parsedItems })
+    const purchaseRecord = upsertPaidPurchaseFromSession(session)
+    const cartItems = purchaseRecord?.items || getCheckoutItemsFromSession(session)
 
     if (cartItems.length === 0) {
       return res.status(404).json({ error: "Produit introuvable." })
     }
 
-    const downloads = buildProductDownloads(cartItems, sessionId)
+    const downloads = buildProductDownloads(cartItems, {
+      sessionId,
+      uid,
+    })
 
     if (downloads.length === 0) {
       return res.status(404).json({ error: "Produit introuvable." })
@@ -1057,11 +1520,26 @@ app.get("/api/checkout-session", async (req, res) => {
     return res.status(200).json({
       paid: true,
       downloads,
-      customerEmail: session.customer_details?.email ?? null,
+      customerEmail: getSessionCustomerEmail(session) || null,
     })
   } catch (error) {
     console.error("Checkout session lookup error:", error)
     return res.status(500).json({ error: "Impossible de verifier le paiement." })
+  }
+})
+
+app.get("/api/my-purchases", firebaseAuth, async (req, res) => {
+  try {
+    const uid = sanitizeText(req.user?.uid, 128)
+    if (!uid) {
+      return res.status(401).json({ error: "Authentification requise." })
+    }
+
+    const items = buildOwnedDigitalProducts(uid)
+    return res.status(200).json(items)
+  } catch (error) {
+    console.error("My purchases lookup error:", error)
+    return res.status(500).json({ error: "Impossible de charger les achats." })
   }
 })
 app.get("/api/download", (req, res) => {
@@ -1072,6 +1550,12 @@ app.get("/api/download", (req, res) => {
   const payload = verifyDownloadToken(token)
   if (!payload) {
     return res.status(403).send("Lien expire ou invalide.")
+  }
+  if (!payload?.uid || !payload?.sessionId || !payload?.productId) {
+    return res.status(403).send("Lien expire ou invalide.")
+  }
+  if (!hasPaidPurchaseAccess({ uid: payload.uid, sessionId: payload.sessionId, productId: payload.productId })) {
+    return res.status(403).send("Acces refuse.")
   }
 
   let product
@@ -1115,19 +1599,34 @@ app.post("/api/stripe-webhook", async (req, res) => {
     return res.status(400).send(`Webhook Error: ${err.message}`)
   }
 
-  if (event.type === "checkout.session.completed") {
+  if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
     const session = event.data.object
-    const rawItems = session.metadata?.items
-    const parsedItems = rawItems ? JSON.parse(rawItems) : null
-    const cartItems = normalizeCheckoutItems({ items: parsedItems })
-    const downloads = buildProductDownloads(cartItems, session.id)
+    try {
+      const purchaseRecord = upsertPaidPurchaseFromSession(session)
 
-    const email = session.customer_details?.email
-    if (email && downloads.length > 0) {
-      await sendDownloadEmail({
-        to: email,
-        items: downloads,
-      })
+      if (purchaseRecord) {
+        const downloads = buildProductDownloads(purchaseRecord.items, {
+          sessionId: purchaseRecord.sessionId,
+          uid: purchaseRecord.uid,
+        })
+        const emailAttachments = buildProductEmailAttachments(purchaseRecord.items)
+        const email = purchaseRecord.email || getSessionCustomerEmail(session)
+
+        if (email && downloads.length > 0 && !purchaseRecord.emailSentAt) {
+          await sendDownloadEmail({
+            to: email,
+            items: downloads,
+            attachments: emailAttachments.attachments,
+            attachedPdfCount: emailAttachments.attachedPdfCount,
+            skippedPdfCount: emailAttachments.skippedPdfCount,
+            hasNonPdfFiles: emailAttachments.hasNonPdfFiles,
+            sessionId: purchaseRecord.sessionId,
+          })
+          markPurchaseEmailSent(purchaseRecord.sessionId)
+        }
+      }
+    } catch (error) {
+      console.error("Webhook purchase persistence error:", error)
     }
   }
 

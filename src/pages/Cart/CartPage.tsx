@@ -1,13 +1,12 @@
-﻿import { useEffect, useMemo, useState } from "react"
-import { Link } from "react-router-dom"
+import { useEffect, useMemo, useState } from "react"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import "../Boutique/Boutique.css"
 import "./Cart.css"
-import { buildApiUrl } from "../../utils/apiUrl"
-
 import { products } from "../Boutique/boutiqueData"
 import { loadCustomProducts } from "../Boutique/boutiqueStorage"
 import { clearCart, loadCartItems, removeFromCart } from "../Boutique/cartStorage"
-
+import { useAuth } from "../../context/AuthContext"
+import { createCheckoutSession } from "../../services/boutique/checkout"
 const parsePriceToCents = (price: string) => {
   const normalized = price.replace(/[^0-9,\.]/g, "").replace(",", ".")
   const value = Number.parseFloat(normalized)
@@ -20,20 +19,10 @@ const formatCents = (cents: number) => {
   return `${euros}€`
 }
 
-const parseCheckoutError = async (response: Response) => {
-  try {
-    const payload = (await response.json()) as { error?: string }
-    if (payload?.error) {
-      return payload.error
-    }
-  } catch {
-    // ignore malformed JSON payloads
-  }
-
-  return "Impossible de lancer le paiement."
-}
-
 const CartPage = () => {
+  const { isAuthenticated } = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation()
   const [isCartLoading, setIsCartLoading] = useState(true)
   const [cartItems, setCartItems] = useState(() => loadCartItems())
   const [customProducts, setCustomProducts] = useState(() => loadCustomProducts())
@@ -88,6 +77,19 @@ const CartPage = () => {
 
   const handleCheckout = async () => {
     if (lineItems.length === 0 || unavailableItems.length > 0) return
+
+    if (!isAuthenticated) {
+      navigate("/login", {
+        state: {
+          from: {
+            pathname: location.pathname,
+            search: location.search,
+          },
+        },
+      })
+      return
+    }
+
     setIsCheckoutLoading(true)
     setCheckoutError(null)
     try {
@@ -95,19 +97,8 @@ const CartPage = () => {
         productId: item.productId,
         quantity: item.quantity,
       }))
-      const response = await fetch(buildApiUrl("/api/create-checkout-session"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: payloadItems }),
-      })
-      if (!response.ok) {
-        throw new Error(await parseCheckoutError(response))
-      }
-      const data = await response.json()
-      if (!data?.url) {
-        throw new Error("Lien de paiement manquant.")
-      }
-      window.location.href = data.url
+      const checkoutUrl = await createCheckoutSession({ items: payloadItems })
+      window.location.href = checkoutUrl
     } catch (error) {
       console.error(error)
       setCheckoutError(error instanceof Error ? error.message : "Impossible de lancer le paiement. Reessaie dans quelques secondes.")
@@ -150,7 +141,11 @@ const CartPage = () => {
         <section className="cart-layout">
           <div className="cart-items">
             {lineItems.map(({ item, product }) => (
-              <article key={item.productId} className="cart-item">
+              <article
+                key={item.productId}
+                className="cart-item"
+                onClick={() => navigate(`/boutique/produit/${item.productId}`)}
+              >
                 <div className="cart-item__media">
                   <img src={product!.image} alt={product!.title} loading="lazy" decoding="async" />
                 </div>
@@ -162,7 +157,14 @@ const CartPage = () => {
                     <span>Quantité : {item.quantity}</span>
                   </div>
                 </div>
-                <button type="button" className="cart-item__remove" onClick={() => removeFromCart(item.productId)}>
+                <button
+                  type="button"
+                  className="cart-item__remove"
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    removeFromCart(item.productId)
+                  }}
+                >
                   Retirer
                 </button>
                 {product?.checkoutEnabled === false ? (
@@ -203,3 +205,4 @@ const CartPage = () => {
 }
 
 export default CartPage
+

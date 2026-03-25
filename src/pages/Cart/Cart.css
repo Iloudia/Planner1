@@ -62,6 +62,7 @@
   background: #ffffff;
   border: 1px solid rgba(31, 27, 22, 0.18);
   padding: 1.2rem;
+  cursor: pointer;
 }
 
 .cart-item__media {

@@ -38,10 +38,31 @@ npm run preview
 ```
 
 ## Production
-- Front statique servi par Nginx
+- Front statique servi par Nginx ou Firebase Hosting
 - API Node derrière Nginx sur `/api`
 - Médias servis sur `/media`
 - Référence de déploiement : `deploy/DEPLOY_VPS.md`
+
+## Firebase Hosting
+Le repo contient maintenant `firebase.json` et `.firebaserc` pour déployer le build Vite sur Firebase Hosting.
+
+Flux recommandé :
+```bash
+npm run build
+npx firebase-tools login
+npx firebase-tools deploy --only hosting
+```
+
+Pour la prod publique, construis le front avec :
+```bash
+VITE_API_BASE=https://api.meandrituals.com npm run build
+```
+
+La config Hosting est prévue pour une SPA React :
+- `dist/` comme répertoire publié
+- rewrite global vers `index.html`
+- cache long sur les assets buildés
+- `index.html` et `version.json` en `no-cache`
 
 ## Où modifier le contenu
 - UI principale : `src/App.tsx`

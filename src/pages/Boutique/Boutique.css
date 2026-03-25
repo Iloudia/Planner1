@@ -214,12 +214,14 @@ body.boutique-page--tone {
   display: grid;
   gap: 0.6rem;
   width: min(420px, calc(100vw - 2rem));
-  z-index: 50;
+  z-index: 9999;
   opacity: 0;
   transform: translateY(-10px);
   pointer-events: none;
   transition: opacity 0.25s ease, transform 0.25s ease;
   color: var(--ink);
+  appearance: none;
+  text-align: left;
 }
 
 .boutique-cart-toast__eyebrow {
@@ -232,6 +234,8 @@ body.boutique-page--tone {
 .boutique-cart-toast.is-visible {
   opacity: 1;
   transform: translateY(0);
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 .boutique-cart-toast__content {
@@ -272,6 +276,7 @@ body.boutique-page--tone {
   gap: 2rem;
   position: relative;
   padding: 2rem 0;
+  padding-inline: clamp(1.2rem, 3vw, 2.4rem);
   border-top: none;
 }
 
@@ -280,10 +285,8 @@ body.boutique-page--tone {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
+  left: 0;
+  right: 0;
   background: var(--paper);
   z-index: -1;
 }
@@ -329,6 +332,7 @@ body.boutique-page--tone {
 .boutique-section--olive {
   position: relative;
   padding: 2rem 0;
+  padding-inline: clamp(1.2rem, 3vw, 2.4rem);
 }
 
 .boutique-categories {
@@ -409,10 +413,16 @@ body.boutique-page--tone {
 
 .boutique-products {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 1.4rem;
   position: relative;
   padding: 0;
+}
+
+@media (max-width: 1400px) {
+  .boutique-products {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 .boutique-products--featured .boutique-product-card {
@@ -428,6 +438,14 @@ body.boutique-page--tone {
   transition: transform 180ms ease, box-shadow 180ms ease;
   text-decoration: none;
   color: inherit;
+}
+
+.boutique-product-card.is-owned {
+  opacity: 0.66;
+}
+
+.boutique-product-card.is-owned .boutique-product__image {
+  filter: grayscale(1);
 }
 
 .boutique-product-card:hover {
@@ -494,6 +512,22 @@ body.boutique-page--tone {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   padding: 0.2rem 0.6rem;
+}
+
+.boutique-product__owned {
+  align-self: flex-start;
+  border: 1px solid rgba(31, 27, 22, 0.18);
+  background: rgba(31, 27, 22, 0.08);
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0.24rem 0.65rem;
+  color: var(--ink);
+}
+
+.boutique-button--primary.is-disabled {
+  background: rgba(31, 27, 22, 0.52);
+  border-color: rgba(31, 27, 22, 0.52);
 }
 
 .boutique-product__meta {
@@ -578,7 +612,7 @@ body.boutique-page--tone {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(20, 18, 16, 0.35);
+  background: #ffffff;
   z-index: 0;
 }
 
@@ -649,7 +683,8 @@ body.boutique-page--tone {
   padding: 0.8rem;
 }
 
-.boutique-detail__main img {
+.boutique-detail__main img,
+.boutique-detail__main video {
   width: 100%;
   height: clamp(320px, 50vw, 520px);
   object-fit: cover;
@@ -658,7 +693,7 @@ body.boutique-page--tone {
 
 .boutique-detail__thumbs {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
   gap: 0.6rem;
 }
 
@@ -666,15 +701,32 @@ body.boutique-page--tone {
   border: 1px solid var(--line);
   padding: 0.3rem;
   background: #ffffff;
+  position: relative;
+  overflow: hidden;
   cursor: pointer;
   transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
 }
 
-.boutique-detail__thumb img {
+.boutique-detail__thumb img,
+.boutique-detail__thumb video {
   width: 100%;
   height: 70px;
   object-fit: cover;
   display: block;
+}
+
+.boutique-detail__thumb-badge {
+  position: absolute;
+  left: 0.45rem;
+  bottom: 0.45rem;
+  padding: 0.14rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(31, 27, 22, 0.78);
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .boutique-detail__thumb:hover {
@@ -777,6 +829,14 @@ body.boutique-page--tone {
 }
 
 @media (max-width: 720px) {
+  .boutique-section {
+    padding-inline: 1rem;
+  }
+
+  .boutique-section--olive {
+    padding-inline: 1rem;
+  }
+
   .boutique-products {
     display: flex;
     overflow-x: auto;

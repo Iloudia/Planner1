@@ -1,12 +1,15 @@
 # Deploy on VPS
 
 ## Target layout
-- App checkout: `/var/www/planner/current`
-- Static build: `/var/www/planner/current/dist`
+- Releases: `/var/www/planner/releases/<release>`
+- Active checkout/API release: PM2 process `planner-api`
 - Shared media: `/var/www/planner/shared/media`
+- Shared downloads: `/var/www/planner/shared/downloads`
+- Shared data: `/var/www/planner/shared/data`
+- Shared logs: `/var/www/planner/shared/logs`
 - Env file: `/etc/planner/planner.env`
-- Nginx site: `/etc/nginx/sites-available/planner.conf`
-- systemd unit: `/etc/systemd/system/planner-api.service`
+- PM2 ecosystem: `deploy/pm2/planner-api.ecosystem.config.cjs`
+- Optional Nginx site: `/etc/nginx/sites-available/planner.conf`
 
 ## DNS
 - Point `nomdns.com` to `148.113.191.155`
@@ -24,8 +27,11 @@ npm -v
 
 ## App directories
 ```bash
+sudo mkdir -p /var/www/planner/releases
 sudo mkdir -p /var/www/planner/shared/media
 sudo mkdir -p /var/www/planner/shared/downloads
+sudo mkdir -p /var/www/planner/shared/data
+sudo mkdir -p /var/www/planner/shared/logs
 sudo mkdir -p /var/www/certbot
 sudo mkdir -p /etc/planner
 sudo chown -R ubuntu:ubuntu /var/www/planner
@@ -45,6 +51,9 @@ API_PUBLIC_BASE_URL=https://nomdns.com
 CORS_ORIGINS=https://nomdns.com,https://www.nomdns.com
 MEDIA_PUBLIC_BASE_URL=/media
 MEDIA_ROOT_DIR=/var/www/planner/shared/media
+DOWNLOADS_DIR=/var/www/planner/shared/downloads
+CUSTOM_PRODUCTS_FILE=/var/www/planner/shared/data/custom-products.json
+PURCHASES_FILE=/var/www/planner/shared/data/purchases.json
 FIREBASE_PROJECT_ID=meandrituals-72041
 STRIPE_SECRET_KEY=sk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
@@ -52,10 +61,10 @@ DOWNLOAD_TOKEN_SECRET=<long_random_secret>
 ADMIN_EMAILS=admin1@example.com,admin2@example.com
 RESEND_API_KEY=...
 EMAIL_FROM=...
-DOWNLOADS_DIR=/var/www/planner/shared/downloads
 ```
 
 `DOWNLOAD_TOKEN_SECRET` is mandatory and must not be `replace-me`.
+`CUSTOM_PRODUCTS_FILE` and `PURCHASES_FILE` must point outside the release directory so product data and purchase rights survive redeploys.
 
 For the current phase, keep Stripe in test mode only:
 - `STRIPE_SECRET_KEY` must start with `sk_test_`
@@ -66,20 +75,24 @@ For the current phase, keep Stripe in test mode only:
 ## App release
 ```bash
 cd /var/www/planner
-git clone <repo> current
-cd current
+mkdir -p releases/2026-03-22-001
+cd releases/2026-03-22-001
 npm install
 npm run build
 ```
 
-## systemd
+## PM2
 ```bash
-sudo cp deploy/systemd/planner-api.service /etc/systemd/system/planner-api.service
-sudo systemctl daemon-reload
-sudo systemctl enable planner-api
-sudo systemctl restart planner-api
-sudo systemctl status planner-api
+npm install -g pm2
+cd /var/www/planner/releases/2026-03-22-001
+pm2 start deploy/pm2/planner-api.ecosystem.config.cjs
+pm2 save
+pm2 startup
+pm2 status
+pm2 logs planner-api
 ```
+
+The PM2 ecosystem reads `/etc/planner/planner.env` through `DOTENV_CONFIG_PATH`.
 
 ## Nginx
 ```bash
@@ -101,6 +114,7 @@ sudo certbot --nginx -d nomdns.com -d www.nomdns.com
 curl -I http://127.0.0.1:4242/api/custom-products
 curl -I https://nomdns.com
 curl -I https://nomdns.com/api/custom-products
+pm2 status
 ```
 
 ## Local Stripe test webhook

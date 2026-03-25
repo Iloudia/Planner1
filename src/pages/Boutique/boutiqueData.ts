@@ -10,44 +10,9 @@ import productPortfolio from "../../assets/mallika-jain-dupe.webp"
 import productStory from "../../assets/amy-rikard-dupe.webp"
 import productBundle from "../../assets/lauren-lista-dupe.webp"
 import productPlan from "../../assets/kalina-wolf-dupe.webp"
+import type { BoutiqueCategory, BoutiqueProduct } from "../../models/product.model"
 
 export const boutiqueHeroBackdrop = heroBackdrop
-
-export type BoutiqueCategory = {
-  id: "ebooks" | "templates" | "carrousels"
-  title: string
-  description: string
-  highlight: string
-  image: string
-  productType: "ebook" | "template" | "carousel"
-}
-
-export type BoutiqueProduct = {
-  id: string
-  title: string
-  benefit: string
-  price: string
-  format: string
-  formatLabel: string
-  badge: string
-  mockup: "ebook" | "template" | "carousel" | "bundle"
-  bestSeller: boolean
-  image: string
-  gallery: string[]
-  description: string
-  features: string[]
-  digitalFiles?: BoutiqueDigitalFile[]
-  checkoutEnabled?: boolean
-}
-
-export type BoutiqueDigitalFile = {
-  id: string
-  originalName: string
-  downloadName: string
-  storagePath: string
-  mimeType: string
-  sizeBytes: number
-}
 
 export const categories: BoutiqueCategory[] = [
   {
@@ -82,10 +47,6 @@ export const products: BoutiqueProduct[] = [
 ]
 
 export const benefits = [
-  {
-    title: "Pensé pour convertir",
-    text: "Chaque ressource est orientée action, avec des hooks et des CTA prêts à l'emploi.",
-  },
   {
     title: "Gain de temps immédiat",
     text: "Fini les pages blanches : tu personnalises, tu publies, tu vends.",

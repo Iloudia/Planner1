@@ -3,7 +3,7 @@ import "./AdminProducts.css"
 import "./AdminProductsManage.css"
 import "../Boutique/Boutique.css"
 
-import type { BoutiqueProduct } from "../Boutique/boutiqueData"
+import type { BoutiqueProduct } from "../../models/product.model"
 import {
   deleteCustomProduct,
   fetchCustomProducts,

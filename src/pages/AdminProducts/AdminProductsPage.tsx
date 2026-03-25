@@ -3,14 +3,15 @@ import "./AdminProducts.css"
 import "../Boutique/Boutique.css"
 import placeholderProduct from "../../assets/kalina-wolf-dupe.webp"
 import { publishCustomProduct } from "../Boutique/boutiqueStorage"
-import type { BoutiqueProduct } from "../Boutique/boutiqueData"
-import { uploadImage } from "../../services/media/api"
+import type { BoutiqueProduct } from "../../models/product.model"
+import { uploadImage, uploadVideo } from "../../services/media/api"
 import { uploadDigitalProductFiles } from "../../services/boutique/api"
 type MediaFile = { name: string; url: string; type: "image" | "video"; file?: File }
 
-const mockCategories = ["Ebook", "Templates", "Carrousels", "Bundles"]
+const mockCategories = ["Ebook", "Templates", "Carrousels"]
 const CATEGORY_PLACEHOLDER = "Choisir une catégorie"
-const MAX_IMAGES = 6
+const MAX_IMAGES = 4
+const categoriesWithoutShippingPanel = new Set(["Ebook", "Templates", "Carrousels"])
 
 const AdminProductsPage = () => {
   const [images, setImages] = useState<MediaFile[]>([])
@@ -98,7 +99,7 @@ const AdminProductsPage = () => {
 
     setVideo((prev) => {
       if (prev) URL.revokeObjectURL(prev.url)
-      return { name: file.name, url: URL.createObjectURL(file), type: "video" }
+      return { name: file.name, url: URL.createObjectURL(file), type: "video", file }
     })
   }
 
@@ -187,6 +188,8 @@ const AdminProductsPage = () => {
 
     return digitalFiles.map((file) => file.name).join(" • ")
   }, [digitalFiles])
+
+  const shouldShowShippingPanel = !category || !categoriesWithoutShippingPanel.has(category)
 
   const slugify = (value: string) =>
     value
@@ -287,6 +290,10 @@ const AdminProductsPage = () => {
         safeGallery = [placeholderProduct]
       }
 
+      const uploadedVideo = video?.file
+        ? await uploadVideo(video.file, "boutique-product-video", id)
+        : null
+
       const uploadedDigitalFiles = await uploadDigitalProductFiles(digitalFiles, id)
 
       const product: BoutiqueProduct = {
@@ -300,6 +307,7 @@ const AdminProductsPage = () => {
         mockup,
         bestSeller: false,
         image: safeGallery[0],
+        video: uploadedVideo?.url,
         gallery: safeGallery,
         description: description.trim() || "Description à compléter.",
         features: features.length > 0 ? features : ["Ressource digitale", "Accès immédiat",],
@@ -334,7 +342,7 @@ const AdminProductsPage = () => {
             <div>
               <p>Photo et vidéo</p>
             </div>
-            <p className="admin-products-helper">Ajoutez jusqu'à 6 photos et 1 vidéo.</p>
+            <p className="admin-products-helper">Ajoutez jusqu'à 4 photos et 1 vidéo.</p>
           </header>
 
           <input
@@ -343,6 +351,21 @@ const AdminProductsPage = () => {
             accept="image/*,video/*"
             multiple
             onChange={handleMediaChange}
+            style={{ display: "none" }}
+          />
+          <input
+            ref={imageInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleImageChange}
+            style={{ display: "none" }}
+          />
+          <input
+            ref={videoInputRef}
+            type="file"
+            accept="video/*"
+            onChange={handleVideoChange}
             style={{ display: "none" }}
           />
 
@@ -385,7 +408,7 @@ const AdminProductsPage = () => {
             })}
 
             {video ? (
-              <button type="button" className="admin-products-preview" onClick={() => handleMediaBrowse()}>
+              <button type="button" className="admin-products-preview" onClick={handleVideoBrowse}>
                 <video src={video.url} muted playsInline />
                 <span className="admin-products-preview__label">Vidéo</span>
                 <button
@@ -404,7 +427,7 @@ const AdminProductsPage = () => {
               <button
                 type="button"
                 className="admin-products-preview admin-products-preview--empty admin-products-preview--video"
-                onClick={() => handleMediaBrowse()}
+                onClick={handleVideoBrowse}
               >
                 <span>+ Vidéo</span>
               </button>
@@ -413,14 +436,6 @@ const AdminProductsPage = () => {
 
           {shouldShowDropzone ? (
             <label className="admin-products-dropzone">
-              <input
-                ref={imageInputRef}
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleImageChange}
-              />
-              <input ref={videoInputRef} type="file" accept="video/*" onChange={handleVideoChange} />
               <div className="admin-products-dropzone__content">
                 <p>Cliquez-déposez les fichiers ou</p>
                 <div className="admin-products-dropzone__actions">
@@ -536,9 +551,11 @@ const AdminProductsPage = () => {
                 multiple
                 onChange={handleDigitalFilesChange}
               />
-              <span className="admin-products-digital-dropzone__text">
-                Ajouter un fichier
-              </span>
+              {digitalFiles.length === 0 ? (
+                <span className="admin-products-digital-dropzone__text">
+                  Ajouter un fichier
+                </span>
+              ) : null}
               <span className="admin-products-digital-dropzone__subtext">{digitalFilesSummary}</span>
             </label>
             {digitalFiles.length > 0 ? (
@@ -583,45 +600,47 @@ const AdminProductsPage = () => {
           </div>
         </section>
 
-        <section className="admin-products-panel">
-          <header className="admin-products-panel__header">
-            <div>
-              <p>Livraison, traitement et retours</p>
-            </div>
-            <p className="admin-products-helper">Précisez les délais et la politique de retour.</p>
-          </header>
+        {shouldShowShippingPanel ? (
+          <section className="admin-products-panel">
+            <header className="admin-products-panel__header">
+              <div>
+                <p>Livraison, traitement et retours</p>
+              </div>
+              <p className="admin-products-helper">Précisez les délais et la politique de retour.</p>
+            </header>
 
-          <div className="admin-products-field">
-            <label htmlFor="product-delivery">Livraison</label>
-            <input
-              id="product-delivery"
-              type="text"
-              placeholder="Téléchargement immédiat après achat"
-              value={delivery}
-              onChange={(event) => setDelivery(event.target.value)}
-            />
-          </div>
-          <div className="admin-products-field">
-            <label htmlFor="product-processing">Traitement</label>
-            <input
-              id="product-processing"
-              type="text"
-              placeholder="Aucun délai de préparation"
-              value={processing}
-              onChange={(event) => setProcessing(event.target.value)}
-            />
-          </div>
-          <div className="admin-products-field">
-            <label htmlFor="product-returns">Retours</label>
-            <input
-              id="product-returns"
-              type="text"
-              placeholder="Pas de retours pour les produits digitaux"
-              value={returnsText}
-              onChange={(event) => setReturnsText(event.target.value)}
-            />
-          </div>
-        </section>
+            <div className="admin-products-field">
+              <label htmlFor="product-delivery">Livraison</label>
+              <input
+                id="product-delivery"
+                type="text"
+                placeholder="Téléchargement immédiat après achat"
+                value={delivery}
+                onChange={(event) => setDelivery(event.target.value)}
+              />
+            </div>
+            <div className="admin-products-field">
+              <label htmlFor="product-processing">Traitement</label>
+              <input
+                id="product-processing"
+                type="text"
+                placeholder="Aucun délai de préparation"
+                value={processing}
+                onChange={(event) => setProcessing(event.target.value)}
+              />
+            </div>
+            <div className="admin-products-field">
+              <label htmlFor="product-returns">Retours</label>
+              <input
+                id="product-returns"
+                type="text"
+                placeholder="Pas de retours pour les produits digitaux"
+                value={returnsText}
+                onChange={(event) => setReturnsText(event.target.value)}
+              />
+            </div>
+          </section>
+        ) : null}
 
         <section className="admin-products-panel admin-products-panel--actions">
           <button type="button" className="boutique-button boutique-button--ghost">

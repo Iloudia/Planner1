@@ -5,6 +5,11 @@ import "./Boutique.css"
 import { categories, products } from "./boutiqueData"
 import { fetchCustomProducts, loadCustomProducts, PRODUCTS_UPDATED_EVENT } from "./boutiqueStorage"
 
+type ProductMedia = {
+  type: "image" | "video"
+  url: string
+}
+
 const BoutiqueCategoryPage = () => {
   const { categoryId } = useParams()
   const [customProducts, setCustomProducts] = useState(() => loadCustomProducts())
@@ -19,12 +24,19 @@ const BoutiqueCategoryPage = () => {
   }, [allProducts, category])
 
   const gallery = product?.gallery ?? []
-  const thumbnails = gallery.slice(1, 6)
-  const [activeImage, setActiveImage] = useState(gallery[0] ?? product?.image ?? "")
+  const mediaItems = useMemo<ProductMedia[]>(
+    () => [
+      ...gallery.map((url) => ({ type: "image" as const, url })),
+      ...(product?.video ? [{ type: "video" as const, url: product.video }] : []),
+    ],
+    [gallery, product?.video],
+  )
+  const thumbnails = mediaItems.slice(1, 7)
+  const [activeMedia, setActiveMedia] = useState<ProductMedia | null>(mediaItems[0] ?? null)
 
   useEffect(() => {
-    setActiveImage(gallery[0] ?? product?.image ?? "")
-  }, [gallery, product?.image, product?.id])
+    setActiveMedia(mediaItems[0] ?? null)
+  }, [mediaItems, product?.id])
 
   useEffect(() => {
     document.body.classList.add("boutique-page--tone")
@@ -78,18 +90,29 @@ const BoutiqueCategoryPage = () => {
       <section className="boutique-detail__layout">
         <div className="boutique-detail__gallery">
           <div className="boutique-detail__main">
-            <img src={activeImage} alt={product.title} loading="lazy" decoding="async" />
+            {activeMedia?.type === "video" ? (
+              <video src={activeMedia.url} controls playsInline preload="metadata" />
+            ) : (
+              <img src={activeMedia?.url ?? product.image} alt={product.title} loading="lazy" decoding="async" />
+            )}
           </div>
           <div className="boutique-detail__thumbs">
             {thumbnails.map((thumb, index) => (
               <button
-                key={`${product.id}-thumb-${index}`}
+                key={`${product.id}-thumb-${thumb.type}-${index}`}
                 type="button"
-                className={`boutique-detail__thumb${thumb === activeImage ? " is-active" : ""}`}
-                onClick={() => setActiveImage(thumb)}
-                aria-label={`Voir la photo ${index + 2}`}
+                className={`boutique-detail__thumb${thumb.url === activeMedia?.url && thumb.type === activeMedia?.type ? " is-active" : ""}`}
+                onClick={() => setActiveMedia(thumb)}
+                aria-label={thumb.type === "video" ? "Voir la video du produit" : `Voir la photo ${index + 2}`}
               >
-                <img src={thumb} alt="" loading="lazy" decoding="async" />
+                {thumb.type === "video" ? (
+                  <>
+                    <video src={thumb.url} muted playsInline preload="metadata" />
+                    <span className="boutique-detail__thumb-badge">Video</span>
+                  </>
+                ) : (
+                  <img src={thumb.url} alt="" loading="lazy" decoding="async" />
+                )}
               </button>
             ))}
           </div>
@@ -104,7 +127,6 @@ const BoutiqueCategoryPage = () => {
           <div className="boutique-detail__meta">
             <span>{product.format}</span>
             <span>Acces immediat</span>
-            <span>Licence commerciale incluse</span>
           </div>
           <Link to={`/boutique/produit/${product.id}`} className="boutique-button boutique-button--primary">
             Voir le produit
