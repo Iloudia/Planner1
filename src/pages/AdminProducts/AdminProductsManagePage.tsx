@@ -20,6 +20,7 @@ const CATEGORY_OPTIONS: CategoryOption[] = [
   { label: "Ebook", value: "ebook" },
   { label: "Templates", value: "template" },
   { label: "Carrousels", value: "carousel" },
+  { label: "Moodboard", value: "moodboard" },
   { label: "Bundles", value: "bundle" },
 ]
 

@@ -7,8 +7,10 @@ import { fetchCustomProducts, loadCustomProducts, PRODUCTS_UPDATED_EVENT } from 
 import { useAuth } from "../../context/AuthContext"
 import { fetchOwnedDigitalProducts } from "../../services/boutique/checkout"
 
+type BoutiqueFilter = "all" | "ebook" | "template" | "carousel" | "moodboard"
+
 const BoutiquePage = () => {
-  const [activeFilter, setActiveFilter] = useState("all")
+  const [activeFilter, setActiveFilter] = useState<BoutiqueFilter>("all")
   const [customProducts, setCustomProducts] = useState(() => loadCustomProducts())
   const [isBoutiqueLoading, setIsBoutiqueLoading] = useState(true)
   const [ownedProductIds, setOwnedProductIds] = useState<string[]>([])
@@ -256,7 +258,7 @@ const BoutiquePage = () => {
             onClick={() => setActiveFilter("template")}
             aria-pressed={activeFilter === "template"}
           >
-            Templates
+            Mignature
           </button>
           <button
             type="button"
@@ -265,6 +267,14 @@ const BoutiquePage = () => {
             aria-pressed={activeFilter === "carousel"}
           >
             Carrousels
+          </button>
+          <button
+            type="button"
+            className={`boutique-filter ${activeFilter === "moodboard" ? "is-active" : ""}`}
+            onClick={() => setActiveFilter("moodboard")}
+            aria-pressed={activeFilter === "moodboard"}
+          >
+            Visionboard
           </button>
         </div>
         {filteredProducts.length === 0 ? (

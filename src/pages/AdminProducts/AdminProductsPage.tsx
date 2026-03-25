@@ -8,10 +8,15 @@ import { uploadImage, uploadVideo } from "../../services/media/api"
 import { uploadDigitalProductFiles } from "../../services/boutique/api"
 type MediaFile = { name: string; url: string; type: "image" | "video"; file?: File }
 
-const mockCategories = ["Ebook", "Templates", "Carrousels"]
+const mockCategories = ["Ebook", "Mignature", "Carrousels", "Moodboard"]
 const CATEGORY_PLACEHOLDER = "Choisir une catégorie"
 const MAX_IMAGES = 4
-const categoriesWithoutShippingPanel = new Set(["Ebook", "Templates", "Carrousels"])
+const MAX_IMAGE_SIZE_BYTES = 8 * 1024 * 1024
+const MAX_VIDEO_SIZE_BYTES = 25 * 1024 * 1024
+const MAX_DIGITAL_FILE_SIZE_BYTES = 25 * 1024 * 1024
+const categoriesWithoutShippingPanel = new Set(["Ebook", "Mignature", "Carrousels", "Moodboard"])
+
+const formatFileSizeMb = (bytes: number) => `${(bytes / (1024 * 1024)).toFixed(0)} Mo`
 
 const AdminProductsPage = () => {
   const [images, setImages] = useState<MediaFile[]>([])
@@ -64,6 +69,11 @@ const AdminProductsPage = () => {
 
     const nextFiles = Array.from(selected).filter((file) => file.type.startsWith("image/"))
     if (nextFiles.length === 0) return
+    const oversizedImage = nextFiles.find((file) => file.size > MAX_IMAGE_SIZE_BYTES)
+    if (oversizedImage) {
+      window.alert(`"${oversizedImage.name}" depasse ${formatFileSizeMb(MAX_IMAGE_SIZE_BYTES)}. Reduis l'image avant de la publier.`)
+      return
+    }
 
     const enriched = nextFiles.map((file) => ({
       name: file.name,
@@ -96,6 +106,14 @@ const AdminProductsPage = () => {
     if (!selected || selected.length === 0) return
     const file = Array.from(selected).find((item) => item.type.startsWith("video/"))
     if (!file) return
+    if (file.size > MAX_VIDEO_SIZE_BYTES) {
+      window.alert(
+        `"${file.name}" depasse ${formatFileSizeMb(
+          MAX_VIDEO_SIZE_BYTES,
+        )}. Au-dela, Nginx coupe actuellement l'upload et le navigateur affiche a tort "Serveur media inaccessible".`,
+      )
+      return
+    }
 
     setVideo((prev) => {
       if (prev) URL.revokeObjectURL(prev.url)
@@ -162,6 +180,14 @@ const AdminProductsPage = () => {
         file.type === "application/x-zip-compressed" ||
         /\.(pdf|zip)$/i.test(file.name),
     )
+    const oversizedFile = files.find((file) => file.size > MAX_DIGITAL_FILE_SIZE_BYTES)
+    if (oversizedFile) {
+      window.alert(
+        `"${oversizedFile.name}" depasse ${formatFileSizeMb(MAX_DIGITAL_FILE_SIZE_BYTES)}. Choisis un PDF/ZIP plus leger.`,
+      )
+      event.target.value = ""
+      return
+    }
     setDigitalFiles(files)
     event.target.value = ""
   }
@@ -200,8 +226,9 @@ const AdminProductsPage = () => {
       .replace(/(^-|-$)+/g, "")
 
   const getMockupForCategory = (value: string): BoutiqueProduct["mockup"] => {
-    if (value === "Templates") return "template"
+    if (value === "Mignature") return "template"
     if (value === "Carrousels") return "carousel"
+    if (value === "Moodboard") return "moodboard"
     if (value === "Bundles") return "bundle"
     return "ebook"
   }

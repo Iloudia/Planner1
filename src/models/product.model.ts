@@ -1,10 +1,10 @@
 export type BoutiqueCategory = {
-  id: "ebooks" | "templates" | "carrousels"
+  id: "ebooks" | "templates" | "carrousels" | "moodboards"
   title: string
   description: string
   highlight: string
   image: string
-  productType: "ebook" | "template" | "carousel"
+  productType: "ebook" | "template" | "carousel" | "moodboard"
 }
 
 export type BoutiqueDigitalFile = {
@@ -24,7 +24,7 @@ export type BoutiqueProduct = {
   format: string
   formatLabel: string
   badge: string
-  mockup: "ebook" | "template" | "carousel" | "bundle"
+  mockup: "ebook" | "template" | "carousel" | "moodboard" | "bundle"
   bestSeller: boolean
   image: string
   video?: string
