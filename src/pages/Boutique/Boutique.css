@@ -287,8 +287,12 @@ body.boutique-page--tone {
   bottom: 0;
   left: 0;
   right: 0;
-  background: var(--paper);
+  background: transparent;
   z-index: -1;
+}
+
+.boutique-section.reveal.is-visible {
+  background: #fff;
 }
 
 .boutique-section--paper::before {
@@ -327,6 +331,10 @@ body.boutique-page--tone {
   background: transparent;
   border: none;
   padding: 2rem 0;
+}
+
+.boutique-section--olive.reveal.is-visible {
+  background: #fff;
 }
 
 .boutique-section--olive {

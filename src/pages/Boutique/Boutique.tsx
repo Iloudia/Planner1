@@ -180,9 +180,9 @@ const BoutiquePage = () => {
         <div className="boutique-hero__media" style={{ backgroundImage: `url(${boutiqueHeroBackdrop})` }}>
           <div className="boutique-hero__content">
             <span className="boutique-eyebrow">Boutique</span>
-            <h1 id="boutique-hero-title">Des ressources prêtes à vendre pour les créateurs ambitieux.</h1>
+            <h1 id="boutique-hero-title">Des ressources prÃªtes Ã  vendre pour les crÃ©ateurs ambitieux.</h1>
             <p className="boutique-hero__subtitle">
-              Ebooks PDF, templates Canva, carrousels Instagram : tout est pensé pour booster tes ventes, ta visibilité et ton
+              Ebooks PDF, templates Canva, carrousels Instagram : tout est pensÃ© pour booster tes ventes, ta visibilitÃ© et ton
               expertise en un temps record.
             </p>
             <div className="boutique-hero__actions">
@@ -194,9 +194,9 @@ const BoutiquePage = () => {
               </a>
             </div>
             <div className="boutique-hero__meta">
-              <span>Accès immédiat</span>
+              <span>AccÃ¨s immÃ©diat</span>
               <span>|</span>
-              <span>Mises à jour incluses</span>
+              <span>Mises Ã  jour incluses</span>
             </div>
           </div>
         </div>
@@ -206,7 +206,6 @@ const BoutiquePage = () => {
         <div className="boutique-section__header">
           <span className="boutique-eyebrow">Favoris</span>
           <h2 id="boutique-categories-title">Les favoris du moment.</h2>
-          <p>Une sélection de produits repérés pour leur style, leur utilité et leur efficacité immédiate.</p>
         </div>
         <div className="boutique-categories">
           {categories.map((category) => (
@@ -267,14 +266,6 @@ const BoutiquePage = () => {
           >
             Carrousels
           </button>
-          <button
-            type="button"
-            className={`boutique-filter ${activeFilter === "bundle" ? "is-active" : ""}`}
-            onClick={() => setActiveFilter("bundle")}
-            aria-pressed={activeFilter === "bundle"}
-          >
-            Bundles
-          </button>
         </div>
         {filteredProducts.length === 0 ? (
           <p className="boutique-checkout-error">Aucun produit n'est encore publie dans cette categorie.</p>
@@ -283,7 +274,7 @@ const BoutiquePage = () => {
           {filteredProducts.map((product) => (
             <Link
               key={product.id}
-              to={`/boutique/produit/${product.id}`}
+              to={ownedProductsSet.has(product.id) ? "/mes-achats" : `/boutique/produit/${product.id}`}
               className={`boutique-product-card${ownedProductsSet.has(product.id) ? " is-owned" : ""}`}
             >
               <div className={`boutique-product__mockup boutique-product__mockup--${product.mockup}`} aria-hidden="true">
@@ -311,7 +302,7 @@ const BoutiquePage = () => {
       <section className="boutique-section reveal" id="promesse" aria-labelledby="boutique-benefits-title">
         <div className="boutique-section__header">
           <span className="boutique-eyebrow">Promesse</span>
-          <h2 id="boutique-benefits-title">Une boutique qui vend pendant que tu crées.</h2>
+          <h2 id="boutique-benefits-title">Une boutique qui vend pendant que tu crÃ©es.</h2>
         </div>
         <div className="boutique-benefits">
           {benefits.map((benefit) => (
@@ -321,16 +312,6 @@ const BoutiquePage = () => {
             </article>
           ))}
         </div>
-      </section>
-
-      <section className="boutique-cta reveal" aria-labelledby="boutique-cta-title">
-        <div className="boutique-cta__content">
-          <h2 id="boutique-cta-title">Prête à passer à la vitesse supérieure ?</h2>
-          <p>Choisis tes ressources et lance ton prochain contenu dès aujourd'hui.</p>
-        </div>
-        <a className="boutique-button boutique-button--primary" href="#produits">
-          Voir la boutique
-        </a>
       </section>
 
       <section className="boutique-legal"></section>
