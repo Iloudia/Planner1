@@ -6,8 +6,12 @@ import { createClientId } from "../utils/clientId"
 import { formatLocalISODate } from "../utils/weekKey"
 import { deleteRoutineItem, saveRoutineItem, subscribeToRoutineItems } from "../services/firestore/routine"
 
-const ROUTINE_LOAD_ERROR = "Impossible de charger vos routines."
-const ROUTINE_MUTATION_ERROR = "Impossible de mettre à jour vos routines."
+const ROUTINE_LOAD_ERROR = "Impossible de charger tes routines."
+const ROUTINE_MUTATION_ERROR = "Impossible de mettre à jour tes routines."
+
+const ROUTINE_TITLE_MIGRATIONS: Record<string, string> = {
+  "morning-1": "Étirements doux",
+}
 
 const getTodayKey = () => formatLocalISODate(new Date())
 
@@ -46,6 +50,7 @@ const useUserRoutine = () => {
   const [error, setError] = useState<string | null>(null)
   const [todayKey, setTodayKey] = useState(getTodayKey)
   const seedAttemptRef = useRef(false)
+  const migrationAttemptRef = useRef(false)
 
   useEffect(() => {
     let timeoutId: number | null = null
@@ -78,6 +83,7 @@ const useUserRoutine = () => {
       setError(null)
       setIsLoading(false)
       seedAttemptRef.current = false
+      migrationAttemptRef.current = false
       return
     }
 
@@ -85,6 +91,7 @@ const useUserRoutine = () => {
     setError(null)
     setIsLoading(true)
     seedAttemptRef.current = false
+    migrationAttemptRef.current = false
 
     return subscribeToRoutineItems(
       userId,
@@ -116,6 +123,39 @@ const useUserRoutine = () => {
       }
     })()
   }, [isLoading, items.length, userId])
+
+  useEffect(() => {
+    if (!userId || isLoading || migrationAttemptRef.current || items.length === 0) {
+      return
+    }
+
+    const itemsToMigrate = items.filter((item) => {
+      const expectedTitle = ROUTINE_TITLE_MIGRATIONS[item.id]
+      return expectedTitle !== undefined && item.title !== expectedTitle
+    })
+
+    migrationAttemptRef.current = true
+
+    if (itemsToMigrate.length === 0) {
+      return
+    }
+
+    void (async () => {
+      try {
+        await Promise.all(
+          itemsToMigrate.map((item) =>
+            saveRoutineItem(userId, {
+              ...item,
+              title: ROUTINE_TITLE_MIGRATIONS[item.id] ?? item.title,
+            }),
+          ),
+        )
+      } catch (migrationError) {
+        console.error("Routine migration failed", migrationError)
+        setError(ROUTINE_MUTATION_ERROR)
+      }
+    })()
+  }, [isLoading, items, userId])
 
   const mutate = useCallback(
     async (operation: () => Promise<void>) => {

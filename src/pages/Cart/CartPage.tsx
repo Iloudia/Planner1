@@ -7,12 +7,7 @@ import { loadCustomProducts } from "../Boutique/boutiqueStorage"
 import { clearCart, loadCartItems, removeFromCart } from "../Boutique/cartStorage"
 import { useAuth } from "../../context/AuthContext"
 import { createCheckoutSession } from "../../services/boutique/checkout"
-const parsePriceToCents = (price: string) => {
-  const normalized = price.replace(/[^0-9,\.]/g, "").replace(",", ".")
-  const value = Number.parseFloat(normalized)
-  if (Number.isNaN(value)) return 0
-  return Math.round(value * 100)
-}
+import { getProductPricing } from "../../utils/productPricing"
 
 const formatCents = (cents: number) => {
   const euros = (cents / 100).toFixed(2).replace(".", ",")
@@ -65,7 +60,7 @@ const CartPage = () => {
 
   const totalCents = useMemo(() => {
     return lineItems.reduce((sum, entry) => {
-      const priceCents = parsePriceToCents(entry.product!.price)
+      const priceCents = getProductPricing(entry.product!).currentPriceCents
       return sum + priceCents * entry.item.quantity
     }, 0)
   }, [lineItems])
@@ -153,7 +148,7 @@ const CartPage = () => {
                   <h2>{product!.title}</h2>
                   <p>{product!.benefit}</p>
                   <div className="cart-item__meta">
-                    <span>{product!.price}</span>
+                    <span>{getProductPricing(product!).currentPrice}</span>
                     <span>Quantité : {item.quantity}</span>
                   </div>
                 </div>

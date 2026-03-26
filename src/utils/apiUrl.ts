@@ -2,9 +2,17 @@ const API_BASE = String(import.meta.env.VITE_API_BASE || "").trim().replace(/\/+
 
 const normalizePath = (path: string) => (path.startsWith("/") ? path : `/${path}`)
 
+const getResolvedApiBase = () => {
+  if (typeof window !== "undefined") {
+    return ""
+  }
+  return API_BASE
+}
+
 export const buildApiUrl = (path: string) => {
   const normalizedPath = normalizePath(path)
-  return API_BASE ? `${API_BASE}${normalizedPath}` : normalizedPath
+  const apiBase = getResolvedApiBase()
+  return apiBase ? `${apiBase}${normalizedPath}` : normalizedPath
 }
 
 export const resolvePublicUrl = (value: string) => {
@@ -17,7 +25,8 @@ export const resolvePublicUrl = (value: string) => {
 }
 
 export const getApiTargetLabel = () => {
-  if (API_BASE) return API_BASE
+  const apiBase = getResolvedApiBase()
+  if (apiBase) return apiBase
   if (typeof window !== "undefined") return window.location.origin
   return "same-origin"
 }

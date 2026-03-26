@@ -3,7 +3,7 @@ import { useAuth } from "../context/AuthContext"
 import type { JournalEntry, JournalEntryInput } from "../types/personalization"
 import { createJournalEntry, deleteJournalEntry, subscribeToJournalEntries } from "../services/firestore/journalEntries"
 
-const JOURNAL_LOAD_ERROR = "Impossible de charger vos entrées de journaling."
+const JOURNAL_LOAD_ERROR = "Impossible de charger tes entrées de journaling."
 const JOURNAL_SAVE_ERROR = "Impossible d'enregistrer cette page."
 const JOURNAL_DELETE_ERROR = "Impossible de supprimer cette entrée."
 

@@ -523,7 +523,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const changePassword = useCallback(async (currentPassword: string, newPassword: string): Promise<ChangePasswordResult> => {
     const currentUser = auth.currentUser
     if (!currentUser?.email) {
-      return { success: false, error: "Vous devez être connecté pour changer votre mot de passe." }
+      return { success: false, error: "Tu dois être connecté pour changer ton mot de passe." }
     }
     if (!currentPassword || !newPassword) {
       return { success: false, error: "Tous les champs sont obligatoires." }
@@ -548,7 +548,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const deactivateAccount = useCallback(async (): Promise<AccountActionResult> => {
     const currentUser = auth.currentUser
     if (!currentUser) {
-      return { success: false, error: "Vous devez être connecté pour désactiver votre compte." }
+      return { success: false, error: "Tu dois être connecté pour désactiver ton compte." }
     }
     const deleteAt = new Date(Date.now() + THIRTY_DAYS_MS).toISOString()
     try {
@@ -567,7 +567,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const deleteAccount = useCallback(async (): Promise<AccountActionResult> => {
     const currentUser = auth.currentUser
     if (!currentUser) {
-      return { success: false, error: "Vous devez être connecté pour supprimer votre compte." }
+      return { success: false, error: "Tu dois être connecté pour supprimer ton compte." }
     }
     try {
       await deleteDoc(doc(db, "users", currentUser.uid))
@@ -582,7 +582,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       console.error("Account delete failed", error)
       return {
         success: false,
-        error: "Suppression impossible sans reconnexion récente. Reconnectez-vous puis réessayez.",
+        error: "Suppression impossible sans reconnexion récente. Reconnecte-toi puis réessaie.",
       }
     }
   }, [])
@@ -638,7 +638,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
     const currentEmail = auth.currentUser?.email
     if (currentEmail && normalizeEmail(currentEmail) === normalizeEmail(email)) {
-      return { success: false, error: "Utilisez la suppression de compte depuis vos paramètres." }
+      return { success: false, error: "Utilise la suppression de compte depuis tes paramètres." }
     }
     try {
       const targetDoc = await loadAdminUserByEmail(email)
@@ -662,7 +662,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       const currentUser = auth.currentUser
       if (!currentUser) {
-        return { success: false, error: "Vous devez etre connecte pour effectuer cette action." }
+        return { success: false, error: "Tu dois etre connecte pour effectuer cette action." }
       }
 
       try {

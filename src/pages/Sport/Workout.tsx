@@ -430,7 +430,7 @@ const WorkoutPage = () => {
                 />
               </label>
               <label>
-                <span>Muscle cible</span>
+                <span>Muscle ciblé</span>
                 <div className="workout-form__select" ref={muscleMenuRef}>
                   <button
                     type="button"

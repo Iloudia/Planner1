@@ -14,7 +14,7 @@ const firstStoryPart = [
 
 const secondStoryPart = [
   "Ce site est né d'une envie d'aider les autres à mieux organiser leurs journées, à penser un peu plus positivement et à essayer de se réconcilier avec soi-même grâce à quelques exercices simples.",
-  "Prenez du temps pour sculpter votre corps, prenez du temps pour faire du journaling et poser toutes vos pensées, négatives comme positives, et vous pourrez observer un grand changement dans votre vie.",
+  "Prends du temps pour sculpter ton corps, prends du temps pour faire du journaling et poser toutes tes pensées, négatives comme positives, et tu pourras observer un grand changement dans ta vie.",
   "Dans ma vie, je me suis longtemps cherchée. Mais s'il y a une chose que je sais avec certitude aujourd'hui, c'est que j'aime aider les gens, et j'espère que ce site en sera la preuve.",
 ]
 

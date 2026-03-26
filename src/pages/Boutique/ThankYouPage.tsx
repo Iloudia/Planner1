@@ -31,7 +31,7 @@ const ThankYouPage = () => {
     }
 
     if (!isAuthenticated) {
-      setStatus({ paid: false, error: "Reconnecte-toi pour retrouver tes téléchargements." })
+      setStatus({ paid: false, error: "Reconnecte-toi pour retrouver tes tï¿½lï¿½chargements." })
       return
     }
 
@@ -76,9 +76,9 @@ const ThankYouPage = () => {
   }
 
   const isPaid = status?.paid
-  const title = isPaid ? "Merci pour ton achat" : "Paiement en attente"
+  const title = isPaid ? "" : "Paiement en attente"
   const message = isPaid
-    ? "Ton paiement est confirme. Tu peux telecharger ton produit ci-dessous ou le retrouver dans ta bibliothèque." 
+    ? "Ton paiement est confirme. Tu peux telecharger ton produit ci-dessous ou le retrouver sur la page Mes achats." 
     : status?.error || "Nous n'avons pas encore recu la confirmation du paiement."
 
   return (
@@ -92,7 +92,7 @@ const ThankYouPage = () => {
           <div className="boutique-thankyou__actions">
             {status.downloads.map((item) => (
               <a key={item.downloadUrl} href={item.downloadUrl} className="boutique-button boutique-button--primary">
-                Telecharger {item.label || item.productName}
+                Telecharger
               </a>
             ))}
             <Link to="/mes-achats" className="boutique-button boutique-button--ghost">
@@ -118,7 +118,7 @@ const ThankYouPage = () => {
             </Link>
             {sessionId ? (
               <p className="boutique-thankyou__help">
-                Si le paiement est validé mais que rien n'apparait, ouvre la page Mes achats ou reconnecte-toi avec le compte utilise pour payer.
+                Si le paiement est validï¿½ mais que rien n'apparait, ouvre la page Mes achats ou reconnecte-toi avec le compte utilise pour payer.
               </p>
             ) : null}
           </div>

@@ -547,8 +547,21 @@ body.boutique-page--tone {
 }
 
 .boutique-product__price {
-  font-weight: 700;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45rem;
   color: var(--ink);
+}
+
+.boutique-price__base {
+  color: var(--ink-soft);
+  font-weight: 500;
+  text-decoration-thickness: 1px;
+}
+
+.boutique-product__price strong,
+.boutique-detail__price-value strong {
+  font-weight: 700;
 }
 
 .boutique-filters {
@@ -774,8 +787,10 @@ body.boutique-page--tone {
 }
 
 .boutique-detail__price-value {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.55rem;
   font-size: 1.6rem;
-  font-weight: 700;
 }
 
 .boutique-detail__description {

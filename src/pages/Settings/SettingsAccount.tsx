@@ -5,9 +5,9 @@ const accountOptions = [
   {
     id: "info",
     label: "Informations sur le compte",
-    description: "Consultez les informations de votre compte, comme votre numéro de téléphone et votre adresse e-mail.",
+    description: "Consulte les informations de ton compte, comme ton numéro de téléphone et ton adresse e-mail.",
   },
-  { id: "password", label: "Changez votre mot de passe", description: "Changez votre mot de passe à tout moment." },
+  { id: "password", label: "Change ton mot de passe", description: "Change ton mot de passe à tout moment." },
   {
     id: "deactivate",
     label: "Désactiver ou supprimer le compte",
@@ -113,7 +113,6 @@ const SettingsAccount = () => {
 
   const passwordInputType = (field: PasswordField) => (passwordVisibility[field] ? "text" : "password")
 
-
   const personal = userProfile.personalInfo ?? {}
   const identity = userProfile.identityInfo ?? {}
 
@@ -185,7 +184,7 @@ const SettingsAccount = () => {
     }
     setPasswordChangeError(null)
     setPasswordForm({ current: "", next: "", confirm: "" })
-    setPasswordChangeSuccess("Votre mot de passe a été mis à jour.")
+    setPasswordChangeSuccess("Ton mot de passe a été mis à jour.")
   }
 
   const handleDeactivateAccount = async () => {
@@ -198,7 +197,7 @@ const SettingsAccount = () => {
     }
     const deletionDate = result.deleteAt ?? scheduledDeletionDate
     const formatted = deletionDate ? formatDateTime(deletionDate) : "30 jours"
-    setAccountActionSuccess(`Votre compte restera actif jusqu'au ${formatted} avant suppression définitive.`)
+    setAccountActionSuccess(`Ton compte restera actif jusqu'au ${formatted} avant suppression définitive.`)
   }
 
   const handleDeleteAccount = async () => {
@@ -209,14 +208,14 @@ const SettingsAccount = () => {
       setAccountActionSuccess(null)
       return
     }
-    setAccountActionSuccess("Votre compte a été supprimé.")
+    setAccountActionSuccess("Ton compte a été supprimé.")
   }
 
   if (step === "password") {
     return (
       <div className="settings-section">
-        <h2>Confirmez votre mot de passe</h2>
-        <p className="settings-section__intro">Veuillez saisir votre mot de passe pour obtenir ceci.</p>
+        <h2>Confirme ton mot de passe</h2>
+        <p className="settings-section__intro">Veuillez saisir ton mot de passe pour obtenir ceci.</p>
         <div className="settings-password">
           <label>
             <span>Mot de passe du compte</span>
@@ -263,7 +262,7 @@ const SettingsAccount = () => {
             </div>
           ))}
         </dl>
-        <p className="settings-note">Modifiez votre date de naissance sur votre profil.</p>
+        <p className="settings-note">Modifie ta date de naissance sur ton profil.</p>
         <button type="button" className="settings-link" onClick={handleReset}>
           Retour aux options
         </button>
@@ -274,8 +273,8 @@ const SettingsAccount = () => {
   if (step === "change-password") {
     return (
       <div className="settings-section">
-        <h2>Changez votre mot de passe</h2>
-        <p className="settings-section__intro">Renforcez la sécurité de votre compte Planner.</p>
+        <h2>Change ton mot de passe</h2>
+        <p className="settings-section__intro">Renforce la sécurité de ton compte Planner.</p>
         <p className="settings-note">Mot de passe oublié</p>
         <form className="settings-password-change" onSubmit={handlePasswordChangeSubmit}>
           <label>
@@ -343,7 +342,7 @@ const SettingsAccount = () => {
           {passwordChangeError ? <p className="settings-error">{passwordChangeError}</p> : null}
           {passwordChangeSuccess ? <p className="settings-success">{passwordChangeSuccess}</p> : null}
           <p className="settings-note">
-            Modifier votre mot de passe vous déconnectera de toutes vos sessions actives, sauf celle que vous utilisez actuellement.
+            Modifier ton mot de passe te déconnectera de toutes tes sessions actives, sauf celle que tu utilises actuellement.
           </p>
           <div className="settings-password__actions">
             <button type="button" onClick={handlePasswordChangeReset}>
@@ -364,7 +363,7 @@ const SettingsAccount = () => {
       <div className="settings-section">
         <h2>Désactiver ou supprimer le compte</h2>
         <p className="settings-section__intro">
-          Désactivez votre compte pour planifier sa suppression sous 30 jours ou supprimez-le immédiatement si vous êtes sûr de votre choix.
+          Désactive ton compte pour planifier sa suppression sous 30 jours ou supprime-le immédiatement si tu es sûr de ton choix.
         </p>
         {accountActionError ? <p className="settings-error">{accountActionError}</p> : null}
         {accountActionSuccess ? <p className="settings-success">{accountActionSuccess}</p> : null}
@@ -379,7 +378,7 @@ const SettingsAccount = () => {
           </article>
           <article className="settings-action-card settings-action-card--danger">
             <h3>Supprimer le compte</h3>
-            <p>Supprime immédiatement et définitivement vos données et sessions.</p>
+            <p>Supprime immédiatement et définitivement tes données et sessions.</p>
             <button type="button" onClick={handleDeleteAccount}>
               Supprimer définitivement
             </button>
@@ -394,8 +393,8 @@ const SettingsAccount = () => {
 
   return (
     <div className="settings-section">
-      <h2>Votre compte</h2>
-      <p className="settings-section__intro">Gardez le contrôle de vos informations personnelles.</p>
+      <h2>Ton compte</h2>
+      <p className="settings-section__intro">Garde le contrôle de tes informations personnelles.</p>
       <div className="settings-options">
         {accountOptions.map((option) => (
           <button

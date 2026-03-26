@@ -62,7 +62,7 @@ const accountRows: AccountRow[] = [
 ]
 
 const settingsSections = [
-  { id: "account", title: "Votre compte", description: "Gérer les informations personnelles et la sécurité." },
+  { id: "account", title: "Ton compte", description: "Gérer les informations personnelles et la sécurité." },
   { id: "display", title: "Affichage", description: "Modifier la taille de la police et l'ambiance visuelle." },
   { id: "languages", title: "Langues", description: "Choisir la langue principale de l'interface." },
 ]
@@ -655,7 +655,7 @@ const ProfilePage = () => {
                         </button>
                       </div>
                       <label className="account-danger__label">
-                        Pourquoi souhaitez-vous le faire ?
+                        Pourquoi souhaites-tu le faire ?
                         <textarea
                           value={dangerReason}
                           onChange={(event) => setDangerReason(event.target.value)}

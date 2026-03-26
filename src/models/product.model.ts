@@ -16,11 +16,21 @@ export type BoutiqueDigitalFile = {
   sizeBytes: number
 }
 
+export type BoutiqueProductPromotion = {
+  enabled: boolean
+  percentage?: number
+  price: string
+  label?: string
+  startsAt?: string
+  endsAt?: string
+}
+
 export type BoutiqueProduct = {
   id: string
   title: string
   benefit: string
   price: string
+  promotion?: BoutiqueProductPromotion
   format: string
   formatLabel: string
   badge: string

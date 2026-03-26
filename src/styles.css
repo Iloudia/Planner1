@@ -2,7 +2,7 @@
   --color-mint: #d8d7b2;
   --color-chocolate: #725c3f;
   --color-caramel: #e3d7ca;
-  --color-contrast: #1e1b4b;
+  --color-contrast: #000000;
   --color-muted: #6b7280;
   --lux-ink-soft: #5b5249;
   --color-border-strong: rgba(15, 23, 42, 0.12);
@@ -25,7 +25,7 @@
   --font-size-h1: 2rem;
   --font-size-h2: 1.5rem;
   --font-weight-h2: 600;
-  --color-h2: #1e1b4b;
+  --color-h2: #000000;
   --font-size-h3: 1.25rem;
   --font-size-h4: 1.125rem;
   --font-size-body: 1rem;

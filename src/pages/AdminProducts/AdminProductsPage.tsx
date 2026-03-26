@@ -6,15 +6,16 @@ import { publishCustomProduct } from "../Boutique/boutiqueStorage"
 import type { BoutiqueProduct } from "../../models/product.model"
 import { uploadImage, uploadVideo } from "../../services/media/api"
 import { uploadDigitalProductFiles } from "../../services/boutique/api"
+import { getDiscountedPriceFromPercentage, normalizePriceInput, normalizePromotionPercentage } from "../../utils/productPricing"
 type MediaFile = { name: string; url: string; type: "image" | "video"; file?: File }
 
-const mockCategories = ["Ebook", "Mignature", "Carrousels", "Moodboard"]
+const mockCategories = ["Ebook", "Mignature", "Carrousels", "Visionboard"]
 const CATEGORY_PLACEHOLDER = "Choisir une catégorie"
 const MAX_IMAGES = 4
-const MAX_IMAGE_SIZE_BYTES = 8 * 1024 * 1024
-const MAX_VIDEO_SIZE_BYTES = 25 * 1024 * 1024
-const MAX_DIGITAL_FILE_SIZE_BYTES = 25 * 1024 * 1024
-const categoriesWithoutShippingPanel = new Set(["Ebook", "Mignature", "Carrousels", "Moodboard"])
+const MAX_IMAGE_SIZE_BYTES = 60 * 1024 * 1024
+const MAX_VIDEO_SIZE_BYTES = 60 * 1024 * 1024
+const MAX_DIGITAL_FILE_SIZE_BYTES = 60 * 1024 * 1024
+const categoriesWithoutShippingPanel = new Set(["Ebook", "Mignature", "Carrousels", "Visionboard"])
 
 const formatFileSizeMb = (bytes: number) => `${(bytes / (1024 * 1024)).toFixed(0)} Mo`
 
@@ -27,6 +28,11 @@ const AdminProductsPage = () => {
   const [description, setDescription] = useState("")
   const [price, setPrice] = useState("")
   const [stock, setStock] = useState("")
+  const [promotionEnabled, setPromotionEnabled] = useState(false)
+  const [promotionPercentage, setPromotionPercentage] = useState("")
+  const [promotionLabel, setPromotionLabel] = useState("")
+  const [promotionStartsAt, setPromotionStartsAt] = useState("")
+  const [promotionEndsAt, setPromotionEndsAt] = useState("")
   const [delivery, setDelivery] = useState("")
   const [processing, setProcessing] = useState("")
   const [returnsText, setReturnsText] = useState("")
@@ -108,9 +114,7 @@ const AdminProductsPage = () => {
     if (!file) return
     if (file.size > MAX_VIDEO_SIZE_BYTES) {
       window.alert(
-        `"${file.name}" depasse ${formatFileSizeMb(
-          MAX_VIDEO_SIZE_BYTES,
-        )}. Au-dela, Nginx coupe actuellement l'upload et le navigateur affiche a tort "Serveur media inaccessible".`,
+        `"${file.name}" depasse ${formatFileSizeMb(MAX_VIDEO_SIZE_BYTES)}. Choisis une video plus legere avant publication.`,
       )
       return
     }
@@ -216,6 +220,7 @@ const AdminProductsPage = () => {
   }, [digitalFiles])
 
   const shouldShowShippingPanel = !category || !categoriesWithoutShippingPanel.has(category)
+  const computedPromotionPrice = useMemo(() => getDiscountedPriceFromPercentage(price, promotionPercentage), [price, promotionPercentage])
 
   const slugify = (value: string) =>
     value
@@ -228,7 +233,7 @@ const AdminProductsPage = () => {
   const getMockupForCategory = (value: string): BoutiqueProduct["mockup"] => {
     if (value === "Mignature") return "template"
     if (value === "Carrousels") return "carousel"
-    if (value === "Moodboard") return "moodboard"
+    if (value === "Visionboard") return "moodboard"
     if (value === "Bundles") return "bundle"
     return "ebook"
   }
@@ -246,13 +251,6 @@ const AdminProductsPage = () => {
     }
   }
 
-  const normalizePrice = (value: string) => {
-    const trimmed = value.trim()
-    if (!trimmed) return ""
-    const numeric = trimmed.replace(",", ".")
-    return /\d/.test(numeric) ? `${numeric}€` : trimmed
-  }
-
   const resetForm = () => {
     images.forEach((file) => URL.revokeObjectURL(file.url))
     if (video) {
@@ -265,6 +263,11 @@ const AdminProductsPage = () => {
     setDescription("")
     setPrice("")
     setStock("")
+    setPromotionEnabled(false)
+    setPromotionPercentage("")
+    setPromotionLabel("")
+    setPromotionStartsAt("")
+    setPromotionEndsAt("")
     setDelivery("")
     setProcessing("")
     setReturnsText("")
@@ -289,6 +292,13 @@ const AdminProductsPage = () => {
     }
     if (digitalFiles.length === 0) {
       window.alert("Ajoute au moins un fichier numerique a livrer apres l'achat.")
+      return
+    }
+
+    const normalizedPrice = normalizePriceInput(price)
+    const normalizedPromotionPrice = computedPromotionPrice
+    if (promotionEnabled && !normalizedPromotionPrice) {
+      window.alert("Ajoute un pourcentage de promo valide.")
       return
     }
 
@@ -327,7 +337,17 @@ const AdminProductsPage = () => {
         id,
         title: title.trim(),
         benefit,
-        price: normalizePrice(price),
+        price: normalizedPrice,
+        promotion: promotionEnabled
+          ? {
+              enabled: true,
+              percentage: normalizePromotionPercentage(promotionPercentage),
+              price: normalizedPromotionPrice,
+              label: promotionLabel.trim() || undefined,
+              startsAt: promotionStartsAt || undefined,
+              endsAt: promotionEndsAt || undefined,
+            }
+          : undefined,
         format,
         formatLabel,
         badge: "",
@@ -369,7 +389,6 @@ const AdminProductsPage = () => {
             <div>
               <p>Photo et vidéo</p>
             </div>
-            <p className="admin-products-helper">Ajoutez jusqu'à 4 photos et 1 vidéo.</p>
           </header>
 
           <input
@@ -486,7 +505,6 @@ const AdminProductsPage = () => {
             <div>
               <p>Catégorie</p>
             </div>
-            <p className="admin-products-helper">Choisissez la catégorie principale pour faciliter la recherche.</p>
           </header>
 
           <div className="admin-products-field">
@@ -534,7 +552,6 @@ const AdminProductsPage = () => {
             <div>
               <p>Détails de l'article</p>
             </div>
-            <p className="admin-products-helper">Expliquez clairement ce que l'acheteur va recevoir.</p>
           </header>
 
           <div className="admin-products-field">
@@ -564,7 +581,6 @@ const AdminProductsPage = () => {
             <div>
               <p>Fichiers numériques</p>
             </div>
-            <p className="admin-products-helper">Ajoutez les fichiers PDF ou ZIP qui seront livrés après l'achat.</p>
           </header>
 
           <div className="admin-products-field">
@@ -585,9 +601,6 @@ const AdminProductsPage = () => {
               ) : null}
               <span className="admin-products-digital-dropzone__subtext">{digitalFilesSummary}</span>
             </label>
-            {digitalFiles.length > 0 ? (
-              <p className="admin-products-helper">{digitalFiles.length} fichier(s) sélectionné(s).</p>
-            ) : null}
           </div>
         </section>
 
@@ -596,11 +609,10 @@ const AdminProductsPage = () => {
             <div>
               <p>Prix et stock</p>
             </div>
-            <p className="admin-products-helper">Définissez le prix et la disponibilité.</p>
           </header>
 
           <div className="admin-products-field admin-products-field--inline">
-            <div>
+            <div className="admin-products-field">
               <label htmlFor="product-price">Prix</label>
               <input
                 id="product-price"
@@ -612,19 +624,100 @@ const AdminProductsPage = () => {
                 onChange={(event) => setPrice(event.target.value)}
               />
             </div>
-            <div>
-              <label htmlFor="product-stock">Stock</label>
-              <input
-                id="product-stock"
-                type="number"
-                placeholder="999"
-                min="0"
-                step="1"
-                value={stock}
-                onChange={(event) => setStock(event.target.value)}
-              />
-            </div>
+            {!categoriesWithoutShippingPanel.has(category) ? (
+              <div className="admin-products-field">
+                <label htmlFor="product-stock">Stock</label>
+                <input
+                  id="product-stock"
+                  type="number"
+                  placeholder="999"
+                  min="0"
+                  step="1"
+                  value={stock}
+                  onChange={(event) => setStock(event.target.value)}
+                />
+              </div>
+            ) : null}
           </div>
+        </section>
+
+        <section className="admin-products-panel">
+          <header className="admin-products-panel__header">
+            <div>
+              <p>Promotions</p>
+            </div>
+          </header>
+
+          <div className="admin-products-field">
+            <label className="admin-products-checkbox">
+              <input
+                type="checkbox"
+                checked={promotionEnabled}
+                onChange={(event) => setPromotionEnabled(event.target.checked)}
+              />
+              <span>Activer une promotion sur ce produit</span>
+            </label>
+          </div>
+
+          {promotionEnabled ? (
+            <>
+              <div className="admin-products-field admin-products-field--inline">
+                <div className="admin-products-field">
+                  <label htmlFor="product-promotion-percentage">Promotion (%)</label>
+                  <input
+                    id="product-promotion-percentage"
+                    type="number"
+                    placeholder="30"
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    value={promotionPercentage}
+                    onChange={(event) => setPromotionPercentage(event.target.value)}
+                  />
+                </div>
+                <div className="admin-products-field">
+                  <label htmlFor="product-promotion-label">Libellé promo</label>
+                  <input
+                    id="product-promotion-label"
+                    type="text"
+                    placeholder="-25% cette semaine"
+                    value={promotionLabel}
+                    onChange={(event) => setPromotionLabel(event.target.value)}
+                  />
+                </div>
+                <div className="admin-products-field">
+                  <label htmlFor="product-promotion-price-preview">Prix après réduction</label>
+                  <input
+                    id="product-promotion-price-preview"
+                    type="text"
+                    value={computedPromotionPrice || "Renseigne un prix et un pourcentage"}
+                    readOnly
+                  />
+                </div>
+              </div>
+
+              <div className="admin-products-field admin-products-field--inline">
+                <div className="admin-products-field">
+                  <label htmlFor="product-promotion-starts-at">Début</label>
+                  <input
+                    id="product-promotion-starts-at"
+                    type="datetime-local"
+                    value={promotionStartsAt}
+                    onChange={(event) => setPromotionStartsAt(event.target.value)}
+                  />
+                </div>
+                <div className="admin-products-field">
+                  <label htmlFor="product-promotion-ends-at">Fin</label>
+                  <input
+                    id="product-promotion-ends-at"
+                    type="datetime-local"
+                    value={promotionEndsAt}
+                    onChange={(event) => setPromotionEndsAt(event.target.value)}
+                  />
+                </div>
+              </div>
+            </>
+          ) : null}
         </section>
 
         {shouldShowShippingPanel ? (
@@ -633,7 +726,6 @@ const AdminProductsPage = () => {
               <div>
                 <p>Livraison, traitement et retours</p>
               </div>
-              <p className="admin-products-helper">Précisez les délais et la politique de retour.</p>
             </header>
 
             <div className="admin-products-field">

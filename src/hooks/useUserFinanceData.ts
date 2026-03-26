@@ -10,8 +10,8 @@ import {
   subscribeToFinanceMonthlySnapshots,
 } from "../services/firestore/financeEntries"
 
-const FINANCE_LOAD_ERROR = "Impossible de charger vos données financières."
-const FINANCE_MUTATION_ERROR = "Impossible de mettre à jour vos finances."
+const FINANCE_LOAD_ERROR = "Impossible de charger tes données financières."
+const FINANCE_MUTATION_ERROR = "Impossible de mettre à jour tes finances."
 
 const useUserFinanceData = () => {
   const { isAuthReady, userId } = useAuth()

@@ -4,6 +4,7 @@ import "./Boutique.css"
 
 import { categories, products } from "./boutiqueData"
 import { fetchCustomProducts, loadCustomProducts, PRODUCTS_UPDATED_EVENT } from "./boutiqueStorage"
+import { getProductPricing } from "../../utils/productPricing"
 
 type ProductMedia = {
   type: "image" | "video"
@@ -33,6 +34,7 @@ const BoutiqueCategoryPage = () => {
   )
   const thumbnails = mediaItems.slice(1, 7)
   const [activeMedia, setActiveMedia] = useState<ProductMedia | null>(mediaItems[0] ?? null)
+  const pricing = useMemo(() => (product ? getProductPricing(product) : null), [product])
 
   useEffect(() => {
     setActiveMedia(mediaItems[0] ?? null)
@@ -121,7 +123,10 @@ const BoutiqueCategoryPage = () => {
         <aside className="boutique-detail__info">
           <div className="boutique-detail__price">
             <span className="boutique-detail__price-label">Prix</span>
-            <span className="boutique-detail__price-value">{product.price}</span>
+            <span className="boutique-detail__price-value">
+              {pricing?.hasActivePromotion ? <s className="boutique-price__base">{pricing.basePrice}</s> : null}
+              <strong>{pricing?.currentPrice ?? product.price}</strong>
+            </span>
           </div>
           <p className="boutique-detail__description">{product.description}</p>
           <div className="boutique-detail__meta">

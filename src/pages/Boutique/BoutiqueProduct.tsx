@@ -6,6 +6,7 @@ import { fetchCustomProducts, loadCustomProducts, PRODUCTS_UPDATED_EVENT } from 
 import { addToCart } from "./cartStorage"
 import { useAuth } from "../../context/AuthContext"
 import { createCheckoutSession } from "../../services/boutique/checkout"
+import { getProductPricing } from "../../utils/productPricing"
 
 type ProductMedia = {
   type: "image" | "video"
@@ -78,6 +79,7 @@ const BoutiqueProductPage = () => {
   }, [])
 
   const isCheckoutAvailable = product?.checkoutEnabled !== false
+  const pricing = useMemo(() => (product ? getProductPricing(product) : null), [product])
   const shouldShowDeliveryInfo = product?.mockup === "bundle" && product.features.length > 0
 
   const handleAddToCart = () => {
@@ -163,7 +165,7 @@ const BoutiqueProductPage = () => {
             <img src={product.image} alt="" className="boutique-cart-toast__image" loading="lazy" decoding="async" />
             <div>
               <h1 className="boutique-cart-toast__title">{product.title}</h1>
-              <p className="boutique-cart-toast__price">{product.price}</p>
+              <p className="boutique-cart-toast__price">{pricing?.currentPrice ?? product.price}</p>
             </div>
           </div>
         ) : null}
@@ -214,7 +216,10 @@ const BoutiqueProductPage = () => {
           <aside className="boutique-detail__info">
             <div className="boutique-detail__price">
               <span className="boutique-detail__price-label">Prix</span>
-              <span className="boutique-detail__price-value">{product.price}</span>
+              <span className="boutique-detail__price-value">
+                {pricing?.hasActivePromotion ? <s className="boutique-price__base">{pricing.basePrice}</s> : null}
+                <strong>{pricing?.currentPrice ?? product.price}</strong>
+              </span>
             </div>
             <p className="boutique-detail__description">{product.description}</p>
             <div className="boutique-detail__meta">

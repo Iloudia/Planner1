@@ -19,12 +19,12 @@ const GestionCookiesPage = () => {
         <PageHeading eyebrow="Cookies" title="Gestion des cookies" className="cookies-page__header" />
       <div className="legal-page">
         <p className="legal-page__intro">
-          Lors de la consultation de ce site, des cookies et traceurs locaux peuvent être déposés sur votre appareil
+          Lors de la consultation de ce site, des cookies et traceurs locaux peuvent être déposés sur ton appareil
           (ordinateur, mobile ou tablette).
         </p>
         <h2 className="legal-section__title">Qu'est-ce qu'un cookie ?</h2>
         <p className="legal-section__text">
-          Un cookie est un petit fichier texte qui permet au site de fonctionner correctement et d’améliorer votre
+          Un cookie est un petit fichier texte qui permet au site de fonctionner correctement et d’améliorer ton
           expérience.
         </p>
         <section className="legal-section">
@@ -36,12 +36,12 @@ const GestionCookiesPage = () => {
               désactivés.
             </li>
             <li>
-              <strong>Cookies de personnalisation (optionnels)</strong> – retiennent vos choix (ex. langue, préférences)
-              pour personnaliser l’expérience.
+              <strong>Cookies de personnalisation (optionnels)</strong> – Retiennent tes choix (ex. langue,
+              préférences) pour personnaliser l’expérience.
             </li>
           </ul>
           <p className="legal-section__text">
-            Aucun cookie non essentiel n’est déposé sans votre consentement.
+            Aucun cookie non essentiel n’est déposé sans ton consentement.
           </p>
         </section>
 
@@ -63,7 +63,7 @@ const GestionCookiesPage = () => {
               <tbody>
                 <tr>
                   <td>planner.cookieConsent (stockage local)</td>
-                  <td>Mémoriser vos choix de cookies</td>
+                  <td>Mémoriser tes choix de cookies</td>
                   <td>13 mois</td>
                   <td>Nécessaire</td>
                 </tr>
@@ -93,8 +93,8 @@ const GestionCookiesPage = () => {
         <section className="legal-section">
           <h2 className="legal-section__title">Consentement</h2>
           <p className="legal-section__text">
-            Lors de votre première visite, un bandeau vous permet d’accepter, de refuser ou de personnaliser votre choix.
-            Vous pouvez modifier ou retirer votre consentement à tout moment.
+            Lors de ta première visite, un bandeau te permet d’accepter, de refuser ou de personnaliser ton choix.
+            Tu peux modifier ou retirer ton consentement à tout moment.
           </p>
         </section>
 
@@ -110,10 +110,10 @@ const GestionCookiesPage = () => {
         <section className="legal-section">
           <h2 className="legal-section__title">Gestion des cookies</h2>
           <p className="legal-section__text">
-            Pour modifier vos choix, utilisez le bouton "Personnaliser" du bandeau cookies ou cliquez sur "Personnaliser" présent en bas de page. Vos préférences sont appliquées immédiatement.
+            Pour modifier tes choix, utilise le bouton "Personnaliser" du bandeau cookies ou clique sur "Personnaliser" présent en bas de page. Tes préférences sont appliquées immédiatement.
           </p>
           <p className="legal-section__text">
-            Pour plus d’informations sur le traitement des données personnelles, consultez la{" "}
+            Pour plus d’informations sur le traitement des données personnelles, consulte la{" "}
             <Link to="/confidentialite" className="legal-link">
               politique de confidentialité
             </Link>
@@ -124,8 +124,8 @@ const GestionCookiesPage = () => {
         <section className="legal-section">
           <h2 className="legal-section__title">Comment désactiver les cookies ?</h2>
           <p className="legal-section__text">
-            Vous pouvez aussi gérer les cookies depuis votre navigateur (paramètres &gt; confidentialité &gt; cookies). Vous
-            pouvez refuser ou supprimer les cookies déjà enregistrés. Le chemin exact dépend de votre navigateur.
+            Tu peux aussi gérer les cookies depuis ton navigateur (paramètres &gt; confidentialité &gt; cookies). Tu
+            peux refuser ou supprimer les cookies déjà enregistrés. Le chemin exact dépend de ton navigateur.
           </p>
           <p className="legal-section__text">
             Attention : désactiver les cookies essentiels bloque l'accès à l'espace sécurisé (connexion, sauvegarde).

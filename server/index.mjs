@@ -47,22 +47,23 @@ if (adminEmails.size === 0) {
 }
 
 const stripe = new Stripe(stripeSecretKey, { apiVersion: "2024-06-20" })
+const MAX_UPLOAD_BYTES = 60 * 1024 * 1024
 const mediaUpload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 8 * 1024 * 1024,
+    fileSize: MAX_UPLOAD_BYTES,
   },
 })
 const mediaVideoUpload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 50 * 1024 * 1024,
+    fileSize: MAX_UPLOAD_BYTES,
   },
 })
 const digitalDownloadUpload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 25 * 1024 * 1024,
+    fileSize: MAX_UPLOAD_BYTES,
     files: 10,
   },
 })
@@ -342,11 +343,75 @@ const normalizeGallery = (value) => {
   return gallery
 }
 
+const normalizePromotionPayload = (value) => {
+  if (!value || typeof value !== "object" || value.enabled !== true) {
+    return undefined
+  }
+
+  const rawPrice = sanitizeText(value.price, 80)
+  const priceCents = parsePriceToCents(rawPrice)
+  if (priceCents <= 0) {
+    return undefined
+  }
+
+  const startsAt = sanitizeText(value.startsAt, 80)
+  const endsAt = sanitizeText(value.endsAt, 80)
+
+  return {
+    enabled: true,
+    price: formatPriceFromCents(priceCents),
+    label: sanitizeText(value.label, 80),
+    startsAt,
+    endsAt,
+  }
+}
+
+const isPromotionActive = (promotion) => {
+  if (!promotion?.enabled) {
+    return false
+  }
+
+  const now = Date.now()
+  const startsAt = promotion.startsAt ? Date.parse(promotion.startsAt) : Number.NaN
+  const endsAt = promotion.endsAt ? Date.parse(promotion.endsAt) : Number.NaN
+
+  if (Number.isFinite(startsAt) && startsAt > now) {
+    return false
+  }
+  if (Number.isFinite(endsAt) && endsAt < now) {
+    return false
+  }
+
+  return true
+}
+
+const getEffectiveProductPrice = (product) => {
+  const basePrice = sanitizeText(product?.price, 80)
+  const basePriceCents = parsePriceToCents(basePrice)
+  const promotion = normalizePromotionPayload(product?.promotion)
+  const promotionPriceCents = parsePriceToCents(promotion?.price)
+
+  if (promotion && isPromotionActive(promotion) && promotionPriceCents > 0 && promotionPriceCents < basePriceCents) {
+    return {
+      price: promotion.price,
+      priceCents: promotionPriceCents,
+      promotion,
+    }
+  }
+
+  return {
+    price: basePrice,
+    priceCents: basePriceCents,
+    promotion,
+  }
+}
+
 const normalizeCustomProductPayload = (product, existingProduct) => {
   const id = sanitizeText(product?.id || existingProduct?.id, 160)
   const title = sanitizeText(product?.title || existingProduct?.title, 180)
   const rawPrice = sanitizeText(product?.price || existingProduct?.price, 80)
   const priceCents = parsePriceToCents(rawPrice)
+  const promotion = normalizePromotionPayload(product?.promotion ?? existingProduct?.promotion)
   const image = sanitizeText(product?.image || existingProduct?.image, 4000)
   const video = sanitizeText(product?.video || existingProduct?.video, 4000)
   const gallery = normalizeGallery(product?.gallery ?? existingProduct?.gallery)
@@ -361,6 +426,7 @@ const normalizeCustomProductPayload = (product, existingProduct) => {
     title,
     benefit: sanitizeText(product?.benefit || existingProduct?.benefit || title, 220),
     price: priceCents > 0 ? formatPriceFromCents(priceCents) : rawPrice,
+    promotion,
     format: sanitizeText(product?.format || existingProduct?.format || "PDF - contenu digital", 120),
     formatLabel: sanitizeText(product?.formatLabel || existingProduct?.formatLabel || "PDF", 80),
     badge: sanitizeText(product?.badge || existingProduct?.badge, 80),
@@ -433,6 +499,7 @@ const toPublicCustomProduct = (product) => ({
   title: product.title,
   benefit: product.benefit,
   price: product.price,
+  promotion: product.promotion,
   format: product.format,
   formatLabel: product.formatLabel,
   badge: product.badge,
@@ -451,11 +518,12 @@ const toPublicCustomProduct = (product) => ({
 const getCatalogProductsById = () => {
   const catalog = new Map(seedCatalogById)
   for (const product of readStoredCustomProducts()) {
+    const effectivePricing = getEffectiveProductPrice(product)
     catalog.set(product.id, {
       id: product.id,
       name: product.title,
-      priceCents: parsePriceToCents(product.price),
-      price: product.price,
+      priceCents: effectivePricing.priceCents,
+      price: effectivePricing.price,
       image: product.image,
       formatLabel: product.formatLabel,
       digitalFiles: normalizeStoredDigitalFiles(product.digitalFiles),
@@ -1335,31 +1403,100 @@ const sendWelcomeEmail = async ({ to, firstName }) => {
   const subject = "Bienvenue sur MeAndRituals"
   const greeting = safeFirstName ? `Bienvenue ${safeFirstName},` : "Bienvenue,"
   const loginUrl = `${appBaseUrl}/login`
+  const preheader = "Bienvenue sur MeAndRituals."
+  const welcomePhotoPath = path.resolve(process.cwd(), "src", "assets", "Photo bienvenue.jpeg")
+  const welcomePhotoSrc = fs.existsSync(welcomePhotoPath)
+    ? `data:image/jpeg;base64,${fs.readFileSync(welcomePhotoPath).toString("base64")}`
+    : ""
   const html = `
-    <div style="margin:0;padding:32px 16px;background:#fff8f1;">
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:620px;margin:0 auto;background:#ffffff;border:1px solid #f3e7d7;border-radius:18px;overflow:hidden;">
+    <div style="margin:0;padding:0;background:#f8f0e6;">
+      <div style="display:none;max-height:0;overflow:hidden;opacity:0;">
+        ${preheader}
+      </div>
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;background:#f8f0e6;">
         <tr>
-          <td style="padding:24px 28px;background:linear-gradient(135deg,#1f1b16 0%,#3a2f24 100%);">
-            <p style="margin:0;font-family:Arial,sans-serif;font-size:13px;letter-spacing:1px;color:#f8e7d0;text-transform:uppercase;">MeAndRituals</p>
-            <h1 style="margin:8px 0 0;font-family:Georgia,'Times New Roman',serif;font-size:28px;line-height:1.25;color:#ffffff;font-weight:600;">Ton espace bien-etre est pret</h1>
+          <td align="center" style="padding:28px 16px 32px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:620px;background:#f8f0e6;">
+              <tr>
+                <td style="padding:0;background:#ffffff;border:1px solid rgba(0,0,0,0.12);">
+                  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                    <tr>
+                      <td align="center" style="padding:22px 20px 20px;border-bottom:1px solid rgba(0,0,0,0.12);">
+                        <div style="font-family:Georgia,'Times New Roman',serif;font-size:46px;line-height:1;color:#000000;font-style:italic;">
+                          Me& rituals
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="center" style="padding:14px 12px;">
+                        <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                          <tr>
+                            <td style="padding:8px 14px;background:#e7d3bc;font-family:Arial,sans-serif;font-size:14px;font-weight:700;color:#000000;">
+                              Accueil
+                            </td>
+                            <td style="padding:8px 14px;font-family:Arial,sans-serif;font-size:14px;font-weight:600;color:#4b5563;">
+                              Boutique
+                            </td>
+                            <td style="padding:8px 14px;font-family:Arial,sans-serif;font-size:14px;font-weight:600;color:#4b5563;">
+                              Panier
+                            </td>
+                            <td style="padding:8px 14px;font-family:Arial,sans-serif;font-size:14px;font-weight:600;color:#4b5563;">
+                              Mes achats
+                            </td>
+                            <td style="padding:8px 14px;font-family:Arial,sans-serif;font-size:14px;font-weight:600;color:#4b5563;">
+                              A propos
+                            </td>
+                            <td style="padding:8px 14px;font-family:Arial,sans-serif;font-size:14px;font-weight:600;color:#4b5563;">
+                              Contact
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:28px 0 0;font-family:Arial,sans-serif;color:#000000;">
+                  <p style="margin:0 0 14px;font-size:22px;line-height:1.4;font-weight:700;">${greeting}</p>
+                  <p style="margin:0 0 18px;font-size:15px;line-height:1.8;color:#000000;">
+                    Merci d'avoir cree ton compte. Ton espace MeAndRituals est pret.
+                  </p>
+                  <p style="margin:0 0 22px;font-size:15px;line-height:1.8;color:#000000;">
+                    Tu peux maintenant retrouver ton planning, tes routines et tes objectifs dans un seul espace.
+                  </p>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:0 0 24px;">
+                  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#ffffff;border:1px solid rgba(0,0,0,0.12);">
+                    <tr>
+                      <td style="padding:18px 18px 16px;">
+                        ${
+                          welcomePhotoSrc
+                            ? `<img src="${welcomePhotoSrc}" alt="Photo bienvenue" width="584" style="display:block;width:100%;max-width:584px;height:auto;border:0;outline:none;text-decoration:none;" />`
+                            : `<div style="padding:120px 24px;background:#f8f0e6;font-family:Arial,sans-serif;font-size:20px;font-weight:600;line-height:1.4;text-align:center;color:#000000;">Photo bienvenue</div>`
+                        }
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:0 0 22px;font-family:Arial,sans-serif;color:#000000;">
+                  <p style="margin:0 0 22px;font-size:15px;line-height:1.8;color:#000000;">
+                    Commence des maintenant et accede a ton espace personnel.
+                  </p>
+                  <a href="${loginUrl}" style="display:inline-block;padding:14px 24px;border-radius:0;background:#000000;color:#ffffff;text-decoration:none;font-size:14px;font-weight:700;">
+                    Acceder a MeAndRituals
+                  </a>
+                </td>
+              </tr>
+            </table>
           </td>
         </tr>
         <tr>
-          <td style="padding:28px 28px 24px;font-family:Arial,sans-serif;color:#2b241c;">
-            <p style="margin:0 0 14px;font-size:18px;line-height:1.4;font-weight:600;">${greeting}</p>
-            <p style="margin:0 0 10px;font-size:15px;line-height:1.7;">
-              Merci d'avoir cree ton compte. Tu peux maintenant centraliser tes rituels, ton planning et tes objectifs dans un seul espace.
-            </p>
-            <p style="margin:0 0 22px;font-size:15px;line-height:1.7;">
-              Commence des maintenant et construis une routine qui te ressemble.
-            </p>
-            <a href="${loginUrl}" style="display:inline-block;padding:12px 20px;border-radius:999px;background:#1f1b16;color:#ffffff;text-decoration:none;font-size:14px;font-weight:700;">
-              Acceder a MeAndRituals
-            </a>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:18px 28px 24px;border-top:1px solid #f2ece4;font-family:Arial,sans-serif;color:#7c6c5a;font-size:12px;line-height:1.6;">
+          <td align="center" style="padding:6px 16px 26px;font-family:Arial,sans-serif;color:#6b7280;font-size:12px;line-height:1.6;">
             Cet email est envoye automatiquement a la creation de ton compte.
           </td>
         </tr>
@@ -1634,6 +1771,12 @@ app.post("/api/stripe-webhook", async (req, res) => {
 })
 
 app.use((error, req, res, next) => {
+  if (error instanceof multer.MulterError) {
+    if (error.code === "LIMIT_FILE_SIZE") {
+      return res.status(413).json({ error: "Fichier trop volumineux pour cette route d'upload." })
+    }
+    return res.status(400).json({ error: "Upload invalide." })
+  }
   if (error?.type === "entity.too.large") {
     return res.status(413).json({ error: "Payload trop volumineux pour cette requete." })
   }

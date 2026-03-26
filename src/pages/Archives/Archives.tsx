@@ -493,7 +493,7 @@ const ArchivesPage = () => {
 
       <header className="archives-header">
         <div className="archives-intro">
-          <p>Retrouvez vos écrits par date.</p>
+          <p>Retrouve tes écrits par date.</p>
         </div>
         <div className="archives-controls">
           <label className="archives-control">

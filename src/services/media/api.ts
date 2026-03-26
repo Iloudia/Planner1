@@ -28,8 +28,12 @@ export const resolveMediaUrl = (value: string) => {
 }
 
 const parseErrorMessage = async (response: Response, fallback: string) => {
+  if (response.status === 413) {
+    return "Fichier trop volumineux pour l'upload. Reduis sa taille puis reessaie."
+  }
+
   try {
-    const payload = (await response.json()) as { error?: string }
+    const payload = (await response.clone().json()) as { error?: string }
     if (payload?.error) {
       return payload.error
     }
@@ -97,10 +101,10 @@ const uploadMedia = async (file: File, scope: string, endpoint: string, fallback
 }
 
 export const uploadImage = async (file: File, scope: ImageUploadScope, entityId?: string) =>
-  uploadMedia(file, scope, "/api/media/upload-image", "Media upload failed", entityId)
+  uploadMedia(file, scope, "/api/media/upload-image", "Impossible de televerser cette image.", entityId)
 
 export const uploadVideo = async (file: File, scope: VideoUploadScope, entityId?: string) =>
-  uploadMedia(file, scope, "/api/media/upload-video", "Video upload failed", entityId)
+  uploadMedia(file, scope, "/api/media/upload-video", "Impossible de televerser cette video.", entityId)
 
 export const deleteMedia = async (path: string) => {
   const headers = await buildAuthHeaders()

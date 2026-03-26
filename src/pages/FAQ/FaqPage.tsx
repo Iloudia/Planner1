@@ -22,7 +22,7 @@ const faqItems: FaqItem[] = [
   {
     question: "Puis-je suggérer des idées ?",
     answer:
-      "Bien sûr ! J’adore recevoir vos retours. Écris-moi via la page contact pour partager tes envies et inspirer les prochaines évolutions du Planner.",
+      "Bien sûr ! J’adore recevoir tes retours. Écris-moi via la page contact pour partager tes envies et inspirer les prochaines évolutions du Planner.",
   },
   {
     question: "Planner fonctionne-t-il hors connexion ?",

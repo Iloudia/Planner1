@@ -11,6 +11,13 @@ import {
   PRODUCTS_UPDATED_EVENT,
   updateCustomProduct,
 } from "../Boutique/boutiqueStorage"
+import {
+  getDiscountedPriceFromPercentage,
+  getProductPricing,
+  getPromotionPercentageFromPrices,
+  normalizePriceInput,
+  normalizePromotionPercentage,
+} from "../../utils/productPricing"
 
 type EditableProduct = BoutiqueProduct & { createdAt?: string; updatedAt?: string }
 
@@ -20,7 +27,7 @@ const CATEGORY_OPTIONS: CategoryOption[] = [
   { label: "Ebook", value: "ebook" },
   { label: "Templates", value: "template" },
   { label: "Carrousels", value: "carousel" },
-  { label: "Moodboard", value: "moodboard" },
+  { label: "Visionboard", value: "moodboard" },
   { label: "Bundles", value: "bundle" },
 ]
 
@@ -29,6 +36,7 @@ const AdminProductsManagePage = () => {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [draft, setDraft] = useState<EditableProduct | null>(null)
   const [imagePreview, setImagePreview] = useState<string>("")
+  const [promotionPercentage, setPromotionPercentage] = useState("")
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
@@ -61,12 +69,20 @@ const AdminProductsManagePage = () => {
     setEditingId(product.id)
     setDraft({ ...product })
     setImagePreview(product.image)
+    setPromotionPercentage(
+      product.promotion?.percentage
+        ? String(product.promotion.percentage)
+        : product.promotion?.price
+          ? String(getPromotionPercentageFromPrices(product.price, product.promotion.price))
+          : "",
+    )
   }
 
   const cancelEdit = () => {
     setEditingId(null)
     setDraft(null)
     setImagePreview("")
+    setPromotionPercentage("")
   }
 
   const handleDelete = (productId: string) => {
@@ -99,6 +115,11 @@ const AdminProductsManagePage = () => {
       window.alert("Ajoute un prix.")
       return
     }
+    const computedPromotionPrice = getDiscountedPriceFromPercentage(draft.price, promotionPercentage)
+    if (draft.promotion?.enabled && !computedPromotionPrice) {
+      window.alert("Ajoute un pourcentage de promo valide.")
+      return
+    }
 
     const features = draft.features?.length ? draft.features : ["Ressource digitale", "Acces immediat", "Usage commercial autorise"]
     const gallery = draft.gallery?.length ? [...draft.gallery] : []
@@ -109,7 +130,17 @@ const AdminProductsManagePage = () => {
     const updated: BoutiqueProduct = {
       ...draft,
       title: draft.title.trim(),
-      price: draft.price.trim(),
+      price: normalizePriceInput(draft.price),
+      promotion: draft.promotion?.enabled
+        ? {
+            enabled: true,
+            percentage: normalizePromotionPercentage(promotionPercentage),
+            price: computedPromotionPrice,
+            label: draft.promotion.label?.trim() || undefined,
+            startsAt: draft.promotion.startsAt || undefined,
+            endsAt: draft.promotion.endsAt || undefined,
+          }
+        : undefined,
       benefit: draft.benefit?.trim() || draft.description?.trim().slice(0, 90) || "Nouvelle ressource a decouvrir.",
       description: draft.description?.trim() || "Description a completer.",
       features,
@@ -136,29 +167,33 @@ const AdminProductsManagePage = () => {
         </section>
       ) : (
         <section className="admin-products-panel admin-products-list">
-          {sortedProducts.map((product) => (
-            <article key={product.id} className="admin-products-card">
-              <div className="admin-products-card__media">
-                <img src={product.image} alt={product.title} loading="lazy" decoding="async" />
-              </div>
-              <div className="admin-products-card__body">
-                <div className="admin-products-card__meta">
-                  <span className="admin-products-card__eyebrow">{product.mockup}</span>
-                  <strong>{product.price}</strong>
+          {sortedProducts.map((product) => {
+            const pricing = getProductPricing(product)
+
+            return (
+              <article key={product.id} className="admin-products-card">
+                <div className="admin-products-card__media">
+                  <img src={product.image} alt={product.title} loading="lazy" decoding="async" />
                 </div>
-                <h2>{product.title}</h2>
-                <p>{product.benefit}</p>
-              </div>
-              <div className="admin-products-card__actions">
-                <button type="button" className="boutique-button boutique-button--primary" onClick={() => startEdit(product)}>
-                  Modifier
-                </button>
-                <button type="button" className="boutique-button boutique-button--ghost" onClick={() => handleDelete(product.id)}>
-                  Supprimer
-                </button>
-              </div>
-            </article>
-          ))}
+                <div className="admin-products-card__body">
+                  <div className="admin-products-card__meta">
+                    <span className="admin-products-card__eyebrow">{product.mockup}</span>
+                    <strong>{pricing.currentPrice}</strong>
+                  </div>
+                  <h2>{product.title}</h2>
+                  <p>{product.benefit}</p>
+                </div>
+                <div className="admin-products-card__actions">
+                  <button type="button" className="boutique-button boutique-button--primary" onClick={() => startEdit(product)}>
+                    Modifier
+                  </button>
+                  <button type="button" className="boutique-button boutique-button--ghost" onClick={() => handleDelete(product.id)}>
+                    Supprimer
+                  </button>
+                </div>
+              </article>
+            )
+          })}
         </section>
       )}
 
@@ -209,6 +244,106 @@ const AdminProductsManagePage = () => {
                   onChange={(event) => setDraft((prev) => (prev ? { ...prev, price: event.target.value } : prev))}
                 />
               </div>
+              <div className="admin-products-field">
+                <label className="admin-products-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={Boolean(draft.promotion?.enabled)}
+                    onChange={(event) =>
+                      setDraft((prev) =>
+                        prev
+                          ? {
+                              ...prev,
+                              promotion: event.target.checked
+                                ? {
+                                    enabled: true,
+                                    price: prev.promotion?.price || "",
+                                    percentage: prev.promotion?.percentage,
+                                    label: prev.promotion?.label,
+                                    startsAt: prev.promotion?.startsAt,
+                                    endsAt: prev.promotion?.endsAt,
+                                  }
+                                : undefined,
+                            }
+                          : prev,
+                      )
+                    }
+                  />
+                  <span>Promotion active</span>
+                </label>
+              </div>
+              {draft.promotion?.enabled ? (
+                <>
+                  <div className="admin-products-field admin-products-field--inline">
+                    <div className="admin-products-field">
+                      <label htmlFor="edit-promotion-percentage">Promotion (%)</label>
+                      <input
+                        id="edit-promotion-percentage"
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        value={promotionPercentage}
+                        onChange={(event) => setPromotionPercentage(event.target.value)}
+                      />
+                    </div>
+                    <div className="admin-products-field">
+                      <label htmlFor="edit-promotion-label">Libellé promo</label>
+                      <input
+                        id="edit-promotion-label"
+                        type="text"
+                        value={draft.promotion.label ?? ""}
+                        onChange={(event) =>
+                          setDraft((prev) =>
+                            prev && prev.promotion
+                              ? { ...prev, promotion: { ...prev.promotion, label: event.target.value } }
+                              : prev,
+                          )
+                        }
+                      />
+                    </div>
+                    <div className="admin-products-field">
+                      <label htmlFor="edit-promotion-price-preview">Prix après réduction</label>
+                      <input
+                        id="edit-promotion-price-preview"
+                        type="text"
+                        value={getDiscountedPriceFromPercentage(draft.price, promotionPercentage) || "Renseigne un prix et un pourcentage"}
+                        readOnly
+                      />
+                    </div>
+                  </div>
+                  <div className="admin-products-field">
+                    <label htmlFor="edit-promotion-starts-at">Début promo</label>
+                    <input
+                      id="edit-promotion-starts-at"
+                      type="datetime-local"
+                      value={draft.promotion.startsAt ?? ""}
+                      onChange={(event) =>
+                        setDraft((prev) =>
+                          prev && prev.promotion
+                            ? { ...prev, promotion: { ...prev.promotion, startsAt: event.target.value } }
+                            : prev,
+                        )
+                      }
+                    />
+                  </div>
+                  <div className="admin-products-field">
+                    <label htmlFor="edit-promotion-ends-at">Fin promo</label>
+                    <input
+                      id="edit-promotion-ends-at"
+                      type="datetime-local"
+                      value={draft.promotion.endsAt ?? ""}
+                      onChange={(event) =>
+                        setDraft((prev) =>
+                          prev && prev.promotion
+                            ? { ...prev, promotion: { ...prev.promotion, endsAt: event.target.value } }
+                            : prev,
+                        )
+                      }
+                    />
+                  </div>
+                </>
+              ) : null}
               <div className="admin-products-field">
                 <label htmlFor="edit-benefit">Accroche</label>
                 <input

@@ -227,6 +227,22 @@
   font-family: inherit;
 }
 
+.admin-products-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 0.95rem;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.admin-products-checkbox input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: #000000;
+}
+
 .product-form__select {
   position: relative;
   width: 100%;
@@ -339,8 +355,24 @@
 }
 
 .admin-products-field--inline {
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
+  align-items: start;
+}
+
+.admin-products-field--inline > .admin-products-field {
+  margin-bottom: 0;
+}
+
+.admin-products-field--inline > .admin-products-field label {
+  min-height: 1.2rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 860px) {
+  .admin-products-field--inline {
+    grid-template-columns: 1fr;
+  }
 }
 
 .admin-products-panel--actions {
