@@ -388,6 +388,10 @@ body.admin-page--tone {
   font-weight: 700;
 }
 
+.admin-empty-state__actions {
+  margin-top: 0.85rem;
+}
+
 .admin-alert--success {
   background: #e9f5eb;
   color: #25573a;

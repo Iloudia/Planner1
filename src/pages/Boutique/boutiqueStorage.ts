@@ -1,11 +1,10 @@
 import type { BoutiqueProduct } from "../../models/product.model"
-import { buildApiUrl } from "../../utils/apiUrl"
-import { resolvePublicUrl } from "../../utils/apiUrl"
+import { fetchApi, resolvePublicUrl } from "../../utils/apiUrl"
 import { auth } from "../../utils/firebase"
 
 const CUSTOM_PRODUCTS_KEY = "boutique.customProducts.v1"
 const CUSTOM_PRODUCTS_EVENT = "products:updated"
-const CUSTOM_PRODUCTS_ENDPOINT = buildApiUrl("/api/custom-products")
+const CUSTOM_PRODUCTS_ENDPOINT = "/api/custom-products"
 
 type StoredProduct = BoutiqueProduct & { createdAt: string; updatedAt?: string }
 let inMemoryProducts: StoredProduct[] | null = null
@@ -96,7 +95,7 @@ const buildAuthenticatedJsonHeaders = async () => {
 const pushRemoteUpdate = async (payload: Record<string, unknown>) => {
   try {
     const headers = await buildAuthenticatedJsonHeaders()
-    const response = await fetch(CUSTOM_PRODUCTS_ENDPOINT, {
+    const response = await fetchApi(CUSTOM_PRODUCTS_ENDPOINT, {
       method: "POST",
       headers,
       body: JSON.stringify(payload),
@@ -192,7 +191,7 @@ export const compactCustomProducts = () => {
 
 export const fetchCustomProducts = async () => {
   try {
-    const response = await fetch(CUSTOM_PRODUCTS_ENDPOINT)
+    const response = await fetchApi(CUSTOM_PRODUCTS_ENDPOINT)
     if (!response.ok) {
       return loadCustomProducts()
     }

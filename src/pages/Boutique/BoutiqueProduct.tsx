@@ -210,7 +210,6 @@ const BoutiqueProductPage = () => {
           <div className="boutique-detail__intro">
             <span className="boutique-eyebrow">Produit digital</span>
             <h1>{product.title}</h1>
-            <p>{product.benefit}</p>
           </div>
 
           <aside className="boutique-detail__info">

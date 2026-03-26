@@ -2,17 +2,43 @@ const API_BASE = String(import.meta.env.VITE_API_BASE || "").trim().replace(/\/+
 
 const normalizePath = (path: string) => (path.startsWith("/") ? path : `/${path}`)
 
-const getResolvedApiBase = () => {
-  if (typeof window !== "undefined") {
-    return ""
+const getResolvedApiBase = () => API_BASE
+
+const getSameOriginFallbackUrl = (path: string) => {
+  if (typeof window === "undefined" || !API_BASE) {
+    return null
   }
-  return API_BASE
+
+  try {
+    const apiOrigin = new URL(API_BASE).origin
+    if (window.location.origin === apiOrigin) {
+      return null
+    }
+  } catch {
+    return null
+  }
+
+  return normalizePath(path)
 }
 
 export const buildApiUrl = (path: string) => {
   const normalizedPath = normalizePath(path)
   const apiBase = getResolvedApiBase()
   return apiBase ? `${apiBase}${normalizedPath}` : normalizedPath
+}
+
+export const fetchApi = async (path: string, init?: RequestInit) => {
+  const primaryUrl = buildApiUrl(path)
+
+  try {
+    return await fetch(primaryUrl, init)
+  } catch (error) {
+    const fallbackUrl = getSameOriginFallbackUrl(path)
+    if (error instanceof TypeError && fallbackUrl && fallbackUrl !== primaryUrl) {
+      return fetch(fallbackUrl, init)
+    }
+    throw error
+  }
 }
 
 export const resolvePublicUrl = (value: string) => {

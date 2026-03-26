@@ -102,7 +102,7 @@ export const fetchCheckoutSessionStatus = async (sessionId: string) => {
     })
 
     if (!response.ok) {
-      throw new Error(await parseErrorMessage(response, "Impossible de verifier le paiement."))
+      throw new Error(await parseErrorMessage(response, "Impossible de vérifier le paiement."))
     }
 
     return (await response.json()) as CheckoutStatus

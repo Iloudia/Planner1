@@ -1,10 +1,12 @@
 ﻿import "dotenv/config"
 import crypto from "node:crypto"
 import fs from "node:fs"
+import fsPromises from "node:fs/promises"
 import path from "node:path"
 import express from "express"
 import multer from "multer"
 import Stripe from "stripe"
+import { getFirebaseAdminAuth, getFirebaseAdminDb, isFirebaseAdminConfigured } from "./firebaseAdmin.mjs"
 import { isFirebaseTokenVerificationConfigured, verifyFirebaseIdToken } from "./firebaseTokenVerifier.mjs"
 import { deleteMediaFile, isAllowedImageScope, isAllowedVideoScope, storeImage, storeVideo } from "./mediaStorage.mjs"
 
@@ -33,6 +35,9 @@ const adminEmails = new Set(
     .map((entry) => entry.trim().toLowerCase())
     .filter(Boolean),
 )
+const contactRecipientEmail = String(process.env.CONTACT_EMAIL_TO || "contact@meandrituals.com")
+  .trim()
+  .toLowerCase()
 
 if (!downloadTokenSecret || downloadTokenSecret === "replace-me") {
   throw new Error("DOWNLOAD_TOKEN_SECRET must be set with a strong random value.")
@@ -46,8 +51,12 @@ if (adminEmails.size === 0) {
   console.warn("ADMIN_EMAILS is empty. Only Firebase tokens with admin custom claim can manage custom products.")
 }
 
+if (!isFirebaseAdminConfigured) {
+  console.warn("Firebase Admin SDK is not configured. Admin account deletion will be unavailable.")
+}
+
 const stripe = new Stripe(stripeSecretKey, { apiVersion: "2024-06-20" })
-const MAX_UPLOAD_BYTES = 60 * 1024 * 1024
+const MAX_UPLOAD_BYTES = 500 * 1024 * 1024
 const mediaUpload = multer({
   storage: multer.memoryStorage(),
   limits: {
@@ -258,6 +267,7 @@ const parsePriceToCents = (value) => {
 }
 
 const sanitizeText = (value, maxLength = 4000) => String(value || "").trim().slice(0, maxLength)
+const isValidEmailAddress = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || "").trim())
 const escapeHtml = (value) =>
   String(value || "").replace(/[&<>"']/g, (character) => {
     switch (character) {
@@ -441,7 +451,7 @@ const normalizeCustomProductPayload = (product, existingProduct) => {
         ? features
         : fallbackFeatures.length > 0
           ? fallbackFeatures
-          : ["Ressource digitale", "Acces immediat", "Usage commercial autorise"],
+          : ["Ressource digitale", "Accès immédiat", "Usage commercial autorisé"],
     digitalFiles: preservedDigitalFiles,
     createdAt: sanitizeText(existingProduct?.createdAt || product?.createdAt, 80) || new Date().toISOString(),
     updatedAt: sanitizeText(product?.updatedAt || existingProduct?.updatedAt, 80) || new Date().toISOString(),
@@ -459,7 +469,7 @@ const validateCustomProduct = (product) => {
     return "Prix produit invalide."
   }
   if (!normalizeStoredDigitalFiles(product?.digitalFiles).length) {
-    return "Ajoute au moins un fichier numerique avant publication."
+    return "Ajoute au moins un fichier numérique avant publication."
   }
   return null
 }
@@ -538,7 +548,7 @@ const getCatalogProductOrThrow = (productId) => {
     throw createHttpError(404, `Produit introuvable: ${productId}`)
   }
   if (!Array.isArray(catalogProduct.digitalFiles) || catalogProduct.digitalFiles.length === 0) {
-    throw createHttpError(400, "Ce produit n'a pas encore de fichier telechargeable configure.")
+    throw createHttpError(400, "Ce produit n'a pas encore de fichier téléchargeable configuré.")
   }
   if (!Number.isFinite(catalogProduct.priceCents) || catalogProduct.priceCents <= 0) {
     throw createHttpError(400, "Ce produit n'a pas de prix valide.")
@@ -551,7 +561,7 @@ const resolveDownloadAbsolutePath = (storagePath) => {
   const absolutePath = path.resolve(downloadsDir, normalizedPath)
   const downloadsRoot = path.resolve(downloadsDir)
   if (!absolutePath.startsWith(downloadsRoot)) {
-    throw createHttpError(400, "Chemin de telechargement invalide.")
+    throw createHttpError(400, "Chemin de téléchargement invalide.")
   }
   return absolutePath
 }
@@ -648,7 +658,7 @@ const storeDigitalFile = ({ file, uid, productId }) => {
   const extension = path.extname(String(file?.originalname || "")).toLowerCase()
   const detectedMimeType = detectDigitalMimeType(file?.originalname, file?.mimetype)
   if (!allowedDigitalExtensions.has(extension) || !detectedMimeType) {
-    throw createHttpError(400, "Seuls les fichiers PDF et ZIP sont acceptes.")
+    throw createHttpError(400, "Seuls les fichiers PDF et ZIP sont acceptés.")
   }
 
   const relativeDirectory = path.join("custom-products", safeUid, safeProductId)
@@ -812,7 +822,7 @@ const createRateLimiter = ({ windowMs, max, keyPrefix }) => {
     if (current.count >= max) {
       const retryAfterSeconds = Math.ceil((current.resetAt - now) / 1000)
       res.setHeader("Retry-After", String(Math.max(retryAfterSeconds, 1)))
-      return res.status(429).json({ error: "Trop de requetes. Merci de reessayer dans quelques instants." })
+      return res.status(429).json({ error: "Trop de requêtes. Merci de réessayer dans quelques instants." })
     }
 
     current.count += 1
@@ -853,10 +863,11 @@ app.use("/api/checkout-session", sensitiveApiRateLimit)
 app.use("/api/my-purchases", sensitiveApiRateLimit)
 app.use("/api/download", sensitiveApiRateLimit)
 app.use("/api/email", sensitiveApiRateLimit)
+app.use("/api/admin", sensitiveApiRateLimit)
 
 const firebaseAuth = async (req, res, next) => {
   if (!isFirebaseTokenVerificationConfigured) {
-    return res.status(503).json({ error: "Firebase Auth n'est pas configure cote serveur." })
+    return res.status(503).json({ error: "Firebase Auth n'est pas configuré côté serveur." })
   }
 
   const authorization = req.headers.authorization || ""
@@ -893,7 +904,7 @@ const adminOnly = (req, res, next) => {
     role: req.user?.role ?? null,
     adminEmailsConfigured: adminEmails.size,
   })
-  return res.status(403).json({ error: "Acces admin requis." })
+  return res.status(403).json({ error: "Accès admin requis." })
 }
 
 app.post("/api/media/upload-image", firebaseAuth, mediaUpload.single("file"), async (req, res) => {
@@ -907,13 +918,13 @@ app.post("/api/media/upload-image", firebaseAuth, mediaUpload.single("file"), as
       return res.status(401).json({ error: "Utilisateur introuvable." })
     }
     if (!file || !file.buffer) {
-      return res.status(400).json({ error: "Aucun fichier image recu." })
+      return res.status(400).json({ error: "Aucun fichier image reçu." })
     }
     if (!isAllowedImageScope(scope)) {
       return res.status(400).json({ error: "Scope media invalide." })
     }
     if (!file.mimetype?.startsWith("image/")) {
-      return res.status(400).json({ error: "Seules les images sont acceptees." })
+      return res.status(400).json({ error: "Seules les images sont acceptées." })
     }
 
     const payload = await storeImage({
@@ -928,7 +939,7 @@ app.post("/api/media/upload-image", firebaseAuth, mediaUpload.single("file"), as
     return res.json(payload)
   } catch (error) {
     console.error("Media upload failed:", error)
-    return res.status(500).json({ error: "Impossible de televerser cette image." })
+    return res.status(500).json({ error: "Impossible de téléverser cette image." })
   }
 })
 
@@ -943,13 +954,13 @@ app.post("/api/media/upload-video", firebaseAuth, mediaVideoUpload.single("file"
       return res.status(401).json({ error: "Utilisateur introuvable." })
     }
     if (!file || !file.buffer) {
-      return res.status(400).json({ error: "Aucun fichier video recu." })
+      return res.status(400).json({ error: "Aucun fichier vidéo reçu." })
     }
     if (!isAllowedVideoScope(scope)) {
       return res.status(400).json({ error: "Scope media invalide." })
     }
     if (!file.mimetype?.startsWith("video/")) {
-      return res.status(400).json({ error: "Seules les videos sont acceptees." })
+      return res.status(400).json({ error: "Seules les vidéos sont acceptées." })
     }
 
     const payload = await storeVideo({
@@ -966,7 +977,7 @@ app.post("/api/media/upload-video", firebaseAuth, mediaVideoUpload.single("file"
     return res.json(payload)
   } catch (error) {
     console.error("Video upload failed:", error)
-    return res.status(500).json({ error: "Impossible de televerser cette video." })
+    return res.status(500).json({ error: "Impossible de téléverser cette vidéo." })
   }
 })
 
@@ -985,7 +996,7 @@ app.post("/api/media/delete", firebaseAuth, async (req, res) => {
     return res.json({ ok: true })
   } catch (error) {
     console.error("Media delete failed:", error)
-    return res.status(400).json({ error: "Impossible de supprimer ce media." })
+    return res.status(400).json({ error: "Impossible de supprimer ce média." })
   }
 })
 
@@ -1007,7 +1018,7 @@ app.post("/api/custom-products/upload-digital-file", firebaseAuth, adminOnly, di
       return res.status(400).json({ error: "Identifiant produit manquant." })
     }
     if (files.length === 0) {
-      return res.status(400).json({ error: "Ajoute au moins un fichier numerique." })
+      return res.status(400).json({ error: "Ajoute au moins un fichier numérique." })
     }
 
     const uploadedFiles = files.map((file) =>
@@ -1022,7 +1033,7 @@ app.post("/api/custom-products/upload-digital-file", firebaseAuth, adminOnly, di
   } catch (error) {
     console.error("Digital file upload failed:", error)
     return res.status(error?.statusCode || 500).json({
-      error: error instanceof Error ? error.message : "Impossible de televerser ce fichier numerique.",
+      error: error instanceof Error ? error.message : "Impossible de téléverser ce fichier numérique.",
     })
   }
 })
@@ -1066,10 +1077,10 @@ app.post("/api/custom-products", firebaseAuth, adminOnly, (req, res) => {
     return res.json(next.map(toPublicCustomProduct))
   }
 
-  return res.status(400).json({ error: "Requete invalide." })
+  return res.status(400).json({ error: "Requête invalide." })
 })
 
-const sendResendEmail = async ({ to, subject, html, attachments, idempotencyKey }) => {
+const sendResendEmail = async ({ to, subject, html, text, attachments, idempotencyKey }) => {
   const resendApiKey = process.env.RESEND_API_KEY
   const from = process.env.EMAIL_FROM || "MeAndRituals <no-reply@example.com>"
   if (!resendApiKey) {
@@ -1078,6 +1089,21 @@ const sendResendEmail = async ({ to, subject, html, attachments, idempotencyKey 
   }
 
   try {
+    const normalizedAttachments = Array.isArray(attachments)
+      ? attachments.map((attachment) => {
+          const normalized = { ...attachment }
+          if (typeof attachment?.contentId === "string" && attachment.contentId) {
+            normalized.content_id = attachment.contentId
+            normalized.content_disposition = "inline"
+            delete normalized.contentId
+          }
+          if (typeof attachment?.contentType === "string" && attachment.contentType) {
+            normalized.content_type = attachment.contentType
+            delete normalized.contentType
+          }
+          return normalized
+        })
+      : undefined
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -1090,7 +1116,8 @@ const sendResendEmail = async ({ to, subject, html, attachments, idempotencyKey 
         to,
         subject,
         html,
-        ...(Array.isArray(attachments) && attachments.length > 0 ? { attachments } : {}),
+        ...(typeof text === "string" ? { text } : {}),
+        ...(Array.isArray(normalizedAttachments) && normalizedAttachments.length > 0 ? { attachments: normalizedAttachments } : {}),
       }),
     })
 
@@ -1122,22 +1149,156 @@ const sendResendEmail = async ({ to, subject, html, attachments, idempotencyKey 
   }
 }
 
+const renderEmailHeroImage = ({ attachment, contentId, alt, fallbackLabel }) =>
+  attachment
+    ? `<img src="cid:${contentId}" alt="${alt}" width="552" height="276" style="display:block;width:100%;max-width:552px;height:276px;object-fit:cover;border:0;outline:none;text-decoration:none;" />`
+    : `<div style="padding:120px 24px;background:#f1ece4;font-family:Arial,sans-serif;font-size:20px;font-weight:600;line-height:1.4;text-align:center;color:#000000;">${fallbackLabel}</div>`
+
+const renderEmailShell = ({
+  preheader,
+  homeUrl,
+  shopUrl,
+  aboutUrl,
+  contactUrl,
+  introHtml,
+  imageHtml,
+  ctaDescription,
+  ctaUrl,
+  ctaLabel,
+  extraContentHtml = "",
+  footerNote = "",
+}) => `
+  <div style="margin:0;padding:0;background:#f8f0e6;">
+    <div style="display:none;max-height:0;overflow:hidden;opacity:0;">
+      ${preheader}
+    </div>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;background:#f8f0e6;">
+      <tr>
+        <td align="center" style="padding:22px 14px 24px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:620px;background:#f8f0e6;border:1px solid rgba(0,0,0,0.18);">
+            <tr>
+              <td style="padding:0;background:#f8f0e6;border-bottom:1px solid rgba(0,0,0,0.18);">
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                  <tr>
+                    <td align="center" style="padding:18px 20px 16px;border-bottom:1px solid rgba(0,0,0,0.18);">
+                      <div style="font-family:Arial,sans-serif;font-size:11px;line-height:1.4;letter-spacing:2px;text-transform:uppercase;color:#000000;margin:0 0 10px;">
+                        MeAndRituals
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td align="center" style="padding:12px 10px 13px;">
+                      <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;">
+                        <tr>
+                          <td style="padding:4px 10px;">
+                            <a href="${homeUrl}" style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#000000;text-decoration:none;">
+                              Accueil
+                            </a>
+                          </td>
+                          <td style="padding:4px 10px;">
+                            <a href="${shopUrl}" style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#000000;text-decoration:none;">
+                              Boutique
+                            </a>
+                          </td>
+                          <td style="padding:4px 10px;">
+                            <a href="${aboutUrl}" style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#000000;text-decoration:none;">
+                              A propos
+                            </a>
+                          </td>
+                          <td style="padding:4px 10px;">
+                            <a href="${contactUrl}" style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#000000;text-decoration:none;">
+                              Contact
+                            </a>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td align="center" style="padding:28px 28px 10px;font-family:Arial,sans-serif;color:#000000;">
+                ${introHtml}
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:24px 28px 18px;">
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#f8f0e6;border:1px solid rgba(0,0,0,0.18);">
+                  <tr>
+                    <td style="padding:14px 14px 10px;">
+                      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border:1px solid rgba(0,0,0,0.18);background:#ffffff;">
+                        <tr>
+                          <td style="padding:0;">
+                            ${imageHtml}
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td align="center" style="padding:8px 28px 30px;font-family:Arial,sans-serif;color:#000000;">
+                <div style="width:84px;height:1px;background:#000000;margin:0 auto 20px;"></div>
+                <p style="margin:0 auto 20px;max-width:420px;font-size:15px;line-height:1.8;color:#000000;">
+                  ${ctaDescription}
+                </p>
+                <a href="${ctaUrl}" style="display:inline-block;padding:14px 26px;background:#e3d7ca;border:1px solid #000000;color:#000000;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
+                  ${ctaLabel}
+                </a>
+              </td>
+            </tr>
+            ${extraContentHtml}
+          </table>
+        </td>
+      </tr>
+      ${
+        footerNote
+          ? `
+      <tr>
+        <td align="center" style="padding:4px 16px 18px;font-family:Arial,sans-serif;color:#000000;font-size:12px;line-height:1.6;">
+          ${footerNote}
+        </td>
+      </tr>
+      `
+          : ""
+      }
+    </table>
+  </div>
+`
+
 const sendDownloadEmail = async ({ to, items, attachments, attachedPdfCount = 0, skippedPdfCount = 0, hasNonPdfFiles = false, sessionId }) => {
   const subject = "Merci pour ton achat | Tes fichiers MeAndRituals"
   const purchasesUrl = `${appBaseUrl}/mes-achats`
+  const homeUrl = `${appBaseUrl}/`
+  const shopUrl = `${appBaseUrl}/boutique`
+  const aboutUrl = `${appBaseUrl}/a-propos`
+  const contactUrl = `${appBaseUrl}/contact`
+  const preheader = "Merci pour ton achat. Tes fichiers sont prêts et tes PDF sont joints à cet email quand leur taille le permet."
+  const purchasePhotoPath = path.resolve(process.cwd(), "src", "assets", "email-perseverance.png")
+  const purchasePhotoAttachment = fs.existsSync(purchasePhotoPath)
+    ? {
+        content: fs.readFileSync(purchasePhotoPath).toString("base64"),
+        filename: "purchase-photo.png",
+        contentType: "image/png",
+        contentId: "purchase-photo",
+      }
+    : null
   const list = items
     .map(
       (item) =>
         `
           <tr>
             <td style="padding:0 0 14px;">
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border:1px solid #eadfce;border-radius:14px;background:#fcf8f2;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border:1px solid rgba(0,0,0,0.18);background:#ffffff;">
                 <tr>
-                  <td style="padding:16px 18px;font-family:Arial,sans-serif;color:#2b241c;">
-                    <p style="margin:0 0 6px;font-size:15px;line-height:1.5;font-weight:700;">${escapeHtml(item.label || item.productName)}</p>
-                    <p style="margin:0 0 14px;font-size:13px;line-height:1.6;color:#7c6c5a;">Lien securise valable 48 heures.</p>
-                    <a href="${item.downloadUrl}" style="display:inline-block;padding:10px 16px;border-radius:999px;background:#1f1b16;color:#ffffff;text-decoration:none;font-size:13px;font-weight:700;">
-                      Telecharger
+                  <td style="padding:16px 18px;font-family:Arial,sans-serif;color:#000000;">
+                    <p style="margin:0 0 6px;font-size:15px;line-height:1.6;font-weight:700;color:#000000;">${escapeHtml(item.label || item.productName)}</p>
+                    <p style="margin:0 0 14px;font-size:13px;line-height:1.7;color:#000000;">Lien sécurisé valable 48 heures.</p>
+                    <a href="${item.downloadUrl}" style="display:inline-block;padding:10px 16px;border:1px solid #000000;background:#e3d7ca;color:#000000;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
+                      Télécharger
                     </a>
                   </td>
                 </tr>
@@ -1149,71 +1310,191 @@ const sendDownloadEmail = async ({ to, items, attachments, attachedPdfCount = 0,
     .join("")
   const attachmentNote =
     attachedPdfCount > 0
-      ? `<p style="margin:0 0 12px;font-size:14px;line-height:1.7;color:#2b241c;">${attachedPdfCount} PDF ${attachedPdfCount > 1 ? "sont joints" : "est joint"} a cet email pour un acces immediat.</p>`
+      ? `<p style="margin:0 auto 14px;max-width:470px;font-size:15px;line-height:1.8;color:#000000;">${attachedPdfCount} PDF ${attachedPdfCount > 1 ? "sont joints" : "est joint"} à cet email pour un accès immédiat.</p>`
       : ""
   const skippedNote =
     skippedPdfCount > 0
-      ? `<p style="margin:0 0 12px;font-size:14px;line-height:1.7;color:#7a3d2b;">Certains PDF n'ont pas pu etre joints car ils sont trop volumineux pour un email. Utilise les liens de telechargement ci-dessous.</p>`
+      ? `<p style="margin:0 auto 14px;max-width:470px;font-size:15px;line-height:1.8;color:#000000;">Certains PDF n'ont pas pu être joints car ils sont trop volumineux pour un email. Utilise les liens de téléchargement ci-dessous.</p>`
       : ""
   const zipNote = hasNonPdfFiles
-    ? `<p style="margin:0 0 12px;font-size:14px;line-height:1.7;color:#2b241c;">Les fichiers ZIP ou autres ressources complementaires restent disponibles via les liens securises ci-dessous.</p>`
+    ? `<p style="margin:0 auto 14px;max-width:470px;font-size:15px;line-height:1.8;color:#000000;">Les fichiers ZIP ou autres ressources complémentaires restent disponibles via les liens sécurisés ci-dessous.</p>`
     : ""
-  const html = `
-    <div style="margin:0;padding:32px 16px;background:#fff8f1;">
-      <div style="display:none;max-height:0;overflow:hidden;opacity:0;">
-        Merci pour ton achat. Tes fichiers sont prets et tes PDF sont joints a cet email quand leur taille le permet.
-      </div>
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:620px;margin:0 auto;background:#ffffff;border:1px solid #f3e7d7;border-radius:18px;overflow:hidden;">
-        <tr>
-          <td style="padding:24px 28px;background:linear-gradient(135deg,#1f1b16 0%,#3a2f24 100%);">
-            <p style="margin:0;font-family:Arial,sans-serif;font-size:13px;letter-spacing:1px;color:#f8e7d0;text-transform:uppercase;">MeAndRituals</p>
-            <h1 style="margin:8px 0 0;font-family:Georgia,'Times New Roman',serif;font-size:28px;line-height:1.25;color:#ffffff;font-weight:600;">Merci pour ton achat</h1>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:28px 28px 20px;font-family:Arial,sans-serif;color:#2b241c;">
-            <p style="margin:0 0 14px;font-size:18px;line-height:1.4;font-weight:600;">Tes fichiers sont prets.</p>
-            <p style="margin:0 0 14px;font-size:15px;line-height:1.7;">
-              Merci pour ta commande sur MeAndRituals. Tu trouveras ci-dessous tes liens de telechargement securises.
-            </p>
-            ${attachmentNote}
-            ${skippedNote}
-            ${zipNote}
-            <p style="margin:0 0 20px;font-size:14px;line-height:1.7;color:#7c6c5a;">
-              Si besoin, tu peux aussi retrouver tes achats dans ton espace personnel.
-            </p>
-            <a href="${purchasesUrl}" style="display:inline-block;padding:12px 20px;border-radius:999px;background:#d6b98c;color:#1f1b16;text-decoration:none;font-size:14px;font-weight:700;">
-              Ouvrir mes achats
-            </a>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:0 28px 8px;">
-            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-              ${list}
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:18px 28px 24px;border-top:1px solid #f2ece4;font-family:Arial,sans-serif;color:#7c6c5a;font-size:12px;line-height:1.7;">
-            Les liens ci-dessus expirent dans 48 heures. Si un lien a expire, reconnecte-toi a ton compte et ouvre la page Mes achats.
-          </td>
-        </tr>
-      </table>
-    </div>
-  `
+  const html = renderEmailShell({
+    preheader,
+    homeUrl,
+    shopUrl,
+    aboutUrl,
+    contactUrl,
+    introHtml: `
+      <p style="margin:0 0 14px;font-size:28px;line-height:1.2;font-weight:700;color:#000000;">Merci pour ton achat,</p>
+      <p style="margin:0 auto 14px;max-width:470px;font-size:15px;line-height:1.8;color:#000000;">
+        Tes fichiers sont prêts. Merci pour ta commande sur MeAndRituals.
+      </p>
+      <p style="margin:0 auto 14px;max-width:470px;font-size:15px;line-height:1.8;color:#000000;">
+        Tu trouveras ci-dessous tes liens de téléchargement sécurisés ainsi que l'accès à la page Mes achats pour retrouver tout ton contenu.
+      </p>
+      ${attachmentNote}
+      ${skippedNote}
+      ${zipNote}
+    `,
+    imageHtml: renderEmailHeroImage({
+      attachment: purchasePhotoAttachment,
+      contentId: "purchase-photo",
+      alt: "Photo achat",
+      fallbackLabel: "Photo achat",
+    }),
+    ctaDescription: "Retrouve dès maintenant tous tes fichiers et tes liens de téléchargement.",
+    ctaUrl: purchasesUrl,
+    ctaLabel: "Ouvrir mes achats",
+    extraContentHtml: `
+      <tr>
+        <td style="padding:0 28px 10px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+            ${list}
+          </table>
+        </td>
+      </tr>
+    `,
+    footerNote: "Les liens ci-dessus expirent dans 48 heures. Si un lien a expiré, reconnecte-toi à ton compte et ouvre la page Mes achats.",
+  })
 
   await sendResendEmail({
     to,
     subject,
     html,
-    attachments,
+    attachments: [
+      ...(purchasePhotoAttachment ? [purchasePhotoAttachment] : []),
+      ...(Array.isArray(attachments) ? attachments : []),
+    ],
     idempotencyKey: sessionId ? `purchase-email:${sessionId}` : undefined,
+  })
+}
+
+const sendContactEmail = async ({ firstName, lastName, email, subject, message, origin, ip }) => {
+  const safeFirstName = sanitizeText(firstName, 80)
+  const safeLastName = sanitizeText(lastName, 80)
+  const safeEmail = normalizeEmailValue(email)
+  const safeSubject = sanitizeText(subject, 160)
+  const safeMessage = sanitizeText(message, 5000)
+  const senderName = [safeFirstName, safeLastName].filter(Boolean).join(" ")
+  const messageHtml = escapeHtml(safeMessage).replace(/\r?\n/g, "<br />")
+  const html = `
+    <div style="margin:0;padding:32px 16px;background:#f7f3ee;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:640px;margin:0 auto;background:#ffffff;border:1px solid #e8ddd1;">
+        <tr>
+          <td style="padding:24px 28px;background:#1f1b16;color:#ffffff;">
+            <p style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#d9c6b1;">MeAndRituals</p>
+            <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:28px;line-height:1.2;font-weight:600;">Nouveau message de contact</h1>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:28px;font-family:Arial,sans-serif;color:#2b241c;">
+            <p style="margin:0 0 18px;font-size:15px;line-height:1.7;">Un message a été envoyé depuis le formulaire de contact du site.</p>
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;">
+              <tr>
+                <td style="padding:0 0 10px;font-size:13px;font-weight:700;width:120px;">Nom</td>
+                <td style="padding:0 0 10px;font-size:14px;">${escapeHtml(senderName || "-")}</td>
+              </tr>
+              <tr>
+                <td style="padding:0 0 10px;font-size:13px;font-weight:700;width:120px;">Email</td>
+                <td style="padding:0 0 10px;font-size:14px;">${escapeHtml(safeEmail)}</td>
+              </tr>
+              <tr>
+                <td style="padding:0 0 10px;font-size:13px;font-weight:700;width:120px;">Sujet</td>
+                <td style="padding:0 0 10px;font-size:14px;">${escapeHtml(safeSubject)}</td>
+              </tr>
+              <tr>
+                <td style="padding:0 0 10px;font-size:13px;font-weight:700;width:120px;vertical-align:top;">Message</td>
+                <td style="padding:0 0 10px;font-size:14px;line-height:1.7;">${messageHtml}</td>
+              </tr>
+              <tr>
+                <td style="padding:10px 0 0;font-size:12px;font-weight:700;width:120px;vertical-align:top;color:#6f6256;">Origine</td>
+                <td style="padding:10px 0 0;font-size:12px;color:#6f6256;">${escapeHtml(origin || "inconnue")} | ${escapeHtml(ip || "ip inconnue")}</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+  `
+  const text = [
+    "Nouveau message de contact MeAndRituals",
+    "",
+    `Nom: ${senderName || "-"}`,
+    `Email: ${safeEmail}`,
+    `Sujet: ${safeSubject}`,
+    "",
+    safeMessage,
+    "",
+    `Origine: ${origin || "inconnue"}`,
+    `IP: ${ip || "ip inconnue"}`,
+  ].join("\n")
+
+  return sendResendEmail({
+    to: contactRecipientEmail,
+    subject: `Contact site | ${safeSubject}`,
+    html,
+    text,
+    idempotencyKey: `contact:${crypto.createHash("sha256").update(`${safeEmail}|${safeSubject}|${safeMessage}`).digest("hex")}`,
   })
 }
 
 const sanitizeName = (value) => String(value || "").replace(/[<>&"']/g, "")
 const normalizeEmailValue = (value) => String(value || "").trim().toLowerCase()
+
+const resolveUserMediaDirectory = (uid) => {
+  const safeUid = sanitizeText(uid, 128)
+  if (!safeUid) {
+    return null
+  }
+
+  const usersRoot = path.resolve(mediaRootDir, "users")
+  const userMediaDir = path.resolve(usersRoot, safeUid)
+  if (!userMediaDir.startsWith(`${usersRoot}${path.sep}`)) {
+    throw new Error("invalid-user-media-directory")
+  }
+
+  return userMediaDir
+}
+
+const listFirestoreUserTargets = async ({ adminDb, email, uid }) => {
+  const usersCollection = adminDb.collection("users")
+  const targets = new Map()
+
+  if (uid) {
+    targets.set(uid, usersCollection.doc(uid))
+  }
+
+  const [emailLowerSnapshot, emailSnapshot] = await Promise.all([
+    usersCollection.where("emailLower", "==", email).get(),
+    usersCollection.where("email", "==", email).get(),
+  ])
+
+  emailLowerSnapshot.docs.forEach((docSnap) => targets.set(docSnap.id, docSnap.ref))
+  emailSnapshot.docs.forEach((docSnap) => targets.set(docSnap.id, docSnap.ref))
+
+  return Array.from(targets.entries()).map(([id, ref]) => ({ id, ref }))
+}
+
+const deleteUserMediaDirectories = async (userIds) => {
+  const uniqueIds = Array.from(new Set((Array.isArray(userIds) ? userIds : []).map((entry) => sanitizeText(entry, 128)).filter(Boolean)))
+
+  if (uniqueIds.length === 0) {
+    return false
+  }
+
+  await Promise.all(
+    uniqueIds.map(async (uid) => {
+      const userMediaDir = resolveUserMediaDirectory(uid)
+      if (!userMediaDir) {
+        return
+      }
+      await fsPromises.rm(userMediaDir, { recursive: true, force: true })
+    }),
+  )
+
+  return true
+}
 
 const normalizePurchaseRecord = (entry, existingRecord) => {
   const sessionId = sanitizeText(entry?.sessionId || existingRecord?.sessionId, 255)
@@ -1403,109 +1684,104 @@ const sendWelcomeEmail = async ({ to, firstName }) => {
   const subject = "Bienvenue sur MeAndRituals"
   const greeting = safeFirstName ? `Bienvenue ${safeFirstName},` : "Bienvenue,"
   const loginUrl = `${appBaseUrl}/login`
+  const homeUrl = `${appBaseUrl}/`
+  const shopUrl = `${appBaseUrl}/boutique`
+  const aboutUrl = `${appBaseUrl}/a-propos`
+  const contactUrl = `${appBaseUrl}/contact`
   const preheader = "Bienvenue sur MeAndRituals."
-  const welcomePhotoPath = path.resolve(process.cwd(), "src", "assets", "Photo bienvenue.jpeg")
-  const welcomePhotoSrc = fs.existsSync(welcomePhotoPath)
-    ? `data:image/jpeg;base64,${fs.readFileSync(welcomePhotoPath).toString("base64")}`
-    : ""
-  const html = `
-    <div style="margin:0;padding:0;background:#f8f0e6;">
-      <div style="display:none;max-height:0;overflow:hidden;opacity:0;">
-        ${preheader}
-      </div>
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;background:#f8f0e6;">
-        <tr>
-          <td align="center" style="padding:28px 16px 32px;">
-            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:620px;background:#f8f0e6;">
-              <tr>
-                <td style="padding:0;background:#ffffff;border:1px solid rgba(0,0,0,0.12);">
-                  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-                    <tr>
-                      <td align="center" style="padding:22px 20px 20px;border-bottom:1px solid rgba(0,0,0,0.12);">
-                        <div style="font-family:Georgia,'Times New Roman',serif;font-size:46px;line-height:1;color:#000000;font-style:italic;">
-                          Me& rituals
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td align="center" style="padding:14px 12px;">
-                        <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                          <tr>
-                            <td style="padding:8px 14px;background:#e7d3bc;font-family:Arial,sans-serif;font-size:14px;font-weight:700;color:#000000;">
-                              Accueil
-                            </td>
-                            <td style="padding:8px 14px;font-family:Arial,sans-serif;font-size:14px;font-weight:600;color:#4b5563;">
-                              Boutique
-                            </td>
-                            <td style="padding:8px 14px;font-family:Arial,sans-serif;font-size:14px;font-weight:600;color:#4b5563;">
-                              Panier
-                            </td>
-                            <td style="padding:8px 14px;font-family:Arial,sans-serif;font-size:14px;font-weight:600;color:#4b5563;">
-                              Mes achats
-                            </td>
-                            <td style="padding:8px 14px;font-family:Arial,sans-serif;font-size:14px;font-weight:600;color:#4b5563;">
-                              A propos
-                            </td>
-                            <td style="padding:8px 14px;font-family:Arial,sans-serif;font-size:14px;font-weight:600;color:#4b5563;">
-                              Contact
-                            </td>
-                          </tr>
-                        </table>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-              <tr>
-                <td style="padding:28px 0 0;font-family:Arial,sans-serif;color:#000000;">
-                  <p style="margin:0 0 14px;font-size:22px;line-height:1.4;font-weight:700;">${greeting}</p>
-                  <p style="margin:0 0 18px;font-size:15px;line-height:1.8;color:#000000;">
-                    Merci d'avoir cree ton compte. Ton espace MeAndRituals est pret.
-                  </p>
-                  <p style="margin:0 0 22px;font-size:15px;line-height:1.8;color:#000000;">
-                    Tu peux maintenant retrouver ton planning, tes routines et tes objectifs dans un seul espace.
-                  </p>
-                </td>
-              </tr>
-              <tr>
-                <td style="padding:0 0 24px;">
-                  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#ffffff;border:1px solid rgba(0,0,0,0.12);">
-                    <tr>
-                      <td style="padding:18px 18px 16px;">
-                        ${
-                          welcomePhotoSrc
-                            ? `<img src="${welcomePhotoSrc}" alt="Photo bienvenue" width="584" style="display:block;width:100%;max-width:584px;height:auto;border:0;outline:none;text-decoration:none;" />`
-                            : `<div style="padding:120px 24px;background:#f8f0e6;font-family:Arial,sans-serif;font-size:20px;font-weight:600;line-height:1.4;text-align:center;color:#000000;">Photo bienvenue</div>`
-                        }
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-              <tr>
-                <td style="padding:0 0 22px;font-family:Arial,sans-serif;color:#000000;">
-                  <p style="margin:0 0 22px;font-size:15px;line-height:1.8;color:#000000;">
-                    Commence des maintenant et accede a ton espace personnel.
-                  </p>
-                  <a href="${loginUrl}" style="display:inline-block;padding:14px 24px;border-radius:0;background:#000000;color:#ffffff;text-decoration:none;font-size:14px;font-weight:700;">
-                    Acceder a MeAndRituals
-                  </a>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td align="center" style="padding:6px 16px 26px;font-family:Arial,sans-serif;color:#6b7280;font-size:12px;line-height:1.6;">
-            Cet email est envoye automatiquement a la creation de ton compte.
-          </td>
-        </tr>
-      </table>
-    </div>
-  `
+  const welcomePhotoPath = path.resolve(process.cwd(), "src", "assets", "email-perseverance.png")
+  const welcomePhotoAttachment = fs.existsSync(welcomePhotoPath)
+    ? {
+        content: fs.readFileSync(welcomePhotoPath).toString("base64"),
+        filename: "welcome-photo.png",
+        contentType: "image/png",
+        contentId: "welcome-photo",
+      }
+    : null
+  const html = renderEmailShell({
+    preheader,
+    homeUrl,
+    shopUrl,
+    aboutUrl,
+    contactUrl,
+    introHtml: `
+      <p style="margin:0 0 14px;font-size:28px;line-height:1.2;font-weight:700;color:#000000;">${greeting}</p>
+      <p style="margin:0 auto 14px;max-width:470px;font-size:15px;line-height:1.8;color:#000000;">
+        Je suis ravie de te compter parmi nous. Tu viens de rejoindre un espace pens&eacute; pour t&rsquo;accompagner au quotidien, que ce soit pour organiser tes s&eacute;ances de sport, planifier tes repas, g&eacute;rer ta wishlist ou simplement structurer tes envies et tes objectifs.
+      </p>
+      <p style="margin:0 auto 14px;max-width:470px;font-size:15px;line-height:1.8;color:#000000;">
+        Ici, tout est con&ccedil;u pour te simplifier la vie et t&rsquo;aider &agrave; rester motiv&eacute;e, organis&eacute;e et inspir&eacute;e.
+      </p>
+      <p style="margin:0 auto 14px;max-width:470px;font-size:15px;line-height:1.8;color:#000000;">
+        Prends le temps de d&eacute;couvrir les diff&eacute;rentes fonctionnalit&eacute;s, personnalise ton espace selon tes besoins et fais-en un outil qui te ressemble vraiment.
+      </p>
+      <p style="margin:0 auto;max-width:470px;font-size:15px;line-height:1.8;color:#000000;">
+        Si tu as la moindre question ou besoin d&rsquo;aide, je suis l&agrave; pour toi.
+      </p>
+    `,
+    imageHtml: renderEmailHeroImage({
+      attachment: welcomePhotoAttachment,
+      contentId: "welcome-photo",
+      alt: "Photo bienvenue",
+      fallbackLabel: "Photo bienvenue",
+    }),
+    ctaDescription: "Commence d&egrave;s maintenant et simplifie ton quotidien",
+    ctaUrl: loginUrl,
+    ctaLabel: "Acc&eacute;der &agrave; mon espace",
+    footerNote: "Cet email est envoyé automatiquement à la création de ton compte.",
+  })
 
-  return sendResendEmail({ to, subject, html })
+  return sendResendEmail({
+    to,
+    subject,
+    html,
+    attachments: welcomePhotoAttachment ? [welcomePhotoAttachment] : undefined,
+  })
 }
+
+app.post("/api/email/contact", async (req, res) => {
+  try {
+    const firstName = sanitizeText(req.body?.firstName, 80)
+    const lastName = sanitizeText(req.body?.lastName, 80)
+    const email = normalizeEmailValue(req.body?.email)
+    const subject = sanitizeText(req.body?.subject, 160)
+    const message = sanitizeText(req.body?.message, 5000)
+    const website = sanitizeText(req.body?.website, 120)
+
+    if (website) {
+      return res.json({ ok: true })
+    }
+    if (!firstName || !lastName || !email || !subject || !message) {
+      return res.status(400).json({ error: "Tous les champs du formulaire sont requis." })
+    }
+    if (!isValidEmailAddress(email)) {
+      return res.status(400).json({ error: "Adresse e-mail invalide." })
+    }
+    if (!process.env.RESEND_API_KEY) {
+      return res.status(503).json({ error: "Le service d'envoi d'e-mails n'est pas configuré." })
+    }
+
+    const delivery = await sendContactEmail({
+      firstName,
+      lastName,
+      email,
+      subject,
+      message,
+      origin: req.headers.origin || req.headers.referer || appBaseUrl,
+      ip: req.ip || req.socket?.remoteAddress || "unknown",
+    })
+
+    return res.json({
+      ok: true,
+      message: "Message envoyé.",
+      emailId: delivery?.id ?? null,
+      to: contactRecipientEmail,
+    })
+  } catch (error) {
+    console.error("Contact email failed:", error)
+    return res.status(500).json({ error: "Impossible d'envoyer ton message pour le moment." })
+  }
+})
 
 app.post("/api/email/welcome", firebaseAuth, async (req, res) => {
   try {
@@ -1543,13 +1819,94 @@ app.post("/api/email/welcome/admin-resend", firebaseAuth, adminOnly, async (req,
     })
     return res.json({
       ok: true,
-      message: "E-mail de bienvenue envoye.",
+      message: "E-mail de bienvenue envoyé.",
       emailId: delivery?.id ?? null,
       to,
     })
   } catch (error) {
     console.error("Admin welcome email resend failed:", error)
     return res.status(500).json({ error: "Impossible de renvoyer l'email de bienvenue." })
+  }
+})
+
+app.post("/api/admin/users/delete", firebaseAuth, adminOnly, async (req, res) => {
+  if (!isFirebaseAdminConfigured) {
+    return res.status(503).json({
+      error:
+        "La suppression complete des comptes n'est pas configuree sur le serveur. Ajoute une configuration Firebase Admin.",
+    })
+  }
+
+  try {
+    const email = normalizeEmailValue(req.body?.email)
+    const requesterEmail = normalizeEmailValue(req.user?.email)
+
+    if (!email || !isValidEmailAddress(email)) {
+      return res.status(400).json({ error: "Adresse e-mail invalide." })
+    }
+
+    if (requesterEmail && requesterEmail === email) {
+      return res.status(400).json({ error: "Utilise la suppression de compte depuis tes parametres." })
+    }
+
+    const adminAuth = getFirebaseAdminAuth()
+    const adminDb = getFirebaseAdminDb()
+
+    let authUser = null
+    try {
+      authUser = await adminAuth.getUserByEmail(email)
+    } catch (error) {
+      if (!(error && typeof error === "object" && "code" in error && error.code === "auth/user-not-found")) {
+        throw error
+      }
+    }
+
+    const authUid = sanitizeText(authUser?.uid, 128)
+    const firestoreTargets = await listFirestoreUserTargets({
+      adminDb,
+      email,
+      uid: authUid,
+    })
+
+    if (!authUid && firestoreTargets.length === 0) {
+      return res.status(404).json({ error: "Utilisateur introuvable." })
+    }
+
+    let authDeleted = false
+    if (authUid) {
+      await adminAuth.deleteUser(authUid)
+      authDeleted = true
+    }
+
+    let firestoreDeleted = false
+    if (firestoreTargets.length > 0) {
+      await Promise.all(firestoreTargets.map(({ ref }) => adminDb.recursiveDelete(ref)))
+      firestoreDeleted = true
+    }
+
+    const mediaDeleted = await deleteUserMediaDirectories([
+      authUid,
+      ...firestoreTargets.map(({ id }) => id),
+    ])
+
+    console.log("Admin user deleted", {
+      requestedBy: req.user?.email ?? req.user?.uid ?? "unknown",
+      email,
+      uid: authUid || null,
+      authDeleted,
+      firestoreDeleted,
+      mediaDeleted,
+    })
+
+    return res.json({
+      ok: true,
+      authDeleted,
+      firestoreDeleted,
+      mediaDeleted,
+    })
+  } catch (error) {
+    console.error("Admin user delete failed:", error)
+    return res.status(500).json({ error: "Impossible de supprimer completement ce compte." })
   }
 })
 app.post("/api/create-checkout-session", firebaseAuth, async (req, res) => {
@@ -1573,8 +1930,8 @@ app.post("/api/create-checkout-session", firebaseAuth, async (req, res) => {
       const firstOwnedProduct = getCatalogProductOrThrow(alreadyOwnedItems[0].productId)
       const errorMessage =
         alreadyOwnedItems.length > 1
-          ? "Un ou plusieurs produits de ce panier ont deja ete achetes. Retire-les du panier ou ouvre Mes achats."
-          : `${firstOwnedProduct.name} a deja ete achete. Retrouve-le dans Mes achats.`
+          ? "Un ou plusieurs produits de ce panier ont déjà été achetés. Retire-les du panier ou ouvre Mes achats."
+          : `${firstOwnedProduct.name} a déjà été acheté. Retrouve-le dans Mes achats.`
 
       return res.status(409).json({ error: errorMessage })
     }
@@ -1614,7 +1971,7 @@ app.post("/api/create-checkout-session", firebaseAuth, async (req, res) => {
   } catch (error) {
     console.error("Checkout session error:", error)
     return res.status(error?.statusCode || 500).json({
-      error: error instanceof Error ? error.message : "Impossible de creer la session de paiement.",
+      error: error instanceof Error ? error.message : "Impossible de créer la session de paiement.",
     })
   }
 })
@@ -1632,7 +1989,7 @@ app.get("/api/checkout-session", firebaseAuth, async (req, res) => {
     const session = await stripe.checkout.sessions.retrieve(sessionId)
     const sessionOwnerUid = getSessionOwnerUid(session)
     if (!sessionOwnerUid || sessionOwnerUid !== uid) {
-      return res.status(403).json({ error: "Cette session de paiement n'appartient pas a ce compte." })
+      return res.status(403).json({ error: "Cette session de paiement n'appartient pas à ce compte." })
     }
     if (session.payment_status !== "paid") {
       return res.status(200).json({ paid: false })
@@ -1661,7 +2018,7 @@ app.get("/api/checkout-session", firebaseAuth, async (req, res) => {
     })
   } catch (error) {
     console.error("Checkout session lookup error:", error)
-    return res.status(500).json({ error: "Impossible de verifier le paiement." })
+    return res.status(500).json({ error: "Impossible de vérifier le paiement." })
   }
 })
 
@@ -1692,7 +2049,7 @@ app.get("/api/download", (req, res) => {
     return res.status(403).send("Lien expire ou invalide.")
   }
   if (!hasPaidPurchaseAccess({ uid: payload.uid, sessionId: payload.sessionId, productId: payload.productId })) {
-    return res.status(403).send("Acces refuse.")
+    return res.status(403).send("Accès refusé.")
   }
 
   let product
@@ -1778,7 +2135,7 @@ app.use((error, req, res, next) => {
     return res.status(400).json({ error: "Upload invalide." })
   }
   if (error?.type === "entity.too.large") {
-    return res.status(413).json({ error: "Payload trop volumineux pour cette requete." })
+    return res.status(413).json({ error: "Payload trop volumineux pour cette requête." })
   }
   return next(error)
 })

@@ -640,14 +640,53 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     if (currentEmail && normalizeEmail(currentEmail) === normalizeEmail(email)) {
       return { success: false, error: "Utilise la suppression de compte depuis tes paramètres." }
     }
+
+    const currentUser = auth.currentUser
+    if (!currentUser) {
+      return { success: false, error: "Tu dois etre connecte pour effectuer cette action." }
+    }
+
     try {
-      const targetDoc = await loadAdminUserByEmail(email)
-      if (!targetDoc) {
-        return { success: false, error: "Utilisateur introuvable." }
+      const normalizedEmail = normalizeEmail(email)
+      const token = await currentUser.getIdToken()
+      const response = await fetch(buildApiUrl("/api/admin/users/delete"), {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: normalizedEmail,
+        }),
+      })
+
+      if (!response.ok) {
+        let reason = `status ${response.status}`
+        try {
+          const payload = (await response.json()) as { error?: string }
+          if (payload?.error) {
+            reason = payload.error
+          }
+        } catch {
+          // ignore malformed response bodies
+        }
+        console.error("Admin delete failed", {
+          email: normalizedEmail,
+          status: response.status,
+          reason,
+        })
+        return { success: false, error: reason }
       }
-      await deleteDoc(targetDoc.ref)
+
       return { success: true }
     } catch (error) {
+      if (error instanceof TypeError) {
+        console.error("Admin delete network error", {
+          email,
+          target: getApiTargetLabel(),
+        })
+        return { success: false, error: `Serveur admin inaccessible (${getApiTargetLabel()}).` }
+      }
       console.error("Admin delete failed", error)
       return { success: false, error: "Suppression impossible avec les droits actuels." }
     }

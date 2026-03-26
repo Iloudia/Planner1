@@ -31,7 +31,7 @@ const ThankYouPage = () => {
     }
 
     if (!isAuthenticated) {
-      setStatus({ paid: false, error: "Reconnecte-toi pour retrouver tes t�l�chargements." })
+      setStatus({ paid: false, error: "Reconnecte-toi pour retrouver tes téléchargements." })
       return
     }
 

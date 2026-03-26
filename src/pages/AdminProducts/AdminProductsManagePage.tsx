@@ -121,7 +121,7 @@ const AdminProductsManagePage = () => {
       return
     }
 
-    const features = draft.features?.length ? draft.features : ["Ressource digitale", "Acces immediat", "Usage commercial autorise"]
+    const features = draft.features?.length ? draft.features : ["Ressource digitale", "Accès immédiat", "Usage commercial autorisé"]
     const gallery = draft.gallery?.length ? [...draft.gallery] : []
     const normalizedGallery = draft.image
       ? [draft.image, ...gallery.filter((img) => img !== draft.image)]
@@ -141,8 +141,8 @@ const AdminProductsManagePage = () => {
             endsAt: draft.promotion.endsAt || undefined,
           }
         : undefined,
-      benefit: draft.benefit?.trim() || draft.description?.trim().slice(0, 90) || "Nouvelle ressource a decouvrir.",
-      description: draft.description?.trim() || "Description a completer.",
+      benefit: draft.benefit?.trim() || draft.description?.trim().slice(0, 90) || "Nouvelle ressource à découvrir.",
+      description: draft.description?.trim() || "Description à compléter.",
       features,
       gallery: normalizedGallery.length > 0 ? normalizedGallery : draft.gallery,
     }
@@ -156,14 +156,14 @@ const AdminProductsManagePage = () => {
     <div className="boutique-page admin-products-page admin-products-manage-page">
       <header className="admin-products-hero">
         <div>
-          <h1>Produits publies</h1>
-          <p>Modifie ou supprime les fiches produits deja publiees.</p>
+          <h1>Produits publiés</h1>
+          <p>Modifie ou supprime les fiches produits déjà publiées.</p>
         </div>
       </header>
 
       {sortedProducts.length === 0 ? (
         <section className="admin-products-panel admin-products-empty">
-          <p>Aucune fiche publiee pour le moment.</p>
+          <p>Aucune fiche publiée pour le moment.</p>
         </section>
       ) : (
         <section className="admin-products-panel admin-products-list">
@@ -203,13 +203,13 @@ const AdminProductsManagePage = () => {
             <div>
               <p>Modifier la fiche</p>
             </div>
-            <p className="admin-products-helper">Mets a jour les informations du produit.</p>
+            <p className="admin-products-helper">Mets à jour les informations du produit.</p>
           </header>
 
           <div className="admin-products-edit__grid">
             <div className="admin-products-edit__media">
               <div className="admin-products-edit__preview">
-                {imagePreview ? <img src={imagePreview} alt="Apercu" /> : <span>Aucune image</span>}
+                {imagePreview ? <img src={imagePreview} alt="Aperçu" /> : <span>Aucune image</span>}
               </div>
               <button type="button" className="boutique-button boutique-button--ghost" onClick={() => fileInputRef.current?.click()}>
                 Changer la photo
@@ -363,7 +363,7 @@ const AdminProductsManagePage = () => {
                 />
               </div>
               <div className="admin-products-field">
-                <label htmlFor="edit-category">Categorie</label>
+                <label htmlFor="edit-category">Catégorie</label>
                 <select
                   id="edit-category"
                   value={draft.mockup}
@@ -399,7 +399,7 @@ const AdminProductsManagePage = () => {
                 />
               </div>
               <div className="admin-products-field">
-                <label htmlFor="edit-features">Details (1 par ligne)</label>
+                <label htmlFor="edit-features">Détails (1 par ligne)</label>
                 <textarea
                   id="edit-features"
                   rows={4}

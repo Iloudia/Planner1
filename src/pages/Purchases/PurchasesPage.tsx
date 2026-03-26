@@ -76,7 +76,7 @@ const PurchasesPage = () => {
     <div className="boutique-page purchases-page">
       <section className="purchases-hero">
         <div>
-          <span className="boutique-eyebrow">Bibliotheque</span>
+          <span className="boutique-eyebrow">Bibliothèque</span>
           <h1>Mes achats</h1>
           <p>Retrouve ici tous les produits que tu as acheté.</p>
         </div>
@@ -89,12 +89,12 @@ const PurchasesPage = () => {
         <section className="purchases-empty">
           <p className="boutique-checkout-error">{error}</p>
           <Link to="/boutique" className="boutique-button boutique-button--primary">
-            Revenir a la boutique
+            Revenir à la boutique
           </Link>
         </section>
       ) : items.length === 0 ? (
         <section className="purchases-empty">
-          <p>Tu n'as pas encore de produit digital debloque.</p>
+          <p>Tu n'as pas encore de produit digital débloqué.</p>
           <Link to="/boutique" className="boutique-button boutique-button--primary">
             Voir la boutique
           </Link>
@@ -110,7 +110,7 @@ const PurchasesPage = () => {
                 <div className="purchases-card__header">
                   <div>
                     <h2>{item.title}</h2>
-                    <p>Achete le {formatPurchasedAt(item.purchasedAt)}</p>
+                    <p>Acheté le {formatPurchasedAt(item.purchasedAt)}</p>
                   </div>
                   <div className="purchases-card__meta">
                     <span>{item.price}</span>
@@ -120,7 +120,7 @@ const PurchasesPage = () => {
                 <div className="purchases-card__downloads">
                   {item.downloads.map((download) => (
                     <a key={download.downloadUrl} href={download.downloadUrl} className="boutique-button boutique-button--primary">
-                      Telecharger {download.label || download.productName}
+                      Télécharger
                     </a>
                   ))}
                 </div>

@@ -1,5 +1,5 @@
 import { auth } from "../../utils/firebase"
-import { buildApiUrl, getApiTargetLabel, resolvePublicUrl } from "../../utils/apiUrl"
+import { fetchApi, getApiTargetLabel, resolvePublicUrl } from "../../utils/apiUrl"
 
 export type ImageUploadScope =
   | "profile-photo"
@@ -29,7 +29,7 @@ export const resolveMediaUrl = (value: string) => {
 
 const parseErrorMessage = async (response: Response, fallback: string) => {
   if (response.status === 413) {
-    return "Fichier trop volumineux pour l'upload. Reduis sa taille puis reessaie."
+    return "Fichier trop volumineux pour l'upload. Réduis sa taille puis réessaie."
   }
 
   try {
@@ -56,7 +56,7 @@ const parseErrorMessage = async (response: Response, fallback: string) => {
 const buildAuthHeaders = async () => {
   const user = auth.currentUser
   if (!user) {
-    throw new Error("Utilisateur non connecte.")
+    throw new Error("Utilisateur non connecté.")
   }
   const token = await user.getIdToken()
   return {
@@ -74,7 +74,7 @@ const uploadMedia = async (file: File, scope: string, endpoint: string, fallback
   }
 
   try {
-    const response = await fetch(buildApiUrl(endpoint), {
+    const response = await fetchApi(endpoint, {
       method: "POST",
       headers,
       body: formData,
@@ -82,7 +82,7 @@ const uploadMedia = async (file: File, scope: string, endpoint: string, fallback
 
     if (!response.ok) {
       if (response.status === 404) {
-        throw new Error(`La route ${endpoint} est introuvable sur l'API configuree. Le serveur doit etre redeploye ou redemarre.`)
+        throw new Error(`La route ${endpoint} est introuvable sur l'API configurée. Le serveur doit être redéployé ou redémarré.`)
       }
       throw new Error(await parseErrorMessage(response, fallbackMessage))
     }
@@ -101,15 +101,15 @@ const uploadMedia = async (file: File, scope: string, endpoint: string, fallback
 }
 
 export const uploadImage = async (file: File, scope: ImageUploadScope, entityId?: string) =>
-  uploadMedia(file, scope, "/api/media/upload-image", "Impossible de televerser cette image.", entityId)
+  uploadMedia(file, scope, "/api/media/upload-image", "Impossible de téléverser cette image.", entityId)
 
 export const uploadVideo = async (file: File, scope: VideoUploadScope, entityId?: string) =>
-  uploadMedia(file, scope, "/api/media/upload-video", "Impossible de televerser cette video.", entityId)
+  uploadMedia(file, scope, "/api/media/upload-video", "Impossible de téléverser cette vidéo.", entityId)
 
 export const deleteMedia = async (path: string) => {
   const headers = await buildAuthHeaders()
   try {
-    const response = await fetch(buildApiUrl("/api/media/delete"), {
+    const response = await fetchApi("/api/media/delete", {
       method: "POST",
       headers: {
         ...headers,

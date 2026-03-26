@@ -67,7 +67,7 @@
   max-width: none;
   margin: 0;
   height: 860px;
-  object-fit: cover;
+  object-fit: contain;
   box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
   display: block;
 }

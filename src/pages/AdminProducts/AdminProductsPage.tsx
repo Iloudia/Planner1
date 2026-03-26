@@ -12,9 +12,9 @@ type MediaFile = { name: string; url: string; type: "image" | "video"; file?: Fi
 const mockCategories = ["Ebook", "Mignature", "Carrousels", "Visionboard"]
 const CATEGORY_PLACEHOLDER = "Choisir une catégorie"
 const MAX_IMAGES = 4
-const MAX_IMAGE_SIZE_BYTES = 60 * 1024 * 1024
-const MAX_VIDEO_SIZE_BYTES = 60 * 1024 * 1024
-const MAX_DIGITAL_FILE_SIZE_BYTES = 60 * 1024 * 1024
+const MAX_IMAGE_SIZE_BYTES = 500 * 1024 * 1024
+const MAX_VIDEO_SIZE_BYTES = 500 * 1024 * 1024
+const MAX_DIGITAL_FILE_SIZE_BYTES = 500 * 1024 * 1024
 const categoriesWithoutShippingPanel = new Set(["Ebook", "Mignature", "Carrousels", "Visionboard"])
 
 const formatFileSizeMb = (bytes: number) => `${(bytes / (1024 * 1024)).toFixed(0)} Mo`

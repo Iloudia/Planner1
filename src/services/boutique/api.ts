@@ -1,5 +1,5 @@
 import { auth } from "../../utils/firebase"
-import { buildApiUrl, getApiTargetLabel } from "../../utils/apiUrl"
+import { fetchApi, getApiTargetLabel } from "../../utils/apiUrl"
 import type { BoutiqueDigitalFile } from "../../models/product.model"
 
 const parseErrorMessage = async (response: Response, fallback: string) => {
@@ -27,7 +27,7 @@ const parseErrorMessage = async (response: Response, fallback: string) => {
 const buildAuthHeaders = async () => {
   const user = auth.currentUser
   if (!user) {
-    throw new Error("Utilisateur non connecte.")
+    throw new Error("Utilisateur non connecté.")
   }
 
   const token = await user.getIdToken()
@@ -41,7 +41,7 @@ export const uploadDigitalProductFiles = async (files: File[], productId: string
     throw new Error("Identifiant produit manquant.")
   }
   if (files.length === 0) {
-    throw new Error("Ajoute au moins un fichier numerique.")
+    throw new Error("Ajoute au moins un fichier numérique.")
   }
 
   const headers = await buildAuthHeaders()
@@ -50,7 +50,7 @@ export const uploadDigitalProductFiles = async (files: File[], productId: string
   files.forEach((file) => formData.append("files", file))
 
   try {
-    const response = await fetch(buildApiUrl("/api/custom-products/upload-digital-file"), {
+    const response = await fetchApi("/api/custom-products/upload-digital-file", {
       method: "POST",
       headers,
       body: formData,

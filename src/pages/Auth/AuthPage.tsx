@@ -31,17 +31,17 @@ const getLoginErrorMessage = (errorCode?: string) => {
     case "auth/user-not-found":
       return "Email ou mot de passe incorrect."
     case "auth/user-disabled":
-      return "Ce compte est desactive. Contacte l'administrateur."
+      return "Ce compte est désactivé. Contacte l'administrateur."
     case "auth/too-many-requests":
-      return "Trop de tentatives. Reessaie dans quelques minutes."
+      return "Trop de tentatives. Réessaie dans quelques minutes."
     case "auth/network-request-failed":
-      return "Connexion reseau impossible. Verifie Internet puis reessaie."
+      return "Connexion réseau impossible. Vérifie Internet puis réessaie."
     case "auth/operation-not-allowed":
-      return "La connexion email/mot de passe est desactivee sur Firebase."
+      return "La connexion email/mot de passe est désactivée sur Firebase."
     case "app/account-deleted":
       return "Ce compte n'est plus accessible."
     default:
-      return "Connexion impossible pour le moment. Reessaie."
+      return "Connexion impossible pour le moment. Réessaie."
   }
 }
 
@@ -52,15 +52,15 @@ const getRegisterErrorMessage = (errorCode?: string) => {
     case "auth/invalid-email":
       return "L'adresse email est invalide."
     case "auth/email-already-in-use":
-      return "Un compte existe deja avec cet email."
+      return "Un compte existe déjà avec cet email."
     case "auth/weak-password":
       return "Le mot de passe est trop faible."
     case "auth/network-request-failed":
-      return "Connexion reseau impossible. Verifie Internet puis reessaie."
+      return "Connexion réseau impossible. Vérifie Internet puis réessaie."
     case "auth/operation-not-allowed":
-      return "L'inscription email/mot de passe est desactivee sur Firebase."
+      return "L'inscription email/mot de passe est désactivée sur Firebase."
     default:
-      return "Creation de compte impossible pour le moment. Reessaie."
+      return "Création de compte impossible pour le moment. Réessaie."
   }
 }
 

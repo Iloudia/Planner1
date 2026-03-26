@@ -55,16 +55,19 @@ DOWNLOADS_DIR=/var/www/planner/shared/downloads
 CUSTOM_PRODUCTS_FILE=/var/www/planner/shared/data/custom-products.json
 PURCHASES_FILE=/var/www/planner/shared/data/purchases.json
 FIREBASE_PROJECT_ID=meandrituals-72041
+FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON='{"project_id":"meandrituals-72041","client_email":"...","private_key":"-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"}'
 STRIPE_SECRET_KEY=sk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 DOWNLOAD_TOKEN_SECRET=<long_random_secret>
 ADMIN_EMAILS=admin1@example.com,admin2@example.com
 RESEND_API_KEY=...
 EMAIL_FROM=...
+CONTACT_EMAIL_TO=contact@meandrituals.com
 ```
 
 `DOWNLOAD_TOKEN_SECRET` is mandatory and must not be `replace-me`.
 `CUSTOM_PRODUCTS_FILE` and `PURCHASES_FILE` must point outside the release directory so product data and purchase rights survive redeploys.
+`FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON` (or an equivalent Firebase Admin credential source) is required if you want `/admin` account deletion to remove the Firebase Auth account, Firestore user tree, and user media for real.
 
 For the current phase, keep Stripe in test mode only:
 - `STRIPE_SECRET_KEY` must start with `sk_test_`

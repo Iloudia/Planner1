@@ -64,6 +64,8 @@ const normalizeGender = (value: unknown) => {
   return "non precise"
 }
 
+const isEmailLike = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanString(value))
+
 const toSortedEntries = (bucket: Record<string, number>) =>
   Object.entries(bucket).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
 
@@ -187,6 +189,14 @@ const AdminPage = () => {
     return users.filter((user) => user.email.toLowerCase().includes(normalized))
   }, [users, searchTerm])
 
+  const missingEmailCandidate = useMemo(() => {
+    const normalized = searchTerm.trim().toLowerCase()
+    if (!normalized || !isEmailLike(normalized)) {
+      return null
+    }
+    return users.some((user) => user.email.toLowerCase() === normalized) ? null : normalized
+  }, [searchTerm, users])
+
   const stats = useMemo(
     () => ({
       total: users.length,
@@ -274,7 +284,7 @@ const AdminPage = () => {
 
   const handleDelete = async (email: string) => {
     const confirmed = window.confirm(
-      `Supprimer le compte ${email} ? Cette action supprime les donnees locales associees et coupe toutes les sessions.`,
+      `Supprimer le compte ${email} ? Cette action supprime le compte, ses donnees Firestore et ses medias utilisateur.`,
     )
     if (!confirmed) return
     const result = await adminDeleteUser(email)
@@ -282,7 +292,7 @@ const AdminPage = () => {
       setAlert({ type: "error", message: result.error ?? "Impossible de supprimer ce compte." })
       return
     }
-    setAlert({ type: "success", message: "Compte supprime et donnees nettoyees." })
+    setAlert({ type: "success", message: "Compte supprime completement." })
     await refreshUsers()
   }
 
@@ -389,7 +399,20 @@ const AdminPage = () => {
 
               <div className="admin-user-list__body">
                 {filteredUsers.length === 0 ? (
-                  <p className="admin-empty-state">Aucun compte ne correspond a cette recherche.</p>
+                  <div className="admin-empty-state">
+                    <p>Aucun compte ne correspond a cette recherche.</p>
+                    {missingEmailCandidate ? (
+                      <div className="admin-empty-state__actions">
+                        <button
+                          type="button"
+                          className="admin-button admin-button--danger"
+                          onClick={() => handleDelete(missingEmailCandidate)}
+                        >
+                          Purger l'e-mail {missingEmailCandidate}
+                        </button>
+                      </div>
+                    ) : null}
+                  </div>
                 ) : (
                   filteredUsers.map((user) => (
                     <div
