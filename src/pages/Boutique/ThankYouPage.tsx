@@ -78,7 +78,7 @@ const ThankYouPage = () => {
   const isPaid = status?.paid
   const title = isPaid ? "" : "Paiement en attente"
   const message = isPaid
-    ? "Ton paiement est confirme. Tu peux telecharger ton produit ci-dessous ou le retrouver sur la page Mes achats." 
+    ? "Ton paiement est confirmé. Tu peux télécharger ton produit ci-dessous ou le retrouver sur la page Mes achats." 
     : status?.error || "Nous n'avons pas encore recu la confirmation du paiement."
 
   return (

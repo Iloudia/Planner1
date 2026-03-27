@@ -64,11 +64,16 @@ const CARD_PATH_SET = new Set(CARD_PATHS)
 const CATEGORY_TO_PATH: Record<string, string> = {
   sport: "/sport",
   journaling: "/journaling",
+  mindset: "/self-love",
+  "mind set": "/self-love",
+  "self love": "/self-love",
   "self-love": "/self-love",
   finances: "/finances",
   routine: "/routine",
   wishlist: "/wishlist",
+  calendrier: "/calendrier",
   "calendrier mensuel": "/calendrier",
+  "menu de la semaine": "/alimentation",
   cuisine: "/alimentation",
 }
 
@@ -185,6 +190,18 @@ const buildBaseCardOrder = (preferredCardOrder: string[]) => {
   const seen = new Set(preferred)
   const remaining = CARD_PATHS.filter((path) => !seen.has(path))
   return [...preferred, ...remaining]
+}
+
+const prioritizePreferredCardOrder = (paths: string[], preferredCardOrder: string[]) => {
+  const normalizedPaths = toFullCardOrder(paths)
+  const preferred = preferredCardOrder.filter((path) => CARD_PATH_SET.has(path))
+
+  if (preferred.length === 0) {
+    return normalizedPaths
+  }
+
+  const seen = new Set(preferred)
+  return [...preferred, ...normalizedPaths.filter((path) => !seen.has(path))]
 }
 
 const deriveOrderFromLegacyUsage = (legacyUsage: Record<string, number>, preferredCardOrder: string[]) => {
@@ -416,9 +433,9 @@ function HomePage() {
   const baseCardOrder = useMemo(() => buildBaseCardOrder(preferredCardOrder), [preferredCardOrder])
 
   const orderedCards = useMemo(() => {
-    const effectiveOrder = cardOrder.length > 0 ? cardOrder : baseCardOrder
+    const effectiveOrder = prioritizePreferredCardOrder(cardOrder.length > 0 ? cardOrder : baseCardOrder, preferredCardOrder)
     return buildOrderedCardsFromPaths(effectiveOrder)
-  }, [baseCardOrder, cardOrder])
+  }, [baseCardOrder, cardOrder, preferredCardOrder])
 
   useEffect(() => {
     const current = safeReadStorage(homeMoodboardKey)
@@ -469,7 +486,10 @@ function HomePage() {
     const legacyUsage = readLegacyCardUsageFromStorage(legacyCardUsageKey)
     const legacyOrder =
       Object.keys(legacyUsage).length > 0 ? deriveOrderFromLegacyUsage(legacyUsage, preferredCardOrder) : []
-    const fallbackOrder = toFullCardOrder(localOrder.length > 0 ? localOrder : legacyOrder.length > 0 ? legacyOrder : baseCardOrder)
+    const fallbackOrder = prioritizePreferredCardOrder(
+      localOrder.length > 0 ? localOrder : legacyOrder.length > 0 ? legacyOrder : baseCardOrder,
+      preferredCardOrder,
+    )
     const fallbackProgress = normalizeCardClickProgress(localProgress)
 
     if (!userId) {
@@ -483,7 +503,10 @@ function HomePage() {
     return subscribeToHomeCardsState(
       userId,
       (remoteState) => {
-        const nextOrder = toFullCardOrder(remoteState.order.length > 0 ? remoteState.order : fallbackOrder)
+        const nextOrder = prioritizePreferredCardOrder(
+          remoteState.order.length > 0 ? remoteState.order : fallbackOrder,
+          preferredCardOrder,
+        )
         // Keep local click progress as source of truth to avoid stale remote counters
         // causing a card to move on every visit.
         const nextProgress = fallbackProgress
@@ -494,7 +517,7 @@ function HomePage() {
         safeWriteStorage(cardProgressKey, JSON.stringify(nextProgress))
         safeRemoveStorage(legacyCardUsageKey)
 
-        const remoteOrder = toFullCardOrder(remoteState.order)
+        const remoteOrder = prioritizePreferredCardOrder(remoteState.order, preferredCardOrder)
         const remoteProgress = normalizeCardClickProgress(remoteState.clickProgress)
         if (!areOrdersEqual(remoteOrder, nextOrder) || !areClickProgressEqual(remoteProgress, nextProgress)) {
           void saveHomeCardsState(userId, { order: nextOrder, clickProgress: nextProgress }).catch((error) => {

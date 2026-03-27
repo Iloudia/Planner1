@@ -40,6 +40,22 @@ const CATEGORY_OPTIONS = [
   { label: "Menu de la semaine", icon: "Cuisine" },
 ]
 
+const CATEGORY_LABELS = new Set(CATEGORY_OPTIONS.map((option) => option.label))
+
+const sanitizeStringList = (value: unknown, allowedValues?: Set<string>, maxSelections?: number) => {
+  if (!Array.isArray(value)) return []
+
+  const sanitized = Array.from(
+    new Set(
+      value.filter(
+        (item): item is string => typeof item === "string" && (!allowedValues || allowedValues.has(item)),
+      ),
+    ),
+  )
+
+  return typeof maxSelections === "number" ? sanitized.slice(0, maxSelections) : sanitized
+}
+
 type OnboardingAnswers = {
   source: string
   sourceOther: string
@@ -75,22 +91,6 @@ const OnboardingPage = () => {
     }
     return "/home"
   }, [location.state])
-
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem(storageKey)
-      if (!stored) return
-      const parsed = JSON.parse(stored) as Partial<OnboardingAnswers>
-      setAnswers((prev) => ({
-        ...prev,
-        ...parsed,
-        reasons: Array.isArray(parsed.reasons) ? parsed.reasons : prev.reasons,
-        categories: Array.isArray(parsed.categories) ? parsed.categories.slice(0, MAX_CATEGORY_SELECTIONS) : prev.categories,
-      }))
-    } catch {
-      // ignore
-    }
-  }, [storageKey])
 
   useEffect(() => {
     document.body.classList.add("onboarding-page--lux")
@@ -177,11 +177,15 @@ const OnboardingPage = () => {
 
   const toggleMulti = (key: "reasons" | "categories", value: string) => {
     setAnswers((prev) => {
-      const current = prev[key]
+      const current =
+        key === "categories" ? sanitizeStringList(prev.categories, CATEGORY_LABELS, MAX_CATEGORY_SELECTIONS) : prev[key]
+
       if (key === "categories" && !current.includes(value) && current.length >= MAX_CATEGORY_SELECTIONS) {
         return prev
       }
+
       const next = current.includes(value) ? current.filter((item) => item !== value) : [...current, value]
+
       return {
         ...prev,
         [key]: next,

@@ -1242,9 +1242,15 @@ const renderEmailShell = ({
             <tr>
               <td align="center" style="padding:8px 28px 30px;font-family:Arial,sans-serif;color:#000000;">
                 <div style="width:84px;height:1px;background:#000000;margin:0 auto 20px;"></div>
+                ${
+                  ctaDescription
+                    ? `
                 <p style="margin:0 auto 20px;max-width:420px;font-size:15px;line-height:1.8;color:#000000;">
                   ${ctaDescription}
                 </p>
+                `
+                    : ""
+                }
                 <a href="${ctaUrl}" style="display:inline-block;padding:14px 26px;background:#e3d7ca;border:1px solid #000000;color:#000000;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
                   ${ctaLabel}
                 </a>
@@ -1277,7 +1283,7 @@ const sendDownloadEmail = async ({ to, items, attachments, attachedPdfCount = 0,
   const aboutUrl = `${appBaseUrl}/a-propos`
   const contactUrl = `${appBaseUrl}/contact`
   const preheader = "Merci pour ton achat. Tes fichiers sont prêts et tes PDF sont joints à cet email quand leur taille le permet."
-  const purchasePhotoPath = path.resolve(process.cwd(), "src", "assets", "email-perseverance.png")
+  const purchasePhotoPath = path.resolve(process.cwd(), "src", "assets", "Merci beaucoup.png")
   const purchasePhotoAttachment = fs.existsSync(purchasePhotoPath)
     ? {
         content: fs.readFileSync(purchasePhotoPath).toString("base64"),
@@ -1286,39 +1292,29 @@ const sendDownloadEmail = async ({ to, items, attachments, attachedPdfCount = 0,
         contentId: "purchase-photo",
       }
     : null
-  const list = items
-    .map(
-      (item) =>
-        `
-          <tr>
-            <td style="padding:0 0 14px;">
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border:1px solid rgba(0,0,0,0.18);background:#ffffff;">
-                <tr>
-                  <td style="padding:16px 18px;font-family:Arial,sans-serif;color:#000000;">
-                    <p style="margin:0 0 6px;font-size:15px;line-height:1.6;font-weight:700;color:#000000;">${escapeHtml(item.label || item.productName)}</p>
-                    <p style="margin:0 0 14px;font-size:13px;line-height:1.7;color:#000000;">Lien sécurisé valable 48 heures.</p>
-                    <a href="${item.downloadUrl}" style="display:inline-block;padding:10px 16px;border:1px solid #000000;background:#e3d7ca;color:#000000;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
-                      Télécharger
-                    </a>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        `,
-    )
-    .join("")
   const attachmentNote =
     attachedPdfCount > 0
-      ? `<p style="margin:0 auto 14px;max-width:470px;font-size:15px;line-height:1.8;color:#000000;">${attachedPdfCount} PDF ${attachedPdfCount > 1 ? "sont joints" : "est joint"} à cet email pour un accès immédiat.</p>`
+      ? `<p style="margin:0 auto 14px;max-width:470px;font-size:15px;line-height:1.8;color:#000000;">${
+          attachedPdfCount > 1
+            ? `${attachedPdfCount} PDF sont joints à cet email pour y accéder immédiatement.`
+            : "Tu trouveras un PDF joint à cet email pour y accéder immédiatement."
+        }</p>`
       : ""
-  const skippedNote =
-    skippedPdfCount > 0
-      ? `<p style="margin:0 auto 14px;max-width:470px;font-size:15px;line-height:1.8;color:#000000;">Certains PDF n'ont pas pu être joints car ils sont trop volumineux pour un email. Utilise les liens de téléchargement ci-dessous.</p>`
-      : ""
-  const zipNote = hasNonPdfFiles
-    ? `<p style="margin:0 auto 14px;max-width:470px;font-size:15px;line-height:1.8;color:#000000;">Les fichiers ZIP ou autres ressources complémentaires restent disponibles via les liens sécurisés ci-dessous.</p>`
+  const fallbackMessage =
+    skippedPdfCount > 0 && hasNonPdfFiles
+      ? "Certains PDF n'ont pas pu être joints et les fichiers complémentaires restent disponibles dans ton espace Mes achats."
+      : skippedPdfCount > 0
+        ? "Certains PDF n'ont pas pu être joints car ils sont trop volumineux pour un email. Retrouve-les dans ton espace Mes achats."
+        : hasNonPdfFiles
+          ? "Les fichiers complémentaires non envoyés par email restent disponibles dans ton espace Mes achats."
+          : ""
+  const fallbackNote = fallbackMessage
+    ? `<p style="margin:0 auto 14px;max-width:470px;font-size:15px;line-height:1.8;color:#000000;">${fallbackMessage}</p>`
     : ""
+  const footerNote =
+    skippedPdfCount > 0 || hasNonPdfFiles
+      ? "Si une pièce jointe manque, reconnecte-toi à ton compte et ouvre la page Mes achats."
+      : "Cet email est envoyé automatiquement après la validation de ton achat."
   const html = renderEmailShell({
     preheader,
     homeUrl,
@@ -1326,16 +1322,27 @@ const sendDownloadEmail = async ({ to, items, attachments, attachedPdfCount = 0,
     aboutUrl,
     contactUrl,
     introHtml: `
-      <p style="margin:0 0 14px;font-size:28px;line-height:1.2;font-weight:700;color:#000000;">Merci pour ton achat,</p>
+      <p style="margin:0 0 14px;font-size:28px;line-height:1.2;font-weight:700;color:#000000;">Bonjour,</p>
       <p style="margin:0 auto 14px;max-width:470px;font-size:15px;line-height:1.8;color:#000000;">
-        Tes fichiers sont prêts. Merci pour ta commande sur MeAndRituals.
+        Merci beaucoup pour ta commande
       </p>
       <p style="margin:0 auto 14px;max-width:470px;font-size:15px;line-height:1.8;color:#000000;">
-        Tu trouveras ci-dessous tes liens de téléchargement sécurisés ainsi que l'accès à la page Mes achats pour retrouver tout ton contenu.
+        Tes contenus sont prêts et disponibles dès maintenant.
       </p>
       ${attachmentNote}
-      ${skippedNote}
-      ${zipNote}
+      <p style="margin:0 auto 14px;max-width:470px;font-size:15px;line-height:1.8;color:#000000;">
+        Télécharge-le et suis les instructions indiquées pour accéder à tes contenus.
+      </p>
+      <p style="margin:0 auto 14px;max-width:470px;font-size:15px;line-height:1.8;color:#000000;">
+        L'ensemble de tes fichiers reste également accessible à tout moment depuis la page « Mes achats » de ton espace MeAndRituals.
+      </p>
+      <p style="margin:0 auto 14px;max-width:470px;font-size:15px;line-height:1.8;color:#000000;">
+        Si tu as la moindre question ou besoin d'aide, je reste à ta disposition.
+      </p>
+      ${fallbackNote}
+      <p style="margin:0 auto;max-width:470px;font-size:15px;line-height:1.8;color:#000000;">
+        À très vite
+      </p>
     `,
     imageHtml: renderEmailHeroImage({
       attachment: purchasePhotoAttachment,
@@ -1343,19 +1350,10 @@ const sendDownloadEmail = async ({ to, items, attachments, attachedPdfCount = 0,
       alt: "Photo achat",
       fallbackLabel: "Photo achat",
     }),
-    ctaDescription: "Retrouve dès maintenant tous tes fichiers et tes liens de téléchargement.",
+    ctaDescription: "",
     ctaUrl: purchasesUrl,
-    ctaLabel: "Ouvrir mes achats",
-    extraContentHtml: `
-      <tr>
-        <td style="padding:0 28px 10px;">
-          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-            ${list}
-          </table>
-        </td>
-      </tr>
-    `,
-    footerNote: "Les liens ci-dessus expirent dans 48 heures. Si un lien a expiré, reconnecte-toi à ton compte et ouvre la page Mes achats.",
+    ctaLabel: "Voir mes achats",
+    footerNote,
   })
 
   await sendResendEmail({
@@ -1927,11 +1925,7 @@ app.post("/api/create-checkout-session", firebaseAuth, async (req, res) => {
     const alreadyOwnedItems = cartItems.filter((item) => ownedProductIds.has(item.productId))
 
     if (alreadyOwnedItems.length > 0) {
-      const firstOwnedProduct = getCatalogProductOrThrow(alreadyOwnedItems[0].productId)
-      const errorMessage =
-        alreadyOwnedItems.length > 1
-          ? "Un ou plusieurs produits de ce panier ont déjà été achetés. Retire-les du panier ou ouvre Mes achats."
-          : `${firstOwnedProduct.name} a déjà été acheté. Retrouve-le dans Mes achats.`
+      const errorMessage = "Ce produit à déjà été acheté. Retrouve-le sur la page Mes achats."
 
       return res.status(409).json({ error: errorMessage })
     }
@@ -2143,8 +2137,5 @@ app.use((error, req, res, next) => {
 app.listen(port, host, () => {
   console.log(`Boutique server listening on http://${host}:${port}`)
 })
-
-
-
 
 

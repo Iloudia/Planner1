@@ -29,6 +29,7 @@ const BoutiqueProductPage = () => {
   const [isCartToastVisible, setIsCartToastVisible] = useState(false)
   const cartAnimationTimeoutRef = useRef<number | null>(null)
   const cartToastTimeoutRef = useRef<number | null>(null)
+  const recommendationsTrackRef = useRef<HTMLDivElement | null>(null)
 
   const gallery = product?.gallery ?? []
   const mediaItems = useMemo<ProductMedia[]>(
@@ -81,6 +82,20 @@ const BoutiqueProductPage = () => {
   const isCheckoutAvailable = product?.checkoutEnabled !== false
   const pricing = useMemo(() => (product ? getProductPricing(product) : null), [product])
   const shouldShowDeliveryInfo = product?.mockup === "bundle" && product.features.length > 0
+  const recommendedProducts = useMemo(
+    () => [...products, ...customProducts].filter((item) => item.id !== product?.id).slice(0, 8),
+    [customProducts, product?.id],
+  )
+
+  const handleRecommendationsScroll = (direction: "prev" | "next") => {
+    const track = recommendationsTrackRef.current
+    if (!track) return
+    const scrollAmount = Math.max(track.clientWidth * 0.85, 280)
+    track.scrollBy({
+      left: direction === "next" ? scrollAmount : -scrollAmount,
+      behavior: "smooth",
+    })
+  }
 
   const handleAddToCart = () => {
     if (!product || !isCheckoutAvailable) return
@@ -171,10 +186,15 @@ const BoutiqueProductPage = () => {
         ) : null}
       </button>
       <section className="boutique-detail__header">
-        <Link to="/boutique" className="boutique-link-button">
-          &lt; Retour boutique
-        </Link>
+        <div className="boutique-detail__intro sport-header">
+          <span className="boutique-eyebrow">Produit digital</span>
+          <h1>{product.title}</h1>
+        </div>
       </section>
+
+      <Link to="/boutique" className="boutique-link-button">
+        &lt; Retour boutique
+      </Link>
 
       <section className="boutique-detail__layout">
         <div className="boutique-detail__gallery">
@@ -207,11 +227,6 @@ const BoutiqueProductPage = () => {
           </div>
         </div>
         <div className="boutique-detail__side">
-          <div className="boutique-detail__intro">
-            <span className="boutique-eyebrow">Produit digital</span>
-            <h1>{product.title}</h1>
-          </div>
-
           <aside className="boutique-detail__info">
             <div className="boutique-detail__price">
               <span className="boutique-detail__price-label">Prix</span>
@@ -258,6 +273,63 @@ const BoutiqueProductPage = () => {
           </aside>
         </div>
       </section>
+
+      {recommendedProducts.length > 0 ? (
+        <section className="boutique-section boutique-recommendations" aria-labelledby="boutique-recommendations-title">
+          <div className="boutique-section__header boutique-recommendations__header">
+            <span className="boutique-eyebrow">Selection</span>
+            <h2 id="boutique-recommendations-title">Tu vas aussi aimer</h2>
+          </div>
+          <div className="boutique-recommendations__carousel">
+            <button
+              type="button"
+              className="boutique-recommendations__arrow boutique-recommendations__arrow--left"
+              aria-label="Produits precedents"
+              onClick={() => handleRecommendationsScroll("prev")}
+            >
+              &lt;
+            </button>
+            <div className="boutique-recommendations__track" ref={recommendationsTrackRef}>
+              {recommendedProducts.map((item) => {
+                const itemPricing = getProductPricing(item)
+
+                return (
+                  <Link key={item.id} to={`/boutique/produit/${item.id}`} className="boutique-product-card boutique-recommendations__card">
+                    <div className={`boutique-product__mockup boutique-product__mockup--${item.mockup}`} aria-hidden="true">
+                      <img className="boutique-product__image" src={item.image} alt="" loading="lazy" decoding="async" />
+                      <span className="boutique-product__mockup-label">{item.formatLabel}</span>
+                    </div>
+                    <div className="boutique-product__body">
+                      {item.badge ? <span className="boutique-product__badge">{item.badge}</span> : null}
+                      {itemPricing.hasActivePromotion && itemPricing.promotionLabel ? (
+                        <span className="boutique-product__badge">{itemPricing.promotionLabel}</span>
+                      ) : null}
+                      <h3>{item.title}</h3>
+                      <p>{item.benefit}</p>
+                      <div className="boutique-product__meta">
+                        <span>{item.format}</span>
+                        <span className="boutique-product__price">
+                          {itemPricing.hasActivePromotion ? <s className="boutique-price__base">{itemPricing.basePrice}</s> : null}
+                          <strong>{itemPricing.currentPrice}</strong>
+                        </span>
+                      </div>
+                      <span className="boutique-button boutique-button--primary">Voir le produit</span>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+            <button
+              type="button"
+              className="boutique-recommendations__arrow boutique-recommendations__arrow--right"
+              aria-label="Produits suivants"
+              onClick={() => handleRecommendationsScroll("next")}
+            >
+              &gt;
+            </button>
+          </div>
+        </section>
+      ) : null}
     </div>
   )
 }
