@@ -32,14 +32,19 @@ const BoutiqueProductPage = () => {
   const recommendationsTrackRef = useRef<HTMLDivElement | null>(null)
 
   const gallery = product?.gallery ?? []
-  const mediaItems = useMemo<ProductMedia[]>(
-    () => [
-      ...gallery.map((url) => ({ type: "image" as const, url })),
+  const mediaItems = useMemo<ProductMedia[]>(() => {
+    const coverMedia = product?.image ? [{ type: "image" as const, url: product.image }] : []
+    const galleryMedia = gallery
+      .filter((url) => url && url !== product?.image)
+      .map((url) => ({ type: "image" as const, url }))
+
+    return [
+      ...coverMedia,
+      ...galleryMedia,
       ...(product?.video ? [{ type: "video" as const, url: product.video }] : []),
-    ],
-    [gallery, product?.video],
-  )
-  const thumbnails = mediaItems.slice(1, 7)
+    ]
+  }, [gallery, product?.image, product?.video])
+  const thumbnails = mediaItems.slice(0, 7)
   const [activeMedia, setActiveMedia] = useState<ProductMedia | null>(mediaItems[0] ?? null)
 
   useEffect(() => {
@@ -212,7 +217,7 @@ const BoutiqueProductPage = () => {
                 type="button"
                 className={`boutique-detail__thumb${thumb.url === activeMedia?.url && thumb.type === activeMedia?.type ? " is-active" : ""}`}
                 onClick={() => setActiveMedia(thumb)}
-                aria-label={thumb.type === "video" ? "Voir la video du produit" : `Voir la photo ${index + 2}`}
+                aria-label={thumb.type === "video" ? "Voir la video du produit" : index === 0 ? "Voir la photo de couverture" : `Voir la photo ${index + 1}`}
               >
                 {thumb.type === "video" ? (
                   <>

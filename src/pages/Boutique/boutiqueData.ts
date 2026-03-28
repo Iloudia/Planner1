@@ -1,7 +1,7 @@
-﻿import heroBackdrop from "../../assets/rowena-regterschot-dupe.webp"
-import categoryEbook from "../../assets/voyage.webp"
-import categoryTemplate from "../../assets/food2.webp"
-import categoryCarousel from "../../assets/lauren-lista-dupe.webp"
+import heroBackdrop from "../../assets/plante.jpeg"
+import categoryEbook from "../../assets/couverture glow-up.png"
+import categoryTemplate from "../../assets/Couvertur levelup.png"
+import categoryCarousel from "../../assets/Journal de couple.png"
 import productEbook from "../../assets/ebony-forsyth-dupe.webp"
 import productTemplate from "../../assets/katie-huber-rhoades-dupe (1).webp"
 import productCarousel from "../../assets/lindsay-piotter-dupe.webp"
@@ -17,25 +17,22 @@ export const boutiqueHeroBackdrop = heroBackdrop
 export const categories: BoutiqueCategory[] = [
   {
     id: "ebooks",
-    title: "Ebooks PDF",
-    description: "Guides actionnables, frameworks et checklists pour vendre plus vite.",
-    highlight: "Structurer ton offre",
+    title: "Le guide complet pour devenir la meilleure version de toi-même",
+    description: "Un guide complet pour reprendre confiance en toi, évoluer chaque jour et construire une version de toi plus alignée.",
     image: categoryEbook,
     productType: "ebook",
   },
   {
     id: "templates",
-    title: "Templates Canva",
-    description: "Designs premium prêts à personnaliser pour un rendu pro en minutes.",
-    highlight: "Gagner du temps",
+    title: "21 jours pour reconstruire la confiance en soi",
+    description: "Un guide de 21 jours pour reconstruire la confiance en soi, reprendre ton pouvoir et avancer avec plus d'assurance.",
     image: categoryTemplate,
     productType: "template",
   },
   {
     id: "carrousels",
-    title: "Carrousels Instagram",
-    description: "Storytelling clair, hooks puissants, et call-to-action optimisés.",
-    highlight: "Booster l'engagement",
+    title: "Journal de couple",
+    description: "Un journal à remplir à deux pour créer des souvenirs, ouvrir de vraies discussions et renforcer votre lien au quotidien.",
     image: categoryCarousel,
     productType: "carousel",
   },
@@ -43,13 +40,12 @@ export const categories: BoutiqueCategory[] = [
 
 const sharedGallery = [productEbook, productTemplate, productCarousel, productPricing, productPortfolio, productStory]
 
-export const products: BoutiqueProduct[] = [
-]
+export const products: BoutiqueProduct[] = []
 
 export const benefits = [
   {
     title: "Gain de temps immédiat",
-    text: "Fini les pages blanches : tu personnalises, tu publies, tu vends.",
+    text: "Tu personnalises, tu publies, tu vends.",
   },
   {
     title: "Designs premium",
@@ -60,6 +56,3 @@ export const benefits = [
     text: "Tu télécharges et tu utilises quand tu veux, où tu veux.",
   },
 ]
-
-
-

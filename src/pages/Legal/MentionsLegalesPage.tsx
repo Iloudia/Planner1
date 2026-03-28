@@ -41,11 +41,13 @@ const MentionsLegalesPage = () => {
         <p className="legal-section__text">
           Le site est hébergé par :
           <br />
-          [Nom de l'hébergeur]
+          IONOS SE
           <br />
-          [Adresse de l'hébergeur]
+          Elgendorfer Str. 57
           <br />
-          [Téléphone de l'hébergeur]
+          56410 Montabaur, Allemagne
+          <br />
+          Téléphone : 0970 808 911
         </p>
       </section>
 

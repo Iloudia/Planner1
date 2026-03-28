@@ -192,7 +192,7 @@ const seedCatalogProducts = [
   },
 ]
 
-const allowedMockups = new Set(["ebook", "template", "carousel", "bundle"])
+const allowedMockups = new Set(["ebook", "template", "carousel", "moodboard", "bundle"])
 const allowedDigitalMimeTypes = new Set([
   "application/pdf",
   "application/zip",
@@ -431,6 +431,9 @@ const normalizeCustomProductPayload = (product, existingProduct) => {
   const features = sanitizeStringArray(product?.features, 12, 240)
   const fallbackFeatures = sanitizeStringArray(existingProduct?.features, 12, 240)
 
+  const requestedMockup = String(product?.mockup || existingProduct?.mockup || "")
+  const normalizedMockup = requestedMockup === "bundle" ? "moodboard" : requestedMockup
+
   return {
     id,
     title,
@@ -440,7 +443,7 @@ const normalizeCustomProductPayload = (product, existingProduct) => {
     format: sanitizeText(product?.format || existingProduct?.format || "PDF - contenu digital", 120),
     formatLabel: sanitizeText(product?.formatLabel || existingProduct?.formatLabel || "PDF", 80),
     badge: sanitizeText(product?.badge || existingProduct?.badge, 80),
-    mockup: allowedMockups.has(String(product?.mockup || existingProduct?.mockup)) ? String(product?.mockup || existingProduct?.mockup) : "ebook",
+    mockup: allowedMockups.has(normalizedMockup) ? normalizedMockup : "ebook",
     bestSeller: Boolean(product?.bestSeller ?? existingProduct?.bestSeller),
     image: image || normalizedGallery[0] || "",
     video,
@@ -2137,5 +2140,4 @@ app.use((error, req, res, next) => {
 app.listen(port, host, () => {
   console.log(`Boutique server listening on http://${host}:${port}`)
 })
-
 

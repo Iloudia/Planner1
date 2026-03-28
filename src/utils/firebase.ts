@@ -17,13 +17,24 @@ const auth: Auth = getAuth(app);
 const db: Firestore = getFirestore(app);
 
 let analytics: Analytics | null = null;
-const analyticsReady = isSupported()
-  .then((supported) => {
-    if (supported) {
-      analytics = getAnalytics(app);
-    }
-    return analytics;
-  })
-  .catch(() => null);
+let analyticsReady: Promise<Analytics | null> | null = null;
 
-export { app, auth, db, analytics, analyticsReady };
+const initAnalytics = () => {
+  if (!analyticsReady) {
+    analyticsReady = isSupported()
+      .then((supported) => {
+        if (!supported) {
+          return null;
+        }
+        if (!analytics) {
+          analytics = getAnalytics(app);
+        }
+        return analytics;
+      })
+      .catch(() => null);
+  }
+
+  return analyticsReady;
+};
+
+export { app, auth, db, analytics, analyticsReady, initAnalytics };

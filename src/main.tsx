@@ -7,7 +7,6 @@ import App from "./App";
 import { CookieConsentProvider } from "./context/CookieConsentContext";
 import { MoodboardProvider } from "./context/MoodboardContext";
 import "./styles.css";
-import "./utils/firebase";
 
 const rootElement = document.getElementById("root");
 

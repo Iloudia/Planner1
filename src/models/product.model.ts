@@ -2,7 +2,6 @@ export type BoutiqueCategory = {
   id: "ebooks" | "templates" | "carrousels" | "moodboards"
   title: string
   description: string
-  highlight: string
   image: string
   productType: "ebook" | "template" | "carousel" | "moodboard"
 }

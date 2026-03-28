@@ -234,7 +234,6 @@ const AdminProductsPage = () => {
     if (value === "Mignature") return "template"
     if (value === "Carrousels") return "carousel"
     if (value === "Visionboard") return "moodboard"
-    if (value === "Bundles") return "bundle"
     return "ebook"
   }
 
@@ -244,8 +243,8 @@ const AdminProductsPage = () => {
         return { format: "Canva - fichier éditable", formatLabel: "Canva" }
       case "carousel":
         return { format: "Canva - carrousel", formatLabel: "Canva" }
-      case "bundle":
-        return { format: "PDF + Canva", formatLabel: "Bundle" }
+      case "moodboard":
+        return { format: "Canva - visionboard", formatLabel: "Canva" }
       default:
         return { format: "PDF - contenu digital", formatLabel: "PDF" }
     }

@@ -10,6 +10,25 @@ import { getProductPricing } from "../../utils/productPricing"
 
 type BoutiqueFilter = "all" | "ebook" | "template" | "carousel" | "moodboard"
 
+const categoryProductRouteMap = {
+  ebooks: "/boutique/produit/le-guide-complet-pour-devenir-la-meilleure-version-de-toi-meme-1774631866049",
+  templates: "/boutique/produit/21-jours-pour-reconstruire-la-confiance-en-soi-1774630446671",
+  carrousels: "/boutique/produit/journal-de-couple-17746421401",
+} as const
+
+const glowUpProductIds = new Set([
+  "le-guide-complet-pour-devenir-la-meilleure-version-de-toi-meme-1774631866049",
+  "1774631866049",
+])
+const confidenceProductIds = new Set([
+  "21-jours-pour-reconstruire-la-confiance-en-soi-1774630446671",
+  "1774630446671",
+])
+const coupleJournalProductIds = new Set([
+  "journal-de-couple-17746421401",
+  "17746421401",
+])
+
 const BoutiquePage = () => {
   const [activeFilter, setActiveFilter] = useState<BoutiqueFilter>("all")
   const [customProducts, setCustomProducts] = useState(() => loadCustomProducts())
@@ -159,14 +178,6 @@ const BoutiquePage = () => {
   }, [activeFilter, allProducts, ownedProductsSet])
 
   const bestSellers = allProducts.filter((product) => product.bestSeller)
-  const categoryProductMap = useMemo(() => {
-    return categories.reduce<Record<string, string>>((acc, category) => {
-      const match = allProducts.find((product) => product.mockup === category.productType) ?? allProducts[0]
-      if (match) acc[category.id] = match.id
-      return acc
-    }, {})
-  }, [allProducts])
-
   if (isBoutiqueLoading) {
     return (
       <div className="boutique-page boutique-page--loading" aria-busy="true" aria-live="polite">
@@ -183,10 +194,9 @@ const BoutiquePage = () => {
         <div className="boutique-hero__media" style={{ backgroundImage: `url(${boutiqueHeroBackdrop})` }}>
           <div className="boutique-hero__content">
             <span className="boutique-eyebrow">Boutique</span>
-            <h1 id="boutique-hero-title">Des ressources prêtes à vendre pour les créateurs ambitieux.</h1>
+            <h1 id="boutique-hero-title">Je t’aide à créer du contenu, t’organiser et vendre plus simplement.</h1>
             <p className="boutique-hero__subtitle">
-              Ebooks PDF, templates Canva, carrousels Instagram : tout est pensé pour booster tes ventes, ta visibilité et ton
-              expertise en un temps record.
+              Ebooks, templates Canva, carrousels Instagram… tout est là pour t’aider à passer à l’action.
             </p>
             <div className="boutique-hero__actions">
               <a className="boutique-button boutique-button--primary" href="#produits">
@@ -214,7 +224,7 @@ const BoutiquePage = () => {
           {categories.map((category) => (
             <Link
               key={category.id}
-              to={categoryProductMap[category.id] ? `/boutique/produit/${categoryProductMap[category.id]}` : `/boutique/${category.id}`}
+              to={categoryProductRouteMap[category.id] ?? `/boutique/${category.id}`}
               className="boutique-category-card"
             >
               <div className="boutique-category-card__image">
@@ -222,7 +232,6 @@ const BoutiquePage = () => {
               </div>
               <div className="boutique-category-card__top">
                 <h3>{category.title}</h3>
-                <span className="boutique-category-card__tag">{category.highlight}</span>
               </div>
               <p>{category.description}</p>
               <span className="boutique-link-button">Explorer</span>
@@ -284,6 +293,12 @@ const BoutiquePage = () => {
         <div className="boutique-products">
           {filteredProducts.map((product) => {
             const pricing = getProductPricing(product)
+            const isGlowUpProduct =
+              glowUpProductIds.has(product.id) || product.title === "Le guide complet pour devenir la meilleure version de toi-même"
+            const isConfidenceProduct =
+              confidenceProductIds.has(product.id) || product.title === "21 jours pour reconstruire la confiance en soi"
+            const isCoupleJournalProduct =
+              coupleJournalProductIds.has(product.id) || product.title === "Journal de couple"
 
             return (
               <Link
@@ -292,7 +307,13 @@ const BoutiquePage = () => {
                 className={`boutique-product-card${ownedProductsSet.has(product.id) ? " is-owned" : ""}`}
               >
                 <div className={`boutique-product__mockup boutique-product__mockup--${product.mockup}`} aria-hidden="true">
-                  <img className="boutique-product__image" src={product.image} alt="" loading="lazy" decoding="async" />
+                  <img
+                    className={`boutique-product__image${isGlowUpProduct ? " boutique-product__image--glowup" : ""}${isConfidenceProduct ? " boutique-product__image--confidence" : ""}${isCoupleJournalProduct ? " boutique-product__image--couple-journal" : ""}`}
+                    src={product.image}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
                   <span className="boutique-product__mockup-label">{product.formatLabel}</span>
                 </div>
                 <div className="boutique-product__body">

@@ -9,6 +9,8 @@ const CUSTOM_PRODUCTS_ENDPOINT = "/api/custom-products"
 type StoredProduct = BoutiqueProduct & { createdAt: string; updatedAt?: string }
 let inMemoryProducts: StoredProduct[] | null = null
 
+const normalizeMockup = (mockup: BoutiqueProduct["mockup"]) => (mockup === "bundle" ? "moodboard" : mockup)
+
 const safeParse = (raw: string | null) => {
   if (!raw) return [] as StoredProduct[]
   try {
@@ -31,15 +33,42 @@ const normalizeProducts = (value: unknown) => {
       const gallery = Array.isArray(product.gallery)
         ? product.gallery.map((entry) => resolvePublicUrl(String(entry || ""))).filter(Boolean)
         : []
+      const mockup = normalizeMockup(product.mockup)
 
       return {
         ...product,
+        mockup,
         image,
         video: video || undefined,
         gallery: image ? [image, ...gallery.filter((entry) => entry !== image)] : gallery,
         checkoutEnabled: product.checkoutEnabled !== false,
       }
     }) as StoredProduct[]
+}
+
+const mergeProductsPreservingLocalCategory = (localProducts: StoredProduct[], incomingProducts: StoredProduct[]) => {
+  const localById = new Map(localProducts.map((product) => [product.id, product]))
+  const merged = incomingProducts.map((product) => {
+    const localProduct = localById.get(product.id)
+    if (!localProduct) {
+      return product
+    }
+
+    const localMockup = normalizeMockup(localProduct.mockup)
+    const incomingMockup = normalizeMockup(product.mockup)
+    if (localMockup === incomingMockup) {
+      return product
+    }
+
+    return {
+      ...product,
+      mockup: localMockup,
+    }
+  })
+
+  const incomingIds = new Set(merged.map((product) => product.id))
+  const missingLocalProducts = localProducts.filter((product) => !incomingIds.has(product.id))
+  return [...merged, ...missingLocalProducts]
 }
 
 const readLocalProducts = () => {
@@ -126,7 +155,7 @@ export const saveCustomProduct = (product: BoutiqueProduct) => {
   void (async () => {
     const synced = await pushRemoteUpdate({ action: "upsert", product: productWithDates })
     if (synced) {
-      writeProducts(synced)
+      writeProducts(mergeProductsPreservingLocalCategory(loadCustomProducts(), synced))
     }
   })()
 }
@@ -142,8 +171,9 @@ export const publishCustomProduct = async (product: BoutiqueProduct) => {
   if (!synced) {
     throw new Error("Serveur boutique inaccessible. Verifie que le serveur est demarre puis reessaie.")
   }
-  writeProducts(synced)
-  return synced
+  const merged = mergeProductsPreservingLocalCategory(loadCustomProducts(), synced)
+  writeProducts(merged)
+  return merged
 }
 
 export const updateCustomProduct = (product: BoutiqueProduct) => {
@@ -161,7 +191,7 @@ export const updateCustomProduct = (product: BoutiqueProduct) => {
   void (async () => {
     const synced = await pushRemoteUpdate({ action: "upsert", product: productWithDates })
     if (synced) {
-      writeProducts(synced)
+      writeProducts(mergeProductsPreservingLocalCategory(loadCustomProducts(), synced))
     }
   })()
 }
@@ -200,8 +230,9 @@ export const fetchCustomProducts = async () => {
       return loadCustomProducts()
     }
     const normalized = normalizeProducts(data)
-    writeProducts(normalized)
-    return normalized
+    const merged = mergeProductsPreservingLocalCategory(loadCustomProducts(), normalized)
+    writeProducts(merged)
+    return merged
   } catch {
     return loadCustomProducts()
   }

@@ -1,9 +1,10 @@
-﻿import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import "./AdminProducts.css"
 import "./AdminProductsManage.css"
 import "../Boutique/Boutique.css"
 
 import type { BoutiqueProduct } from "../../models/product.model"
+import { uploadImage } from "../../services/media/api"
 import {
   deleteCustomProduct,
   fetchCustomProducts,
@@ -20,24 +21,36 @@ import {
 } from "../../utils/productPricing"
 
 type EditableProduct = BoutiqueProduct & { createdAt?: string; updatedAt?: string }
-
-type CategoryOption = { label: string; value: BoutiqueProduct["mockup"] }
+type EditableGalleryItem = { url: string; name: string; file?: File }
+type EditableCategory = Exclude<BoutiqueProduct["mockup"], "bundle">
+type CategoryOption = { label: string; value: EditableCategory }
 
 const CATEGORY_OPTIONS: CategoryOption[] = [
   { label: "Ebook", value: "ebook" },
-  { label: "Templates", value: "template" },
+  { label: "Mignature", value: "template" },
   { label: "Carrousels", value: "carousel" },
   { label: "Visionboard", value: "moodboard" },
-  { label: "Bundles", value: "bundle" },
 ]
+
+const normalizeEditableCategory = (mockup: BoutiqueProduct["mockup"]): EditableCategory =>
+  mockup === "bundle" ? "moodboard" : mockup
+
+const getCategoryLabel = (mockup: BoutiqueProduct["mockup"]) =>
+  CATEGORY_OPTIONS.find((option) => option.value === normalizeEditableCategory(mockup))?.label ?? "Ebook"
+const MAX_IMAGES = 4
+const MAX_IMAGE_SIZE_BYTES = 500 * 1024 * 1024
+
+const formatFileSizeMb = (bytes: number) => `${(bytes / (1024 * 1024)).toFixed(0)} Mo`
 
 const AdminProductsManagePage = () => {
   const [products, setProducts] = useState<EditableProduct[]>(() => loadCustomProducts())
   const [editingId, setEditingId] = useState<string | null>(null)
   const [draft, setDraft] = useState<EditableProduct | null>(null)
-  const [imagePreview, setImagePreview] = useState<string>("")
+  const [galleryItems, setGalleryItems] = useState<EditableGalleryItem[]>([])
   const [promotionPercentage, setPromotionPercentage] = useState("")
-  const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
+  const imageInputRef = useRef<HTMLInputElement | null>(null)
+  const pendingImageSlotRef = useRef<number | null>(null)
 
   useEffect(() => {
     document.body.classList.add("boutique-page--tone")
@@ -65,10 +78,30 @@ const AdminProductsManagePage = () => {
     return [...products].sort((a, b) => (b.updatedAt || b.createdAt || "").localeCompare(a.updatedAt || a.createdAt || ""))
   }, [products])
 
+  const imageSlots = useMemo(() => {
+    return Array.from({ length: MAX_IMAGES }, (_, index) => galleryItems[index] ?? null)
+  }, [galleryItems])
+
   const startEdit = (product: EditableProduct) => {
+    const seededGallery = Array.isArray(product.gallery) && product.gallery.length > 0
+      ? product.gallery
+      : product.image
+        ? [product.image]
+        : []
+
     setEditingId(product.id)
-    setDraft({ ...product })
-    setImagePreview(product.image)
+    setDraft({
+      ...product,
+      mockup: normalizeEditableCategory(product.mockup),
+      image: seededGallery[0] ?? product.image,
+      gallery: seededGallery,
+    })
+    setGalleryItems(
+      seededGallery.slice(0, MAX_IMAGES).map((url, index) => ({
+        url,
+        name: `Photo ${index + 1}`,
+      })),
+    )
     setPromotionPercentage(
       product.promotion?.percentage
         ? String(product.promotion.percentage)
@@ -76,13 +109,16 @@ const AdminProductsManagePage = () => {
           ? String(getPromotionPercentageFromPrices(product.price, product.promotion.price))
           : "",
     )
+    setIsSaving(false)
   }
 
   const cancelEdit = () => {
     setEditingId(null)
     setDraft(null)
-    setImagePreview("")
+    setGalleryItems([])
     setPromotionPercentage("")
+    setIsSaving(false)
+    pendingImageSlotRef.current = null
   }
 
   const handleDelete = (productId: string) => {
@@ -94,18 +130,52 @@ const AdminProductsManagePage = () => {
     }
   }
 
+  const handleImageBrowse = (slotIndex: number) => {
+    pendingImageSlotRef.current = slotIndex
+    imageInputRef.current?.click()
+  }
+
   const handleImageChange = (file?: File) => {
     if (!file) return
+    if (!file.type.startsWith("image/")) {
+      window.alert("Choisis un fichier image valide.")
+      pendingImageSlotRef.current = null
+      return
+    }
+    if (file.size > MAX_IMAGE_SIZE_BYTES) {
+      window.alert(`"${file.name}" dépasse ${formatFileSizeMb(MAX_IMAGE_SIZE_BYTES)}. Réduis l'image avant l'enregistrement.`)
+      pendingImageSlotRef.current = null
+      return
+    }
+
     const reader = new FileReader()
     reader.onload = () => {
-      const result = String(reader.result)
-      setImagePreview(result)
-      setDraft((prev) => (prev ? { ...prev, image: result } : prev))
+      const slotIndex = pendingImageSlotRef.current
+      pendingImageSlotRef.current = null
+      const nextItem: EditableGalleryItem = {
+        url: String(reader.result),
+        name: file.name,
+        file,
+      }
+
+      setGalleryItems((prev) => {
+        const next = [...prev]
+        const targetIndex = typeof slotIndex === "number" ? slotIndex : next.length
+        if (targetIndex >= MAX_IMAGES) {
+          return prev
+        }
+        next[targetIndex] = nextItem
+        return next
+      })
     }
     reader.readAsDataURL(file)
   }
 
-  const handleSave = () => {
+  const handleRemoveImage = (index: number) => {
+    setGalleryItems((prev) => prev.filter((_, currentIndex) => currentIndex !== index))
+  }
+
+  const handleSave = async () => {
     if (!draft) return
     if (!draft.title.trim()) {
       window.alert("Ajoute un titre.")
@@ -121,35 +191,58 @@ const AdminProductsManagePage = () => {
       return
     }
 
-    const features = draft.features?.length ? draft.features : ["Ressource digitale", "Accès immédiat", "Usage commercial autorisé"]
-    const gallery = draft.gallery?.length ? [...draft.gallery] : []
-    const normalizedGallery = draft.image
-      ? [draft.image, ...gallery.filter((img) => img !== draft.image)]
-      : gallery
-
-    const updated: BoutiqueProduct = {
-      ...draft,
-      title: draft.title.trim(),
-      price: normalizePriceInput(draft.price),
-      promotion: draft.promotion?.enabled
-        ? {
-            enabled: true,
-            percentage: normalizePromotionPercentage(promotionPercentage),
-            price: computedPromotionPrice,
-            label: draft.promotion.label?.trim() || undefined,
-            startsAt: draft.promotion.startsAt || undefined,
-            endsAt: draft.promotion.endsAt || undefined,
-          }
-        : undefined,
-      benefit: draft.benefit?.trim() || draft.description?.trim().slice(0, 90) || "Nouvelle ressource à découvrir.",
-      description: draft.description?.trim() || "Description à compléter.",
-      features,
-      gallery: normalizedGallery.length > 0 ? normalizedGallery : draft.gallery,
+    const preparedGallery = galleryItems.filter((item): item is EditableGalleryItem => Boolean(item?.url))
+    if (preparedGallery.length === 0) {
+      window.alert("Ajoute au moins une photo pour le produit.")
+      return
     }
 
-    updateCustomProduct(updated)
-    setProducts(loadCustomProducts())
-    cancelEdit()
+    setIsSaving(true)
+
+    try {
+      const uploadedGallery = await Promise.all(
+        preparedGallery.map(async (item, index) => {
+          if (!item.file) {
+            return item.url
+          }
+          const uploaded = await uploadImage(item.file, "boutique-product-image", `${draft.id}-${index + 1}`)
+          return uploaded.url
+        }),
+      )
+
+      const features = draft.features?.length ? draft.features : ["Ressource digitale", "Accès immédiat", "Usage commercial autorisé"]
+      const normalizedGallery = uploadedGallery.filter(Boolean)
+
+      const updated: BoutiqueProduct = {
+        ...draft,
+        mockup: normalizeEditableCategory(draft.mockup),
+        title: draft.title.trim(),
+        price: normalizePriceInput(draft.price),
+        promotion: draft.promotion?.enabled
+          ? {
+              enabled: true,
+              percentage: normalizePromotionPercentage(promotionPercentage),
+              price: computedPromotionPrice,
+              label: draft.promotion.label?.trim() || undefined,
+              startsAt: draft.promotion.startsAt || undefined,
+              endsAt: draft.promotion.endsAt || undefined,
+            }
+          : undefined,
+        benefit: draft.benefit?.trim() || draft.description?.trim()?.slice(0, 90) || "Nouvelle ressource à découvrir.",
+        description: draft.description?.trim() || "Description à compléter.",
+        features,
+        image: normalizedGallery[0] ?? "",
+        gallery: normalizedGallery,
+      }
+
+      updateCustomProduct(updated)
+      setProducts(loadCustomProducts())
+      cancelEdit()
+    } catch (error) {
+      console.error("Update product error:", error)
+      window.alert(error instanceof Error ? error.message : "Impossible d'enregistrer les nouvelles photos pour le moment.")
+      setIsSaving(false)
+    }
   }
 
   return (
@@ -177,7 +270,7 @@ const AdminProductsManagePage = () => {
                 </div>
                 <div className="admin-products-card__body">
                   <div className="admin-products-card__meta">
-                    <span className="admin-products-card__eyebrow">{product.mockup}</span>
+                    <span className="admin-products-card__eyebrow">{getCategoryLabel(product.mockup)}</span>
                     <strong>{pricing.currentPrice}</strong>
                   </div>
                   <h2>{product.title}</h2>
@@ -208,20 +301,64 @@ const AdminProductsManagePage = () => {
 
           <div className="admin-products-edit__grid">
             <div className="admin-products-edit__media">
-              <div className="admin-products-edit__preview">
-                {imagePreview ? <img src={imagePreview} alt="Aperçu" /> : <span>Aucune image</span>}
-              </div>
-              <button type="button" className="boutique-button boutique-button--ghost" onClick={() => fileInputRef.current?.click()}>
-                Changer la photo
-              </button>
               <input
-                ref={fileInputRef}
+                ref={imageInputRef}
                 type="file"
                 accept="image/*"
                 onChange={(event) => {
                   handleImageChange(event.target.files?.[0])
                   event.target.value = ""
                 }}
+              />
+
+              <div className="admin-products-previews admin-products-edit__previews" aria-label="Photos du produit">
+                {imageSlots.map((item, index) => {
+                  if (!item) {
+                    return (
+                      <button
+                        key={`edit-image-empty-${index}`}
+                        type="button"
+                        className="admin-products-preview admin-products-preview--empty"
+                        onClick={() => handleImageBrowse(index)}
+                      >
+                        <span>+ Photo</span>
+                      </button>
+                    )
+                  }
+
+                  return (
+                    <button
+                      key={`${item.url}-${index}`}
+                      type="button"
+                      className="admin-products-preview"
+                      onClick={() => handleImageBrowse(index)}
+                    >
+                      <img src={item.url} alt={item.name || `Photo ${index + 1}`} />
+                      {index === 0 ? <span className="admin-products-edit__slot-label">Couverture</span> : null}
+                      <button
+                        type="button"
+                        className="admin-products-preview__delete"
+                        aria-label={`Supprimer la photo ${index + 1}`}
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          handleRemoveImage(index)
+                        }}
+                      >
+                        🗑️
+                      </button>
+                    </button>
+                  )
+                })}
+              </div>
+
+              <p className="admin-products-edit__media-note">
+                Clique sur une photo pour la remplacer. La première image reste utilisée comme photo de couverture.
+              </p>
+
+              <input
+                className="admin-products-edit__media-input"
+                value={`${galleryItems.filter(Boolean).length}/${MAX_IMAGES} photo(s) configurée(s)`}
+                readOnly
               />
             </div>
 
@@ -366,10 +503,10 @@ const AdminProductsManagePage = () => {
                 <label htmlFor="edit-category">Catégorie</label>
                 <select
                   id="edit-category"
-                  value={draft.mockup}
+                  value={normalizeEditableCategory(draft.mockup)}
                   onChange={(event) =>
                     setDraft((prev) =>
-                      prev ? { ...prev, mockup: event.target.value as BoutiqueProduct["mockup"] } : prev,
+                      prev ? { ...prev, mockup: event.target.value as EditableCategory } : prev,
                     )
                   }
                 >
@@ -423,8 +560,13 @@ const AdminProductsManagePage = () => {
           </div>
 
           <div className="admin-products-panel--actions admin-products-edit__actions">
-            <button type="button" className="boutique-button boutique-button--primary" onClick={handleSave}>
-              Enregistrer les modifications
+            <button
+              type="button"
+              className="boutique-button boutique-button--primary"
+              onClick={() => void handleSave()}
+              disabled={isSaving}
+            >
+              {isSaving ? "Enregistrement..." : "Enregistrer les modifications"}
             </button>
             <button type="button" className="boutique-button boutique-button--ghost" onClick={cancelEdit}>
               Annuler
