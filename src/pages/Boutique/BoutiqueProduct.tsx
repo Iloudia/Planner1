@@ -13,6 +13,18 @@ type ProductMedia = {
   url: string
 }
 
+const DEFAULT_PRODUCT_BENEFIT = "Nouvelle ressource à découvrir."
+
+const getProductCardBenefit = (benefit: string, description: string) => {
+  const trimmedBenefit = benefit.trim()
+  if (trimmedBenefit && trimmedBenefit !== DEFAULT_PRODUCT_BENEFIT) {
+    return trimmedBenefit
+  }
+
+  const descriptionStart = description.trim().split("\n").find(Boolean)?.trim() ?? ""
+  return descriptionStart.slice(0, 90) || trimmedBenefit || DEFAULT_PRODUCT_BENEFIT
+}
+
 const BoutiqueProductPage = () => {
   const { productId } = useParams()
   const { isAuthenticated } = useAuth()
@@ -310,7 +322,7 @@ const BoutiqueProductPage = () => {
                         <span className="boutique-product__badge">{itemPricing.promotionLabel}</span>
                       ) : null}
                       <h3>{item.title}</h3>
-                      <p>{item.benefit}</p>
+                      <p>{getProductCardBenefit(item.benefit, item.description)}</p>
                       <div className="boutique-product__meta">
                         <span>{item.format}</span>
                         <span className="boutique-product__price">

@@ -305,7 +305,7 @@ const AdminProductsPage = () => {
     const mockup = getMockupForCategory(category)
     const { format, formatLabel } = getFormatForMockup(mockup)
     const benefitBase = description.trim().split("\n").find(Boolean) ?? ""
-    const benefit = benefitBase.length > 0 ? benefitBase.slice(0, 90) : "Nouvelle ressource à découvrir."
+    const benefit = benefitBase.length > 0 ? benefitBase.slice(0, 90).trim() : "Description à compléter."
     const features = [delivery.trim(), processing.trim(), returnsText.trim()].filter(Boolean)
     const idBase = slugify(title) || "produit"
     const id = `${idBase}-${Date.now()}`

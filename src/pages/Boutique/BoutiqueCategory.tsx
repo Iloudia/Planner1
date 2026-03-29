@@ -11,6 +11,18 @@ type ProductMedia = {
   url: string
 }
 
+const DEFAULT_PRODUCT_BENEFIT = "Nouvelle ressource à découvrir."
+
+const getProductCardBenefit = (benefit: string, description: string) => {
+  const trimmedBenefit = benefit.trim()
+  if (trimmedBenefit && trimmedBenefit !== DEFAULT_PRODUCT_BENEFIT) {
+    return trimmedBenefit
+  }
+
+  const descriptionStart = description.trim().split("\n").find(Boolean)?.trim() ?? ""
+  return descriptionStart.slice(0, 90) || trimmedBenefit || DEFAULT_PRODUCT_BENEFIT
+}
+
 const BoutiqueCategoryPage = () => {
   const { categoryId } = useParams()
   const [customProducts, setCustomProducts] = useState(() => loadCustomProducts())
@@ -90,7 +102,7 @@ const BoutiqueCategoryPage = () => {
         <div>
           <span className="boutique-eyebrow">Categorie {category.title}</span>
           <h1>{product.title}</h1>
-          <p>{product.benefit}</p>
+          <p>{getProductCardBenefit(product.benefit, product.description)}</p>
         </div>
       </section>
 

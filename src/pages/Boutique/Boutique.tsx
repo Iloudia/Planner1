@@ -29,6 +29,18 @@ const coupleJournalProductIds = new Set([
   "17746421401",
 ])
 
+const DEFAULT_PRODUCT_BENEFIT = "Nouvelle ressource à découvrir."
+
+const getProductCardBenefit = (benefit: string, description: string) => {
+  const trimmedBenefit = benefit.trim()
+  if (trimmedBenefit && trimmedBenefit !== DEFAULT_PRODUCT_BENEFIT) {
+    return trimmedBenefit
+  }
+
+  const descriptionStart = description.trim().split("\n").find(Boolean)?.trim() ?? ""
+  return descriptionStart.slice(0, 90) || trimmedBenefit || DEFAULT_PRODUCT_BENEFIT
+}
+
 const BoutiquePage = () => {
   const [activeFilter, setActiveFilter] = useState<BoutiqueFilter>("all")
   const [customProducts, setCustomProducts] = useState(() => loadCustomProducts())
@@ -321,7 +333,7 @@ const BoutiquePage = () => {
                   {pricing.hasActivePromotion && pricing.promotionLabel ? <span className="boutique-product__badge">{pricing.promotionLabel}</span> : null}
                   {ownedProductsSet.has(product.id) ? <span className="boutique-product__owned">Déjà acheté</span> : null}
                   <h3>{product.title}</h3>
-                  <p>{product.benefit}</p>
+                  <p>{getProductCardBenefit(product.benefit, product.description)}</p>
                   <div className="boutique-product__meta">
                     <span>{product.format}</span>
                     <span className="boutique-product__price">

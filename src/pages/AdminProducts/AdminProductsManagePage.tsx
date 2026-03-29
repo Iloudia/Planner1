@@ -228,7 +228,7 @@ const AdminProductsManagePage = () => {
               endsAt: draft.promotion.endsAt || undefined,
             }
           : undefined,
-        benefit: draft.benefit?.trim() || draft.description?.trim()?.slice(0, 90) || "Nouvelle ressource à découvrir.",
+        benefit: draft.benefit?.trim() || draft.description?.trim()?.slice(0, 90).trim() || "Description à compléter.",
         description: draft.description?.trim() || "Description à compléter.",
         features,
         image: normalizedGallery[0] ?? "",

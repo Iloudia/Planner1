@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react"
-import { Link } from "react-router-dom"
+﻿import { useEffect, useMemo, useRef, useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "../../context/AuthContext"
 import useUserDietData from "../../hooks/useUserDietData"
 import { getWeekKey } from "../../utils/weekKey"
@@ -14,7 +14,6 @@ import photo6 from "../../assets/salade-de-fruit.webp"
 import "./Alimentation.css"
 
 const stripImages = [photo1, photo2, photo3, photo4, photo5, photo6]
-
 const weekDays = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"] as const
 
 type MealSlotId = "morning" | "midday" | "evening"
@@ -298,6 +297,7 @@ const shuffle = <T,>(items: T[]) => {
 }
 
 function DietPage() {
+  const navigate = useNavigate()
   const { isAuthReady, userId } = useAuth()
   const [weekKey, setWeekKey] = useState(() => getWeekKey())
   const {
@@ -309,7 +309,6 @@ function DietPage() {
     saveShoppingNotes,
     saveCuisineGoals,
     saveFillOnlyEmpty,
-    removeRecipeFromSlot,
     saveWeekPlan,
   } = useUserDietData(weekKey)
   const canEdit = Boolean(userId)
@@ -353,10 +352,6 @@ function DietPage() {
       window.removeEventListener("visibilitychange", syncOnVisibilityChange)
     }
   }, [])
-  const [selectedRecipe, setSelectedRecipe] = useState<RecipeSnapshot | null>(null)
-  const [selectedRecipeSlot, setSelectedRecipeSlot] = useState<{ day: typeof weekDays[number]; slot: MealSlotId } | null>(
-    null,
-  )
   const [generatorStatus, setGeneratorStatus] = useState<string | null>(null)
   const weeklyPlan = weekPlan.meals as WeeklyPlan
   const shoppingNotes = weekPlan.shoppingNotes
@@ -532,13 +527,6 @@ function DietPage() {
     return recipeLookupByTitle.get(normalizeMealTitle(mealName)) ?? null
   }
 
-  const removeRecipeFromPlan = async (day: typeof weekDays[number], slot: MealSlotId) => {
-    if (!canEdit) return
-    await removeRecipeFromSlot(day, slot)
-    setSelectedRecipe(null)
-    setSelectedRecipeSlot(null)
-  }
-
   if (isAlimentationLoading) {
     return (
       <>
@@ -652,10 +640,16 @@ function DietPage() {
                           <button
                             type="button"
                             className="diet-week__recipe-badge"
-                            onClick={() => {
-                              setSelectedRecipe(slotRecipe)
-                              setSelectedRecipeSlot({ day, slot: slot.id })
-                            }}
+                            onClick={() =>
+                              navigate("/diet", {
+                                state: {
+                                  openRecipeId: slotRecipe.id,
+                                  openRecipeSource: slotRecipe.source,
+                                  planDay: day,
+                                  planSlot: slot.id,
+                                },
+                              })
+                            }
                           >
                             Voir la recette
                           </button>
@@ -702,91 +696,6 @@ function DietPage() {
             </div>
           </div>
         </section>
-        {selectedRecipe ? (
-          <div className="diet-plan-modal" role="dialog" aria-label={`Recette ${selectedRecipe.title}`}>
-            <div
-              className="diet-plan-modal__backdrop"
-              onClick={() => {
-                setSelectedRecipe(null)
-                setSelectedRecipeSlot(null)
-              }}
-            />
-            <div className="diet-plan-modal__panel">
-              <div className="diet-plan-modal__cover">
-                <img src={selectedRecipe.image} alt={selectedRecipe.title} loading="lazy" decoding="async" />
-                <button
-                  type="button"
-                  className="diet-recipe-close-icon diet-recipe-close-icon--cover"
-                  onClick={() => {
-                    setSelectedRecipe(null)
-                    setSelectedRecipeSlot(null)
-                  }}
-                  aria-label="Fermer"
-                >
-                  <span aria-hidden="true" />
-                </button>
-              </div>
-              <div className="diet-plan-modal__content">
-                <header>
-                  <h3>{selectedRecipe.title}</h3>
-                  <div className="diet-plan-modal__meta">
-                    <span>{selectedRecipe.flavor === "sucre" ? "Sucré" : "Salé"}</span>
-                    <span>{selectedRecipe.prepTime}</span>
-                    <span>{selectedRecipe.servings}</span>
-                  </div>
-                </header>
-                <section>
-                  <h4>Ingrédients</h4>
-                  <ul>
-                    {selectedRecipe.ingredients.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section>
-                  <h4>Étapes</h4>
-                  <ol>
-                    {selectedRecipe.steps.map((step) => (
-                      <li key={step}>{step}</li>
-                    ))}
-                  </ol>
-                </section>
-                {selectedRecipe.toppings ? (
-                  <section>
-                    <h4>Idées de toppings</h4>
-                    <ul>
-                      {selectedRecipe.toppings.map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
-                  </section>
-                ) : null}
-                {selectedRecipe.tips ? (
-                  <section>
-                    <h4>Astuce</h4>
-                    <ul>
-                      {selectedRecipe.tips.map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
-                  </section>
-                ) : null}
-              </div>
-              <footer className="diet-recipe-modal__actions">
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (!selectedRecipeSlot) return
-                    void removeRecipeFromPlan(selectedRecipeSlot.day, selectedRecipeSlot.slot)
-                  }}
-                  disabled={!canEdit}
-                >
-                  Supprimer la recette du planning
-                </button>
-              </footer>
-            </div>
-          </div>
-        ) : null}
     </>
   )
 }

@@ -1,5 +1,5 @@
 ﻿import { useEffect, useMemo, useRef, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../../context/AuthContext"
 import useUserDietData from "../../hooks/useUserDietData"
 import { deleteMedia, uploadImage } from "../../services/media/api"
@@ -271,7 +271,7 @@ type IngredientVisual = {
   sectionTitle?: string
 }
 
-const ingredientVisualsByRecipeId: Record<string, IngredientVisual[]> = {
+export const ingredientVisualsByRecipeId: Record<string, IngredientVisual[]> = {
   "mass-pancakes": [
     { id: "whey", label: "Whey", detail: "1 scoop de whey (30 g)", image: wheyIngredientImg },
     { id: "oeuf", label: "Oeuf", detail: "1 oeuf", image: oeufIngredientImg },
@@ -5483,6 +5483,12 @@ type WeeklyPlan = Record<typeof dietWeekDays[number], Record<MealSlotId, string>
 type DietTab = "sweet" | "savory" | "drinks" | "condiments" | "favorites" | "custom"
 const DIET_TAB_STORAGE_KEY = "dietPageActiveTab"
 const DIET_TABS: DietTab[] = ["sweet", "savory", "drinks", "condiments", "favorites", "custom"]
+type DietNavigationState = {
+  openRecipeId?: string
+  openRecipeSource?: RenderRecipe["source"]
+  planDay?: typeof dietWeekDays[number]
+  planSlot?: MealSlotId
+}
 
 const buildDefaultWeeklyPlan = (): WeeklyPlan => {
   const plan = {} as WeeklyPlan
@@ -5493,6 +5499,8 @@ const buildDefaultWeeklyPlan = (): WeeklyPlan => {
 }
 
 const DietClassicPage = () => {
+  const location = useLocation()
+  const navigate = useNavigate()
   const { isAuthReady, userId } = useAuth()
   const weekKey = getWeekKey()
   const {
@@ -5581,6 +5589,22 @@ const DietClassicPage = () => {
     ],
     [customRecipes],
   )
+  useEffect(() => {
+    const state = location.state as DietNavigationState | null
+    if (!state?.openRecipeId) return
+    const recipe = allRecipes.find(
+      (item) => item.id === state.openRecipeId && (!state.openRecipeSource || item.source === state.openRecipeSource),
+    )
+    if (!recipe) return
+    setSelectedRecipe(recipe)
+    if (state.planDay) {
+      setPlanDay(state.planDay)
+    }
+    if (state.planSlot) {
+      setPlanSlot(state.planSlot)
+    }
+    navigate(location.pathname, { replace: true, state: null })
+  }, [allRecipes, location.pathname, location.state, navigate])
   const currentHeading = tab === "favorites" || tab === "custom" ? null : DIET_HEADINGS[tab]
   const getFlavorLabel = (flavor: Recipe["flavor"]) => {
     if (flavor === "sucre") return "Sucré"
@@ -5968,7 +5992,7 @@ const DietClassicPage = () => {
               Passe sur la page Alimentation pour organiser tes repas et ta liste de courses.
             </p>
           </div>
-          <Link to="/menu" className="pill pill--diet">
+          <Link to="/alimentation" className="pill pill--diet">
             Planifier les repas
           </Link>
         </div>

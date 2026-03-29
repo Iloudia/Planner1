@@ -543,6 +543,13 @@ body.boutique-page--tone {
   gap: 0.6rem;
 }
 
+.boutique-product-card .boutique-product__body > p {
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 .boutique-product__badge {
   align-self: flex-start;
   border: 1px solid var(--line);
