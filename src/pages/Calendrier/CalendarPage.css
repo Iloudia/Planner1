@@ -384,11 +384,13 @@
 
 .calendar-heading__eyebrow {
   display: block;
+  align-self: center;
   font-size: 0.75rem;
   letter-spacing: 0.25em;
   text-transform: uppercase;
   font-weight: 600;
   color: var(--lux-accent-strong, #9b8976);
+  text-align: center;
 }
 
 .calendar-heading__title {

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ChangeEvent, type KeyboardEvent } from "react"
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent, type KeyboardEvent } from "react"
 import { Link } from "react-router-dom"
 import PageHeading from "../../components/PageHeading"
 import { useAuth } from "../../context/AuthContext"
@@ -47,10 +47,8 @@ const SportPage = () => {
   const canEdit = Boolean(userId)
   const isSportLoading = !isAuthReady || isLoading
   const [activityDrafts, setActivityDrafts] = useState<Record<string, string>>({})
-  const [savedActivityDayId, setSavedActivityDayId] = useState<string | null>(null)
   const activityDraftsRef = useRef<Record<string, string>>({})
   const activitySaveTimeoutsRef = useRef<Record<string, number>>({})
-  const savedActivityFeedbackTimeoutRef = useRef<number | null>(null)
   const boardDraftsStorageKey = useMemo(
     () => buildUserScopedKey(normalizeUserEmail(userEmail), `${SPORT_BOARD_DRAFTS_STORAGE_KEY}.${weekKey}`),
     [userEmail, weekKey],
@@ -182,17 +180,6 @@ const SportPage = () => {
     delete activitySaveTimeoutsRef.current[dayId]
   }
 
-  const showSavedActivityFeedback = (dayId: string) => {
-    if (savedActivityFeedbackTimeoutRef.current) {
-      window.clearTimeout(savedActivityFeedbackTimeoutRef.current)
-    }
-    setSavedActivityDayId(dayId)
-    savedActivityFeedbackTimeoutRef.current = window.setTimeout(() => {
-      setSavedActivityDayId(null)
-      savedActivityFeedbackTimeoutRef.current = null
-    }, 2000)
-  }
-
   const commitActivityValue = async (dayId: string, nextValue: string) => {
     if (!canEdit) return
     const draft = nextValue
@@ -236,26 +223,38 @@ const SportPage = () => {
   }
 
   const handleActivityKeyDown = (dayId: string) => async (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key !== "Enter") {
+    if (event.key !== "Enter" && event.code !== "Enter" && event.code !== "NumpadEnter") {
       return
     }
     event.preventDefault()
     clearActivitySaveTimeout(dayId)
-    const wasCommitted = await commitActivityValue(dayId, event.currentTarget.value)
+    const input = event.currentTarget
+    const wasCommitted = await commitActivityValue(dayId, input.value)
     if (!wasCommitted) {
       return
     }
-    event.currentTarget.blur()
-    showSavedActivityFeedback(dayId)
+    input.blur()
+  }
+
+  const handleActivitySubmit = (dayId: string) => async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    clearActivitySaveTimeout(dayId)
+    const formData = new FormData(event.currentTarget)
+    const nextValue = String(formData.get("activity") ?? "")
+    const wasCommitted = await commitActivityValue(dayId, nextValue)
+    if (!wasCommitted) {
+      return
+    }
+    const input = event.currentTarget.elements.namedItem("activity")
+    if (input instanceof HTMLInputElement) {
+      input.blur()
+    }
   }
 
   useEffect(
     () => () => {
       Object.values(activitySaveTimeoutsRef.current).forEach((timeoutId) => window.clearTimeout(timeoutId))
       activitySaveTimeoutsRef.current = {}
-      if (savedActivityFeedbackTimeoutRef.current) {
-        window.clearTimeout(savedActivityFeedbackTimeoutRef.current)
-      }
     },
     [],
   )
@@ -324,23 +323,25 @@ const SportPage = () => {
                     {day.done ? "Fait" : "À planifier"}
                   </span>
                 </header>
-                <label className="sport-board-card__field">
-                  <span>Séance</span>
-                  <input
-                    type="text"
-                    value={activityDrafts[day.id] ?? day.activity}
-                    onChange={handleActivityChange(day.id)}
-                    onBlur={(event) => {
-                      clearActivitySaveTimeout(day.id)
-                      void commitActivityValue(day.id, event.currentTarget.value)
-                    }}
-                    onKeyDown={(event) => void handleActivityKeyDown(day.id)(event)}
-                    placeholder="Ex : Legday"
-                    enterKeyHint="done"
-                    disabled={!canEdit}
-                  />
-                  {savedActivityDayId === day.id ? <span className="sport-board-card__feedback">Enregistré</span> : null}
-                </label>
+<form onSubmit={(event) => void handleActivitySubmit(day.id)(event)}>
+                  <label className="sport-board-card__field">
+                    <span>Séance</span>
+                    <input
+                      type="text"
+                      name="activity"
+                      value={activityDrafts[day.id] ?? day.activity}
+                      onChange={handleActivityChange(day.id)}
+                      onBlur={(event) => {
+                        clearActivitySaveTimeout(day.id)
+                        void commitActivityValue(day.id, event.currentTarget.value)
+                      }}
+                      onKeyDown={(event) => void handleActivityKeyDown(day.id)(event)}
+                      placeholder="Ex : Legday"
+                      enterKeyHint="done"
+                      disabled={!canEdit}
+                    />
+                  </label>
+                </form>
                 <label className="sport-board-card__checkbox">
                   <input type="checkbox" checked={day.done} onChange={handleDoneToggle(day.id)} disabled={!canEdit} />
                   <span>Séance effectuée</span>

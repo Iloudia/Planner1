@@ -25,6 +25,7 @@ const purchasesFile = resolveConfiguredPath(process.env.PURCHASES_FILE, path.joi
 const downloadsDir = process.env.DOWNLOADS_DIR || path.resolve(process.cwd(), "server", "downloads")
 const mediaRootDir = process.env.MEDIA_ROOT_DIR || path.resolve(process.cwd(), "server", "media")
 const mediaPublicBaseUrl = process.env.MEDIA_PUBLIC_BASE_URL || "/media"
+const mediaSessionCookieName = "planner_media_session"
 const downloadTokenSecret = String(process.env.DOWNLOAD_TOKEN_SECRET || "").trim()
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY || ""
 const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET || ""
@@ -785,6 +786,114 @@ const parseOrigins = () => {
 
 const allowedOrigins = parseOrigins()
 
+const parseCookieHeader = (headerValue) => {
+  const cookies = {}
+  for (const part of String(headerValue || "").split(";")) {
+    const separatorIndex = part.indexOf("=")
+    if (separatorIndex <= 0) {
+      continue
+    }
+    const key = part.slice(0, separatorIndex).trim()
+    const value = part.slice(separatorIndex + 1).trim()
+    if (!key) {
+      continue
+    }
+    cookies[key] = decodeURIComponent(value)
+  }
+  return cookies
+}
+
+const getCookieValue = (req, cookieName) => parseCookieHeader(req.headers.cookie || "")[cookieName] || ""
+
+const isSecureRequest = (req) => {
+  if (req.secure) {
+    return true
+  }
+  const forwardedProto = String(req.headers["x-forwarded-proto"] || "")
+  return forwardedProto.split(",")[0]?.trim() === "https"
+}
+
+const createCookieHeader = ({ name, value, maxAgeSeconds, req }) => {
+  const segments = [`${name}=${encodeURIComponent(value)}`, "Path=/", "HttpOnly", "SameSite=Lax"]
+  if (typeof maxAgeSeconds === "number") {
+    segments.push(`Max-Age=${Math.max(Math.floor(maxAgeSeconds), 0)}`)
+  }
+  if (isSecureRequest(req)) {
+    segments.push("Secure")
+  }
+  return segments.join("; ")
+}
+
+const clearCookieHeader = ({ name, req }) => createCookieHeader({ name, value: "", maxAgeSeconds: 0, req })
+
+const getBearerToken = (req) => {
+  const authorization = req.headers.authorization || ""
+  const [scheme, token] = authorization.split(" ")
+  if (scheme !== "Bearer" || !token) {
+    return ""
+  }
+  return token
+}
+
+const getRequestFirebaseToken = (req, { allowMediaCookie = false } = {}) => {
+  const bearerToken = getBearerToken(req)
+  if (bearerToken) {
+    return bearerToken
+  }
+  if (!allowMediaCookie) {
+    return ""
+  }
+  return getCookieValue(req, mediaSessionCookieName)
+}
+
+const verifyRequestUser = async (req, { allowMediaCookie = false } = {}) => {
+  if (!isFirebaseTokenVerificationConfigured) {
+    throw new Error("firebase-auth-not-configured")
+  }
+
+  const token = getRequestFirebaseToken(req, { allowMediaCookie })
+  if (!token) {
+    throw new Error("firebase-auth-token-missing")
+  }
+
+  const decoded = await verifyFirebaseIdToken(token)
+  return {
+    decoded,
+    token,
+  }
+}
+
+const normalizeMediaRelativePath = (value) => ensureForwardSlashes(String(value || "")).replace(/^\/+/g, "")
+
+const resolveMediaAbsolutePath = (relativePath) => {
+  const normalizedRelativePath = normalizeMediaRelativePath(relativePath)
+  const absolutePath = path.resolve(mediaRootDir, normalizedRelativePath)
+  const mediaRoot = path.resolve(mediaRootDir)
+  if (!absolutePath.startsWith(mediaRoot)) {
+    throw createHttpError(400, "Chemin media invalide.")
+  }
+  return {
+    normalizedRelativePath,
+    absolutePath,
+  }
+}
+
+const getMediaOwnerUid = (relativePath) => {
+  const segments = normalizeMediaRelativePath(relativePath).split("/").filter(Boolean)
+  if (segments[0] !== "users" || !segments[1]) {
+    return null
+  }
+  return segments[1]
+}
+
+const isPublicMediaPath = (relativePath) => {
+  const normalized = normalizeMediaRelativePath(relativePath)
+  if (!normalized.startsWith("users/")) {
+    return true
+  }
+  return /(^|\/)boutique\/products(\/|$)/.test(normalized)
+}
+
 const isAdminToken = (decodedToken) => {
   if (!decodedToken || typeof decodedToken !== "object") {
     return false
@@ -853,12 +962,12 @@ app.use((req, res, next) => {
 
 app.use("/api/stripe-webhook", express.raw({ type: "application/json" }))
 app.use(express.json({ limit: "50mb" }))
-app.use("/media", express.static(mediaRootDir))
 
 const apiRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 180, keyPrefix: "api" })
 const sensitiveApiRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 30, keyPrefix: "sensitive" })
 
 app.use("/api", apiRateLimit)
+app.use("/api/auth", sensitiveApiRateLimit)
 app.use("/api/custom-products", sensitiveApiRateLimit)
 app.use("/api/media", sensitiveApiRateLimit)
 app.use("/api/create-checkout-session", sensitiveApiRateLimit)
@@ -873,21 +982,66 @@ const firebaseAuth = async (req, res, next) => {
     return res.status(503).json({ error: "Firebase Auth n'est pas configuré côté serveur." })
   }
 
-  const authorization = req.headers.authorization || ""
-  const [scheme, token] = authorization.split(" ")
-  if (scheme !== "Bearer" || !token) {
-    return res.status(401).json({ error: "Authentification requise." })
-  }
-
   try {
-    const decoded = await verifyFirebaseIdToken(token)
+    const { decoded, token } = await verifyRequestUser(req)
     req.user = decoded
+    req.authToken = token
     return next()
   } catch (error) {
+    if (error instanceof Error && error.message === "firebase-auth-token-missing") {
+      return res.status(401).json({ error: "Authentification requise." })
+    }
     console.error("Firebase auth failed:", error)
     return res.status(401).json({ error: "Jeton Firebase invalide." })
   }
 }
+
+const mediaAuth = async (req, res, next) => {
+  try {
+    const { decoded } = await verifyRequestUser(req, { allowMediaCookie: true })
+    req.user = decoded
+    return next()
+  } catch (error) {
+    if (error instanceof Error && error.message === "firebase-auth-token-missing") {
+      return res.status(401).send("Authentification requise.")
+    }
+    console.error("Media auth failed:", error)
+    return res.status(401).send("Jeton Firebase invalide.")
+  }
+}
+
+app.post("/api/auth/media-session", firebaseAuth, (req, res) => {
+  const token = String(req.authToken || "").trim()
+  if (!token) {
+    return res.status(401).json({ error: "Authentification requise." })
+  }
+
+  res.setHeader(
+    "Set-Cookie",
+    createCookieHeader({
+      name: mediaSessionCookieName,
+      value: token,
+      maxAgeSeconds: 60 * 60,
+      req,
+    }),
+  )
+
+  return res.json({
+    ok: true,
+    isAdmin: isAdminToken(req.user),
+  })
+})
+
+app.delete("/api/auth/media-session", (req, res) => {
+  res.setHeader(
+    "Set-Cookie",
+    clearCookieHeader({
+      name: mediaSessionCookieName,
+      req,
+    }),
+  )
+  return res.status(204).end()
+})
 
 const adminOnly = (req, res, next) => {
   const allowed = isAdminToken(req.user)
@@ -909,6 +1063,40 @@ const adminOnly = (req, res, next) => {
   })
   return res.status(403).json({ error: "Accès admin requis." })
 }
+
+app.use("/media", async (req, res, next) => {
+  if (req.method !== "GET" && req.method !== "HEAD") {
+    return res.status(405).send("Méthode non autorisée.")
+  }
+
+  try {
+    const { normalizedRelativePath, absolutePath } = resolveMediaAbsolutePath(req.path)
+    if (!fs.existsSync(absolutePath)) {
+      return res.status(404).send("Fichier introuvable.")
+    }
+
+    if (isPublicMediaPath(normalizedRelativePath)) {
+      return res.sendFile(absolutePath)
+    }
+
+    const ownerUid = getMediaOwnerUid(normalizedRelativePath)
+    if (!ownerUid) {
+      return res.status(403).send("Accès refusé.")
+    }
+
+    return mediaAuth(req, res, () => {
+      if (req.user?.uid !== ownerUid && !isAdminToken(req.user)) {
+        return res.status(403).send("Accès refusé.")
+      }
+      return res.sendFile(absolutePath)
+    })
+  } catch (error) {
+    if (error?.statusCode) {
+      return res.status(error.statusCode).send(error.message)
+    }
+    return next(error)
+  }
+})
 
 app.post("/api/media/upload-image", firebaseAuth, mediaUpload.single("file"), async (req, res) => {
   try {
@@ -1827,6 +2015,65 @@ app.post("/api/email/welcome/admin-resend", firebaseAuth, adminOnly, async (req,
   } catch (error) {
     console.error("Admin welcome email resend failed:", error)
     return res.status(500).json({ error: "Impossible de renvoyer l'email de bienvenue." })
+  }
+})
+
+app.post("/api/account/delete", firebaseAuth, async (req, res) => {
+  if (!isFirebaseAdminConfigured) {
+    return res.status(503).json({
+      error:
+        "La suppression complete des comptes n'est pas configuree sur le serveur. Ajoute une configuration Firebase Admin.",
+    })
+  }
+
+  try {
+    const uid = sanitizeText(req.user?.uid, 128)
+    const email = normalizeEmailValue(req.user?.email)
+
+    if (!uid) {
+      return res.status(401).json({ error: "Authentification requise." })
+    }
+
+    const adminAuth = getFirebaseAdminAuth()
+    const adminDb = getFirebaseAdminDb()
+    const firestoreTargets = await listFirestoreUserTargets({
+      adminDb,
+      email,
+      uid,
+    })
+
+    if (firestoreTargets.length > 0) {
+      await Promise.all(firestoreTargets.map(({ ref }) => adminDb.recursiveDelete(ref)))
+    }
+
+    await adminAuth.deleteUser(uid)
+    const mediaDeleted = await deleteUserMediaDirectories([
+      uid,
+      ...firestoreTargets.map(({ id }) => id),
+    ])
+
+    res.setHeader(
+      "Set-Cookie",
+      clearCookieHeader({
+        name: mediaSessionCookieName,
+        req,
+      }),
+    )
+
+    console.log("User deleted own account", {
+      email: req.user?.email ?? null,
+      uid,
+      firestoreDeleted: firestoreTargets.length > 0,
+      mediaDeleted,
+    })
+
+    return res.json({
+      ok: true,
+      mediaDeleted,
+    })
+  } catch (error) {
+    console.error("Self account delete failed:", error)
+    return res.status(500).json({ error: "Impossible de supprimer completement ce compte." })
   }
 })
 

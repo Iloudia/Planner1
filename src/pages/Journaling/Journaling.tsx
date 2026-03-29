@@ -377,7 +377,7 @@ const JournalingPage = () => {
       <section className="journaling-section journaling-write journaling-section--delay-3">
         <header className="journaling-section__header">
           <div>
-            <h2>Zone d'écriture principale</h2>
+            <h2>Zone d'écriture libre</h2>
             <p>Écris sans filtre. Tu es libre de t’arrêter quand tu veux.</p>
           </div>
         </header>

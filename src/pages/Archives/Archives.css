@@ -49,7 +49,8 @@
   flex-wrap: wrap;
 }
 
-.archives-control {
+.archives-controls > label,
+.archives-detail-header > label {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -57,8 +58,10 @@
   color: rgba(30, 27, 43, 0.7);
 }
 
-.archives-control input,
-.archives-control select {
+.archives-controls > label input,
+.archives-controls > label select,
+.archives-detail-header > label input,
+.archives-detail-header > label select {
   border: 1px solid rgba(114, 92, 63, 0.22);
   padding: 0.45rem 0.9rem;
   background: rgba(255, 255, 255, 0.95);
@@ -66,13 +69,15 @@
   color: #1f1a2f;
 }
 
-.archives-control .workout-form__select {
+.archives-controls > label .workout-form__select,
+.archives-detail-header > label .workout-form__select {
   position: relative;
   width: 100%;
   min-width: 200px;
 }
 
-.archives-control .workout-form__select-trigger {
+.archives-controls > label .workout-form__select-trigger,
+.archives-detail-header > label .workout-form__select-trigger {
   border: 1px solid #e6e1d9;
   border-radius: 0;
   background: #ffffff;
@@ -90,20 +95,23 @@
   color: #000000;
 }
 
-.archives-control .workout-form__select-trigger:focus-visible {
+.archives-controls > label .workout-form__select-trigger:focus-visible,
+.archives-detail-header > label .workout-form__select-trigger:focus-visible {
   outline: none;
   border-color: #000000;
   box-shadow: 0 10px 26px rgba(0, 0, 0, 0.15);
 }
 
-.archives-control .workout-form__select-chevron {
+.archives-controls > label .workout-form__select-chevron,
+.archives-detail-header > label .workout-form__select-chevron {
   width: 18px;
   height: 18px;
   color: rgba(15, 23, 42, 0.6);
   flex: 0 0 auto;
 }
 
-.archives-control .workout-form__select-menu {
+.archives-controls > label .workout-form__select-menu,
+.archives-detail-header > label .workout-form__select-menu {
   position: absolute;
   top: calc(100% + 0.4rem);
   left: 0;
@@ -119,7 +127,8 @@
   z-index: 5;
 }
 
-.archives-control .workout-form__select-menu button {
+.archives-controls > label .workout-form__select-menu button,
+.archives-detail-header > label .workout-form__select-menu button {
   background: none;
   border: none;
   text-align: left;
@@ -131,9 +140,12 @@
   transition: background 0.2s ease, color 0.2s ease;
 }
 
-.archives-control .workout-form__select-menu button:hover,
-.archives-control .workout-form__select-menu button:focus-visible,
-.archives-control .workout-form__select-menu button.is-selected {
+.archives-controls > label .workout-form__select-menu button:hover,
+.archives-controls > label .workout-form__select-menu button:focus-visible,
+.archives-controls > label .workout-form__select-menu button.is-selected,
+.archives-detail-header > label .workout-form__select-menu button:hover,
+.archives-detail-header > label .workout-form__select-menu button:focus-visible,
+.archives-detail-header > label .workout-form__select-menu button.is-selected {
   background: #f1ece4;
   color: #000000;
   outline: none;
@@ -669,6 +681,10 @@
   color: #1f1a2f;
 }
 
+.archives-modal__content .modal__close {
+  border-radius: 999px;
+}
+
 .archives-modal__body {
   padding: clamp(1.4rem, 3vw, 2rem);
   background: #fff;
@@ -691,6 +707,12 @@
   gap: 1rem;
 }
 
+.archives-modal__section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 .archives-modal__detail span {
   font-size: 0.75rem;
   letter-spacing: 0.1em;
@@ -703,6 +725,28 @@
   margin: 0.35rem 0 0;
   color: rgba(15, 23, 42, 0.8);
   line-height: 1.6;
+}
+
+.archives-modal__qa {
+  padding-top: 1rem;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.archives-modal__qa:first-child {
+  padding-top: 0;
+  border-top: none;
+}
+
+.archives-modal__qa-question,
+.archives-modal__qa-answer {
+  margin: 0.35rem 0 0.9rem;
+  color: rgba(15, 23, 42, 0.8);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.archives-modal__qa-answer {
+  margin-bottom: 0;
 }
 
 .archives-modal__footer {
@@ -764,10 +808,14 @@ body.boutique-page--tone .archives-detail h3 {
   color: var(--ink);
 }
 
-body.boutique-page--tone .archives-control input,
-body.boutique-page--tone .archives-control select,
-body.boutique-page--tone .archives-control .workout-form__select-trigger,
-body.boutique-page--tone .archives-control .workout-form__select-menu {
+body.boutique-page--tone .archives-controls > label input,
+body.boutique-page--tone .archives-controls > label select,
+body.boutique-page--tone .archives-controls > label .workout-form__select-trigger,
+body.boutique-page--tone .archives-controls > label .workout-form__select-menu,
+body.boutique-page--tone .archives-detail-header > label input,
+body.boutique-page--tone .archives-detail-header > label select,
+body.boutique-page--tone .archives-detail-header > label .workout-form__select-trigger,
+body.boutique-page--tone .archives-detail-header > label .workout-form__select-menu {
   border-radius: 0;
   border: 1px solid var(--line);
   background: var(--paper);
@@ -775,13 +823,17 @@ body.boutique-page--tone .archives-control .workout-form__select-menu {
   color: var(--ink);
 }
 
-body.boutique-page--tone .archives-control .workout-form__select-menu button {
+body.boutique-page--tone .archives-controls > label .workout-form__select-menu button,
+body.boutique-page--tone .archives-detail-header > label .workout-form__select-menu button {
   color: var(--ink);
 }
 
-body.boutique-page--tone .archives-control .workout-form__select-menu button:hover,
-body.boutique-page--tone .archives-control .workout-form__select-menu button:focus-visible,
-body.boutique-page--tone .archives-control .workout-form__select-menu button.is-selected {
+body.boutique-page--tone .archives-controls > label .workout-form__select-menu button:hover,
+body.boutique-page--tone .archives-controls > label .workout-form__select-menu button:focus-visible,
+body.boutique-page--tone .archives-controls > label .workout-form__select-menu button.is-selected,
+body.boutique-page--tone .archives-detail-header > label .workout-form__select-menu button:hover,
+body.boutique-page--tone .archives-detail-header > label .workout-form__select-menu button:focus-visible,
+body.boutique-page--tone .archives-detail-header > label .workout-form__select-menu button.is-selected {
   background: #f2ede6;
   color: var(--ink);
 }

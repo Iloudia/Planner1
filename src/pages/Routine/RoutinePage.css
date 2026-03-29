@@ -238,6 +238,14 @@
   max-width: 100%;
 }
 
+.routine-note__label--title-only {
+  align-items: center;
+}
+
+.routine-note__text--title-only {
+  justify-content: center;
+}
+
 .routine-note__item-title {
   font-weight: 600;
   color: var(--color-chocolate);

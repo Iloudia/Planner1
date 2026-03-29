@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+﻿import { useEffect, useMemo, useRef, useState } from "react"
 import PageHeading from "../../components/PageHeading"
 import { useAuth } from "../../context/AuthContext"
 import useUserJournalEntries from "../../hooks/useUserJournalEntries"
@@ -41,6 +41,50 @@ const SECTION_OPTIONS: Array<{ value: "all" | "journaling" | "self-love"; label:
   { value: "self-love", label: "Self Love" },
 ]
 
+const moodLabels: Record<string, string> = {
+  bright: "Heureuse",
+  good: "Calme",
+  low: "Triste",
+  overwhelmed: "Fatiguée",
+  neutral: "En colère",
+}
+
+const energyLabels: Record<string, string> = {
+  high: "Haute",
+  medium: "Moyenne",
+  low: "Faible",
+}
+
+const postFeelingLabels: Record<string, string> = {
+  better: "Un peu mieux",
+  same: "Pareil",
+  clearer: "Soulagée",
+  tiredRelieved: "Fatiguée",
+}
+
+const formatArchiveDetailLabel = (label: string) => {
+  if (
+    label === "Niveau d'énergie" ||
+    label === "Niveau d'\u00c3\u00a9nergie" ||
+    label === "Niveau d'\u00c3\u0192\u00c2\u00a9nergie" ||
+    label === "Niveau d'\u00c3\u0192\u00c6\u2019\u00c3\u201a\u00c2\u00a9nergie"
+  ) {
+    return "Niveau d'énergie"
+  }
+  if (
+    label === "Mot-clé" ||
+    label === "Mot-cl\u00c3\u0192\u00c2\u00a9" ||
+    label === "Mot-cl\u00c3\u0192\u00c6\u2019\u00c3\u201a\u00c2\u00a9" ||
+    label === "Mot-cl\u00c3\u00a9 du jour"
+  ) {
+    return "Mot-clé"
+  }
+  if (label === "Ancrage") {
+    return "Ancrage positif"
+  }
+  return label
+}
+
 const getTimestampFromDateKey = (dateKey: string) => {
   const [year, month, day] = dateKey.split("-").map(Number)
   if (!year || !month || !day) {
@@ -72,6 +116,25 @@ const formatArchiveDate = (value: string) => {
   return formatted.charAt(0).toUpperCase() + formatted.slice(1)
 }
 
+const parseGuidedQuestions = (value?: string) =>
+  String(value ?? "")
+    .split(" | ")
+    .map((item) => item.trim())
+    .filter(Boolean)
+
+const parseGuidedAnswers = (value?: string) => {
+  const source = String(value ?? "").trim()
+  if (!source) {
+    return []
+  }
+
+  const matches = Array.from(source.matchAll(/(?:^|\n\s*\n)Q\d+\s*:\s*([\s\S]*?)(?=(?:\n\s*\n)Q\d+\s*:|$)/g))
+    .map((match) => match[1]?.trim() ?? "")
+    .filter(Boolean)
+
+  return matches.length > 0 ? matches : [source]
+}
+
 const buildMonthGrid = (year: number, monthIndex: number) => {
   const firstDay = new Date(year, monthIndex, 1)
   const daysInMonth = new Date(year, monthIndex + 1, 0).getDate()
@@ -89,10 +152,10 @@ const buildMonthGrid = (year: number, monthIndex: number) => {
 
 const getSelfLoveTitle = (letter: SelfLoveSavedLetter) => {
   if (letter.entryType === "innerChild") {
-    return "Exercice — L'enfant intérieur"
+    return "Exercice - L'enfant intérieur"
   }
   if (letter.entryType === "bestFriend") {
-    return "Exercice — Jeu de rôles"
+    return "Exercice - Jeu de rôles"
   }
   if (letter.openDate) {
     return "Lettre au futur"
@@ -144,7 +207,6 @@ const ArchivesPage = () => {
     deleteArchiveEntry,
   } = useUserSelfLove()
   const [sectionFilter, setSectionFilter] = useState<"all" | "journaling" | "self-love">("all")
-  const [searchQuery, setSearchQuery] = useState("")
   const [selectedYear, setSelectedYear] = useState<string | null>(null)
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null)
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
@@ -172,6 +234,12 @@ const ArchivesPage = () => {
           tags.push(entry.keyword)
         }
         const details: Array<{ label: string; value: string }> = []
+        if (entry.mood) {
+          details.push({ label: "Humeur du jour", value: moodLabels[entry.mood] ?? String(entry.mood) })
+        }
+        if (entry.energy) {
+          details.push({ label: "Niveau d'énergie", value: energyLabels[entry.energy] ?? String(entry.energy) })
+        }
         if (entry.keyword) {
           details.push({ label: "Mot-clé", value: entry.keyword })
         }
@@ -186,6 +254,12 @@ const ArchivesPage = () => {
         }
         if (entry.positiveAnchor) {
           details.push({ label: "Ancrage", value: entry.positiveAnchor })
+        }
+        if (entry.postFeeling) {
+          details.push({
+            label: "Comment te sens-tu maintenant ?",
+            value: postFeelingLabels[entry.postFeeling] ?? String(entry.postFeeling),
+          })
         }
         return {
           id: entry.id,
@@ -272,21 +346,14 @@ const ArchivesPage = () => {
   }, [selfLoveFirestoreEntries])
 
   const filteredEntries = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase()
     const base =
       sectionFilter === "all"
         ? [...journalingArchiveEntries, ...selfLoveArchiveEntries]
         : sectionFilter === "journaling"
           ? journalingArchiveEntries
           : selfLoveArchiveEntries
-    if (!query) {
-      return base
-    }
-    return base.filter((entry) => {
-      const haystack = [entry.title, entry.excerpt, entry.sectionLabel, entry.tags.join(" ")].join(" ").toLowerCase()
-      return haystack.includes(query)
-    })
-  }, [journalingArchiveEntries, selfLoveArchiveEntries, sectionFilter, searchQuery])
+    return base
+  }, [journalingArchiveEntries, selfLoveArchiveEntries, sectionFilter])
 
   const entriesByDate = useMemo(() => {
     const map = new Map<string, ArchiveEntry[]>()
@@ -454,6 +521,67 @@ const ArchivesPage = () => {
   const selectedSelfLoveEntry = selectedEntry?.section === "self-love" ? selectedEntry.selfLoveLetter ?? null : null
   const selectedLetter = selectedSelfLoveEntry?.entryType === "letter" ? selectedSelfLoveEntry : null
   const selectedExercise = selectedSelfLoveEntry && selectedSelfLoveEntry.entryType !== "letter" ? selectedSelfLoveEntry : null
+  const selectedQuestionDetail =
+    selectedEntry?.details.find((detail) => detail.label === "Questions guidées" || detail.label === "Question du jour")?.value
+  const selectedAnswerDetail = selectedEntry?.details.find((detail) => detail.label === "Réponse")?.value
+  const selectedQuestionDetailValue =
+    selectedEntry?.details.find(
+      (detail) => detail.label === "Questions guidées" || detail.label === "Questions guid\u00c3\u0192\u00c2\u00a9es",
+    )?.value ??
+    selectedQuestionDetail
+  const selectedAnswerDetailValue =
+    selectedEntry?.details.find((detail) => detail.label === "Réponses guidées")?.value ??
+    selectedAnswerDetail
+  const selectedGuidedPairs =
+    selectedEntry?.section === "journaling" && selectedQuestionDetailValue
+      ? parseGuidedQuestions(selectedQuestionDetailValue).map((question, index) => ({
+          question,
+          answer: parseGuidedAnswers(selectedAnswerDetailValue)[index] ?? "",
+        }))
+      : []
+  const selectedEntryDetails =
+    selectedGuidedPairs.length > 0
+      ? selectedEntry?.details.filter((detail) => detail.label !== "Question du jour" && detail.label !== "Réponse") ?? []
+      : selectedEntry?.details ?? []
+  const selectedEntryDetailsBeforeQuestions = selectedGuidedPairs.length > 0
+    ? selectedEntryDetails.filter(
+        (detail) =>
+          detail.label === "Humeur du jour" ||
+          detail.label === "Niveau d'énergie" ||
+          detail.label === "Niveau d'\u00c3\u0192\u00c2\u00a9nergie" ||
+          detail.label === "Mot-clé du jour" ||
+          detail.label === "Mot-clé" ||
+          detail.label === "Mot-cl\u00c3\u0192\u00c2\u00a9",
+      )
+    : selectedEntryDetails
+  const selectedEntryDetailsAfterQuestions = selectedGuidedPairs.length > 0
+    ? selectedEntryDetails.filter(
+        (detail) =>
+          detail.label !== "Humeur du jour" &&
+          detail.label !== "Niveau d'énergie" &&
+          detail.label !== "Niveau d'\u00c3\u0192\u00c2\u00a9nergie" &&
+          detail.label !== "Mot-clé du jour" &&
+          detail.label !== "Mot-clé" &&
+          detail.label !== "Mot-cl\u00c3\u0192\u00c2\u00a9",
+      )
+    : []
+  const selectedTopDetails = [
+    selectedEntry?.details.find((detail) => detail.label.startsWith("Mot")),
+    selectedEntry?.details.find((detail) => detail.label.startsWith("Humeur")),
+    selectedEntry?.details.find((detail) => detail.label.startsWith("Niveau")),
+  ].filter((detail): detail is { label: string; value: string } => Boolean(detail))
+  const selectedBodyDetails = selectedEntryDetails.filter(
+    (detail) =>
+      !detail.label.startsWith("Mot") &&
+      !detail.label.startsWith("Humeur") &&
+      !detail.label.startsWith("Niveau"),
+  )
+  const selectedClosureDetails = selectedBodyDetails.filter(
+    (detail) => detail.label === "Ancrage" || detail.label === "Ancrage positif" || detail.label === "Comment te sens-tu maintenant ?",
+  )
+  const selectedFreeWritingDetails = selectedBodyDetails.filter(
+    (detail) => detail.label !== "Ancrage" && detail.label !== "Ancrage positif" && detail.label !== "Comment te sens-tu maintenant ?",
+  )
   const selectedLetterLocked = selectedLetter ? isFutureLetterLocked(selectedLetter) : false
   const selectedLetterDate = selectedLetter
     ? new Date(selectedLetter.createdAt).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" })
@@ -496,16 +624,7 @@ const ArchivesPage = () => {
           <p>Retrouve tes écrits par date.</p>
         </div>
         <div className="archives-controls">
-          <label className="archives-control">
-            <span>Rechercher</span>
-            <input
-              type="search"
-              placeholder="Rechercher dans les archives"
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-            />
-          </label>
-          <label className="archives-control">
+          <label>
             <span>Section</span>
             <div className="workout-form__select" ref={sectionMenuRef}>
               <button
@@ -627,7 +746,7 @@ const ArchivesPage = () => {
                       .slice(0, 2)
                       .map((entry) => entry.title)
                       .join(" · ")
-                    const tooltip = `${cell.count} écrit(s)${preview ? ` — ${preview}` : ""}`
+                    const tooltip = `${cell.count} écrit(s)${preview ? ` - ${preview}` : ""}`
                     return (
                       <button
                         key={cell.key}
@@ -677,7 +796,7 @@ const ArchivesPage = () => {
                     <span className="archives-detail-eyebrow">Détails du jour</span>
                     <h3>{formatArchiveDate(selectedDay)}</h3>
                   </div>
-                  <label className="archives-control">
+                  <label>
                     <span>Tri</span>
                     <select
                       value={sortOrder}
@@ -866,7 +985,7 @@ const ArchivesPage = () => {
                     <div className="archives-exercise-card__content">
                       <section className="archives-exercise-card__section archives-exercise-card__section--intro">
                         <h4>Reconnecte-toi avec ton enfant intérieur</h4>
-                        <p>Offre à ton enfant intérieur les mots qu’il aurait eu besoin d’entendre.</p>
+                        <p>Offre à ton enfant intérieur les mots qu'il aurait eu besoin d'entendre.</p>
                       </section>
                       {selectedExercise.innerChild?.message ? (
                         <section className="archives-exercise-card__section archives-exercise-card__section--qa">
@@ -891,15 +1010,53 @@ const ArchivesPage = () => {
                 </div>
               ) : (
                 <>
-                  <h4>{selectedEntry.title}</h4>
-                  {selectedEntry.details.length > 0 ? (
+                  {selectedEntryDetails.length > 0 || selectedGuidedPairs.length > 0 ? (
                     <div className="archives-modal__details">
-                      {selectedEntry.details.map((detail) => (
-                        <div key={`${selectedEntry.id}-${detail.label}`} className="archives-modal__detail">
-                          <span>{detail.label}</span>
-                          <p>{detail.value}</p>
-                        </div>
-                      ))}
+                      {selectedTopDetails.length > 0 ? (
+                        <section className="archives-modal__section">
+                          <h4>Check-in émotionnel</h4>
+                          {selectedTopDetails.map((detail) => (
+                            <div key={`${selectedEntry.id}-${detail.label}`} className="archives-modal__detail">
+                              <span>{formatArchiveDetailLabel(detail.label)}</span>
+                              <p>{detail.value}</p>
+                            </div>
+                          ))}
+                        </section>
+                      ) : null}
+                      {selectedGuidedPairs.length > 0 ? (
+                        <section className="archives-modal__section">
+                          <h4>Question guidée du jour</h4>
+                          {selectedGuidedPairs.map((pair, index) => (
+                            <div key={`${selectedEntry.id}-qa-${index}`} className="archives-modal__qa">
+                              <span>Question {index + 1}</span>
+                              <p className="archives-modal__qa-question">{pair.question}</p>
+                              <span>Réponse</span>
+                              <p className="archives-modal__qa-answer">{pair.answer || "Aucune réponse."}</p>
+                            </div>
+                          ))}
+                        </section>
+                      ) : null}
+                      {selectedFreeWritingDetails.length > 0 ? (
+                        <section className="archives-modal__section">
+                          <h4>Zone d'écriture libre</h4>
+                          {selectedFreeWritingDetails.map((detail) => (
+                            <div key={`${selectedEntry.id}-${detail.label}`} className="archives-modal__detail">
+                              <p>{detail.value}</p>
+                            </div>
+                          ))}
+                        </section>
+                      ) : null}
+                      {selectedClosureDetails.length > 0 ? (
+                        <section className="archives-modal__section">
+                          <h4>Clôture émotionnelle</h4>
+                          {selectedClosureDetails.map((detail) => (
+                            <div key={`${selectedEntry.id}-${detail.label}`} className="archives-modal__detail">
+                              <span>{formatArchiveDetailLabel(detail.label)}</span>
+                              <p>{detail.value}</p>
+                            </div>
+                          ))}
+                        </section>
+                      ) : null}
                     </div>
                   ) : (
                     <p>Aucun détail disponible.</p>

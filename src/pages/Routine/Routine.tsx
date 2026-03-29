@@ -32,7 +32,7 @@ const RoutineChecklist = ({ items, completedSet, toggleRoutine, onRemoveItem, di
     {items.map((item, index) => (
       <li className="routine-note__item" key={item.id}>
         <div className="routine-note__row">
-          <label className="routine-note__label">
+          <label className={`routine-note__label${item.detail ? "" : " routine-note__label--title-only"}`}>
             <span className="routine-note__index">{String(index + 1).padStart(2, "0")}</span>
             <input
               className="routine-note__checkbox"
@@ -41,7 +41,7 @@ const RoutineChecklist = ({ items, completedSet, toggleRoutine, onRemoveItem, di
               onChange={() => toggleRoutine(item.id)}
               disabled={disabled}
             />
-            <span className="routine-note__text">
+            <span className={`routine-note__text${item.detail ? "" : " routine-note__text--title-only"}`}>
               <span className="routine-note__item-title">{truncateText(item.title)}</span>
               {item.detail ? <span className="routine-note__item-detail">{item.detail}</span> : null}
             </span>

@@ -52,10 +52,10 @@ const cards: CardItem[] = [
   { image: planner06, alt: "Calendrier", kicker: "Vue globale", title: "Calendrier", path: "/calendrier" },
   { image: planner05, alt: "Wishlist", kicker: "Envies", title: "Wishlist", path: "/wishlist" },
   { image: planner03, alt: "Journaling", kicker: "Reflet", title: "Journaling", path: "/journaling" },
-  { image: planner04, alt: "Self-love", kicker: "Soin", title: "Mindset", path: "/self-love" },
+  { image: planner04, alt: "Self-love", kicker: "Soin", title: "Mindset", path: "/mindset" },
   { image: planner07, alt: "Finances", kicker: "Budget", title: "Finances", path: "/finances" },
   { image: planner08, alt: "Routine", kicker: "Rythme", title: "Routine", path: "/routine" },
-  { image: planner09, alt: "Courses & menus", kicker: "Saveurs", title: "Menu de la semaine", path: "/alimentation" },
+  { image: planner09, alt: "Courses & menus", kicker: "Saveurs", title: "Menu de la semaine", path: "/menu" },
 ]
 
 const CARD_PATHS = cards.map((card) => card.path)
@@ -64,17 +64,17 @@ const CARD_PATH_SET = new Set(CARD_PATHS)
 const CATEGORY_TO_PATH: Record<string, string> = {
   sport: "/sport",
   journaling: "/journaling",
-  mindset: "/self-love",
-  "mind set": "/self-love",
-  "self love": "/self-love",
-  "self-love": "/self-love",
+  mindset: "/mindset",
+  "mind set": "/mindset",
+  "self love": "/mindset",
+  "self-love": "/mindset",
   finances: "/finances",
   routine: "/routine",
   wishlist: "/wishlist",
   calendrier: "/calendrier",
   "calendrier mensuel": "/calendrier",
-  "menu de la semaine": "/alimentation",
-  cuisine: "/alimentation",
+  "menu de la semaine": "/menu",
+  cuisine: "/menu",
 }
 
 const clamp = (value: number) => Math.min(100, Math.max(0, value))
@@ -890,7 +890,7 @@ function HomePage() {
                 alt={card.alt}
                 loading="lazy"
                 decoding="async"
-                style={card.path === "/self-love" ? { objectPosition: "center 30%" } : undefined}
+                style={card.path === "/mindset" ? { objectPosition: "center 30%" } : undefined}
               />
               <div className="card-body">
                 <h3>{card.title}</h3>

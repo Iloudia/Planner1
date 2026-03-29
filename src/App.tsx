@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect } from "react"
-import { Link, Route, Routes, useLocation } from "react-router-dom"
+import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom"
 import { useCookieConsent } from "./context/CookieConsentContext"
 import { initAnalytics } from "./utils/firebase"
 import Header from "./components/Header"
@@ -162,14 +162,17 @@ function App() {
               <Route path="/sport" element={<SportPage />} />
               <Route path="/sport/workout/*" element={<SportWorkoutPage />} />
               <Route path="/journaling" element={<JournalingPage />} />
-              <Route path="/self-love" element={<SelfLovePage />} />
+              <Route path="/mindset" element={<SelfLovePage />} />
+              <Route path="/self-love" element={<Navigate to="/mindset" replace />} />
               <Route path="/wishlist" element={<WishlistPage />} />
               <Route path="/calendrier" element={<CalendrierPage />} />
               <Route path="/finances" element={<FinancesPage />} />
               <Route path="/routine" element={<RoutinePage />} />
               <Route path="/goals" element={<GoalsPage />} />
               <Route path="/diet" element={<DietClassicPage />} />
-              <Route path="/alimentation" element={<CuisinePage />} />
+              <Route path="/menu" element={<CuisinePage />} />
+              <Route path="/Menu" element={<Navigate to="/menu" replace />} />
+              <Route path="/alimentation" element={<Navigate to="/menu" replace />} />
               <Route path="/profil" element={<ProfilePage />} />
               <Route path="/archives" element={<ArchivesPage />} />
               <Route path="/mes-achats" element={<PurchasesPage />} />

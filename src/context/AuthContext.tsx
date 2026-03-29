@@ -9,6 +9,7 @@ import {
   browserSessionPersistence,
   createUserWithEmailAndPassword,
   deleteUser,
+  onIdTokenChanged,
   onAuthStateChanged,
   reauthenticateWithCredential,
   setPersistence,
@@ -31,7 +32,7 @@ import {
   where,
 } from "firebase/firestore"
 import { type FirebaseUserDocument } from "../models/firebase"
-import { buildApiUrl, getApiTargetLabel } from "../utils/apiUrl"
+import { buildApiUrl, fetchApi, getApiTargetLabel } from "../utils/apiUrl"
 import { auth, db } from "../utils/firebase"
 import { buildUserScopedKey, normalizeUserEmail } from "../utils/userScopedKey"
 const THIRTY_DAYS_MS = 1000 * 60 * 60 * 24 * 30
@@ -115,20 +116,20 @@ const readLocalProfile = (email: string | null | undefined): UserProfileData => 
     return emptyUserProfile
   }
 
-  const keys = [buildUserScopedKey(normalizeUserEmail(email), PROFILE_STORAGE_KEY), PROFILE_STORAGE_KEY]
+  const key = buildUserScopedKey(normalizeUserEmail(email), PROFILE_STORAGE_KEY)
 
-  for (const key of keys) {
-    try {
-      const raw = window.localStorage.getItem(key)
-      if (!raw) continue
-      const parsed = JSON.parse(raw) as UserProfileData
-      return {
-        personalInfo: parsed.personalInfo ?? {},
-        identityInfo: parsed.identityInfo ?? {},
-      }
-    } catch {
-      // ignore malformed storage entries
+  try {
+    const raw = window.localStorage.getItem(key)
+    if (!raw) {
+      return emptyUserProfile
     }
+    const parsed = JSON.parse(raw) as UserProfileData
+    return {
+      personalInfo: parsed.personalInfo ?? {},
+      identityInfo: parsed.identityInfo ?? {},
+    }
+  } catch {
+    // ignore malformed storage entries
   }
 
   return emptyUserProfile
@@ -198,6 +199,50 @@ const notifyWelcomeEmail = async (firstName?: string) => {
       // ignore malformed payloads
     }
     throw new Error(reason)
+  }
+}
+
+const clearServerMediaSession = async () => {
+  try {
+    await fetchApi("/api/auth/media-session", {
+      method: "DELETE",
+      credentials: "include",
+    })
+  } catch (error) {
+    if (error instanceof TypeError) {
+      console.warn(`Media session clear skipped: server unreachable (${getApiTargetLabel()})`)
+      return
+    }
+    console.error("Media session clear failed", error)
+  }
+}
+
+const syncServerMediaSession = async (user: User) => {
+  const token = await user.getIdToken()
+  const response = await fetchApi("/api/auth/media-session", {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  if (!response.ok) {
+    let reason = `status ${response.status}`
+    try {
+      const payload = (await response.json()) as { error?: string }
+      if (payload?.error) {
+        reason = payload.error
+      }
+    } catch {
+      // ignore malformed payloads
+    }
+    throw new Error(reason)
+  }
+
+  const payload = (await response.json().catch(() => ({}))) as { isAdmin?: boolean }
+  return {
+    isAdmin: Boolean(payload?.isAdmin),
   }
 }
 
@@ -303,6 +348,7 @@ type AuthProviderProps = {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [authUser, setAuthUser] = useState<User | null>(auth.currentUser)
   const [userDoc, setUserDoc] = useState<FirebaseUserDocument | null>(null)
+  const [isAdminApproved, setIsAdminApproved] = useState(false)
   const [accountCreatedAt, setAccountCreatedAt] = useState<string | null>(null)
   const [scheduledDeletionDate, setScheduledDeletionDate] = useState<string | null>(null)
   const [authReady, setAuthReady] = useState(false)
@@ -313,8 +359,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setAuthUser(nextUser)
       if (!nextUser) {
         setUserDoc(null)
+        setIsAdminApproved(false)
         setAccountCreatedAt(null)
         setScheduledDeletionDate(null)
+        await clearServerMediaSession()
         if (isMounted) {
           setAuthReady(true)
         }
@@ -353,6 +401,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           identityInfo: data.identityInfo ?? {},
         })
 
+        try {
+          const sessionState = await syncServerMediaSession(nextUser)
+          if (isMounted) {
+            setIsAdminApproved(sessionState.isAdmin)
+          }
+        } catch (error) {
+          if (error instanceof TypeError) {
+            console.warn(`Media session sync skipped: server unreachable (${getApiTargetLabel()})`)
+          } else {
+            console.error("Media session sync failed", error)
+          }
+          if (isMounted) {
+            setIsAdminApproved(false)
+          }
+        }
+
         setUserDoc(data)
         setAccountCreatedAt(data.createdAt ?? nextUser.metadata.creationTime ?? null)
         setScheduledDeletionDate(data.deletionPlannedAt ?? null)
@@ -370,6 +434,29 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     return () => {
       isMounted = false
+      unsubscribe()
+    }
+  }, [])
+
+  useEffect(() => {
+    const unsubscribe = onIdTokenChanged(auth, async (nextUser) => {
+      if (!nextUser) {
+        return
+      }
+
+      try {
+        const sessionState = await syncServerMediaSession(nextUser)
+        setIsAdminApproved(sessionState.isAdmin)
+      } catch (error) {
+        if (error instanceof TypeError) {
+          console.warn(`Media session refresh skipped: server unreachable (${getApiTargetLabel()})`)
+          return
+        }
+        console.error("Media session refresh failed", error)
+      }
+    })
+
+    return () => {
       unsubscribe()
     }
   }, [])
@@ -421,19 +508,26 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (!trimmedEmail || !password) return { success: false, errorCode: "auth/missing-credentials" }
       try {
         await applyPersistence(remember)
+        if (profile) {
+          writeLocalProfile(trimmedEmail, {
+            personalInfo: {
+              firstName: profile.firstName?.trim() || "",
+              lastName: profile.lastName?.trim() || "",
+              email: trimmedEmail,
+            },
+            identityInfo: {
+              username: profile.username?.trim() || "",
+              birthday: profile.birthday?.trim() || "",
+              gender: profile.gender?.trim() || "",
+            },
+          })
+        }
         const result = await createUserWithEmailAndPassword(auth, trimmedEmail, password)
         const displayName = profile?.username || [profile?.firstName, profile?.lastName].filter(Boolean).join(" ")
         if (displayName) {
           await updateProfile(result.user, { displayName })
         }
-        // Create the profile document without blocking onboarding navigation.
-        void (async () => {
-          try {
-            await ensureUserDocument(result.user, profile)
-          } catch (error) {
-            console.error("Post-register profile setup failed", error)
-          }
-        })()
+        await ensureUserDocument(result.user, profile)
         // Send welcome email asynchronously to keep signup flow fast and resilient.
         void notifyWelcomeEmail(profile?.firstName).catch((error) => {
           if (error instanceof TypeError) {
@@ -583,6 +677,94 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       return {
         success: false,
         error: "Suppression impossible sans reconnexion récente. Reconnecte-toi puis réessaie.",
+      }
+    }
+  }, [])
+
+  const deleteAccountViaServer = useCallback(async (): Promise<AccountActionResult> => {
+    const currentUser = auth.currentUser
+    if (!currentUser) {
+      return { success: false, error: "Tu dois Ãªtre connectÃ© pour supprimer ton compte." }
+    }
+
+    try {
+      const token = await currentUser.getIdToken()
+      const response = await fetch(buildApiUrl("/api/account/delete"), {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+
+      if (!response.ok) {
+        let reason = `status ${response.status}`
+        try {
+          const payload = (await response.json()) as { error?: string }
+          if (payload?.error) {
+            reason = payload.error
+          }
+        } catch {
+          // ignore malformed response bodies
+        }
+        return { success: false, error: reason }
+      }
+
+      await signOut(auth)
+      return { success: true }
+    } catch (error) {
+      if (error instanceof TypeError) {
+        return { success: false, error: `Serveur compte inaccessible (${getApiTargetLabel()}).` }
+      }
+      console.error("Account delete failed", error)
+      return {
+        success: false,
+        error: "Suppression complete impossible pour le moment.",
+      }
+    }
+  }, [])
+
+  const deleteAccountFinal = useCallback(async (): Promise<AccountActionResult> => {
+    const currentUser = auth.currentUser
+    if (!currentUser) {
+      return { success: false, error: "Tu dois etre connecte pour supprimer ton compte." }
+    }
+
+    try {
+      const token = await currentUser.getIdToken()
+      const response = await fetch(buildApiUrl("/api/account/delete"), {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+
+      if (!response.ok) {
+        let reason = `status ${response.status}`
+        try {
+          const payload = (await response.json()) as { error?: string }
+          if (payload?.error) {
+            reason = payload.error
+          }
+        } catch {
+          // ignore malformed response bodies
+        }
+        return { success: false, error: reason }
+      }
+
+      await signOut(auth)
+      return { success: true }
+    } catch (error) {
+      if (error instanceof TypeError) {
+        return { success: false, error: `Serveur compte inaccessible (${getApiTargetLabel()}).` }
+      }
+      console.error("Account delete failed", error)
+      return {
+        success: false,
+        error: "Suppression complete impossible pour le moment.",
       }
     }
   }, [])
@@ -772,7 +954,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const value = useMemo<AuthContextValue>(() => {
     const email = authUser?.email ?? null
-    const isAdmin = Boolean(userDoc?.admin)
+    const isAdmin = isAdminApproved || Boolean(userDoc?.admin)
     const username = userDoc?.identityInfo?.username?.trim() || null
     const userProfile = mergeProfileData(
       {
@@ -799,7 +981,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       verifyPassword,
       changePassword,
       deactivateAccount,
-      deleteAccount,
+      deleteAccount: deleteAccountFinal,
       scheduledDeletionDate,
       adminListUsers,
       adminUpdateStatus,
@@ -816,7 +998,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     authUser,
     changePassword,
     deactivateAccount,
-    deleteAccount,
+    deleteAccountFinal,
+    isAdminApproved,
     login,
     loginWithGoogle,
     logout,

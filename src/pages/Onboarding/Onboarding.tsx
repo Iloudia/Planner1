@@ -21,7 +21,6 @@ const SOURCE_OPTIONS = [
 ]
 
 const REASON_OPTIONS = [
-  "Découvrir du contenu inspirant",
   "Organiser mon quotidien",
   "Améliorer mon bien-être",
   "Mieux gérer mes projets et objectifs",

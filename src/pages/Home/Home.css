@@ -868,6 +868,7 @@ body.home-page--lux {
   background: #ffffff;
   border: 1px solid var(--lux-line);
   color: var(--lux-ink);
+  border-radius: 999px;
 }
 
 .page.home-page .profile-photo {
