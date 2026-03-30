@@ -1,4 +1,4 @@
-import type { ChangeEvent, FormEvent } from "react"
+import type { ChangeEvent, FormEvent, KeyboardEvent } from "react"
 import { useEffect, useMemo, useRef, useState } from "react"
 import MediaImage from "../../components/MediaImage"
 import stampLove from "../../assets/Timbre-1.webp"
@@ -148,6 +148,14 @@ const SelfLovePage = () => {
     if (!trimmed) return
     await addThought(trimmed)
     setThoughtDraft("")
+  }
+
+  const handleEnterSubmit = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key !== "Enter") {
+      return
+    }
+    event.preventDefault()
+    event.currentTarget.form?.requestSubmit()
   }
 
   const handleReleaseThought = (thoughtId: string) => {
@@ -340,6 +348,7 @@ const SelfLovePage = () => {
               placeholder="Ex : Je sais écouter avec le cœur..."
               value={qualityDraft}
               onChange={(event) => setQualityDraft(event.target.value)}
+              onKeyDown={handleEnterSubmit}
             />
             <button type="submit">Ajouter</button>
           </form>
@@ -392,6 +401,7 @@ const SelfLovePage = () => {
               placeholder="Ex. Je dois être parfaite..."
               value={thoughtDraft}
               onChange={(event) => setThoughtDraft(event.target.value)}
+              onKeyDown={handleEnterSubmit}
             />
             <button type="submit">Ajouter</button>
           </form>

@@ -48,7 +48,7 @@ const defaultDraft = (): SelfLoveDraft => ({
   futureLetterTo: "Moi du futur",
   futureLetterFrom: "Moi du présent",
   futureLetterBody:
-    "Si tu lis ces mots, c'est que tu as tenu bon. J'espère que tu te souviens de nos promesses et de nos petites victoires.",
+    "Ex : Si tu lis ces mots, c'est que tu as tenu bon. J'espère que tu te souviens de nos promesses et de nos petites victoires...",
   futureLetterOpenDate: getDefaultFutureOpenDate(),
   innerChildMessage: "",
   innerChildReassurance: "",

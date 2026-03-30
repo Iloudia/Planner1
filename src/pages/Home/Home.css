@@ -418,6 +418,10 @@
   color: #0f172a;
 }
 
+.notes input[type="checkbox"] {
+  accent-color: #000000;
+}
+
 .todo-item.is-done span {
   text-decoration: line-through;
   color: rgba(15, 23, 42, 0.5);

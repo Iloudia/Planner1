@@ -828,6 +828,7 @@ function HomePage() {
             <input
               type="text"
               value={todoInput}
+              maxLength={17}
               onChange={(event) => setTodoInput(event.target.value)}
               onKeyDown={(event) => {
                 if (event.key === "Enter") {
@@ -835,7 +836,7 @@ function HomePage() {
                   addTodo()
                 }
               }}
-              placeholder="Ajouter une tâche"
+              placeholder=" Ex : faire les courses "
             />
             <button type="button" className="todo-add" onClick={addTodo} aria-label="Ajouter une tâche">
               +

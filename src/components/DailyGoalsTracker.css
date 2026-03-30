@@ -173,7 +173,7 @@
 .sport-habits__row {
   display: grid;
   grid-template-columns: 1.2fr repeat(7, minmax(0, 1fr)) 0.6fr;
-  align-items: center;
+  align-items: stretch;
   gap: 0;
   border: 1px solid rgba(31, 27, 22, 0.3);
   overflow: hidden;
@@ -222,6 +222,9 @@
 }
 
 .sport-habits__cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.42rem 0.55rem;
   text-align: center;
   border-right: 1px solid rgba(31, 27, 22, 0.3);
@@ -233,6 +236,7 @@
 }
 
 .sport-habits__cell--label {
+  justify-content: flex-start;
   text-align: left;
   font-weight: 600;
   background: #f8f6f1;
@@ -277,6 +281,9 @@
 }
 
 .sport-habits__cell--checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: #fff;
 }
 

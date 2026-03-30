@@ -284,10 +284,14 @@
   padding: 0.8rem 1rem;
   font-size: 1rem;
   font-family: inherit;
-  color: var(--color-chocolate);
+  color: #000000;
   background: #fff;
   resize: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.journaling-section textarea {
+  color: #000000;
 }
 
 .journaling-input:focus,

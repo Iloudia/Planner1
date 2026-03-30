@@ -566,9 +566,9 @@ const ArchivesPage = () => {
       )
     : []
   const selectedTopDetails = [
-    selectedEntry?.details.find((detail) => detail.label.startsWith("Mot")),
     selectedEntry?.details.find((detail) => detail.label.startsWith("Humeur")),
     selectedEntry?.details.find((detail) => detail.label.startsWith("Niveau")),
+    selectedEntry?.details.find((detail) => detail.label.startsWith("Mot")),
   ].filter((detail): detail is { label: string; value: string } => Boolean(detail))
   const selectedBodyDetails = selectedEntryDetails.filter(
     (detail) =>
