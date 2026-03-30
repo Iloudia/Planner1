@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react"
+import MediaImage from "../../components/MediaImage"
 import PageHeading from "../../components/PageHeading"
 import useUserWorkoutData from "../../hooks/useUserWorkoutData"
 import { deleteMedia, uploadImage } from "../../services/media/api"
@@ -566,7 +567,7 @@ const WorkoutPage = () => {
                     ) : null}
                   </div>
                   <div className="workout-card__media">
-                    <img src={resolveExerciseImage(exercise)} alt={exercise.title} loading="lazy" decoding="async" />
+                    <MediaImage src={resolveExerciseImage(exercise)} alt={exercise.title} loading="lazy" decoding="async" />
                   </div>
                   <div className="workout-card__body">
                     <h3>{exercise.title}</h3>
@@ -731,7 +732,7 @@ const WorkoutPage = () => {
               ) : null}
             </div>
             <div className="workout-modal__cover">
-              <img src={resolveExerciseImage(selectedExercise)} alt={selectedExercise.title} loading="lazy" decoding="async" />
+              <MediaImage src={resolveExerciseImage(selectedExercise)} alt={selectedExercise.title} loading="lazy" decoding="async" />
             </div>
             <div className="workout-modal__body">
               <header className="workout-modal__header">

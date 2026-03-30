@@ -7,6 +7,7 @@ import { fetchApi } from "../../utils/apiUrl"
 import { buildUserScopedKey } from "../../utils/userScopedKey"
 import { auth } from "../../utils/firebase"
 import defaultProfilePhoto from "../../assets/katie-huber-rhoades-dupe (1).webp"
+import MediaImage from "../../components/MediaImage"
 import PageHeading from "../../components/PageHeading"
 import "./Profile.css"
 
@@ -483,7 +484,7 @@ const ProfilePage = () => {
                   <h2>Informations de base</h2>
                   <div className="account-avatar-row">
                     <button type="button" className="account-avatar" onClick={() => fileInputRef.current?.click()} disabled={isAvatarBusy}>
-                      {avatarSrc ? <img src={avatarSrc} alt="Profil" loading="eager" decoding="async" width={64} height={64} /> : null}
+                      {avatarSrc ? <MediaImage src={avatarSrc} alt="Profil" loading="eager" decoding="async" width={64} height={64} /> : null}
                     </button>
                     <div className="account-avatar-actions">
                       <button type="button" onClick={() => fileInputRef.current?.click()} disabled={isAvatarBusy}>

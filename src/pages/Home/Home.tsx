@@ -2,6 +2,7 @@
 import { useNavigate } from "react-router-dom"
 import { useTasks } from "../../context/TasksContext"
 import { useAuth } from "../../context/AuthContext"
+import MediaImage from "../../components/MediaImage"
 import { useUserProfilePhoto } from "../../hooks/useUserProfilePhoto"
 import { saveHomeCardsState, subscribeToHomeCardsState } from "../../services/firestore/homeCards"
 import { buildUserScopedKey, normalizeUserEmail } from "../../utils/userScopedKey"
@@ -740,7 +741,7 @@ function HomePage() {
       <aside className="aside-right">
         <div className="profile-card">
           <div className="profile-photo">
-            <img src={profileSrc} alt="Profil" loading="eager" decoding="async" width={220} height={220} />
+            <MediaImage src={profileSrc} alt="Profil" loading="eager" decoding="async" width={220} height={220} />
             <div className="home-profile-card__menu">
               <button
                 className="profile-menu"

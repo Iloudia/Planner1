@@ -1,5 +1,6 @@
 ﻿import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import DailyGoalsTracker from "../../components/DailyGoalsTracker";
+import MediaImage from "../../components/MediaImage";
 import PageHeading from "../../components/PageHeading";
 import { useAuth } from "../../context/AuthContext";
 import { deleteMedia, uploadImage } from "../../services/media/api";
@@ -241,7 +242,7 @@ const GoalsPage = () => {
                 <div key={index} className="body-goal-slot">
                   {image ? (
                     <>
-                      <img src={image} alt={`Body goal ${index + 1}`} loading="lazy" decoding="async" />
+                      <MediaImage src={image} alt={`Body goal ${index + 1}`} loading="lazy" decoding="async" />
                       <button
                         type="button"
                         className="body-goal-slot__action"

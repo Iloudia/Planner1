@@ -1,5 +1,6 @@
 import type { ChangeEvent, FormEvent } from "react"
 import { useEffect, useMemo, useRef, useState } from "react"
+import MediaImage from "../../components/MediaImage"
 import stampLove from "../../assets/Timbre-1.webp"
 import stampKey from "../../assets/Timbre-2.webp"
 import PageHeading from "../../components/PageHeading"
@@ -306,7 +307,7 @@ const SelfLovePage = () => {
               <div key={photo.id} className="self-love-photo-card">
                 <label className="self-love-photo-card__drop">
                   {photo.imageUrl ? (
-                    <img src={photo.imageUrl} alt={`Souvenir ${index + 1}`} loading="lazy" decoding="async" />
+                    <MediaImage src={photo.imageUrl} alt={`Souvenir ${index + 1}`} loading="lazy" decoding="async" />
                   ) : (
                     <span className="self-love-photo-card__placeholder">
                       <span className="body-goal-slot__upload">

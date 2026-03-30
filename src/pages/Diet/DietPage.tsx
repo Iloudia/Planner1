@@ -1,5 +1,6 @@
 ﻿import { useEffect, useMemo, useRef, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
+import MediaImage from "../../components/MediaImage"
 import { useAuth } from "../../context/AuthContext"
 import useUserDietData from "../../hooks/useUserDietData"
 import { deleteMedia, uploadImage } from "../../services/media/api"
@@ -6053,7 +6054,7 @@ const DietClassicPage = () => {
                   onClick={() => setSelectedRecipe(recipe)}
                 >
                   <div className="diet-recipe-card__media">
-                    <img
+                    <MediaImage
                       src={recipe.image}
                       alt={recipe.title}
                       loading="lazy"
@@ -6125,7 +6126,7 @@ const DietClassicPage = () => {
                       }}
                     >
                       <div className="diet-recipe-card__media">
-                        <img
+                        <MediaImage
                           src={recipe.image}
                           alt={recipe.title}
                           loading="lazy"
@@ -6221,7 +6222,7 @@ const DietClassicPage = () => {
                 onClick={() => setSelectedRecipe(recipe)}
               >
                 <div className="diet-recipe-card__media">
-                  <img
+                  <MediaImage
                     src={recipe.image}
                     alt={recipe.title}
                     loading="lazy"
@@ -6272,7 +6273,7 @@ const DietClassicPage = () => {
             <div className="diet-recipe-modal__panel">
               {draftImage ? (
                 <div className="diet-recipe-modal__cover">
-                  <img
+                  <MediaImage
                     src={draftImage}
                     alt="Aperçu recette"
                     className="diet-recipe-modal__image"
@@ -6427,7 +6428,7 @@ const DietClassicPage = () => {
             <div className="diet-recipe-modal__panel">
               {editImage ? (
                 <div className="diet-recipe-modal__cover">
-                  <img
+                  <MediaImage
                     src={editImage}
                     alt="Aperçu recette"
                     className="diet-recipe-modal__image"
@@ -6544,7 +6545,7 @@ const DietClassicPage = () => {
             <div className="diet-recipe-modal__backdrop" onClick={() => setSelectedRecipe(null)} />
             <div className="diet-recipe-modal__panel">
               <div className="diet-recipe-modal__cover">
-                <img src={selectedRecipe.image} alt={selectedRecipe.title} className="diet-recipe-modal__image" loading="lazy" decoding="async" />
+                <MediaImage src={selectedRecipe.image} alt={selectedRecipe.title} className="diet-recipe-modal__image" loading="lazy" decoding="async" />
                 <button
                   type="button"
                   className="diet-recipe-close-icon diet-recipe-close-icon--cover"

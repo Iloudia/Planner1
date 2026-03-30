@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react"
+import MediaImage from "../../components/MediaImage"
 import PageHeading from "../../components/PageHeading"
 import { useAuth } from "../../context/AuthContext"
 import useUserWishlist from "../../hooks/useUserWishlist"
@@ -657,7 +658,7 @@ const WishlistPage = () => {
                 <p className="wishlist-create__cover-label">Image de couverture</p>
                 <div className={`wishlist-create__cover-preview-panel${newCategoryCoverPreview ? " wishlist-create__cover-preview-panel--has-image" : ""}`}>
                   {newCategoryCoverPreview ? (
-                    <img
+                    <MediaImage
                       className="wishlist-create__cover-preview"
                       src={newCategoryCoverPreview}
                       alt="Aperçu de la photo sélectionnée"
@@ -762,7 +763,7 @@ const WishlistPage = () => {
                 ) : null}
               </div>
             ) : null}
-            <img className="wishlist-card__cover" src={category.cover} alt={category.title} loading="lazy" decoding="async" />
+            <MediaImage className="wishlist-card__cover" src={category.cover} alt={category.title} loading="lazy" decoding="async" />
             <div className="wishlist-card__content">
               <strong>{category.title}</strong>
               <span>{category.items.length} élément(s)</span>
@@ -782,7 +783,7 @@ const WishlistPage = () => {
                   <path d="M18 6L6 18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
                 </svg>
               </button>
-              <img src={categoryCoverPreview || selectedCategory.cover} alt={selectedCategory.title} loading="lazy" decoding="async" />
+              <MediaImage src={categoryCoverPreview || selectedCategory.cover} alt={selectedCategory.title} loading="lazy" decoding="async" />
             </div>
             <div className="wishlist-modal__body">
               <header className="wishlist-modal__header">
@@ -851,7 +852,7 @@ const WishlistPage = () => {
                         disabled={!canEdit}
                       />
                       {itemPreview ? (
-                        <img className="wishlist-modal__photo-preview" src={itemPreview} alt="Aperçu élément" />
+                        <MediaImage className="wishlist-modal__photo-preview" src={itemPreview} alt="Aperçu élément" />
                       ) : (
                         <span>Ajouter une photo</span>
                       )}
@@ -996,7 +997,7 @@ const WishlistPage = () => {
                                     <div className="wishlist-item__header">
                                       <div className="wishlist-item__media">
                                         {item.imageUrl ? (
-                                          <img src={item.imageUrl} alt={item.title} loading="lazy" decoding="async" />
+                                          <MediaImage src={item.imageUrl} alt={item.title} loading="lazy" decoding="async" />
                                         ) : (
                                           <div className="wishlist-item__placeholder">Sans image</div>
                                         )}
@@ -1088,7 +1089,7 @@ const WishlistPage = () => {
                             )
                           }
                         >
-                          <img src={category.cover} alt={category.title} loading="lazy" decoding="async" />
+                          <MediaImage src={category.cover} alt={category.title} loading="lazy" decoding="async" />
                           <span>{category.title}</span>
                         </button>
                       ))}
