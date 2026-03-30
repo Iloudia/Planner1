@@ -1,5 +1,6 @@
+import { browserLocalPersistence, setPersistence } from "firebase/auth"
 import { auth } from "../../utils/firebase"
-import { buildApiUrl, getApiTargetLabel } from "../../utils/apiUrl"
+import { buildApiUrl, fetchApi, getApiTargetLabel } from "../../utils/apiUrl"
 
 export type CheckoutDownload = {
   downloadUrl: string
@@ -69,7 +70,11 @@ export const createCheckoutSession = async (payload: CheckoutPayload) => {
   const headers = await buildAuthenticatedJsonHeaders()
 
   try {
-    const response = await fetch(buildApiUrl("/api/create-checkout-session"), {
+    // Keep the Firebase session across the full Stripe redirect flow, including
+    // cases where the success URL opens in a fresh browsing context.
+    await setPersistence(auth, browserLocalPersistence)
+
+    const response = await fetchApi("/api/create-checkout-session", {
       method: "POST",
       headers,
       body: JSON.stringify(payload),

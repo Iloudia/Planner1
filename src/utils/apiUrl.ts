@@ -47,7 +47,15 @@ export const resolvePublicUrl = (value: string) => {
     return value
   }
 
-  return value.startsWith("/") ? buildApiUrl(value) : value
+  if (!value.startsWith("/")) {
+    return value
+  }
+
+  if (value.startsWith("/api/") || value.startsWith("/media/")) {
+    return buildApiUrl(value)
+  }
+
+  return value
 }
 
 export const getApiTargetLabel = () => {

@@ -501,13 +501,13 @@
   margin-left: 0.6rem;
   border: none;
   padding: 0.15rem 0.6rem;
-  font-size: 0.62rem;
+  font-size: 0.56rem;
   font-weight: 700;
   background: #725c3f;
   color: #ffffff;
   cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  text-transform: none;
+  letter-spacing: normal;
 }
 
 .diet-generator__header {
@@ -747,8 +747,12 @@ body.alimentation-page--lux .diet-shopping__input button {
   background: #ffffff;
   color: #000000;
   border: 1px solid var(--color-chocolate);
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
+}
+
+body.alimentation-page--lux .diet-week__recipe-badge {
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 0.56rem;
 }
 
 body.alimentation-page--lux .pill--diet {

@@ -6536,7 +6536,7 @@ const DietClassicPage = () => {
 
         {planConfirmationVisible ? (
           <div className="diet-plan__confirmation-card" role="status" aria-live="polite">
-            <p>La recette a bien ete ajoutee sur la page cuisine.</p>
+            <p style={{ color: '#000000' }}>La recette a bien été ajoutée sur la page cuisine.</p>
           </div>
         ) : null}
 

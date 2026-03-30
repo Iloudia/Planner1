@@ -191,7 +191,7 @@ const BoutiqueProductPage = () => {
         aria-live="polite"
         onClick={handleOpenCart}
       >
-        <span className="boutique-cart-toast__eyebrow">Ajoute a votre panier</span>
+        <span className="boutique-cart-toast__eyebrow">Ajouté à votre panier</span>
         {product ? (
           <div className="boutique-cart-toast__content">
             <img src={product.image} alt="" className="boutique-cart-toast__image" loading="lazy" decoding="async" />

@@ -647,7 +647,7 @@
 
 .diet-plan__confirmation-card p {
   margin: 0;
-  color: #000000;
+  color: #000000 !important;
 }
 
 .diet-recipe-modal__body {

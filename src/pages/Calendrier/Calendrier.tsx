@@ -941,7 +941,7 @@ return (
                   value={newTaskForm.title}
                   onChange={(event) => handleNewTaskFieldChange("title", event.target.value)}
                   placeholder="Bloc deep work, rendez-vous, self-care..."
-                  maxLength={40}
+                  maxLength={30}
                   required
                 />
               </label>

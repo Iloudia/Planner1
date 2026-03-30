@@ -699,11 +699,6 @@ const WorkoutPage = () => {
               <button type="button" className="profile-menu" aria-label="Options" onClick={() => setIsModalMenuOpen((previous) => !previous)}>
                 <span aria-hidden="true">...</span>
               </button>
-              <button type="button" className="modal__close" aria-label="Fermer" onClick={handleClosePlanner}>
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                </svg>
-              </button>
               {isModalMenuOpen && selectedExerciseId ? (
                 <div className="workout-card__menu-panel" role="menu">
                   <label className="workout-card__menu-item">

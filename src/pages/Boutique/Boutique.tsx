@@ -342,7 +342,7 @@ const BoutiquePage = () => {
                     </span>
                   </div>
                   <span className={`boutique-button boutique-button--primary${ownedProductsSet.has(product.id) ? " is-disabled" : ""}`}>
-                    {ownedProductsSet.has(product.id) ? "Disponible dans mes achats" : "Acheter"}
+                    {ownedProductsSet.has(product.id) ? "Disponible dans mes achats" : "En savoir plus"}
                   </span>
                 </div>
               </Link>

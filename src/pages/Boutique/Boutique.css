@@ -1044,6 +1044,27 @@ body.boutique-page--tone {
   }
 }
 
+@media (max-width: 850px) {
+  .boutique-products {
+    display: flex;
+    overflow-x: auto;
+    gap: 1rem;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 0.5rem;
+  }
+
+  .boutique-product-card {
+    min-width: min(80vw, 320px);
+    scroll-snap-align: start;
+  }
+}
+
+@media (max-width: 812px) {
+  .boutique-benefits {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 720px) {
   .boutique-section {
     padding-inline: 1rem;

@@ -869,7 +869,7 @@ function HomePage() {
         <section className="home-hero-strip">
           <div className="home-hero-strip__center">
             <div className="today">{todayLabel()}</div>
-            <h1>Organise tes journées avec intention</h1>
+            <h1>Organise tes journées</h1>
           </div>
         </section>
 

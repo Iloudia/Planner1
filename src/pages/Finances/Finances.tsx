@@ -906,16 +906,13 @@ const FinancePage = () => {
                       {group.entries.map((entry) => {
                         const definition = entry.category ? categoryDefinitions[entry.category] : undefined
                         const amountValue = entry.direction === 'out' ? -entry.amount : entry.amount
-                        const amountColor = entry.direction === 'in' ? '#725c3f' : definition?.color ?? '#1e1b4b'
+                        const chipColor = entry.direction === 'in' ? '#725c3f' : definition?.color ?? '#1e1b4b'
                         const categoryLabel = entry.direction === 'in' ? 'Revenus' : definition?.label ?? 'Dépense'
                         const formattedDate = formatHistoryDate(entry.date)
                         const directionLabel = entry.direction === 'in' ? 'Entrée' : 'Sortie'
 
                         return (
                           <li key={entry.id} className="finance-history__item">
-                            <div className="finance-history__indicator" style={{ backgroundColor: amountColor }}>
-                              {entry.direction === 'in' ? <span aria-hidden="true">+</span> : null}
-                            </div>
                             <div className="finance-history__details">
                               <div className="finance-history__row">
                                 <div className="finance-history__headline">
@@ -934,7 +931,7 @@ const FinancePage = () => {
                                 </button>
                               </div>
                               <div className="finance-history__meta">
-                                <span className="finance-history__category-chip">
+                                <span className="finance-history__category-chip" style={{ color: chipColor }}>
                                   {categoryLabel}
                                 </span>
                                 <span className="finance-history__date">{`${directionLabel} le ${formattedDate}`}</span>
@@ -1055,16 +1052,13 @@ const FinancePage = () => {
                       {group.entries.map((entry) => {
                         const definition = entry.category ? categoryDefinitions[entry.category] : undefined
                         const amountValue = entry.direction === 'out' ? -entry.amount : entry.amount
-                        const amountColor = entry.direction === 'in' ? '#725c3f' : definition?.color ?? '#1e1b4b'
+                        const chipColor = entry.direction === 'in' ? '#725c3f' : definition?.color ?? '#1e1b4b'
                         const categoryLabel = entry.direction === 'in' ? 'Revenus' : definition?.label ?? 'Dépense'
                         const formattedDate = formatHistoryDate(entry.date)
                         const directionLabel = entry.direction === 'in' ? 'Entrée' : 'Sortie'
 
                         return (
                           <li key={entry.id} className="finance-history__item">
-                            <div className="finance-history__indicator" style={{ backgroundColor: amountColor }}>
-                              {entry.direction === 'in' ? <span aria-hidden="true">+</span> : null}
-                            </div>
                             <div className="finance-history__details">
                               <div className="finance-history__row">
                                 <div className="finance-history__headline">
@@ -1083,7 +1077,7 @@ const FinancePage = () => {
                                 </button>
                               </div>
                               <div className="finance-history__meta">
-                                <span className="finance-history__category-chip">
+                                <span className="finance-history__category-chip" style={{ color: chipColor }}>
                                   {categoryLabel}
                                 </span>
                                 <span className="finance-history__date">{`${directionLabel} le ${formattedDate}`}</span>
