@@ -1,8 +1,9 @@
 ﻿import { useEffect, useMemo, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { sendEmailVerification, sendPasswordResetEmail } from "firebase/auth"
+import { sendEmailVerification } from "firebase/auth"
 import { useAuth } from "../../context/AuthContext"
 import { useUserProfilePhoto } from "../../hooks/useUserProfilePhoto"
+import { fetchApi } from "../../utils/apiUrl"
 import { buildUserScopedKey } from "../../utils/userScopedKey"
 import { auth } from "../../utils/firebase"
 import defaultProfilePhoto from "../../assets/katie-huber-rhoades-dupe (1).webp"
@@ -358,16 +359,37 @@ const ProfilePage = () => {
     setPasswordError("")
     setPasswordSuccess("")
     setResetInfo("")
-    const email = getDisplayValue("email")
+    const currentUser = auth.currentUser
+    const email = currentUser?.email?.trim()
     if (!email) {
       setPasswordError("Aucun email associé au compte.")
       return
     }
     try {
-      await sendPasswordResetEmail(auth, email)
+      const token = await currentUser.getIdToken()
+      const response = await fetchApi("/api/email/password-reset", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      })
+      if (!response.ok) {
+        let reason = "Impossible d'envoyer le lien de réinitialisation."
+        try {
+          const payload = await response.json()
+          if (payload?.error) {
+            reason = payload.error
+          }
+        } catch {
+          // ignore
+        }
+        throw new Error(reason)
+      }
       setResetInfo("Un lien de réinitialisation a été envoyé par email.")
-    } catch {
-      setPasswordError("Impossible d'envoyer le lien de réinitialisation.")
+    } catch (error) {
+      setPasswordError(error instanceof Error ? error.message : "Impossible d'envoyer le lien de réinitialisation.")
     }
   }
 

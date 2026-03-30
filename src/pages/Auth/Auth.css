@@ -280,6 +280,13 @@
   font-weight: 700;
 }
 
+.auth-info {
+  margin: 0;
+  color: #166534;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
 .auth-remember {
   display: inline-flex;
   align-items: center;
@@ -331,6 +338,10 @@
   align-items: center;
   justify-content: flex-end;
   flex-wrap: nowrap;
+}
+
+.auth-step-actions--spread {
+  justify-content: space-between;
 }
 
 .auth-step-actions .auth-submit {
@@ -529,6 +540,10 @@ body.auth-page--lux .auth-form__select-menu button.is-selected {
 }
 
 body.auth-page--lux .auth-password-hint {
+  color: var(--lux-ink-soft);
+}
+
+body.auth-page--lux .auth-info {
   color: var(--lux-ink-soft);
 }
 

@@ -39,6 +39,11 @@ const adminEmails = new Set(
 const contactRecipientEmail = String(process.env.CONTACT_EMAIL_TO || "contact@meandrituals.com")
   .trim()
   .toLowerCase()
+const firebaseWebApiKey = String(
+  process.env.FIREBASE_WEB_API_KEY ||
+  process.env.VITE_FIREBASE_API_KEY ||
+  "AIzaSyBwpIugx9UYl8EZFSQz2kBUEqdAqkc-xAg",
+).trim()
 
 if (!downloadTokenSecret || downloadTokenSecret === "replace-me") {
   throw new Error("DOWNLOAD_TOKEN_SECRET must be set with a strong random value.")
@@ -1928,6 +1933,255 @@ const sendWelcomeEmail = async ({ to, firstName }) => {
   })
 }
 
+const sendCustomPasswordResetEmail = async ({ to, resetUrl }) => {
+  const safeResetUrl = String(resetUrl || "").trim()
+  if (!safeResetUrl) {
+    throw new Error("password-reset-link-missing")
+  }
+
+  const escapedResetUrl = escapeHtml(safeResetUrl)
+  const subject = "Réinitialisation de ton mot de passe"
+  const text = [
+    "Bonjour,",
+    "",
+    "Tu as oublié ton mot de passe ? Pas de souci !",
+    "",
+    "Clique ici pour en choisir un nouveau :",
+    safeResetUrl,
+    "",
+    "Si tu n’as rien demandé, ignore simplement ce message.",
+    "",
+    "À très vite,",
+    "Me&rituals",
+  ].join("\n")
+  const html = `
+    <div style="margin:0;padding:30px 12px;background:#f5f0e8;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #e1d5c8;">
+        <tr>
+          <td style="padding:30px;font-family:Arial,sans-serif;color:#1f1b16;">
+            <p style="margin:0 0 26px;font-size:16px;line-height:1.7;">Bonjour,</p>
+            <p style="margin:0 0 26px;font-size:15px;line-height:1.8;">Tu as oublié ton mot de passe ? Pas de souci !</p>
+            <p style="margin:0 0 24px;font-size:15px;line-height:1.8;">Clique ici pour en choisir un nouveau :</p>
+            <p style="margin:0 0 26px;">
+              <a href="${safeResetUrl}" style="display:inline-block;padding:14px 20px;background:#e3d7ca;border:1px solid #1f1b16;color:#1f1b16;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:0.03em;text-transform:uppercase;">
+                Réinitialiser mon mot de passe
+              </a>
+            </p>
+            <p style="margin:0 0 28px;font-size:15px;line-height:1.8;">Si tu n’as rien demandé, ignore simplement ce message.</p>
+            <p style="margin:0 0 24px;font-size:15px;line-height:1.8;">À très vite,<br />Me&amp;rituals</p>
+            <p style="margin:0;font-size:12px;line-height:1.7;color:#6f6257;word-break:break-all;">
+              Si le bouton ne fonctionne pas, copie et colle ce lien dans ton navigateur :<br />
+              <a href="${safeResetUrl}" style="color:#6f6257;text-decoration:underline;">${escapedResetUrl}</a>
+            </p>
+          </td>
+        </tr>
+      </table>
+    </div>
+  `
+
+  const delivery = await sendResendEmail({
+    to,
+    subject,
+    html,
+    text,
+  })
+  if (!delivery?.id) {
+    throw new Error("custom-password-reset-email-send-failed")
+  }
+  return delivery
+}
+
+const sendFirebaseHostedPasswordResetEmail = async (to) => {
+  if (!firebaseWebApiKey) {
+    throw new Error("firebase-web-api-key-missing")
+  }
+
+  const requestSend = async (body) => {
+    const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${encodeURIComponent(firebaseWebApiKey)}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    })
+
+    const payload = await response.json().catch(() => ({}))
+    if (!response.ok) {
+      const errorCode = String(payload?.error?.message || "")
+      if (errorCode === "EMAIL_NOT_FOUND") {
+        return { ok: true, provider: "firebase-hosted" }
+      }
+      throw new Error(errorCode || "firebase-password-reset-send-failed")
+    }
+
+    return { ok: true, provider: "firebase-hosted", email: payload?.email || to }
+  }
+
+  try {
+    return await requestSend({
+      requestType: "PASSWORD_RESET",
+      email: to,
+      continueUrl: `${appBaseUrl}/login`,
+      canHandleCodeInApp: false,
+    })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error || "")
+    if (!message.includes("CONTINUE_URI")) {
+      throw error
+    }
+
+    console.error("Firebase hosted password reset with continueUrl failed, retrying without continueUrl:", error)
+    return requestSend({
+      requestType: "PASSWORD_RESET",
+      email: to,
+    })
+  }
+}
+
+const generatePasswordResetLinkWithFallback = async (adminAuth, to) => {
+  try {
+    return await adminAuth.generatePasswordResetLink(to, {
+      url: `${appBaseUrl}/login`,
+      handleCodeInApp: false,
+    })
+  } catch (error) {
+    const errorCode = error && typeof error === "object" && "code" in error ? String(error.code || "") : ""
+    if (errorCode !== "auth/internal-error" && errorCode !== "auth/unauthorized-continue-uri") {
+      throw error
+    }
+
+    console.error("Password reset link with ActionCodeSettings failed, retrying without settings:", error)
+    return adminAuth.generatePasswordResetLink(to)
+  }
+}
+
+const buildPasswordResetFailure = (error) => {
+  const code = error && typeof error === "object" && "code" in error ? String(error.code || "") : ""
+  const statusCode = error && typeof error === "object" && "statusCode" in error ? Number(error.statusCode) : 0
+  const message = error instanceof Error ? error.message : String(error || "")
+
+  if (statusCode === 429 || message.includes("RESET_PASSWORD_EXCEED_LIMIT")) {
+    return {
+      status: 429,
+      error: "Trop de demandes de réinitialisation ont été envoyées. Réessaie dans quelques minutes.",
+    }
+  }
+
+  if (code === "auth/user-not-found") {
+    return {
+      status: 200,
+      error: null,
+      message: "Si un compte existe avec cette adresse, un email de réinitialisation a été envoyé.",
+    }
+  }
+
+  return {
+    status: 500,
+    error: "Impossible d'envoyer l'email de réinitialisation pour le moment.",
+  }
+}
+
+const passwordResetLinkCache = new Map()
+const passwordResetLinkReuseWindowMs = 5 * 60 * 1000
+const passwordResetLinkFallbackWindowMs = 30 * 60 * 1000
+
+const getCachedPasswordResetLink = (email, maxAgeMs) => {
+  const normalizedEmail = normalizeEmailValue(email)
+  if (!normalizedEmail) {
+    return null
+  }
+
+  const cached = passwordResetLinkCache.get(normalizedEmail)
+  if (!cached) {
+    return null
+  }
+
+  const now = Date.now()
+  if (!cached.link || !cached.createdAt || now - cached.createdAt > maxAgeMs) {
+    passwordResetLinkCache.delete(normalizedEmail)
+    return null
+  }
+
+  return cached.link
+}
+
+const cachePasswordResetLink = (email, link) => {
+  const normalizedEmail = normalizeEmailValue(email)
+  const normalizedLink = String(link || "").trim()
+  if (!normalizedEmail || !normalizedLink) {
+    return
+  }
+
+  passwordResetLinkCache.set(normalizedEmail, {
+    link: normalizedLink,
+    createdAt: Date.now(),
+  })
+}
+
+const sendPasswordResetEmailWithFallback = async (to) => {
+  if (isFirebaseAdminConfigured) {
+    const recentCachedLink = getCachedPasswordResetLink(to, passwordResetLinkReuseWindowMs)
+    if (recentCachedLink) {
+      const delivery = await sendCustomPasswordResetEmail({ to, resetUrl: recentCachedLink })
+      return {
+        ok: true,
+        provider: "custom-cached",
+        emailId: delivery?.id ?? null,
+        to,
+      }
+    }
+
+    try {
+      const adminAuth = getFirebaseAdminAuth()
+      const resetUrl = await generatePasswordResetLinkWithFallback(adminAuth, to)
+      cachePasswordResetLink(to, resetUrl)
+      const delivery = await sendCustomPasswordResetEmail({ to, resetUrl })
+      return {
+        ok: true,
+        provider: "custom",
+        emailId: delivery?.id ?? null,
+        to,
+      }
+    } catch (error) {
+      const failure = buildPasswordResetFailure(error)
+      if (failure.status === 200) {
+        return {
+          ok: true,
+          provider: "custom",
+          emailId: null,
+          to,
+          message: failure.message,
+        }
+      }
+      if (failure.status === 429) {
+        const fallbackCachedLink = getCachedPasswordResetLink(to, passwordResetLinkFallbackWindowMs)
+        if (fallbackCachedLink) {
+          const delivery = await sendCustomPasswordResetEmail({ to, resetUrl: fallbackCachedLink })
+          return {
+            ok: true,
+            provider: "custom-cached-after-rate-limit",
+            emailId: delivery?.id ?? null,
+            to,
+          }
+        }
+
+        const rateLimitedError = new Error(failure.error)
+        rateLimitedError.statusCode = failure.status
+        throw rateLimitedError
+      }
+      console.error("Custom password reset email failed, falling back to Firebase hosted email:", error)
+    }
+  }
+
+  const delivery = await sendFirebaseHostedPasswordResetEmail(to)
+  return {
+    ok: true,
+    provider: delivery?.provider || "firebase-hosted",
+    emailId: delivery?.id ?? null,
+    to: delivery?.email || to,
+  }
+}
+
 app.post("/api/email/contact", async (req, res) => {
   try {
     const firstName = sanitizeText(req.body?.firstName, 80)
@@ -1985,6 +2239,45 @@ app.post("/api/email/welcome", firebaseAuth, async (req, res) => {
   } catch (error) {
     console.error("Welcome email failed:", error)
     return res.status(500).json({ error: "Impossible d'envoyer l'email de bienvenue." })
+  }
+})
+
+app.post("/api/email/password-reset/request", async (req, res) => {
+  const to = normalizeEmailValue(req.body?.email)
+  if (!to || !isValidEmailAddress(to)) {
+    return res.status(400).json({ error: "Adresse e-mail invalide." })
+  }
+
+  try {
+    await sendPasswordResetEmailWithFallback(to)
+
+    return res.json({
+      ok: true,
+      message: "Si un compte existe avec cette adresse, un email de réinitialisation a été envoyé.",
+    })
+  } catch (error) {
+    console.error("Public password reset email failed:", error)
+    const failure = buildPasswordResetFailure(error)
+    if (failure.status === 200) {
+      return res.json({ ok: true, message: failure.message })
+    }
+    return res.status(failure.status).json({ error: failure.error })
+  }
+})
+
+app.post("/api/email/password-reset", firebaseAuth, async (req, res) => {
+  try {
+    const to = normalizeEmailValue(req.user?.email)
+    if (!to) {
+      return res.status(400).json({ error: "Email utilisateur introuvable." })
+    }
+
+    const delivery = await sendPasswordResetEmailWithFallback(to)
+    return res.json({ ok: true, emailId: delivery?.emailId ?? null, to })
+  } catch (error) {
+    console.error("Password reset email failed:", error)
+    const failure = buildPasswordResetFailure(error)
+    return res.status(failure.status).json({ error: failure.error })
   }
 })
 

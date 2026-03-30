@@ -1,6 +1,7 @@
 ﻿import { useState, useMemo, useEffect, useRef, useCallback, type FormEvent } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../../context/AuthContext"
+import { fetchApi } from "../../utils/apiUrl"
 import { buildUserScopedKey, normalizeUserEmail } from "../../utils/userScopedKey"
 import { useMoodboard } from "../../context/MoodboardContext"
 import "./Auth.css"
@@ -15,6 +16,7 @@ const GENDER_OPTIONS = [
 ]
 
 type AuthMode = "login" | "register"
+type LoginPanelMode = "login" | "forgot"
 
 type AuthFormProps = {
   mode: AuthMode
@@ -130,6 +132,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
     return window.localStorage.getItem(REMEMBER_PREFERENCE_KEY) === "true"
   })
   const [error, setError] = useState("")
+  const [info, setInfo] = useState("")
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
   const [username, setUsername] = useState("")
@@ -138,6 +141,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
   const [isGenderMenuOpen, setIsGenderMenuOpen] = useState(false)
   const [acceptTerms, setAcceptTerms] = useState(false)
   const [registerStep, setRegisterStep] = useState(0)
+  const [loginPanelMode, setLoginPanelMode] = useState<LoginPanelMode>("login")
   const genderMenuRef = useRef<HTMLDivElement | null>(null)
   const skipAutoRedirectRef = useRef(false)
 
@@ -211,6 +215,8 @@ const AuthPage = ({ mode }: AuthFormProps) => {
   useEffect(() => {
     setRegisterStep(0)
     setError("")
+    setInfo("")
+    setLoginPanelMode("login")
   }, [mode])
 
   const profileKeyFor = useCallback(
@@ -260,6 +266,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setError("")
+    setInfo("")
     const normalizedEmail = email.trim()
 
     if (mode === "register") {
@@ -334,13 +341,39 @@ const AuthPage = ({ mode }: AuthFormProps) => {
   }
 
   const handleForgot = () => {
+    setError("")
+    setInfo("")
+    setLoginPanelMode("forgot")
+  }
+
+  const handleForgotSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setError("")
+    setInfo("")
     const normalizedEmail = email.trim()
     if (!normalizedEmail) {
       setError("Renseigne ton email pour recevoir un lien de réinitialisation.")
       return
     }
-    setError("")
-    window.alert("Un lien de réinitialisation a été envoyé à " + normalizedEmail + ".")
+
+    try {
+      const response = await fetchApi("/api/email/password-reset/request", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: normalizedEmail }),
+      })
+      const payload = await response.json().catch(() => ({}))
+
+      if (!response.ok) {
+        throw new Error(payload?.error || "Impossible d'envoyer l'email de réinitialisation.")
+      }
+      rememberEmail(normalizedEmail)
+      setInfo(payload?.message || "Si un compte existe avec cette adresse, un email de réinitialisation a été envoyé.")
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Impossible d'envoyer l'email de réinitialisation.")
+    }
   }
 
   const handleGoogleLogin = async () => {
@@ -354,6 +387,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
   }
 
   const heading = mode === "login" ? "Connexion" : "Création de compte"
+  const panelHeading = mode === "login" && loginPanelMode === "forgot" ? "Mot de passe oublié" : heading
   const switchLabel = mode === "login" ? "Pas encore de compte ?" : "Déjà un compte ?"
   const switchTo = mode === "login" ? "/register" : "/login"
   const ctaLabel = mode === "login" ? "Se connecter" : registerStep < 2 ? "Continuer" : "Créer mon compte"
@@ -379,11 +413,15 @@ const AuthPage = ({ mode }: AuthFormProps) => {
           <img src={moodboardSrc} alt="Moodboard Planner" loading="eager" decoding="async" />
         </div>
         <div className="auth-panel">
-          <h1 className="auth-title">{heading}</h1>
-          <div className="auth-switch">
-            <span>{switchLabel}</span>
-            <Link to={switchTo}>{mode === "login" ? "Créer un compte" : "Se connecter"}</Link>
-          </div>
+          <h1 className="auth-title">{panelHeading}</h1>
+          {mode === "login" && loginPanelMode === "forgot" ? (
+            <p className="auth-lead">Entre ton email pour recevoir un lien de réinitialisation.</p>
+          ) : (
+            <div className="auth-switch">
+              <span>{switchLabel}</span>
+              <Link to={switchTo}>{mode === "login" ? "Créer un compte" : "Se connecter"}</Link>
+            </div>
+          )}
 
           {isAuthenticated && mode !== "register" ? (
             <p className="auth-status">
@@ -391,33 +429,205 @@ const AuthPage = ({ mode }: AuthFormProps) => {
             </p>
           ) : null}
 
-          <form className="auth-form" onSubmit={handleSubmit}>
-            {isRegister ? (
-              <div className="auth-steps" aria-label="Progression de création de compte">
-                {registerSteps.map((label, index) => (
-                  <div key={label} className={`auth-step${registerStep === index ? " is-active" : registerStep > index ? " is-done" : ""}`}>
-                    <span className="auth-step__index">{index + 1}</span>
-                    <span className="auth-step__label">{label}</span>
-                  </div>
-                ))}
-              </div>
-            ) : null}
+          {mode === "login" && loginPanelMode === "forgot" ? (
+            <form className="auth-form" onSubmit={handleForgotSubmit}>
+              <label>
+                Email
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  onBlur={handleEmailBlur}
+                  placeholder="toi@exemple.com"
+                  required
+                  autoComplete="email"
+                  list="auth-email-history"
+                />
+              </label>
+              {emailHistory.length > 0 ? (
+                <datalist id="auth-email-history">
+                  {emailHistory.map((savedEmail) => (
+                    <option key={savedEmail} value={savedEmail} />
+                  ))}
+                </datalist>
+              ) : null}
 
-            {mode === "register" ? (
-              <>
-                {registerStep === 0 ? (
-                  <label>
-                    Email
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(event) => setEmail(event.target.value)}
-                      onBlur={handleEmailBlur}
-                      placeholder="toi@exemple.com"
-                      required
-                      autoComplete="email"
-                      list="auth-email-history"
-                    />
+              {error ? <p className="auth-error">{error}</p> : null}
+              {info ? <p className="auth-info">{info}</p> : null}
+
+              <div className="auth-step-actions auth-step-actions--spread">
+                <button
+                  type="button"
+                  className="auth-secondary"
+                  onClick={() => {
+                    setLoginPanelMode("login")
+                    setError("")
+                    setInfo("")
+                  }}
+                >
+                  Retour à la connexion
+                </button>
+                <button type="submit" className="auth-submit">
+                  Envoyer le lien
+                </button>
+              </div>
+            </form>
+          ) : (
+            <>
+              <form className="auth-form" onSubmit={handleSubmit}>
+                {isRegister ? (
+                  <div className="auth-steps" aria-label="Progression de création de compte">
+                    {registerSteps.map((label, index) => (
+                      <div key={label} className={`auth-step${registerStep === index ? " is-active" : registerStep > index ? " is-done" : ""}`}>
+                        <span className="auth-step__index">{index + 1}</span>
+                        <span className="auth-step__label">{label}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+
+                {mode === "register" ? (
+                  <>
+                    {registerStep === 0 ? (
+                      <label>
+                        Email
+                        <input
+                          type="email"
+                          value={email}
+                          onChange={(event) => setEmail(event.target.value)}
+                          onBlur={handleEmailBlur}
+                          placeholder="toi@exemple.com"
+                          required
+                          autoComplete="email"
+                          list="auth-email-history"
+                        />
+                        {emailHistory.length > 0 ? (
+                          <datalist id="auth-email-history">
+                            {emailHistory.map((savedEmail) => (
+                              <option key={savedEmail} value={savedEmail} />
+                            ))}
+                          </datalist>
+                        ) : null}
+                      </label>
+                    ) : null}
+
+                    {registerStep === 1 ? (
+                      <>
+                        <div className="auth-form__row">
+                          <label>
+                            Prénom
+                            <input type="text" value={firstName} onChange={(event) => setFirstName(event.target.value)} placeholder="Prénom" required />
+                          </label>
+                          <label>
+                            Nom
+                            <input type="text" value={lastName} onChange={(event) => setLastName(event.target.value)} placeholder="Nom" required />
+                          </label>
+                        </div>
+                        <label>
+                          Pseudo
+                          <input type="text" value={username} onChange={(event) => setUsername(event.target.value)} placeholder="Ton pseudo" maxLength={15} required />
+                        </label>
+                      </>
+                    ) : null}
+
+                    {registerStep === 2 ? (
+                      <>
+                        <label>
+                          Mot de passe
+                          <div className="auth-password-field">
+                            <input
+                              type={showPassword ? "text" : "password"}
+                              value={password}
+                              onChange={(event) => setPassword(event.target.value)}
+                              placeholder="********"
+                              minLength={6}
+                              required
+                            />
+                            <button
+                              type="button"
+                              className="auth-password-toggle"
+                              onClick={() => setShowPassword((prev) => !prev)}
+                              aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                              aria-pressed={showPassword}
+                            >
+                              <EyeIcon crossed={!showPassword} />
+                            </button>
+                          </div>
+                          <p className="auth-password-hint">
+                            6 caractères minimum, avec 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial.
+                          </p>
+                        </label>
+                        <div className="auth-form__row">
+                          <label>
+                            Anniversaire
+                            <input type="date" value={birthday} onChange={(event) => setBirthday(event.target.value)} required />
+                          </label>
+                          <label>
+                            Genre
+                            <div className="auth-form__select" ref={genderMenuRef}>
+                              <button
+                                type="button"
+                                className={gender ? "auth-form__select-trigger" : "auth-form__select-trigger is-placeholder"}
+                                aria-haspopup="listbox"
+                                aria-expanded={isGenderMenuOpen}
+                                onClick={() => setIsGenderMenuOpen((prev) => !prev)}
+                              >
+                                <span>{genderLabel}</span>
+                                <svg className="auth-form__select-chevron" viewBox="0 0 20 20" aria-hidden="true">
+                                  <path
+                                    d="M5 7.5L10 12.5L15 7.5"
+                                    stroke="currentColor"
+                                    strokeWidth="1.6"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                  />
+                                </svg>
+                              </button>
+                              {isGenderMenuOpen ? (
+                                <div className="auth-form__select-menu" role="listbox">
+                                  {GENDER_OPTIONS.map((option) => (
+                                    <button
+                                      key={option.value}
+                                      type="button"
+                                      role="option"
+                                      aria-selected={gender === option.value}
+                                      className={gender === option.value ? "is-selected" : undefined}
+                                      onMouseDown={(event) => {
+                                        event.preventDefault()
+                                        setGender(option.value)
+                                        setIsGenderMenuOpen(false)
+                                      }}
+                                    >
+                                      {option.label}
+                                    </button>
+                                  ))}
+                                </div>
+                              ) : null}
+                            </div>
+                          </label>
+                        </div>
+                        <label className="auth-terms">
+                          <input type="checkbox" checked={acceptTerms} onChange={(event) => setAcceptTerms(event.target.checked)} required />
+                          J’accepte les conditions générales.
+                        </label>
+                      </>
+                    ) : null}
+                  </>
+                ) : (
+                  <>
+                    <label>
+                      Email
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(event) => setEmail(event.target.value)}
+                        onBlur={handleEmailBlur}
+                        placeholder="toi@exemple.com"
+                        required
+                        autoComplete="email"
+                        list="auth-email-history"
+                      />
+                    </label>
                     {emailHistory.length > 0 ? (
                       <datalist id="auth-email-history">
                         {emailHistory.map((savedEmail) => (
@@ -425,30 +635,6 @@ const AuthPage = ({ mode }: AuthFormProps) => {
                         ))}
                       </datalist>
                     ) : null}
-                  </label>
-                ) : null}
-
-                {registerStep === 1 ? (
-                  <>
-                    <div className="auth-form__row">
-                      <label>
-                        Prénom
-                        <input type="text" value={firstName} onChange={(event) => setFirstName(event.target.value)} placeholder="Prénom" required />
-                      </label>
-                      <label>
-                        Nom
-                        <input type="text" value={lastName} onChange={(event) => setLastName(event.target.value)} placeholder="Nom" required />
-                      </label>
-                    </div>
-                    <label>
-                      Pseudo
-                      <input type="text" value={username} onChange={(event) => setUsername(event.target.value)} placeholder="Ton pseudo" maxLength={15} required />
-                    </label>
-                  </>
-                ) : null}
-
-                {registerStep === 2 ? (
-                  <>
                     <label>
                       Mot de passe
                       <div className="auth-password-field">
@@ -470,147 +656,47 @@ const AuthPage = ({ mode }: AuthFormProps) => {
                           <EyeIcon crossed={!showPassword} />
                         </button>
                       </div>
-                      <p className="auth-password-hint">
-                        6 caractères minimum, avec 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial.
-                      </p>
-                    </label>
-                    <div className="auth-form__row">
-                      <label>
-                        Anniversaire
-                        <input type="date" value={birthday} onChange={(event) => setBirthday(event.target.value)} required />
-                      </label>
-                      <label>
-                        Genre
-                        <div className="auth-form__select" ref={genderMenuRef}>
-                          <button
-                            type="button"
-                            className={gender ? "auth-form__select-trigger" : "auth-form__select-trigger is-placeholder"}
-                            aria-haspopup="listbox"
-                            aria-expanded={isGenderMenuOpen}
-                            onClick={() => setIsGenderMenuOpen((prev) => !prev)}
-                          >
-                            <span>{genderLabel}</span>
-                            <svg className="auth-form__select-chevron" viewBox="0 0 20 20" aria-hidden="true">
-                              <path
-                                d="M5 7.5L10 12.5L15 7.5"
-                                stroke="currentColor"
-                                strokeWidth="1.6"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                          </button>
-                          {isGenderMenuOpen ? (
-                            <div className="auth-form__select-menu" role="listbox">
-                              {GENDER_OPTIONS.map((option) => (
-                                <button
-                                  key={option.value}
-                                  type="button"
-                                  role="option"
-                                  aria-selected={gender === option.value}
-                                  className={gender === option.value ? "is-selected" : undefined}
-                                  onMouseDown={(event) => {
-                                    event.preventDefault()
-                                    setGender(option.value)
-                                    setIsGenderMenuOpen(false)
-                                  }}
-                                >
-                                  {option.label}
-                                </button>
-                              ))}
-                            </div>
-                          ) : null}
-                        </div>
-                      </label>
-                    </div>
-                    <label className="auth-terms">
-                      <input type="checkbox" checked={acceptTerms} onChange={(event) => setAcceptTerms(event.target.checked)} required />
-                      J’accepte les conditions générales.
                     </label>
                   </>
-                ) : null}
-              </>
-            ) : (
-              <>
-                <label>
-                  Email
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}
-                    onBlur={handleEmailBlur}
-                    placeholder="toi@exemple.com"
-                    required
-                    autoComplete="email"
-                    list="auth-email-history"
-                  />
-                </label>
-                {emailHistory.length > 0 ? (
-                  <datalist id="auth-email-history">
-                    {emailHistory.map((savedEmail) => (
-                      <option key={savedEmail} value={savedEmail} />
-                    ))}
-                  </datalist>
-                ) : null}
-                <label>
-                  Mot de passe
-                  <div className="auth-password-field">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      value={password}
-                      onChange={(event) => setPassword(event.target.value)}
-                      placeholder="********"
-                      minLength={6}
-                      required
-                    />
-                    <button
-                      type="button"
-                      className="auth-password-toggle"
-                      onClick={() => setShowPassword((prev) => !prev)}
-                      aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
-                      aria-pressed={showPassword}
-                    >
-                      <EyeIcon crossed={!showPassword} />
+                )}
+
+                {error ? <p className="auth-error">{error}</p> : null}
+                {info ? <p className="auth-info">{info}</p> : null}
+
+                {mode === "login" ? (
+                  <>
+                    <label className="auth-remember">
+                      <input type="checkbox" checked={remember} onChange={(event) => setRemember(event.target.checked)} />
+                      Se souvenir de moi
+                    </label>
+                    <button type="submit" className="auth-submit">
+                      {ctaLabel}
+                    </button>
+                    <button type="button" className="auth-forgot" onClick={handleForgot}>
+                      Mot de passe oublié ?
+                    </button>
+                  </>
+                ) : (
+                  <div className="auth-step-actions">
+                    {registerStep > 0 ? (
+                      <button type="button" className="auth-secondary" onClick={() => setRegisterStep((prev) => Math.max(prev - 1, 0))}>
+                        Retour
+                      </button>
+                    ) : null}
+                    <button type="submit" className="auth-submit">
+                      {ctaLabel}
                     </button>
                   </div>
-                </label>
-              </>
-            )}
+                )}
+              </form>
 
-            {error ? <p className="auth-error">{error}</p> : null}
-
-            {mode === "login" ? (
-              <>
-                <label className="auth-remember">
-                  <input type="checkbox" checked={remember} onChange={(event) => setRemember(event.target.checked)} />
-                  Se souvenir de moi
-                </label>
-                <button type="submit" className="auth-submit">
-                  {ctaLabel}
-                </button>
-                <button type="button" className="auth-forgot" onClick={handleForgot}>
-                  Mot de passe oublié ?
-                </button>
-              </>
-            ) : (
-              <div className="auth-step-actions">
-                {registerStep > 0 ? (
-                  <button type="button" className="auth-secondary" onClick={() => setRegisterStep((prev) => Math.max(prev - 1, 0))}>
-                    Retour
-                  </button>
-                ) : null}
-                <button type="submit" className="auth-submit">
-                  {ctaLabel}
+              <div className="auth-google">
+                <button type="button" className="auth-secondary auth-google__button" onClick={handleGoogleLogin}>
+                  Continuer avec Google
                 </button>
               </div>
-            )}
-          </form>
-
-          <div className="auth-google">
-            <button type="button" className="auth-secondary auth-google__button" onClick={handleGoogleLogin}>
-              Continuer avec Google
-            </button>
-          </div>
+            </>
+          )}
         </div>
       </div>
 </div>
