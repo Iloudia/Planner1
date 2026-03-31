@@ -34,4 +34,9 @@ export type FirebaseUserDocument = {
   }
   homeCardOrder?: string[]
   homeCardClickProgress?: Record<string, number>
+  homeTodos?: Array<{
+    id: string
+    text: string
+    done: boolean
+  }>
 }

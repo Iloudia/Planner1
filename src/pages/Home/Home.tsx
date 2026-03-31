@@ -5,6 +5,7 @@ import { useAuth } from "../../context/AuthContext"
 import MediaImage from "../../components/MediaImage"
 import { useUserProfilePhoto } from "../../hooks/useUserProfilePhoto"
 import { saveHomeCardsState, subscribeToHomeCardsState } from "../../services/firestore/homeCards"
+import { saveHomeTodos, subscribeToHomeTodos, type HomeTodoItem } from "../../services/firestore/homeTodos"
 import { buildUserScopedKey, normalizeUserEmail } from "../../utils/userScopedKey"
 
 import planner01 from "../../assets/sport.webp"
@@ -47,6 +48,8 @@ type TaskDisplay = {
   start?: string
   end?: string
 }
+
+type TodoItem = HomeTodoItem
 
 const cards: CardItem[] = [
   { image: planner01, alt: "Sport", kicker: "Énergie", title: "Sport", path: "/sport" },
@@ -145,6 +148,85 @@ function safeRemoveStorage(key: string) {
     // ignore
   }
 }
+
+const normalizeTodos = (value: unknown): TodoItem[] => {
+  if (!Array.isArray(value)) {
+    return []
+  }
+
+  const seen = new Set<string>()
+  const normalized: TodoItem[] = []
+
+  value.forEach((entry) => {
+    if (!entry || typeof entry !== "object") {
+      return
+    }
+
+    const todo = entry as Partial<TodoItem>
+    const id = typeof todo.id === "string" ? todo.id.trim() : ""
+    const text = typeof todo.text === "string" ? todo.text.trim() : ""
+    if (!id || !text || seen.has(id)) {
+      return
+    }
+
+    seen.add(id)
+    normalized.push({
+      id,
+      text,
+      done: Boolean(todo.done),
+    })
+  })
+
+  return normalized
+}
+
+const readTodosFromStorage = (storageKey: string) => {
+  try {
+    const raw = localStorage.getItem(storageKey)
+    if (!raw) {
+      return []
+    }
+    return normalizeTodos(JSON.parse(raw))
+  } catch {
+    return []
+  }
+}
+
+const extractTodoTimestamp = (todoId: string) => {
+  const match = /^todo-(\d+)$/.exec(todoId)
+  return match ? Number.parseInt(match[1] ?? "0", 10) : 0
+}
+
+const mergeTodos = (...collections: TodoItem[][]) => {
+  const seen = new Set<string>()
+  const merged: TodoItem[] = []
+
+  collections.forEach((items) => {
+    items.forEach((item) => {
+      if (seen.has(item.id)) {
+        return
+      }
+      seen.add(item.id)
+      merged.push(item)
+    })
+  })
+
+  return [...merged].sort((left, right) => {
+    const rightTimestamp = extractTodoTimestamp(right.id)
+    const leftTimestamp = extractTodoTimestamp(left.id)
+    if (rightTimestamp !== leftTimestamp) {
+      return rightTimestamp - leftTimestamp
+    }
+    return 0
+  })
+}
+
+const areTodosEqual = (left: TodoItem[], right: TodoItem[]) =>
+  left.length === right.length &&
+  left.every(
+    (item, index) =>
+      item.id === right[index]?.id && item.text === right[index]?.text && item.done === right[index]?.done,
+  )
 
 const normalizeCardOrderPaths = (value: unknown) => {
   if (!Array.isArray(value)) {
@@ -370,6 +452,7 @@ function HomePage() {
 
   const homeMoodboardKey = useMemo(() => scopedKey(HOME_MOODBOARD_SUFFIX), [scopedKey])
   const todosKey = useMemo(() => scopedKey("todos"), [scopedKey])
+  const legacyAnonymousTodosKey = useMemo(() => buildUserScopedKey("anonymous", "todos"), [])
   const cardOrderKey = useMemo(() => scopedKey(CARD_ORDER_SUFFIX), [scopedKey])
   const cardProgressKey = useMemo(() => scopedKey(CARD_PROGRESS_SUFFIX), [scopedKey])
   const legacyCardUsageKey = useMemo(() => scopedKey(LEGACY_CARD_USAGE_SUFFIX), [scopedKey])
@@ -396,16 +479,9 @@ function HomePage() {
   const moodboardInputRef = useRef<HTMLInputElement | null>(null)
 
   const [todoInput, setTodoInput] = useState("")
-  const [todos, setTodos] = useState<{ id: string; text: string; done: boolean }[]>(() => {
-    try {
-      const saved = localStorage.getItem(todosKey)
-      if (!saved) return []
-      const parsed = JSON.parse(saved)
-      return Array.isArray(parsed) ? parsed.slice(0, MAX_TODOS) : []
-    } catch {
-      return []
-    }
-  })
+  const [todos, setTodos] = useState<TodoItem[]>([])
+  const [isHomeTodosLoaded, setIsHomeTodosLoaded] = useState(false)
+  const lastPersistedTodosRef = useRef("")
 
   const [progress, setProgress] = useState(() => computeProgress())
   const profileUsername = useMemo(() => username?.trim() || "", [username])
@@ -472,8 +548,77 @@ function HomePage() {
   }, [homeMoodboardKey, homeMoodboardSrc])
 
   useEffect(() => {
-    safeWriteStorage(todosKey, JSON.stringify(todos))
-  }, [todosKey, todos])
+    if (!isAuthReady) {
+      setIsHomeTodosLoaded(false)
+      return
+    }
+
+    setIsHomeTodosLoaded(false)
+    const localTodos = readTodosFromStorage(todosKey)
+    const legacyAnonymousTodos =
+      userId && legacyAnonymousTodosKey !== todosKey ? readTodosFromStorage(legacyAnonymousTodosKey) : []
+    const fallbackTodos = mergeTodos(localTodos, legacyAnonymousTodos)
+    const serializedFallbackTodos = JSON.stringify(fallbackTodos)
+
+    if (!userId) {
+      setTodos(fallbackTodos)
+      lastPersistedTodosRef.current = serializedFallbackTodos
+      safeWriteStorage(todosKey, serializedFallbackTodos)
+      setIsHomeTodosLoaded(true)
+      return
+    }
+
+    return subscribeToHomeTodos(
+      userId,
+      (remoteTodos) => {
+        const nextTodos = mergeTodos(remoteTodos, fallbackTodos)
+        const serializedNextTodos = JSON.stringify(nextTodos)
+        setTodos((currentTodos) => (areTodosEqual(currentTodos, nextTodos) ? currentTodos : nextTodos))
+        lastPersistedTodosRef.current = serializedNextTodos
+        safeWriteStorage(todosKey, serializedNextTodos)
+        if (legacyAnonymousTodosKey !== todosKey) {
+          safeRemoveStorage(legacyAnonymousTodosKey)
+        }
+        setIsHomeTodosLoaded(true)
+
+        if (!areTodosEqual(remoteTodos, nextTodos)) {
+          void saveHomeTodos(userId, nextTodos).catch((error) => {
+            console.error("Home todos seed failed", error)
+          })
+        }
+      },
+      (error) => {
+        console.error("Home todos load failed", error)
+        setTodos(fallbackTodos)
+        lastPersistedTodosRef.current = serializedFallbackTodos
+        safeWriteStorage(todosKey, serializedFallbackTodos)
+        setIsHomeTodosLoaded(true)
+      },
+    )
+  }, [isAuthReady, legacyAnonymousTodosKey, todosKey, userId])
+
+  useEffect(() => {
+    if (!isAuthReady || !isHomeTodosLoaded) {
+      return
+    }
+
+    const normalizedTodos = normalizeTodos(todos)
+    const serializedTodos = JSON.stringify(normalizedTodos)
+    if (serializedTodos === lastPersistedTodosRef.current) {
+      return
+    }
+
+    lastPersistedTodosRef.current = serializedTodos
+    safeWriteStorage(todosKey, serializedTodos)
+
+    if (!userId) {
+      return
+    }
+
+    void saveHomeTodos(userId, normalizedTodos).catch((error) => {
+      console.error("Home todos save failed", error)
+    })
+  }, [isAuthReady, isHomeTodosLoaded, todos, todosKey, userId])
 
   useEffect(() => {
     if (!isAuthReady) {
@@ -726,7 +871,7 @@ function HomePage() {
     return normalized.map(({ startTs: _startTs, endTs: _endTs, ...task }) => task)
   }, [now, tasks])
 
-  const isHomeLoading = !isAuthReady || !isProfilePhotoLoaded || !isHomeCardsLoaded
+  const isHomeLoading = !isAuthReady || !isProfilePhotoLoaded || !isHomeCardsLoaded || !isHomeTodosLoaded
 
   if (isHomeLoading) {
     return (
