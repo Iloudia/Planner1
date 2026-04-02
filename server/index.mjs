@@ -1081,6 +1081,7 @@ app.use("/media", async (req, res, next) => {
     }
 
     if (isPublicMediaPath(normalizedRelativePath)) {
+      res.setHeader("Cache-Control", "public, max-age=31536000, immutable")
       return res.sendFile(absolutePath)
     }
 
@@ -1093,6 +1094,7 @@ app.use("/media", async (req, res, next) => {
       if (req.user?.uid !== ownerUid && !isAdminToken(req.user)) {
         return res.status(403).send("Accès refusé.")
       }
+      res.setHeader("Cache-Control", "private, max-age=31536000, immutable")
       return res.sendFile(absolutePath)
     })
   } catch (error) {

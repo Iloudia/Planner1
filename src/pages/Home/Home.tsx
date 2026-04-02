@@ -482,6 +482,7 @@ function HomePage() {
   const [todos, setTodos] = useState<TodoItem[]>([])
   const [isHomeTodosLoaded, setIsHomeTodosLoaded] = useState(false)
   const lastPersistedTodosRef = useRef("")
+  const homeTodosSeedRef = useRef<string | null>(null)
 
   const [progress, setProgress] = useState(() => computeProgress())
   const profileUsername = useMemo(() => username?.trim() || "", [username])
@@ -491,6 +492,7 @@ function HomePage() {
   const [cardOrder, setCardOrder] = useState<string[]>([])
   const [cardClickProgress, setCardClickProgress] = useState<Record<string, number>>({})
   const [isHomeCardsLoaded, setIsHomeCardsLoaded] = useState(false)
+  const homeCardsSeedRef = useRef<string | null>(null)
 
   const preferredCardOrder = useMemo(() => {
     try {
@@ -553,6 +555,7 @@ function HomePage() {
       return
     }
 
+    homeTodosSeedRef.current = null
     setIsHomeTodosLoaded(false)
     const localTodos = readTodosFromStorage(todosKey)
     const legacyAnonymousTodos =
@@ -570,8 +573,8 @@ function HomePage() {
 
     return subscribeToHomeTodos(
       userId,
-      (remoteTodos) => {
-        const nextTodos = mergeTodos(remoteTodos, fallbackTodos)
+      ({ todos: remoteTodos, hasStoredTodos }) => {
+        const nextTodos = hasStoredTodos ? remoteTodos : mergeTodos(remoteTodos, fallbackTodos)
         const serializedNextTodos = JSON.stringify(nextTodos)
         setTodos((currentTodos) => (areTodosEqual(currentTodos, nextTodos) ? currentTodos : nextTodos))
         lastPersistedTodosRef.current = serializedNextTodos
@@ -581,7 +584,8 @@ function HomePage() {
         }
         setIsHomeTodosLoaded(true)
 
-        if (!areTodosEqual(remoteTodos, nextTodos)) {
+        if (!hasStoredTodos && serializedNextTodos !== homeTodosSeedRef.current) {
+          homeTodosSeedRef.current = serializedNextTodos
           void saveHomeTodos(userId, nextTodos).catch((error) => {
             console.error("Home todos seed failed", error)
           })
@@ -626,6 +630,7 @@ function HomePage() {
       return
     }
 
+    homeCardsSeedRef.current = null
     setIsHomeCardsLoaded(false)
     const localOrder = readCardOrderFromStorage(cardOrderKey)
     const localProgress = readCardClickProgressFromStorage(cardProgressKey)
@@ -648,24 +653,28 @@ function HomePage() {
 
     return subscribeToHomeCardsState(
       userId,
-      (remoteState) => {
+      ({ state: remoteState, hasStoredOrder, hasStoredClickProgress }) => {
         const nextOrder = prioritizePreferredCardOrder(
-          remoteState.order.length > 0 ? remoteState.order : fallbackOrder,
+          hasStoredOrder ? remoteState.order : fallbackOrder,
           preferredCardOrder,
         )
-        // Keep local click progress as source of truth to avoid stale remote counters
-        // causing a card to move on every visit.
-        const nextProgress = fallbackProgress
-        setCardOrder(nextOrder)
-        setCardClickProgress(nextProgress)
+        const nextProgress = hasStoredClickProgress
+          ? normalizeCardClickProgress(remoteState.clickProgress)
+          : fallbackProgress
+        setCardOrder((currentOrder) => (areOrdersEqual(currentOrder, nextOrder) ? currentOrder : nextOrder))
+        setCardClickProgress((currentProgress) =>
+          areClickProgressEqual(currentProgress, nextProgress) ? currentProgress : nextProgress,
+        )
         setIsHomeCardsLoaded(true)
         safeWriteStorage(cardOrderKey, JSON.stringify(nextOrder))
         safeWriteStorage(cardProgressKey, JSON.stringify(nextProgress))
         safeRemoveStorage(legacyCardUsageKey)
 
-        const remoteOrder = prioritizePreferredCardOrder(remoteState.order, preferredCardOrder)
-        const remoteProgress = normalizeCardClickProgress(remoteState.clickProgress)
-        if (!areOrdersEqual(remoteOrder, nextOrder) || !areClickProgressEqual(remoteProgress, nextProgress)) {
+        const shouldSeedOrder = !hasStoredOrder
+        const shouldSeedProgress = !hasStoredClickProgress && Object.keys(nextProgress).length > 0
+        const seedSignature = JSON.stringify({ order: shouldSeedOrder ? nextOrder : null, clickProgress: shouldSeedProgress ? nextProgress : null })
+        if ((shouldSeedOrder || shouldSeedProgress) && seedSignature !== homeCardsSeedRef.current) {
+          homeCardsSeedRef.current = seedSignature
           void saveHomeCardsState(userId, { order: nextOrder, clickProgress: nextProgress }).catch((error) => {
             console.error("Home cards state seed failed", error)
           })

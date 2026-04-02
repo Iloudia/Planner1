@@ -10,6 +10,11 @@ export type HomeTodoItem = {
   done: boolean
 }
 
+export type HomeTodosSnapshot = {
+  todos: HomeTodoItem[]
+  hasStoredTodos: boolean
+}
+
 const normalizeHomeTodos = (value: unknown): HomeTodoItem[] => {
   if (!Array.isArray(value)) {
     return []
@@ -43,14 +48,17 @@ const normalizeHomeTodos = (value: unknown): HomeTodoItem[] => {
 
 export const subscribeToHomeTodos = (
   userId: string,
-  onTodos: (todos: HomeTodoItem[]) => void,
+  onTodos: (snapshot: HomeTodosSnapshot) => void,
   onError?: (error: Error) => void,
 ) =>
   onSnapshot(
     userDocRef(userId),
     (snapshot) => {
       const data = snapshot.data() as FirebaseUserDocument | undefined
-      onTodos(normalizeHomeTodos(data?.homeTodos))
+      onTodos({
+        todos: normalizeHomeTodos(data?.homeTodos),
+        hasStoredTodos: Object.prototype.hasOwnProperty.call(data ?? {}, "homeTodos"),
+      })
     },
     (error) => {
       onError?.(error)

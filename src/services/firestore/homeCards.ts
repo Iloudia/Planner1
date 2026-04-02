@@ -51,9 +51,15 @@ export type HomeCardsState = {
   clickProgress: Record<string, number>
 }
 
+export type HomeCardsSnapshot = {
+  state: HomeCardsState
+  hasStoredOrder: boolean
+  hasStoredClickProgress: boolean
+}
+
 export const subscribeToHomeCardsState = (
   userId: string,
-  onState: (state: HomeCardsState) => void,
+  onState: (snapshot: HomeCardsSnapshot) => void,
   onError?: (error: Error) => void,
 ) =>
   onSnapshot(
@@ -61,8 +67,12 @@ export const subscribeToHomeCardsState = (
     (snapshot) => {
       const data = snapshot.data() as FirebaseUserDocument | undefined
       onState({
-        order: normalizeCardOrder(data?.homeCardOrder),
-        clickProgress: normalizeCardClickProgress(data?.homeCardClickProgress),
+        state: {
+          order: normalizeCardOrder(data?.homeCardOrder),
+          clickProgress: normalizeCardClickProgress(data?.homeCardClickProgress),
+        },
+        hasStoredOrder: Object.prototype.hasOwnProperty.call(data ?? {}, "homeCardOrder"),
+        hasStoredClickProgress: Object.prototype.hasOwnProperty.call(data ?? {}, "homeCardClickProgress"),
       })
     },
     (error) => {

@@ -362,14 +362,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setIsAdminApproved(false)
         setAccountCreatedAt(null)
         setScheduledDeletionDate(null)
-        await clearServerMediaSession()
         if (isMounted) {
           setAuthReady(true)
         }
+        void clearServerMediaSession()
         return
       }
 
-      try {
+      const documentLoadPromise = (async () => {
         let data = await ensureUserDocument(nextUser)
         const localProfile = readLocalProfile(nextUser.email)
         const mergedProfile = mergeProfileData(
@@ -401,6 +401,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           identityInfo: data.identityInfo ?? {},
         })
 
+        return data
+      })()
+
+      try {
         try {
           const sessionState = await syncServerMediaSession(nextUser)
           if (isMounted) {
@@ -415,6 +419,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           if (isMounted) {
             setIsAdminApproved(false)
           }
+        } finally {
+          if (isMounted) {
+            setAuthReady(true)
+          }
+        }
+
+        const data = await documentLoadPromise
+        if (!isMounted) {
+          return
         }
 
         setUserDoc(data)
