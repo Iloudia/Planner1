@@ -93,6 +93,13 @@
   gap: 0.8rem;
 }
 
+@media (max-width: 768px) {
+  .purchases-page {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
 @media (max-width: 720px) {
   .purchases-card {
     grid-template-columns: 1fr;

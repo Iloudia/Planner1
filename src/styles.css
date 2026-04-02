@@ -2281,7 +2281,18 @@ h1 {
   }
 
   .site-header__nav {
-    display: none;
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    justify-content: center;
+    gap: 0.35rem 0.45rem;
+    flex-wrap: wrap;
+  }
+
+  .site-header__nav-link {
+    padding: 0.28rem 0.48rem;
+    font-size: 0.78rem;
+    white-space: nowrap;
   }
 
   .header-menu__toggle,

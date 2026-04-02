@@ -119,6 +119,13 @@
   font-size: 1.1rem;
 }
 
+@media (max-width: 768px) {
+  .cart-page {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
 .cart-summary__row {
   display: flex;
   align-items: center;
