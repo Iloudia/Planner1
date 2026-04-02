@@ -100,6 +100,46 @@ const withAlpha = (hexColor: string, alpha: number) => {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`
 }
 
+const getTaskIcon = (category?: ScheduledTask['tag']) => {
+  switch (category) {
+    case 'Travail':
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 6V4.75A1.75 1.75 0 0 1 10.75 3h2.5A1.75 1.75 0 0 1 15 4.75V6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+          <rect x="4" y="6" width="16" height="13" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.8" />
+          <path d="M4 11h16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        </svg>
+      )
+    case 'Sport':
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 10v4M7 8v8M17 8v8M20 10v4M9 12h6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      )
+    case 'Rendez-vous':
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="4" y="5" width="16" height="15" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.8" />
+          <path d="M8 3.75V7M16 3.75V7M4 10h16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      )
+    case 'Repos':
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M15.5 4.5A7.5 7.5 0 1 0 19.5 18a7 7 0 0 1-4-13.5Z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      )
+    case 'Perso':
+    default:
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M8.5 10V8.75A3.5 3.5 0 0 1 12 5.25a3.5 3.5 0 0 1 3.5 3.5V10" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+          <rect x="6" y="10" width="12" height="9" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.8" />
+        </svg>
+      )
+  }
+}
+
 const parseDateKey = (value: string) => {
   const [year, month, day] = value.split('-').map(Number)
   return new Date(year ?? 1970, (month ?? 1) - 1, day ?? 1)
@@ -596,7 +636,7 @@ const viewToggle = (
       className={`calendar-view-toggle__button${calendarView === 'weekly' ? ' is-active' : ''}`}
       onClick={() => setCalendarView('weekly')}
     >
-      Calendrier Hebdomadaire
+      {isCompact ? 'Hebdomadaire' : 'Calendrier Hebdomadaire'}
     </button>
     <button
       type="button"
@@ -605,7 +645,7 @@ const viewToggle = (
       className={`calendar-view-toggle__button${calendarView === 'monthly' ? ' is-active' : ''}`}
       onClick={() => setCalendarView('monthly')}
     >
-      Calendrier mensuel
+      {isCompact ? 'Mensuel' : 'Calendrier mensuel'}
     </button>
   </div>
 )
@@ -652,23 +692,56 @@ return (
     <section className="calendar-weekly">
       {isCompact ? (
         <>
-          {weeklyHeader}
-          <div className="calendar-weekly__mobile calendar-mobile" role="region" aria-label="Calendrier mobile">
-            <div className="calendar-weekly__toolbar calendar-mobile__toolbar" aria-label="Navigation semaine">
-              {viewToggle}
+          <section className="calendar-compact-header sport-header" aria-label="En-tête du calendrier">
+            <div className="calendar-compact-header__copy">
+              <span className="sport-header__eyebrow">Calendrier</span>
+              <h1 className="calendar-compact-header__title">Calendrier</h1>
+              <p className="calendar-compact-header__subtitle">Organise tes rituels, aligne ton énergie.</p>
             </div>
+            <div className="calendar-mobile__toggle">{viewToggle}</div>
+          </section>
 
+          <div className="calendar-weekly__mobile calendar-mobile" role="region" aria-label="Calendrier mobile">
             <div className="calendar-mobile__panel">
-              <span className="calendar-mobile__month">{formatMonthTitle(weekStartDate)}</span>
+              <div className="calendar-mobile__panel-header">
+                <button
+                  type="button"
+                  className="calendar-mobile__week-nav"
+                  onClick={() => handleWeekChange(-1)}
+                  aria-label="Semaine précédente"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M14 6 8 12l6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+
+                <div className="calendar-mobile__panel-heading">
+                  <span className="calendar-mobile__month">Navigation hebdomadaire</span>
+                  <span className="calendar-mobile__week-label">{`Semaine du ${weekRangeLabel}`}</span>
+                </div>
+
+                <button
+                  type="button"
+                  className="calendar-mobile__week-nav"
+                  onClick={() => handleWeekChange(1)}
+                  aria-label="Semaine suivante"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m10 6 6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+              </div>
+
               <div className="calendar-mobile__week" role="list">
                 {weekDates.map((date, index) => {
                   const dateKey = getDateKey(date)
                   const isToday = date.toDateString() === today.toDateString()
+                  const isSelected = dateKey === mobileSelectedDateKey
                   return (
                     <button
                       key={dateKey}
                       type="button"
-                      className={`calendar-mobile__day-card${isToday ? " is-today" : ""}`}
+                      className={`calendar-mobile__day-card${isToday ? " is-today" : ""}${isSelected ? " is-selected" : ""}`}
                       onClick={() => {
                         setMobileSelectedDateKey(dateKey)
                         handleDaySelect(dateKey)
@@ -678,6 +751,7 @@ return (
                     >
                       <span className="calendar-mobile__day-name">{weekDays[index].toLowerCase()}</span>
                       <span className="calendar-mobile__day-number">{date.getDate()}</span>
+                      <span className="calendar-mobile__day-marker" aria-hidden="true" />
                     </button>
                   )
                 })}
@@ -685,7 +759,28 @@ return (
             </div>
 
             <div className="calendar-mobile__today-row">
-              <span>{mobileSelectedLabel}</span>
+              <div className="calendar-mobile__selected-heading">
+                <span className="calendar-mobile__selected-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <rect x="4" y="5" width="16" height="15" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.8" />
+                    <path d="M8 3.75V7M16 3.75V7M4 10h16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+                <div className="calendar-mobile__selected-copy">
+                  <h2>{mobileSelectedLabel}</h2>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className="calendar-mobile__add"
+                onClick={() => handleDaySelect(mobileSelectedDateKey, { presetForm: true })}
+              >
+                <span className="calendar-mobile__add-plus" aria-hidden="true">
+                  +
+                </span>
+                <span>Ajouter un rituel</span>
+              </button>
             </div>
 
             <div className="calendar-mobile__agenda" role="list">
@@ -695,20 +790,48 @@ return (
                 mobileSelectedTasks.map((task) => (
                   <div key={task.id} className="calendar-mobile__event">
                     <span className="calendar-mobile__event-time">{task.start}</span>
+                    <span
+                      className="calendar-mobile__event-dot"
+                      style={{ backgroundColor: withAlpha(task.color, 0.26) }}
+                      aria-hidden="true"
+                    />
                     <div
                       className="calendar-mobile__event-card"
-                      style={{
-                        background: `linear-gradient(135deg, ${withAlpha(task.color, 0.12)} 0%, ${withAlpha(
-                          task.color,
-                          0.28,
-                        )} 100%)`,
-                        borderColor: withAlpha(task.color, 0.4),
-                      }}
+                      style={
+                        {
+                          '--event-color': task.color,
+                          background: `linear-gradient(135deg, ${withAlpha(task.color, 0.12)} 0%, ${withAlpha(
+                            task.color,
+                            0.28,
+                          )} 100%)`,
+                          borderColor: withAlpha(task.color, 0.4),
+                        } as CSSProperties
+                      }
                     >
-                      <span className="calendar-mobile__event-title">{task.title}</span>
-                      <span className="calendar-mobile__event-hours">
-                        {task.start} - {task.end}
+                      <span className="calendar-mobile__event-icon" aria-hidden="true">
+                        {getTaskIcon(task.tag)}
                       </span>
+                      <div className="calendar-mobile__event-body">
+                        <div className="calendar-mobile__event-main">
+                          <span className="calendar-mobile__event-title">{task.title}</span>
+                          <button
+                            type="button"
+                            className="calendar-mobile__event-more"
+                            aria-label={`Ouvrir les détails de ${task.title}`}
+                            onClick={() => handleDaySelect(mobileSelectedDateKey)}
+                          >
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                              <circle cx="12" cy="5" r="1.8" fill="currentColor" />
+                              <circle cx="12" cy="12" r="1.8" fill="currentColor" />
+                              <circle cx="12" cy="19" r="1.8" fill="currentColor" />
+                            </svg>
+                          </button>
+                        </div>
+                        <span className="calendar-mobile__event-hours">
+                          {task.start} - {task.end}
+                        </span>
+                        {task.tag ? <span className="calendar-mobile__event-tag">{task.tag}</span> : null}
+                      </div>
                     </div>
                   </div>
                 ))
