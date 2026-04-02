@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   gap: 2.75rem;
-  padding: clamp(1.2rem, 3vw, 2rem);
+  padding: 0;
 }
 
 .wishlist-page--loading {

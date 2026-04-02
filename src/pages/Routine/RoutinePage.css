@@ -257,6 +257,10 @@
   word-break: break-word;
 }
 
+.routine-note__item-title--mobile {
+  display: none;
+}
+
 .routine-note__item-detail {
   font-size: 0.86rem;
   color: rgba(15, 23, 42, 0.55);
@@ -661,6 +665,91 @@ body.routine-page--lux .routine-note__item-detail {
   }
 }
 
+@media (max-width: 768px) {
+  .routine-note__list {
+    width: 100%;
+    gap: 0.7rem;
+  }
+
+  .routine-note__item {
+    padding: 0.66rem 0.65rem;
+  }
+
+  .routine-note__row {
+    gap: 0.45rem;
+    align-items: flex-start;
+  }
+
+  .routine-note__label {
+    grid-template-columns: 30px 18px minmax(0, 1fr);
+    gap: 0.42rem;
+    align-items: flex-start;
+    font-size: 0.92rem;
+  }
+
+  .routine-note__label--title-only {
+    align-items: center;
+  }
+
+  .routine-note__index {
+    min-width: 30px;
+    height: 30px;
+    font-size: 0.72rem;
+  }
+
+  .routine-note__checkbox {
+    width: 18px;
+    height: 18px;
+    margin-top: 0.18rem;
+  }
+
+  .routine-note__label--title-only .routine-note__checkbox {
+    margin-top: 0;
+  }
+
+  .routine-note__text {
+    gap: 0.18rem;
+    min-width: 0;
+  }
+
+  .routine-note__text--title-only {
+    justify-content: center;
+    align-self: stretch;
+  }
+
+  .routine-note__item-title--desktop {
+    display: none;
+  }
+
+  .routine-note__item-title--mobile {
+    display: block;
+  }
+
+  .routine-note__item-title {
+    font-size: 0.9rem;
+    line-height: 1.26;
+    overflow: visible;
+  }
+
+  .routine-note__item-detail {
+    font-size: 0.74rem;
+    line-height: 1.3;
+  }
+
+  .routine-note__actions {
+    gap: 0.2rem;
+    margin-top: 0;
+    flex: 0 0 auto;
+    align-self: flex-start;
+  }
+
+  .routine-note__remove {
+    width: 26px;
+    height: 26px;
+    font-size: 0.82rem;
+  }
+}
+
 @media (max-width: 640px) {
   .routine-page {
     gap: 1.6rem;
@@ -680,18 +769,18 @@ body.routine-page--lux .routine-note__item-detail {
   }
 
   .routine-note__item {
-    padding: 0.8rem 0.75rem;
+    padding: 0.66rem 0.62rem;
   }
 
   .routine-note__label {
-    grid-template-columns: 34px 20px minmax(0, 1fr);
-    gap: 0.65rem;
+    grid-template-columns: 30px 18px minmax(0, 1fr);
+    gap: 0.42rem;
   }
 
   .routine-note__index {
-    min-width: 34px;
-    height: 34px;
-    font-size: 0.82rem;
+    min-width: 30px;
+    height: 30px;
+    font-size: 0.72rem;
   }
 }
 

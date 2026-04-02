@@ -42,7 +42,8 @@ const RoutineChecklist = ({ items, completedSet, toggleRoutine, onRemoveItem, di
               disabled={disabled}
             />
             <span className={`routine-note__text${item.detail ? "" : " routine-note__text--title-only"}`}>
-              <span className="routine-note__item-title">{truncateText(item.title)}</span>
+              <span className="routine-note__item-title routine-note__item-title--desktop">{truncateText(item.title)}</span>
+              <span className="routine-note__item-title routine-note__item-title--mobile">{item.title}</span>
               {item.detail ? <span className="routine-note__item-detail">{item.detail}</span> : null}
             </span>
           </label>

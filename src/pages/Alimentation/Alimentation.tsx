@@ -1,5 +1,6 @@
 ﻿import { useEffect, useMemo, useRef, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
+import type { TouchEvent } from "react"
 import { useAuth } from "../../context/AuthContext"
 import useUserDietData from "../../hooks/useUserDietData"
 import { getWeekKey } from "../../utils/weekKey"
@@ -14,6 +15,7 @@ import photo6 from "../../assets/salade-de-fruit.webp"
 import "./Alimentation.css"
 
 const stripImages = [photo1, photo2, photo3, photo4, photo5, photo6]
+const SWIPE_THRESHOLD = 42
 const weekDays = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"] as const
 
 type MealSlotId = "morning" | "midday" | "evening"
@@ -300,6 +302,10 @@ function DietPage() {
   const navigate = useNavigate()
   const { isAuthReady, userId } = useAuth()
   const [weekKey, setWeekKey] = useState(() => getWeekKey())
+  const [isMobileWeekCarousel, setIsMobileWeekCarousel] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches,
+  )
+  const [activeWeekCardIndex, setActiveWeekCardIndex] = useState(0)
   const {
     weekPlan,
     customRecipes,
@@ -311,6 +317,8 @@ function DietPage() {
     saveFillOnlyEmpty,
     saveWeekPlan,
   } = useUserDietData(weekKey)
+  const weekCarouselTouchStartXRef = useRef<number | null>(null)
+  const weekCarouselTouchDeltaXRef = useRef(0)
   const canEdit = Boolean(userId)
   const isAlimentationLoading = !isAuthReady || isLoading
   useEffect(() => {
@@ -352,11 +360,34 @@ function DietPage() {
       window.removeEventListener("visibilitychange", syncOnVisibilityChange)
     }
   }, [])
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return
+    }
+
+    const mediaQuery = window.matchMedia("(max-width: 768px)")
+    const syncViewport = () => {
+      setIsMobileWeekCarousel(mediaQuery.matches)
+    }
+
+    syncViewport()
+
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", syncViewport)
+      return () => mediaQuery.removeEventListener("change", syncViewport)
+    }
+
+    mediaQuery.addListener(syncViewport)
+    return () => mediaQuery.removeListener(syncViewport)
+  }, [])
+
   const [generatorStatus, setGeneratorStatus] = useState<string | null>(null)
   const weeklyPlan = weekPlan.meals as WeeklyPlan
   const shoppingNotes = weekPlan.shoppingNotes
   const cuisineGoals = weekPlan.cuisineGoalIds as CuisineGoalId[]
   const fillOnlyEmpty = weekPlan.fillOnlyEmpty
+  const hasMultipleWeekCards = weekDays.length > 1
 
   const recipeLookup = useMemo(() => {
     const map = new Map<string, RecipeSnapshot>()
@@ -527,6 +558,87 @@ function DietPage() {
     return recipeLookupByTitle.get(normalizeMealTitle(mealName)) ?? null
   }
 
+  const setWeekCardSlide = (nextIndex: number) => {
+    const normalizedIndex = (nextIndex + weekDays.length) % weekDays.length
+    setActiveWeekCardIndex(normalizedIndex)
+  }
+
+  const showPreviousWeekCard = () => {
+    setWeekCardSlide(activeWeekCardIndex - 1)
+  }
+
+  const showNextWeekCard = () => {
+    setWeekCardSlide(activeWeekCardIndex + 1)
+  }
+
+  const handleWeekCarouselTouchStart = (event: TouchEvent<HTMLDivElement>) => {
+    if (!hasMultipleWeekCards) return
+    weekCarouselTouchStartXRef.current = event.touches[0]?.clientX ?? null
+    weekCarouselTouchDeltaXRef.current = 0
+  }
+
+  const handleWeekCarouselTouchMove = (event: TouchEvent<HTMLDivElement>) => {
+    if (weekCarouselTouchStartXRef.current === null) return
+    weekCarouselTouchDeltaXRef.current = (event.touches[0]?.clientX ?? 0) - weekCarouselTouchStartXRef.current
+  }
+
+  const handleWeekCarouselTouchEnd = () => {
+    if (weekCarouselTouchStartXRef.current === null) return
+    if (weekCarouselTouchDeltaXRef.current <= -SWIPE_THRESHOLD) {
+      showNextWeekCard()
+    } else if (weekCarouselTouchDeltaXRef.current >= SWIPE_THRESHOLD) {
+      showPreviousWeekCard()
+    }
+    weekCarouselTouchStartXRef.current = null
+    weekCarouselTouchDeltaXRef.current = 0
+  }
+
+  const renderWeekCard = (day: typeof weekDays[number]) => (
+    <article key={day} className="diet-week__card">
+      <div className="diet-week__card-head">
+        <span className="diet-week__day">{day}</span>
+      </div>
+      {mealSlots.map((slot) => {
+        const slotRecipe = getRecipeForSlot(day, slot.id)
+        return (
+          <div
+            key={slot.id}
+            className={`diet-week__slot${slotRecipe ? " has-recipe" : ""}`}
+          >
+            <span>
+              {slot.label}
+              {slotRecipe ? (
+                <button
+                  type="button"
+                  className="diet-week__recipe-badge"
+                  onClick={() =>
+                    navigate("/diet", {
+                      state: {
+                        openRecipeId: slotRecipe.id,
+                        openRecipeSource: slotRecipe.source,
+                        planDay: day,
+                        planSlot: slot.id,
+                      },
+                    })
+                  }
+                >
+                  Voir la recette
+                </button>
+              ) : null}
+            </span>
+            <input
+              type="text"
+              value={weeklyPlan[day][slot.id]}
+              placeholder={`Ton plat du ${slot.label.toLowerCase()}`}
+              onChange={(event) => void handleMealChange(day, slot.id, event.target.value)}
+              disabled={!canEdit}
+            />
+          </div>
+        )
+      })}
+    </article>
+  )
+
   if (isAlimentationLoading) {
     return (
       <>
@@ -621,53 +733,71 @@ function DietPage() {
             </div>
             <p className="diet-week__range">{weekRangeLabel}</p>
           </header>
-          <div className="diet-week__grid">
-            {weekDays.map((day) => (
-              <article key={day} className="diet-week__card">
-                <div className="diet-week__card-head">
-                  <span className="diet-week__day">{day}</span>
+          {isMobileWeekCarousel ? (
+            <>
+              <div className="diet-week__carousel">
+                <button
+                  type="button"
+                  className="diet-week__nav diet-week__nav--prev"
+                  onClick={showPreviousWeekCard}
+                  aria-label="Voir le jour precedent"
+                  disabled={!hasMultipleWeekCards}
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M14 6 8 12l6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+
+                <div
+                  className="diet-week__carousel-grid"
+                  onTouchStart={handleWeekCarouselTouchStart}
+                  onTouchMove={handleWeekCarouselTouchMove}
+                  onTouchEnd={handleWeekCarouselTouchEnd}
+                  onTouchCancel={handleWeekCarouselTouchEnd}
+                >
+                  <div
+                    className="diet-week__carousel-track"
+                    style={{ transform: `translateX(-${activeWeekCardIndex * 100}%)` }}
+                  >
+                    {weekDays.map((day, index) => (
+                      <div key={day} className="diet-week__carousel-slide" aria-hidden={index !== activeWeekCardIndex}>
+                        {renderWeekCard(day)}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                {mealSlots.map((slot) => {
-                  const slotRecipe = getRecipeForSlot(day, slot.id)
-                  return (
-                    <div
-                      key={slot.id}
-                      className={`diet-week__slot${slotRecipe ? " has-recipe" : ""}`}
-                    >
-                      <span>
-                        {slot.label}
-                        {slotRecipe ? (
-                          <button
-                            type="button"
-                            className="diet-week__recipe-badge"
-                            onClick={() =>
-                              navigate("/diet", {
-                                state: {
-                                  openRecipeId: slotRecipe.id,
-                                  openRecipeSource: slotRecipe.source,
-                                  planDay: day,
-                                  planSlot: slot.id,
-                                },
-                              })
-                            }
-                          >
-                            Voir la recette
-                          </button>
-                        ) : null}
-                      </span>
-                      <input
-                        type="text"
-                        value={weeklyPlan[day][slot.id]}
-                        placeholder={`Ton plat du ${slot.label.toLowerCase()}`}
-                        onChange={(event) => void handleMealChange(day, slot.id, event.target.value)}
-                        disabled={!canEdit}
-                      />
-                    </div>
-                  )
-                })}
-              </article>
-            ))}
-          </div>
+
+                <button
+                  type="button"
+                  className="diet-week__nav diet-week__nav--next"
+                  onClick={showNextWeekCard}
+                  aria-label="Voir le jour suivant"
+                  disabled={!hasMultipleWeekCards}
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m10 6 6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="diet-week__dots" aria-label="Position dans le carousel des repas">
+                {weekDays.map((day, index) => (
+                  <button
+                    key={day}
+                    type="button"
+                    className={`diet-week__dot${index === activeWeekCardIndex ? " is-active" : ""}`}
+                    aria-label={`Afficher ${day}`}
+                    aria-pressed={index === activeWeekCardIndex}
+                    onClick={() => setWeekCardSlide(index)}
+                  />
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="diet-week__grid">
+              {weekDays.map((day) => renderWeekCard(day))}
+            </div>
+          )}
         </section>
 
         <section className="page-section diet-shopping">
