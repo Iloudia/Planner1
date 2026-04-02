@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type FormEvent } from "react"
+import { useEffect, useMemo, useRef, useState, type FormEvent, type TouchEvent } from "react"
 import MediaImage from "../../components/MediaImage"
 import PageHeading from "../../components/PageHeading"
 import useUserWorkoutData from "../../hooks/useUserWorkoutData"
@@ -179,7 +179,10 @@ const WorkoutPage = () => {
   const [isMuscleMenuOpen, setIsMuscleMenuOpen] = useState(false)
   const [openExerciseMenuId, setOpenExerciseMenuId] = useState<string | null>(null)
   const [isModalMenuOpen, setIsModalMenuOpen] = useState(false)
+  const [activeCreatorIndex, setActiveCreatorIndex] = useState(0)
   const muscleMenuRef = useRef<HTMLDivElement | null>(null)
+  const creatorTouchStartXRef = useRef<number | null>(null)
+  const creatorTouchDeltaXRef = useRef(0)
 
   useEffect(() => {
     document.body.classList.add("workout-page--lux")
@@ -244,12 +247,50 @@ const WorkoutPage = () => {
     () => selectedSeries.filter((item) => item.completed).length,
     [selectedSeries],
   )
+  const hasMultipleCreators = CREATOR_RECOMMENDATIONS.length > 1
 
   useEffect(() => {
     setSeriesInput("")
     setSeriesWeightInput("")
     setNoteDraft(selectedExercise?.note ?? "")
   }, [selectedExercise])
+
+  const setCreatorSlide = (nextIndex: number) => {
+    if (CREATOR_RECOMMENDATIONS.length === 0) return
+    const normalizedIndex = (nextIndex + CREATOR_RECOMMENDATIONS.length) % CREATOR_RECOMMENDATIONS.length
+    setActiveCreatorIndex(normalizedIndex)
+  }
+
+  const showPreviousCreator = () => {
+    setCreatorSlide(activeCreatorIndex - 1)
+  }
+
+  const showNextCreator = () => {
+    setCreatorSlide(activeCreatorIndex + 1)
+  }
+
+  const handleCreatorsTouchStart = (event: TouchEvent<HTMLDivElement>) => {
+    if (!hasMultipleCreators) return
+    creatorTouchStartXRef.current = event.touches[0]?.clientX ?? null
+    creatorTouchDeltaXRef.current = 0
+  }
+
+  const handleCreatorsTouchMove = (event: TouchEvent<HTMLDivElement>) => {
+    if (creatorTouchStartXRef.current === null) return
+    creatorTouchDeltaXRef.current = (event.touches[0]?.clientX ?? 0) - creatorTouchStartXRef.current
+  }
+
+  const handleCreatorsTouchEnd = () => {
+    if (creatorTouchStartXRef.current === null) return
+    const swipeThreshold = 42
+    if (creatorTouchDeltaXRef.current <= -swipeThreshold) {
+      showNextCreator()
+    } else if (creatorTouchDeltaXRef.current >= swipeThreshold) {
+      showPreviousCreator()
+    }
+    creatorTouchStartXRef.current = null
+    creatorTouchDeltaXRef.current = 0
+  }
 
   const resolveExerciseImage = (exercise: (typeof exercises)[number]) => {
     if (exercise.imageMode === "custom" && exercise.imageUrl) {
@@ -662,24 +703,75 @@ const WorkoutPage = () => {
             <h2>Recommandations YouTube & Instagram</h2>
             <p>Des comptes efficaces et faciles à intégrer dans ta routine.</p>
           </header>
-          <div className="workout-creators__grid">
-            {CREATOR_RECOMMENDATIONS.map((creator) => (
-              <article key={creator.id} className="workout-creator-card">
-                <div className="workout-creator-card__top">
-                  <span className={`workout-creator-card__platform workout-creator-card__platform--${creator.platform.toLowerCase()}`}>
-                    {creator.platform}
-                  </span>
-                  <h3>{creator.name}</h3>
-                </div>
-                <p className="workout-creator-card__description">{creator.description}</p>
-                <div className="workout-creator-card__meta">
-                  <span>{creator.focus}</span>
-                  <span>{creator.level}</span>
-                </div>
-                <a href={creator.url} target="_blank" rel="noreferrer" className="workout-creator-card__link">
-                  Voir le profil
-                </a>
-              </article>
+          <div className="workout-creators__carousel">
+            <button
+              type="button"
+              className="workout-creators__nav workout-creators__nav--prev"
+              onClick={showPreviousCreator}
+              aria-label="Voir la recommandation precedente"
+              disabled={!hasMultipleCreators}
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M14 6 8 12l6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            <div
+              className="workout-creators__grid"
+              onTouchStart={handleCreatorsTouchStart}
+              onTouchMove={handleCreatorsTouchMove}
+              onTouchEnd={handleCreatorsTouchEnd}
+              onTouchCancel={handleCreatorsTouchEnd}
+            >
+              <div
+                className="workout-creators__track"
+                style={{ transform: `translateX(-${activeCreatorIndex * 100}%)` }}
+              >
+                {CREATOR_RECOMMENDATIONS.map((creator, index) => (
+                  <div key={creator.id} className="workout-creators__slide" aria-hidden={index !== activeCreatorIndex}>
+                    <article className="workout-creator-card">
+                      <div className="workout-creator-card__top">
+                        <span
+                          className={`workout-creator-card__platform workout-creator-card__platform--${creator.platform.toLowerCase()}`}
+                        >
+                          {creator.platform}
+                        </span>
+                        <h3>{creator.name}</h3>
+                      </div>
+                      <p className="workout-creator-card__description">{creator.description}</p>
+                      <div className="workout-creator-card__meta">
+                        <span>{creator.focus}</span>
+                        <span>{creator.level}</span>
+                      </div>
+                      <a href={creator.url} target="_blank" rel="noreferrer" className="workout-creator-card__link">
+                        Voir le profil
+                      </a>
+                    </article>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <button
+              type="button"
+              className="workout-creators__nav workout-creators__nav--next"
+              onClick={showNextCreator}
+              aria-label="Voir la recommandation suivante"
+              disabled={!hasMultipleCreators}
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m10 6 6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </div>
+          <div className="workout-creators__dots" aria-label="Position dans le carousel">
+            {CREATOR_RECOMMENDATIONS.map((creator, index) => (
+              <button
+                key={creator.id}
+                type="button"
+                className={`workout-creators__dot${index === activeCreatorIndex ? " is-active" : ""}`}
+                aria-label={`Afficher ${creator.name}`}
+                aria-pressed={index === activeCreatorIndex}
+                onClick={() => setCreatorSlide(index)}
+              />
             ))}
           </div>
         </section>

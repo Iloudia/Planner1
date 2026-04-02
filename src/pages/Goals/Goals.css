@@ -167,4 +167,36 @@ body.goals-page--lux {
   min-height: 46px;
 }
 
+@media (max-width: 768px) {
+  .body-goals__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .body-goal-slot,
+  .body-goal-slot__upload,
+  .body-goal-slot__action,
+  .body-goal-slot__upload span {
+    min-width: 0;
+  }
+
+  .body-goal-slot {
+    min-height: 0;
+  }
+
+  .body-goal-slot__upload {
+    width: 100%;
+    padding: 0.65rem 0.7rem;
+    text-align: center;
+  }
+
+  .body-goal-slot__upload span {
+    overflow-wrap: anywhere;
+  }
+
+  .body-goal-slot__action {
+    max-width: calc(100% - 1rem);
+  }
+}
+
 
