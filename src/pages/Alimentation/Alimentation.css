@@ -520,6 +520,26 @@
   }
 }
 
+@media (max-width: 768px) {
+  .page-section.diet-crosslink .diet-crosslink__label {
+    font-size: 0.75rem;
+    line-height: 1.15;
+    margin-bottom: 0.25rem;
+  }
+
+  .page-section.diet-crosslink .diet-crosslink__text {
+    font-size: 0.84rem;
+    line-height: 1.35;
+  }
+
+  .page-section.diet-crosslink .pill.pill--diet,
+  body.alimentation-page--lux .page-section.diet-crosslink .pill.pill--diet {
+    font-size: 0.72rem;
+    line-height: 1.1;
+    padding: 0.52rem 0.78rem;
+  }
+}
+
 .diet-plan-modal {
   position: fixed;
   inset: 0;
