@@ -1013,3 +1013,141 @@ body.home-page--lux .account-menu__item.is-selected {
   }
 }
 
+@media (max-width: 767px) {
+  .page.home-page {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: clip;
+  }
+
+  .page.home-page > * {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .page.home-page .aside-right,
+  .page.home-page .board,
+  .page.home-page .aside-left,
+  .page.home-page .home-moodboard {
+    overflow-x: clip;
+  }
+
+  .home-hero-strip,
+  .home-hero-strip__center,
+  .home-page .card-grid,
+  .card,
+  .card-body,
+  .home-moodboard__top,
+  .home-moodboard__top-actions,
+  .todo-input,
+  .todo-item,
+  .todo-item label,
+  .task-card,
+  .task-card__header {
+    min-width: 0;
+  }
+
+  .home-hero-strip h1 {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    font-size: clamp(1.35rem, 6.2vw, 1.7rem);
+    line-height: 1.16;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    text-wrap: balance;
+  }
+
+  .home-hero-strip .today {
+    width: auto;
+    max-width: 100%;
+    padding: 0.65rem 0.85rem;
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+
+  .home-page .card-grid {
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .card h3,
+  .task-title,
+  .home-moodboard__top h2,
+  .todo-item span {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .card h3 {
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+
+  .home-page .card-grid .card:nth-child(-n+3) h3 {
+    font-size: 1rem;
+  }
+
+  .todo-limit-message {
+    white-space: normal;
+    line-height: 1.35;
+  }
+
+  .todo-item {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .todo-item label {
+    align-items: flex-start;
+  }
+
+  .home-moodboard {
+    padding: 0.9rem;
+  }
+
+  .home-moodboard__top {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .home-moodboard__top h2 {
+    width: 100%;
+    margin: 0;
+    font-size: clamp(1.35rem, 5.6vw, 1.7rem);
+    line-height: 1.18;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .home-moodboard__top-actions {
+    width: 100%;
+  }
+
+  .home-moodboard__button {
+    width: 100%;
+    min-height: 44px;
+    margin: 0;
+    padding: 0.65rem 0.85rem;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .home-moodboard__preview {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .home-moodboard img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    max-height: min(82vh, 420px);
+    object-fit: contain;
+  }
+}

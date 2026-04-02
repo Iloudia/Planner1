@@ -1085,23 +1085,45 @@
   .workout-section--full {
     grid-column: auto;
   }
-
-  .workout-cards {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .workout-video-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .workout-cards {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
   }
 
   .workout-video-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .workout-card,
+  .workout-card__body,
+  .workout-card__body h3,
+  .workout-card__meta {
+    min-width: 0;
+  }
+
+  .workout-card__body {
+    padding: 0.7rem 0.75rem 0.8rem;
+  }
+
+  .workout-card__body h3 {
+    font-size: 0.95rem;
+    overflow-wrap: anywhere;
+  }
+
+  .workout-card__meta {
+    gap: 0.35rem;
+    font-size: 0.72rem !important;
+    line-height: 1.15;
+  }
+
+  .workout-card__meta span {
+    font-size: inherit;
+    max-width: 100%;
+    padding: 0.16rem 0.4rem;
+    overflow-wrap: anywhere;
   }
 }
 

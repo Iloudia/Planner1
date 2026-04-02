@@ -13,6 +13,20 @@ import "./Sport.css"
 const formatBoardDate = (isoDate: string) =>
   new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "short" }).format(new Date(isoDate))
 
+const formatBoardTabLabel = (label: string) => {
+  const normalized = label.trim().toLowerCase()
+  const labels: Record<string, string> = {
+    lundi: "Lun",
+    mardi: "Mar",
+    mercredi: "Mer",
+    jeudi: "Jeu",
+    vendredi: "Ven",
+    samedi: "Sam",
+    dimanche: "Dim",
+  }
+  return labels[normalized] ?? label.slice(0, 3)
+}
+
 const computeWeekRange = (dateKeys: string[]) => {
   if (dateKeys.length === 0) {
     return ""
@@ -49,6 +63,7 @@ const SportPage = () => {
   const [activityDrafts, setActivityDrafts] = useState<Record<string, string>>({})
   const activityDraftsRef = useRef<Record<string, string>>({})
   const activitySaveTimeoutsRef = useRef<Record<string, number>>({})
+  const [selectedDayId, setSelectedDayId] = useState<string | null>(null)
   const boardDraftsStorageKey = useMemo(
     () => buildUserScopedKey(normalizeUserEmail(userEmail), `${SPORT_BOARD_DRAFTS_STORAGE_KEY}.${weekKey}`),
     [userEmail, weekKey],
@@ -154,6 +169,20 @@ const SportPage = () => {
   }, [board.days])
 
   useEffect(() => {
+    if (board.days.length === 0) {
+      setSelectedDayId(null)
+      return
+    }
+
+    setSelectedDayId((currentDayId) => {
+      if (currentDayId && board.days.some((day) => day.id === currentDayId)) {
+        return currentDayId
+      }
+      return board.days.find((day) => !day.done)?.id ?? board.days[0]?.id ?? null
+    })
+  }, [board.days])
+
+  useEffect(() => {
     if (!canEdit) {
       return
     }
@@ -170,6 +199,10 @@ const SportPage = () => {
   }, [activityDrafts, board.days, canEdit])
 
   const weekRange = useMemo(() => computeWeekRange(board.days.map((day) => day.dateISO)), [board.days])
+  const selectedDay = useMemo(
+    () => board.days.find((day) => day.id === selectedDayId) ?? board.days[0] ?? null,
+    [board.days, selectedDayId],
+  )
 
   const clearActivitySaveTimeout = (dayId: string) => {
     const timeoutId = activitySaveTimeoutsRef.current[dayId]
@@ -181,7 +214,7 @@ const SportPage = () => {
   }
 
   const commitActivityValue = async (dayId: string, nextValue: string) => {
-    if (!canEdit) return
+    if (!canEdit) return false
     const draft = nextValue
     const currentDay = board.days.find((day) => day.id === dayId)
     if (!currentDay) {
@@ -311,7 +344,7 @@ const SportPage = () => {
         </header>
 
         <div className="sport-board__group">
-          <div className="sport-board__columns" role="list">
+          <div className="sport-board__desktop-list" role="list" aria-label="Planning desktop tablette">
             {board.days.map((day) => (
               <article key={day.id} className="sport-board-card" role="listitem">
                 <header className="sport-board-card__header">
@@ -323,7 +356,8 @@ const SportPage = () => {
                     {day.done ? "Fait" : "À planifier"}
                   </span>
                 </header>
-<form onSubmit={(event) => void handleActivitySubmit(day.id)(event)}>
+
+                <form onSubmit={(event) => void handleActivitySubmit(day.id)(event)}>
                   <label className="sport-board-card__field">
                     <span>Séance</span>
                     <input
@@ -342,12 +376,86 @@ const SportPage = () => {
                     />
                   </label>
                 </form>
+
                 <label className="sport-board-card__checkbox">
                   <input type="checkbox" checked={day.done} onChange={handleDoneToggle(day.id)} disabled={!canEdit} />
                   <span>Séance effectuée</span>
                 </label>
               </article>
             ))}
+          </div>
+
+          <div className="sport-board__mobile-view">
+            <div className="sport-board__tabs" role="tablist" aria-label="Jours de la semaine">
+              {board.days.map((day) => {
+                const isSelected = day.id === selectedDay?.id
+                return (
+                  <button
+                    key={day.id}
+                    type="button"
+                    className={`sport-board__tab${isSelected ? " is-active" : ""}${day.done ? " is-done" : ""}`}
+                    role="tab"
+                    id={`sport-board-tab-${day.id}`}
+                    aria-selected={isSelected}
+                    aria-controls={`sport-board-panel-${day.id}`}
+                    onClick={() => setSelectedDayId(day.id)}
+                  >
+                    <span className="sport-board__tab-day">{formatBoardTabLabel(day.label)}</span>
+                    <span className="sport-board__tab-date">{formatBoardDate(day.dateISO)}</span>
+                  </button>
+                )
+              })}
+            </div>
+
+            {selectedDay ? (
+              <article
+                key={selectedDay.id}
+                className="sport-board-card sport-board-card--detail"
+                role="tabpanel"
+                id={`sport-board-panel-${selectedDay.id}`}
+                aria-labelledby={`sport-board-tab-${selectedDay.id}`}
+              >
+                <header className="sport-board-card__header">
+                  <div>
+                    <h3>{selectedDay.label}</h3>
+                    <time dateTime={selectedDay.dateISO}>{formatBoardDate(selectedDay.dateISO)}</time>
+                  </div>
+                  <span className={`sport-board-card__status${selectedDay.done ? " is-done" : ""}`}>
+                    {selectedDay.done ? "Fait" : "À planifier"}
+                  </span>
+                </header>
+
+                <form onSubmit={(event) => void handleActivitySubmit(selectedDay.id)(event)}>
+                  <label className="sport-board-card__field">
+                    <span>Séance</span>
+                    <input
+                      type="text"
+                      name="activity"
+                      value={activityDrafts[selectedDay.id] ?? selectedDay.activity}
+                      onChange={handleActivityChange(selectedDay.id)}
+                      onBlur={(event) => {
+                        clearActivitySaveTimeout(selectedDay.id)
+                        void commitActivityValue(selectedDay.id, event.currentTarget.value)
+                      }}
+                      onKeyDown={(event) => void handleActivityKeyDown(selectedDay.id)(event)}
+                      placeholder="Ex : Legday"
+                      enterKeyHint="done"
+                      disabled={!canEdit}
+                    />
+                  </label>
+                </form>
+
+                <label className="sport-board-card__checkbox">
+                  <input
+                    type="checkbox"
+                    checked={selectedDay.done}
+                    onChange={handleDoneToggle(selectedDay.id)}
+                    disabled={!canEdit}
+                  />
+                  <span>Séance effectuée</span>
+                </label>
+              </article>
+            ) : null}
           </div>
         </div>
       </section>
