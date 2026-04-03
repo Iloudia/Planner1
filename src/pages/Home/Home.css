@@ -951,6 +951,16 @@ body.home-page--lux {
   box-shadow: 0 10px 26px rgba(0, 0, 0, 0.15);
 }
 
+@media (min-width: 768px) and (max-width: 1340px) {
+  .page.home-page .aside-left .task-card {
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+    min-height: auto;
+    justify-content: flex-start;
+    align-items: stretch;
+  }
+}
+
 .page.home-page .todo-add {
   border-radius: 0;
   background: #000000;

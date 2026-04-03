@@ -1,1 +1,0 @@
-import{j as e}from"./index-DGTD9qlc.js";const h=({eyebrow:s,title:a,className:r,children:d})=>e.jsxs("header",{className:`sport-header${r?` ${r}`:""}`,children:[e.jsxs("div",{children:[e.jsx("span",{className:"sport-header__eyebrow",children:s}),e.jsx("h1",{children:a})]}),d]});export{h as P};

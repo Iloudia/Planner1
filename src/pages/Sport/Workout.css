@@ -686,6 +686,7 @@
   left: 0;
   width: min(200px, calc(100vw - 24px));
   max-width: calc(100vw - 24px);
+  border: 1px solid var(--lux-line);
   z-index: 220;
 }
 
@@ -1289,14 +1290,14 @@
 }
 
 body.workout-page--lux {
-  background: #f8f6f1;
-}
-
-.workout-page {
   --lux-ink: #1f1b16;
   --lux-ink-soft: #5b5249;
   --lux-accent: #b8a99a;
   --lux-line: rgba(31, 27, 22, 0.18);
+  background: #f8f6f1;
+}
+
+.workout-page {
   font-family: "Playfair Display", "Times New Roman", serif;
   color: var(--lux-ink);
   background: transparent;
@@ -1328,6 +1329,13 @@ body.workout-page--lux {
   border-radius: 0;
   box-shadow: none;
   background: #ffffff;
+}
+
+body.workout-page--lux .workout-exercises,
+body.workout-page--lux .workout-library.workout-section--full,
+body.workout-page--lux .workout-videos.workout-section--full,
+body.workout-page--lux .workout-card__menu-panel.workout-card__menu-panel--floating {
+  border: 1px solid var(--lux-line);
 }
 
 .workout-form input,

@@ -1097,7 +1097,7 @@ function HomePage() {
       </main>
 
       <aside className="aside-left">
-        <div className="aside-title">Prochains événements</div>
+        <h2 className="aside-title">Prochains événements</h2>
         <div className="task-window">
           <div className="task-list">
             {tasksError ? (

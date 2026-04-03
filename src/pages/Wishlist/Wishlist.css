@@ -369,24 +369,29 @@
   overflow-y: auto;
 }
 
+.wishlist-modal h3 {
+  font-size: 0.90rem !important;
+}
+
 .wishlist-modal__header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   gap: 1.5rem;
+  margin-top: 0.75rem;
 }
 
 .wishlist-modal__header h2 {
-  margin: 0.25rem 0 0;
+  margin: 0;
   font-size: clamp(1.8rem, 3vw, 2.2rem);
   color: var(--color-chocolate);
 }
 
 .wishlist-modal__badge {
-  align-self: flex-start;
+  align-self: center;
   padding: 0.45rem 0.9rem;
   border-radius: 0;
-  background: var(--color-caramel);
+  background: transparent;
   color: #000000;
   font-size: 0.85rem;
   letter-spacing: 0.14em;
@@ -1028,19 +1033,21 @@
   background: transparent;
   padding: 0;
   cursor: pointer;
+  font-size: clamp(0.56rem, 0.48rem + 0.28vw, 0.68rem);
 }
 
-.wishlist-modal__group h3 {
+.wishlist-modal__group-toggle h3 {
   margin: 0;
-  font-size: 0.85rem;
-  letter-spacing: 0.12em;
+  font-size: 0.5rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-chocolate);
+  font-family: inherit;
 }
 
 .wishlist-modal__group-chevron {
   color: var(--color-chocolate);
-  font-size: 1rem;
+  font-size: 0.82em;
   line-height: 1;
   transition: transform 0.2s ease;
 }
@@ -1476,8 +1483,8 @@
   width: 48px;
   height: 48px;
   padding: 0;
-  background: #e3d7ca;
-  color: #fff7ed;
+  background: #ffffff;
+  border: 1px solid var(--lux-ink);
 }
 
 .wishlist-modal__actions button:last-child {
@@ -1494,7 +1501,8 @@
 .wishlist-modal__actions button svg {
   width: 20px;
   height: 20px;
-  fill: currentColor;
+  fill: #000000;
+  color: #000000;
 }
 
 
@@ -1895,8 +1903,8 @@
   }
 
   .wishlist-modal__header {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    align-items: center;
     gap: 1rem;
   }
 
@@ -2027,6 +2035,15 @@
   .wishlist-card {
     min-width: 0;
   }
+
+  .wishlist-modal__group-toggle {
+    font-size: clamp(0.5rem, 0.44rem + 0.22vw, 0.58rem);
+  }
+
+  .wishlist-modal__group-toggle h3 {
+    font-size: 0.44rem;
+    letter-spacing: 0.06em;
+  }
 }
 
 
@@ -2040,8 +2057,8 @@
   }
 
   .wishlist-modal__header {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    align-items: center;
     gap: 1rem;
   }
 
@@ -2202,6 +2219,17 @@ body.wishlist-page--lux .wishlist-note__add {
   text-transform: uppercase;
   letter-spacing: 0.2em;
   box-shadow: none;
+}
+
+body.wishlist-page--lux .wishlist-modal__actions button:first-child {
+  background: #ffffff;
+  border: 1px solid var(--lux-ink);
+  color: var(--lux-ink);
+}
+
+body.wishlist-page--lux .wishlist-modal__actions button:first-child svg {
+  fill: #000000;
+  color: #000000;
 }
 
 body.wishlist-page--lux .wishlist-modal__photo-remove {

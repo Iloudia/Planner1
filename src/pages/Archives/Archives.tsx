@@ -407,6 +407,11 @@ const ArchivesPage = () => {
     })
   }, [selectedYear, monthCountsByYear])
 
+  const selectedMonthConfig = useMemo(
+    () => selectedYearMonths.find((month) => month.monthKey === selectedMonth) ?? null,
+    [selectedMonth, selectedYearMonths],
+  )
+
   const calendarCells = useMemo(() => {
     if (!selectedMonth) {
       return []
@@ -437,6 +442,8 @@ const ArchivesPage = () => {
     })
     return days.sort((a, b) => (a.dateKey > b.dateKey ? -1 : 1))
   }, [entriesByDate, selectedMonth])
+
+  const isMonthFocused = Boolean(selectedMonth)
 
   const activeDayEntries = useMemo(() => {
     if (!selectedDay) {
@@ -516,6 +523,11 @@ const ArchivesPage = () => {
       }
     }
     setSelectedEntry(null)
+  }
+
+  const handleBackToMonths = () => {
+    setSelectedMonth(null)
+    setSelectedDay(null)
   }
 
   const selectedSelfLoveEntry = selectedEntry?.section === "self-love" ? selectedEntry.selfLoveLetter ?? null : null
@@ -676,7 +688,7 @@ const ArchivesPage = () => {
         <p className="archives-empty">Aucun écrit pour le moment.</p>
       ) : (
         <div className="archives-layout">
-          <div className="archives-nav">
+          <div className={`archives-nav${isMonthFocused ? " archives-nav--month-focus" : ""}`}>
             <div className="archives-years">
               {archiveYears.map((group) => (
                 <button
@@ -696,14 +708,14 @@ const ArchivesPage = () => {
             </div>
 
             {selectedYear ? (
-              <div className="archives-months">
+              <div className={`archives-months${isMonthFocused ? " archives-months--focused" : ""}`}>
                 {selectedYearMonths.map((month) => (
                   <button
                     key={month.monthKey}
                     type="button"
                     className={`archives-month-card${selectedMonth === month.monthKey ? " is-active" : ""}${
                       month.total === 0 ? " is-empty" : ""
-                    }`}
+                    }${isMonthFocused && selectedMonth !== month.monthKey ? " is-hidden" : ""}`}
                     onClick={() => {
                       setSelectedMonth(month.monthKey)
                       setSelectedDay(null)
@@ -768,7 +780,16 @@ const ArchivesPage = () => {
             ) : null}
 
             {selectedMonth ? (
-              <div className="archives-days-list">
+              <div className="archives-days-list is-visible">
+                <div className="archives-days-list__header">
+                  <div>
+                    <span className="archives-detail-eyebrow">Mois sélectionné</span>
+                    <h3>{selectedMonthConfig?.label ?? formatMonthLabel(selectedMonth)}</h3>
+                  </div>
+                  <button type="button" className="archives-month-focus-panel__back" onClick={handleBackToMonths}>
+                    Voir tous les mois
+                  </button>
+                </div>
                 {selectedMonthDays.length > 0 ? (
                   selectedMonthDays.map((day) => (
                     <button
@@ -782,7 +803,10 @@ const ArchivesPage = () => {
                     </button>
                   ))
                 ) : (
-                  <p className="archives-empty">Aucun écrit sur ce mois.</p>
+                  <div className="archives-days-list__empty-state" role="status" aria-live="polite">
+                    <span className="archives-detail-eyebrow">Détail du mois</span>
+                    <p className="archives-empty">Aucun écrit sur ce mois.</p>
+                  </div>
                 )}
               </div>
             ) : null}

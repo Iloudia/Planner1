@@ -248,6 +248,7 @@ p {
   align-items: center;
   gap: clamp(0.8rem, 2vw, 1.6rem);
   position: relative;
+  padding-bottom: 0.5rem;
 }
 
 .site-header__left {
@@ -255,6 +256,8 @@ p {
   display: flex;
   align-items: center;
   gap: 0.8rem;
+  position: relative;
+  z-index: 2;
 }
 
 .site-header__nav {
@@ -275,11 +278,15 @@ p {
 .site-header__brand {
   justify-self: center;
   text-align: center;
-  position: relative;
+  position: absolute;
+  left: 50%;
+  top: 50%;
   padding-left: 0;
   padding-bottom: 0.2rem;
   line-height: 1;
   text-decoration: none;
+  transform: translate(-50%, -50%);
+  z-index: 1;
 }
 
 .site-header__logo {
@@ -292,11 +299,12 @@ p {
 .site-header__top::after {
   content: "";
   position: absolute;
-  left: 0;
-  right: 0;
+  left: 50%;
   bottom: 0;
+  width: 100vw;
   height: 1px;
   background: rgba(15, 23, 42, 0.12);
+  transform: translateX(-50%);
 }
 
 .site-header__right {
@@ -304,6 +312,8 @@ p {
   display: flex;
   align-items: center;
   gap: clamp(0.6rem, 1.4vw, 1rem);
+  position: relative;
+  z-index: 2;
 }
 
 .header-logout {
@@ -931,8 +941,8 @@ p {
   align-items: center;
   gap: 8px;
   letter-spacing: -0.01em;
-  margin-bottom: 12px;
-  color: var(--color-chocolate);
+  margin: 0 0 12px;
+  color: #000;
 }
 
 .dot {
