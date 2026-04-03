@@ -696,10 +696,9 @@ return (
             <div className="calendar-compact-header__copy">
               <span className="sport-header__eyebrow">Calendrier</span>
               <h1 className="calendar-compact-header__title">Calendrier</h1>
-              <p className="calendar-compact-header__subtitle">Organise tes rituels, aligne ton énergie.</p>
             </div>
-            <div className="calendar-mobile__toggle">{viewToggle}</div>
           </section>
+          <div className="calendar-mobile__toggle">{viewToggle}</div>
 
           <div className="calendar-weekly__mobile calendar-mobile" role="region" aria-label="Calendrier mobile">
             <div className="calendar-mobile__panel">
@@ -716,7 +715,6 @@ return (
                 </button>
 
                 <div className="calendar-mobile__panel-heading">
-                  <span className="calendar-mobile__month">Navigation hebdomadaire</span>
                   <span className="calendar-mobile__week-label">{`Semaine du ${weekRangeLabel}`}</span>
                 </div>
 
@@ -792,7 +790,11 @@ return (
                     <span className="calendar-mobile__event-time">{task.start}</span>
                     <span
                       className="calendar-mobile__event-dot"
-                      style={{ backgroundColor: withAlpha(task.color, 0.26) }}
+                      style={
+                        {
+                          '--event-color': task.color,
+                        } as CSSProperties
+                      }
                       aria-hidden="true"
                     />
                     <div
@@ -827,10 +829,12 @@ return (
                             </svg>
                           </button>
                         </div>
-                        <span className="calendar-mobile__event-hours">
-                          {task.start} - {task.end}
-                        </span>
-                        {task.tag ? <span className="calendar-mobile__event-tag">{task.tag}</span> : null}
+                        <div className="calendar-mobile__event-meta">
+                          <span className="calendar-mobile__event-hours">
+                            {task.start} - {task.end}
+                          </span>
+                          {task.tag ? <span className="calendar-mobile__event-tag">{task.tag}</span> : null}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -941,7 +945,7 @@ return (
     ) : null}
 
     {calendarView === 'monthly' ? (
-    <section className="calendar-monthly-preview">
+    <>
       <header className="sport-header calendar-header calendar-header--compact">
         <div className="calendar-heading">
           <span className="calendar-heading__eyebrow">Aperçu mensuel</span>
@@ -969,6 +973,7 @@ return (
       <div className="calendar-weekly__toolbar calendar-monthly__controls">
         {viewToggle}
       </div>
+    <section className="calendar-monthly-preview">
       <div className="calendar-grid calendar-grid--preview">
         {weekDays.map((label) => (
           <div key={label} className="calendar-grid__weekday">
@@ -1028,6 +1033,7 @@ return (
         )}
       </div>
     </section>
+    </>
     ) : null}
     {isDayModalOpen && activeDateKey ? (
       <div className="calendar-modal" role="dialog" aria-modal="true" aria-labelledby="calendar-modal-title">
