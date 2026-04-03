@@ -256,8 +256,6 @@ p {
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  position: relative;
-  z-index: 2;
 }
 
 .site-header__nav {
@@ -278,15 +276,11 @@ p {
 .site-header__brand {
   justify-self: center;
   text-align: center;
-  position: absolute;
-  left: 50%;
-  top: 50%;
+  position: relative;
   padding-left: 0;
   padding-bottom: 0.2rem;
   line-height: 1;
   text-decoration: none;
-  transform: translate(-50%, -50%);
-  z-index: 1;
 }
 
 .site-header__logo {
@@ -312,8 +306,6 @@ p {
   display: flex;
   align-items: center;
   gap: clamp(0.6rem, 1.4vw, 1rem);
-  position: relative;
-  z-index: 2;
 }
 
 .header-logout {
@@ -2326,8 +2318,8 @@ h1 {
   }
 
   .auth-button--login {
-    padding: 0.7rem 0.85rem;
-    font-size: 0.75rem;
+    padding: 0.52rem 0.68rem;
+    font-size: 0.68rem;
     white-space: nowrap;
   }
 

@@ -213,7 +213,9 @@ const ArchivesPage = () => {
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest")
   const [selectedEntry, setSelectedEntry] = useState<ArchiveEntry | null>(null)
   const [isSectionMenuOpen, setIsSectionMenuOpen] = useState(false)
+  const [isSortMenuOpen, setIsSortMenuOpen] = useState(false)
   const sectionMenuRef = useRef<HTMLDivElement | null>(null)
+  const sortMenuRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     document.body.classList.add("boutique-page--tone")
@@ -479,6 +481,7 @@ const ArchivesPage = () => {
       if (event.key === "Escape") {
         setSelectedEntry(null)
         setIsSectionMenuOpen(false)
+        setIsSortMenuOpen(false)
       }
     }
     if (selectedEntry) {
@@ -506,6 +509,26 @@ const ArchivesPage = () => {
       window.removeEventListener("keydown", handleKeyDown)
     }
   }, [isSectionMenuOpen])
+
+  useEffect(() => {
+    if (!isSortMenuOpen) return
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node
+      if (sortMenuRef.current?.contains(target)) return
+      setIsSortMenuOpen(false)
+    }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsSortMenuOpen(false)
+      }
+    }
+    window.addEventListener("mousedown", handleClickOutside)
+    window.addEventListener("keydown", handleKeyDown)
+    return () => {
+      window.removeEventListener("mousedown", handleClickOutside)
+      window.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [isSortMenuOpen])
 
   const handleDeleteSelectedEntry = async () => {
     if (!selectedEntry) return
@@ -822,13 +845,56 @@ const ArchivesPage = () => {
                   </div>
                   <label>
                     <span>Tri</span>
-                    <select
-                      value={sortOrder}
-                      onChange={(event) => setSortOrder(event.target.value as "newest" | "oldest")}
-                    >
-                      <option value="newest">Plus récent</option>
-                      <option value="oldest">Plus ancien</option>
-                    </select>
+                    <div className="workout-form__select" ref={sortMenuRef}>
+                      <button
+                        type="button"
+                        className="workout-form__select-trigger is-placeholder"
+                        aria-haspopup="listbox"
+                        aria-expanded={isSortMenuOpen}
+                        onClick={() => setIsSortMenuOpen((prev) => !prev)}
+                      >
+                        <span>{sortOrder === "newest" ? "Plus récent" : "Plus ancien"}</span>
+                        <svg className="workout-form__select-chevron" viewBox="0 0 20 20" aria-hidden="true">
+                          <path
+                            d="M5 7.5L10 12.5L15 7.5"
+                            stroke="currentColor"
+                            strokeWidth="1.6"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </button>
+                      {isSortMenuOpen ? (
+                        <div className="workout-form__select-menu" role="listbox">
+                          <button
+                            type="button"
+                            role="option"
+                            aria-selected={sortOrder === "newest"}
+                            className={sortOrder === "newest" ? "is-selected" : undefined}
+                            onMouseDown={(event) => {
+                              event.preventDefault()
+                              setSortOrder("newest")
+                              setIsSortMenuOpen(false)
+                            }}
+                          >
+                            Plus récent
+                          </button>
+                          <button
+                            type="button"
+                            role="option"
+                            aria-selected={sortOrder === "oldest"}
+                            className={sortOrder === "oldest" ? "is-selected" : undefined}
+                            onMouseDown={(event) => {
+                              event.preventDefault()
+                              setSortOrder("oldest")
+                              setIsSortMenuOpen(false)
+                            }}
+                          >
+                            Plus ancien
+                          </button>
+                        </div>
+                      ) : null}
+                    </div>
                   </label>
                 </div>
                 {activeDayEntries.length > 0 ? (
