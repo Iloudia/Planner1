@@ -1,1 +1,0 @@
-import{j as o}from"./index-DyyOjwp7.js";/* empty css                     */const e=()=>o.jsx("section",{className:"settings-cookies",children:o.jsx("button",{type:"button",className:"cookie-actions__outline",onClick:()=>{window.location.href="/cookies"},children:"Gestion des cookies"})});export{e as default};

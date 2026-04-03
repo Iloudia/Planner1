@@ -99,6 +99,8 @@
 }
 
 .wishlist-card {
+  --wishlist-card-gradient-top: 66.667%;
+  --wishlist-card-gradient-bottom: 0px;
   position: relative;
   border-radius: 0;
   overflow: hidden;
@@ -119,8 +121,10 @@
 .wishlist-card::after {
   content: "";
   position: absolute;
-  inset: auto 0 0 0;
-  height: 33.333%;
+  top: var(--wishlist-card-gradient-top);
+  right: 0;
+  bottom: var(--wishlist-card-gradient-bottom);
+  left: 0;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.92) 60%, #ffffff 100%);
   pointer-events: none;
   z-index: 1;
@@ -170,6 +174,16 @@
   min-width: 220px;
   box-shadow: none;
   z-index: 20;
+}
+
+.wishlist-card__menu-popover--floating {
+  position: fixed;
+  top: 0;
+  right: auto;
+  left: 0;
+  width: min(220px, calc(100vw - 24px));
+  max-width: calc(100vw - 24px);
+  z-index: 220;
 }
 
 .profile-menu {
@@ -1852,13 +1866,14 @@
   }
 
   .wishlist-card {
+    --wishlist-card-gradient-top: 58%;
+    --wishlist-card-gradient-bottom: -2px;
     min-height: 220px;
     overflow: visible;
     z-index: 1;
   }
 
   .wishlist-card::after {
-    height: 42%;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.95) 54%, #ffffff 100%);
   }
 
@@ -1981,12 +1996,13 @@
   }
 
   .wishlist-card {
+    --wishlist-card-gradient-top: 52%;
+    --wishlist-card-gradient-bottom: -2px;
     min-height: 180px;
     aspect-ratio: 3 / 4;
   }
 
   .wishlist-card::after {
-    height: 48%;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.97) 50%, #ffffff 100%);
   }
 

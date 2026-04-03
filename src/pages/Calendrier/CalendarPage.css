@@ -2898,9 +2898,9 @@ body.calendar-page--lux .calendar-weekly__day-grid {
   }
 
   .calendar-monthly-preview {
-    gap: 1.2rem;
-    padding: 1.35rem;
-    border-radius: 1.8rem;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 1.5rem;
     background: rgba(255, 255, 255, 0.88);
     border: 1px solid rgba(36, 29, 24, 0.08);
     box-shadow: 0 22px 55px rgba(36, 29, 24, 0.1);
@@ -2943,7 +2943,7 @@ body.calendar-page--lux .calendar-weekly__day-grid {
   }
 
   .calendar-grid--preview {
-    gap: 0.72rem;
+    gap: 0.4rem;
     padding: 0;
     background: transparent;
     border: none;
@@ -2951,18 +2951,18 @@ body.calendar-page--lux .calendar-weekly__day-grid {
   }
 
   .calendar-grid--preview .calendar-grid__weekday {
-    font-size: 0.72rem;
+    font-size: 0.58rem;
     font-weight: 700;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: rgba(52, 41, 34, 0.58);
   }
 
   .calendar-grid--preview .calendar-day,
   .calendar-grid--preview .calendar-day--empty {
-    min-height: 8.8rem;
-    padding: 0.95rem;
-    border-radius: 1.25rem;
+    min-height: 6.2rem;
+    padding: 0.65rem;
+    border-radius: 1rem;
     border: 1px solid rgba(36, 29, 24, 0.08);
     background: rgba(255, 255, 255, 0.96);
     box-shadow: 0 14px 34px rgba(36, 29, 24, 0.08);
@@ -2973,7 +2973,7 @@ body.calendar-page--lux .calendar-weekly__day-grid {
   }
 
   .calendar-grid--preview .calendar-day__number {
-    font-size: 1.18rem;
+    font-size: 0.95rem;
     color: #241d18;
   }
 
@@ -3002,8 +3002,7 @@ body.calendar-page--lux .calendar-weekly__day-grid {
     font-size: 0.92rem;
   }
 
-  .calendar-mobile__panel,
-  .calendar-monthly-preview {
+  .calendar-mobile__panel {
     padding: 1rem;
     border-radius: 1.5rem;
   }
@@ -3165,29 +3164,6 @@ body.calendar-page--lux .calendar-weekly__day-grid {
     min-width: 0;
   }
 
-  .calendar-monthly-preview {
-    gap: 1rem;
-  }
-
-  .calendar-grid--preview {
-    gap: 0.4rem;
-  }
-
-  .calendar-grid--preview .calendar-grid__weekday {
-    font-size: 0.58rem;
-    letter-spacing: 0.08em;
-  }
-
-  .calendar-grid--preview .calendar-day,
-  .calendar-grid--preview .calendar-day--empty {
-    min-height: 6.2rem;
-    padding: 0.65rem;
-    border-radius: 1rem;
-  }
-
-  .calendar-grid--preview .calendar-day__number {
-    font-size: 0.95rem;
-  }
 }
 
 

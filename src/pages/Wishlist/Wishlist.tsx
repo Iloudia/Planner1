@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState, type FormEvent } from "react"
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type FormEvent } from "react"
+import { createPortal } from "react-dom"
 import MediaImage from "../../components/MediaImage"
 import PageHeading from "../../components/PageHeading"
 import { useAuth } from "../../context/AuthContext"
@@ -186,6 +187,7 @@ const WishlistPage = () => {
   const [openWishlistGroups, setOpenWishlistGroups] = useState<string[]>([])
   const [activeItemMenuId, setActiveItemMenuId] = useState<string | null>(null)
   const [activeCardMenuId, setActiveCardMenuId] = useState<string | null>(null)
+  const [activeCardMenuPopoverStyle, setActiveCardMenuPopoverStyle] = useState<CSSProperties>({})
   const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null)
   const [moveItemDraft, setMoveItemDraft] = useState<{ itemId: string; targetCategoryId: string; targetSubcategory: string } | null>(null)
   const newCategoryCoverRef = useRef<HTMLInputElement | null>(null)
@@ -193,6 +195,8 @@ const WishlistPage = () => {
   const itemImageRef = useRef<HTMLInputElement | null>(null)
   const categoryFieldRef = useRef<HTMLDivElement | null>(null)
   const itemMenuRef = useRef<HTMLDivElement | null>(null)
+  const activeCardMenuPopoverRef = useRef<HTMLDivElement | null>(null)
+  const cardMenuButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({})
 
   useEffect(() => {
     document.body.classList.add("wishlist-page--lux")
@@ -318,7 +322,7 @@ const WishlistPage = () => {
       if (!target.closest(".wishlist-item__menu")) {
         setActiveItemMenuId(null)
       }
-      if (!target.closest(".wishlist-card__menu-wrap")) {
+      if (!target.closest(".wishlist-card__menu-wrap") && !target.closest(".wishlist-card__menu-popover")) {
         setActiveCardMenuId(null)
       }
     }
@@ -327,6 +331,49 @@ const WishlistPage = () => {
       document.removeEventListener("mousedown", handlePointerDown)
     }
   }, [activeCardMenuId, activeItemMenuId, isCategorySuggestionsOpen])
+
+  useEffect(() => {
+    if (!activeCardMenuId) {
+      setActiveCardMenuPopoverStyle({})
+      return
+    }
+
+    const updateActiveCardMenuPopoverPosition = () => {
+      const trigger = cardMenuButtonRefs.current[activeCardMenuId]
+      const popover = activeCardMenuPopoverRef.current
+      if (!trigger || !popover) return
+
+      const triggerRect = trigger.getBoundingClientRect()
+      const popoverRect = popover.getBoundingClientRect()
+      const viewportWidth = window.innerWidth
+      const viewportHeight = window.innerHeight
+      const viewportMargin = 12
+      const gap = 8
+
+      let left = triggerRect.right - popoverRect.width
+      left = Math.min(Math.max(left, viewportMargin), viewportWidth - popoverRect.width - viewportMargin)
+
+      let top = triggerRect.bottom + gap
+      if (top + popoverRect.height > viewportHeight - viewportMargin) {
+        top = Math.max(viewportMargin, triggerRect.top - popoverRect.height - gap)
+      }
+
+      setActiveCardMenuPopoverStyle({
+        top: `${Math.round(top)}px`,
+        left: `${Math.round(left)}px`,
+      })
+    }
+
+    const frame = window.requestAnimationFrame(updateActiveCardMenuPopoverPosition)
+    window.addEventListener("resize", updateActiveCardMenuPopoverPosition)
+    window.addEventListener("scroll", updateActiveCardMenuPopoverPosition, true)
+
+    return () => {
+      window.cancelAnimationFrame(frame)
+      window.removeEventListener("resize", updateActiveCardMenuPopoverPosition)
+      window.removeEventListener("scroll", updateActiveCardMenuPopoverPosition, true)
+    }
+  }, [activeCardMenuId])
 
   const handlePreviewFile = (file: File | null, onPreview: (value: string) => void, onFile: (value: File | null) => void) => {
     onFile(file)
@@ -731,6 +778,9 @@ const WishlistPage = () => {
                 <button
                   type="button"
                   className="profile-menu wishlist-card__menu"
+                  ref={(node) => {
+                    cardMenuButtonRefs.current[category.id] = node
+                  }}
                   aria-label="Ouvrir le menu de la catégorie"
                   onClick={(event) => {
                     event.stopPropagation()
@@ -740,26 +790,34 @@ const WishlistPage = () => {
                   <span aria-hidden="true">...</span>
                 </button>
                 {activeCardMenuId === category.id ? (
-                  <div className="wishlist-card__menu-popover">
-                    <button
-                      type="button"
-                      onClick={(event) => {
-                        event.stopPropagation()
-                        handleStartEditCategory(category)
-                      }}
+                  createPortal(
+                    <div
+                      ref={activeCardMenuPopoverRef}
+                      className="wishlist-card__menu-popover wishlist-card__menu-popover--floating"
+                      style={activeCardMenuPopoverStyle}
+                      onClick={(event) => event.stopPropagation()}
                     >
-                      Modifier
-                    </button>
-                    <button
-                      type="button"
-                      onClick={(event) => {
-                        event.stopPropagation()
-                        void handleDeleteCategoryCard(category)
-                      }}
-                    >
-                      Supprimer
-                    </button>
-                  </div>
+                      <button
+                        type="button"
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          handleStartEditCategory(category)
+                        }}
+                      >
+                        Modifier
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          void handleDeleteCategoryCard(category)
+                        }}
+                      >
+                        Supprimer
+                      </button>
+                    </div>,
+                    document.body,
+                  )
                 ) : null}
               </div>
             ) : null}

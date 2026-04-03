@@ -381,6 +381,10 @@
   gap: 1rem;
 }
 
+.workout-creators__carousel--static {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .workout-creators__nav {
   width: 2.9rem;
   height: 2.9rem;
@@ -420,6 +424,7 @@
 }
 
 .workout-creators__grid {
+  --workout-creators-per-view: 1;
   min-width: 0;
   overflow: hidden;
   touch-action: pan-y;
@@ -432,7 +437,9 @@
 }
 
 .workout-creators__slide {
-  min-width: 100%;
+  flex: 0 0 calc(100% / var(--workout-creators-per-view));
+  min-width: 0;
+  box-sizing: border-box;
   display: flex;
   justify-content: center;
   padding: 0.2rem;
@@ -670,6 +677,16 @@
   min-width: 200px;
   box-shadow: none;
   z-index: 10;
+}
+
+.workout-card__menu-panel--floating {
+  position: fixed;
+  top: 0;
+  right: auto;
+  left: 0;
+  width: min(200px, calc(100vw - 24px));
+  max-width: calc(100vw - 24px);
+  z-index: 220;
 }
 
 .workout-card__menu-item {
@@ -1241,6 +1258,22 @@
   }
 }
 
+@media (max-width: 767px) {
+  .workout-video-form {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .workout-video-form button {
+    justify-self: stretch;
+    width: 100%;
+  }
+
+  .workout-video-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 375px) {
   .workout-creators__carousel {
     gap: 0.45rem;
@@ -1253,15 +1286,6 @@
     font-size: 1.35rem;
   }
 
-  .workout-video-form {
-    grid-template-columns: 1fr;
-    align-items: stretch;
-  }
-
-  .workout-video-form button {
-    justify-self: stretch;
-    width: 100%;
-  }
 }
 
 body.workout-page--lux {

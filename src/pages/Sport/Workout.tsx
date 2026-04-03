@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState, type FormEvent, type TouchEvent } from "react"
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type FormEvent, type TouchEvent } from "react"
+import { createPortal } from "react-dom"
 import MediaImage from "../../components/MediaImage"
 import PageHeading from "../../components/PageHeading"
 import useUserWorkoutData from "../../hooks/useUserWorkoutData"
@@ -150,6 +151,16 @@ const extractYoutubeId = (url: string) => {
   }
 }
 
+const getCreatorCardsPerView = () => {
+  if (typeof window === "undefined") return 1
+  const width = window.innerWidth
+  if (width >= 1536) return 5
+  if (width >= 1280) return 4
+  if (width >= 1024) return 3
+  if (width >= 768) return 2
+  return 1
+}
+
 const WorkoutPage = () => {
   const {
     exercises,
@@ -180,9 +191,13 @@ const WorkoutPage = () => {
   const [openExerciseMenuId, setOpenExerciseMenuId] = useState<string | null>(null)
   const [isModalMenuOpen, setIsModalMenuOpen] = useState(false)
   const [activeCreatorIndex, setActiveCreatorIndex] = useState(0)
+  const [creatorCardsPerView, setCreatorCardsPerView] = useState(getCreatorCardsPerView)
+  const [activeExerciseMenuStyle, setActiveExerciseMenuStyle] = useState<CSSProperties>({})
   const muscleMenuRef = useRef<HTMLDivElement | null>(null)
   const creatorTouchStartXRef = useRef<number | null>(null)
   const creatorTouchDeltaXRef = useRef(0)
+  const exerciseMenuPopoverRef = useRef<HTMLDivElement | null>(null)
+  const exerciseMenuButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({})
 
   useEffect(() => {
     document.body.classList.add("workout-page--lux")
@@ -235,6 +250,59 @@ const WorkoutPage = () => {
     return () => window.removeEventListener("pointerdown", handleOutsideMenu)
   }, [])
 
+  useEffect(() => {
+    if (!openExerciseMenuId) {
+      setActiveExerciseMenuStyle({})
+      return
+    }
+
+    const updateExerciseMenuPosition = () => {
+      const trigger = exerciseMenuButtonRefs.current[openExerciseMenuId]
+      const popover = exerciseMenuPopoverRef.current
+      if (!trigger || !popover) return
+
+      const triggerRect = trigger.getBoundingClientRect()
+      const popoverRect = popover.getBoundingClientRect()
+      const viewportWidth = window.innerWidth
+      const viewportHeight = window.innerHeight
+      const viewportMargin = 12
+      const gap = 8
+
+      let left = triggerRect.right - popoverRect.width
+      left = Math.min(Math.max(left, viewportMargin), viewportWidth - popoverRect.width - viewportMargin)
+
+      let top = triggerRect.bottom + gap
+      if (top + popoverRect.height > viewportHeight - viewportMargin) {
+        top = Math.max(viewportMargin, triggerRect.top - popoverRect.height - gap)
+      }
+
+      setActiveExerciseMenuStyle({
+        top: `${Math.round(top)}px`,
+        left: `${Math.round(left)}px`,
+      })
+    }
+
+    const frame = window.requestAnimationFrame(updateExerciseMenuPosition)
+    window.addEventListener("resize", updateExerciseMenuPosition)
+    window.addEventListener("scroll", updateExerciseMenuPosition, true)
+
+    return () => {
+      window.cancelAnimationFrame(frame)
+      window.removeEventListener("resize", updateExerciseMenuPosition)
+      window.removeEventListener("scroll", updateExerciseMenuPosition, true)
+    }
+  }, [openExerciseMenuId])
+
+  useEffect(() => {
+    const updateCreatorCardsPerView = () => {
+      setCreatorCardsPerView(getCreatorCardsPerView())
+    }
+
+    updateCreatorCardsPerView()
+    window.addEventListener("resize", updateCreatorCardsPerView)
+    return () => window.removeEventListener("resize", updateCreatorCardsPerView)
+  }, [])
+
   const selectedExercise = useMemo(
     () => exercises.find((exercise) => exercise.id === selectedExerciseId) ?? null,
     [exercises, selectedExerciseId],
@@ -247,7 +315,13 @@ const WorkoutPage = () => {
     () => selectedSeries.filter((item) => item.completed).length,
     [selectedSeries],
   )
-  const hasMultipleCreators = CREATOR_RECOMMENDATIONS.length > 1
+  const maxCreatorIndex = Math.max(0, CREATOR_RECOMMENDATIONS.length - creatorCardsPerView)
+  const creatorPositionCount = maxCreatorIndex + 1
+  const hasMultipleCreators = creatorPositionCount > 1
+  const creatorDotIndexes = useMemo(
+    () => Array.from({ length: creatorPositionCount }, (_, index) => index),
+    [creatorPositionCount],
+  )
 
   useEffect(() => {
     setSeriesInput("")
@@ -255,9 +329,16 @@ const WorkoutPage = () => {
     setNoteDraft(selectedExercise?.note ?? "")
   }, [selectedExercise])
 
+  useEffect(() => {
+    setActiveCreatorIndex((currentIndex) => Math.min(currentIndex, maxCreatorIndex))
+  }, [maxCreatorIndex])
+
   const setCreatorSlide = (nextIndex: number) => {
-    if (CREATOR_RECOMMENDATIONS.length === 0) return
-    const normalizedIndex = (nextIndex + CREATOR_RECOMMENDATIONS.length) % CREATOR_RECOMMENDATIONS.length
+    if (!hasMultipleCreators) {
+      setActiveCreatorIndex(0)
+      return
+    }
+    const normalizedIndex = (nextIndex + creatorPositionCount) % creatorPositionCount
     setActiveCreatorIndex(normalizedIndex)
   }
 
@@ -571,6 +652,9 @@ const WorkoutPage = () => {
                     <button
                       type="button"
                       className="profile-menu"
+                      ref={(node) => {
+                        exerciseMenuButtonRefs.current[exercise.id] = node
+                      }}
                       aria-label={`Options pour ${exercise.title}`}
                       onClick={(event) => {
                         event.stopPropagation()
@@ -580,31 +664,40 @@ const WorkoutPage = () => {
                       <span aria-hidden="true">...</span>
                     </button>
                     {openExerciseMenuId === exercise.id ? (
-                      <div className="workout-card__menu-panel" role="menu" onClick={(event) => event.stopPropagation()}>
-                        <label className="workout-card__menu-item">
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(event) => {
-                              void handleReplaceExerciseImage(exercise.id, event.target.files?.[0])
-                              event.target.value = ""
+                      createPortal(
+                        <div
+                          ref={exerciseMenuPopoverRef}
+                          className="workout-card__menu-panel workout-card__menu-panel--floating"
+                          role="menu"
+                          style={activeExerciseMenuStyle}
+                          onClick={(event) => event.stopPropagation()}
+                        >
+                          <label className="workout-card__menu-item">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(event) => {
+                                void handleReplaceExerciseImage(exercise.id, event.target.files?.[0])
+                                event.target.value = ""
+                                setOpenExerciseMenuId(null)
+                              }}
+                            />
+                            Modifier la photo
+                          </label>
+                          <button
+                            type="button"
+                            className="workout-card__menu-item workout-card__menu-item--danger"
+                            onClick={(event) => {
+                              event.stopPropagation()
+                              void handleDeleteExercise(exercise.id)
                               setOpenExerciseMenuId(null)
                             }}
-                          />
-                          Modifier la photo
-                        </label>
-                        <button
-                          type="button"
-                          className="workout-card__menu-item workout-card__menu-item--danger"
-                          onClick={(event) => {
-                            event.stopPropagation()
-                            void handleDeleteExercise(exercise.id)
-                            setOpenExerciseMenuId(null)
-                          }}
-                        >
-                          Supprimer
-                        </button>
-                      </div>
+                          >
+                            Supprimer
+                          </button>
+                        </div>,
+                        document.body,
+                      )
                     ) : null}
                   </div>
                   <div className="workout-card__media">
@@ -703,31 +796,37 @@ const WorkoutPage = () => {
             <h2>Recommandations YouTube & Instagram</h2>
             <p>Des comptes efficaces et faciles à intégrer dans ta routine.</p>
           </header>
-          <div className="workout-creators__carousel">
-            <button
-              type="button"
-              className="workout-creators__nav workout-creators__nav--prev"
-              onClick={showPreviousCreator}
-              aria-label="Voir la recommandation precedente"
-              disabled={!hasMultipleCreators}
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M14 6 8 12l6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
+          <div className={`workout-creators__carousel${hasMultipleCreators ? "" : " workout-creators__carousel--static"}`}>
+            {hasMultipleCreators ? (
+              <button
+                type="button"
+                className="workout-creators__nav workout-creators__nav--prev"
+                onClick={showPreviousCreator}
+                aria-label="Voir la recommandation precedente"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M14 6 8 12l6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            ) : null}
             <div
               className="workout-creators__grid"
               onTouchStart={handleCreatorsTouchStart}
               onTouchMove={handleCreatorsTouchMove}
               onTouchEnd={handleCreatorsTouchEnd}
               onTouchCancel={handleCreatorsTouchEnd}
+              style={{ "--workout-creators-per-view": String(creatorCardsPerView) } as CSSProperties}
             >
               <div
                 className="workout-creators__track"
-                style={{ transform: `translateX(-${activeCreatorIndex * 100}%)` }}
+                style={{ transform: `translateX(-${(activeCreatorIndex * 100) / creatorCardsPerView}%)` }}
               >
                 {CREATOR_RECOMMENDATIONS.map((creator, index) => (
-                  <div key={creator.id} className="workout-creators__slide" aria-hidden={index !== activeCreatorIndex}>
+                  <div
+                    key={creator.id}
+                    className="workout-creators__slide"
+                    aria-hidden={index < activeCreatorIndex || index >= activeCreatorIndex + creatorCardsPerView}
+                  >
                     <article className="workout-creator-card">
                       <div className="workout-creator-card__top">
                         <span
@@ -750,30 +849,33 @@ const WorkoutPage = () => {
                 ))}
               </div>
             </div>
-            <button
-              type="button"
-              className="workout-creators__nav workout-creators__nav--next"
-              onClick={showNextCreator}
-              aria-label="Voir la recommandation suivante"
-              disabled={!hasMultipleCreators}
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="m10 6 6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          </div>
-          <div className="workout-creators__dots" aria-label="Position dans le carousel">
-            {CREATOR_RECOMMENDATIONS.map((creator, index) => (
+            {hasMultipleCreators ? (
               <button
-                key={creator.id}
                 type="button"
-                className={`workout-creators__dot${index === activeCreatorIndex ? " is-active" : ""}`}
-                aria-label={`Afficher ${creator.name}`}
-                aria-pressed={index === activeCreatorIndex}
-                onClick={() => setCreatorSlide(index)}
-              />
-            ))}
+                className="workout-creators__nav workout-creators__nav--next"
+                onClick={showNextCreator}
+                aria-label="Voir la recommandation suivante"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m10 6 6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            ) : null}
           </div>
+          {hasMultipleCreators ? (
+            <div className="workout-creators__dots" aria-label="Position dans le carousel">
+              {creatorDotIndexes.map((index) => (
+                <button
+                  key={index}
+                  type="button"
+                  className={`workout-creators__dot${index === activeCreatorIndex ? " is-active" : ""}`}
+                  aria-label={`Afficher les recommandations ${index + 1}`}
+                  aria-pressed={index === activeCreatorIndex}
+                  onClick={() => setCreatorSlide(index)}
+                />
+              ))}
+            </div>
+          ) : null}
         </section>
       </div>
       <div className="workout-page__footer-bar" aria-hidden="true" />

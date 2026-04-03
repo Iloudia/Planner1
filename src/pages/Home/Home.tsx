@@ -30,6 +30,8 @@ const DEFAULT_PROFILE_PHOTO = citationImage
 const CARD_ORDER_SUFFIX = "home.card-order.v1"
 const CARD_PROGRESS_SUFFIX = "home.card-progress.v2"
 const LEGACY_CARD_USAGE_SUFFIX = "home.card-usage"
+const CARD_STATE_FIX_SUFFIX = "home.card-threshold-fix.v1"
+const CARD_STATE_FIX_TOKEN = "3-click-threshold-reset"
 const CARD_CLICK_THRESHOLD = 3
 const MAX_TODOS = 3
 
@@ -456,6 +458,7 @@ function HomePage() {
   const cardOrderKey = useMemo(() => scopedKey(CARD_ORDER_SUFFIX), [scopedKey])
   const cardProgressKey = useMemo(() => scopedKey(CARD_PROGRESS_SUFFIX), [scopedKey])
   const legacyCardUsageKey = useMemo(() => scopedKey(LEGACY_CARD_USAGE_SUFFIX), [scopedKey])
+  const cardStateFixKey = useMemo(() => scopedKey(CARD_STATE_FIX_SUFFIX), [scopedKey])
   const onboardingKey = useMemo(
     () => buildUserScopedKey(normalizeUserEmail(safeEmail), ONBOARDING_STORAGE_KEY),
     [safeEmail],
@@ -632,6 +635,9 @@ function HomePage() {
 
     homeCardsSeedRef.current = null
     setIsHomeCardsLoaded(false)
+    const shouldResetCardState = safeReadStorage(cardStateFixKey) !== CARD_STATE_FIX_TOKEN
+    const resetOrder = toFullCardOrder(baseCardOrder)
+    const resetProgress: Record<string, number> = {}
     const localOrder = readCardOrderFromStorage(cardOrderKey)
     const localProgress = readCardClickProgressFromStorage(cardProgressKey)
     const legacyUsage = readLegacyCardUsageFromStorage(legacyCardUsageKey)
@@ -644,8 +650,13 @@ function HomePage() {
     const fallbackProgress = normalizeCardClickProgress(localProgress)
 
     if (!userId) {
-      setCardOrder(fallbackOrder)
-      setCardClickProgress(fallbackProgress)
+      const nextOrder = shouldResetCardState ? resetOrder : fallbackOrder
+      const nextProgress = shouldResetCardState ? resetProgress : fallbackProgress
+      setCardOrder(nextOrder)
+      setCardClickProgress(nextProgress)
+      safeWriteStorage(cardOrderKey, JSON.stringify(nextOrder))
+      safeWriteStorage(cardProgressKey, JSON.stringify(nextProgress))
+      safeWriteStorage(cardStateFixKey, CARD_STATE_FIX_TOKEN)
       safeRemoveStorage(legacyCardUsageKey)
       setIsHomeCardsLoaded(true)
       return
@@ -654,6 +665,29 @@ function HomePage() {
     return subscribeToHomeCardsState(
       userId,
       ({ state: remoteState, hasStoredOrder, hasStoredClickProgress }) => {
+        if (shouldResetCardState) {
+          setCardOrder(resetOrder)
+          setCardClickProgress(resetProgress)
+          setIsHomeCardsLoaded(true)
+          safeWriteStorage(cardOrderKey, JSON.stringify(resetOrder))
+          safeWriteStorage(cardProgressKey, JSON.stringify(resetProgress))
+          safeWriteStorage(cardStateFixKey, CARD_STATE_FIX_TOKEN)
+          safeRemoveStorage(legacyCardUsageKey)
+
+          const resetSignature = JSON.stringify({
+            order: resetOrder,
+            clickProgress: resetProgress,
+            fix: CARD_STATE_FIX_TOKEN,
+          })
+          if (resetSignature !== homeCardsSeedRef.current) {
+            homeCardsSeedRef.current = resetSignature
+            void saveHomeCardsState(userId, { order: resetOrder, clickProgress: resetProgress }).catch((error) => {
+              console.error("Home cards state reset failed", error)
+            })
+          }
+          return
+        }
+
         const nextOrder = prioritizePreferredCardOrder(
           hasStoredOrder ? remoteState.order : fallbackOrder,
           preferredCardOrder,
@@ -687,7 +721,7 @@ function HomePage() {
         setIsHomeCardsLoaded(true)
       },
     )
-  }, [baseCardOrder, cardOrderKey, cardProgressKey, isAuthReady, legacyCardUsageKey, preferredCardOrder, userId])
+  }, [baseCardOrder, cardOrderKey, cardProgressKey, cardStateFixKey, isAuthReady, legacyCardUsageKey, preferredCardOrder, userId])
 
   useEffect(() => {
     // Remove any old per-card customization so the default home cards are always shown.
@@ -804,13 +838,14 @@ function HomePage() {
 
   const handleCardOpen = useCallback(
     (path: string) => {
-      const currentOrder = cardOrder.length > 0 ? cardOrder : baseCardOrder
+      const currentOrder = toFullCardOrder(cardOrder.length > 0 ? cardOrder : baseCardOrder)
       const currentProgress = normalizeCardClickProgress(cardClickProgress)
       const nextProgress = { ...currentProgress }
       const nextCount = (nextProgress[path] ?? 0) + 1
 
-      let nextOrder = toFullCardOrder(currentOrder)
-      if (nextCount >= CARD_CLICK_THRESHOLD) {
+      let nextOrder = currentOrder
+      const shouldReorder = nextCount >= CARD_CLICK_THRESHOLD
+      if (shouldReorder) {
         delete nextProgress[path]
         const index = currentOrder.indexOf(path)
         if (index > 0) {
@@ -822,13 +857,18 @@ function HomePage() {
         nextProgress[path] = nextCount
       }
 
-      setCardOrder(nextOrder)
+      if (shouldReorder) {
+        setCardOrder(nextOrder)
+      }
       setCardClickProgress(nextProgress)
-      safeWriteStorage(cardOrderKey, JSON.stringify(nextOrder))
+      const persistedOrder = shouldReorder ? nextOrder : cardOrder
+      if (shouldReorder) {
+        safeWriteStorage(cardOrderKey, JSON.stringify(nextOrder))
+      }
       safeWriteStorage(cardProgressKey, JSON.stringify(nextProgress))
 
       if (userId) {
-        void saveHomeCardsState(userId, { order: nextOrder, clickProgress: nextProgress }).catch((error) => {
+        void saveHomeCardsState(userId, { order: persistedOrder, clickProgress: nextProgress }).catch((error) => {
           console.error("Home cards state save failed", error)
         })
       }
