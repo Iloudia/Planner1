@@ -296,6 +296,11 @@
   align-self: center;
 }
 
+.auth-remember input[type="checkbox"],
+.auth-terms input[type="checkbox"] {
+  accent-color: #000;
+}
+
 .auth-terms {
   display: inline-flex;
   align-items: center;

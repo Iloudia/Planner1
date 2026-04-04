@@ -38,17 +38,16 @@ const LandingPage = () => {
   const location = useLocation()
   const { isAuthReady, isAuthenticated, userEmail, logout } = useAuth()
   const [carouselIndex, setCarouselIndex] = useState(0)
-
   const [cardsPerView, setCardsPerView] = useState(1)
 
   useEffect(() => {
     const updateCardsPerView = () => {
       const width = window.innerWidth
-      if (width >= 1200) {
+      if (width >= 1180) {
         setCardsPerView(4)
-      } else if (width >= 980) {
+      } else if (width >= 900) {
         setCardsPerView(3)
-      } else if (width >= 700) {
+      } else if (width >= 560) {
         setCardsPerView(2)
       } else {
         setCardsPerView(1)
@@ -75,6 +74,8 @@ const LandingPage = () => {
       }),
     [carouselIndex, cardsPerView],
   )
+
+  const carouselDotIndexes = useMemo(() => carouselItems.map((_, index) => index), [])
 
   const handleCarouselPrev = () => {
     setCarouselIndex((prev) => (prev - 1 + carouselItems.length) % carouselItems.length)
@@ -109,15 +110,10 @@ const LandingPage = () => {
 
   return (
     <div className="landing-page">
-
       <section className="landing-hero" style={{ backgroundImage: `url(${heroBackdrop})` }}>
         <div className="landing-hero__content">
-          <h1>
-            L’espace qui transforme ton quotidien en une vie plus fluide, plus douce et plus alignée.
-          </h1>
-          <p className="landing-hero__accent">
-            Parce que tu mérites une vie sans pression, et où tout est plus simple.
-          </p>
+          <h1>L’espace qui transforme ton quotidien en une vie plus fluide, plus douce et plus alignée.</h1>
+          <p className="landing-hero__accent">Parce que tu mérites une vie sans pression, et où tout est plus simple.</p>
           <div className="landing-hero__actions">
             <button type="button" className="landing-cta-button" onClick={() => navigate("/login")}>
               Commencer mon organisation
@@ -146,7 +142,7 @@ const LandingPage = () => {
             style={{
               fontSize: "clamp(0.78rem, 0.72rem + 0.45vw, 1.35rem)",
               lineHeight: 1.18,
-              whiteSpace: "nowrap"
+              whiteSpace: "nowrap",
             }}
           >
             Sur ce site tu as accès à :
@@ -154,9 +150,11 @@ const LandingPage = () => {
         </div>
         <div className="landing-carousel">
           <button type="button" className="landing-carousel__arrow landing-carousel__arrow--left" aria-label="Cartes précédentes" onClick={handleCarouselPrev}>
-            <span aria-hidden="true">‹</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M14 6 8 12l6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </button>
-          <div className="landing-carousel__grid">
+          <div className="landing-carousel__grid" style={{ gridTemplateColumns: `repeat(${cardsPerView}, minmax(0, 1fr))` }}>
             {visibleCards.map((card) => (
               <article key={card.title} className="landing-carousel__card">
                 <div className="landing-carousel__image">
@@ -170,8 +168,22 @@ const LandingPage = () => {
             ))}
           </div>
           <button type="button" className="landing-carousel__arrow landing-carousel__arrow--right" aria-label="Cartes suivantes" onClick={handleCarouselNext}>
-            <span aria-hidden="true">›</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m10 6 6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </button>
+        </div>
+        <div className="landing-carousel__dots" aria-label="Position dans le carousel">
+          {carouselDotIndexes.map((index) => (
+            <button
+              key={index}
+              type="button"
+              className={`landing-carousel__dot${index === carouselIndex ? " is-active" : ""}`}
+              aria-label={`Afficher les cartes ${index + 1}`}
+              aria-pressed={index === carouselIndex}
+              onClick={() => setCarouselIndex(index)}
+            />
+          ))}
         </div>
       </section>
 
@@ -185,9 +197,7 @@ const LandingPage = () => {
         </div>
         <ul className="landing-differentiator__list">
           {differentiatorHighlights.map((highlight) => (
-            <li key={highlight}>
-              {highlight}
-            </li>
+            <li key={highlight}>{highlight}</li>
           ))}
         </ul>
       </section>
@@ -205,9 +215,8 @@ const LandingPage = () => {
           Créer mon espace
         </button>
       </section>
-</div>
+    </div>
   )
 }
 
 export default LandingPage
-
