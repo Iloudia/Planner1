@@ -73,6 +73,13 @@
   padding-bottom: 0.4rem;
 }
 
+.diet-page-heading .sport-header__eyebrow,
+.diet-page-heading h1 {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
 .diet-crosslink {
   display: flex;
   align-items: center;

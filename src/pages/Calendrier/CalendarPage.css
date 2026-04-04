@@ -2585,8 +2585,9 @@ body.calendar-page--lux .calendar-weekly__day-grid {
   }
 
   .calendar-mobile__day-marker {
-    width: 0.38rem;
-    height: 0.38rem;
+    width: 0.28rem;
+    height: 0.28rem;
+    margin-top: 0.38rem;
     border-radius: 999px;
     background: transparent;
     opacity: 0;
@@ -2627,11 +2628,11 @@ body.calendar-page--lux .calendar-weekly__day-grid {
     align-items: center;
     gap: 1rem;
     flex-wrap: nowrap;
-    padding: 1rem 1rem 1.05rem;
-    border: 1px solid rgba(36, 29, 24, 0.08);
+    padding: 0 0 0.15rem;
+    border: none;
     border-radius: 0;
-    background: #ffffff;
-    box-shadow: 0 14px 32px rgba(36, 29, 24, 0.08);
+    background: transparent;
+    box-shadow: none;
     font-size: 1rem;
     letter-spacing: 0;
     text-transform: none;
@@ -2728,6 +2729,7 @@ body.calendar-page--lux .calendar-weekly__day-grid {
     --calendar-mobile-time-col: 4rem;
     --calendar-mobile-dot-col: 1rem;
     --calendar-mobile-dot-size: 0.95rem;
+    --calendar-mobile-agenda-header-offset: 4.75rem;
     position: relative;
     gap: 1rem;
     padding: var(--calendar-mobile-agenda-padding);
@@ -2742,7 +2744,7 @@ body.calendar-page--lux .calendar-weekly__day-grid {
   .calendar-mobile__agenda::before {
     content: "";
     position: absolute;
-    top: 1.05rem;
+    top: calc(var(--calendar-mobile-agenda-padding) + var(--calendar-mobile-agenda-header-offset));
     bottom: 1.05rem;
     left: calc(var(--calendar-mobile-agenda-padding) + var(--calendar-mobile-time-col) + (var(--calendar-mobile-dot-col) / 2));
     width: 2px;
@@ -2776,6 +2778,7 @@ body.calendar-page--lux .calendar-weekly__day-grid {
     z-index: 1;
     width: var(--calendar-mobile-dot-size);
     height: var(--calendar-mobile-dot-size);
+    left: -0.88rem;
     margin-top: 1.15rem;
     border-radius: 999px;
     background: var(--event-color, rgba(201, 155, 116, 0.9));
@@ -3046,7 +3049,7 @@ body.calendar-page--lux .calendar-weekly__day-grid {
     justify-content: space-between;
     flex-wrap: nowrap;
     gap: 0.55rem;
-    padding: 0.8rem 0.82rem;
+    padding: 0 0 0.15rem;
   }
 
   .calendar-mobile__selected-heading {
@@ -3113,6 +3116,7 @@ body.calendar-page--lux .calendar-weekly__day-grid {
     z-index: 1;
     width: var(--calendar-mobile-dot-size);
     height: var(--calendar-mobile-dot-size);
+    left: -0.5rem;
     margin-top: 0.94rem;
     border-width: 3px;
     box-shadow: 0 0 0 1px rgba(36, 29, 24, 0.1), 0 6px 14px rgba(36, 29, 24, 0.12);
@@ -3123,6 +3127,7 @@ body.calendar-page--lux .calendar-weekly__day-grid {
     --calendar-mobile-time-col: 2.9rem;
     --calendar-mobile-dot-col: 0.9rem;
     --calendar-mobile-dot-size: 0.78rem;
+    --calendar-mobile-agenda-header-offset: 3.55rem;
   }
 
   .calendar-mobile__event-card {

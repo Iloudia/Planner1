@@ -276,6 +276,11 @@
   color: rgba(15, 23, 42, 0.6);
 }
 
+.workout-form__select-trigger.is-placeholder span {
+  color: #000000;
+  text-transform: none;
+}
+
 .workout-form__select-trigger:focus-visible {
   outline: none;
   border-color: #725c3f;

@@ -5430,6 +5430,12 @@ const DIET_HEADINGS = {
   },
 } as const
 
+const getDietHeadingLabel = (eyebrow: string) => {
+  if (eyebrow === "Sucre") return "Sucré"
+  if (eyebrow === "Sale") return "Salé"
+  return eyebrow
+}
+
 const CONDIMENT_RECIPE_IDS = [
   "mass-houmous-maison",
   "mass-tzatziki",
@@ -5554,11 +5560,13 @@ const DietClassicPage = () => {
   const [editToppings, setEditToppings] = useState("")
   const [editTips, setEditTips] = useState("")
   const [isFlavorMenuOpen, setIsFlavorMenuOpen] = useState(false)
+  const [isEditFlavorMenuOpen, setIsEditFlavorMenuOpen] = useState(false)
   const [isPlanDayMenuOpen, setIsPlanDayMenuOpen] = useState(false)
   const [isPlanSlotMenuOpen, setIsPlanSlotMenuOpen] = useState(false)
   const draftImageInputRef = useRef<HTMLInputElement | null>(null)
   const editImageInputRef = useRef<HTMLInputElement | null>(null)
   const flavorMenuRef = useRef<HTMLDivElement | null>(null)
+  const editFlavorMenuRef = useRef<HTMLDivElement | null>(null)
   const planDayMenuRef = useRef<HTMLDivElement | null>(null)
   const planSlotMenuRef = useRef<HTMLDivElement | null>(null)
   const customMenuRef = useRef<HTMLDivElement | null>(null)
@@ -5662,19 +5670,22 @@ const DietClassicPage = () => {
   }, [selectedRecipe])
 
   useEffect(() => {
-    if (!isFlavorMenuOpen && !isPlanDayMenuOpen && !isPlanSlotMenuOpen) return
+    if (!isFlavorMenuOpen && !isEditFlavorMenuOpen && !isPlanDayMenuOpen && !isPlanSlotMenuOpen) return
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node
       if (flavorMenuRef.current?.contains(target)) return
+      if (editFlavorMenuRef.current?.contains(target)) return
       if (planDayMenuRef.current?.contains(target)) return
       if (planSlotMenuRef.current?.contains(target)) return
       setIsFlavorMenuOpen(false)
+      setIsEditFlavorMenuOpen(false)
       setIsPlanDayMenuOpen(false)
       setIsPlanSlotMenuOpen(false)
     }
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setIsFlavorMenuOpen(false)
+        setIsEditFlavorMenuOpen(false)
         setIsPlanDayMenuOpen(false)
         setIsPlanSlotMenuOpen(false)
       }
@@ -5685,7 +5696,7 @@ const DietClassicPage = () => {
       window.removeEventListener("mousedown", handleClickOutside)
       window.removeEventListener("keydown", handleKeyDown)
     }
-  }, [isFlavorMenuOpen, isPlanDayMenuOpen, isPlanSlotMenuOpen])
+  }, [isEditFlavorMenuOpen, isFlavorMenuOpen, isPlanDayMenuOpen, isPlanSlotMenuOpen])
 
   useEffect(() => {
     if (!customMenuOpenId) return
@@ -5785,6 +5796,7 @@ const DietClassicPage = () => {
     setEditSteps("")
     setEditToppings("")
     setEditTips("")
+    setIsEditFlavorMenuOpen(false)
   }
 
   const handleCreateRecipe = async () => {
@@ -5845,6 +5857,7 @@ const DietClassicPage = () => {
     setEditSteps(recipe.steps.join("\n"))
     setEditToppings(recipe.toppings ? recipe.toppings.join("\n") : "")
     setEditTips(recipe.tips ? recipe.tips.join("\n") : "")
+    setIsEditFlavorMenuOpen(false)
     setIsEditOpen(true)
   }
 
@@ -5972,17 +5985,15 @@ const DietClassicPage = () => {
         {currentHeading ? (
           <>
             <PageHeading
-              eyebrow={currentHeading.eyebrow}
-              title="Ma diet"
-              className="diet-page-heading"
+              eyebrow={getDietHeadingLabel(currentHeading.eyebrow)}
+              title={getDietHeadingLabel(currentHeading.eyebrow)}
             />
           </>
         ) : (
           <>
             <PageHeading
-              eyebrow="Favoris"
-              title="Ma diet"
-              className="diet-page-heading"
+              eyebrow={tab === "custom" ? "Mes recettes" : "Favoris"}
+              title={tab === "custom" ? "Mes recettes" : "Favoris"}
             />
           </>
         )}
@@ -6463,10 +6474,54 @@ const DietClassicPage = () => {
                     <div className="diet-recipe-form__row">
                       <label>
                         Type
-                        <select value={editFlavor} onChange={(event) => setEditFlavor(event.target.value as "sucre" | "sale")}>
-                          <option value="sale">Salé</option>
-                          <option value="sucre">Sucré</option>
-                        </select>
+                        <div className="workout-form__select" ref={editFlavorMenuRef}>
+                          <button
+                            type="button"
+                            className="workout-form__select-trigger"
+                            aria-haspopup="listbox"
+                            aria-expanded={isEditFlavorMenuOpen}
+                            onClick={() => {
+                              setIsEditFlavorMenuOpen((prev) => !prev)
+                              setIsFlavorMenuOpen(false)
+                              setIsPlanDayMenuOpen(false)
+                              setIsPlanSlotMenuOpen(false)
+                            }}
+                          >
+                            <span>{editFlavor === "sucre" ? "Sucré" : "Salé"}</span>
+                            <svg className="workout-form__select-chevron" viewBox="0 0 20 20" aria-hidden="true">
+                              <path
+                                d="M5 7.5L10 12.5L15 7.5"
+                                stroke="currentColor"
+                                strokeWidth="1.6"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                          </button>
+                          {isEditFlavorMenuOpen ? (
+                            <div className="workout-form__select-menu" role="listbox">
+                              {[
+                                { value: "sale" as const, label: "Salé" },
+                                { value: "sucre" as const, label: "Sucré" },
+                              ].map((option) => (
+                                <button
+                                  key={option.value}
+                                  type="button"
+                                  role="option"
+                                  aria-selected={editFlavor === option.value}
+                                  className={editFlavor === option.value ? "is-selected" : undefined}
+                                  onMouseDown={(event) => {
+                                    event.preventDefault()
+                                    setEditFlavor(option.value)
+                                    setIsEditFlavorMenuOpen(false)
+                                  }}
+                                >
+                                  {option.label}
+                                </button>
+                              ))}
+                            </div>
+                          ) : null}
+                        </div>
                       </label>
                       <label>
                         Préparation

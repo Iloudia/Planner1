@@ -109,11 +109,15 @@
 }
 
 .sport-board__tab.is-done {
-  background: #f7fbf8;
+  background: #dff3e4;
+  border-color: #8fbc9b;
+  color: #2f7a4b;
 }
 
 .sport-board__tab.is-active.is-done {
-  background: #dff3e4;
+  background: #bddfc7;
+  border-color: #bddfc7;
+  color: #1f4c34;
 }
 
 .sport-board__tab:focus-visible {
@@ -131,6 +135,25 @@
   font-size: 0.76rem;
   line-height: 1.2;
   color: #64748b;
+}
+
+.sport-board__tab-number {
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.sport-board__tab-month {
+  font-size: 0.76rem;
+  line-height: 1.2;
+  color: #64748b;
+}
+
+.sport-board__tab.is-done .sport-board__tab-day,
+.sport-board__tab.is-done .sport-board__tab-date,
+.sport-board__tab.is-done .sport-board__tab-month,
+.sport-board__tab.is-done .sport-board__tab-number {
+  color: #2f7a4b;
 }
 
 .sport-board-card {
@@ -153,7 +176,12 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 0.55rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+}
+
+.sport-board-card__header > div {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .sport-board-card__header h3 {
@@ -450,22 +478,12 @@
 }
 
 @media (min-width: 769px) and (max-width: 825px) {
-  .sport-board-card__header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
   .sport-board-card__status {
     align-self: flex-start;
   }
 }
 
 @media (min-width: 1024px) and (max-width: 1187px) {
-  .sport-board-card__header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
   .sport-board-card__status {
     align-self: flex-start;
   }
@@ -474,11 +492,6 @@
 @media (max-width: 501px) {
   .sport-board__tabs {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .sport-board-card__header {
-    flex-direction: column;
-    align-items: flex-start;
   }
 
   .sport-board-card__status {
@@ -529,11 +542,15 @@ body.sport-page--lux {
 }
 
 .sport-board__tab.is-done {
-  background: #f7fbf8;
+  background: #dff3e4;
+  border-color: #8fbc9b;
+  color: #2f7a4b;
 }
 
 .sport-board__tab.is-active.is-done {
-  background: #dff3e4;
+  background: #bddfc7;
+  border-color: #bddfc7;
+  color: #1f4c34;
 }
 
 .sport-board-card__status,
@@ -563,4 +580,61 @@ body.sport-page--lux {
 .sport-hero-image {
   border-radius: 0;
   box-shadow: none;
+}
+
+@media (max-width: 768px) {
+  .sport-board__mobile-view {
+    min-width: 0;
+    gap: 1.1rem;
+  }
+
+  .sport-board__tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.7rem;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .sport-board__tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .sport-board__tab {
+    flex: 1 1 74px;
+    min-width: 74px;
+    min-height: 92px;
+    padding: 0.5rem 0.45rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.12rem;
+    scroll-snap-align: start;
+    transform: none;
+  }
+
+  .sport-board__tab:hover {
+    transform: translateY(-2px);
+  }
+
+  .sport-board__tab-day {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+
+  .sport-board__tab-number {
+    margin-top: 0.1rem;
+    font-size: 1.7rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .sport-board__tab-month {
+    font-size: 0.86rem;
+  }
 }

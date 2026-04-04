@@ -13,6 +13,14 @@ import "./Sport.css"
 const formatBoardDate = (isoDate: string) =>
   new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "short" }).format(new Date(isoDate))
 
+const formatBoardTabDateParts = (isoDate: string) => {
+  const date = new Date(`${isoDate}T00:00:00`)
+  return {
+    dayNumber: new Intl.DateTimeFormat("fr-FR", { day: "2-digit" }).format(date),
+    monthLabel: new Intl.DateTimeFormat("fr-FR", { month: "short" }).format(date),
+  }
+}
+
 const formatBoardTabLabel = (label: string) => {
   const normalized = label.trim().toLowerCase()
   const labels: Record<string, string> = {
@@ -389,6 +397,7 @@ const SportPage = () => {
             <div className="sport-board__tabs" role="tablist" aria-label="Jours de la semaine">
               {board.days.map((day) => {
                 const isSelected = day.id === selectedDay?.id
+                const { dayNumber, monthLabel } = formatBoardTabDateParts(day.dateISO)
                 return (
                   <button
                     key={day.id}
@@ -401,7 +410,8 @@ const SportPage = () => {
                     onClick={() => setSelectedDayId(day.id)}
                   >
                     <span className="sport-board__tab-day">{formatBoardTabLabel(day.label)}</span>
-                    <span className="sport-board__tab-date">{formatBoardDate(day.dateISO)}</span>
+                    <span className="sport-board__tab-number">{dayNumber}</span>
+                    <span className="sport-board__tab-month">{monthLabel}</span>
                   </button>
                 )
               })}

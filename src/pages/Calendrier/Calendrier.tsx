@@ -756,32 +756,32 @@ return (
               </div>
             </div>
 
-            <div className="calendar-mobile__today-row">
-              <div className="calendar-mobile__selected-heading">
-                <span className="calendar-mobile__selected-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24">
-                    <rect x="4" y="5" width="16" height="15" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.8" />
-                    <path d="M8 3.75V7M16 3.75V7M4 10h16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </span>
-                <div className="calendar-mobile__selected-copy">
-                  <h2>{mobileSelectedLabel}</h2>
+            <div className="calendar-mobile__agenda" role="list">
+              <div className="calendar-mobile__today-row">
+                <div className="calendar-mobile__selected-heading">
+                  <span className="calendar-mobile__selected-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                      <rect x="4" y="5" width="16" height="15" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.8" />
+                      <path d="M8 3.75V7M16 3.75V7M4 10h16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
+                  <div className="calendar-mobile__selected-copy">
+                    <h2>{mobileSelectedLabel}</h2>
+                  </div>
                 </div>
+
+                <button
+                  type="button"
+                  className="calendar-mobile__add"
+                  onClick={() => handleDaySelect(mobileSelectedDateKey, { presetForm: true })}
+                >
+                  <span className="calendar-mobile__add-plus" aria-hidden="true">
+                    +
+                  </span>
+                  <span>Ajouter un rituel</span>
+                </button>
               </div>
 
-              <button
-                type="button"
-                className="calendar-mobile__add"
-                onClick={() => handleDaySelect(mobileSelectedDateKey, { presetForm: true })}
-              >
-                <span className="calendar-mobile__add-plus" aria-hidden="true">
-                  +
-                </span>
-                <span>Ajouter un rituel</span>
-              </button>
-            </div>
-
-            <div className="calendar-mobile__agenda" role="list">
               {mobileSelectedTasks.length === 0 ? (
                 <p className="calendar-mobile__empty">Aucun événement pour cette journée.</p>
               ) : (
