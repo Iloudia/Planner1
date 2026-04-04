@@ -11,11 +11,11 @@ const newTaskColors = ['#A5B4FC', '#7DD3FC', '#FBCFE8', '#BBF7D0', '#FDE68A']
 const dayStartMinutes = 6 * 60
 const dayEndMinutes = 23 * 60
 const legendColors = {
-  Travail: '#f8c4cf',
-  Sport: '#f971b3',
-  Perso: '#fff6d6',
-  'Rendez-vous': '#cdebbd',
-  Repos: '#425e40',
+  Travail: '#D8E49F',
+  Sport: '#EDB8A7',
+  Perso: '#EEE4D1',
+  'Rendez-vous': '#F7D7CF',
+  Repos: '#A6B57A',
 }
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
@@ -78,7 +78,7 @@ const formatMonthTitle = (date: Date) => {
 const formatWeekRange = (start: Date) => {
   const end = new Date(start)
   end.setDate(start.getDate() + 6)
-  const formatter = new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: 'short' })
+  const formatter = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long' })
   return `${formatter.format(start)} - ${formatter.format(end)}`
 }
 
@@ -99,6 +99,8 @@ const withAlpha = (hexColor: string, alpha: number) => {
   const b = bigint & 255
   return `rgba(${r}, ${g}, ${b}, ${alpha})`
 }
+
+const getTaskDisplayColor = (task: Pick<ScheduledTask, 'tag' | 'color'>) => legendColors[task.tag as keyof typeof legendColors] ?? task.color
 
 const getTaskIcon = (category?: ScheduledTask['tag']) => {
   switch (category) {
@@ -180,7 +182,7 @@ const CalendrierPage = () => {
   })
   const [calendarView, setCalendarView] = useState<'weekly' | 'monthly'>('weekly')
   const [isCompact, setIsCompact] = useState(() => window.innerWidth < 1024)
-  const [mobileSelectedDateKey, setMobileSelectedDateKey] = useState(() => getDateKey(new Date()))
+  const [mobileSelectedDateKey, setMobileSelectedDateKey] = useState<string | null>(() => getDateKey(new Date()))
   const [weekAnchorDate, setWeekAnchorDate] = useState(() => new Date())
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
   const [duplicateTask, setDuplicateTask] = useState<ScheduledTask | null>(null)
@@ -190,6 +192,7 @@ const CalendrierPage = () => {
   const categoryMenuRef = useRef<HTMLDivElement | null>(null)
   const [activeDateKey, setActiveDateKey] = useState<string | null>(null)
   const [isDayModalOpen, setDayModalOpen] = useState(false)
+  const [compactModalView, setCompactModalView] = useState<'form' | 'agenda'>('form')
   const [editDraft, setEditDraft] = useState({
     start: '',
     end: '',
@@ -230,6 +233,10 @@ const CalendrierPage = () => {
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
+
+  useEffect(() => {
+    setCompactModalView('form')
+  }, [isDayModalOpen, activeDateKey, isCompact, calendarView])
 
   useEffect(() => {
     if (!isCategoryMenuOpen) return
@@ -274,6 +281,7 @@ const CalendrierPage = () => {
     return date
   })
   const weekRangeLabel = formatWeekRange(weekStartDate)
+  const weekDateKeys = useMemo(() => weekDates.map((date) => getDateKey(date)), [weekDates])
 
   const tasksByDate = useMemo(() => {
     const map = new Map<string, ScheduledTask[]>()
@@ -292,8 +300,19 @@ const CalendrierPage = () => {
   }, [tasks, now])
 
   const activeDateTasks = activeDateKey ? tasksByDate.get(activeDateKey) ?? [] : []
-  const mobileSelectedTasks = tasksByDate.get(mobileSelectedDateKey) ?? []
-  const mobileSelectedLabel = useMemo(() => formatDateLabel(mobileSelectedDateKey), [mobileSelectedDateKey])
+  const showCompactModalToggle = isCompact && calendarView === 'monthly'
+  const hideCompactWeeklyAgenda = isCompact && calendarView === 'weekly'
+  const mobileAgendaDateKey = useMemo(() => {
+    if (mobileSelectedDateKey && weekDateKeys.includes(mobileSelectedDateKey)) {
+      return mobileSelectedDateKey
+    }
+    if (weekDateKeys.includes(todayKey)) {
+      return todayKey
+    }
+    return weekDateKeys[0] ?? null
+  }, [mobileSelectedDateKey, todayKey, weekDateKeys])
+  const mobileSelectedTasks = mobileAgendaDateKey ? tasksByDate.get(mobileAgendaDateKey) ?? [] : []
+  const mobileSelectedLabel = useMemo(() => formatDateLabel(mobileAgendaDateKey), [mobileAgendaDateKey])
 
   const activeDateLabel = useMemo(() => formatDateLabel(activeDateKey), [activeDateKey])
   const newTaskRangeLabel = useMemo(() => {
@@ -313,11 +332,7 @@ const CalendrierPage = () => {
       next.setDate(previous.getDate() + delta * 7)
       return next
     })
-    setMobileSelectedDateKey((previous) => {
-      const next = parseDateKey(previous)
-      next.setDate(next.getDate() + delta * 7)
-      return getDateKey(next)
-    })
+    setMobileSelectedDateKey(null)
   }
   const handleMonthChange = (delta: number) => {
     setCurrentMonthDate((previous) => {
@@ -636,7 +651,7 @@ const viewToggle = (
       className={`calendar-view-toggle__button${calendarView === 'weekly' ? ' is-active' : ''}`}
       onClick={() => setCalendarView('weekly')}
     >
-      {isCompact ? 'Hebdomadaire' : 'Calendrier Hebdomadaire'}
+      Hebdomadaire
     </button>
     <button
       type="button"
@@ -645,7 +660,7 @@ const viewToggle = (
       className={`calendar-view-toggle__button${calendarView === 'monthly' ? ' is-active' : ''}`}
       onClick={() => setCalendarView('monthly')}
     >
-      {isCompact ? 'Mensuel' : 'Calendrier mensuel'}
+      Mensuel
     </button>
   </div>
 )
@@ -756,7 +771,7 @@ return (
               </div>
             </div>
 
-            <div className="calendar-mobile__agenda" role="list">
+            <div className={`calendar-mobile__agenda${mobileSelectedTasks.length === 0 ? ' is-empty' : ''}`} role="list">
               <div className="calendar-mobile__today-row">
                 <div className="calendar-mobile__selected-heading">
                   <span className="calendar-mobile__selected-icon" aria-hidden="true">
@@ -773,12 +788,12 @@ return (
                 <button
                   type="button"
                   className="calendar-mobile__add"
-                  onClick={() => handleDaySelect(mobileSelectedDateKey, { presetForm: true })}
+                  onClick={() => mobileAgendaDateKey && handleDaySelect(mobileAgendaDateKey, { presetForm: true })}
                 >
                   <span className="calendar-mobile__add-plus" aria-hidden="true">
                     +
                   </span>
-                  <span>Ajouter un rituel</span>
+                  <span>Ajouter</span>
                 </button>
               </div>
 
@@ -820,7 +835,7 @@ return (
                             type="button"
                             className="calendar-mobile__event-more"
                             aria-label={`Ouvrir les détails de ${task.title}`}
-                            onClick={() => handleDaySelect(mobileSelectedDateKey)}
+                              onClick={() => mobileAgendaDateKey && handleDaySelect(mobileAgendaDateKey)}
                           >
                             <svg viewBox="0 0 24 24" aria-hidden="true">
                               <circle cx="12" cy="5" r="1.8" fill="currentColor" />
@@ -919,7 +934,11 @@ return (
                         style={{
                           top: `${top}px`,
                           height: `${height}px`,
-                          background: task.color,
+                          background: `linear-gradient(135deg, ${withAlpha(getTaskDisplayColor(task), 0.82)} 0%, ${withAlpha(
+                            getTaskDisplayColor(task),
+                            0.96,
+                          )} 100%)`,
+                          border: `1px solid ${withAlpha(getTaskDisplayColor(task), 0.4)}`,
                         }}
                         onClick={(event) => {
                           event.stopPropagation()
@@ -1010,10 +1029,7 @@ return (
                       <><div
                     className="calendar-day__preview"
                     style={{
-                      background: `linear-gradient(135deg, ${withAlpha(cell.tasks[0].color, 0.12)} 0%, ${withAlpha(
-                        cell.tasks[0].color,
-                        0.32,
-                      )} 100%)`,
+                      background: getTaskDisplayColor(cell.tasks[0]),
                     }}
                   >
                     <span className="calendar-day__preview-time">
@@ -1038,7 +1054,7 @@ return (
     {isDayModalOpen && activeDateKey ? (
       <div className="calendar-modal" role="dialog" aria-modal="true" aria-labelledby="calendar-modal-title">
         <div className="calendar-modal__backdrop" onClick={handleCloseModal} aria-hidden="true" />
-        <div className="calendar-modal__panel">
+        <div className={`calendar-modal__panel${hideCompactWeeklyAgenda ? ' calendar-modal__panel--compact-weekly' : ''}`}>
           <header className="calendar-modal__header">
             <div>
               <h2 id="calendar-modal-title">{activeDateLabel}</h2>
@@ -1057,7 +1073,29 @@ return (
             </button>
           </header>
 
+          {showCompactModalToggle ? (
+            <div className="calendar-modal__toggle">
+              <div className="calendar-view-toggle" role="tablist" aria-label="Sections du jour">
+                <button
+                  type="button"
+                  className={`calendar-view-toggle__button${compactModalView === 'form' ? ' is-active' : ''}`}
+                  onClick={() => setCompactModalView('form')}
+                >
+                  Programmer
+                </button>
+                <button
+                  type="button"
+                  className={`calendar-view-toggle__button${compactModalView === 'agenda' ? ' is-active' : ''}`}
+                  onClick={() => setCompactModalView('agenda')}
+                >
+                  Événements
+                </button>
+              </div>
+            </div>
+          ) : null}
+
           <div className="calendar-modal__columns">
+          {(!showCompactModalToggle || compactModalView === 'form') ? (
           <section className="calendar-modal__section">
             <div className="calendar-modal__section-header">
               <h3>Programmer un bloc</h3>
@@ -1176,131 +1214,146 @@ return (
               </button>
             </div>
           </section>
-          <div className="calendar-modal__divider" aria-hidden="true" />
+          ) : null}
+          {!showCompactModalToggle && !hideCompactWeeklyAgenda ? (
+            <>
+              <div className="calendar-modal__divider" aria-hidden="true" />
+            </>
+          ) : null}
 
-          <section className="calendar-modal__section calendar-modal__section--agenda">
-            <div className="calendar-modal__section-header">
-              <h3>Agenda du jour</h3>
-            </div>
-            <div className="calendar-modal__list">
-              {activeDateTasks.length === 0 ? (
-                <p className="calendar-modal__empty">Programme ton premier événement de la journée.</p>
-              ) : (
-                activeDateTasks.map((task) => (
-                  <div
-                    key={task.id}
-                    className={`calendar-task${editingTaskId === task.id ? " calendar-task--editing" : ""}`}
-                    style={{ background: task.color }}
-                    onClick={() => {
-                      if (editingTaskId === task.id) {
-                        return
-                      }
-                      handleEditClick(task.id)
-                    }}
-                  >
-                    {editingTaskId === task.id ? (
-                      <form className="calendar-task__form" onSubmit={(event) => handleSubmitEdit(event, task.id)}>
-                        <div className="calendar-task__form-row">
-                          <label className="calendar-task__field">
-                            <span>Début</span>
-                            <input
-                              type="time"
-                              value={editDraft.start}
-                              onChange={(event) => handleDraftChange("start", event.target.value)}
-                              required
-                            />
-                          </label>
-                          <label className="calendar-task__field">
-                            <span>Fin</span>
-                            <input
-                              type="time"
-                              value={editDraft.end}
-                              onChange={(event) => handleDraftChange("end", event.target.value)}
-                              required
-                            />
-                          </label>
-                        </div>
-                        <div className="calendar-task__actions">
-                          <button
-                            type="button"
-                            className="calendar-task__button calendar-task__button--ghost"
-                            onClick={handleCancelEdit}
-                          >
-                            Annuler
-                          </button>
-                          <button
-                            type="button"
-                            className="calendar-task__button calendar-task__button--ghost"
-                            onClick={() => handleDeleteTask(task.id)}
-                          >
-                            Supprimer
-                          </button>
-                          <button type="submit" className="calendar-task__button calendar-task__button--primary">
-                            Sauvegarder
-                          </button>
-                        </div>
-                      </form>
-                    ) : (
-                      <>
-                          <div className="calendar-task__header">
-                            <span className="calendar-task__time">
-                              {task.start} - {task.end}
-                            </span>
-                            <div className="calendar-task__header-actions">
+          {!hideCompactWeeklyAgenda && (!showCompactModalToggle || compactModalView === 'agenda') ? (
+            <>
+              <section className="calendar-modal__section calendar-modal__section--agenda">
+                <div className="calendar-modal__section-header">
+                  <h3>Agenda du jour</h3>
+                </div>
+                <div className="calendar-modal__list">
+                  {activeDateTasks.length === 0 ? (
+                    <p className="calendar-modal__empty">Programme ton premier événement de la journée.</p>
+                  ) : (
+                    activeDateTasks.map((task) => (
+                      <div
+                        key={task.id}
+                        className={`calendar-task${editingTaskId === task.id ? " calendar-task--editing" : ""}`}
+                        style={{
+                          background: `linear-gradient(135deg, ${withAlpha(getTaskDisplayColor(task), 0.12)} 0%, ${withAlpha(
+                            getTaskDisplayColor(task),
+                            0.28,
+                          )} 100%)`,
+                          borderColor: withAlpha(getTaskDisplayColor(task), 0.4),
+                        }}
+                        onClick={() => {
+                          if (editingTaskId === task.id) {
+                            return
+                          }
+                          handleEditClick(task.id)
+                        }}
+                      >
+                        {editingTaskId === task.id ? (
+                          <form className="calendar-task__form" onSubmit={(event) => handleSubmitEdit(event, task.id)}>
+                            <div className="calendar-task__form-row">
+                              <label className="calendar-task__field">
+                                <span>Début</span>
+                                <input
+                                  type="time"
+                                  value={editDraft.start}
+                                  onChange={(event) => handleDraftChange("start", event.target.value)}
+                                  required
+                                />
+                              </label>
+                              <label className="calendar-task__field">
+                                <span>Fin</span>
+                                <input
+                                  type="time"
+                                  value={editDraft.end}
+                                  onChange={(event) => handleDraftChange("end", event.target.value)}
+                                  required
+                                />
+                              </label>
+                            </div>
+                            <div className="calendar-task__actions">
                               <button
                                 type="button"
-                                className="calendar-task__edit"
-                                onClick={(event) => {
-                                  event.stopPropagation()
-                                  handleDuplicateTask(task)
-                                }}
-                                aria-label={`Dupliquer ${task.title}`}
+                                className="calendar-task__button calendar-task__button--ghost"
+                                onClick={handleCancelEdit}
                               >
-                                <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-                                  <path
-                                    d="M6 6h9v9H6z"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="1.3"
-                                    strokeLinejoin="round"
-                                  />
-                                  <path
-                                    d="M4 4h9v9"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="1.3"
-                                    strokeLinejoin="round"
-                                  />
-                                </svg>
+                                Annuler
                               </button>
                               <button
                                 type="button"
-                                className="calendar-task__edit"
-                                onClick={(event) => {
-                                  event.stopPropagation()
-                                  handleEditClick(task.id)
-                                }}
-                                aria-label={`Modifier ${task.title}`}
+                                className="calendar-task__button calendar-task__button--ghost"
+                                onClick={() => handleDeleteTask(task.id)}
                               >
-                                <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-                                  <path
-                                    d="M4.5 14.75 3.5 17l2.25-1 7.75-7.75-1.5-1.5L4.5 14.75Zm9.2-9.2 1.5 1.5 1.3-1.3a.75.75 0 0 0 0-1.06l-.94-.94a.75.75 0 0 0-1.06 0l-1.3 1.3Z"
-                                    fill="currentColor"
-                                    stroke="currentColor"
-                                    strokeWidth="0.3"
-                                  />
-                                </svg>
+                                Supprimer
+                              </button>
+                              <button type="submit" className="calendar-task__button calendar-task__button--primary">
+                                Sauvegarder
                               </button>
                             </div>
-                          </div>
-                          <span className="calendar-task__title">{task.title}</span>
-                        </>
-                      )}
-                    </div>
-                  ))
-                )}
-              </div>
-          </section>
+                          </form>
+                        ) : (
+                          <>
+                            <div className="calendar-task__header">
+                              <span className="calendar-task__time">
+                                {task.start} - {task.end}
+                              </span>
+                              <div className="calendar-task__header-actions">
+                                <button
+                                  type="button"
+                                  className="calendar-task__edit"
+                                  onClick={(event) => {
+                                    event.stopPropagation()
+                                    handleDuplicateTask(task)
+                                  }}
+                                  aria-label={`Dupliquer ${task.title}`}
+                                >
+                                  <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                                    <path
+                                      d="M6 6h9v9H6z"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="1.3"
+                                      strokeLinejoin="round"
+                                    />
+                                    <path
+                                      d="M4 4h9v9"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="1.3"
+                                      strokeLinejoin="round"
+                                    />
+                                  </svg>
+                                </button>
+                                <button
+                                  type="button"
+                                  className="calendar-task__edit"
+                                  onClick={(event) => {
+                                    event.stopPropagation()
+                                    handleEditClick(task.id)
+                                  }}
+                                  aria-label={`Modifier ${task.title}`}
+                                >
+                                  <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                                    <path
+                                      d="M4.5 14.75 3.5 17l2.25-1 7.75-7.75-1.5-1.5L4.5 14.75Zm9.2-9.2 1.5 1.5 1.3-1.3a.75.75 0 0 0 0-1.06l-.94-.94a.75.75 0 0 0-1.06 0l-1.3 1.3Z"
+                                      fill="currentColor"
+                                      stroke="currentColor"
+                                      strokeWidth="0.3"
+                                    />
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
+                            <span className="calendar-task__title">{task.title}</span>
+                          </>
+                        )}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </section>
+            </>
+          ) : null}
           </div>
         </div>
       </div>
