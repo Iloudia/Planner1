@@ -713,9 +713,8 @@ return (
               <h1 className="calendar-compact-header__title">Calendrier</h1>
             </div>
           </section>
-          <div className="calendar-mobile__toggle">{viewToggle}</div>
-
           <div className="calendar-weekly__mobile calendar-mobile" role="region" aria-label="Calendrier mobile">
+            <div className="calendar-mobile__toggle">{viewToggle}</div>
             <div className="calendar-mobile__panel">
               <div className="calendar-mobile__panel-header">
                 <button
@@ -989,10 +988,10 @@ return (
           </h1>
         </div>
       </header>
+    <section className="calendar-monthly-preview">
       <div className="calendar-weekly__toolbar calendar-monthly__controls">
         {viewToggle}
       </div>
-    <section className="calendar-monthly-preview">
       <div className="calendar-grid calendar-grid--preview">
         {weekDays.map((label) => (
           <div key={label} className="calendar-grid__weekday">

@@ -2695,10 +2695,10 @@ body.calendar-page--lux .calendar-weekly__day-grid {
     padding: 0.72rem 0.35rem 0.48rem;
     justify-content: center;
     gap: 0.14rem;
-    border-radius: 1.15rem;
-    border: 1px solid rgba(36, 29, 24, 0.08);
-    background: rgba(255, 255, 255, 0.96);
-    box-shadow: 0 14px 30px rgba(36, 29, 24, 0.08);
+    border-radius: 0;
+    border: 1px solid var(--lux-line, rgba(15, 23, 42, 0.12));
+    background: var(--lux-paper, #ffffff);
+    box-shadow: none;
     color: #2f241e;
     letter-spacing: 0;
     transform: none;
@@ -2710,7 +2710,7 @@ body.calendar-page--lux .calendar-weekly__day-grid {
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: rgba(52, 41, 34, 0.58);
+    color: var(--lux-ink-soft);
   }
 
   .calendar-mobile__day-number {
@@ -2731,26 +2731,26 @@ body.calendar-page--lux .calendar-weekly__day-grid {
   }
 
   .calendar-mobile__day-card.is-selected {
-    background: #241d18;
-    border-color: #241d18;
-    box-shadow: 0 18px 32px rgba(36, 29, 24, 0.2);
-    color: #ffffff;
+    background: #f4efe8;
+    border-color: rgba(31, 27, 22, 0.34);
+    box-shadow: 0 12px 26px rgba(31, 27, 22, 0.1);
+    color: var(--lux-ink, #1f2937);
   }
 
   body.calendar-page--lux .calendar-mobile__day-card.is-selected {
-    background: #241d18;
-    border-color: #241d18;
-    box-shadow: 0 18px 32px rgba(36, 29, 24, 0.2);
-    color: #ffffff;
+    background: #f4efe8;
+    border-color: rgba(31, 27, 22, 0.34);
+    box-shadow: 0 12px 26px rgba(31, 27, 22, 0.1);
+    color: var(--lux-ink, #1f2937);
   }
 
   .calendar-mobile__day-card.is-selected .calendar-mobile__day-name,
   .calendar-mobile__day-card.is-selected .calendar-mobile__day-number {
-    color: #ffffff;
+    color: inherit;
   }
 
   .calendar-mobile__day-card.is-selected .calendar-mobile__day-marker {
-    background: #ffffff;
+    background: currentColor;
     opacity: 1;
   }
 

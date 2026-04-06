@@ -397,7 +397,7 @@ const SportPage = () => {
             <div className="sport-board__tabs" role="tablist" aria-label="Jours de la semaine">
               {board.days.map((day) => {
                 const isSelected = day.id === selectedDay?.id
-                const { dayNumber, monthLabel } = formatBoardTabDateParts(day.dateISO)
+                const { dayNumber } = formatBoardTabDateParts(day.dateISO)
                 return (
                   <button
                     key={day.id}
@@ -411,7 +411,6 @@ const SportPage = () => {
                   >
                     <span className="sport-board__tab-day">{formatBoardTabLabel(day.label)}</span>
                     <span className="sport-board__tab-number">{dayNumber}</span>
-                    <span className="sport-board__tab-month">{monthLabel}</span>
                   </button>
                 )
               })}
