@@ -1054,7 +1054,7 @@
 .calendar-modal .calendar-task__title {
   font-size: 1.05rem;
   font-weight: 600;
-  color: #0f172a;
+  color: #000000;
 }
 
 .calendar-task__header {
@@ -1075,24 +1075,25 @@
 
 .calendar-task__edit {
   border: none;
-  background: rgba(15, 23, 42, 0.08);
+  background: transparent;
   color: #1d1b4b;
   padding: 0.25rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background-color 0.18s ease, color 0.18s ease;
+  transition: color 0.18s ease, opacity 0.18s ease;
 }
 
 .calendar-task__edit svg {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
 }
 
 .calendar-task__edit:hover {
-  background: rgba(79, 70, 229, 0.15);
+  background: transparent;
   color: #312e81;
+  opacity: 0.82;
 }
 
 .calendar-task__form {

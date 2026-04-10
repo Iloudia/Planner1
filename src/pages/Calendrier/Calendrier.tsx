@@ -709,7 +709,7 @@ return (
         <>
           <section className="calendar-compact-header sport-header" aria-label="En-tête du calendrier">
             <div className="calendar-compact-header__copy">
-              <span className="sport-header__eyebrow">Calendrier</span>
+              <span className="sport-header__eyebrow">Calendrier hebdomadaire</span>
               <h1 className="calendar-compact-header__title">Calendrier</h1>
             </div>
           </section>
@@ -966,7 +966,7 @@ return (
     <>
       <header className="sport-header calendar-header calendar-header--compact">
         <div className="calendar-heading">
-          <span className="calendar-heading__eyebrow">Aperçu mensuel</span>
+          <span className="calendar-heading__eyebrow">Calendrier mensuel</span>
           <h1 className="calendar-heading__title">
             <button
               type="button"
@@ -1308,17 +1308,19 @@ return (
                                 >
                                   <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
                                     <path
-                                      d="M6 6h9v9H6z"
+                                      d="M7 3.75A2.25 2.25 0 0 1 9.25 1.5h6A2.25 2.25 0 0 1 17.5 3.75v6A2.25 2.25 0 0 1 15.25 12h-6A2.25 2.25 0 0 1 7 9.75v-6Z"
                                       fill="none"
                                       stroke="currentColor"
-                                      strokeWidth="1.3"
+                                      strokeWidth="1.5"
+                                      strokeLinecap="round"
                                       strokeLinejoin="round"
                                     />
                                     <path
-                                      d="M4 4h9v9"
+                                      d="M4.75 7.75A2.25 2.25 0 0 1 2.5 5.5v-1A2.25 2.25 0 0 1 4.75 2.25h1.5"
                                       fill="none"
                                       stroke="currentColor"
-                                      strokeWidth="1.3"
+                                      strokeWidth="1.5"
+                                      strokeLinecap="round"
                                       strokeLinejoin="round"
                                     />
                                   </svg>
@@ -1334,10 +1336,12 @@ return (
                                 >
                                   <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
                                     <path
-                                      d="M4.5 14.75 3.5 17l2.25-1 7.75-7.75-1.5-1.5L4.5 14.75Zm9.2-9.2 1.5 1.5 1.3-1.3a.75.75 0 0 0 0-1.06l-.94-.94a.75.75 0 0 0-1.06 0l-1.3 1.3Z"
-                                      fill="currentColor"
+                                      d="m13.9 3.6 2.5 2.5M5.1 14.9 3.75 16.25l1.35-4.05L13.2 4.1a1.6 1.6 0 0 1 2.25 0l.45.45a1.6 1.6 0 0 1 0 2.25L7.8 14.9 5.1 15.6"
+                                      fill="none"
                                       stroke="currentColor"
-                                      strokeWidth="0.3"
+                                      strokeWidth="1.5"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
                                     />
                                   </svg>
                                 </button>

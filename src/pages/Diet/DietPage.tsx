@@ -5986,14 +5986,14 @@ const DietClassicPage = () => {
           <>
             <PageHeading
               eyebrow={getDietHeadingLabel(currentHeading.eyebrow)}
-              title={getDietHeadingLabel(currentHeading.eyebrow)}
+              title="Diet"
             />
           </>
         ) : (
           <>
             <PageHeading
               eyebrow={tab === "custom" ? "Mes recettes" : "Favoris"}
-              title={tab === "custom" ? "Mes recettes" : "Favoris"}
+              title="Diet"
             />
           </>
         )}

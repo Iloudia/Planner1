@@ -335,7 +335,7 @@ function DietPage() {
   if (isAlimentationLoading) {
     return (
       <>
-        <PageHeading eyebrow="Alimentation" title="Menu de la semaine" />
+        <PageHeading eyebrow="Repas" title="Menu de la semaine" />
         <div className="diet-page diet-page--loading" aria-busy="true" aria-live="polite">
           <span className="diet-loading-a11y" role="status">
             Chargement
@@ -347,7 +347,7 @@ function DietPage() {
 
   return (
     <>
-      <PageHeading eyebrow="Alimentation" title="Menu de la semaine" />
+      <PageHeading eyebrow="Repas" title="Menu de la semaine" />
       {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer ton espace alimentation.</p> : null}
       {error ? <p className="routine-note__composer-hint">{error}</p> : null}
         <section className="page-section diet-crosslink">

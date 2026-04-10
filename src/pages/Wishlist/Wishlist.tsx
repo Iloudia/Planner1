@@ -660,7 +660,7 @@ const WishlistPage = () => {
 
   return (
     <div className="wishlist-page">
-      <PageHeading eyebrow="Wishlist" title="Wishlist" />
+      <PageHeading eyebrow="Envie" title="Wishlist" />
       {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer ta wishlist.</p> : null}
       {error ? <p className="routine-note__composer-hint">{error}</p> : null}
 

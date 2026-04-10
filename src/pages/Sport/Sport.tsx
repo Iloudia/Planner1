@@ -317,7 +317,7 @@ const SportPage = () => {
 
   return (
     <div className="sport-page">
-      <PageHeading eyebrow="Routine active" title="Sport" />
+      <PageHeading eyebrow="Énergie" title="Sport" />
       {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer ton espace sport.</p> : null}
       {error ? <p className="routine-note__composer-hint">{error}</p> : null}
 

@@ -536,6 +536,17 @@
   display: none;
 }
 
+.aside-left-photo {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.aside-left-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 .home-moodboard__top-actions {
   display: flex;
   gap: 0.6rem;
