@@ -791,6 +791,30 @@ const parseOrigins = () => {
 
 const allowedOrigins = parseOrigins()
 
+const getUrlOrigin = (value) => {
+  try {
+    return new URL(String(value || "").trim()).origin
+  } catch {
+    return ""
+  }
+}
+
+const getTrustedRequestOrigin = (req) => {
+  const originHeader = String(req.headers.origin || "").trim()
+  if (originHeader && allowedOrigins.includes(originHeader)) {
+    return originHeader
+  }
+
+  const refererOrigin = getUrlOrigin(req.headers.referer)
+  if (refererOrigin && allowedOrigins.includes(refererOrigin)) {
+    return refererOrigin
+  }
+
+  return ""
+}
+
+const getRequestAppBaseUrl = (req) => getTrustedRequestOrigin(req) || appBaseUrl
+
 const parseCookieHeader = (headerValue) => {
   const cookies = {}
   for (const part of String(headerValue || "").split(";")) {
@@ -2457,6 +2481,7 @@ app.post("/api/create-checkout-session", firebaseAuth, async (req, res) => {
     const uid = sanitizeText(req.user?.uid, 128)
     const email = normalizeEmailValue(req.user?.email)
     const isCartCheckout = Array.isArray(req.body?.items)
+    const requestAppBaseUrl = getRequestAppBaseUrl(req)
     const cartItems = normalizeCheckoutItems(req.body || {})
 
     if (!uid) {
@@ -2489,11 +2514,13 @@ app.post("/api/create-checkout-session", firebaseAuth, async (req, res) => {
       }
     })
 
-    const cancelUrl = isCartCheckout ? `${appBaseUrl}/panier` : `${appBaseUrl}/boutique/produit/${cartItems[0].productId}`
+    const cancelUrl = isCartCheckout
+      ? `${requestAppBaseUrl}/panier`
+      : `${requestAppBaseUrl}/boutique/produit/${cartItems[0].productId}`
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
-      success_url: `${appBaseUrl}/merci?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${requestAppBaseUrl}/merci?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: cancelUrl,
       line_items: lineItems,
       client_reference_id: uid,
