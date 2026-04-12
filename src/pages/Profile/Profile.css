@@ -189,7 +189,7 @@
 .account-info-main {
   width: 100%;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  grid-template-columns: clamp(4.5rem, 22%, 7rem) minmax(0, 1fr) auto;
   align-items: center;
   gap: 0.6rem;
   padding: 0.75rem 1rem;
@@ -210,13 +210,45 @@
 }
 
 .account-info-value {
+  min-width: 0;
   color: #0f172a;
   justify-self: end;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .account-info-arrow {
   color: rgba(15, 23, 42, 0.45);
   font-size: 1.1rem;
+}
+
+@media (max-width: 560px) {
+  .account-info-main {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "label arrow"
+      "value arrow";
+    align-items: start;
+    row-gap: 0.2rem;
+  }
+
+  .account-info-label {
+    grid-area: label;
+  }
+
+  .account-info-value {
+    grid-area: value;
+    justify-self: start;
+    max-width: 100%;
+    text-align: left;
+  }
+
+  .account-info-arrow {
+    grid-area: arrow;
+    align-self: center;
+  }
 }
 
 .account-info-edit {

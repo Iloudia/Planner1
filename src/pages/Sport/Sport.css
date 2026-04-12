@@ -502,7 +502,25 @@
 
 @media (max-width: 501px) {
   .sport-board__tabs {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.38rem;
+  }
+
+  .sport-board__tab {
+    min-height: 5rem;
+    padding: 0.56rem 0.18rem 0.42rem;
+    gap: 0.08rem;
+  }
+
+  .sport-board__tab-day {
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.02rem;
+  }
+
+  .sport-board__tab-number {
+    font-size: clamp(1.08rem, 5.3vw, 1.45rem);
+    line-height: 0.86;
+    margin: -0.08rem 0 -0.02rem;
   }
 
   .sport-board-card__status {
@@ -601,20 +619,10 @@ body.sport-page--lux {
 
   .sport-board__tabs {
     display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(62px, 1fr);
-    gap: 0.6rem;
-    width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding: 0 0 0.2rem;
-    scroll-snap-type: x proximity;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-
-  .sport-board__tabs::-webkit-scrollbar {
-    display: none;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.65rem;
+    overflow: visible;
+    padding-bottom: 0;
   }
 
   .sport-board__tab {

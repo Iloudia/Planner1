@@ -388,7 +388,7 @@ const ProfilePage = () => {
         }
         throw new Error(reason)
       }
-      setResetInfo("Un lien de réinitialisation a été envoyé par email.")
+      setResetInfo("Un lien de réinitialisation a été envoyé par email. Si vous ne le voyez pas, regardez dans les spams de votre boîte mail.")
     } catch (error) {
       setPasswordError(error instanceof Error ? error.message : "Impossible d'envoyer le lien de réinitialisation.")
     }

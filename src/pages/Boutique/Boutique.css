@@ -277,6 +277,7 @@ body.boutique-page--tone {
   position: relative;
   padding: 2rem 0;
   padding-inline: clamp(1.2rem, 3vw, 2.4rem);
+  border: 1px solid var(--line);
   border-top: none;
 }
 
@@ -341,6 +342,7 @@ body.boutique-page--tone {
   position: relative;
   padding: 2rem 0;
   padding-inline: clamp(1.2rem, 3vw, 2.4rem);
+  border: 1px solid var(--line);
 }
 
 .boutique-categories {

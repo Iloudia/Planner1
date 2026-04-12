@@ -126,6 +126,10 @@ const RoutinePage = () => {
   const { items, completedSet, isLoading, error, addItem, removeItem, toggleItem } = useUserRoutine()
   const canEdit = Boolean(userId)
   const isRoutineLoading = !isAuthReady || isLoading
+  const [activeRoutinePeriod, setActiveRoutinePeriod] = useState<RoutinePeriod>("morning")
+  const [isMobileRoutineView, setIsMobileRoutineView] = useState(() =>
+    typeof window !== "undefined" ? window.innerWidth <= 1160 : false,
+  )
   const [routineDrafts, setRoutineDrafts] = useState<Record<RoutinePeriod, RoutineDraft>>({
     morning: { title: "", detail: "" },
     evening: { title: "", detail: "" },
@@ -150,6 +154,21 @@ const RoutinePage = () => {
     document.body.classList.add("routine-page--lux")
     return () => {
       document.body.classList.remove("routine-page--lux")
+    }
+  }, [])
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return
+    }
+    const mediaQuery = window.matchMedia("(max-width: 1160px)")
+    const handleChange = (event: MediaQueryListEvent) => {
+      setIsMobileRoutineView(event.matches)
+    }
+    setIsMobileRoutineView(mediaQuery.matches)
+    mediaQuery.addEventListener("change", handleChange)
+    return () => {
+      mediaQuery.removeEventListener("change", handleChange)
     }
   }, [])
 
@@ -221,6 +240,29 @@ const RoutinePage = () => {
     )
   }
 
+  const routinePeriodToggle = (
+    <div className="calendar-view-toggle" role="tablist" aria-label="Période de routine">
+      <button
+        type="button"
+        role="tab"
+        aria-selected={activeRoutinePeriod === "morning"}
+        className={`calendar-view-toggle__button${activeRoutinePeriod === "morning" ? " is-active" : ""}`}
+        onClick={() => setActiveRoutinePeriod("morning")}
+      >
+        Matin
+      </button>
+      <button
+        type="button"
+        role="tab"
+        aria-selected={activeRoutinePeriod === "evening"}
+        className={`calendar-view-toggle__button${activeRoutinePeriod === "evening" ? " is-active" : ""}`}
+        onClick={() => setActiveRoutinePeriod("evening")}
+      >
+        Soir
+      </button>
+    </div>
+  )
+
   return (
     <div className="routine-page aesthetic-page">
       <PageHeading eyebrow="Routine" title="Mes Routines" />
@@ -228,8 +270,10 @@ const RoutinePage = () => {
       {error ? <p className="routine-note__composer-hint">{error}</p> : null}
 
       <div className="routine-notes">
+        {!isMobileRoutineView || activeRoutinePeriod === "morning" ? (
         <section className="routine-note routine-note--morning">
           <div className="routine-note__top">
+            {isMobileRoutineView ? routinePeriodToggle : null}
             <div className="routine-note__title-band">
               <h2>Routine du matin</h2>
             </div>
@@ -257,9 +301,12 @@ const RoutinePage = () => {
             />
           </div>
         </section>
+        ) : null}
 
+        {!isMobileRoutineView || activeRoutinePeriod === "evening" ? (
         <section className="routine-note routine-note--evening">
           <div className="routine-note__top">
+            {isMobileRoutineView ? routinePeriodToggle : null}
             <div className="routine-note__title-band">
               <h2>Routine du soir</h2>
             </div>
@@ -287,6 +334,7 @@ const RoutinePage = () => {
             />
           </div>
         </section>
+        ) : null}
       </div>
     </div>
   )

@@ -141,6 +141,12 @@
   content: none;
 }
 
+@media (min-width: 1161px) {
+  .routine-note__body {
+    margin-top: 0.2rem;
+  }
+}
+
 .routine-note__pins {
   position: absolute;
   top: 6px;
@@ -665,7 +671,49 @@ body.routine-page--lux .routine-note__item-detail {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1160px) {
+  .routine-note__top {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .routine-note__top .calendar-view-toggle {
+    width: min(100%, 22rem);
+    min-width: 0;
+    margin: 0 auto;
+    padding: 0.2rem;
+    gap: 0.18rem;
+    border: 1px solid rgba(36, 29, 24, 0.08);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: 0 10px 24px rgba(36, 29, 24, 0.07);
+    align-self: center;
+  }
+
+  .routine-note__top .calendar-view-toggle__button {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 2.4rem;
+    padding: 0.5rem 0.72rem;
+    border: none;
+    border-radius: 999px;
+    background: transparent;
+    box-shadow: none;
+    color: rgba(60, 48, 40, 0.7);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    line-height: 1.1;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .routine-note__top .calendar-view-toggle__button.is-active {
+    background: #241d18;
+    color: #ffffff;
+    box-shadow: 0 10px 20px rgba(36, 29, 24, 0.22);
+  }
+
   .routine-note__list {
     width: 100%;
     gap: 0.7rem;
