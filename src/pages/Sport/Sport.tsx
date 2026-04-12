@@ -45,6 +45,13 @@ const computeWeekRange = (dateKeys: string[]) => {
   return `${first} - ${last}`
 }
 
+type TimeDraft = {
+  startTime: string
+  endTime: string
+}
+
+const normalizeTimeValue = (value?: string) => (typeof value === "string" ? value : "")
+
 const getNextMondayMidnight = (reference: Date) => {
   const next = new Date(reference)
   next.setHours(0, 0, 0, 0)
@@ -69,6 +76,7 @@ const SportPage = () => {
   const canEdit = Boolean(userId)
   const isSportLoading = !isAuthReady || isLoading
   const [activityDrafts, setActivityDrafts] = useState<Record<string, string>>({})
+  const [timeDrafts, setTimeDrafts] = useState<Record<string, TimeDraft>>({})
   const activityDraftsRef = useRef<Record<string, string>>({})
   const activitySaveTimeoutsRef = useRef<Record<string, number>>({})
   const [selectedDayId, setSelectedDayId] = useState<string | null>(null)
@@ -117,6 +125,22 @@ const SportPage = () => {
   useEffect(() => {
     activityDraftsRef.current = activityDrafts
   }, [activityDrafts])
+
+  useEffect(() => {
+    setTimeDrafts((currentDrafts) => {
+      const nextDrafts = Object.fromEntries(
+        board.days.map((day) => [
+          day.id,
+          {
+            startTime: currentDrafts[day.id]?.startTime ?? normalizeTimeValue(day.startTime),
+            endTime: currentDrafts[day.id]?.endTime ?? normalizeTimeValue(day.endTime),
+          },
+        ]),
+      )
+
+      return JSON.stringify(nextDrafts) === JSON.stringify(currentDrafts) ? currentDrafts : nextDrafts
+    })
+  }, [board.days])
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -305,6 +329,25 @@ const SportPage = () => {
     await updateBoardDay(dayId, { done: event.target.checked })
   }
 
+  const handleTimeChange =
+    (dayId: string, field: keyof TimeDraft) => (event: ChangeEvent<HTMLInputElement>) => {
+      const currentDay = board.days.find((day) => day.id === dayId)
+      const nextValue = event.target.value
+      setTimeDrafts((currentDrafts) => ({
+        ...currentDrafts,
+        [dayId]: {
+          startTime: currentDrafts[dayId]?.startTime ?? normalizeTimeValue(currentDay?.startTime),
+          endTime: currentDrafts[dayId]?.endTime ?? normalizeTimeValue(currentDay?.endTime),
+          [field]: nextValue,
+        },
+      }))
+    }
+
+  const commitTimeValue = async (dayId: string, field: keyof TimeDraft, nextValue: string) => {
+    if (!canEdit) return
+    await updateBoardDay(dayId, { [field]: nextValue })
+  }
+
   if (isSportLoading) {
     return (
       <div className="sport-page sport-page--loading" aria-busy="true" aria-live="polite">
@@ -385,6 +428,29 @@ const SportPage = () => {
                   </label>
                 </form>
 
+                <div className="sport-board-card__time-row">
+                  <label className="sport-board-card__field">
+                    <span>Début</span>
+                    <input
+                      type="time"
+                      value={timeDrafts[day.id]?.startTime ?? normalizeTimeValue(day.startTime)}
+                      onChange={handleTimeChange(day.id, "startTime")}
+                      onBlur={(event) => void commitTimeValue(day.id, "startTime", event.currentTarget.value)}
+                      disabled={!canEdit}
+                    />
+                  </label>
+                  <label className="sport-board-card__field">
+                    <span>Fin</span>
+                    <input
+                      type="time"
+                      value={timeDrafts[day.id]?.endTime ?? normalizeTimeValue(day.endTime)}
+                      onChange={handleTimeChange(day.id, "endTime")}
+                      onBlur={(event) => void commitTimeValue(day.id, "endTime", event.currentTarget.value)}
+                      disabled={!canEdit}
+                    />
+                  </label>
+                </div>
+
                 <label className="sport-board-card__checkbox">
                   <input type="checkbox" checked={day.done} onChange={handleDoneToggle(day.id)} disabled={!canEdit} />
                   <span>Séance effectuée</span>
@@ -453,6 +519,31 @@ const SportPage = () => {
                     />
                   </label>
                 </form>
+
+                <div className="sport-board-card__time-row">
+                  <label className="sport-board-card__field">
+                    <span>Début</span>
+                    <input
+                      type="time"
+                      value={timeDrafts[selectedDay.id]?.startTime ?? normalizeTimeValue(selectedDay.startTime)}
+                      onChange={handleTimeChange(selectedDay.id, "startTime")}
+                      onBlur={(event) =>
+                        void commitTimeValue(selectedDay.id, "startTime", event.currentTarget.value)
+                      }
+                      disabled={!canEdit}
+                    />
+                  </label>
+                  <label className="sport-board-card__field">
+                    <span>Fin</span>
+                    <input
+                      type="time"
+                      value={timeDrafts[selectedDay.id]?.endTime ?? normalizeTimeValue(selectedDay.endTime)}
+                      onChange={handleTimeChange(selectedDay.id, "endTime")}
+                      onBlur={(event) => void commitTimeValue(selectedDay.id, "endTime", event.currentTarget.value)}
+                      disabled={!canEdit}
+                    />
+                  </label>
+                </div>
 
                 <label className="sport-board-card__checkbox">
                   <input

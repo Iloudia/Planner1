@@ -605,6 +605,22 @@
   overflow: hidden;
 }
 
+.calendar-weekly__task--sport {
+  border-left: 3px solid rgba(15, 23, 42, 0.3);
+}
+
+.calendar-weekly__task--sport.is-done {
+  opacity: 0.78;
+}
+
+.calendar-weekly__task-badge {
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(15, 23, 42, 0.58);
+  font-weight: 700;
+}
+
 .calendar-weekly__task-time {
   font-size: 0.65rem;
   letter-spacing: 0.06em;
@@ -617,6 +633,17 @@
   font-size: 0.86rem;
   font-weight: 400;
   line-height: 1.2;
+}
+
+.calendar-task--readonly {
+  cursor: default;
+}
+
+.calendar-task__readonly-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(15, 23, 42, 0.56);
 }
 
 .calendar-weekly__layout {

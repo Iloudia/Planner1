@@ -569,7 +569,7 @@
 .wishlist-modal__category-option {
   border: none;
   background: transparent;
-  color: var(--color-chocolate);
+  color: #000000;
   text-align: left;
   padding: 0.6rem 0.75rem;
   cursor: pointer;

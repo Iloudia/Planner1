@@ -107,6 +107,8 @@ export type SportBoardDay = {
   label: string
   dateISO: string
   activity: string
+  startTime?: string
+  endTime?: string
   done: boolean
 }
 

@@ -28,6 +28,8 @@ const buildEmptyBoard = (weekKey: string): SportWeekBoardRecord => {
         label,
         dateISO: formatLocalISODate(current),
         activity: "",
+        startTime: "",
+        endTime: "",
         done: false,
       }
     }),

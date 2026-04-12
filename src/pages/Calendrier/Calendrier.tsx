@@ -3,6 +3,7 @@ import type { CSSProperties, FormEvent, KeyboardEvent } from 'react'
 import { getDateKey } from '../../data/sampleData'
 import type { ScheduledTask } from '../../data/sampleData'
 import { useTasks } from '../../context/TasksContext'
+import useUserSportDashboard from '../../hooks/useUserSportDashboard'
 import './CalendarPage.css'
 const weekDays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
 const hours = Array.from({ length: 18 }, (_, index) => index + 6)
@@ -101,6 +102,13 @@ const withAlpha = (hexColor: string, alpha: number) => {
 }
 
 const getTaskDisplayColor = (task: Pick<ScheduledTask, 'tag' | 'color'>) => legendColors[task.tag as keyof typeof legendColors] ?? task.color
+
+type CalendarTaskItem = ScheduledTask & {
+  source: 'calendar' | 'sport'
+  done?: boolean
+}
+
+const isSportTaskItem = (task: CalendarTaskItem) => task.source === 'sport'
 
 const getTaskIcon = (category?: ScheduledTask['tag']) => {
   switch (category) {
@@ -275,6 +283,8 @@ const CalendrierPage = () => {
   const nextTaskLabel = useMemo(() => formatDateLabel(nextTask?.date ?? null), [nextTask])
 
   const weekStartDate = getWeekStart(weekAnchorDate)
+  const sportWeekKey = getDateKey(weekStartDate)
+  const { board: sportBoard } = useUserSportDashboard(sportWeekKey)
   const weekDates = Array.from({ length: 7 }, (_, index) => {
     const date = new Date(weekStartDate)
     date.setDate(weekStartDate.getDate() + index)
@@ -284,11 +294,38 @@ const CalendrierPage = () => {
   const weekDateKeys = useMemo(() => weekDates.map((date) => getDateKey(date)), [weekDates])
 
   const tasksByDate = useMemo(() => {
-    const map = new Map<string, ScheduledTask[]>()
+    const map = new Map<string, CalendarTaskItem[]>()
     tasks.forEach((task) => {
       const list = map.get(task.date) ?? []
-      list.push(task)
+      list.push({
+        ...task,
+        source: 'calendar',
+      })
       map.set(task.date, list)
+    })
+
+    sportBoard.days.forEach((day) => {
+      const title = day.activity.trim()
+      if (!title || !day.startTime || !day.endTime) {
+        return
+      }
+      if (parseTimeToMinutes(day.endTime) <= parseTimeToMinutes(day.startTime)) {
+        return
+      }
+
+      const list = map.get(day.dateISO) ?? []
+      list.push({
+        id: `sport-board-${day.dateISO}-${day.id}`,
+        title,
+        start: day.startTime,
+        end: day.endTime,
+        date: day.dateISO,
+        color: legendColors.Sport,
+        tag: 'Sport',
+        source: 'sport',
+        done: day.done,
+      })
+      map.set(day.dateISO, list)
     })
 
     map.forEach((list, key) => {
@@ -297,7 +334,7 @@ const CalendrierPage = () => {
     })
 
     return map
-  }, [tasks, now])
+  }, [sportBoard.days, tasks])
 
   const activeDateTasks = activeDateKey ? tasksByDate.get(activeDateKey) ?? [] : []
   const showCompactModalToggle = isCompact && calendarView === 'monthly'
@@ -513,7 +550,7 @@ const CalendrierPage = () => {
     if (!confirmation) {
       return
     }
-    const tasksForDay = tasksByDate.get(activeDateKey) ?? []
+    const tasksForDay = tasks.filter((task) => task.date === activeDateKey)
     tasksForDay.forEach((task) => removeTask(task.id))
     setNewTaskForm(createNewTaskForm(activeDateKey))
     setNewTaskError(null)
@@ -800,7 +837,7 @@ return (
                 <p className="calendar-mobile__empty">Aucun événement pour cette journée.</p>
               ) : (
                 mobileSelectedTasks.map((task) => (
-                  <div key={task.id} className="calendar-mobile__event">
+                  <div key={task.id} className={`calendar-mobile__event${isSportTaskItem(task) ? ' is-sport' : ''}`}>
                     <span className="calendar-mobile__event-time">{task.start}</span>
                     <span
                       className="calendar-mobile__event-dot"
@@ -847,7 +884,11 @@ return (
                           <span className="calendar-mobile__event-hours">
                             {task.start} - {task.end}
                           </span>
-                          {task.tag ? <span className="calendar-mobile__event-tag">{task.tag}</span> : null}
+                          {task.tag ? (
+                            <span className="calendar-mobile__event-tag">
+                              {isSportTaskItem(task) && task.done ? 'Sport terminé' : task.tag}
+                            </span>
+                          ) : null}
                         </div>
                       </div>
                     </div>
@@ -924,9 +965,15 @@ return (
                       <button
                         key={task.id}
                         type="button"
-                        className="calendar-weekly__task"
-                        draggable
+                        className={`calendar-weekly__task${isSportTaskItem(task) ? " calendar-weekly__task--sport" : ""}${
+                          isSportTaskItem(task) && task.done ? " is-done" : ""
+                        }`}
+                        draggable={!isSportTaskItem(task)}
                         onDragStart={(event) => {
+                          if (isSportTaskItem(task)) {
+                            event.preventDefault()
+                            return
+                          }
                           event.dataTransfer.setData('text/plain', task.id)
                           event.dataTransfer.effectAllowed = 'move'
                         }}
@@ -944,6 +991,7 @@ return (
                           handleDaySelect(dateKey)
                         }}
                       >
+                        {isSportTaskItem(task) ? <span className="calendar-weekly__task-badge">Sport</span> : null}
                         <span className="calendar-weekly__task-title">{task.title}</span>
                         <span className="calendar-weekly__task-time">
                           {task.start} - {task.end}
@@ -1233,7 +1281,9 @@ return (
                     activeDateTasks.map((task) => (
                       <div
                         key={task.id}
-                        className={`calendar-task${editingTaskId === task.id ? " calendar-task--editing" : ""}`}
+                        className={`calendar-task${editingTaskId === task.id ? " calendar-task--editing" : ""}${
+                          isSportTaskItem(task) ? " calendar-task--readonly" : ""
+                        }`}
                         style={{
                           background: `linear-gradient(135deg, ${withAlpha(getTaskDisplayColor(task), 0.12)} 0%, ${withAlpha(
                             getTaskDisplayColor(task),
@@ -1242,13 +1292,16 @@ return (
                           borderColor: withAlpha(getTaskDisplayColor(task), 0.4),
                         }}
                         onClick={() => {
+                          if (isSportTaskItem(task)) {
+                            return
+                          }
                           if (editingTaskId === task.id) {
                             return
                           }
                           handleEditClick(task.id)
                         }}
                       >
-                        {editingTaskId === task.id ? (
+                        {!isSportTaskItem(task) && editingTaskId === task.id ? (
                           <form className="calendar-task__form" onSubmit={(event) => handleSubmitEdit(event, task.id)}>
                             <div className="calendar-task__form-row">
                               <label className="calendar-task__field">
@@ -1297,54 +1350,62 @@ return (
                                 {task.start} - {task.end}
                               </span>
                               <div className="calendar-task__header-actions">
-                                <button
-                                  type="button"
-                                  className="calendar-task__edit"
-                                  onClick={(event) => {
-                                    event.stopPropagation()
-                                    handleDuplicateTask(task)
-                                  }}
-                                  aria-label={`Dupliquer ${task.title}`}
-                                >
-                                  <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-                                    <path
-                                      d="M7 3.75A2.25 2.25 0 0 1 9.25 1.5h6A2.25 2.25 0 0 1 17.5 3.75v6A2.25 2.25 0 0 1 15.25 12h-6A2.25 2.25 0 0 1 7 9.75v-6Z"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      strokeWidth="1.5"
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                    />
-                                    <path
-                                      d="M4.75 7.75A2.25 2.25 0 0 1 2.5 5.5v-1A2.25 2.25 0 0 1 4.75 2.25h1.5"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      strokeWidth="1.5"
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                    />
-                                  </svg>
-                                </button>
-                                <button
-                                  type="button"
-                                  className="calendar-task__edit"
-                                  onClick={(event) => {
-                                    event.stopPropagation()
-                                    handleEditClick(task.id)
-                                  }}
-                                  aria-label={`Modifier ${task.title}`}
-                                >
-                                  <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-                                    <path
-                                      d="m13.9 3.6 2.5 2.5M5.1 14.9 3.75 16.25l1.35-4.05L13.2 4.1a1.6 1.6 0 0 1 2.25 0l.45.45a1.6 1.6 0 0 1 0 2.25L7.8 14.9 5.1 15.6"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      strokeWidth="1.5"
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                    />
-                                  </svg>
-                                </button>
+                                {isSportTaskItem(task) ? (
+                                  <span className="calendar-task__readonly-label">
+                                    {task.done ? 'Sport terminé' : 'Depuis /sport'}
+                                  </span>
+                                ) : (
+                                  <>
+                                    <button
+                                      type="button"
+                                      className="calendar-task__edit"
+                                      onClick={(event) => {
+                                        event.stopPropagation()
+                                        handleDuplicateTask(task)
+                                      }}
+                                      aria-label={`Dupliquer ${task.title}`}
+                                    >
+                                      <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                                        <path
+                                          d="M7 3.75A2.25 2.25 0 0 1 9.25 1.5h6A2.25 2.25 0 0 1 17.5 3.75v6A2.25 2.25 0 0 1 15.25 12h-6A2.25 2.25 0 0 1 7 9.75v-6Z"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          strokeWidth="1.5"
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                        />
+                                        <path
+                                          d="M4.75 7.75A2.25 2.25 0 0 1 2.5 5.5v-1A2.25 2.25 0 0 1 4.75 2.25h1.5"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          strokeWidth="1.5"
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                        />
+                                      </svg>
+                                    </button>
+                                    <button
+                                      type="button"
+                                      className="calendar-task__edit"
+                                      onClick={(event) => {
+                                        event.stopPropagation()
+                                        handleEditClick(task.id)
+                                      }}
+                                      aria-label={`Modifier ${task.title}`}
+                                    >
+                                      <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                                        <path
+                                          d="m13.9 3.6 2.5 2.5M5.1 14.9 3.75 16.25l1.35-4.05L13.2 4.1a1.6 1.6 0 0 1 2.25 0l.45.45a1.6 1.6 0 0 1 0 2.25L7.8 14.9 5.1 15.6"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          strokeWidth="1.5"
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                        />
+                                      </svg>
+                                    </button>
+                                  </>
+                                )}
                               </div>
                             </div>
                             <span className="calendar-task__title">{task.title}</span>
