@@ -10,6 +10,27 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
 
+    function hasAdminClaim() {
+      return isSignedIn() &&
+        (request.auth.token.admin == true || request.auth.token.role == "admin");
+    }
+
+    function hasAdminEmail() {
+      return isSignedIn() &&
+        (request.auth.token.email == "contact@meandrituals.com" ||
+          request.auth.token.email == "iloudiav@gmail.com");
+    }
+
+    function hasAdminDocument() {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.admin == true;
+    }
+
+    function isAdmin() {
+      return hasAdminClaim() || hasAdminEmail() || hasAdminDocument();
+    }
+
     function isPlannerCollection(collectionName) {
       return collectionName == "calendarEvents" ||
         collectionName == "journalEntries" ||
@@ -37,7 +58,9 @@ service cloud.firestore {
     }
 
     match /users/{userId} {
-      allow read, write: if isOwner(userId);
+      allow list: if isAdmin();
+      allow get: if isOwner(userId) || isAdmin();
+      allow create, update, delete: if isOwner(userId);
 
       match /{collectionName}/{docId} {
         allow read, write: if isOwner(userId) && isPlannerCollection(collectionName);

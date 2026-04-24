@@ -1,4 +1,4 @@
-﻿import "dotenv/config"
+import "dotenv/config"
 import crypto from "node:crypto"
 import fs from "node:fs"
 import fsPromises from "node:fs/promises"
@@ -2396,6 +2396,154 @@ app.post("/api/account/delete", firebaseAuth, async (req, res) => {
   }
 })
 
+app.get("/api/admin/users", firebaseAuth, adminOnly, async (req, res) => {
+  if (!isFirebaseAdminConfigured) {
+    return res.status(503).json({
+      error:
+        "La liste des comptes n'est pas configuree sur le serveur. Ajoute une configuration Firebase Admin.",
+    })
+  }
+
+  try {
+    const adminDb = getFirebaseAdminDb()
+    const snapshot = await adminDb.collection("users").get()
+    const toTextList = (value) =>
+      Array.isArray(value)
+        ? value
+            .map((entry) => sanitizeText(entry, 120))
+            .filter(Boolean)
+        : []
+    const users = snapshot.docs
+      .map((docSnap) => {
+        const data = docSnap.data() || {}
+        const email = sanitizeText(data.email, 320) || sanitizeText(docSnap.id, 128)
+        const personalInfo = data.personalInfo && typeof data.personalInfo === "object" ? data.personalInfo : {}
+        const identityInfo = data.identityInfo && typeof data.identityInfo === "object" ? data.identityInfo : {}
+        const onboarding = data.onboarding && typeof data.onboarding === "object" ? data.onboarding : {}
+        return {
+          email,
+          createdAt: sanitizeText(data.createdAt, 80) || null,
+          status: data.status === "desactive" ? "desactive" : "actif",
+          deletionPlannedAt: sanitizeText(data.deletionPlannedAt, 80) || null,
+          personalInfo: {
+            firstName: sanitizeText(personalInfo.firstName, 120) || "",
+            lastName: sanitizeText(personalInfo.lastName, 120) || "",
+          },
+          identityInfo: {
+            username: sanitizeText(identityInfo.username, 120) || "",
+            gender: sanitizeText(identityInfo.gender, 80) || "",
+          },
+          onboarding: {
+            source: sanitizeText(onboarding.source, 120) || "",
+            sourceOther: sanitizeText(onboarding.sourceOther, 160) || "",
+            reasons: toTextList(onboarding.reasons),
+            reasonsOther: sanitizeText(onboarding.reasonsOther, 160) || "",
+            categories: toTextList(onboarding.categories),
+            priority: toTextList(onboarding.priority),
+            completedAt: sanitizeText(onboarding.completedAt, 80) || null,
+          },
+        }
+      })
+      .sort((left, right) => {
+        const leftTime = Date.parse(left.createdAt || "")
+        const rightTime = Date.parse(right.createdAt || "")
+        const leftValue = Number.isFinite(leftTime) ? leftTime : 0
+        const rightValue = Number.isFinite(rightTime) ? rightTime : 0
+        if (rightValue !== leftValue) {
+          return rightValue - leftValue
+        }
+        return left.email.localeCompare(right.email)
+      })
+
+    return res.json({ users })
+  } catch (error) {
+    console.error("Admin users list failed:", error)
+    return res.status(500).json({ error: "Impossible de charger la liste des comptes." })
+  }
+})
+
+app.post("/api/admin/users/status", firebaseAuth, adminOnly, async (req, res) => {
+  if (!isFirebaseAdminConfigured) {
+    return res.status(503).json({
+      error:
+        "La mise a jour des comptes n'est pas configuree sur le serveur. Ajoute une configuration Firebase Admin.",
+    })
+  }
+
+  try {
+    const email = normalizeEmailValue(req.body?.email)
+    const nextStatus = sanitizeText(req.body?.status, 32)
+
+    if (!email || !isValidEmailAddress(email)) {
+      return res.status(400).json({ error: "Adresse e-mail invalide." })
+    }
+
+    if (nextStatus !== "actif" && nextStatus !== "desactive") {
+      return res.status(400).json({ error: "Statut de compte invalide." })
+    }
+
+    const adminAuth = getFirebaseAdminAuth()
+    const adminDb = getFirebaseAdminDb()
+
+    let authUser = null
+    try {
+      authUser = await adminAuth.getUserByEmail(email)
+    } catch (error) {
+      if (!(error && typeof error === "object" && "code" in error && error.code === "auth/user-not-found")) {
+        throw error
+      }
+    }
+
+    const authUid = sanitizeText(authUser?.uid, 128)
+    const firestoreTargets = await listFirestoreUserTargets({
+      adminDb,
+      email,
+      uid: authUid,
+    })
+
+    if (!authUid && firestoreTargets.length === 0) {
+      return res.status(404).json({ error: "Utilisateur introuvable." })
+    }
+
+    const updates = {
+      status: nextStatus,
+      updatedAt: new Date().toISOString(),
+    }
+    if (nextStatus === "actif") {
+      updates.deletionPlannedAt = null
+    }
+
+    if (firestoreTargets.length > 0) {
+      await Promise.all(firestoreTargets.map(({ ref }) => ref.set(updates, { merge: true })))
+    }
+
+    if (authUid) {
+      await adminAuth.updateUser(authUid, { disabled: nextStatus === "desactive" })
+      if (nextStatus === "desactive") {
+        await adminAuth.revokeRefreshTokens(authUid)
+      }
+    }
+
+    console.log("Admin user status updated", {
+      requestedBy: req.user?.email ?? req.user?.uid ?? "unknown",
+      email,
+      uid: authUid || null,
+      status: nextStatus,
+      firestoreUpdated: firestoreTargets.length,
+    })
+
+    return res.json({
+      ok: true,
+      status: nextStatus,
+      firestoreUpdated: firestoreTargets.length,
+      authUpdated: Boolean(authUid),
+    })
+  } catch (error) {
+    console.error("Admin user status update failed:", error)
+    return res.status(500).json({ error: "Impossible de mettre a jour ce compte." })
+  }
+})
+
 app.post("/api/admin/users/delete", firebaseAuth, adminOnly, async (req, res) => {
   if (!isFirebaseAdminConfigured) {
     return res.status(503).json({
@@ -2709,4 +2857,3 @@ app.use((error, req, res, next) => {
 app.listen(port, host, () => {
   console.log(`Boutique server listening on http://${host}:${port}`)
 })
-

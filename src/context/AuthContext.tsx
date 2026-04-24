@@ -26,10 +26,8 @@ import {
   doc,
   getDoc,
   getDocs,
-  query,
   setDoc,
   updateDoc,
-  where,
 } from "firebase/firestore"
 import { type FirebaseUserDocument } from "../models/firebase"
 import { buildApiUrl, fetchApi, getApiTargetLabel } from "../utils/apiUrl"
@@ -47,6 +45,23 @@ export type AdminUserRecord = {
   createdAt: string | null
   status: AccountStatus
   deletionPlannedAt: string | null
+  personalInfo?: {
+    firstName?: string
+    lastName?: string
+  }
+  identityInfo?: {
+    username?: string
+    gender?: string
+  }
+  onboarding?: {
+    source?: string
+    sourceOther?: string
+    reasons?: string[]
+    reasonsOther?: string
+    categories?: string[]
+    priority?: string[]
+    completedAt?: string | null
+  }
 }
 
 type ChangePasswordResult = {
@@ -103,6 +118,63 @@ export type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 
 const normalizeEmail = (value: string) => String(value ?? "").trim().toLowerCase()
+
+const asRecord = (value: unknown): Record<string, unknown> =>
+  value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : {}
+
+const cleanAdminText = (value: unknown) => {
+  if (typeof value === "string") return value.trim()
+  if (typeof value === "number" || typeof value === "boolean") return String(value)
+  return ""
+}
+
+const cleanAdminList = (value: unknown) => {
+  if (!Array.isArray(value)) return []
+  return value.map((entry) => cleanAdminText(entry)).filter(Boolean)
+}
+
+const sortAdminUsers = (users: AdminUserRecord[]) =>
+  [...users].sort((left, right) => {
+    const leftTime = Date.parse(left.createdAt || "")
+    const rightTime = Date.parse(right.createdAt || "")
+    const leftValue = Number.isFinite(leftTime) ? leftTime : 0
+    const rightValue = Number.isFinite(rightTime) ? rightTime : 0
+    if (rightValue !== leftValue) {
+      return rightValue - leftValue
+    }
+    return left.email.localeCompare(right.email)
+  })
+
+const mapAdminUserRecord = (docId: string, value: unknown): AdminUserRecord => {
+  const data = asRecord(value)
+  const personalInfo = asRecord(data.personalInfo)
+  const identityInfo = asRecord(data.identityInfo)
+  const onboarding = asRecord(data.onboarding)
+
+  return {
+    email: cleanAdminText(data.email) || cleanAdminText(docId),
+    createdAt: cleanAdminText(data.createdAt) || null,
+    status: data.status === "desactive" ? "desactive" : "actif",
+    deletionPlannedAt: cleanAdminText(data.deletionPlannedAt) || null,
+    personalInfo: {
+      firstName: cleanAdminText(personalInfo.firstName),
+      lastName: cleanAdminText(personalInfo.lastName),
+    },
+    identityInfo: {
+      username: cleanAdminText(identityInfo.username),
+      gender: cleanAdminText(identityInfo.gender),
+    },
+    onboarding: {
+      source: cleanAdminText(onboarding.source),
+      sourceOther: cleanAdminText(onboarding.sourceOther),
+      reasons: cleanAdminList(onboarding.reasons),
+      reasonsOther: cleanAdminText(onboarding.reasonsOther),
+      categories: cleanAdminList(onboarding.categories),
+      priority: cleanAdminList(onboarding.priority),
+      completedAt: cleanAdminText(onboarding.completedAt) || null,
+    },
+  }
+}
 
 const nowIso = () => new Date().toISOString()
 
@@ -322,23 +394,6 @@ const ensureUserDocument = async (user: User, profile?: RegistrationProfile) => 
 
   const refreshed = await getDoc(docRef)
   return (refreshed.data() as FirebaseUserDocument) ?? data
-}
-
-const loadAdminUserByEmail = async (email: string) => {
-  const normalized = normalizeEmail(email)
-  if (!normalized) return null
-  const usersRef = collection(db, "users")
-  const byLower = query(usersRef, where("emailLower", "==", normalized))
-  const snapshot = await getDocs(byLower)
-  if (snapshot.docs[0]) return snapshot.docs[0]
-  const byEmail = query(usersRef, where("email", "==", email))
-  const fallbackSnapshot = await getDocs(byEmail)
-  if (fallbackSnapshot.docs[0]) return fallbackSnapshot.docs[0]
-  const allSnapshot = await getDocs(usersRef)
-  return allSnapshot.docs.find((docSnap) => {
-    const data = docSnap.data() as FirebaseUserDocument
-    return normalizeEmail(data.email ?? "") === normalized
-  }) ?? null
 }
 
 type AuthProviderProps = {
@@ -783,18 +838,56 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, [])
 
   const adminListUsers = useCallback(async () => {
+    const currentUser = auth.currentUser
+    if (!currentUser) {
+      return []
+    }
+
     try {
       const snapshot = await getDocs(collection(db, "users"))
-      return snapshot.docs.map((docSnap) => {
-        const data = docSnap.data() as FirebaseUserDocument
-        return {
-          email: data.email ?? docSnap.id,
-          createdAt: data.createdAt ?? null,
-          status: (data.status ?? "actif") as AccountStatus,
-          deletionPlannedAt: data.deletionPlannedAt ?? null,
-        }
-      })
+      return sortAdminUsers(snapshot.docs.map((docSnap) => mapAdminUserRecord(docSnap.id, docSnap.data())))
     } catch (error) {
+      if (error instanceof FirebaseError) {
+        console.warn("Admin users Firestore load failed, fallback to API", {
+          code: error.code,
+          message: error.message,
+        })
+      } else {
+        console.warn("Admin users Firestore load failed, fallback to API", error)
+      }
+    }
+
+    try {
+      const token = await currentUser.getIdToken()
+      const response = await fetch(buildApiUrl("/api/admin/users"), {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (!response.ok) {
+        let reason = `status ${response.status}`
+        try {
+          const payload = (await response.json()) as { error?: string }
+          if (payload?.error) {
+            reason = payload.error
+          }
+        } catch {
+          // ignore malformed response bodies
+        }
+        throw new Error(reason)
+      }
+
+      const payload = (await response.json().catch(() => ({}))) as { users?: AdminUserRecord[] }
+      return Array.isArray(payload?.users) ? sortAdminUsers(payload.users) : []
+    } catch (error) {
+      if (error instanceof TypeError) {
+        console.error("Admin users load network error", {
+          target: getApiTargetLabel(),
+        })
+        return []
+      }
       console.error("Admin users load failed", error)
       return []
     }
@@ -804,29 +897,57 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     if (!email) {
       return { success: false, error: "E-mail requis pour mettre à jour le statut." }
     }
+
+    const currentUser = auth.currentUser
+    if (!currentUser) {
+      return { success: false, error: "Tu dois etre connecte pour effectuer cette action." }
+    }
+
     try {
-      const targetDoc = await loadAdminUserByEmail(email)
-      if (!targetDoc) {
-        return { success: false, error: "Utilisateur introuvable." }
+      const token = await currentUser.getIdToken()
+      const response = await fetch(buildApiUrl("/api/admin/users/status"), {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: normalizeEmail(email),
+          status,
+        }),
+      })
+
+      if (!response.ok) {
+        let reason = `status ${response.status}`
+        try {
+          const payload = (await response.json()) as { error?: string }
+          if (payload?.error) {
+            reason = payload.error
+          }
+        } catch {
+          // ignore malformed response bodies
+        }
+        return { success: false, error: reason }
       }
-      const updates: Partial<FirebaseUserDocument> = {
-        status,
-        updatedAt: nowIso(),
-      }
-      if (status === "actif") {
-        updates.deletionPlannedAt = null
-      }
-      await updateDoc(targetDoc.ref, updates)
-      if (auth.currentUser?.uid === targetDoc.id && status === "desactive") {
+
+      if (normalizeEmail(currentUser.email ?? "") === normalizeEmail(email) && status === "desactive") {
         await signOut(auth)
       }
+
       return { success: true }
     } catch (error) {
+      if (error instanceof TypeError) {
+        console.error("Admin status update network error", {
+          email,
+          status,
+          target: getApiTargetLabel(),
+        })
+        return { success: false, error: `Serveur admin inaccessible (${getApiTargetLabel()}).` }
+      }
       console.error("Admin status update failed", error)
       return { success: false, error: "Mise à jour impossible." }
     }
   }, [])
-
   const adminDeleteUser = useCallback(async (email: string): Promise<AccountActionResult> => {
     if (!email) {
       return { success: false, error: "E-mail requis pour supprimer le compte." }
