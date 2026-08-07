@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { eveningRoutine as defaultEveningRoutine, morningRoutine as defaultMorningRoutine } from "../data/sampleData"
 import { useAuth } from "../context/AuthContext"
-import type { RoutineRecord } from "../types/personalization"
+import type { RoutineRecord, RoutineSettings } from "../types/personalization"
 import { createClientId } from "../utils/clientId"
 import { formatLocalISODate } from "../utils/weekKey"
-import { deleteRoutineItem, saveRoutineItem, subscribeToRoutineItems } from "../services/firestore/routine"
+import { deleteRoutineItem, getRoutineSettings, saveRoutineItem, saveRoutineSettings, subscribeToRoutineItems } from "../services/firestore/routine"
 
 const ROUTINE_LOAD_ERROR = "Impossible de charger tes routines."
 const ROUTINE_MUTATION_ERROR = "Impossible de mettre à jour tes routines."
@@ -46,10 +46,12 @@ const seededDefaults: RoutineRecord[] = [
 const useUserRoutine = () => {
   const { isAuthReady, userId } = useAuth()
   const [items, setItems] = useState<RoutineRecord[]>([])
+  const [settings, setSettings] = useState<RoutineSettings | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [todayKey, setTodayKey] = useState(getTodayKey)
   const seedAttemptRef = useRef(false)
+  const settingsBackfillAttemptRef = useRef(false)
   const migrationAttemptRef = useRef(false)
 
   useEffect(() => {
@@ -80,49 +82,98 @@ const useUserRoutine = () => {
 
     if (!userId) {
       setItems([])
+      setSettings(null)
       setError(null)
       setIsLoading(false)
       seedAttemptRef.current = false
+      settingsBackfillAttemptRef.current = false
       migrationAttemptRef.current = false
       return
     }
 
     setItems([])
+    setSettings(null)
     setError(null)
     setIsLoading(true)
     seedAttemptRef.current = false
+    settingsBackfillAttemptRef.current = false
     migrationAttemptRef.current = false
 
-    return subscribeToRoutineItems(
+    let itemsLoaded = false
+    let settingsLoaded = false
+    const syncLoadingState = () => setIsLoading(!(itemsLoaded && settingsLoaded))
+
+    const unsubscribeItems = subscribeToRoutineItems(
       userId,
       (nextItems) => {
+        itemsLoaded = true
         setItems(nextItems)
         setError(null)
-        setIsLoading(false)
+        syncLoadingState()
       },
       (loadError) => {
         console.error("Routine load failed", loadError)
+        itemsLoaded = true
         setItems([])
         setError(ROUTINE_LOAD_ERROR)
-        setIsLoading(false)
+        syncLoadingState()
       },
     )
+
+    void getRoutineSettings(userId)
+      .then((nextSettings) => {
+        settingsLoaded = true
+        setSettings(nextSettings)
+        syncLoadingState()
+      })
+      .catch((loadError) => {
+        console.error("Routine settings load failed", loadError)
+        settingsLoaded = true
+        setSettings(null)
+        setError(ROUTINE_LOAD_ERROR)
+        syncLoadingState()
+      })
+
+    return unsubscribeItems
   }, [isAuthReady, userId])
 
   useEffect(() => {
-    if (!userId || isLoading || seedAttemptRef.current || items.length > 0) {
+    if (!userId || isLoading || settings || settingsBackfillAttemptRef.current || items.length === 0) {
+      return
+    }
+
+    settingsBackfillAttemptRef.current = true
+    void (async () => {
+      try {
+        const nextSettings = { seededAt: Date.now() }
+        await saveRoutineSettings(userId, nextSettings)
+        setSettings(nextSettings)
+      } catch (backfillError) {
+        console.error("Routine settings backfill failed", backfillError)
+        setError(ROUTINE_MUTATION_ERROR)
+      }
+    })()
+  }, [isLoading, items.length, settings, userId])
+
+  useEffect(() => {
+    if (!userId || isLoading || settings || seedAttemptRef.current || items.length > 0) {
       return
     }
     seedAttemptRef.current = true
     void (async () => {
       try {
-        await Promise.all(seededDefaults.map((item) => saveRoutineItem(userId, item)))
+        const nextSettings = { seededAt: Date.now() }
+        await Promise.all([
+          ...seededDefaults.map((item) => saveRoutineItem(userId, item)),
+          saveRoutineSettings(userId, nextSettings),
+        ])
+        setSettings(nextSettings)
       } catch (seedError) {
         console.error("Routine seed failed", seedError)
         setError(ROUTINE_MUTATION_ERROR)
       }
     })()
-  }, [isLoading, items.length, userId])
+  }, [isLoading, items.length, settings, userId])
 
   useEffect(() => {
     if (!userId || isLoading || migrationAttemptRef.current || items.length === 0) {

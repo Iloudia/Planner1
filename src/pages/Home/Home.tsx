@@ -1149,9 +1149,6 @@ function HomePage() {
             )}
           </div>
         </div>
-        <div className="aside-left-photo">
-          <img src={citationImage} alt="Illustration" loading="lazy" decoding="async" />
-        </div>
       </aside>
 
       <section className="home-moodboard">

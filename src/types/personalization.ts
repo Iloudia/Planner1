@@ -255,6 +255,10 @@ export type RoutineRecord = {
   updatedAt?: number
 }
 
+export type RoutineSettings = {
+  seededAt: number
+}
+
 export type DailyGoalsTrackerRecord = {
   weekKey: string
   rows: string[]

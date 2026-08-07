@@ -44,15 +44,15 @@ export const products: BoutiqueProduct[] = []
 
 export const benefits = [
   {
-    title: "Gain de temps immédiat",
-    text: "Tu personnalises, tu publies, tu vends.",
+    title: "Des ressources pour tous tes projets",
+    text: "Retrouve des ebooks, templates Canva, vision boards, signatures, carrousels Instagram et bien d'autres outils prêts à l'emploi.",
   },
   {
-    title: "Designs premium",
-    text: "Une esthétique élégante et moderne pour renforcer ta crédibilité.",
+    title: "Qualité & simplicité",
+    text: "Chaque ressource est créée avec soin pour être facile à utiliser, esthétique et vraiment utile au quotidien.",
   },
   {
-    title: "Accès à vie",
-    text: "Tu télécharges et tu utilises quand tu veux, où tu veux.",
+    title: "Téléchargement instantané",
+    text: "Achète, télécharge et profite de tes ressources immédiatement. Accès à vie, où et quand tu veux.",
   },
 ]

@@ -206,9 +206,9 @@ const BoutiquePage = () => {
         <div className="boutique-hero__media" style={{ backgroundImage: `url(${boutiqueHeroBackdrop})` }}>
           <div className="boutique-hero__content">
             <span className="boutique-eyebrow">Boutique</span>
-            <h1 id="boutique-hero-title">Je t’aide à créer du contenu, t’organiser et vendre plus simplement.</h1>
+            <h1 id="boutique-hero-title">Des ressources digitales pour t'aider à t'organiser, gagner en confiance et faire grandir tes projets.</h1>
             <p className="boutique-hero__subtitle">
-              Ebooks, templates Canva, carrousels Instagram… tout est là pour t’aider à passer à l’action.
+              Ebooks, templates Canva, carrousels Instagram, vision boards et bien plus.
             </p>
             <div className="boutique-hero__actions">
               <a className="boutique-button boutique-button--primary" href="#produits">
@@ -354,7 +354,7 @@ const BoutiquePage = () => {
       <section className="boutique-section reveal" id="promesse" aria-labelledby="boutique-benefits-title">
         <div className="boutique-section__header">
           <span className="boutique-eyebrow">Promesse</span>
-          <h2 id="boutique-benefits-title">Une boutique qui vend pendant que tu crées.</h2>
+          <h2 id="boutique-benefits-title">Une boutique digitale pensée pour t'aider à avancer.</h2>
         </div>
         <div className="boutique-benefits">
           {benefits.map((benefit) => (

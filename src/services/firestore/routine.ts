@@ -1,5 +1,6 @@
 import {
   deleteDoc,
+  getDoc,
   onSnapshot,
   orderBy,
   query,
@@ -9,13 +10,17 @@ import {
   type FirestoreError,
   type Unsubscribe,
 } from "firebase/firestore"
-import type { RoutineRecord } from "../../types/personalization"
-import { routineItemDocRef, routineItemsCollectionRef } from "./userPaths"
+import type { RoutineRecord, RoutineSettings } from "../../types/personalization"
+import { routineItemDocRef, routineItemsCollectionRef, userDocRef } from "./userPaths"
 import { toMillis } from "./shared"
 
 type RoutineDoc = Omit<RoutineRecord, "id" | "createdAt" | "updatedAt"> & {
   createdAt?: Timestamp | null
   updatedAt?: Timestamp | null
+}
+
+type RoutineSettingsDoc = {
+  routineDefaultsInitializedAt?: Timestamp | null
 }
 
 export const subscribeToRoutineItems = (
@@ -67,4 +72,30 @@ export const saveRoutineItem = async (userId: string, item: RoutineRecord) => {
 
 export const deleteRoutineItem = async (userId: string, itemId: string) => {
   await deleteDoc(routineItemDocRef(userId, itemId))
+}
+
+export const getRoutineSettings = async (userId: string): Promise<RoutineSettings | null> => {
+  const snapshot = await getDoc(userDocRef(userId))
+  if (!snapshot.exists()) {
+    return null
+  }
+
+  const data = snapshot.data() as RoutineSettingsDoc
+  const seededAt = toMillis(data.routineDefaultsInitializedAt)
+  if (!seededAt) {
+    return null
+  }
+
+  return { seededAt }
+}
+
+export const saveRoutineSettings = async (userId: string, settings: RoutineSettings) => {
+  await setDoc(
+    userDocRef(userId),
+    {
+      routineDefaultsInitializedAt: Timestamp.fromMillis(settings.seededAt),
+      updatedAt: serverTimestamp(),
+    },
+    { merge: true },
+  )
 }
