@@ -378,7 +378,7 @@ const JournalingPage = () => {
         <header className="journaling-section__header">
           <div>
             <h2>Zone d'écriture libre</h2>
-            <p>Écris sans filtre. Tu es libre de t’arrêter quand tu veux.</p>
+            <p>Écris sans filtre, tu es libre de t’arrêter quand tu veux.</p>
           </div>
         </header>
         <textarea

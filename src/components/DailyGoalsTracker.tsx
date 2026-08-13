@@ -469,7 +469,7 @@ const DailyGoalsTracker = ({ onLoadingStateChange }: DailyGoalsTrackerProps) => 
           </div>
         </div>
         {habitRows.map((rowLabel, rowIndex) => (
-          <div key={`${rowLabel}-${rowIndex}`} className="sport-habits__row" role="row">
+          <div key={rowIndex} className="sport-habits__row" role="row">
             <div className="sport-habits__cell sport-habits__cell--label" role="rowheader">
               {isEditingHabits ? (
                 <div className="sport-habits__label-editor">
