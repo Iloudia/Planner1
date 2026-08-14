@@ -48,6 +48,7 @@ const BoutiqueProductPage = lazy(() => import("./pages/Boutique/BoutiqueProduct"
 const ThankYouPage = lazy(() => import("./pages/Boutique/ThankYouPage"))
 const CartPage = lazy(() => import("./pages/Cart/CartPage"))
 const PurchasesPage = lazy(() => import("./pages/Purchases/PurchasesPage"))
+const ProjectPage = lazy(() => import("./pages/Project/ProjectPage"))
 
 function NotFound() {
   return (
@@ -176,6 +177,7 @@ function App() {
               <Route path="/profil" element={<ProfilePage />} />
               <Route path="/archives" element={<ArchivesPage />} />
               <Route path="/mes-achats" element={<PurchasesPage />} />
+              <Route path="/project" element={<ProjectPage />} />
               <Route path="/parametres" element={<SettingsLayout />}>
                 <Route index element={<SettingsAccount />} />
                 <Route path="affichage" element={<SettingsDisplay />} />

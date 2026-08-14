@@ -62,6 +62,7 @@ const cards: CardItem[] = [
   { image: planner07, alt: "Finances", kicker: "Budget", title: "Finances", path: "/finances" },
   { image: planner08, alt: "Routine", kicker: "Rythme", title: "Routine", path: "/routine" },
   { image: planner09, alt: "Courses & menus", kicker: "Saveurs", title: "Menu de la semaine", path: "/menu" },
+  { image: planner06, alt: "Projet", kicker: "Organisation", title: "Projet", path: "/project" },
 ]
 
 const CARD_PATHS = cards.map((card) => card.path)
