@@ -1,4 +1,5 @@
-import { useMemo, useState, type ChangeEvent, type FormEvent } from "react"
+import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react"
+import { Link } from "react-router-dom"
 import usePersistentState from "../../hooks/usePersistentState"
 import PageHeading from "../../components/PageHeading"
 import projectMoodboard from "../../assets/Moodboardsite.png"
@@ -72,11 +73,25 @@ const ProjectPage = () => {
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false)
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false)
   const [isResourceModalOpen, setIsResourceModalOpen] = useState(false)
+  const [editingResourceId, setEditingResourceId] = useState<string | null>(null)
+  const [openResourceMenuId, setOpenResourceMenuId] = useState<string | null>(null)
+  const [openAttachmentMenuId, setOpenAttachmentMenuId] = useState<string | null>(null)
   const [newProject, setNewProject] = useState({ title: "", status: "À commencer" as ProjectStatus, description: "", startDate: "", targetDate: "", priority: "Moyenne" as Priority, image: projectMoodboard })
   const [newTask, setNewTask] = useState({ title: "", status: "À faire" as TaskStatus, dueDate: "", priority: "Moyenne" as Priority })
   const [newResource, setNewResource] = useState({ title: "", url: "" })
   const [attachmentError, setAttachmentError] = useState("")
   const [previewAttachment, setPreviewAttachment] = useState<ProjectAttachment | null>(null)
+
+  useEffect(() => {
+    const handleOutsideMenu = (event: PointerEvent) => {
+      const target = event.target as HTMLElement | null
+      if (target?.closest(".profile-menu") || target?.closest(".account-menu__panel")) return
+      setOpenResourceMenuId(null)
+      setOpenAttachmentMenuId(null)
+    }
+    window.addEventListener("pointerdown", handleOutsideMenu)
+    return () => window.removeEventListener("pointerdown", handleOutsideMenu)
+  }, [])
 
   const activeProjects = projects.filter((project) => !project.archived)
   const archivedProjects = projects.filter((project) => project.archived)
@@ -86,6 +101,7 @@ const ProjectPage = () => {
     pending: activeProjects.filter((project) => project.status === "À commencer").length,
     completed: archivedProjects.length,
   }), [activeProjects, archivedProjects, projects.length])
+
 
   const updateSelectedProject = (update: (project: Project) => Project) => {
     if (!selectedProject) return
@@ -125,13 +141,21 @@ const ProjectPage = () => {
   const handleResourceSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!newResource.title.trim() || !newResource.url.trim()) return
-    updateSelectedProject((project) => ({ ...project, resources: [...project.resources, { id: createId(), title: newResource.title.trim(), url: newResource.url.trim() }] }))
+    updateSelectedProject((project) => ({ ...project, resources: editingResourceId ? project.resources.map((resource) => resource.id === editingResourceId ? { ...resource, title: newResource.title.trim(), url: newResource.url.trim() } : resource) : [...project.resources, { id: createId(), title: newResource.title.trim(), url: newResource.url.trim() }] }))
     setNewResource({ title: "", url: "" })
+    setEditingResourceId(null)
     setIsResourceModalOpen(false)
   }
 
   const deleteResource = (resourceId: string) => {
     updateSelectedProject((project) => ({ ...project, resources: (project.resources ?? []).filter((resource) => resource.id !== resourceId) }))
+  }
+
+  const handleEditResource = (resource: ProjectResource) => {
+    setNewResource({ title: resource.title, url: resource.url })
+    setEditingResourceId(resource.id)
+    setOpenResourceMenuId(null)
+    setIsResourceModalOpen(true)
   }
 
   const validateProject = () => {
@@ -169,6 +193,30 @@ const ProjectPage = () => {
     reader.readAsDataURL(file)
   }
 
+  const handleReplaceAttachment = (attachmentId: string, event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file || !selectedProject) return
+    if (file.size > 1_500_000) {
+      setAttachmentError("Le document est trop volumineux (1,5 Mo maximum).")
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = () => {
+      const fileUrl = reader.result
+      if (typeof fileUrl !== "string") return
+      updateSelectedProject((project) => ({ ...project, attachments: (project.attachments ?? []).map((attachment) => attachment.id === attachmentId ? { ...attachment, name: file.name, url: fileUrl } : attachment) }))
+      setAttachmentError("")
+      setOpenAttachmentMenuId(null)
+      event.target.value = ""
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const deleteAttachment = (attachmentId: string) => {
+    updateSelectedProject((project) => ({ ...project, attachments: (project.attachments ?? []).filter((attachment) => attachment.id !== attachmentId) }))
+    setOpenAttachmentMenuId(null)
+  }
+
   return (
     <div className="project-page">
       <PageHeading className="project-header" eyebrow="Projects" title="Mes projets" />
@@ -180,14 +228,12 @@ const ProjectPage = () => {
 
         <section className="project-section project-active" aria-labelledby="active-project-heading">
           <h2 id="active-project-heading">Projet en cours</h2>
-          {selectedProject ? <><article className="project-active__card"><header className="project-active__header"><h3>{selectedProject.title}</h3><span className={`project-status ${statusClassName(selectedProject.status)}`}>{selectedProject.status}</span></header><div className="project-active__details"><dl className="project-active__meta"><div><dt>Date de début</dt><dd>{formatDate(selectedProject.startDate)}</dd></div><div><dt>Date objectif</dt><dd>{formatDate(selectedProject.targetDate)}</dd></div><div><dt>Priorité</dt><dd><span className={`project-priority ${priorityClassName(selectedProject.priority)}`}>{selectedProject.priority}</span></dd></div></dl><div className="project-active__description"><h4>Description</h4><p>{selectedProject.description || "Aucune description renseignée."}</p></div></div><div className="project-active__progress"><span>Avancement global</span><div className="project-progress"><i style={{ width: `${projectProgress(selectedProject)}%` }} /></div><strong>{projectProgress(selectedProject)}%</strong></div></article>
-          <div className="project-tasks"><h3>Tâches</h3><div className="project-tasks__table" role="table"><div className="project-tasks__row project-tasks__row--head" role="row"><span>Tâche</span><span>Statut</span><span>Échéance</span><span>Priorité</span></div>{selectedProject.tasks.map((task) => <div className="project-tasks__row" role="row" key={task.id}><span>{task.title}</span><button type="button" className={task.status === "Terminée" ? "is-complete" : task.status === "En cours" ? "is-current" : ""} onClick={() => updateSelectedProject((project) => ({ ...project, tasks: project.tasks.map((item) => item.id === task.id ? { ...item, status: item.status === "Terminée" ? "À faire" : "Terminée" } : item) }))}>{task.status === "Terminée" ? "✓ " : "○ "}{task.status}</button><span>{formatDate(task.dueDate)}</span><span><b className={`project-priority ${priorityClassName(task.priority)}`}>{task.priority}</b></span></div>)}<button type="button" className="project-add-task" onClick={() => setIsTaskModalOpen(true)}>+ Ajouter une tâche</button></div></div><div className="project-active__support"><section className="project-section" aria-labelledby="notes-heading"><h2 id="notes-heading">Notes &amp; idées</h2><textarea className="project-notes__input" value={selectedProject.notes ?? ""} onChange={(event) => updateSelectedProject((project) => ({ ...project, notes: event.target.value }))} placeholder="Écris tes notes et idées ici…" aria-label="Notes et idées" /></section><section className="project-section" aria-labelledby="resources-heading"><h2 id="resources-heading">Ressources &amp; liens</h2><ul className="project-links project-links--trello">{(selectedProject.resources ?? []).map((resource) => <li key={resource.id}><img src={faviconUrl(resource.url)} alt="" /><a href={resource.url} target="_blank" rel="noreferrer">{resource.title}</a><button type="button" aria-label={`Supprimer ${resource.title}`} onClick={() => deleteResource(resource.id)}>•••</button></li>)}</ul><button type="button" className="project-add-task" onClick={() => setIsResourceModalOpen(true)}>+ Ajouter un lien</button></section><section className="project-section" aria-labelledby="attachments-heading"><h2 id="attachments-heading">Pièces jointes</h2><ul className="project-links project-attachments">{(selectedProject.attachments ?? []).map((attachment) => <li key={attachment.id}><button type="button" onClick={() => setPreviewAttachment(attachment)}>{attachment.name}</button></li>)}</ul><label className="project-attachment__add">+ Ajouter un document<input type="file" onChange={handleAttachment} /></label>{attachmentError ? <p className="project-attachment__error">{attachmentError}</p> : null}</section></div><div className="project-active__actions"><button type="button" onClick={validateProject} disabled={selectedProject.status === "Terminé"}>Valider le projet</button><button type="button" onClick={deleteProject}>Supprimer</button></div></> : <p className="project-empty-state">Ajoute un projet pour commencer.</p>}
+          {selectedProject ? <><article className="project-active__card"><header className="project-active__header"><img src={selectedProject.image} alt="" /><div className="project-active__intro"><h3>{selectedProject.title}</h3><p>{selectedProject.description || "Aucune description renseignée."}</p></div><span className={`project-status ${statusClassName(selectedProject.status)}`}>{selectedProject.status}</span></header><dl className="project-active__meta"><div><dt><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4m8-4v4" /></svg>Date de début</dt><dd>{formatDate(selectedProject.startDate)}</dd></div><div><dt><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="4" /><path d="m14.5 9.5 5-5M16 4.5h3.5V8" /></svg>Date objectif</dt><dd>{formatDate(selectedProject.targetDate)}</dd></div><div><dt><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.78 5.64 6.22.9-4.5 4.39 1.06 6.2L12 17.2l-5.56 2.93 1.06-6.2L3 9.54l6.22-.9L12 3Z" /></svg>Priorité</dt><dd><span className={`project-priority ${priorityClassName(selectedProject.priority)}`}>{selectedProject.priority}</span></dd></div><div><dt><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" /></svg>Statut</dt><dd><span className={`project-status ${statusClassName(selectedProject.status)}`}>{selectedProject.status}</span></dd></div></dl><div className="project-active__progress"><div><span>Avancement global</span><strong>{projectProgress(selectedProject)}%</strong></div><div className="project-progress"><i style={{ width: `${projectProgress(selectedProject)}%` }} /></div></div></article><section className="project-section" aria-labelledby="timeline-heading"><h2 id="timeline-heading">Timeline</h2><ol className="project-timeline">{selectedProject.tasks.length ? selectedProject.tasks.map((task) => <li className={task.status === "Terminée" ? "is-complete" : task.status === "En cours" ? "is-active" : ""} key={task.id}><time>{formatDate(task.dueDate)}</time><span>{task.title}</span></li>) : <li><span>Aucune tâche à afficher.</span></li>}</ol></section>
+          <div className="project-tasks"><div className="project-tasks__table" role="table"><div className="project-tasks__row project-tasks__row--head" role="row"><span>Tâches principales</span><span>Statut</span><span>Échéance</span><span>Priorité</span></div>{selectedProject.tasks.map((task) => <div className={`project-tasks__row${task.status === "Terminée" ? " is-complete" : ""}`} role="row" key={task.id}><div className="project-task__title"><button type="button" className="project-task__check" aria-label={`${task.status === "Terminée" ? "Marquer comme à faire" : "Marquer comme terminée"} : ${task.title}`} aria-pressed={task.status === "Terminée"} onClick={() => updateSelectedProject((project) => ({ ...project, tasks: project.tasks.map((item) => item.id === task.id ? { ...item, status: item.status === "Terminée" ? "À faire" : "Terminée" } : item) }))}>{task.status === "Terminée" ? "✓" : null}</button><span>{task.title}</span></div><span className={task.status === "Terminée" ? "is-complete" : task.status === "En cours" ? "is-current" : ""}>{task.status === "Terminée" ? "✓ " : task.status === "En cours" ? "○ " : "○ "}{task.status}</span><span>{formatDate(task.dueDate)}</span><span><b className={`project-priority ${priorityClassName(task.priority)}`}>{task.priority}</b></span></div>)}<button type="button" className="project-add-task" onClick={() => setIsTaskModalOpen(true)}>+ Ajouter une tâche</button></div></div><div className="project-active__support"><section className="project-section" aria-labelledby="notes-heading"><h2 id="notes-heading">Notes &amp; idées</h2><textarea className="project-notes__input" value={selectedProject.notes ?? ""} onChange={(event) => updateSelectedProject((project) => ({ ...project, notes: event.target.value }))} placeholder="Écris tes notes et idées ici…" aria-label="Notes et idées" /></section><section className="project-section" aria-labelledby="resources-heading"><h2 id="resources-heading">Ressources &amp; liens</h2><ul className="project-links project-links--trello">{(selectedProject.resources ?? []).map((resource) => <li key={resource.id}><img src={faviconUrl(resource.url)} alt="" /><a href={resource.url} target="_blank" rel="noreferrer">{resource.title}</a><div className="account-menu"><button type="button" className="profile-menu" aria-label={`Options pour ${resource.title}`} aria-expanded={openResourceMenuId === resource.id} onClick={() => setOpenResourceMenuId((current) => current === resource.id ? null : resource.id)}><span aria-hidden="true">...</span></button>{openResourceMenuId === resource.id ? <div className="account-menu__panel" role="menu"><button type="button" className="account-menu__item" onClick={() => handleEditResource(resource)}>Modifier</button><button type="button" className="account-menu__item account-menu__item--danger" onClick={() => { deleteResource(resource.id); setOpenResourceMenuId(null) }}>Supprimer</button></div> : null}</div></li>)}</ul><button type="button" className="project-add-task" onClick={() => { setEditingResourceId(null); setNewResource({ title: "", url: "" }); setIsResourceModalOpen(true) }}>+ Ajouter un lien</button></section><section className="project-section" aria-labelledby="attachments-heading"><h2 id="attachments-heading">Pièces jointes</h2><ul className="project-links project-attachments">{(selectedProject.attachments ?? []).map((attachment) => <li key={attachment.id}><button type="button" onClick={() => setPreviewAttachment(attachment)}>{attachment.name}</button><div className="account-menu"><button type="button" className="profile-menu" aria-label={`Options pour ${attachment.name}`} aria-expanded={openAttachmentMenuId === attachment.id} onClick={() => setOpenAttachmentMenuId((current) => current === attachment.id ? null : attachment.id)}><span aria-hidden="true">...</span></button>{openAttachmentMenuId === attachment.id ? <div className="account-menu__panel" role="menu"><label className="account-menu__item"><input type="file" onChange={(event) => handleReplaceAttachment(attachment.id, event)} />Modifier</label><button type="button" className="account-menu__item account-menu__item--danger" onClick={() => deleteAttachment(attachment.id)}>Supprimer</button></div> : null}</div></li>)}</ul><label className="project-attachment__add">+ Ajouter un document<input type="file" onChange={handleAttachment} /></label>{attachmentError ? <p className="project-attachment__error">{attachmentError}</p> : null}</section></div><div className="project-active__actions"><button type="button" onClick={validateProject} disabled={selectedProject.status === "Terminé"}>Valider le projet</button><button type="button" onClick={deleteProject}>Supprimer</button></div></> : <p className="project-empty-state">Ajoute un projet pour commencer.</p>}
         </section>
       </div>
 
-      <div className="project-bottom-grid"><section className="project-section" aria-labelledby="timeline-heading"><h2 id="timeline-heading">Timeline</h2><ol className="project-timeline">{selectedProject?.tasks.length ? selectedProject.tasks.map((task) => <li className={task.status === "Terminée" ? "is-complete" : task.status === "En cours" ? "is-active" : ""} key={task.id}><time>{formatDate(task.dueDate)}</time><span>{task.title}</span></li>) : <li><span>Aucune tâche à afficher.</span></li>}</ol></section></div>
-
-      {archivedProjects.length ? <details className="project-archive"><summary>Archives <span>{archivedProjects.length}</span></summary><div className="project-archive__list">{archivedProjects.map((project) => <article key={project.id}><div><h2>{project.title}</h2><p>Projet terminé</p></div><button type="button" onClick={() => restoreProject(project.id)}>Restaurer</button></article>)}</div></details> : null}
+      <Link to="/project/archives" className="project-archive-link">Archivés <span>{archivedProjects.length}</span></Link>
 
       {isProjectModalOpen ? <div className="project-modal" role="dialog" aria-modal="true" aria-labelledby="project-modal-title"><div className="project-modal__backdrop" onClick={() => setIsProjectModalOpen(false)} /><form className="project-modal__panel" onSubmit={handleProjectSubmit}><div className="project-modal__header"><h2 id="project-modal-title">Nouveau projet</h2><button type="button" aria-label="Fermer" onClick={() => setIsProjectModalOpen(false)}>×</button></div><label>Titre<input value={newProject.title} onChange={(event) => setNewProject({ ...newProject, title: event.target.value })} required autoFocus /></label><label>Description<textarea value={newProject.description} onChange={(event) => setNewProject({ ...newProject, description: event.target.value })} /></label><div className="project-modal__fields"><label>Date de début<input type="date" value={newProject.startDate} onChange={(event) => setNewProject({ ...newProject, startDate: event.target.value })} /></label><label>Date objectif<input type="date" value={newProject.targetDate} onChange={(event) => setNewProject({ ...newProject, targetDate: event.target.value })} /></label></div><div className="project-modal__fields"><label>Statut<select value={newProject.status} onChange={(event) => setNewProject({ ...newProject, status: event.target.value as ProjectStatus })}><option>À commencer</option><option>En cours</option><option>Terminé</option></select></label><label>Priorité<select value={newProject.priority} onChange={(event) => setNewProject({ ...newProject, priority: event.target.value as Priority })}><option>Basse</option><option>Moyenne</option><option>Haute</option></select></label></div><label>Image<input type="file" accept="image/*" onChange={handleProjectImage} /></label><div className="project-modal__actions"><button type="button" onClick={() => setIsProjectModalOpen(false)}>Annuler</button><button type="submit">Ajouter</button></div></form></div> : null}
       {isTaskModalOpen ? <div className="project-modal" role="dialog" aria-modal="true" aria-labelledby="task-modal-title"><div className="project-modal__backdrop" onClick={() => setIsTaskModalOpen(false)} /><form className="project-modal__panel" onSubmit={handleTaskSubmit}><div className="project-modal__header"><h2 id="task-modal-title">Ajouter une tâche</h2><button type="button" aria-label="Fermer" onClick={() => setIsTaskModalOpen(false)}>×</button></div><label>Tâche<input value={newTask.title} onChange={(event) => setNewTask({ ...newTask, title: event.target.value })} required autoFocus /></label><div className="project-modal__fields"><label>Échéance<input type="date" value={newTask.dueDate} onChange={(event) => setNewTask({ ...newTask, dueDate: event.target.value })} /></label><label>Priorité<select value={newTask.priority} onChange={(event) => setNewTask({ ...newTask, priority: event.target.value as Priority })}><option>Basse</option><option>Moyenne</option><option>Haute</option></select></label></div><label>Statut<select value={newTask.status} onChange={(event) => setNewTask({ ...newTask, status: event.target.value as TaskStatus })}><option>À faire</option><option>En cours</option><option>Terminée</option></select></label><div className="project-modal__actions"><button type="button" onClick={() => setIsTaskModalOpen(false)}>Annuler</button><button type="submit">Ajouter</button></div></form></div> : null}
