@@ -45,7 +45,6 @@
 .project-archive__list p { margin: 0.38rem 0 0; color: var(--project-ink-soft); font-size: 0.78rem; }
 .project-archive button { flex: 0 0 auto; border: 1px solid #725c3f; border-radius: 0; background: #725c3f; color: #ffffff; padding: 0.58rem 0.75rem; font: inherit; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; }
 .project-archive button:hover { background: #5f4d35; border-color: #5f4d35; }
-.project-archive-link { display:inline-flex; align-items:center; justify-content:center; gap:.55rem; align-self:flex-end; border:1px solid var(--project-line); background:#ffffff; color:var(--project-ink); padding:.62rem .9rem; font-size:.7rem; font-weight:700; letter-spacing:.08em; text-decoration:none; text-transform:uppercase; }.project-archive-link span { display:inline-grid; min-width:22px; height:22px; place-items:center; background:var(--project-muted); color:var(--project-ink-soft); font-size:.68rem; }
 
 .project-list-card { display: grid; grid-template-columns: 72px minmax(0, 1fr) auto; align-items: center; gap: 0.75rem; padding: 0.55rem; border: 1px solid var(--project-line); background: #ffffff; }
 .project-list-card { cursor: pointer; }

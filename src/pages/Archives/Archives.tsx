@@ -1,4 +1,5 @@
 ﻿import { useEffect, useMemo, useRef, useState } from "react"
+import { Link } from "react-router-dom"
 import PageHeading from "../../components/PageHeading"
 import { useAuth } from "../../context/AuthContext"
 import useUserJournalEntries from "../../hooks/useUserJournalEntries"
@@ -35,12 +36,6 @@ type ArchiveEntry = {
 }
 
 const weekDays = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"]
-const SECTION_OPTIONS: Array<{ value: "all" | "journaling" | "self-love"; label: string }> = [
-  { value: "all", label: "Toutes les sections" },
-  { value: "journaling", label: "Journaling" },
-  { value: "self-love", label: "Self Love" },
-]
-
 const moodLabels: Record<string, string> = {
   bright: "Heureuse",
   good: "Calme",
@@ -192,7 +187,13 @@ const getSelfLoveExcerpt = (letter: SelfLoveSavedLetter) => {
   return letter.body
 }
 
-const ArchivesPage = () => {
+type ArchiveSection = "journaling" | "self-love"
+
+type ArchivesPageProps = {
+  section: ArchiveSection
+}
+
+const ArchivesPage = ({ section }: ArchivesPageProps) => {
   const { isAuthReady } = useAuth()
   const {
     entries: journalEntries,
@@ -206,15 +207,12 @@ const ArchivesPage = () => {
     error: selfLoveError,
     deleteArchiveEntry,
   } = useUserSelfLove()
-  const [sectionFilter, setSectionFilter] = useState<"all" | "journaling" | "self-love">("all")
   const [selectedYear, setSelectedYear] = useState<string | null>(null)
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null)
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest")
   const [selectedEntry, setSelectedEntry] = useState<ArchiveEntry | null>(null)
-  const [isSectionMenuOpen, setIsSectionMenuOpen] = useState(false)
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false)
-  const sectionMenuRef = useRef<HTMLDivElement | null>(null)
   const sortMenuRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -229,7 +227,7 @@ const ArchivesPage = () => {
       .filter((entry) => entry.date)
       .map((entry) => {
         const title = entry.keyword ? `Mot-clé : ${entry.keyword}` : entry.question ? "Question guidée" : "Journal"
-        const excerpt = entry.content || entry.questionAnswer || entry.positiveAnchor || ""
+        const excerpt = entry.content || entry.questionAnswer || entry.gratitudeItems?.find(Boolean) || entry.positiveAnchor || ""
         const createdAt = entry.createdAt ?? getTimestampFromDateKey(entry.date)
         const tags = ["Journaling"]
         if (entry.keyword) {
@@ -256,6 +254,27 @@ const ArchivesPage = () => {
         }
         if (entry.positiveAnchor) {
           details.push({ label: "Ancrage", value: entry.positiveAnchor })
+        }
+        if (entry.gratitudeItems?.some((item) => item.trim())) {
+          details.push({
+            label: "Gratitude",
+            value: entry.gratitudeItems
+              .map((item, index) => item.trim() ? `${index + 1}. ${item.trim()}` : "")
+              .filter(Boolean)
+              .join("\n"),
+          })
+        }
+        if (entry.victoryItems?.some((item) => item.trim())) {
+          details.push({
+            label: "Petites victoires",
+            value: entry.victoryItems
+              .map((item, index) => item.trim() ? `${index + 1}. ${item.trim()}` : "")
+              .filter(Boolean)
+              .join("\n"),
+          })
+        }
+        if (entry.tomorrowIntention?.trim()) {
+          details.push({ label: "Intention pour demain", value: entry.tomorrowIntention.trim() })
         }
         if (entry.postFeeling) {
           details.push({
@@ -348,14 +367,8 @@ const ArchivesPage = () => {
   }, [selfLoveFirestoreEntries])
 
   const filteredEntries = useMemo(() => {
-    const base =
-      sectionFilter === "all"
-        ? [...journalingArchiveEntries, ...selfLoveArchiveEntries]
-        : sectionFilter === "journaling"
-          ? journalingArchiveEntries
-          : selfLoveArchiveEntries
-    return base
-  }, [journalingArchiveEntries, selfLoveArchiveEntries, sectionFilter])
+    return section === "journaling" ? journalingArchiveEntries : selfLoveArchiveEntries
+  }, [journalingArchiveEntries, selfLoveArchiveEntries, section])
 
   const entriesByDate = useMemo(() => {
     const map = new Map<string, ArchiveEntry[]>()
@@ -480,7 +493,6 @@ const ArchivesPage = () => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setSelectedEntry(null)
-        setIsSectionMenuOpen(false)
         setIsSortMenuOpen(false)
       }
     }
@@ -489,26 +501,6 @@ const ArchivesPage = () => {
     }
     return () => document.removeEventListener("keydown", handleKeyDown)
   }, [selectedEntry])
-
-  useEffect(() => {
-    if (!isSectionMenuOpen) return
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node
-      if (sectionMenuRef.current?.contains(target)) return
-      setIsSectionMenuOpen(false)
-    }
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setIsSectionMenuOpen(false)
-      }
-    }
-    window.addEventListener("mousedown", handleClickOutside)
-    window.addEventListener("keydown", handleKeyDown)
-    return () => {
-      window.removeEventListener("mousedown", handleClickOutside)
-      window.removeEventListener("keydown", handleKeyDown)
-    }
-  }, [isSectionMenuOpen])
 
   useEffect(() => {
     if (!isSortMenuOpen) return
@@ -612,10 +604,22 @@ const ArchivesPage = () => {
       !detail.label.startsWith("Niveau"),
   )
   const selectedClosureDetails = selectedBodyDetails.filter(
-    (detail) => detail.label === "Ancrage" || detail.label === "Ancrage positif" || detail.label === "Comment te sens-tu maintenant ?",
+    (detail) =>
+      detail.label === "Ancrage" ||
+      detail.label === "Ancrage positif" ||
+      detail.label === "Comment te sens-tu maintenant ?" ||
+      detail.label === "Gratitude" ||
+      detail.label === "Petites victoires" ||
+      detail.label === "Intention pour demain",
   )
   const selectedFreeWritingDetails = selectedBodyDetails.filter(
-    (detail) => detail.label !== "Ancrage" && detail.label !== "Ancrage positif" && detail.label !== "Comment te sens-tu maintenant ?",
+    (detail) =>
+      detail.label !== "Ancrage" &&
+      detail.label !== "Ancrage positif" &&
+      detail.label !== "Comment te sens-tu maintenant ?" &&
+      detail.label !== "Gratitude" &&
+      detail.label !== "Petites victoires" &&
+      detail.label !== "Intention pour demain",
   )
   const selectedLetterLocked = selectedLetter ? isFutureLetterLocked(selectedLetter) : false
   const selectedLetterDate = selectedLetter
@@ -638,7 +642,11 @@ const ArchivesPage = () => {
         : "ARCHIVÉE"
     : ""
 
-  const isArchivesLoading = !isAuthReady || isJournalLoading || isSelfLoveLoading
+  const isArchivesLoading = !isAuthReady || (section === "journaling" ? isJournalLoading : isSelfLoveLoading)
+  const sectionTitle = section === "journaling" ? "Archives de journaling" : "Archives mindset"
+  const sectionIntro = section === "journaling" ? "Retrouve tes écrits et tes réflexions par date." : "Retrouve tes lettres et exercices enregistrés par date."
+  const sectionError = section === "journaling" ? journalError : selfLoveError
+  const emptyMessage = section === "journaling" ? "Aucun écrit de journaling pour le moment." : "Aucune archive mindset pour le moment."
 
   if (isArchivesLoading) {
     return (
@@ -652,63 +660,18 @@ const ArchivesPage = () => {
 
   return (
     <div className="archives-page aesthetic-page boutique-page">
-      <PageHeading eyebrow="Archives" title="Archives" />
+      <PageHeading eyebrow="Archives" title={sectionTitle} />
 
       <header className="archives-header">
         <div className="archives-intro">
-          <p>Retrouve tes écrits par date.</p>
+          <p>{sectionIntro}</p>
         </div>
-        <div className="archives-controls">
-          <label>
-            <span>Section</span>
-            <div className="workout-form__select" ref={sectionMenuRef}>
-              <button
-                type="button"
-                className="workout-form__select-trigger"
-                aria-haspopup="listbox"
-                aria-expanded={isSectionMenuOpen}
-                onClick={() => setIsSectionMenuOpen((prev) => !prev)}
-              >
-                <span>{SECTION_OPTIONS.find((option) => option.value === sectionFilter)?.label ?? sectionFilter}</span>
-                <svg className="workout-form__select-chevron" viewBox="0 0 20 20" aria-hidden="true">
-                  <path
-                    d="M5 7.5L10 12.5L15 7.5"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
-              {isSectionMenuOpen ? (
-                <div className="workout-form__select-menu" role="listbox">
-                  {SECTION_OPTIONS.map((option) => (
-                    <button
-                      key={option.value}
-                      type="button"
-                      role="option"
-                      aria-selected={sectionFilter === option.value}
-                      className={sectionFilter === option.value ? "is-selected" : undefined}
-                      onMouseDown={(event) => {
-                        event.preventDefault()
-                        setSectionFilter(option.value)
-                        setIsSectionMenuOpen(false)
-                      }}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
-              ) : null}
-            </div>
-          </label>
-        </div>
+        <Link to="/archives" className="archives-back-link">Choisir une autre catégorie</Link>
       </header>
-      {journalError ? <p className="archives-empty">{journalError}</p> : null}
-      {selfLoveError ? <p className="archives-empty">{selfLoveError}</p> : null}
+      {sectionError ? <p className="archives-empty">{sectionError}</p> : null}
 
       {archiveYears.length === 0 ? (
-        <p className="archives-empty">Aucun écrit pour le moment.</p>
+        <p className="archives-empty">{emptyMessage}</p>
       ) : (
         <div className="archives-layout">
           <div className={`archives-nav${isMonthFocused ? " archives-nav--month-focus" : ""}`}>

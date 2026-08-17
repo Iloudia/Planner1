@@ -10,7 +10,7 @@
   max-width: 100%;
   justify-self: start;
   align-self: start;
-  overflow-x: scroll;
+  overflow-x: hidden;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
 }
@@ -52,7 +52,7 @@
 
 .sport-habits__header {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 0.6rem;
@@ -82,7 +82,7 @@
   background: var(--color-caramel);
   padding: 0.4rem 0.85rem;
   border-radius: 0;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
 }
 
 .sport-habits__reward {
@@ -166,8 +166,10 @@
 
 .sport-habits__table {
   display: grid;
-  gap: 0.35rem;
   width: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(31, 27, 22, 0.18);
+  background: #ffffff;
 }
 
 .sport-habits__row {
@@ -175,9 +177,12 @@
   grid-template-columns: 1.2fr repeat(7, minmax(0, 1fr)) 0.6fr;
   align-items: stretch;
   gap: 0;
-  border: 1px solid rgba(31, 27, 22, 0.3);
-  overflow: hidden;
+  border-bottom: 1px solid rgba(31, 27, 22, 0.18);
   min-width: 640px;
+}
+
+.sport-habits__row:last-child {
+  border-bottom: 0;
 }
 
 @media (max-width: 900px) {
@@ -215,10 +220,114 @@
   }
 }
 
+@media (max-width: 871px) {
+  .sport-habits__table {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    overflow: visible;
+    border: 0;
+    background: transparent;
+  }
+
+  .sport-habits__row--head {
+    display: none;
+  }
+
+  .sport-habits__row {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.45rem;
+    min-width: 0;
+    padding: 0.9rem;
+    border: 1px solid rgba(31, 27, 22, 0.12);
+    border-radius: 1rem;
+    box-shadow: 0 5px 16px rgba(31, 27, 22, 0.06);
+    background: #ffffff;
+  }
+
+  .sport-habits__cell {
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  .sport-habits__cell--label {
+    grid-column: 1 / 6;
+    min-height: 2.35rem;
+    font-family: "Playfair Display", "Times New Roman", serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1f1b16;
+    background: transparent;
+  }
+
+  .sport-habits__cell--total {
+    grid-row: 1;
+    grid-column: 6 / -1;
+    justify-self: end;
+    align-self: center;
+    width: auto;
+    min-height: 2.35rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 0.7rem;
+    background: #faf6ee;
+    color: #1f1b16;
+  }
+
+  .sport-habits__cell--checkbox {
+    grid-row: 2;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    border: 1px solid rgba(177, 135, 83, 0.3);
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  .sport-habits__cell--checkbox input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .sport-habits__cell--checkbox::after {
+    color: #3f352b;
+    font-size: 0.8rem;
+    pointer-events: none;
+  }
+
+  .sport-habits__cell--checkbox:nth-child(2)::after { content: "Lun"; }
+  .sport-habits__cell--checkbox:nth-child(3)::after { content: "Mar"; }
+  .sport-habits__cell--checkbox:nth-child(4)::after { content: "Mer"; }
+  .sport-habits__cell--checkbox:nth-child(5)::after { content: "Jeu"; }
+  .sport-habits__cell--checkbox:nth-child(6)::after { content: "Ven"; }
+  .sport-habits__cell--checkbox:nth-child(7)::after { content: "Sam"; }
+  .sport-habits__cell--checkbox:nth-child(8)::after { content: "Dim"; }
+
+  .sport-habits__cell--checkbox:has(input:checked) {
+    border-color: #1f1b16;
+    background: #1f1b16;
+  }
+
+  .sport-habits__cell--checkbox:has(input:checked)::after {
+    color: #ffffff;
+  }
+
+  .sport-habits__cell--checkbox:has(input:focus-visible) {
+    outline: 2px solid #1f1b16;
+    outline-offset: 2px;
+  }
+}
+
 .sport-habits__row--head {
   font-weight: 700;
   color: #1f1b16;
-  background: linear-gradient(90deg, #fbf7f2 0%, #f0e8de 100%);
+  background: #faf8f5;
 }
 
 .sport-habits__cell {
@@ -227,12 +336,22 @@
   justify-content: center;
   padding: 0.42rem 0.55rem;
   text-align: center;
-  border-right: 1px solid rgba(31, 27, 22, 0.3);
+  border-right: 1px solid rgba(31, 27, 22, 0.18);
   background: #fff;
 }
 
+.sport-habits__cell:last-child {
+  border-right: 0;
+}
+
 .sport-habits__cell--head {
-  border-right: 1px solid rgba(31, 27, 22, 0.3);
+  background: #faf8f5;
+  padding-top: 0.68rem;
+  padding-bottom: 0.68rem;
+  color: #5b5249;
+  font-size: 0.64rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
 }
 
 .sport-habits__cell--label {
@@ -336,4 +455,70 @@
 
 .sport-habits__add-button:hover {
   transform: translateY(-1px);
+}
+
+@media (max-width: 871px) {
+  .sport-habits__row:not(.sport-habits__row--head):nth-of-type(odd) .sport-habits__cell {
+    background: transparent;
+  }
+
+  .sport-habits__table .sport-habits__row {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.45rem;
+    min-width: 0;
+    padding: 0.9rem;
+    border: 1px solid rgba(31, 27, 22, 0.12);
+    border-radius: 1rem;
+    box-shadow: 0 5px 16px rgba(31, 27, 22, 0.06);
+    background: #ffffff;
+  }
+
+  .sport-habits__table .sport-habits__cell {
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  .sport-habits__table .sport-habits__cell--label {
+    grid-column: 1 / 6;
+    min-height: 2.35rem;
+    font-family: "Playfair Display", "Times New Roman", serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1f1b16;
+  }
+
+  .sport-habits__table .sport-habits__cell--total {
+    grid-row: 1;
+    grid-column: 6 / -1;
+    justify-self: end;
+    align-self: center;
+    width: auto;
+    min-height: 2.35rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 0.7rem;
+    background: #faf6ee;
+    color: #1f1b16;
+  }
+
+  .sport-habits__table .sport-habits__cell--checkbox {
+    grid-row: 2;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    border: 1px solid rgba(177, 135, 83, 0.3);
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .sport-habits__table .sport-habits__cell--checkbox input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+  }
 }

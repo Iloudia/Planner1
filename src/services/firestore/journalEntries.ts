@@ -23,6 +23,9 @@ type JournalEntryRecord = {
   postFeeling?: JournalEntry["postFeeling"]
   positiveAnchor?: string
   positiveAnchorType?: JournalEntry["positiveAnchorType"]
+  gratitudeItems?: string[]
+  victoryItems?: string[]
+  tomorrowIntention?: string
   createdAt?: Timestamp | null
 }
 
@@ -38,6 +41,9 @@ const mapJournalEntry = (id: string, record: JournalEntryRecord): JournalEntry =
   postFeeling: record.postFeeling,
   positiveAnchor: record.positiveAnchor,
   positiveAnchorType: record.positiveAnchorType,
+  gratitudeItems: record.gratitudeItems,
+  victoryItems: record.victoryItems,
+  tomorrowIntention: record.tomorrowIntention,
   createdAt: record.createdAt instanceof Timestamp ? record.createdAt.toMillis() : undefined,
 })
 
@@ -68,6 +74,9 @@ export const createJournalEntry = async (userId: string, entry: JournalEntryInpu
     postFeeling: entry.postFeeling ?? null,
     positiveAnchor: entry.positiveAnchor ?? null,
     positiveAnchorType: entry.positiveAnchorType ?? null,
+    gratitudeItems: entry.gratitudeItems ?? [],
+    victoryItems: entry.victoryItems ?? [],
+    tomorrowIntention: entry.tomorrowIntention ?? null,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   })

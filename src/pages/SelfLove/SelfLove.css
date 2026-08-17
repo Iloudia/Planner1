@@ -7,6 +7,12 @@
   padding-bottom: 4rem;
 }
 
+.self-love-page__content {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  padding: 1.25rem;
+}
+
 .self-love-page--loading {
   min-height: 60vh;
   padding: 0;

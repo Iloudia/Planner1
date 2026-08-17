@@ -17,6 +17,8 @@ import planner06 from "../../assets/katie-huber-rhoades-dupe (1).webp"
 import planner07 from "../../assets/ebony-forsyth-dupe.webp"
 import planner08 from "../../assets/Routine.webp"
 import planner09 from "../../assets/avocado-toast.webp"
+import projetsImage from "../../assets/Projets.jpeg"
+import calendrierHomeImage from "../../assets/Calendrierhome.png"
 import noeudPapillon from "../../assets/noeud-papillon.webp"
 import citationImage from "../../assets/Citation.png"
 
@@ -55,14 +57,14 @@ type TodoItem = HomeTodoItem
 
 const cards: CardItem[] = [
   { image: planner01, alt: "Sport", kicker: "Énergie", title: "Sport", path: "/sport" },
-  { image: planner06, alt: "Calendrier", kicker: "Vue globale", title: "Calendrier", path: "/calendrier" },
+  { image: calendrierHomeImage, alt: "Calendrier", kicker: "Vue globale", title: "Calendrier", path: "/calendrier" },
   { image: planner05, alt: "Wishlist", kicker: "Envies", title: "Wishlist", path: "/wishlist" },
   { image: planner03, alt: "Journaling", kicker: "Reflet", title: "Journaling", path: "/journaling" },
   { image: planner04, alt: "Self-love", kicker: "Soin", title: "Mindset", path: "/mindset" },
   { image: planner07, alt: "Finances", kicker: "Budget", title: "Finances", path: "/finances" },
   { image: planner08, alt: "Routine", kicker: "Rythme", title: "Routine", path: "/routine" },
   { image: planner09, alt: "Courses & menus", kicker: "Saveurs", title: "Menu de la semaine", path: "/menu" },
-  { image: planner06, alt: "Projet", kicker: "Organisation", title: "Projet", path: "/project" },
+  { image: projetsImage, alt: "Projet", kicker: "Organisation", title: "Projet", path: "/project" },
 ]
 
 const CARD_PATHS = cards.map((card) => card.path)
@@ -493,6 +495,7 @@ function HomePage() {
   const isTodoLimitReached = todos.length >= MAX_TODOS
   const [showTodoLimitMessage, setShowTodoLimitMessage] = useState(false)
   const [isProfilePhotoMenuOpen, setIsProfilePhotoMenuOpen] = useState(false)
+  const [isMoodboardMenuOpen, setIsMoodboardMenuOpen] = useState(false)
   const [cardOrder, setCardOrder] = useState<string[]>([])
   const [cardClickProgress, setCardClickProgress] = useState<Record<string, number>>({})
   const [isHomeCardsLoaded, setIsHomeCardsLoaded] = useState(false)
@@ -777,6 +780,23 @@ function HomePage() {
     document.addEventListener("mousedown", handleClickOutside)
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [isProfilePhotoMenuOpen])
+
+  useEffect(() => {
+    if (!isMoodboardMenuOpen) {
+      return
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement
+      if (target.closest(".home-moodboard__menu")) {
+        return
+      }
+      setIsMoodboardMenuOpen(false)
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [isMoodboardMenuOpen])
 
   const addTodo = () => {
     const text = todoInput.trim()
@@ -1155,12 +1175,6 @@ function HomePage() {
       <section className="home-moodboard">
         <div className="home-moodboard__top">
           <h2>Mon visionboard</h2>
-          <div className="home-moodboard__top-actions">
-            <button type="button" className="home-moodboard__button" onClick={() => moodboardInputRef.current?.click()}>
-              Changer l'image
-            </button>
-          </div>
-
           <input
             ref={moodboardInputRef}
             type="file"
@@ -1174,6 +1188,34 @@ function HomePage() {
 
         <div className="home-moodboard__preview">
           <img src={homeMoodboardSrc} alt="Moodboard personnalisé" loading="lazy" decoding="async" />
+          <div className="home-moodboard__menu">
+            <button
+              className="profile-menu home-moodboard__button"
+              aria-label="Options du visionboard"
+              aria-expanded={isMoodboardMenuOpen}
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation()
+                setIsMoodboardMenuOpen((previous) => !previous)
+              }}
+            >
+              <span aria-hidden="true">...</span>
+            </button>
+            {isMoodboardMenuOpen ? (
+              <div className="home-profile-card__menu-popover" role="menu" onClick={(event) => event.stopPropagation()}>
+                <button
+                  type="button"
+                  className="home-profile-card__menu-item"
+                  onClick={() => {
+                    setIsMoodboardMenuOpen(false)
+                    moodboardInputRef.current?.click()
+                  }}
+                >
+                  Changer l'image
+                </button>
+              </div>
+            ) : null}
+          </div>
         </div>
       </section>
     </div>

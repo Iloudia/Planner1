@@ -4,33 +4,45 @@ import useUserJournalEntries from '../../hooks/useUserJournalEntries'
 import journalingMoodSecondary from '../../assets/livre.webp'
 import journalingMoodTertiary from '../../assets/mallika-jain-dupe.webp'
 import PageHeading from '../../components/PageHeading'
-import type { AnchorType, EnergyLevel, JournalEntryInput, MoodValue, PostFeeling } from '../../types/personalization'
+import type { EnergyLevel, JournalEntryInput, MoodValue } from '../../types/personalization'
 import './Journaling.css'
 
 const moodOptions = [
-  { value: 'bright', label: 'Heureuse', emoji: '✨' },
-  { value: 'good', label: 'Calme', emoji: '😊' },
-  { value: 'low', label: 'Triste', emoji: '🌧️' },
-  { value: 'overwhelmed', label: 'Fatiguée', emoji: '🫠' },
-  { value: 'neutral', label: 'En colère', emoji: '😐' },
+  { value: 'bright', label: 'Heureuse' },
+  { value: 'good', label: 'Calme' },
+  { value: 'low', label: 'Triste' },
+  { value: 'overwhelmed', label: 'Fatiguée' },
+  { value: 'neutral', label: 'En colère' },
 ] as const
+
+const MoodIcon = ({ mood }: { mood: MoodValue }) => {
+  const commonProps = {
+    fill: 'none',
+    viewBox: '0 0 24 24',
+    stroke: 'currentColor',
+    strokeLinecap: 'round' as const,
+    strokeLinejoin: 'round' as const,
+    strokeWidth: 1.6,
+  }
+
+  switch (mood) {
+    case 'bright':
+      return <svg {...commonProps}><circle cx="12" cy="12" r="3.5" /><path d="M12 2.5v2M12 19.5v2M21.5 12h-2M4.5 12h-2M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4M18.7 18.7l-1.4-1.4M6.7 6.7 5.3 5.3" /></svg>
+    case 'good':
+      return <svg {...commonProps}><path d="M20 4C11 4 5.5 8.4 5.5 15.3c0 1.7.4 3.2 1.1 4.4C13.6 19.5 19.2 13.4 20 4Z" /><path d="M4 20c3.6-4.2 7.4-7 12.1-9.3" /></svg>
+    case 'low':
+      return <svg {...commonProps}><path d="M5.5 16.5h12.3a3.2 3.2 0 0 0 .4-6.4A5.8 5.8 0 0 0 7.4 8.4 4.1 4.1 0 0 0 5.5 16.5Z" /><path d="M8.5 19.2 7.7 21M12.5 19.2l-.8 1.8M16.5 19.2l-.8 1.8" /></svg>
+    case 'overwhelmed':
+      return <svg {...commonProps}><path d="M13.2 2.8 5.7 13h5.1l-.6 8.2L18.5 11h-5.1l-.2-8.2Z" /></svg>
+    case 'neutral':
+      return <svg {...commonProps}><path d="M12.2 2.5c1.1 3.7-2.8 5.6-2.8 8.5 0 1.6 1.1 2.6 2.6 2.6 1.6 0 2.8-1.2 2.8-2.9 1.3.8 2.2 2.2 2.2 4.2 0 3.6-2.3 6.4-5.6 6.4-3.5 0-5.7-2.7-5.7-6 0-5.5 4.2-8.1 6.5-12.8Z" /></svg>
+  }
+}
 
 const energyOptions = [
   { value: 'high', label: 'Haute' },
   { value: 'medium', label: 'Moyenne' },
   { value: 'low', label: 'Faible' },
-] as const
-
-const postFeelingOptions = [
-  { value: 'better', label: 'Un peu mieux' },
-  { value: 'same', label: 'Pareil' },
-  { value: 'clearer', label: 'Soulagée' },
-  { value: 'tiredRelieved', label: 'Fatiguée' },
-] as const
-
-const anchorOptions = [
-  { value: 'gratitude', label: "Une chose pour laquelle je suis reconnaissante aujourd'hui" },
-  { value: 'victory', label: 'Une petite victoire du jour' },
 ] as const
 
 const guidedQuestionsByMood: Record<MoodValue, string[]> = {
@@ -190,14 +202,14 @@ const JournalingPage = () => {
   }, [])
   const [draft, setDraft] = useState({
     date: getTodayISO(),
-    mood: 'neutral' as MoodValue,
-    energy: 'medium' as EnergyLevel,
+    mood: undefined as MoodValue | undefined,
+    energy: undefined as EnergyLevel | undefined,
     keyword: '',
     content: '',
     questionAnswers: ['', '', ''] as string[],
-    postFeeling: '' as PostFeeling | '',
-    positiveAnchor: '',
-    positiveAnchorType: 'gratitude' as AnchorType,
+    gratitudeItems: ['', '', ''],
+    victoryItems: ['', '', ''],
+    tomorrowIntention: '',
   })
   const [saveConfirmationVisible, setSaveConfirmationVisible] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
@@ -211,7 +223,7 @@ const JournalingPage = () => {
     }
   }, [])
 
-  const dailyQuestions = useMemo(() => getDailyQuestions(draft.date, draft.mood, 3), [draft.date, draft.mood])
+  const dailyQuestions = useMemo(() => getDailyQuestions(draft.date, draft.mood ?? 'neutral', 3), [draft.date, draft.mood])
   const displayDate = useMemo(() => formatEntryDate(draft.date), [draft.date])
 
   const handleSubmit = async () => {
@@ -231,9 +243,9 @@ const JournalingPage = () => {
       question: dailyQuestions.join(' | '),
       questionAnswer: combinedQuestionAnswer || undefined,
       content: draft.content.trim() || undefined,
-      postFeeling: draft.postFeeling || undefined,
-      positiveAnchor: draft.positiveAnchor.trim() || undefined,
-      positiveAnchorType: draft.positiveAnchorType,
+      gratitudeItems: draft.gratitudeItems.map((item) => item.trim()).filter(Boolean),
+      victoryItems: draft.victoryItems.map((item) => item.trim()).filter(Boolean),
+      tomorrowIntention: draft.tomorrowIntention.trim() || undefined,
     }
 
     try {
@@ -245,9 +257,9 @@ const JournalingPage = () => {
         keyword: '',
         content: '',
         questionAnswers: ['', '', ''],
-        postFeeling: '' as PostFeeling | '',
-        positiveAnchor: '',
-        positiveAnchorType: 'gratitude',
+        gratitudeItems: ['', '', ''],
+        victoryItems: ['', '', ''],
+        tomorrowIntention: '',
       }))
 
       setSaveConfirmationVisible(true)
@@ -277,6 +289,7 @@ const JournalingPage = () => {
     <div className="journaling-page aesthetic-page">
       <PageHeading eyebrow="Reflet" title="Journaling" />
 
+      <div className="journaling-sections-shell">
       <section className="journaling-section journaling-checkin journaling-section--delay-1">
         <header className="journaling-section__header">
           <div>
@@ -287,7 +300,7 @@ const JournalingPage = () => {
         </header>
         <div className="journaling-checkin__grid">
           <div className="journaling-checkin__block">
-            <span className="journaling-checkin__label">Humeur du jour</span>
+            <span className="journaling-checkin__label">Ton état d'esprit</span>
             <div className="journaling-mood__options">
               {moodOptions.map((option) => (
                 <label key={option.value} className="journaling-choice">
@@ -300,7 +313,7 @@ const JournalingPage = () => {
                   />
                   <span className="journaling-choice__content">
                     <span className="journaling-choice__emoji" aria-hidden="true">
-                      {option.emoji}
+                      <MoodIcon mood={option.value} />
                     </span>
                     <span>{option.label}</span>
                   </span>
@@ -310,7 +323,7 @@ const JournalingPage = () => {
           </div>
 
           <div className="journaling-checkin__block">
-            <span className="journaling-checkin__label">Niveau d'énergie</span>
+            <span className="journaling-checkin__label">Ton énergie</span>
             <div className="journaling-energy__options">
               {energyOptions.map((option) => (
                 <label key={option.value} className="journaling-choice journaling-choice--pill">
@@ -350,16 +363,17 @@ const JournalingPage = () => {
       <section className="journaling-section journaling-question journaling-section--delay-2">
         <header className="journaling-section__header">
           <div>
-            <h2>Question guidée du jour</h2>
+            <h2>Questions du jour</h2>
           </div>
         </header>
         {dailyQuestions.map((question, index) => (
           <div key={`guided-question-${index}`} className="journaling-question__card">
             <p className="journaling-question__prompt">{question}</p>
             <div className="journaling-question__answer">
-              <textarea
+              <input
+                type="text"
                 value={draft.questionAnswers[index] ?? ''}
-                onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
                   setDraft((previous) => {
                     const nextAnswers = [...previous.questionAnswers]
                     nextAnswers[index] = event.target.value
@@ -367,7 +381,6 @@ const JournalingPage = () => {
                   })
                 }
                 placeholder={getGuidedQuestionPlaceholder(question, index)}
-                rows={4}
               />
             </div>
           </div>
@@ -394,56 +407,57 @@ const JournalingPage = () => {
       <section className="journaling-section journaling-closure journaling-section--delay-4">
         <header className="journaling-section__header">
           <div>
-            <h2>Clôture émotionnelle</h2>
-            <p>Prends une respiration lente, laisse ton corps se détendre.</p>
+            <h2>Réflexions &amp; alignement</h2>
           </div>
         </header>
         <div className="journaling-closure__grid">
           <div className="journaling-closure__block">
-            <span className="journaling-checkin__label">Ancrage positif</span>
-            <div className="journaling-anchor__options">
-              {anchorOptions.map((option) => (
-                <label key={option.value} className="journaling-toggle">
-                  <input
-                    type="radio"
-                    name="anchorType"
-                    value={option.value}
-                    checked={draft.positiveAnchorType === option.value}
-                    onChange={() => setDraft((previous) => ({ ...previous, positiveAnchorType: option.value }))}
-                  />
-                  <span className="journaling-toggle__label">{option.label}</span>
-                </label>
-              ))}
-            </div>
-            <textarea
-              value={draft.positiveAnchor}
-              onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
-                setDraft((previous) => ({ ...previous, positiveAnchor: event.target.value }))
-              }
-              placeholder={
-                draft.positiveAnchorType === 'gratitude'
-                  ? "Ex : Je suis reconnaissante pour tout ce que j'ai..."
-                  : 'Ex : Je me suis faite un ami...'
-              }
-              rows={4}
-            />
+            <h3>Gratitude</h3>
+            <p>3 choses pour lesquelles je suis reconnaissante</p>
+            {draft.gratitudeItems.map((item, index) => (
+              <label key={`gratitude-${index}`} className="journaling-reflection__line">
+                <span>{index + 1}.</span>
+                <input
+                  type="text"
+                  value={item}
+                  aria-label={`Gratitude ${index + 1}`}
+                  onChange={(event: ChangeEvent<HTMLInputElement>) => setDraft((previous) => {
+                    const gratitudeItems = [...previous.gratitudeItems]
+                    gratitudeItems[index] = event.target.value
+                    return { ...previous, gratitudeItems }
+                  })}
+                />
+              </label>
+            ))}
           </div>
           <div className="journaling-closure__block">
-            <span className="journaling-checkin__label">Comment te sens-tu maintenant ?</span>
-            <div className="journaling-post__options">
-              {postFeelingOptions.map((option) => (
-                <label key={option.value} className="journaling-choice journaling-choice--wide">
-                  <input
-                    type="radio"
-                    name="postFeeling"
-                    value={option.value}
-                    checked={draft.postFeeling === option.value}
-                    onChange={() => setDraft((previous) => ({ ...previous, postFeeling: option.value }))}
-                  />
-                  <span className="journaling-choice__content">{option.label}</span>
-                </label>
-              ))}
-            </div>
+            <h3>Petites victoires</h3>
+            <p>Mes réussites du jour, même toutes petites</p>
+            {draft.victoryItems.map((item, index) => (
+              <label key={`victory-${index}`} className="journaling-reflection__line">
+                <span>{index + 1}.</span>
+                <input
+                  type="text"
+                  value={item}
+                  aria-label={`Petite victoire ${index +1}`}
+                  onChange={(event: ChangeEvent<HTMLInputElement>) => setDraft((previous) => {
+                    const victoryItems = [...previous.victoryItems]
+                    victoryItems[index] = event.target.value
+                    return { ...previous, victoryItems }
+                  })}
+                />
+              </label>
+            ))}
+          </div>
+          <div className="journaling-closure__block journaling-closure__block--intention">
+            <h3>Intention pour demain</h3>
+            <p>Ce que je veux nourrir ou accomplir</p>
+            <textarea
+              value={draft.tomorrowIntention}
+              onChange={(event: ChangeEvent<HTMLTextAreaElement>) => setDraft((previous) => ({ ...previous, tomorrowIntention: event.target.value }))}
+              aria-label="Intention pour demain"
+              rows={3}
+            />
           </div>
         </div>
       </section>
@@ -460,6 +474,7 @@ const JournalingPage = () => {
           </div>
         ) : null}
       </section>
+      </div>
 </div>
   )
 }

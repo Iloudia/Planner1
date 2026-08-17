@@ -15,6 +15,9 @@ export type JournalEntry = {
   postFeeling?: PostFeeling
   positiveAnchor?: string
   positiveAnchorType?: AnchorType | string
+  gratitudeItems?: string[]
+  victoryItems?: string[]
+  tomorrowIntention?: string
   createdAt?: number
 }
 

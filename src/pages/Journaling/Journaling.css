@@ -238,6 +238,7 @@
 
 .journaling-choice__content {
   border: none;
+  border-radius: 0;
   background: rgba(255, 255, 255, 0.9);
   padding: 0.65rem 0.7rem;
   display: flex;
@@ -281,6 +282,7 @@
 .journaling-input,
 .journaling-section textarea {
   border: none;
+  border-radius: 0;
   padding: 0.8rem 1rem;
   font-size: 1rem;
   font-family: inherit;
@@ -871,5 +873,453 @@ body.journaling-page--lux {
 
 .journaling-modal__backdrop {
   backdrop-filter: blur(2px);
+}
+
+/* Check-in émotionnel : disposition compacte inspirée d'un carnet de suivi. */
+.journaling-section.journaling-checkin {
+  padding: clamp(1.25rem, 2.4vw, 1.8rem);
+}
+
+.journaling-checkin .journaling-section__header {
+  align-items: flex-start;
+  margin-bottom: 1.15rem;
+}
+
+.journaling-checkin .journaling-section__header h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin: 0;
+  font-size: clamp(1.1rem, 1.7vw, 1.35rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.journaling-checkin .journaling-section__header h2::before {
+  content: "♡";
+  color: var(--color-chocolate);
+  font-family: inherit;
+  font-size: 1.5em;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.journaling-checkin .journaling-section__header p {
+  margin-top: 0.45rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.journaling-checkin .journaling-checkin__date {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--lux-ink-soft);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.journaling-checkin__grid {
+  grid-template-columns: minmax(0, 1.45fr) minmax(230px, 0.85fr) minmax(190px, 0.72fr);
+  gap: 0;
+  border: 1px solid var(--lux-line);
+}
+
+.journaling-checkin__block {
+  min-width: 0;
+  padding: 1.15rem clamp(1rem, 2vw, 1.6rem);
+  gap: 0.8rem;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.journaling-checkin__block + .journaling-checkin__block {
+  border-left: 1px solid var(--lux-line);
+}
+
+.journaling-checkin__label {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.journaling-checkin .journaling-mood__options {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.journaling-checkin .journaling-mood__options .journaling-choice__content {
+  min-height: 76px;
+  justify-content: center;
+  padding: 0.5rem 0.3rem;
+  border: 1px solid transparent;
+  border-radius: 0;
+  background: #fff;
+  font-size: 0.72rem;
+  line-height: 1.15;
+}
+
+.journaling-checkin .journaling-mood__options .journaling-choice__emoji {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  place-items: center;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--lux-ink-soft);
+  line-height: 1;
+}
+
+.journaling-checkin .journaling-mood__options .journaling-choice__emoji svg {
+  width: 1.45rem;
+  height: 1.45rem;
+}
+
+.journaling-checkin .journaling-energy__options {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+  padding: 0;
+}
+
+.journaling-checkin .journaling-energy__options .journaling-choice__content {
+  min-height: 76px;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.25rem;
+  border: 1px solid transparent;
+  border-radius: 0;
+  background: #fff;
+  text-align: center;
+  font-size: 0.7rem;
+}
+
+.journaling-checkin .journaling-energy__options .journaling-choice__content::before {
+  display: grid;
+  width: 1.7rem;
+  height: 1.7rem;
+  place-items: center;
+  border: 1px solid var(--lux-line);
+  border-radius: 50%;
+  color: var(--lux-ink-soft);
+  content: "◔";
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.journaling-checkin .journaling-energy__options .journaling-choice:nth-child(1) .journaling-choice__content::before {
+  content: "☀";
+}
+
+.journaling-checkin .journaling-energy__options .journaling-choice:nth-child(3) .journaling-choice__content::before {
+  content: "☾";
+}
+
+.journaling-checkin .journaling-choice input:checked + .journaling-choice__content {
+  border-color: var(--lux-ink);
+  background: var(--journal-accent-soft);
+}
+
+.journaling-checkin .journaling-energy__options .journaling-choice__content::before {
+  content: none;
+  display: none;
+}
+
+.journaling-checkin .journaling-mood__options .journaling-choice input:checked + .journaling-choice__content .journaling-choice__emoji {
+  color: var(--lux-ink);
+}
+
+.journaling-checkin .journaling-choice input:checked + .journaling-choice__content::before {
+  border-color: var(--lux-ink);
+  color: var(--lux-ink);
+}
+
+.journaling-checkin .journaling-input {
+  min-height: 76px;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid transparent;
+  border-radius: 0;
+  background: #fff;
+  font-size: 0.82rem;
+}
+
+.journaling-checkin .journaling-input:focus {
+  border-color: var(--lux-ink);
+}
+
+@media (max-width: 980px) {
+  .journaling-checkin__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .journaling-checkin__block + .journaling-checkin__block {
+    border-left: 1px solid var(--lux-line);
+  }
+
+  .journaling-checkin__block:last-child {
+    grid-column: 1 / -1;
+    border-top: 1px solid var(--lux-line);
+    border-left: 0;
+  }
+}
+
+@media (max-width: 620px) {
+  .journaling-checkin .journaling-section__header {
+    gap: 0.8rem;
+  }
+
+  .journaling-checkin .journaling-checkin__date {
+    display: none;
+  }
+
+  .journaling-checkin__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .journaling-checkin__block + .journaling-checkin__block,
+  .journaling-checkin__block:last-child {
+    grid-column: auto;
+    border-top: 1px solid var(--lux-line);
+    border-left: 0;
+  }
+}
+
+.journaling-question .journaling-section__header h2::before {
+  display: none !important;
+  content: none !important;
+}
+
+/* Réflexions & alignement : trois cartes d'écriture concises. */
+.journaling-section.journaling-closure {
+  padding: clamp(1.2rem, 2.4vw, 1.7rem);
+}
+
+.journaling-closure .journaling-section__header {
+  margin-bottom: 0.85rem;
+}
+
+.journaling-closure .journaling-section__header h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin: 0;
+  font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.journaling-closure .journaling-section__header h2::before {
+  content: "✧";
+  color: var(--lux-ink-soft);
+  font-size: 1.3rem;
+  font-weight: 400;
+}
+
+.journaling-closure__grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.2rem;
+}
+
+.journaling-closure__block {
+  min-height: 174px;
+  padding: 1.15rem 1.35rem;
+  border: 1px solid var(--lux-line);
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: none;
+}
+
+.journaling-closure__block h3 {
+  margin: 0;
+  color: var(--lux-ink);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.journaling-closure__block p {
+  margin: 0.35rem 0 0.7rem;
+  color: var(--lux-ink-soft);
+  font-size: 0.76rem;
+  font-style: italic;
+}
+
+.journaling-reflection__line {
+  display: grid;
+  grid-template-columns: 1rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 1.55rem;
+  color: var(--lux-ink-soft);
+  font-size: 0.78rem;
+}
+
+.journaling-reflection__line input,
+.journaling-question__answer input {
+  width: 100%;
+  min-width: 0;
+  padding: 0.1rem 0;
+  border: 0;
+  border-bottom: 1px dotted var(--lux-line);
+  border-radius: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--lux-ink);
+  font: inherit;
+}
+
+.journaling-reflection__line input:focus,
+.journaling-question__answer input:focus {
+  border-bottom-color: var(--lux-ink);
+  border-bottom-style: solid;
+}
+
+.journaling-closure__block--intention textarea {
+  min-height: 74px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background-color: transparent;
+  background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 22px, var(--lux-line) 23px);
+  box-shadow: none;
+  color: var(--lux-ink);
+  font-size: 0.8rem;
+  line-height: 23px;
+}
+
+@media (max-width: 980px) {
+  .journaling-closure__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Fond commun des quatre sections de journaling. */
+.journaling-sections-shell {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 2.5vw, 2rem);
+  padding: clamp(1rem, 2vw, 1.35rem);
+  background: #fff;
+  border: 1px solid var(--lux-line);
+}
+
+.journaling-sections-shell > .journaling-section {
+  background: transparent;
+  box-shadow: none;
+}
+
+.journaling-checkin .journaling-section__header h2::before,
+.journaling-question .journaling-section__header h2::before,
+.journaling-closure .journaling-section__header h2::before {
+  display: none;
+  content: none;
+}
+
+/* Questions du jour : présentation légère de carnet, sans modifier les réponses. */
+.journaling-section.journaling-question {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(1.2rem, 2.4vw, 1.7rem) clamp(1.25rem, 3vw, 2.2rem);
+}
+
+.journaling-question .journaling-section__header {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 0.3rem;
+}
+
+.journaling-question .journaling-section__header h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin: 0;
+  font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.journaling-question .journaling-section__header h2::before {
+  display: grid;
+  width: 1.35rem;
+  height: 1.35rem;
+  place-items: center;
+  border: 1px solid var(--lux-line);
+  border-radius: 50%;
+  color: var(--lux-ink-soft);
+  content: "?";
+  font-family: "Times New Roman", serif;
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+
+.journaling-question__card {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: max-content minmax(160px, 1fr);
+  align-items: center;
+  gap: clamp(0.5rem, 1vw, 0.9rem);
+  padding: 0.55rem 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.journaling-question__prompt {
+  margin: 0;
+  color: var(--lux-ink-soft);
+  font-family: inherit;
+  font-size: 0.84rem;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.journaling-question__answer {
+  margin: 0;
+}
+
+.journaling-question__answer input {
+  display: block;
+  width: 100%;
+  height: 1.6rem;
+  padding: 0.1rem 0;
+  border: 0;
+  border-bottom: 1px dotted var(--lux-line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--lux-ink);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  transition: border-color 180ms ease;
+}
+
+.journaling-question__answer input::placeholder {
+  color: transparent;
+}
+
+.journaling-question__answer input:focus {
+  border-bottom-style: solid;
+  border-bottom-color: var(--lux-ink);
+}
+
+@media (max-width: 620px) {
+  .journaling-question__card {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+    padding-right: 3.4rem;
+  }
+
+  .journaling-question__prompt {
+    white-space: normal;
+  }
+
+}
+
+.journaling-question .journaling-section__header h2::before {
+  display: none !important;
+  content: none !important;
 }
 

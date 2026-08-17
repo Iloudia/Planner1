@@ -772,7 +772,15 @@
 }
 
 .archives-modal__content .modal__close {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.65rem;
+  z-index: 2;
   border-radius: 999px;
+}
+
+.archives-modal__header {
+  padding-right: 4.5rem;
 }
 
 .archives-modal__body {
@@ -1030,4 +1038,58 @@ body.boutique-page--tone .archives-modal__body--letter {
 
 body.boutique-page--tone .archives-modal__header--letter {
   padding: 1rem 1.2rem 0;
+}
+
+/* Présentation des entrées archivées dans l'esprit de la page Journaling. */
+body.boutique-page--tone .archives-modal__content:not(.archives-modal__content--letter) {
+  --lux-line: rgba(31, 27, 22, 0.18);
+  gap: clamp(1.25rem, 2.5vw, 2rem);
+  padding: clamp(1rem, 2vw, 1.35rem);
+  border: 1px solid var(--lux-line);
+  background: #fff;
+}
+
+.archives-modal__content:not(.archives-modal__content--letter) .archives-modal__header,
+.archives-modal__content:not(.archives-modal__content--letter) .archives-modal__body,
+.archives-modal__content:not(.archives-modal__content--letter) .archives-modal__footer {
+  padding: clamp(1.1rem, 2vw, 1.5rem);
+  border: 1px solid var(--lux-line);
+  background: transparent;
+}
+
+.archives-modal__content:not(.archives-modal__content--letter) .archives-modal__body {
+  gap: 1.25rem;
+}
+
+.archives-modal__content:not(.archives-modal__content--letter) .archives-modal__details {
+  gap: 1.25rem;
+}
+
+.archives-modal__content:not(.archives-modal__content--letter) .archives-modal__section {
+  padding: clamp(1rem, 2vw, 1.35rem);
+  border: 1px solid var(--lux-line);
+  background: #fff;
+}
+
+.archives-modal__content:not(.archives-modal__content--letter) .archives-modal__section h4 {
+  color: var(--ink);
+}
+
+/* Une archive se lit comme une page continue, sans défilement dans son contenu. */
+.archives-modal {
+  align-items: flex-start;
+  overflow-y: auto;
+}
+
+.archives-modal__backdrop {
+  position: fixed;
+}
+
+.archives-modal__content:not(.archives-modal__content--letter) {
+  max-height: none;
+  overflow: visible;
+}
+
+.archives-modal__content:not(.archives-modal__content--letter) .archives-modal__body {
+  overflow: visible;
 }

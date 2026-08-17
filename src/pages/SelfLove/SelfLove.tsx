@@ -298,9 +298,10 @@ const SelfLovePage = () => {
   return (
     <div className="self-love-page">
       <PageHeading eyebrow="Self love" title="mindset" />
-      {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer ton espace self-love.</p> : null}
-      {error ? <p className="routine-note__composer-hint">{error}</p> : null}
-      <fieldset disabled={!canEdit} style={{ border: 0, margin: 0, padding: 0, minInlineSize: 0 }}>
+      <div className="self-love-page__content">
+        {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer ton espace self-love.</p> : null}
+        {error ? <p className="routine-note__composer-hint">{error}</p> : null}
+        <fieldset disabled={!canEdit} style={{ border: 0, margin: 0, padding: 0, minInlineSize: 0 }}>
 
       <section className="self-love-section self-love-section--photos">
         <div className="self-love-photos__intro">
@@ -615,7 +616,8 @@ const SelfLovePage = () => {
           </div>
         </div>
       </section>
-      </fieldset>
+        </fieldset>
+      </div>
     </div>
   )
 }

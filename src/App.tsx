@@ -41,7 +41,9 @@ const SettingsLanguages = lazy(() => import("./pages/Settings/SettingsLanguages"
 const SettingsCookies = lazy(() => import("./pages/Settings/SettingsCookies"))
 const AboutPage = lazy(() => import("./pages/About/AboutPage"))
 const ProfilePage = lazy(() => import("./pages/Profile/Profile"))
+const ArchivesHome = lazy(() => import("./pages/Archives/ArchivesHome"))
 const ArchivesPage = lazy(() => import("./pages/Archives/Archives"))
+const ProjectArchives = lazy(() => import("./pages/Archives/ProjectArchives"))
 const BoutiquePage = lazy(() => import("./pages/Boutique/Boutique"))
 const BoutiqueCategoryPage = lazy(() => import("./pages/Boutique/BoutiqueCategory"))
 const BoutiqueProductPage = lazy(() => import("./pages/Boutique/BoutiqueProduct"))
@@ -49,7 +51,6 @@ const ThankYouPage = lazy(() => import("./pages/Boutique/ThankYouPage"))
 const CartPage = lazy(() => import("./pages/Cart/CartPage"))
 const PurchasesPage = lazy(() => import("./pages/Purchases/PurchasesPage"))
 const ProjectPage = lazy(() => import("./pages/Project/ProjectPage"))
-const ProjectArchivesPage = lazy(() => import("./pages/Project/ProjectArchivesPage"))
 
 function NotFound() {
   return (
@@ -176,10 +177,12 @@ function App() {
               <Route path="/Menu" element={<Navigate to="/menu" replace />} />
               <Route path="/alimentation" element={<Navigate to="/menu" replace />} />
               <Route path="/profil" element={<ProfilePage />} />
-              <Route path="/archives" element={<ArchivesPage />} />
+              <Route path="/archives" element={<ArchivesHome />} />
+              <Route path="/archives/mindset" element={<ArchivesPage section="self-love" />} />
+              <Route path="/archives/journaling" element={<ArchivesPage section="journaling" />} />
+              <Route path="/archives/projets" element={<ProjectArchives />} />
               <Route path="/mes-achats" element={<PurchasesPage />} />
               <Route path="/project" element={<ProjectPage />} />
-              <Route path="/project/archives" element={<ProjectArchivesPage />} />
               <Route path="/parametres" element={<SettingsLayout />}>
                 <Route index element={<SettingsAccount />} />
                 <Route path="affichage" element={<SettingsDisplay />} />

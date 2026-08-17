@@ -70,7 +70,7 @@
   max-width: none;
   margin: 0;
   height: 860px;
-  object-fit: contain;
+  object-fit: cover;
   box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
   display: block;
 }
@@ -109,6 +109,25 @@
 
 .home-moodboard__preview {
   position: relative;
+}
+
+.home-moodboard__menu {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+}
+
+.page.home-page .home-moodboard__menu .profile-menu {
+  position: static;
+  width: 34px;
+  height: 34px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border-radius: 50%;
+  letter-spacing: normal;
+  text-transform: none;
 }
 
 .home-moodboard__file-input {
@@ -615,18 +634,6 @@
     height: 320px;
   }
 
-  .home-moodboard__top-actions {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.5rem;
-  }
-
-  .home-moodboard__button {
-    width: 100%;
-    padding: 0.35rem 0.7rem;
-    font-size: 0.8rem;
-  }
-
   .profile-photo {
     width: 180px;
     height: 180px;
@@ -677,14 +684,6 @@
   .page.home-page .aside-left .task-time-chip {
     padding: 0.22rem 0.52rem;
     font-size: 0.78rem;
-  }
-}
-
-@media (max-width: 375px) {
-  .home-moodboard__button {
-    width: 100%;
-    font-size: 0.75rem;
-    padding: 0.3rem 0.6rem;
   }
 }
 
@@ -1146,36 +1145,42 @@ body.home-page--lux .account-menu__item.is-selected {
   .home-moodboard {
     padding: 0.9rem;
     gap: 0.8rem;
+    container-type: inline-size;
+    overflow: hidden;
   }
 
   .home-moodboard__top {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.75rem;
-    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0;
+    flex-wrap: nowrap;
+    overflow: hidden;
   }
 
   .home-moodboard__top h2 {
-    width: 100%;
+    flex: 0 1 auto;
+    min-width: 0;
     margin: 0;
-    font-size: clamp(1.35rem, 5.6vw, 1.7rem);
+    font-size: clamp(1rem, 6cqi, 1.35rem);
     line-height: 1.18;
-    white-space: normal;
-    text-align: center;
+    white-space: nowrap;
   }
 
   .home-moodboard__top-actions {
-    width: 100%;
+    flex: 0 0 auto;
+    width: auto;
+    margin-left: 0.5rem;
   }
 
   .home-moodboard__button {
-    width: 100%;
-    min-height: 44px;
+    width: auto;
+    min-height: 0;
     margin: 0;
-    padding: 0.58rem 0.8rem;
-    font-size: 0.78rem;
+    padding: clamp(0.35rem, 2cqi, 0.5rem) clamp(0.4rem, 2.5cqi, 0.65rem);
+    font-size: clamp(0.53rem, 3cqi, 0.72rem);
     line-height: 1.2;
-    white-space: normal;
+    white-space: nowrap;
     text-align: center;
   }
 
@@ -1185,11 +1190,16 @@ body.home-page--lux .account-menu__item.is-selected {
     overflow: hidden;
   }
 
+  .home-moodboard__menu {
+    top: 6px;
+    right: 6px;
+  }
+
   .home-moodboard img {
     width: 100%;
     max-width: 100%;
     height: auto;
     max-height: min(82vh, 420px);
-    object-fit: contain;
+    object-fit: cover;
   }
 }
