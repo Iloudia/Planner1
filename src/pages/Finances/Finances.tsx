@@ -726,11 +726,14 @@ const FinancePage = () => {
 
   return (
     <div className="finance-page aesthetic-page">
-      <header className="finance-page-header">
+      <header className="finance-page__heading">
         <div>
+          <span className="finance-page__heading-eyebrow">Mes</span>
           <h1>Finances</h1>
-          <p>Pilotez votre budget et vos objectifs financiers</p>
         </div>
+        <p>Un espace pour suivre ton budget, faire grandir tes projets et avancer vers tes objectifs financiers.</p>
+      </header>
+      <header className="finance-page-header finance-page-header--actions">
         <div className="finance-page-header__actions">
           <div className="finance-page-header__period">
             <span aria-hidden="true">▣</span>

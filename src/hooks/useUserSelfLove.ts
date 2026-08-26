@@ -6,6 +6,7 @@ import type {
   SelfLoveBestFriendSnapshot,
   SelfLoveDraft,
   SelfLoveInnerChildSnapshot,
+  SelfLoveMindsetSnapshot,
   SelfLovePhotoSlot,
   SelfLoveQuality,
   SelfLoveThought,
@@ -410,6 +411,33 @@ const useUserSelfLove = () => {
     [saveArchiveEntry],
   )
 
+  const saveMindsetArchive = useCallback(
+    async (input: {
+      to?: string
+      from?: string
+      body?: string
+      openDate?: string
+      sealedAt?: string
+      mindset: SelfLoveMindsetSnapshot
+    }) => {
+      const entry: SelfLoveArchiveEntry = {
+        id: createClientId("self-love"),
+        entryType: "mindset",
+        template: "classic",
+        to: input.to,
+        from: input.from,
+        body: input.body,
+        openDate: input.openDate,
+        sealedAt: input.sealedAt,
+        mindset: input.mindset,
+        createdAt: Date.now(),
+      }
+      await saveArchiveEntry(entry)
+      return entry.id
+    },
+    [saveArchiveEntry],
+  )
+
   const saveLetterArchive = useCallback(
     async (input: { template: "classic" | "kitty"; to?: string; from?: string; body: string }) => {
       const entry: SelfLoveArchiveEntry = {
@@ -494,6 +522,7 @@ const useUserSelfLove = () => {
       removeThought,
       saveInnerChildArchive,
       saveBestFriendArchive,
+      saveMindsetArchive,
       saveLetterArchive,
       saveFutureLetterArchive,
       sealFutureLetter,
@@ -517,6 +546,7 @@ const useUserSelfLove = () => {
       saveFutureLetterArchive,
       saveInnerChildArchive,
       saveLetterArchive,
+      saveMindsetArchive,
       sealFutureLetter,
       thoughts,
       updateDraft,

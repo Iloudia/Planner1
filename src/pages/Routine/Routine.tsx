@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from "react"
 import type { RoutineItem } from "../../data/sampleData"
 import { useAuth } from "../../context/AuthContext"
 import useUserRoutine from "../../hooks/useUserRoutine"
-import PageHeading from "../../components/PageHeading"
 import "./RoutinePage.css"
 
 type RoutineId = string
@@ -265,7 +264,31 @@ const RoutinePage = () => {
 
   return (
     <div className="routine-page aesthetic-page">
-      <PageHeading eyebrow="Routine" title="Mes Routines" />
+      <header className="routine-page__heading">
+        <div>
+          <span className="routine-page__heading-eyebrow">Mes</span>
+          <h1>Routines</h1>
+        </div>
+        <p>Des gestes simples, choisis avec intention, pour prendre soin de soi chaque jour et créer un équilibre durable, en douceur.</p>
+      </header>
+      <section className="routine-page__stats" aria-label="Résumé des routines">
+        <div className="routine-page__stat">
+          <strong>12 jours</strong>
+          <span>Série actuelle</span>
+        </div>
+        <div className="routine-page__stat">
+          <strong>16</strong>
+          <span>Tâches planifiées</span>
+        </div>
+        <div className="routine-page__stat">
+          <strong>2</strong>
+          <span>Routines actives</span>
+        </div>
+        <div className="routine-page__stat">
+          <strong>87%</strong>
+          <span>Complétion</span>
+        </div>
+      </section>
       {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer tes routines.</p> : null}
       {error ? <p className="routine-note__composer-hint">{error}</p> : null}
 

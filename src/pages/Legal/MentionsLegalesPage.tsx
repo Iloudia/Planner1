@@ -1,5 +1,5 @@
 ﻿import { useEffect } from "react"
-import PageHeading from "../../components/PageHeading"
+import AdministrativePageHeader from "../../components/AdministrativePageHeader"
 import "./MentionsLegalesPage.css"
 
 const MentionsLegalesPage = () => {
@@ -12,7 +12,7 @@ const MentionsLegalesPage = () => {
 
   return (
   <>
-      <PageHeading eyebrow="Mentions légales" title="Mentions légales" className="mentions-legales__header" />
+      <AdministrativePageHeader eyebrow="Les" title="Mentions légales" />
     <div className="legal-page">
       <p className="legal-page__intro">
         Mentions légales complètes, incluant l'éditeur, l'hébergeur, la propriété intellectuelle et les règles d'utilisation du site Me&rituals.

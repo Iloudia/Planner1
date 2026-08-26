@@ -229,9 +229,17 @@ export type SelfLoveBestFriendSnapshot = {
   selfKindness?: string
 }
 
+export type SelfLoveMindsetSnapshot = {
+  photos: Array<{ id: string; imageUrl?: string }>
+  qualities: string[]
+  thoughts: string[]
+  innerChild?: SelfLoveInnerChildSnapshot
+  bestFriend?: SelfLoveBestFriendSnapshot
+}
+
 export type SelfLoveArchiveEntry = {
   id: string
-  entryType: "letter" | "innerChild" | "bestFriend"
+  entryType: "letter" | "innerChild" | "bestFriend" | "mindset"
   template?: "classic" | "kitty"
   to?: string
   from?: string
@@ -240,6 +248,7 @@ export type SelfLoveArchiveEntry = {
   sealedAt?: string
   innerChild?: SelfLoveInnerChildSnapshot
   bestFriend?: SelfLoveBestFriendSnapshot
+  mindset?: SelfLoveMindsetSnapshot
   createdAt?: number
   updatedAt?: number
 }

@@ -1,5 +1,5 @@
 ﻿import { useEffect } from "react"
-import PageHeading from "../../components/PageHeading"
+import AdministrativePageHeader from "../../components/AdministrativePageHeader"
 import { Link } from "react-router-dom"
 import "./ConfidentialitePage.css"
 
@@ -13,7 +13,7 @@ const ConfidentialitePage = () => {
 
   return (
   <>
-      <PageHeading eyebrow="Confidentialité" title="Politique de confidentialité" className="confidentialite-page__header" />
+      <AdministrativePageHeader eyebrow="La" title="Politique de confidentialité" />
     <div className="legal-page">
       <p className="legal-page__intro">
         La présente politique de confidentialité a pour objectif d’informer les utilisateurs du site sur la manière dont

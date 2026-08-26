@@ -190,6 +190,7 @@ export const subscribeToSelfLoveArchiveEntries = (
             sealedAt: data.sealedAt,
             innerChild: data.innerChild,
             bestFriend: data.bestFriend,
+            mindset: data.mindset,
             createdAt: toMillis(data.createdAt),
             updatedAt: toMillis(data.updatedAt),
           }
@@ -277,6 +278,7 @@ export const saveSelfLoveArchiveEntry = async (userId: string, entry: SelfLoveAr
       sealedAt: entry.sealedAt ?? null,
       innerChild: entry.innerChild ?? null,
       bestFriend: entry.bestFriend ?? null,
+      mindset: entry.mindset ?? null,
       createdAt: entry.createdAt ? Timestamp.fromMillis(entry.createdAt) : serverTimestamp(),
       updatedAt: serverTimestamp(),
     },

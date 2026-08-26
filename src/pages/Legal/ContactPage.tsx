@@ -1,5 +1,4 @@
 import { type FormEvent, useEffect, useState } from "react"
-import PageHeading from "../../components/PageHeading"
 import { fetchApi, getApiTargetLabel } from "../../utils/apiUrl"
 import "./ContactPage.css"
 
@@ -81,13 +80,16 @@ const ContactPage = () => {
 
   return (
     <>
-      <PageHeading eyebrow="Contact" title="Contacte-moi" className="contact-page__header" />
+      <header className="contact-page__heading">
+        <div>
+          <span className="contact-page__heading-eyebrow">Me</span>
+          <h1>contacter</h1>
+        </div>
+        <p>Une idée, une question ou envie de collaborer ? Laisse-moi un message et je te répondrai avec grand plaisir.</p>
+      </header>
       <div className="legal-page contact-page">
-        <p className="legal-page__intro">
-          Une idée, une question ou envie de collaborer ? Laisse-moi un message et je te répondrai avec grand plaisir.
-        </p>
-
         <section className="legal-section contact-form">
+          <h2 className="contact-form__title">Envoie-moi un message</h2>
           <form className="contact-form__body" onSubmit={handleSubmit}>
             <label>
               <span>Prénom</span>
@@ -135,6 +137,27 @@ const ContactPage = () => {
             </button>
           </form>
         </section>
+        <aside className="contact-info" aria-label="Informations de contact">
+          <h2>Informations</h2>
+          <section className="contact-info__section">
+            <h3>Me contacter</h3>
+            <a href="mailto:contact@meandrituals.com">contact@meandrituals.com</a>
+          </section>
+          <section className="contact-info__section">
+            <h3>Collaborations</h3>
+            <a href="mailto:contact@meandrituals.com">contact@meandrituals.com</a>
+          </section>
+          <section className="contact-info__section">
+            <h3>Réseaux</h3>
+            <a href="https://www.instagram.com/meandrituals?igsh=YmdwbmRmbTB1cW4w&utm_source=qr" target="_blank" rel="noreferrer noopener">
+              Instagram
+            </a>
+          </section>
+          <section className="contact-info__section">
+            <h3>Temps de réponse</h3>
+            <p>Je réponds généralement sous 24 à 48h.</p>
+          </section>
+        </aside>
       </div>
     </>
   )

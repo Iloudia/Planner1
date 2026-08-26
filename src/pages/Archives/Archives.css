@@ -1093,3 +1093,164 @@ body.boutique-page--tone .archives-modal__content:not(.archives-modal__content--
 .archives-modal__content:not(.archives-modal__content--letter) .archives-modal__body {
   overflow: visible;
 }
+
+/* Copie figée de la page Mindset dans les archives. */
+.archives-mindset-copy {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.5rem, 3vw, 2.25rem);
+  width: 100%;
+}
+
+.archives-mindset-copy__panel,
+.archives-mindset-copy__exercises,
+.archives-mindset-copy__letter {
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  background: #fffdfb;
+  padding: clamp(1.25rem, 2.4vw, 1.75rem);
+}
+
+.archives-mindset-copy__letter-intro,
+.archives-mindset-copy__panel-heading {
+  text-align: center;
+}
+
+.archives-mindset-copy h3,
+.archives-mindset-copy p,
+.archives-mindset-copy span,
+.archives-mindset-copy li,
+.archives-mindset-copy label {
+  font-family: 'Libre Baskerville', Georgia, serif;
+}
+
+.archives-mindset-copy__letter-intro h3 {
+  margin: 0;
+  color: #253652;
+  font-size: clamp(0.95rem, 1.35vw, 1.25rem);
+  font-weight: 400;
+}
+
+.archives-mindset-copy__letter-intro p,
+.archives-mindset-copy__panel-heading p {
+  margin: 0.7rem 0 0;
+  color: #6f7784;
+  font-size: 0.72rem;
+  line-height: 1.55;
+}
+
+.archives-mindset-copy__duo,
+.archives-mindset-copy__exercise-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+
+.archives-mindset-copy__panel-heading {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e1d8cf;
+}
+
+.archives-mindset-copy__panel-heading h3,
+.archives-mindset-copy__exercise-card h3 {
+  margin: 0;
+  color: #253652;
+  font-size: clamp(0.84rem, 1.1vw, 1.05rem);
+  letter-spacing: 0.1em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.archives-mindset-copy__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: mindset-list;
+}
+
+.archives-mindset-copy__list li {
+  min-height: 2.7rem;
+  padding: 0.7rem 0 0.7rem 2.7rem;
+  position: relative;
+  border-bottom: 1px solid #e1d8cf;
+  color: #000000;
+  font-size: 0.9rem;
+  line-height: 1.35;
+  counter-increment: mindset-list;
+}
+
+.archives-mindset-copy__list li::before {
+  content: counter(mindset-list, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  color: #77808d;
+  font-size: 0.62rem;
+}
+
+.archives-mindset-copy__exercise-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: clamp(1.1rem, 2vw, 1.5rem);
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  background: #ffffff;
+}
+
+.archives-mindset-copy__exercise-card > p {
+  margin: 0;
+  color: #6f7784;
+  font-size: 0.75rem;
+  line-height: 1.55;
+}
+
+.archives-mindset-copy__exercise-card label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  color: #000000;
+  font-size: 0.72rem;
+}
+
+.archives-mindset-copy__exercise-card textarea {
+  min-height: 3.5rem;
+  resize: none;
+  border: 1px solid rgba(15, 23, 42, 0.18);
+  background: #ffffff;
+  color: #1f1a2f;
+  font: inherit;
+  line-height: 1.45;
+  padding: 0.65rem 0.75rem;
+}
+
+.archives-mindset-copy__letter {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.archives-mindset-copy__letter .self-love-letter__frame {
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  background: #ffffff;
+  box-shadow: none;
+}
+
+.archives-mindset-copy__letter .self-love-future-letter__status,
+.archives-mindset-copy__letter input,
+.archives-mindset-copy__letter textarea {
+  border-color: rgba(15, 23, 42, 0.2);
+  background: #ffffff;
+}
+
+@media (max-width: 719px) {
+  .archives-mindset-copy__duo,
+  .archives-mindset-copy__exercise-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .archives-mindset-copy__duo,
+  .archives-mindset-copy__exercise-grid {
+    grid-template-columns: 1fr;
+  }
+}

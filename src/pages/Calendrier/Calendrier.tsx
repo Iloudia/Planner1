@@ -8,15 +8,15 @@ import './CalendarPage.css'
 const weekDays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
 const hours = Array.from({ length: 18 }, (_, index) => index + 6)
 const hourHeight = 56
-const newTaskColors = ['#A5B4FC', '#7DD3FC', '#FBCFE8', '#BBF7D0', '#FDE68A']
+const newTaskColors = ['#D9E1E8', '#C7D0D8', '#E7DDCF', '#EFE8DE', '#D6C8BA', '#CBB8A6', '#BCA692']
 const dayStartMinutes = 6 * 60
 const dayEndMinutes = 23 * 60
 const legendColors = {
-  Travail: '#D8E49F',
-  Sport: '#EDB8A7',
-  Perso: '#EEE4D1',
-  'Rendez-vous': '#F7D7CF',
-  Repos: '#A6B57A',
+  Travail: '#D9E1E8',
+  Sport: '#C7D0D8',
+  Perso: '#E7DDCF',
+  'Rendez-vous': '#EFE8DE',
+  Repos: '#D6C8BA',
 }
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
@@ -170,6 +170,29 @@ const getTaskDateTime = (task: ScheduledTask) => {
 const parseTimeToMinutes = (value: string) => {
   const [hoursValue, minutesValue] = value.split(':').map(Number)
   return (hoursValue ?? 0) * 60 + (minutesValue ?? 0)
+}
+
+type WeeklyTaskPosition = {
+  top: number
+  height: number
+}
+
+const getWeeklyTaskPositions = (dayTasks: CalendarTaskItem[]) => {
+  const positions = new Map<string, WeeklyTaskPosition>()
+  let previousTaskBottom = 0
+
+  dayTasks.forEach((task) => {
+    const start = parseTimeToMinutes(task.start)
+    const end = parseTimeToMinutes(task.end)
+    const scheduledTop = (Math.max(0, start - dayStartMinutes) / 60) * hourHeight
+    const height = (Math.max(30, end - start || 30) / 60) * hourHeight
+    const top = Math.max(scheduledTop, previousTaskBottom + 2)
+
+    positions.set(task.id, { top, height })
+    previousTaskBottom = top + height
+  })
+
+  return positions
 }
 
 const CalendrierPage = () => {
@@ -739,19 +762,33 @@ if (isInitialAgendaLoading) {
 
 return (
   <div className="calendar-page">
+    <header className="calendar-page__heading">
+      <div>
+        <span className="calendar-page__heading-eyebrow">Mon</span>
+        <h1>Calendrier</h1>
+      </div>
+      <p>Un espace pour organiser tes journées, planifier tes priorités et avancer avec sérénité.</p>
+    </header>
     {error ? <p className="calendar-modal__empty">{error}</p> : null}
     {calendarView === 'weekly' ? (
     <section className="calendar-weekly">
       {isCompact ? (
         <>
-          <section className="calendar-compact-header sport-header" aria-label="En-tête du calendrier">
-            <div className="calendar-compact-header__copy">
-              <span className="sport-header__eyebrow">Calendrier hebdomadaire</span>
-              <h1 className="calendar-compact-header__title">Calendrier</h1>
+          <header className="calendar-mobile-header" aria-label="En-tête du calendrier">
+            <div className="calendar-mobile-header__label">
+              <span>Calendrier hebdomadaire</span>
+              <i aria-hidden="true" />
             </div>
-          </section>
+            <button
+              type="button"
+              className="calendar-mobile-header__add"
+              onClick={() => mobileAgendaDateKey && handleDaySelect(mobileAgendaDateKey, { presetForm: true })}
+            >
+              <span className="calendar-mobile-header__add-icon" aria-hidden="true">+</span>
+              <span>Ajouter un événement</span>
+            </button>
+          </header>
           <div className="calendar-weekly__mobile calendar-mobile" role="region" aria-label="Calendrier mobile">
-            <div className="calendar-mobile__toggle">{viewToggle}</div>
             <div className="calendar-mobile__panel">
               <div className="calendar-mobile__panel-header">
                 <button
@@ -781,19 +818,21 @@ return (
                 </button>
               </div>
 
+              <div className="calendar-mobile__toggle">{viewToggle}</div>
+
               <div className="calendar-mobile__week" role="list">
                 {weekDates.map((date, index) => {
                   const dateKey = getDateKey(date)
                   const isToday = date.toDateString() === today.toDateString()
                   const isSelected = dateKey === mobileSelectedDateKey
+                  const hasEvents = (tasksByDate.get(dateKey)?.length ?? 0) > 0
                   return (
                     <button
                       key={dateKey}
                       type="button"
-                      className={`calendar-mobile__day-card${isToday ? " is-today" : ""}${isSelected ? " is-selected" : ""}`}
+                      className={`calendar-mobile__day-card${isToday ? " is-today" : ""}${isSelected ? " is-selected" : ""}${hasEvents ? " has-events" : ""}`}
                       onClick={() => {
                         setMobileSelectedDateKey(dateKey)
-                        handleDaySelect(dateKey)
                       }}
                       aria-current={isToday ? "date" : undefined}
                       aria-label={`Voir la journée du ${dateKey}`}
@@ -843,7 +882,7 @@ return (
                       className="calendar-mobile__event-dot"
                       style={
                         {
-                          '--event-color': task.color,
+                          '--event-color': getTaskDisplayColor(task),
                         } as CSSProperties
                       }
                       aria-hidden="true"
@@ -852,45 +891,51 @@ return (
                       className="calendar-mobile__event-card"
                       style={
                         {
-                          '--event-color': task.color,
-                          background: `linear-gradient(135deg, ${withAlpha(task.color, 0.12)} 0%, ${withAlpha(
-                            task.color,
+                          '--event-color': getTaskDisplayColor(task),
+                          background: `linear-gradient(135deg, ${withAlpha(getTaskDisplayColor(task), 0.12)} 0%, ${withAlpha(
+                            getTaskDisplayColor(task),
                             0.28,
                           )} 100%)`,
-                          borderColor: withAlpha(task.color, 0.4),
+                          borderColor: withAlpha(getTaskDisplayColor(task), 0.4),
                         } as CSSProperties
                       }
                     >
-                      <span className="calendar-mobile__event-icon" aria-hidden="true">
-                        {getTaskIcon(task.tag)}
-                      </span>
-                      <div className="calendar-mobile__event-body">
-                        <div className="calendar-mobile__event-main">
-                          <span className="calendar-mobile__event-title">{task.title}</span>
+                      <div className="calendar-mobile__event-copy">
+                        <span className="calendar-mobile__event-hours">
+                          {task.start} - {task.end}
+                        </span>
+                        <span className="calendar-mobile__event-title">{task.title}</span>
+                      </div>
+                      {!isSportTaskItem(task) ? (
+                        <div className="calendar-mobile__event-actions">
                           <button
                             type="button"
-                            className="calendar-mobile__event-more"
-                            aria-label={`Ouvrir les détails de ${task.title}`}
-                              onClick={() => mobileAgendaDateKey && handleDaySelect(mobileAgendaDateKey)}
+                            className="calendar-mobile__event-action"
+                            aria-label={`Dupliquer ${task.title}`}
+                            onClick={() => handleDuplicateTask(task)}
                           >
                             <svg viewBox="0 0 24 24" aria-hidden="true">
-                              <circle cx="12" cy="5" r="1.8" fill="currentColor" />
-                              <circle cx="12" cy="12" r="1.8" fill="currentColor" />
-                              <circle cx="12" cy="19" r="1.8" fill="currentColor" />
+                              <rect x="8" y="8" width="10" height="10" rx="1.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
+                              <path d="M6 15.5H5.5A1.5 1.5 0 0 1 4 14V5.5A1.5 1.5 0 0 1 5.5 4H14a1.5 1.5 0 0 1 1.5 1.5V6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </button>
+                          <button
+                            type="button"
+                            className="calendar-mobile__event-action"
+                            aria-label={`Modifier ${task.title}`}
+                            onClick={() => {
+                              if (mobileAgendaDateKey) {
+                                handleDaySelect(mobileAgendaDateKey)
+                              }
+                              handleEditClick(task.id)
+                            }}
+                          >
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                              <path d="m14.8 4.2 5 5M4.5 19.5l3.1-.7L18.4 8a2 2 0 0 0 0-2.8l-.6-.6a2 2 0 0 0-2.8 0L4.2 15.4l-.7 4.1Z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                           </button>
                         </div>
-                        <div className="calendar-mobile__event-meta">
-                          <span className="calendar-mobile__event-hours">
-                            {task.start} - {task.end}
-                          </span>
-                          {task.tag ? (
-                            <span className="calendar-mobile__event-tag">
-                              {isSportTaskItem(task) && task.done ? 'Sport terminé' : task.tag}
-                            </span>
-                          ) : null}
-                        </div>
-                      </div>
+                      ) : null}
                     </div>
                   </div>
                 ))
@@ -938,6 +983,7 @@ return (
           {weekDates.map((date) => {
             const dateKey = getDateKey(date)
             const dayTasks = tasksByDate.get(dateKey) ?? []
+            const weeklyTaskPositions = getWeeklyTaskPositions(dayTasks)
             return (
               <div
                 key={dateKey}
@@ -957,10 +1003,7 @@ return (
                     const endMinutes = parseTimeToMinutes(task.end)
                     const nowMinutes = now.getHours() * 60 + now.getMinutes()
                     const isOngoing = task.date === nowKey && nowMinutes >= startMinutes && nowMinutes < endMinutes
-                    const durationMinutes = Math.max(30, endMinutes - startMinutes || 30)
-                    const minutesFromStart = Math.max(0, startMinutes - 6 * 60)
-                    const top = (minutesFromStart / 60) * hourHeight
-                    const height = (durationMinutes / 60) * hourHeight
+                    const position = weeklyTaskPositions.get(task.id) ?? { top: 0, height: hourHeight / 2 }
                     return (
                       <button
                         key={task.id}
@@ -978,8 +1021,8 @@ return (
                           event.dataTransfer.effectAllowed = 'move'
                         }}
                         style={{
-                          top: `${top}px`,
-                          height: `${height}px`,
+                          top: `${position.top}px`,
+                          height: `${position.height}px`,
                           background: `linear-gradient(135deg, ${withAlpha(getTaskDisplayColor(task), 0.82)} 0%, ${withAlpha(
                             getTaskDisplayColor(task),
                             0.96,
@@ -1011,36 +1054,36 @@ return (
     ) : null}
 
     {calendarView === 'monthly' ? (
-    <>
-      <header className="sport-header calendar-header calendar-header--compact">
-        <div className="calendar-heading">
-          <span className="calendar-heading__eyebrow">Calendrier mensuel</span>
-          <h1 className="calendar-heading__title">
-            <button
-              type="button"
-              className="calendar-heading__arrow"
-              onClick={() => handleMonthChange(-1)}
-              aria-label="Mois précédent"
-            >
-              {'<'}
-            </button>
-            <span>{formatMonthTitle(currentMonthDate)}</span>
-            <button
-              type="button"
-              className="calendar-heading__arrow"
-              onClick={() => handleMonthChange(1)}
-              aria-label="Mois suivant"
-            >
-              {'>'}
-            </button>
-          </h1>
-        </div>
+    <section className="calendar-weekly">
+      <header className="sport-header calendar-weekly__header">
+          <div className="calendar-heading">
+            <span className="calendar-heading__eyebrow">Calendrier mensuel</span>
+            <h1 className="calendar-heading__title calendar-heading__title--mobile">
+              <button
+                type="button"
+                className="calendar-heading__arrow"
+                onClick={() => handleMonthChange(-1)}
+                aria-label="Mois précédent"
+              >
+                {'<'}
+              </button>
+              <span>{formatMonthTitle(currentMonthDate)}</span>
+              <button
+                type="button"
+                className="calendar-heading__arrow"
+                onClick={() => handleMonthChange(1)}
+                aria-label="Mois suivant"
+              >
+                {'>'}
+              </button>
+            </h1>
+          </div>
       </header>
-    <section className="calendar-monthly-preview">
-      <div className="calendar-weekly__toolbar calendar-monthly__controls">
-        {viewToggle}
-      </div>
-      <div className="calendar-grid calendar-grid--preview">
+      <div className="calendar-weekly__layout">
+        <div className="calendar-weekly__toolbar calendar-monthly__controls">
+          {viewToggle}
+        </div>
+        <div className="calendar-grid calendar-grid--preview">
         {weekDays.map((label) => (
           <div key={label} className="calendar-grid__weekday">
             {label}
@@ -1094,9 +1137,9 @@ return (
             </div>
           ),
         )}
+        </div>
       </div>
     </section>
-    </>
     ) : null}
     {isDayModalOpen && activeDateKey ? (
       <div className="calendar-modal" role="dialog" aria-modal="true" aria-labelledby="calendar-modal-title">

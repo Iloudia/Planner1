@@ -5,7 +5,6 @@ import { useAuth } from "../../context/AuthContext"
 import useUserDietData from "../../hooks/useUserDietData"
 import { getWeekKey } from "../../utils/weekKey"
 import { builtinDietRecipes } from "../Diet/DietPage"
-import PageHeading from "../../components/PageHeading"
 import photo1 from "../../assets/food.webp"
 import photo2 from "../../assets/food2.webp"
 import photo3 from "../../assets/bowl-mediteraneen.webp"
@@ -332,10 +331,20 @@ function DietPage() {
     </article>
   )
 
+  const menuHeading = (
+    <header className="diet-page__heading">
+      <div>
+        <span className="diet-page__heading-eyebrow">Mon</span>
+        <h1>Menu de la semaine</h1>
+      </div>
+      <p>Un espace pour planifier tes repas, nourrir ton énergie et simplifier ton quotidien.</p>
+    </header>
+  )
+
   if (isAlimentationLoading) {
     return (
       <>
-        <PageHeading eyebrow="Repas" title="Menu de la semaine" />
+        {menuHeading}
         <div className="diet-page diet-page--loading" aria-busy="true" aria-live="polite">
           <span className="diet-loading-a11y" role="status">
             Chargement
@@ -347,7 +356,7 @@ function DietPage() {
 
   return (
     <>
-      <PageHeading eyebrow="Repas" title="Menu de la semaine" />
+      {menuHeading}
       {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer ton espace alimentation.</p> : null}
       {error ? <p className="routine-note__composer-hint">{error}</p> : null}
         <section className="page-section diet-crosslink">

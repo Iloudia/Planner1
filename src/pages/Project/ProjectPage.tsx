@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react"
 import usePersistentState from "../../hooks/usePersistentState"
-import PageHeading from "../../components/PageHeading"
 import projectMoodboard from "../../assets/Moodboardsite.png"
 import "./ProjectPage.css"
 
@@ -218,7 +217,13 @@ const ProjectPage = () => {
 
   return (
     <div className="project-page">
-      <PageHeading className="project-header" eyebrow="Projects" title="Mes projets" />
+      <header className="project-page__heading">
+        <div>
+          <span className="project-page__heading-eyebrow">Mes</span>
+          <h1>Projets</h1>
+        </div>
+        <p>Un espace pour imaginer, organiser et faire avancer les projets qui te tiennent à cœur.</p>
+      </header>
 
       <div className="project-top-grid"><section className="project-section project-overview" aria-labelledby="overview-heading"><h2 id="overview-heading">Vue d’ensemble</h2><div className="project-overview__stats"><article><span>Projets en cours</span><strong>{stats.inProgress}</strong></article><article><span>À commencer</span><strong>{stats.pending}</strong></article><article><span>Terminés</span><strong>{stats.completed}</strong></article><article><span>Total projets</span><strong>{projects.length}</strong></article></div></section></div>
 

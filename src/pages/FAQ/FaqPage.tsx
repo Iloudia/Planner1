@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import PageHeading from "../../components/PageHeading"
+import AdministrativePageHeader from "../../components/AdministrativePageHeader"
 import faqPortrait from "../../assets/maria-bolinder-dupe.webp"
 import "./FaqPage.css"
 
@@ -68,7 +68,7 @@ const FAQPage = () => {
 
   return (
     <>
-      <PageHeading eyebrow="FAQ" title="FAQ" className="faq-header" />
+      <AdministrativePageHeader eyebrow="La" title="FAQ" />
       <div className="faq-wrapper">
         <div className="legal-page faq-page">
           <p className="legal-page__intro">Toutes les réponses essentielles pour tirer le meilleur du site.</p>

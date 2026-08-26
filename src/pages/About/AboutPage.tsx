@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import PageHeading from "../../components/PageHeading"
+import AdministrativePageHeader from "../../components/AdministrativePageHeader"
 import portrait from "../../assets/Fleurs-blanches.webp"
 import valuePhotoTwo from "../../assets/Ballons-coeur.webp"
 import valuePhotoThree from "../../assets/Perseverance.webp"
@@ -81,7 +81,7 @@ const AboutPage = () => {
     <>
       <div className="about-page">
         <div className="about-shell">
-          <PageHeading eyebrow="À propos" title="À propos de moi" />
+          <AdministrativePageHeader eyebrow="À propos" title="de moi" />
           <article className="about-article" aria-label="À propos">
             <div className="about-feature">
               <div className="about-feature__copy">

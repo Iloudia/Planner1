@@ -36,6 +36,68 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@500;600;700&display=swap");
 
+.journaling-page__heading {
+  position: relative;
+  min-height: clamp(16rem, 23vw, 20rem);
+  padding: clamp(2rem, 4vw, 3.25rem) clamp(1.75rem, 5vw, 3.5rem);
+  overflow: hidden;
+  text-align: left;
+  background:
+    linear-gradient(90deg, #ffffff 0%, rgba(255, 255, 255, 0.97) 36%, rgba(255, 255, 255, 0.28) 65%, rgba(255, 255, 255, 0) 100%),
+    url('../../assets/Journaling.webp') center / cover no-repeat;
+  border: 1px solid rgba(41, 37, 32, 0.14);
+}
+
+.journaling-page__heading > div {
+  position: relative;
+  z-index: 1;
+}
+
+.journaling-page__heading-eyebrow {
+  display: block;
+  margin-bottom: 0.8rem;
+  color: #1c2c47;
+  font-family: 'Kapakana', cursive !important;
+  font-size: clamp(2.3rem, 3.8vw, 3.6rem) !important;
+  font-weight: 400;
+  font-optical-sizing: auto;
+  font-style: normal;
+  letter-spacing: 0;
+  line-height: 0.75 !important;
+  text-transform: none;
+}
+
+.journaling-page__heading h1 {
+  margin: 0;
+  color: #132642 !important;
+  font-family: 'Italiana', 'Times New Roman', serif !important;
+  font-size: clamp(2.7rem, 5.4vw, 4.7rem) !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.075em !important;
+  line-height: 0.95 !important;
+  text-transform: uppercase;
+}
+
+.journaling-page__heading h1::after {
+  content: '';
+  display: block;
+  width: clamp(4rem, 8vw, 6.8rem);
+  height: 1px;
+  margin-top: clamp(0.85rem, 1.4vw, 1.25rem);
+  background: #132642;
+}
+
+.journaling-page__heading > p {
+  position: relative;
+  z-index: 1;
+  max-width: 22rem;
+  margin: clamp(1.1rem, 2vw, 1.65rem) 0 0;
+  color: #374250;
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: clamp(0.72rem, 0.9vw, 0.92rem);
+  line-height: 1.55;
+}
+
 .journaling-page::before {
   content: none;
 }
@@ -1196,18 +1258,16 @@ body.journaling-page--lux {
   }
 }
 
-/* Fond commun des quatre sections de journaling. */
+/* Conteneur commun des quatre sections de journaling. */
 .journaling-sections-shell {
   display: flex;
   flex-direction: column;
   gap: clamp(1.25rem, 2.5vw, 2rem);
   padding: clamp(1rem, 2vw, 1.35rem);
-  background: #fff;
-  border: 1px solid var(--lux-line);
 }
 
 .journaling-sections-shell > .journaling-section {
-  background: transparent;
+  background: #ffffff;
   box-shadow: none;
 }
 

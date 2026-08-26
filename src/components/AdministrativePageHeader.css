@@ -1,0 +1,50 @@
+.administrative-page-header {
+  position: relative;
+  min-height: clamp(16rem, 23vw, 20rem);
+  padding: clamp(2rem, 4vw, 3.25rem) clamp(1.75rem, 5vw, 3.5rem);
+  overflow: hidden;
+  text-align: left;
+  background:
+    linear-gradient(90deg, #ffffff 0%, rgba(255, 255, 255, 0.97) 36%, rgba(255, 255, 255, 0.28) 65%, rgba(255, 255, 255, 0) 100%),
+    url('../assets/Fleurs-blanches.webp') center / cover no-repeat;
+  border: 1px solid rgba(41, 37, 32, 0.14);
+}
+
+.administrative-page-header > div {
+  position: relative;
+  z-index: 1;
+}
+
+.administrative-page-header__eyebrow {
+  display: block;
+  margin-bottom: 0.8rem;
+  color: #1c2c47;
+  font-family: 'Kapakana', cursive !important;
+  font-size: clamp(2.3rem, 3.8vw, 3.6rem) !important;
+  font-weight: 400;
+  font-optical-sizing: auto;
+  font-style: normal;
+  letter-spacing: 0;
+  line-height: 0.75 !important;
+  text-transform: none;
+}
+
+.administrative-page-header h1 {
+  margin: 0;
+  color: #132642 !important;
+  font-family: 'Italiana', 'Times New Roman', serif !important;
+  font-size: clamp(2.7rem, 5.4vw, 4.7rem) !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.075em !important;
+  line-height: 0.95 !important;
+  text-transform: uppercase;
+}
+
+.administrative-page-header h1::after {
+  content: '';
+  display: block;
+  width: clamp(4rem, 8vw, 6.8rem);
+  height: 1px;
+  margin-top: clamp(0.85rem, 1.4vw, 1.25rem);
+  background: #132642;
+}

@@ -1,5 +1,5 @@
 ﻿import { useEffect } from "react"
-import PageHeading from "../../components/PageHeading"
+import AdministrativePageHeader from "../../components/AdministrativePageHeader"
 import { Link } from "react-router-dom"
 import { useCookieConsent } from "../../context/CookieConsentContext"
 import "./GestionCookiesPage.css"
@@ -16,7 +16,7 @@ const GestionCookiesPage = () => {
 
   return (
     <>
-        <PageHeading eyebrow="Cookies" title="Gestion des cookies" className="cookies-page__header" />
+        <AdministrativePageHeader eyebrow="La" title="Gestion des cookies" />
       <div className="legal-page">
         <p className="legal-page__intro">
           Lors de la consultation de ce site, des cookies et traceurs locaux peuvent être déposés sur ton appareil

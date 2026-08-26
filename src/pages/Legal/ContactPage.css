@@ -11,17 +11,78 @@
   gap: clamp(1.8rem, 3vw, 2.4rem);
 }
 
-.contact-page__header {
-  max-width: 742px;
-  margin: 0 auto;
-  font-family: "Inter", "Times New Roman", sans-serif;
+.contact-page__heading {
+  position: relative;
+  min-height: clamp(16rem, 23vw, 20rem);
+  padding: clamp(2rem, 4vw, 3.25rem) clamp(1.75rem, 5vw, 3.5rem);
+  overflow: hidden;
+  text-align: left;
+  background:
+    linear-gradient(90deg, #ffffff 0%, rgba(255, 255, 255, 0.97) 36%, rgba(255, 255, 255, 0.28) 65%, rgba(255, 255, 255, 0) 100%),
+    url('../../assets/Fleurs-blanches.webp') center / cover no-repeat;
+  border: 1px solid rgba(41, 37, 32, 0.14);
 }
 
-.contact-page__header .sport-header__eyebrow {
-  color: var(--lux-accent-strong, #9b8976);
+.contact-page__heading > div {
+  position: relative;
+  z-index: 1;
+}
+
+.contact-page__heading-eyebrow {
+  display: block;
+  margin-bottom: 0.8rem;
+  color: #1c2c47;
+  font-family: 'Kapakana', cursive !important;
+  font-size: clamp(2.3rem, 3.8vw, 3.6rem) !important;
+  font-weight: 400;
+  font-optical-sizing: auto;
+  font-style: normal;
+  letter-spacing: 0;
+  line-height: 0.75 !important;
+  text-transform: none;
+}
+
+.contact-page__heading h1 {
+  margin: 0;
+  color: #132642 !important;
+  font-family: 'Italiana', 'Times New Roman', serif !important;
+  font-size: clamp(2.7rem, 5.4vw, 4.7rem) !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.075em !important;
+  line-height: 0.95 !important;
+  text-transform: uppercase;
+}
+
+.contact-page__heading h1::after {
+  content: '';
+  display: block;
+  width: clamp(4rem, 8vw, 6.8rem);
+  height: 1px;
+  margin-top: clamp(0.85rem, 1.4vw, 1.25rem);
+  background: #132642;
+}
+
+.contact-page__heading > p {
+  position: relative;
+  z-index: 1;
+  max-width: 22rem;
+  margin: clamp(1.1rem, 2vw, 1.65rem) 0 0;
+  color: #374250;
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: clamp(0.72rem, 0.9vw, 0.92rem);
+  line-height: 1.55;
 }
 
 .contact-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(17rem, 0.8fr);
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  gap: 0;
+  padding: 0;
+  border: 1px solid #dcd3ca;
+  background: #faf7f3;
   font-family: "Inter", "Times New Roman", sans-serif;
 }
 
@@ -90,32 +151,51 @@
 }
 
 .contact-form {
-  gap: 1.2rem;
+  padding: clamp(1.5rem, 3vw, 2.3rem);
+  gap: 1.5rem;
+  border: 0;
+}
+
+.contact-form__title,
+.contact-info h2 {
+  margin: 0;
+  color: #20304d;
+  font-family: "Playfair Display", "Times New Roman", serif;
+  font-size: clamp(1.1rem, 1.6vw, 1.45rem);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  text-transform: uppercase;
 }
 
 .contact-form__body {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1rem 1.2rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
 }
 
 .contact-form__body label {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
-  font-size: 0.9rem;
-  color: var(--color-chocolate);
-  font-weight: 600;
+  gap: 0.3rem;
+  color: #20304d;
+  font-family: "Playfair Display", "Times New Roman", serif;
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .contact-form__body input,
 .contact-form__body textarea {
-  border: 1px solid rgba(114, 92, 63, 0.25);
-  padding: 0.8rem 1rem;
-  font-size: 1rem;
-  font-family: "Inter", "Times New Roman", sans-serif;
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  border: 1px solid #ddd4ca;
+  border-radius: 0;
+  padding: 0.55rem 0.7rem;
+  color: #20304d;
+  font-family: "Libre Baskerville", Georgia, serif;
+  font-size: 0.76rem;
+  background: rgba(255, 255, 255, 0.38);
+  box-shadow: none;
 }
 
 .contact-form__body input::placeholder,
@@ -125,7 +205,7 @@
 
 .contact-form__body textarea {
   resize: none;
-  min-height: 140px;
+  min-height: 7.2rem;
 }
 
 .contact-form__field--full {
@@ -134,15 +214,19 @@
 
 .contact-form__submit {
   grid-column: 1 / -1;
-  justify-self: flex-end;
-  border: none;
-  padding: 0.9rem 2.2rem;
-  background: var(--color-caramel);
-  color: var(--color-chocolate);
-  font-weight: 600;
-  font-size: 1rem;
+  justify-self: stretch;
+  min-height: 2.6rem;
+  border: 1px solid #20304d;
+  padding: 0.7rem 1.2rem;
+  background: #142644;
+  color: #ffffff;
+  font-family: "Playfair Display", "Times New Roman", serif;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   cursor: pointer;
-  box-shadow: 0 18px 40px rgba(227, 215, 202, 0.45);
+  box-shadow: none;
 }
 
 .contact-form__submit:disabled {
@@ -178,10 +262,62 @@
   background: rgba(140, 48, 48, 0.08);
   color: #7a2323;
 }
+
+.contact-info {
+  padding: clamp(1.5rem, 3vw, 2.3rem);
+  border-left: 1px solid #dcd3ca;
+  color: #20304d;
+}
+
+.contact-info__section {
+  padding: 1.1rem 0;
+  border-bottom: 1px solid #dcd3ca;
+}
+
+.contact-info__section:last-child {
+  border-bottom: 0;
+}
+
+.contact-info__section h3 {
+  margin: 0 0 0.6rem;
+  color: #20304d;
+  font-family: "Playfair Display", "Times New Roman", serif;
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.contact-info__section p,
+.contact-info__section a {
+  margin: 0;
+  color: #20304d;
+  font-family: "Libre Baskerville", Georgia, serif;
+  font-size: 0.7rem;
+  line-height: 1.6;
+  text-decoration: none;
+}
+
+.contact-info__section a:hover {
+  text-decoration: underline;
+}
 @media (max-width: 640px) {
   .legal-page {
     padding: clamp(1.6rem, 7vw, 2.2rem);
     gap: 1.6rem;
+  }
+
+  .contact-page {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-form__body {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-info {
+    border-top: 1px solid #dcd3ca;
+    border-left: 0;
   }
 }
 /* Luxury overrides (match boutique design) */
@@ -204,8 +340,7 @@ body.legal-page--lux .legal-page {
   font-family: "Playfair Display", "Times New Roman", serif;
 }
 
-body.legal-page--lux .contact-page,
-body.legal-page--lux .contact-page__header {
+body.legal-page--lux .contact-page {
   font-family: "Inter", "Times New Roman", sans-serif;
 }
 
@@ -238,16 +373,15 @@ body.legal-page--lux .legal-page .sport-header {
 }
 
 body.legal-page--lux .contact-form__body label {
-  color: var(--lux-ink);
+  color: #20304d;
 }
 
 body.legal-page--lux .contact-form__body input,
 body.legal-page--lux .contact-form__body textarea {
-  border-radius: 0;
-  border: 1px solid var(--lux-line);
-  background: var(--lux-paper);
+  border: 1px solid #ddd4ca;
+  background: rgba(255, 255, 255, 0.38);
   box-shadow: none;
-  font-family: "Inter", "Times New Roman", sans-serif;
+  font-family: "Libre Baskerville", Georgia, serif;
 }
 
 body.legal-page--lux .contact-form__body input::placeholder,
@@ -256,9 +390,8 @@ body.legal-page--lux .contact-form__body textarea::placeholder {
 }
 
 body.legal-page--lux .contact-form__submit {
-  border-radius: 0;
-  border: 1px solid var(--lux-ink);
-  background: var(--lux-ink);
+  border: 1px solid #20304d;
+  background: #142644;
   color: #ffffff;
   box-shadow: none;
 }
@@ -273,5 +406,30 @@ body.legal-page--lux .contact-form__status--error {
   border-color: rgba(122, 61, 43, 0.24);
   background: rgba(122, 61, 43, 0.08);
   color: #7a3d2b;
+}
+
+body.legal-page--lux .legal-page.contact-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(17rem, 0.8fr);
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  gap: 0;
+  padding: 0;
+  border: 1px solid #dcd3ca;
+  background: #faf7f3;
+}
+
+body.legal-page--lux .contact-page .contact-form__title,
+body.legal-page--lux .contact-page .contact-info h2,
+body.legal-page--lux .contact-page .contact-info h3 {
+  color: #20304d;
+  font-family: "Playfair Display", "Times New Roman", serif;
+}
+
+@media (max-width: 640px) {
+  body.legal-page--lux .legal-page.contact-page {
+    grid-template-columns: 1fr;
+  }
 }
 

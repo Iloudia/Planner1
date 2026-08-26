@@ -3,7 +3,6 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import MediaImage from "../../components/MediaImage"
 import stampLove from "../../assets/Timbre-1.webp"
 import stampKey from "../../assets/Timbre-2.webp"
-import PageHeading from "../../components/PageHeading"
 import { useAuth } from "../../context/AuthContext"
 import useUserSelfLove from "../../hooks/useUserSelfLove"
 import { deleteMedia, uploadImage } from "../../services/media/api"
@@ -31,11 +30,7 @@ const SelfLovePage = () => {
     removeQuality,
     addThought,
     removeThought,
-    saveInnerChildArchive,
-    saveBestFriendArchive,
-    saveLetterArchive,
-    saveFutureLetterArchive,
-    sealFutureLetter,
+    saveMindsetArchive,
   } = useUserSelfLove()
   const canEdit = Boolean(userId)
   const isSelfLoveLoading = !isAuthReady || isLoading
@@ -43,27 +38,16 @@ const SelfLovePage = () => {
   const [qualityDraft, setQualityDraft] = useState("")
   const [thoughtDraft, setThoughtDraft] = useState("")
   const [releasingThoughtIds, setReleasingThoughtIds] = useState<Set<string>>(new Set())
-  const [letterTemplate, setLetterTemplate] = useState<"classic" | "kitty">("classic")
-  const [letterSaveConfirmationVisible, setLetterSaveConfirmationVisible] = useState(false)
-  const [futureSealConfirmationVisible, setFutureSealConfirmationVisible] = useState(false)
   const [exerciseSaveConfirmationVisible, setExerciseSaveConfirmationVisible] = useState(false)
   const [draftState, setDraftState] = useState(draft)
-  const letterSaveConfirmationTimeout = useRef<number | null>(null)
-  const futureSealConfirmationTimeout = useRef<number | null>(null)
   const exerciseSaveConfirmationTimeout = useRef<number | null>(null)
 
   useEffect(() => {
     document.body.classList.add("self-love-page--lux")
     return () => {
       document.body.classList.remove("self-love-page--lux")
-      if (letterSaveConfirmationTimeout.current !== null) {
-        window.clearTimeout(letterSaveConfirmationTimeout.current)
-      }
       if (exerciseSaveConfirmationTimeout.current !== null) {
         window.clearTimeout(exerciseSaveConfirmationTimeout.current)
-      }
-      if (futureSealConfirmationTimeout.current !== null) {
-        window.clearTimeout(futureSealConfirmationTimeout.current)
       }
     }
   }, [])
@@ -71,28 +55,6 @@ const SelfLovePage = () => {
   useEffect(() => {
     setDraftState(draft)
   }, [draft])
-
-  const showLetterConfirmation = () => {
-    setLetterSaveConfirmationVisible(true)
-    if (letterSaveConfirmationTimeout.current !== null) {
-      window.clearTimeout(letterSaveConfirmationTimeout.current)
-    }
-    letterSaveConfirmationTimeout.current = window.setTimeout(() => {
-      setLetterSaveConfirmationVisible(false)
-      letterSaveConfirmationTimeout.current = null
-    }, 2000)
-  }
-
-  const showFutureConfirmation = () => {
-    setFutureSealConfirmationVisible(true)
-    if (futureSealConfirmationTimeout.current !== null) {
-      window.clearTimeout(futureSealConfirmationTimeout.current)
-    }
-    futureSealConfirmationTimeout.current = window.setTimeout(() => {
-      setFutureSealConfirmationVisible(false)
-      futureSealConfirmationTimeout.current = null
-    }, 2200)
-  }
 
   const showExerciseConfirmation = () => {
     setExerciseSaveConfirmationVisible(true)
@@ -170,101 +132,51 @@ const SelfLovePage = () => {
     }, 620)
   }
 
-  const handleSaveInnerChildExercise = async () => {
-    const snapshot = {
+  const handleSaveMindsetPage = async () => {
+    const innerChildSnapshot = {
       message: draftState.innerChildMessage.trim(),
       reassurance: draftState.innerChildReassurance.trim(),
       neededWords: draftState.innerChildNeededWords.trim(),
     }
-    if (!Object.values(snapshot).some((value) => value.length > 0)) {
-      window.alert("Commence par écrire quelques phrases avant d'ajouter cet exercice.")
-      return
-    }
-    await saveInnerChildArchive(snapshot)
-    const clearedInnerChildDraft = {
-      innerChildMessage: "",
-      innerChildReassurance: "",
-      innerChildNeededWords: "",
-    }
-    setDraftState((previous) => ({ ...previous, ...clearedInnerChildDraft }))
-    await updateDraft(clearedInnerChildDraft)
-    showExerciseConfirmation()
-  }
-
-  const handleSaveBestFriendExercise = async () => {
-    const snapshot = {
+    const bestFriendSnapshot = {
       advice: draftState.bestFriendAdvice.trim(),
       selfTalk: draftState.bestFriendSelfTalk.trim(),
       selfKindness: draftState.bestFriendSelfKindness.trim(),
     }
-    if (!Object.values(snapshot).some((value) => value.length > 0)) {
-      window.alert("Commence par écrire quelques phrases avant d'ajouter cet exercice.")
-      return
-    }
-    await saveBestFriendArchive(snapshot)
-    const clearedBestFriendDraft = {
-      bestFriendAdvice: "",
-      bestFriendSelfTalk: "",
-      bestFriendSelfKindness: "",
-    }
-    setDraftState((previous) => ({ ...previous, ...clearedBestFriendDraft }))
-    await updateDraft(clearedBestFriendDraft)
-    showExerciseConfirmation()
-  }
+    const hasInnerChildContent = Object.values(innerChildSnapshot).some((value) => value.length > 0)
+    const hasBestFriendContent = Object.values(bestFriendSnapshot).some((value) => value.length > 0)
 
-  const handleSaveLetter = async () => {
-    const body = letterTemplate === "classic" ? draftState.letterBody : draftState.kittyLetterBody
-    const trimmed = body.trim()
-    if (!trimmed) {
-      window.alert("Commence par écrire ta lettre avant de l'enregistrer.")
+    const savedQualities = qualities.map((quality) => quality.text.trim()).filter(Boolean)
+    const savedThoughts = thoughts.map((thought) => thought.text.trim()).filter(Boolean)
+    const letterBody = draftState.futureLetterBody.trim()
+    if (!hasInnerChildContent && !hasBestFriendContent && savedQualities.length === 0 && savedThoughts.length === 0 && !letterBody) {
+      window.alert("Ajoute du contenu avant d'enregistrer la page.")
       return
     }
-    await saveLetterArchive({
-      template: letterTemplate,
-      to: letterTemplate === "classic" ? draftState.letterTo : undefined,
-      from: letterTemplate === "classic" ? draftState.letterFrom : undefined,
-      body: trimmed,
-    })
-    showLetterConfirmation()
-  }
 
-  const handleSaveFutureLetter = async () => {
-    const trimmed = draftState.futureLetterBody.trim()
-    if (!trimmed) {
-      window.alert("Commence par écrire ta lettre avant de l'enregistrer.")
-      return
+    if (letterBody) {
+      const openDate = new Date(`${draftState.futureLetterOpenDate}T00:00:00`)
+      if (!draftState.futureLetterOpenDate || Number.isNaN(openDate.getTime()) || openDate.getTime() <= Date.now()) {
+        window.alert("Choisis une date d'ouverture future pour sceller ta lettre.")
+        return
+      }
     }
-    await saveFutureLetterArchive({
-      to: draftState.futureLetterTo,
-      from: draftState.futureLetterFrom,
-      body: trimmed,
+
+    await saveMindsetArchive({
+      to: draftState.futureLetterTo.trim() || undefined,
+      from: draftState.futureLetterFrom.trim() || undefined,
+      body: letterBody || undefined,
       openDate: draftState.futureLetterOpenDate || undefined,
+      sealedAt: letterBody ? new Date().toISOString() : undefined,
+      mindset: {
+        photos: photos.map((photo) => ({ id: photo.id, imageUrl: photo.imageUrl })),
+        qualities: savedQualities,
+        thoughts: savedThoughts,
+        innerChild: hasInnerChildContent ? innerChildSnapshot : undefined,
+        bestFriend: hasBestFriendContent ? bestFriendSnapshot : undefined,
+      },
     })
-    showLetterConfirmation()
-  }
-
-  const handleSealFutureLetter = async () => {
-    const trimmed = draftState.futureLetterBody.trim()
-    if (!trimmed) {
-      window.alert("Écris quelques lignes avant de sceller ta lettre.")
-      return
-    }
-    if (!draftState.futureLetterOpenDate) {
-      window.alert("Choisis une date d'ouverture.")
-      return
-    }
-    const openDate = new Date(`${draftState.futureLetterOpenDate}T00:00:00`)
-    if (Number.isNaN(openDate.getTime()) || openDate.getTime() <= Date.now()) {
-      window.alert("Choisis une date future valide.")
-      return
-    }
-    await sealFutureLetter({
-      to: draftState.futureLetterTo,
-      from: draftState.futureLetterFrom,
-      body: trimmed,
-      openDate: draftState.futureLetterOpenDate,
-    })
-    showFutureConfirmation()
+    showExerciseConfirmation()
   }
 
   const today = useMemo(
@@ -297,7 +209,13 @@ const SelfLovePage = () => {
 
   return (
     <div className="self-love-page">
-      <PageHeading eyebrow="Self love" title="mindset" />
+      <header className="self-love-page__heading">
+        <div>
+          <span className="self-love-page__heading-eyebrow">Mon</span>
+          <h1>Mindset</h1>
+        </div>
+        <p>Un espace pour cultiver l’amour de soi, nourrir ta confiance et avancer avec douceur.</p>
+      </header>
       <div className="self-love-page__content">
         {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer ton espace self-love.</p> : null}
         {error ? <p className="routine-note__composer-hint">{error}</p> : null}
@@ -305,10 +223,7 @@ const SelfLovePage = () => {
 
       <section className="self-love-section self-love-section--photos">
         <div className="self-love-photos__intro">
-          <h2 className="self-love-chocolate self-love-photos__title">Aime-toi</h2>
-          <p className="self-love-chocolate self-love-photos__subtitle">
-            Choisis 6 photos sur lesquelles tu te sens belle
-          </p>
+          <h2 className="self-love-chocolate self-love-photos__title">Choisis 6 photos sur lesquelles tu te sens belle</h2>
         </div>
         <div className="self-love-photos-frame">
           <div className="self-love-photos">
@@ -471,9 +386,6 @@ const SelfLovePage = () => {
             <p className="self-love-exercise__hint">
               Cet exercice apaise les blessures du passé et t'aide à te donner la douceur que tu n'as pas toujours reçue.
             </p>
-            <button type="button" className="self-love-exercise__save" onClick={() => void handleSaveInnerChildExercise()}>
-              Ajouter aux archives
-            </button>
           </article>
 
           <article className="self-love-exercise__card">
@@ -516,16 +428,7 @@ const SelfLovePage = () => {
             <p className="self-love-exercise__hint">
               Cet exercice casse l'auto-critique et rappelle que tu mérites la même douceur.
             </p>
-            <button type="button" className="self-love-exercise__save" onClick={() => void handleSaveBestFriendExercise()}>
-              Ajouter aux archives
-            </button>
           </article>
-        </div>
-        <div className={`self-love-toast self-love-toast--page${exerciseSaveConfirmationVisible ? " is-visible" : ""}`} role="status" aria-live="polite">
-          <div className="self-love-toast__card">
-            <h4>Page ajoutée</h4>
-            <p>Ton contenu a bien été ajouté dans les archives.</p>
-          </div>
         </div>
       </section>
 
@@ -594,22 +497,16 @@ const SelfLovePage = () => {
                 <img src={stampLove} alt="Timbre souvenir" loading="lazy" decoding="async" />
                 <img src={stampKey} alt="Timbre secret" loading="lazy" decoding="async" />
               </div>
-              <div className="self-love-future-letter__actions">
-                <button type="button" className="self-love-future-letter__seal" onClick={() => void handleSealFutureLetter()}>
-                  Sceller la lettre dans les archives
-                </button>
-              </div>
             </div>
           </div>
 
         </div>
-        <div className={`self-love-toast self-love-toast--seal${futureSealConfirmationVisible ? " is-visible" : ""}`} role="status" aria-live="polite">
-          <div className="self-love-toast__card">
-            <h4>Lettre scellée</h4>
-            <p>Ta lettre a bien été scellée et archivée.</p>
-          </div>
+        <div className="self-love-future-letter__actions self-love-future-letter__actions--page">
+          <button type="button" className="self-love-future-letter__seal" onClick={() => void handleSaveMindsetPage()}>
+            Enregistrer la page dans les archives
+          </button>
         </div>
-        <div className={`self-love-toast self-love-toast--page${letterSaveConfirmationVisible ? " is-visible" : ""}`} role="status" aria-live="polite">
+        <div className={`self-love-toast self-love-toast--page${exerciseSaveConfirmationVisible ? " is-visible" : ""}`} role="status" aria-live="polite">
           <div className="self-love-toast__card">
             <h4>Page ajoutée</h4>
             <p>Ton contenu a bien été ajouté dans les archives.</p>

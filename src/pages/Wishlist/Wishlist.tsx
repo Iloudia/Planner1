@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type FormEvent } from "react"
 import { createPortal } from "react-dom"
 import MediaImage from "../../components/MediaImage"
-import PageHeading from "../../components/PageHeading"
 import { useAuth } from "../../context/AuthContext"
 import useUserWishlist from "../../hooks/useUserWishlist"
 import { deleteMedia, uploadImage } from "../../services/media/api"
@@ -53,6 +52,8 @@ type ItemDraft = {
   subcategory: string
 }
 
+type WishlistSort = "" | "date" | "name"
+
 const CATEGORY_DEFINITIONS: CategoryDefinition[] = [
   { id: "hair", label: "Cheveux", accent: "#f497c0", cover: wishlistHair, blurb: "Brushes, soins et petits accessoires pour une routine cheveux complète." },
   { id: "outfits", label: "Vêtements", accent: "#fcd67d", cover: wishlistOutfit, blurb: "Idées tenues et pièces coup de cœur pour tes looks préférés." },
@@ -67,6 +68,7 @@ const CATEGORY_DEFINITIONS: CategoryDefinition[] = [
 ]
 
 const CUSTOM_ACCENTS = ["#e3d7ca", "#c3d9ff", "#ffe3a7", "#c6eed7", "#e3d7ca", "#d9c5ff"] as const
+const WISHLIST_PROMOTION_CLICKS = 3
 const CUSTOM_COVER_POOL = [
   wishlistHair,
   wishlistOutfit,
@@ -190,6 +192,8 @@ const WishlistPage = () => {
   const [activeCardMenuPopoverStyle, setActiveCardMenuPopoverStyle] = useState<CSSProperties>({})
   const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null)
   const [moveItemDraft, setMoveItemDraft] = useState<{ itemId: string; targetCategoryId: string; targetSubcategory: string } | null>(null)
+  const [wishlistSearch, setWishlistSearch] = useState("")
+  const [wishlistSort, setWishlistSort] = useState<WishlistSort>("")
   const newCategoryCoverRef = useRef<HTMLInputElement | null>(null)
   const categoryCoverRef = useRef<HTMLInputElement | null>(null)
   const itemImageRef = useRef<HTMLInputElement | null>(null)
@@ -239,14 +243,32 @@ const WishlistPage = () => {
     })
 
     return cards.sort((left, right) => {
-      const usageLeft = (left.usageCount ?? 0) >= 3 ? left.usageCount ?? 0 : 0
-      const usageRight = (right.usageCount ?? 0) >= 3 ? right.usageCount ?? 0 : 0
+      // L'ordre naturel reste intact jusqu'au troisième clic sur une carte.
+      // Dès ce seuil atteint, les cartes les plus consultées remontent dans la grille.
+      const usageLeft = (left.usageCount ?? 0) >= WISHLIST_PROMOTION_CLICKS ? left.usageCount ?? 0 : 0
+      const usageRight = (right.usageCount ?? 0) >= WISHLIST_PROMOTION_CLICKS ? right.usageCount ?? 0 : 0
       if (usageRight !== usageLeft) {
         return usageRight - usageLeft
       }
       return (left.order ?? 0) - (right.order ?? 0)
     })
   }, [categories, items])
+
+  const visibleCategoryCards = useMemo(() => {
+    const query = wishlistSearch.trim().toLocaleLowerCase("fr")
+
+    const filteredCards = categoryCards.filter(
+      (category) => !query || `${category.title} ${category.blurb}`.toLocaleLowerCase("fr").includes(query),
+    )
+
+    if (!wishlistSort) return filteredCards
+
+    return [...filteredCards].sort((left, right) => {
+        if (wishlistSort === "name") return left.title.localeCompare(right.title, "fr")
+        if (left.createdAt || right.createdAt) return (right.createdAt ?? 0) - (left.createdAt ?? 0)
+        return (left.order ?? 0) - (right.order ?? 0)
+      })
+  }, [categoryCards, wishlistSearch, wishlistSort])
 
   const selectedCategory = useMemo(
     () => categoryCards.find((category) => category.id === selectedCategoryId) ?? null,
@@ -660,25 +682,57 @@ const WishlistPage = () => {
 
   return (
     <div className="wishlist-page">
-      <PageHeading eyebrow="Envie" title="Wishlist" />
+      <header className="wishlist-page__heading">
+        <div>
+          <span className="wishlist-page__heading-eyebrow">Mes</span>
+          <h1>Wishlist</h1>
+        </div>
+        <p>Un espace pour rassembler tes envies, imaginer tes coups de cœur et garder une trace de ce qui t’inspire.</p>
+      </header>
       {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer ta wishlist.</p> : null}
       {error ? <p className="routine-note__composer-hint">{error}</p> : null}
 
-      <div className="wishlist-heading-row">
-        <button
-          type="button"
-          className="wishlist-heading-row__button"
-          onClick={() => {
-            setEditingCategoryId(null)
-            setNewCategoryDraft(emptyNewCategoryDraft())
-            setNewCategoryCoverPreview("")
-            setNewCategoryCoverFile(null)
-            setShowCreateCategory((previous) => !previous)
-          }}
-          disabled={!canEdit}
-        >
-          Nouvelle catégorie
-        </button>
+      <div className="wishlist-toolbar" aria-label="Filtres de la wishlist">
+        <div className="wishlist-toolbar__filters">
+          <label className="wishlist-toolbar__sort">
+            <span>Trier par :</span>
+            <select value={wishlistSort} onChange={(event) => setWishlistSort(event.target.value as WishlistSort)}>
+              <option value="">Les plus utilisées</option>
+              <option value="date">Le plus récent</option>
+              <option value="name">Nom A–Z</option>
+            </select>
+          </label>
+        </div>
+
+        <div className="wishlist-toolbar__actions">
+          <label className="wishlist-toolbar__search">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="5.5" />
+              <path d="m15.2 15.2 4.3 4.3" />
+            </svg>
+            <span className="wishlist-toolbar__sr-only">Rechercher dans ma wishlist</span>
+            <input
+              type="search"
+              value={wishlistSearch}
+              onChange={(event) => setWishlistSearch(event.target.value)}
+              placeholder="Rechercher dans ma wishlist..."
+            />
+          </label>
+          <button
+            type="button"
+            className="wishlist-heading-row__button"
+            onClick={() => {
+              setEditingCategoryId(null)
+              setNewCategoryDraft(emptyNewCategoryDraft())
+              setNewCategoryCoverPreview("")
+              setNewCategoryCoverFile(null)
+              setShowCreateCategory((previous) => !previous)
+            }}
+            disabled={!canEdit}
+          >
+            <span aria-hidden="true">+</span> Nouvelle catégorie
+          </button>
+        </div>
       </div>
 
       {showCreateCategory ? (
@@ -690,75 +744,103 @@ const WishlistPage = () => {
               onSubmit={handleCreateCategory}
               onClick={(event) => event.stopPropagation()}
             >
-              <h2>{editingCategoryId ? "Modifier la catégorie" : "Créer une catégorie"}</h2>
-              <label className="wishlist-create__title-field">
-                <p>Titre</p>
-                <input
-                  type="text"
-                  className="wishlist-create__title-input"
-                  value={newCategoryDraft.title}
-                  onChange={(event) => setNewCategoryDraft((previous) => ({ ...previous, title: event.target.value }))}
-                  disabled={!canEdit}
-                />
-              </label>
-              <div className="wishlist-create__cover-field">
-                <p className="wishlist-create__cover-label">Image de couverture</p>
-                <div className={`wishlist-create__cover-preview-panel${newCategoryCoverPreview ? " wishlist-create__cover-preview-panel--has-image" : ""}`}>
-                  {newCategoryCoverPreview ? (
+              <button
+                className="wishlist-create__close"
+                type="button"
+                aria-label="Fermer"
+                onClick={() => {
+                  setShowCreateCategory(false)
+                  setEditingCategoryId(null)
+                }}
+              >
+                ×
+              </button>
+              <header className="wishlist-create__header">
+                <h2>{editingCategoryId ? "Modifier la catégorie" : "Nouvelle catégorie"}</h2>
+                <p>Crée une nouvelle catégorie pour organiser toutes tes envies au même endroit.</p>
+              </header>
+              <div className="wishlist-create__layout">
+                <div className="wishlist-create__fields">
+                  <div className="wishlist-create__cover-field">
+                    <p className="wishlist-create__cover-label">Image de couverture</p>
+                    <div className={`wishlist-create__cover-preview-panel${newCategoryCoverPreview ? " wishlist-create__cover-preview-panel--has-image" : ""}`}>
+                      <div className="wishlist-create__cover-actions">
+                        {!newCategoryCoverPreview ? (
+                          <label>
+                            <input
+                              className="wishlist-create__cover-input"
+                              ref={newCategoryCoverRef}
+                              type="file"
+                              accept="image/*"
+                              onChange={(event) => {
+                                handlePreviewFile(event.target.files?.[0] ?? null, setNewCategoryCoverPreview, setNewCategoryCoverFile)
+                                event.target.value = ""
+                              }}
+                              disabled={!canEdit}
+                            />
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                              <rect x="3" y="4" width="18" height="16" rx="1" />
+                              <circle cx="9" cy="10" r="1.5" />
+                              <path d="m4 18 5-5 3 3 3-3 5 5" />
+                            </svg>
+                            <span>Ajouter une image</span>
+                          </label>
+                        ) : null}
+                        {newCategoryCoverPreview ? (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setNewCategoryCoverPreview("")
+                              setNewCategoryCoverFile(null)
+                            }}
+                            disabled={!canEdit}
+                          >
+                            Retirer l’image
+                          </button>
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+                  <label className="wishlist-create__title-field">
+                    <p>Nom de la catégorie</p>
+                    <input
+                      type="text"
+                      className="wishlist-create__title-input"
+                      value={newCategoryDraft.title}
+                      placeholder="Ex. Ma routine bien-être"
+                      onChange={(event) => setNewCategoryDraft((previous) => ({ ...previous, title: event.target.value }))}
+                      disabled={!canEdit}
+                    />
+                  </label>
+                  <div className="wishlist-create__actions">
+                    <button type="submit" disabled={!canEdit}>
+                      {editingCategoryId ? "Enregistrer" : "Créer la catégorie"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowCreateCategory(false)
+                        setEditingCategoryId(null)
+                      }}
+                    >
+                      Annuler
+                    </button>
+                  </div>
+                </div>
+                <aside className="wishlist-create__preview-area">
+                  <p>Aperçu</p>
+                  <article className="wishlist-create__preview-card">
                     <MediaImage
-                      className="wishlist-create__cover-preview"
-                      src={newCategoryCoverPreview}
-                      alt="Aperçu de la photo sélectionnée"
+                      src={newCategoryCoverPreview || fallbackCoverForId(newCategoryDraft.title || "wishlist-preview")}
+                      alt="Aperçu de la catégorie"
                       loading="lazy"
                       decoding="async"
                     />
-                  ) : null}
-                  <div className="wishlist-create__cover-actions">
-                    {!newCategoryCoverPreview ? (
-                      <label>
-                        <input
-                          className="wishlist-create__cover-input"
-                          ref={newCategoryCoverRef}
-                          type="file"
-                          accept="image/*"
-                          onChange={(event) => {
-                            handlePreviewFile(event.target.files?.[0] ?? null, setNewCategoryCoverPreview, setNewCategoryCoverFile)
-                            event.target.value = ""
-                          }}
-                          disabled={!canEdit}
-                        />
-                        Choisir une photo
-                      </label>
-                    ) : null}
-                    {newCategoryCoverPreview ? (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setNewCategoryCoverPreview("")
-                          setNewCategoryCoverFile(null)
-                        }}
-                        disabled={!canEdit}
-                      >
-                        Retirer
-                      </button>
-                    ) : null}
-                  </div>
-                  <span className="wishlist-create__cover-hint">Formats d'image acceptés (JPG, PNG, GIF).</span>
-                </div>
-              </div>
-              <div className="wishlist-create__actions">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowCreateCategory(false)
-                    setEditingCategoryId(null)
-                  }}
-                >
-                  Annuler
-                </button>
-                <button type="submit" disabled={!canEdit}>
-                  Enregistrer
-                </button>
+                    <h3>{newCategoryDraft.title.trim() || "Nouvelle catégorie"}</h3>
+                    <span>0 élément</span>
+                  </article>
+                  <small>Ceci est un aperçu. L’apparence peut varier légèrement une fois créée.</small>
+                </aside>
               </div>
             </form>
           </div>
@@ -766,7 +848,7 @@ const WishlistPage = () => {
       ) : null}
 
       <section className="wishlist-grid">
-        {categoryCards.map((category) => (
+        {visibleCategoryCards.map((category) => (
           <button
             key={category.id}
             type="button"

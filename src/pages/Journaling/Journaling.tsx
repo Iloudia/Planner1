@@ -3,7 +3,6 @@ import type { ChangeEvent } from 'react'
 import useUserJournalEntries from '../../hooks/useUserJournalEntries'
 import journalingMoodSecondary from '../../assets/livre.webp'
 import journalingMoodTertiary from '../../assets/mallika-jain-dupe.webp'
-import PageHeading from '../../components/PageHeading'
 import type { EnergyLevel, JournalEntryInput, MoodValue } from '../../types/personalization'
 import './Journaling.css'
 
@@ -287,7 +286,13 @@ const JournalingPage = () => {
 
   return (
     <div className="journaling-page aesthetic-page">
-      <PageHeading eyebrow="Reflet" title="Journaling" />
+      <header className="journaling-page__heading">
+        <div>
+          <span className="journaling-page__heading-eyebrow">Mon</span>
+          <h1>Journaling</h1>
+        </div>
+        <p>Un espace pour déposer tes pensées, accueillir tes émotions et te reconnecter à toi-même, en douceur.</p>
+      </header>
 
       <div className="journaling-sections-shell">
       <section className="journaling-section journaling-checkin journaling-section--delay-1">

@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent, type KeyboardEvent } from "react"
 import { Link } from "react-router-dom"
-import PageHeading from "../../components/PageHeading"
 import { useAuth } from "../../context/AuthContext"
 import useUserSportDashboard from "../../hooks/useUserSportDashboard"
 import { getWeekKey } from "../../utils/weekKey"
@@ -360,7 +359,13 @@ const SportPage = () => {
 
   return (
     <div className="sport-page">
-      <PageHeading eyebrow="Énergie" title="Sport" />
+      <header className="sport-page__heading">
+        <div>
+          <span className="sport-page__heading-eyebrow">Mon</span>
+          <h1>Sport</h1>
+        </div>
+        <p>Un espace pour bouger à ton rythme, prendre soin de ton énergie et célébrer chaque progrès.</p>
+      </header>
       {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer ton espace sport.</p> : null}
       {error ? <p className="routine-note__composer-hint">{error}</p> : null}
 
