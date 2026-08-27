@@ -692,6 +692,7 @@ const WishlistPage = () => {
       {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer ta wishlist.</p> : null}
       {error ? <p className="routine-note__composer-hint">{error}</p> : null}
 
+      <div className="wishlist-content">
       <div className="wishlist-toolbar" aria-label="Filtres de la wishlist">
         <div className="wishlist-toolbar__filters">
           <label className="wishlist-toolbar__sort">
@@ -911,6 +912,7 @@ const WishlistPage = () => {
           </button>
         ))}
       </section>
+      </div>
 
       {selectedCategory ? (
         <>

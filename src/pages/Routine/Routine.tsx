@@ -240,25 +240,27 @@ const RoutinePage = () => {
   }
 
   const routinePeriodToggle = (
-    <div className="calendar-view-toggle" role="tablist" aria-label="Période de routine">
-      <button
-        type="button"
-        role="tab"
-        aria-selected={activeRoutinePeriod === "morning"}
-        className={`calendar-view-toggle__button${activeRoutinePeriod === "morning" ? " is-active" : ""}`}
-        onClick={() => setActiveRoutinePeriod("morning")}
-      >
-        Matin
-      </button>
-      <button
-        type="button"
-        role="tab"
-        aria-selected={activeRoutinePeriod === "evening"}
-        className={`calendar-view-toggle__button${activeRoutinePeriod === "evening" ? " is-active" : ""}`}
-        onClick={() => setActiveRoutinePeriod("evening")}
-      >
-        Soir
-      </button>
+    <div className="calendar-weekly__toolbar calendar-monthly__controls">
+      <div className="calendar-view-toggle" role="tablist" aria-label="Période de routine">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeRoutinePeriod === "morning"}
+          className={`calendar-view-toggle__button${activeRoutinePeriod === "morning" ? " is-active" : ""}`}
+          onClick={() => setActiveRoutinePeriod("morning")}
+        >
+          Matin
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeRoutinePeriod === "evening"}
+          className={`calendar-view-toggle__button${activeRoutinePeriod === "evening" ? " is-active" : ""}`}
+          onClick={() => setActiveRoutinePeriod("evening")}
+        >
+          Soir
+        </button>
+      </div>
     </div>
   )
 

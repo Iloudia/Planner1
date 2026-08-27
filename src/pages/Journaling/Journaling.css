@@ -1263,7 +1263,7 @@ body.journaling-page--lux {
   display: flex;
   flex-direction: column;
   gap: clamp(1.25rem, 2.5vw, 2rem);
-  padding: clamp(1rem, 2vw, 1.35rem);
+  padding: 0;
 }
 
 .journaling-sections-shell > .journaling-section {

@@ -12,11 +12,11 @@ const newTaskColors = ['#D9E1E8', '#C7D0D8', '#E7DDCF', '#EFE8DE', '#D6C8BA', '#
 const dayStartMinutes = 6 * 60
 const dayEndMinutes = 23 * 60
 const legendColors = {
-  Travail: '#D9E1E8',
-  Sport: '#C7D0D8',
-  Perso: '#E7DDCF',
-  'Rendez-vous': '#EFE8DE',
-  Repos: '#D6C8BA',
+  Perso: '#7F96A8',
+  Travail: '#C8B39B',
+  Sport: '#E3C9A4',
+  'Rendez-vous': '#F2D9C7',
+  Repos: '#F8EFE5',
 }
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
@@ -892,10 +892,7 @@ return (
                       style={
                         {
                           '--event-color': getTaskDisplayColor(task),
-                          background: `linear-gradient(135deg, ${withAlpha(getTaskDisplayColor(task), 0.12)} 0%, ${withAlpha(
-                            getTaskDisplayColor(task),
-                            0.28,
-                          )} 100%)`,
+                          background: getTaskDisplayColor(task),
                           borderColor: withAlpha(getTaskDisplayColor(task), 0.4),
                         } as CSSProperties
                       }
@@ -1023,10 +1020,7 @@ return (
                         style={{
                           top: `${position.top}px`,
                           height: `${position.height}px`,
-                          background: `linear-gradient(135deg, ${withAlpha(getTaskDisplayColor(task), 0.82)} 0%, ${withAlpha(
-                            getTaskDisplayColor(task),
-                            0.96,
-                          )} 100%)`,
+                          background: getTaskDisplayColor(task),
                           border: `1px solid ${withAlpha(getTaskDisplayColor(task), 0.4)}`,
                         }}
                         onClick={(event) => {
@@ -1328,10 +1322,7 @@ return (
                           isSportTaskItem(task) ? " calendar-task--readonly" : ""
                         }`}
                         style={{
-                          background: `linear-gradient(135deg, ${withAlpha(getTaskDisplayColor(task), 0.12)} 0%, ${withAlpha(
-                            getTaskDisplayColor(task),
-                            0.28,
-                          )} 100%)`,
+                          background: getTaskDisplayColor(task),
                           borderColor: withAlpha(getTaskDisplayColor(task), 0.4),
                         }}
                         onClick={() => {

@@ -1,1 +1,0 @@
-import{j as e}from"./index-CQA1sA-0.js";const i=({eyebrow:a,title:r})=>e.jsx("header",{className:"administrative-page-header",children:e.jsxs("div",{children:[e.jsx("span",{className:"administrative-page-header__eyebrow",children:a}),e.jsx("h1",{children:r})]})});export{i as A};

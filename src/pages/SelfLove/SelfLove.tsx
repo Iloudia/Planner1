@@ -176,6 +176,20 @@ const SelfLovePage = () => {
         bestFriend: hasBestFriendContent ? bestFriendSnapshot : undefined,
       },
     })
+    const clearedFields = {
+      futureLetterTo: "",
+      futureLetterFrom: "",
+      futureLetterBody: "",
+      futureLetterOpenDate: "",
+      innerChildMessage: "",
+      innerChildReassurance: "",
+      innerChildNeededWords: "",
+      bestFriendAdvice: "",
+      bestFriendSelfTalk: "",
+      bestFriendSelfKindness: "",
+    }
+    await updateDraft(clearedFields)
+    setDraftState((previous) => ({ ...previous, ...clearedFields }))
     showExerciseConfirmation()
   }
 
