@@ -40,6 +40,7 @@ const SettingsDisplay = lazy(() => import("./pages/Settings/SettingsDisplay"))
 const SettingsLanguages = lazy(() => import("./pages/Settings/SettingsLanguages"))
 const SettingsCookies = lazy(() => import("./pages/Settings/SettingsCookies"))
 const AboutPage = lazy(() => import("./pages/About/AboutPage"))
+const BlogPage = lazy(() => import("./pages/Blog/BlogPage"))
 const ProfilePage = lazy(() => import("./pages/Profile/Profile"))
 const ArchivesHome = lazy(() => import("./pages/Archives/ArchivesHome"))
 const ArchivesPage = lazy(() => import("./pages/Archives/Archives"))
@@ -149,6 +150,7 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/faq" element={<FAQPage />} />
             <Route path="/a-propos" element={<AboutPage />} />
+            <Route path="/blog" element={<BlogPage />} />
             <Route path="/boutique" element={<BoutiquePage />} />
             <Route path="/boutique/:categoryId" element={<BoutiqueCategoryPage />} />
             <Route path="/boutique/produit/:productId" element={<BoutiqueProductPage />} />

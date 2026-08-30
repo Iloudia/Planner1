@@ -504,8 +504,8 @@ function Header() {
               Mes achats
             </NavLink>
           ) : null}
-          <NavLink to="/a-propos" className={({ isActive }) => `site-header__nav-link${isActive ? " is-active" : ""}`}>
-            À propos
+          <NavLink to="/blog" className={({ isActive }) => `site-header__nav-link${isActive ? " is-active" : ""}`}>
+            Blog
           </NavLink>
           <NavLink to="/contact" className={({ isActive }) => `site-header__nav-link${isActive ? " is-active" : ""}`}>
             Contact
