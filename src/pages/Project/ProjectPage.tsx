@@ -66,6 +66,13 @@ const projectProgress = (project: Project) => {
 }
 
 const ProjectPage = () => {
+  useEffect(() => {
+    document.body.classList.add("project-page--lux")
+    return () => {
+      document.body.classList.remove("project-page--lux")
+    }
+  }, [])
+
   const [projects, setProjects] = usePersistentState<Project[]>("planner.project.workspace.v1", initialProjects)
   const [selectedProjectId, setSelectedProjectId] = useState(() => projects[0]?.id ?? null)
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false)

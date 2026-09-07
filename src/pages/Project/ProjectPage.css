@@ -1,3 +1,7 @@
+body.project-page--lux {
+  background: #f8f6f1;
+}
+
 .project-page {
   --project-ink: #1f1b16;
   --project-ink-soft: #5b5249;
