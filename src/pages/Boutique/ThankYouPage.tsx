@@ -4,6 +4,7 @@ import "./Boutique.css"
 import { clearCart } from "./cartStorage"
 import { useAuth } from "../../context/AuthContext"
 import { fetchCheckoutSessionStatus, type CheckoutStatus } from "../../services/boutique/checkout"
+import PageLoader from "../../components/PageLoader"
 
 const ThankYouPage = () => {
   const [searchParams] = useSearchParams()
@@ -67,11 +68,7 @@ const ThankYouPage = () => {
 
   if (!isAuthReady) {
     return (
-      <div className="boutique-page boutique-page--loading" aria-busy="true" aria-live="polite">
-        <span className="boutique-loading-a11y" role="status">
-          Chargement
-        </span>
-      </div>
+      <PageLoader />
     )
   }
 

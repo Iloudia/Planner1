@@ -9,6 +9,7 @@ import HighchartsExportData from 'highcharts/modules/export-data'
 import HighchartsAccessibility from 'highcharts/modules/accessibility'
 import HighchartsAdaptiveTheme from 'highcharts/themes/adaptive'
 import PageHero from '../../components/PageHero'
+import PageLoader from '../../components/PageLoader'
 import { useAuth } from '../../context/AuthContext'
 import useUserFinanceData from '../../hooks/useUserFinanceData'
 import financeMood01 from '../../assets/katie-huber-rhoades-dupe (2).webp'
@@ -716,11 +717,7 @@ const FinancePage = () => {
 
   if (isFinanceLoading) {
     return (
-      <div className="finance-page aesthetic-page finance-page--loading" aria-busy="true" aria-live="polite">
-        <span className="finance-loading-a11y" role="status">
-          Chargement
-        </span>
-      </div>
+      <PageLoader />
     )
   }
 

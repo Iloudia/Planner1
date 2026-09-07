@@ -1,6 +1,7 @@
 import type { ChangeEvent, FormEvent, KeyboardEvent } from "react"
 import { useEffect, useMemo, useRef, useState } from "react"
 import MediaImage from "../../components/MediaImage"
+import PageLoader from "../../components/PageLoader"
 import stampLove from "../../assets/Timbre-1.webp"
 import stampKey from "../../assets/Timbre-2.webp"
 import { useAuth } from "../../context/AuthContext"
@@ -213,11 +214,7 @@ const SelfLovePage = () => {
 
   if (isSelfLoveLoading) {
     return (
-      <div className="self-love-page self-love-page--loading" aria-busy="true" aria-live="polite">
-        <span className="self-love-loading-a11y" role="status">
-          Chargement
-        </span>
-      </div>
+      <PageLoader />
     )
   }
 

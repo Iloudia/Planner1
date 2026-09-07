@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthContext"
 import { fetchApi } from "../../utils/apiUrl"
 import { buildUserScopedKey, normalizeUserEmail } from "../../utils/userScopedKey"
 import { useMoodboard } from "../../context/MoodboardContext"
+import PageLoader from "../../components/PageLoader"
 import "./Auth.css"
 
 const REMEMBER_PREFERENCE_KEY = "planner.auth.remember"
@@ -398,11 +399,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
 
   if (isAuthPageLoading) {
     return (
-      <div className="auth-page auth-page--loading" aria-busy="true" aria-live="polite">
-        <span className="auth-loading-a11y" role="status">
-          Chargement
-        </span>
-      </div>
+      <PageLoader />
     )
   }
   return (

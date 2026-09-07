@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import AdministrativePageHeader from "../../components/AdministrativePageHeader"
+import PageLoader from "../../components/PageLoader"
 import portrait from "../../assets/Fleurs-blanches.webp"
 import valuePhotoTwo from "../../assets/Ballons-coeur.webp"
 import valuePhotoThree from "../../assets/Perseverance.webp"
@@ -69,11 +70,7 @@ const AboutPage = () => {
 
   if (isAboutLoading) {
     return (
-      <div className="about-page about-page--loading" aria-busy="true" aria-live="polite">
-        <span className="about-loading-a11y" role="status">
-          Chargement
-        </span>
-      </div>
+      <PageLoader />
     )
   }
 

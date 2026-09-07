@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { useTasks } from "../../context/TasksContext"
 import { useAuth } from "../../context/AuthContext"
 import MediaImage from "../../components/MediaImage"
+import PageLoader from "../../components/PageLoader"
 import { useUserProfilePhoto } from "../../hooks/useUserProfilePhoto"
 import { saveHomeCardsState, subscribeToHomeCardsState } from "../../services/firestore/homeCards"
 import { saveHomeTodos, subscribeToHomeTodos, type HomeTodoItem } from "../../services/firestore/homeTodos"
@@ -945,9 +946,7 @@ function HomePage() {
 
   if (isHomeLoading) {
     return (
-      <div className="page home-page home-page--loading" aria-busy="true" aria-live="polite">
-        <span className="home-loading-a11y" role="status">Chargement</span>
-      </div>
+      <PageLoader />
     )
   }
 

@@ -1,5 +1,6 @@
 ﻿import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ChangeEvent } from 'react'
+import PageLoader from '../../components/PageLoader'
 import useUserJournalEntries from '../../hooks/useUserJournalEntries'
 import journalingMoodSecondary from '../../assets/livre.webp'
 import journalingMoodTertiary from '../../assets/mallika-jain-dupe.webp'
@@ -276,11 +277,7 @@ const JournalingPage = () => {
 
   if (isLoading) {
     return (
-      <div className="journaling-page aesthetic-page journaling-page--loading" aria-busy="true" aria-live="polite">
-        <span className="journaling-loading-a11y" role="status">
-          Chargement
-        </span>
-      </div>
+      <PageLoader />
     )
   }
 

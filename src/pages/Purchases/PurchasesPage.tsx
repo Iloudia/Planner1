@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import "../Boutique/Boutique.css"
 import "./PurchasesPage.css"
 import { fetchOwnedDigitalProducts, type OwnedDigitalProduct } from "../../services/boutique/checkout"
+import PageLoader from "../../components/PageLoader"
 
 const formatPurchasedAt = (value: string) => {
   if (!value) return ""
@@ -64,11 +65,7 @@ const PurchasesPage = () => {
 
   if (isLoading) {
     return (
-      <div className="boutique-page boutique-page--loading" aria-busy="true" aria-live="polite">
-        <span className="boutique-loading-a11y" role="status">
-          Chargement
-        </span>
-      </div>
+      <PageLoader />
     )
   }
 

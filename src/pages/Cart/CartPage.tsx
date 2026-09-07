@@ -8,6 +8,7 @@ import { clearCart, loadCartItems, removeFromCart } from "../Boutique/cartStorag
 import { useAuth } from "../../context/AuthContext"
 import { createCheckoutSession } from "../../services/boutique/checkout"
 import { getProductPricing } from "../../utils/productPricing"
+import PageLoader from "../../components/PageLoader"
 
 const formatCents = (cents: number) => {
   const euros = (cents / 100).toFixed(2).replace(".", ",")
@@ -104,11 +105,7 @@ const CartPage = () => {
 
   if (isCartLoading) {
     return (
-      <div className="cart-page cart-page--loading" aria-busy="true" aria-live="polite">
-        <span className="cart-loading-a11y" role="status">
-          Chargement
-        </span>
-      </div>
+      <PageLoader />
     )
   }
 

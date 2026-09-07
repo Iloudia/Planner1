@@ -2,6 +2,7 @@
 import { Link, useNavigate } from "react-router-dom"
 import type { TouchEvent } from "react"
 import { useAuth } from "../../context/AuthContext"
+import PageLoader from "../../components/PageLoader"
 import useUserDietData from "../../hooks/useUserDietData"
 import { getWeekKey } from "../../utils/weekKey"
 import { builtinDietRecipes } from "../Diet/DietPage"
@@ -345,11 +346,7 @@ function DietPage() {
     return (
       <>
         {menuHeading}
-        <div className="diet-page diet-page--loading" aria-busy="true" aria-live="polite">
-          <span className="diet-loading-a11y" role="status">
-            Chargement
-          </span>
-        </div>
+        <PageLoader />
       </>
     )
   }

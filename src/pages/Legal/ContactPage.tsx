@@ -1,5 +1,6 @@
 import { type FormEvent, useEffect, useState } from "react"
 import { fetchApi, getApiTargetLabel } from "../../utils/apiUrl"
+import PageLoader from "../../components/PageLoader"
 import "./ContactPage.css"
 
 const ContactPage = () => {
@@ -70,11 +71,7 @@ const ContactPage = () => {
 
   if (isContactLoading) {
     return (
-      <div className="legal-page contact-page contact-page--loading" aria-busy="true" aria-live="polite">
-        <span className="contact-loading-a11y" role="status">
-          Chargement
-        </span>
-      </div>
+      <PageLoader />
     )
   }
 

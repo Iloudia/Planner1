@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import AdministrativePageHeader from "../../components/AdministrativePageHeader"
+import PageLoader from "../../components/PageLoader"
 import faqPortrait from "../../assets/maria-bolinder-dupe.webp"
 import "./FaqPage.css"
 
@@ -58,11 +59,7 @@ const FAQPage = () => {
 
   if (isFaqLoading) {
     return (
-      <div className="faq-page faq-page--loading" aria-busy="true" aria-live="polite">
-        <span className="faq-loading-a11y" role="status">
-          Chargement
-        </span>
-      </div>
+      <PageLoader />
     )
   }
 

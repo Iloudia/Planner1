@@ -7,6 +7,7 @@ import { fetchCustomProducts, loadCustomProducts, PRODUCTS_UPDATED_EVENT } from 
 import { useAuth } from "../../context/AuthContext"
 import { fetchOwnedDigitalProducts } from "../../services/boutique/checkout"
 import { getProductPricing } from "../../utils/productPricing"
+import PageLoader from "../../components/PageLoader"
 
 type BoutiqueFilter = "all" | "ebook" | "template" | "carousel" | "moodboard"
 
@@ -192,11 +193,7 @@ const BoutiquePage = () => {
   const bestSellers = allProducts.filter((product) => product.bestSeller)
   if (isBoutiqueLoading) {
     return (
-      <div className="boutique-page boutique-page--loading" aria-busy="true" aria-live="polite">
-        <span className="boutique-loading-a11y" role="status">
-          Chargement
-        </span>
-      </div>
+      <PageLoader />
     )
   }
 

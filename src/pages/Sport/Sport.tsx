@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent, type KeyboardEvent } from "react"
 import { Link } from "react-router-dom"
 import { useAuth } from "../../context/AuthContext"
+import PageLoader from "../../components/PageLoader"
 import useUserSportDashboard from "../../hooks/useUserSportDashboard"
 import { getWeekKey } from "../../utils/weekKey"
 import { buildUserScopedKey, normalizeUserEmail } from "../../utils/userScopedKey"
@@ -349,11 +350,7 @@ const SportPage = () => {
 
   if (isSportLoading) {
     return (
-      <div className="sport-page sport-page--loading" aria-busy="true" aria-live="polite">
-        <span className="sport-loading-a11y" role="status">
-          Chargement
-        </span>
-      </div>
+      <PageLoader />
     )
   }
 

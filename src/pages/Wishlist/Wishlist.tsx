@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type FormEvent } from "react"
 import { createPortal } from "react-dom"
 import MediaImage from "../../components/MediaImage"
+import PageLoader from "../../components/PageLoader"
 import { useAuth } from "../../context/AuthContext"
 import useUserWishlist from "../../hooks/useUserWishlist"
 import { deleteMedia, uploadImage } from "../../services/media/api"
@@ -672,11 +673,7 @@ const WishlistPage = () => {
 
   if (isWishlistLoading) {
     return (
-      <div className="wishlist-page wishlist-page--loading" aria-busy="true" aria-live="polite">
-        <span className="wishlist-loading-a11y" role="status">
-          Chargement
-        </span>
-      </div>
+      <PageLoader />
     )
   }
 

@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react"
 import type { RoutineItem } from "../../data/sampleData"
 import { useAuth } from "../../context/AuthContext"
 import useUserRoutine from "../../hooks/useUserRoutine"
+import PageLoader from "../../components/PageLoader"
 import "./RoutinePage.css"
 
 type RoutineId = string
@@ -231,11 +232,7 @@ const RoutinePage = () => {
 
   if (isRoutineLoading) {
     return (
-      <div className="routine-page aesthetic-page routine-page--loading" aria-busy="true" aria-live="polite">
-        <span className="routine-loading-a11y" role="status">
-          Chargement
-        </span>
-      </div>
+      <PageLoader />
     )
   }
 

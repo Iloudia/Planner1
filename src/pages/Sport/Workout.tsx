@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type CSSProperties, type FormEven
 import { createPortal } from "react-dom"
 import MediaImage from "../../components/MediaImage"
 import PageHeading from "../../components/PageHeading"
+import PageLoader from "../../components/PageLoader"
 import useUserWorkoutData from "../../hooks/useUserWorkoutData"
 import { deleteMedia, uploadImage } from "../../services/media/api"
 import backdayImage from "../../assets/Backday.webp"
@@ -518,11 +519,7 @@ const WorkoutPage = () => {
 
   if (isWorkoutLoading) {
     return (
-      <div className="workout-page workout-page--loading" aria-busy="true" aria-live="polite">
-        <span className="workout-loading-a11y" role="status">
-          Chargement
-        </span>
-      </div>
+      <PageLoader />
     )
   }
 

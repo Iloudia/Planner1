@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../../context/AuthContext"
+import PageLoader from "../../components/PageLoader"
 import "./Landing.css"
 
 import heroBackdrop from "../../assets/frances-leynes-dupe.webp"
@@ -100,11 +101,7 @@ const LandingPage = () => {
 
   if (isLandingLoading) {
     return (
-      <div className="landing-page landing-page--loading" aria-busy="true" aria-live="polite">
-        <span className="landing-loading-a11y" role="status">
-          Chargement
-        </span>
-      </div>
+      <PageLoader />
     )
   }
 

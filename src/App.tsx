@@ -10,6 +10,7 @@ import CookiePreferencesModal from "./components/CookiePreferencesModal"
 import AppUpdateBanner from "./components/AppUpdateBanner"
 import AdminRoute from "./components/AdminRoute"
 import AdminProductsRoute from "./components/AdminProductsRoute"
+import PageLoader from "./components/PageLoader"
 
 const AuthPage = lazy(() => import("./pages/Auth/AuthPage"))
 const OnboardingPage = lazy(() => import("./pages/Onboarding/Onboarding"))
@@ -82,11 +83,7 @@ function ScrollToTop() {
 }
 
 function RouteFallback() {
-  return (
-    <div className="content-page" aria-busy="true" aria-live="polite">
-      <p className="muted">Chargement...</p>
-    </div>
-  )
+  return <PageLoader />
 }
 
 function App() {

@@ -1,6 +1,7 @@
 ﻿import { useEffect, useMemo, useRef, useState } from "react"
 import { Link } from "react-router-dom"
 import PageHeading from "../../components/PageHeading"
+import PageLoader from "../../components/PageLoader"
 import { useAuth } from "../../context/AuthContext"
 import useUserJournalEntries from "../../hooks/useUserJournalEntries"
 import useUserSelfLove from "../../hooks/useUserSelfLove"
@@ -690,11 +691,7 @@ const ArchivesPage = ({ section }: ArchivesPageProps) => {
 
   if (isArchivesLoading) {
     return (
-      <div className="archives-page archives-page--loading" aria-busy="true" aria-live="polite">
-        <span className="archives-loading-a11y" role="status">
-          Chargement
-        </span>
-      </div>
+      <PageLoader />
     )
   }
 

@@ -9,6 +9,7 @@ import { auth } from "../../utils/firebase"
 import defaultProfilePhoto from "../../assets/katie-huber-rhoades-dupe (1).webp"
 import MediaImage from "../../components/MediaImage"
 import PageHeading from "../../components/PageHeading"
+import PageLoader from "../../components/PageLoader"
 import "./Profile.css"
 
 const CHANGE_LIMITS_KEY = "planner.profile.changeLimits.v1"
@@ -448,11 +449,7 @@ const ProfilePage = () => {
 
   if (isProfileLoading) {
     return (
-      <div className="profile-page profile-page--loading" aria-busy="true" aria-live="polite">
-        <span className="profile-loading-a11y" role="status">
-          Chargement
-        </span>
-      </div>
+      <PageLoader />
     )
   }
 

@@ -2,6 +2,7 @@
 import DailyGoalsTracker from "../../components/DailyGoalsTracker";
 import MediaImage from "../../components/MediaImage";
 import PageHeading from "../../components/PageHeading";
+import PageLoader from "../../components/PageLoader";
 import { useAuth } from "../../context/AuthContext";
 import { deleteMedia, uploadImage } from "../../services/media/api";
 import {
@@ -216,11 +217,7 @@ const GoalsPage = () => {
   return (
     <div className="goals-page-shell">
       {isGoalsLoading ? (
-        <div className="goals-page goals-page--loading" aria-busy="true" aria-live="polite">
-          <span className="goals-loading-a11y" role="status">
-            Chargement
-          </span>
-        </div>
+        <PageLoader />
       ) : null}
       <div className={`goals-page-content${isGoalsLoading ? " goals-page-content--hidden" : ""}`} aria-hidden={isGoalsLoading}>
         <PageHeading eyebrow="Goals" title="Mes objectifs" className="goals-page-heading" />

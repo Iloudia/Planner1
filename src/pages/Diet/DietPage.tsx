@@ -1,6 +1,7 @@
 ﻿import { useEffect, useMemo, useRef, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import MediaImage from "../../components/MediaImage"
+import PageLoader from "../../components/PageLoader"
 import { useAuth } from "../../context/AuthContext"
 import useUserDietData from "../../hooks/useUserDietData"
 import { deleteMedia, uploadImage } from "../../services/media/api"
@@ -5966,11 +5967,7 @@ const DietClassicPage = () => {
 
   if (isDietLoading) {
     return (
-      <div className="diet-gymgirl-page diet-gymgirl-page--loading" aria-busy="true" aria-live="polite">
-        <span className="diet-loading-a11y" role="status">
-          Chargement
-        </span>
-      </div>
+      <PageLoader />
     )
   }
 
