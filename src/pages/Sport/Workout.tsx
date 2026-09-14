@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type FormEvent, type TouchEvent } from "react"
 import { createPortal } from "react-dom"
 import MediaImage from "../../components/MediaImage"
-import PageHeading from "../../components/PageHeading"
 import PageLoader from "../../components/PageLoader"
 import useUserWorkoutData from "../../hooks/useUserWorkoutData"
 import { deleteMedia, uploadImage } from "../../services/media/api"
 import backdayImage from "../../assets/Backday.webp"
 import legdayImage from "../../assets/legday.webp"
+import heroWorkout from "../../assets/tuany-kohler-dupe.webp"
 import "./Workout.css"
 
 type ExerciseFormState = {
@@ -58,51 +58,11 @@ const MUSCLE_PLACEHOLDER = "Sélectionner un muscle"
 const YOUTUBE_API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY as string | undefined
 
 const CREATOR_RECOMMENDATIONS: CreatorRecommendation[] = [
-  {
-    id: "sissy-mua-youtube",
-    name: "Sissy Mua",
-    platform: "YouTube",
-    focus: "HIIT / Renfo",
-    level: "Tous niveaux",
-    description: "Séances énergiques de renfo et HIIT avec un coaching motivé et progressif.",
-    url: "https://www.youtube.com/@SissyMUA",
-  },
-  {
-    id: "lidia-mera-youtube",
-    name: "Lidia Mera",
-    platform: "YouTube",
-    focus: "Pilates",
-    level: "Débutant à avancé",
-    description: "Routines pilates fluides et full body, parfaites pour tonifier sans impact.",
-    url: "https://www.youtube.com/@lidiavmera",
-  },
-  {
-    id: "madfit-youtube",
-    name: "MadFit",
-    platform: "YouTube",
-    focus: "Home workout",
-    level: "Tous niveaux",
-    description: "Workouts maison courts et efficaces, souvent sans matériel et faciles à suivre.",
-    url: "https://www.youtube.com/@MadFit",
-  },
-  {
-    id: "anisia-martinez-instagram",
-    name: "Anisia Martinez",
-    platform: "Instagram",
-    focus: "Core / Full body",
-    level: "Débutant",
-    description: "Reels orientés core et full body avec idées de séances rapides et accessibles.",
-    url: "https://www.instagram.com/anisiamartinezz_/",
-  },
-  {
-    id: "leila-hopson-instagram",
-    name: "Leila Hopson",
-    platform: "Instagram",
-    focus: "Cardio / Tonicité",
-    level: "Tous niveaux",
-    description: "Contenus cardio et tonicité avec formats courts, répétables et motivants.",
-    url: "https://www.instagram.com/leilafitjourney/",
-  },
+  { id: "sissy-mua-youtube", name: "Sissy Mua", platform: "YouTube", focus: "HIIT / Renfo", level: "Tous niveaux", description: "Séances énergiques de renfo et HIIT avec un coaching motivé et progressif.", url: "https://www.youtube.com/@SissyMUA" },
+  { id: "lidia-mera-youtube", name: "Lidia Mera", platform: "YouTube", focus: "Pilates", level: "Débutant à avancé", description: "Routines pilates fluides et full body, parfaites pour tonifier sans impact.", url: "https://www.youtube.com/@lidiavmera" },
+  { id: "madfit-youtube", name: "MadFit", platform: "YouTube", focus: "Home workout", level: "Tous niveaux", description: "Workouts maison courts et efficaces, souvent sans matériel et faciles à suivre.", url: "https://www.youtube.com/@MadFit" },
+  { id: "anisia-martinez-instagram", name: "Anisia Martinez", platform: "Instagram", focus: "Core / Full body", level: "Débutant", description: "Reels orientés core et full body avec idées de séances rapides et accessibles.", url: "https://www.instagram.com/anisiamartinezz_/" },
+  { id: "leila-hopson-instagram", name: "Leila Hopson", platform: "Instagram", focus: "Cardio / Tonicité", level: "Tous niveaux", description: "Contenus cardio et tonicité avec formats courts, répétables et motivants.", url: "https://www.instagram.com/leilafitjourney/" },
 ]
 
 const parseIsoDuration = (value: string) => {
@@ -295,10 +255,7 @@ const WorkoutPage = () => {
   }, [openExerciseMenuId])
 
   useEffect(() => {
-    const updateCreatorCardsPerView = () => {
-      setCreatorCardsPerView(getCreatorCardsPerView())
-    }
-
+    const updateCreatorCardsPerView = () => setCreatorCardsPerView(getCreatorCardsPerView())
     updateCreatorCardsPerView()
     window.addEventListener("resize", updateCreatorCardsPerView)
     return () => window.removeEventListener("resize", updateCreatorCardsPerView)
@@ -323,7 +280,6 @@ const WorkoutPage = () => {
     () => Array.from({ length: creatorPositionCount }, (_, index) => index),
     [creatorPositionCount],
   )
-
   useEffect(() => {
     setSeriesInput("")
     setSeriesWeightInput("")
@@ -339,17 +295,11 @@ const WorkoutPage = () => {
       setActiveCreatorIndex(0)
       return
     }
-    const normalizedIndex = (nextIndex + creatorPositionCount) % creatorPositionCount
-    setActiveCreatorIndex(normalizedIndex)
+    setActiveCreatorIndex((nextIndex + creatorPositionCount) % creatorPositionCount)
   }
 
-  const showPreviousCreator = () => {
-    setCreatorSlide(activeCreatorIndex - 1)
-  }
-
-  const showNextCreator = () => {
-    setCreatorSlide(activeCreatorIndex + 1)
-  }
+  const showPreviousCreator = () => setCreatorSlide(activeCreatorIndex - 1)
+  const showNextCreator = () => setCreatorSlide(activeCreatorIndex + 1)
 
   const handleCreatorsTouchStart = (event: TouchEvent<HTMLDivElement>) => {
     if (!hasMultipleCreators) return
@@ -365,11 +315,8 @@ const WorkoutPage = () => {
   const handleCreatorsTouchEnd = () => {
     if (creatorTouchStartXRef.current === null) return
     const swipeThreshold = 42
-    if (creatorTouchDeltaXRef.current <= -swipeThreshold) {
-      showNextCreator()
-    } else if (creatorTouchDeltaXRef.current >= swipeThreshold) {
-      showPreviousCreator()
-    }
+    if (creatorTouchDeltaXRef.current <= -swipeThreshold) showNextCreator()
+    else if (creatorTouchDeltaXRef.current >= swipeThreshold) showPreviousCreator()
     creatorTouchStartXRef.current = null
     creatorTouchDeltaXRef.current = 0
   }
@@ -525,15 +472,23 @@ const WorkoutPage = () => {
 
   return (
     <div className="workout-page">
-      <div className="workout-page__accent-bar" aria-hidden="true" />
-      <PageHeading eyebrow="Routine active" title="Exercices" />
+      <header
+        className="workout-page__heading"
+        style={{ "--workout-heading-image": `url(${heroWorkout})` } as CSSProperties}
+      >
+        <div>
+          <span className="workout-page__heading-eyebrow">Mes</span>
+          <h1>Exercices</h1>
+        </div>
+        <p>Un espace pour composer tes séances, suivre tes séries et progresser à ton rythme.</p>
+      </header>
       {error ? <p className="routine-note__composer-hint">{error}</p> : null}
 
       <div className="workout-layout">
         <section className="workout-exercises">
           <header className="workout-exercises__header">
             <div className="workout-section-header">
-              <h2>Liste d'exercices</h2>
+              <h2>Ajouter un exercice</h2>
             </div>
           </header>
 
@@ -612,7 +567,12 @@ const WorkoutPage = () => {
                           event.target.value = ""
                         }}
                       />
-                      Choisir une photo
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="3" y="4" width="18" height="16" rx="1" />
+                        <circle cx="9" cy="9" r="1.5" />
+                        <path d="m5 18 5-5 3 3 2-2 4 4" />
+                      </svg>
+                      <strong>Choisir une photo</strong>
                     </label>
                   ) : null}
                   {formImagePreview ? (
@@ -624,12 +584,18 @@ const WorkoutPage = () => {
                 <span className="workout-form__photo-hint">Formats d'image acceptés (JPG, PNG, GIF).</span>
               </div>
             </div>
-            <button type="submit">Ajouter la carte</button>
+            <button type="submit">
+              <span>Ajouter la carte</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 12h14M14 7l5 5-5 5" />
+              </svg>
+            </button>
           </form>
         </section>
 
         {exercises.length > 0 ? (
           <section className="workout-library workout-section--full">
+            <h2>Mes exercices enregistrés</h2>
             <div className="workout-cards">
               {exercises.map((exercise) => (
                 <article
@@ -714,6 +680,7 @@ const WorkoutPage = () => {
         ) : null}
 
         <section className="workout-videos workout-section--full">
+          <h2>Mes vidéos d'entrainement</h2>
           <form className="workout-video-form" onSubmit={handleVideoSubmit}>
             <label>
               <span>Titre</span>
@@ -790,20 +757,13 @@ const WorkoutPage = () => {
 
         <section className="workout-creators workout-section--full" aria-label="Recommandations YouTube et Instagram">
           <header className="workout-creators__header">
-            <h2>Recommandations YouTube & Instagram</h2>
+            <h2>Recommandations YouTube &amp; Instagram</h2>
             <p>Des comptes efficaces et faciles à intégrer dans ta routine.</p>
           </header>
           <div className={`workout-creators__carousel${hasMultipleCreators ? "" : " workout-creators__carousel--static"}`}>
             {hasMultipleCreators ? (
-              <button
-                type="button"
-                className="workout-creators__nav workout-creators__nav--prev"
-                onClick={showPreviousCreator}
-                aria-label="Voir la recommandation precedente"
-              >
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M14 6 8 12l6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+              <button type="button" className="workout-creators__nav workout-creators__nav--prev" onClick={showPreviousCreator} aria-label="Voir la recommandation précédente">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 6 8 12l6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </button>
             ) : null}
             <div
@@ -814,66 +774,51 @@ const WorkoutPage = () => {
               onTouchCancel={handleCreatorsTouchEnd}
               style={{ "--workout-creators-per-view": String(creatorCardsPerView) } as CSSProperties}
             >
-              <div
-                className="workout-creators__track"
-                style={{ transform: `translateX(-${(activeCreatorIndex * 100) / creatorCardsPerView}%)` }}
-              >
+              <div className="workout-creators__track" style={{ transform: `translateX(-${(activeCreatorIndex * 100) / creatorCardsPerView}%)` }}>
                 {CREATOR_RECOMMENDATIONS.map((creator, index) => (
-                  <div
-                    key={creator.id}
-                    className="workout-creators__slide"
-                    aria-hidden={index < activeCreatorIndex || index >= activeCreatorIndex + creatorCardsPerView}
-                  >
+                  <div key={creator.id} className="workout-creators__slide" aria-hidden={index < activeCreatorIndex || index >= activeCreatorIndex + creatorCardsPerView}>
                     <article className="workout-creator-card">
                       <div className="workout-creator-card__top">
-                        <span
-                          className={`workout-creator-card__platform workout-creator-card__platform--${creator.platform.toLowerCase()}`}
-                        >
+                        <span className={`workout-creator-card__platform workout-creator-card__platform--${creator.platform.toLowerCase()}`}>
+                          {creator.platform === "YouTube" ? (
+                            <svg className="workout-creator-card__platform-icon" viewBox="0 0 24 24" aria-hidden="true">
+                              <path d="M21.6 7.2a2.9 2.9 0 0 0-2-2C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.6.5a2.9 2.9 0 0 0-2 2A30 30 0 0 0 2 12a30 30 0 0 0 .4 4.8 2.9 2.9 0 0 0 2 2c1.8.5 7.6.5 7.6.5s5.8 0 7.6-.5a2.9 2.9 0 0 0 2-2A30 30 0 0 0 22 12a30 30 0 0 0-.4-4.8Z" />
+                              <path d="m10 15.3 5-3.3-5-3.3v6.6Z" fill="#ffffff" />
+                            </svg>
+                          ) : (
+                            <svg className="workout-creator-card__platform-icon" viewBox="0 0 24 24" aria-hidden="true">
+                              <rect x="3" y="3" width="18" height="18" rx="5" />
+                              <circle cx="12" cy="12" r="4.2" />
+                              <circle cx="17.4" cy="6.7" r="1" className="workout-creator-card__platform-icon-dot" />
+                            </svg>
+                          )}
                           {creator.platform}
                         </span>
                         <h3>{creator.name}</h3>
                       </div>
                       <p className="workout-creator-card__description">{creator.description}</p>
-                      <div className="workout-creator-card__meta">
-                        <span>{creator.focus}</span>
-                        <span>{creator.level}</span>
-                      </div>
-                      <a href={creator.url} target="_blank" rel="noreferrer" className="workout-creator-card__link">
-                        Voir le profil
-                      </a>
+                      <div className="workout-creator-card__meta"><span>{creator.focus}</span><span>{creator.level}</span></div>
+                      <a href={creator.url} target="_blank" rel="noreferrer" className="workout-creator-card__link">Voir le profil</a>
                     </article>
                   </div>
                 ))}
               </div>
             </div>
             {hasMultipleCreators ? (
-              <button
-                type="button"
-                className="workout-creators__nav workout-creators__nav--next"
-                onClick={showNextCreator}
-                aria-label="Voir la recommandation suivante"
-              >
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="m10 6 6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+              <button type="button" className="workout-creators__nav workout-creators__nav--next" onClick={showNextCreator} aria-label="Voir la recommandation suivante">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 6 6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </button>
             ) : null}
           </div>
           {hasMultipleCreators ? (
-            <div className="workout-creators__dots" aria-label="Position dans le carousel">
+            <div className="workout-creators__dots" aria-label="Position dans le carrousel">
               {creatorDotIndexes.map((index) => (
-                <button
-                  key={index}
-                  type="button"
-                  className={`workout-creators__dot${index === activeCreatorIndex ? " is-active" : ""}`}
-                  aria-label={`Afficher les recommandations ${index + 1}`}
-                  aria-pressed={index === activeCreatorIndex}
-                  onClick={() => setCreatorSlide(index)}
-                />
+                <button key={index} type="button" className={`workout-creators__dot${index === activeCreatorIndex ? " is-active" : ""}`} aria-label={`Afficher les recommandations ${index + 1}`} aria-pressed={index === activeCreatorIndex} onClick={() => setCreatorSlide(index)} />
               ))}
             </div>
           ) : null}
         </section>
+
       </div>
       <div className="workout-page__footer-bar" aria-hidden="true" />
 

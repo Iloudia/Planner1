@@ -1,7 +1,6 @@
 ﻿import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import DailyGoalsTracker from "../../components/DailyGoalsTracker";
 import MediaImage from "../../components/MediaImage";
-import PageHeading from "../../components/PageHeading";
 import PageLoader from "../../components/PageLoader";
 import { useAuth } from "../../context/AuthContext";
 import { deleteMedia, uploadImage } from "../../services/media/api";
@@ -220,10 +219,14 @@ const GoalsPage = () => {
         <PageLoader />
       ) : null}
       <div className={`goals-page-content${isGoalsLoading ? " goals-page-content--hidden" : ""}`} aria-hidden={isGoalsLoading}>
-        <PageHeading eyebrow="Goals" title="Mes objectifs" className="goals-page-heading" />
+        <header className="goals-page__heading">
+          <div>
+            <span className="goals-page__heading-eyebrow">Mes</span>
+            <h1>Objectifs</h1>
+          </div>
+          <p>Un espace pour définir tes ambitions, suivre tes progrès et avancer vers ce qui compte pour toi.</p>
+        </header>
         <div className="content-page goals-page">
-          <p className="muted goals-page-heading__intro" aria-hidden="true"></p>
-
           <section className="goals-daily">
             <DailyGoalsTracker onLoadingStateChange={setIsTrackerLoading} />
           </section>

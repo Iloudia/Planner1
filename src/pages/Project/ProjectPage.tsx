@@ -27,6 +27,8 @@ type Project = {
 }
 
 const createId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+const MAX_PROJECT_RESOURCES = 5
+const MAX_PROJECT_ATTACHMENTS = 5
 
 const initialProjects: Project[] = [{
   id: "project-example",
@@ -146,7 +148,8 @@ const ProjectPage = () => {
   const handleResourceSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!newResource.title.trim() || !newResource.url.trim()) return
-    updateSelectedProject((project) => ({ ...project, resources: editingResourceId ? project.resources.map((resource) => resource.id === editingResourceId ? { ...resource, title: newResource.title.trim(), url: newResource.url.trim() } : resource) : [...project.resources, { id: createId(), title: newResource.title.trim(), url: newResource.url.trim() }] }))
+    if (!editingResourceId && (selectedProject?.resources?.length ?? 0) >= MAX_PROJECT_RESOURCES) return
+    updateSelectedProject((project) => ({ ...project, resources: editingResourceId ? (project.resources ?? []).map((resource) => resource.id === editingResourceId ? { ...resource, title: newResource.title.trim(), url: newResource.url.trim() } : resource) : [...(project.resources ?? []), { id: createId(), title: newResource.title.trim(), url: newResource.url.trim() }] }))
     setNewResource({ title: "", url: "" })
     setEditingResourceId(null)
     setIsResourceModalOpen(false)
@@ -184,6 +187,11 @@ const ProjectPage = () => {
   const handleAttachment = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (!file || !selectedProject) return
+    if ((selectedProject.attachments?.length ?? 0) >= MAX_PROJECT_ATTACHMENTS) {
+      setAttachmentError("Tu peux ajouter jusqu’à 5 documents maximum.")
+      event.target.value = ""
+      return
+    }
     if (file.size > 1_500_000) {
       setAttachmentError("Le document est trop volumineux (1,5 Mo maximum).")
       return
@@ -244,7 +252,115 @@ const ProjectPage = () => {
         </section>
       </div>
 
-      {isProjectModalOpen ? <div className="project-modal" role="dialog" aria-modal="true" aria-labelledby="project-modal-title"><div className="project-modal__backdrop" onClick={() => setIsProjectModalOpen(false)} /><form className="project-modal__panel" onSubmit={handleProjectSubmit}><div className="project-modal__header"><h2 id="project-modal-title">Nouveau projet</h2><button type="button" aria-label="Fermer" onClick={() => setIsProjectModalOpen(false)}>×</button></div><label>Titre<input value={newProject.title} onChange={(event) => setNewProject({ ...newProject, title: event.target.value })} required autoFocus /></label><label>Description<textarea value={newProject.description} onChange={(event) => setNewProject({ ...newProject, description: event.target.value })} /></label><div className="project-modal__fields"><label>Date de début<input type="date" value={newProject.startDate} onChange={(event) => setNewProject({ ...newProject, startDate: event.target.value })} /></label><label>Date objectif<input type="date" value={newProject.targetDate} onChange={(event) => setNewProject({ ...newProject, targetDate: event.target.value })} /></label></div><div className="project-modal__fields"><label>Statut<select value={newProject.status} onChange={(event) => setNewProject({ ...newProject, status: event.target.value as ProjectStatus })}><option>À commencer</option><option>En cours</option><option>Terminé</option></select></label><label>Priorité<select value={newProject.priority} onChange={(event) => setNewProject({ ...newProject, priority: event.target.value as Priority })}><option>Basse</option><option>Moyenne</option><option>Haute</option></select></label></div><label>Image<input type="file" accept="image/*" onChange={handleProjectImage} /></label><div className="project-modal__actions"><button type="button" onClick={() => setIsProjectModalOpen(false)}>Annuler</button><button type="submit">Ajouter</button></div></form></div> : null}
+      {isProjectModalOpen ? (
+        <div className="project-modal project-modal--project" role="dialog" aria-modal="true" aria-labelledby="project-modal-title">
+          <div className="project-modal__backdrop" onClick={() => setIsProjectModalOpen(false)} />
+          <form className="project-create" onSubmit={handleProjectSubmit}>
+            <div className="project-create__header">
+              <div>
+                <h2 id="project-modal-title">Nouveau projet</h2>
+                <p>Crée un nouveau projet pour organiser tes idées, objectifs et échéances au même endroit.</p>
+              </div>
+              <button className="project-create__close" type="button" aria-label="Fermer" onClick={() => setIsProjectModalOpen(false)}>×</button>
+            </div>
+
+            <div className="project-create__layout">
+              <div className="project-create__fields">
+                <label>
+                  Titre
+                  <input
+                    value={newProject.title}
+                    onChange={(event) => setNewProject({ ...newProject, title: event.target.value })}
+                    placeholder="Ex. Lancement de mon journal bien-être"
+                    required
+                    autoFocus
+                  />
+                </label>
+
+                <label>
+                  Description
+                  <textarea
+                    value={newProject.description}
+                    onChange={(event) => setNewProject({ ...newProject, description: event.target.value })}
+                    placeholder="Décris ton projet, ses objectifs, son contexte..."
+                  />
+                </label>
+
+                <div className="project-create__fields-row">
+                  <label>
+                    Date de début
+                    <input type="date" value={newProject.startDate} onChange={(event) => setNewProject({ ...newProject, startDate: event.target.value })} />
+                  </label>
+                  <label>
+                    Date objectif
+                    <input type="date" value={newProject.targetDate} onChange={(event) => setNewProject({ ...newProject, targetDate: event.target.value })} />
+                  </label>
+                </div>
+
+                <div className="project-create__fields-row">
+                  <label>
+                    Statut
+                    <select value={newProject.status} onChange={(event) => setNewProject({ ...newProject, status: event.target.value as ProjectStatus })}>
+                      <option>À commencer</option>
+                      <option>En cours</option>
+                      <option>Terminé</option>
+                    </select>
+                  </label>
+                  <label>
+                    Priorité
+                    <select value={newProject.priority} onChange={(event) => setNewProject({ ...newProject, priority: event.target.value as Priority })}>
+                      <option>Basse</option>
+                      <option>Moyenne</option>
+                      <option>Haute</option>
+                    </select>
+                  </label>
+                </div>
+
+                <label className="project-create__cover-field">
+                  Image
+                  <span className="project-create__cover-preview-panel">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <rect x="3" y="4" width="18" height="16" rx="1" />
+                      <circle cx="9" cy="9" r="1.5" />
+                      <path d="m5 18 5-5 3 3 2-2 4 4" />
+                    </svg>
+                    <span>Choisir un fichier</span>
+                    <small>{newProject.image === projectMoodboard ? "Aucun fichier choisi" : "Image sélectionnée"}</small>
+                  </span>
+                  <input type="file" accept="image/*" onChange={handleProjectImage} />
+                </label>
+
+                <div className="project-create__actions">
+                  <button type="submit">Créer le projet</button>
+                  <button type="button" onClick={() => setIsProjectModalOpen(false)}>Annuler</button>
+                </div>
+              </div>
+
+              <aside className="project-create__preview-area" aria-label="Aperçu du projet">
+                <p>Aperçu</p>
+                <article className="project-create__preview-card">
+                  <img src={newProject.image} alt="" />
+                  <div className="project-create__preview-content">
+                    <h3>{newProject.title.trim() || "Nouveau projet"}</h3>
+                    <p>Statut : {newProject.status}</p>
+                    <p>Priorité : {newProject.priority}</p>
+                    <div className="project-create__preview-dates">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="3" y="5" width="18" height="16" rx="2" />
+                        <path d="M3 10h18M8 3v4m8-4v4" />
+                      </svg>
+                      <span>{newProject.startDate ? formatDate(newProject.startDate) : "Date de début"}</span>
+                      <i>–</i>
+                      <span>{newProject.targetDate ? formatDate(newProject.targetDate) : "Date objectif"}</span>
+                    </div>
+                  </div>
+                </article>
+                <small>Ceci est un aperçu. L’apparence peut varier une fois le projet créé.</small>
+              </aside>
+            </div>
+          </form>
+        </div>
+      ) : null}
       {isTaskModalOpen ? <div className="project-modal" role="dialog" aria-modal="true" aria-labelledby="task-modal-title"><div className="project-modal__backdrop" onClick={() => setIsTaskModalOpen(false)} /><form className="project-modal__panel" onSubmit={handleTaskSubmit}><div className="project-modal__header"><h2 id="task-modal-title">Ajouter une tâche</h2><button type="button" aria-label="Fermer" onClick={() => setIsTaskModalOpen(false)}>×</button></div><label>Tâche<input value={newTask.title} onChange={(event) => setNewTask({ ...newTask, title: event.target.value })} required autoFocus /></label><div className="project-modal__fields"><label>Échéance<input type="date" value={newTask.dueDate} onChange={(event) => setNewTask({ ...newTask, dueDate: event.target.value })} /></label><label>Priorité<select value={newTask.priority} onChange={(event) => setNewTask({ ...newTask, priority: event.target.value as Priority })}><option>Basse</option><option>Moyenne</option><option>Haute</option></select></label></div><label>Statut<select value={newTask.status} onChange={(event) => setNewTask({ ...newTask, status: event.target.value as TaskStatus })}><option>À faire</option><option>En cours</option><option>Terminée</option></select></label><div className="project-modal__actions"><button type="button" onClick={() => setIsTaskModalOpen(false)}>Annuler</button><button type="submit">Ajouter</button></div></form></div> : null}
       {isResourceModalOpen ? <div className="project-modal" role="dialog" aria-modal="true" aria-labelledby="resource-modal-title"><div className="project-modal__backdrop" onClick={() => setIsResourceModalOpen(false)} /><form className="project-modal__panel" onSubmit={handleResourceSubmit}><div className="project-modal__header"><h2 id="resource-modal-title">Ajouter une ressource ou un lien</h2><button type="button" aria-label="Fermer" onClick={() => setIsResourceModalOpen(false)}>×</button></div><label>Nom<input value={newResource.title} onChange={(event) => setNewResource({ ...newResource, title: event.target.value })} required autoFocus /></label><label>Lien<input type="url" value={newResource.url} onChange={(event) => setNewResource({ ...newResource, url: event.target.value })} required /></label><div className="project-modal__actions"><button type="button" onClick={() => setIsResourceModalOpen(false)}>Annuler</button><button type="submit">Ajouter</button></div></form></div> : null}
       {previewAttachment ? <div className="project-modal project-preview-modal" role="dialog" aria-modal="true" aria-labelledby="attachment-preview-title"><div className="project-modal__backdrop" onClick={() => setPreviewAttachment(null)} /><div className="project-modal__panel project-preview-modal__panel"><div className="project-modal__header"><h2 id="attachment-preview-title">{previewAttachment.name}</h2><button type="button" aria-label="Fermer" onClick={() => setPreviewAttachment(null)}>×</button></div>{previewAttachment.url.startsWith("data:image/") ? <img className="project-preview-modal__image" src={previewAttachment.url} alt={previewAttachment.name} /> : <iframe className="project-preview-modal__document" src={previewAttachment.url} title={previewAttachment.name} />}</div></div> : null}

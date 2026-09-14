@@ -1,0 +1,72 @@
+body.blog-health-page--solid {
+  background: #f8f6f1;
+}
+
+.blog-health-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2.75rem;
+  padding: 0;
+}
+
+.blog-health-page img {
+  display: block;
+  width: 100%;
+  border-radius: 0;
+}
+
+.blog-health-page__articles {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+.blog-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.blog-pagination button {
+  min-width: 2.65rem;
+  min-height: 2.65rem;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 0;
+  background: #ffffff;
+  color: var(--color-contrast);
+  font-family: var(--font-body);
+  font-size: var(--font-size-small);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.blog-pagination button:hover:not(:disabled),
+.blog-pagination button:focus-visible,
+.blog-pagination button.is-active {
+  border-color: var(--color-contrast);
+  background: var(--color-contrast);
+  color: #ffffff;
+}
+
+.blog-pagination button:focus-visible {
+  outline: 2px solid var(--color-chocolate);
+  outline-offset: 2px;
+}
+
+.blog-pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+@media (max-width: 580px) {
+  .blog-pagination {
+    flex-wrap: wrap;
+  }
+
+  .blog-pagination button:first-child,
+  .blog-pagination button:last-child {
+    flex-basis: calc(50% - 0.25rem);
+  }
+}

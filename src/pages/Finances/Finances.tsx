@@ -730,6 +730,7 @@ const FinancePage = () => {
         </div>
         <p>Un espace pour suivre ton budget, faire grandir tes projets et avancer vers tes objectifs financiers.</p>
       </header>
+      <div className="finance-dashboard-shell">
       <header className="finance-page-header finance-page-header--actions">
         <div className="finance-page-header__actions">
           <div className="finance-page-header__period">
@@ -886,6 +887,7 @@ const FinancePage = () => {
           )}
         </section>
       </section>
+      </div>
 
       {isTransactionModalOpen ? (
         <div className="finance-transaction-modal" role="dialog" aria-modal="true" aria-labelledby="finance-transaction-modal-title">

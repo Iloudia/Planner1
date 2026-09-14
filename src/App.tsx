@@ -19,6 +19,8 @@ const HomePage = lazy(() => import("./pages/Home/Home"))
 const SportPage = lazy(() => import("./pages/Sport/Sport"))
 const JournalingPage = lazy(() => import("./pages/Journaling/Journaling"))
 const SelfLovePage = lazy(() => import("./pages/SelfLove/SelfLove"))
+const SelfLoveHome = lazy(() => import("./pages/SelfLove/SelfLoveHome"))
+const ManifestationPage = lazy(() => import("./pages/Manifestation/Manifestation"))
 const WishlistPage = lazy(() => import("./pages/Wishlist/Wishlist"))
 const CalendrierPage = lazy(() => import("./pages/Calendrier/Calendrier"))
 const FinancesPage = lazy(() => import("./pages/Finances/Finances"))
@@ -42,6 +44,16 @@ const SettingsLanguages = lazy(() => import("./pages/Settings/SettingsLanguages"
 const SettingsCookies = lazy(() => import("./pages/Settings/SettingsCookies"))
 const AboutPage = lazy(() => import("./pages/About/AboutPage"))
 const BlogPage = lazy(() => import("./pages/Blog/BlogPage"))
+const BlogHealthBeautyPage = lazy(() => import("./pages/Blog/categories/BlogHealthBeautyPage"))
+const BlogHealthBeautyArticlePage = lazy(() => import("./pages/Blog/articles/BlogHealthBeautyArticlePage"))
+const BlogFashionPage = lazy(() => import("./pages/Blog/categories/BlogFashionPage"))
+const BlogFashionArticlePage = lazy(() => import("./pages/Blog/articles/BlogFashionArticlePage"))
+const BlogMentalPage = lazy(() => import("./pages/Blog/categories/BlogMentalPage"))
+const BlogMentalArticlePage = lazy(() => import("./pages/Blog/articles/BlogMentalArticlePage"))
+const BlogSportNutritionPage = lazy(() => import("./pages/Blog/categories/BlogSportNutritionPage"))
+const BlogSportNutritionArticlePage = lazy(() => import("./pages/Blog/articles/BlogSportNutritionArticlePage"))
+const BlogLifestylePage = lazy(() => import("./pages/Blog/categories/BlogLifestylePage"))
+const BlogLifestyleArticlePage = lazy(() => import("./pages/Blog/articles/BlogLifestyleArticlePage"))
 const ProfilePage = lazy(() => import("./pages/Profile/Profile"))
 const ArchivesHome = lazy(() => import("./pages/Archives/ArchivesHome"))
 const ArchivesPage = lazy(() => import("./pages/Archives/Archives"))
@@ -148,6 +160,16 @@ function App() {
             <Route path="/faq" element={<FAQPage />} />
             <Route path="/a-propos" element={<AboutPage />} />
             <Route path="/blog" element={<BlogPage />} />
+            <Route path="/blog/sante-beaute" element={<BlogHealthBeautyPage />} />
+            <Route path="/blog/sante-beaute/:articleSlug" element={<BlogHealthBeautyArticlePage />} />
+            <Route path="/blog/mode" element={<BlogFashionPage />} />
+            <Route path="/blog/mode/:articleSlug" element={<BlogFashionArticlePage />} />
+            <Route path="/blog/mental" element={<BlogMentalPage />} />
+            <Route path="/blog/mental/:articleSlug" element={<BlogMentalArticlePage />} />
+            <Route path="/blog/sport-nutrition" element={<BlogSportNutritionPage />} />
+            <Route path="/blog/sport-nutrition/:articleSlug" element={<BlogSportNutritionArticlePage />} />
+            <Route path="/blog/lifestyle" element={<BlogLifestylePage />} />
+            <Route path="/blog/lifestyle/:articleSlug" element={<BlogLifestyleArticlePage />} />
             <Route path="/boutique" element={<BoutiquePage />} />
             <Route path="/boutique/:categoryId" element={<BoutiqueCategoryPage />} />
             <Route path="/boutique/produit/:productId" element={<BoutiqueProductPage />} />
@@ -165,7 +187,8 @@ function App() {
               <Route path="/sport/workout/*" element={<SportWorkoutPage />} />
               <Route path="/journaling" element={<JournalingPage />} />
               <Route path="/mindset" element={<SelfLovePage />} />
-              <Route path="/self-love" element={<Navigate to="/mindset" replace />} />
+              <Route path="/self-love" element={<SelfLoveHome />} />
+              <Route path="/manifestation" element={<ManifestationPage />} />
               <Route path="/wishlist" element={<WishlistPage />} />
               <Route path="/calendrier" element={<CalendrierPage />} />
               <Route path="/finances" element={<FinancesPage />} />

@@ -11,68 +11,70 @@ const MentionsLegalesPage = () => {
   }, [])
 
   return (
-  <>
+    <>
       <AdministrativePageHeader eyebrow="Les" title="Mentions légales" />
-    <div className="legal-page">
-      <p className="legal-page__intro">
-        Mentions légales complètes, incluant l'éditeur, l'hébergeur, la propriété intellectuelle et les règles d'utilisation du site Me&rituals.
-      </p>
+      <div className="legal-page legal-page--mentions">
+        <div className="legal-page__columns">
+          <div className="legal-page__column">
+            <section className="legal-section">
+              <h2 className="legal-section__title">Éditeur du site</h2>
+              <p className="legal-section__text">
+                Nom : Vasseur Iloudia
+                <br />
+                Statut : Auto-entrepreneur
+                <br />
+                Email : contact@meandrituals.com
+                <br />
+                SIRET : 95166317800022
+              </p>
+            </section>
 
-      <section className="legal-section">
-        <h2 className="legal-section__title">Éditeur du site</h2>
-        <p className="legal-section__text">
-          Nom : Vasseur Iloudia
-          <br />
-          Statut : Auto-entrepreneur
-          <br />
-          Email : contact@meandrituals.com
-          <br />
-          SIRET : 95166317800022
-        </p>
-      </section>
+            <section className="legal-section">
+              <h2 className="legal-section__title">Directeur de la publication</h2>
+              <p className="legal-section__text">Vasseur Iloudia</p>
+            </section>
 
-      <section className="legal-section">
-        <h2 className="legal-section__title">Directeur de la publication</h2>
-        <p className="legal-section__text">Vasseur Iloudia</p>
-      </section>
+            <section className="legal-section">
+              <h2 className="legal-section__title">Hébergement</h2>
+              <p className="legal-section__text">
+                Le site est hébergé par :
+                <br />
+                IONOS SE
+                <br />
+                Elgendorfer Str. 57
+                <br />
+                56410 Montabaur, Allemagne
+                <br />
+                Téléphone : 0970 808 911
+              </p>
+            </section>
+          </div>
 
-      <section className="legal-section">
-        <h2 className="legal-section__title">Hébergement</h2>
-        <p className="legal-section__text">
-          Le site est hébergé par :
-          <br />
-          IONOS SE
-          <br />
-          Elgendorfer Str. 57
-          <br />
-          56410 Montabaur, Allemagne
-          <br />
-          Téléphone : 0970 808 911
-        </p>
-      </section>
+          <div className="legal-page__column">
+            <section className="legal-section">
+              <h2 className="legal-section__title">Propriété intellectuelle</h2>
+              <p className="legal-section__text">
+                L'ensemble du contenu présent sur ce site (textes, images, graphismes, logo, structure) est la propriété exclusive de l'éditeur, sauf mention contraire. Toute reproduction, représentation, modification ou adaptation, totale ou partielle, est interdite sans autorisation préalable.
+              </p>
+            </section>
 
-      <section className="legal-section">
-        <h2 className="legal-section__title">Propriété intellectuelle</h2>
-        <p className="legal-section__text">
-          L'ensemble du contenu présent sur ce site (textes, images, graphismes, logo, structure) est la propriété exclusive de l'éditeur, sauf mention contraire. Toute reproduction, représentation, modification ou adaptation, totale ou partielle, est interdite sans autorisation préalable.
-        </p>
-      </section>
+            <section className="legal-section">
+              <h2 className="legal-section__title">Responsabilité</h2>
+              <p className="legal-section__text">
+                L'éditeur s'efforce de fournir des informations aussi précises que possible. Il ne saurait toutefois être tenu responsable des omissions, inexactitudes ou carences dans la mise à jour du contenu.
+              </p>
+            </section>
 
-      <section className="legal-section">
-        <h2 className="legal-section__title">Responsabilité</h2>
-        <p className="legal-section__text">
-          L'éditeur s'efforce de fournir des informations aussi précises que possible. Il ne saurait toutefois être tenu responsable des omissions, inexactitudes ou carences dans la mise à jour du contenu.
-        </p>
-      </section>
-
-      <section className="legal-section">
-        <h2 className="legal-section__title">Données personnelles</h2>
-        <p className="legal-section__text">
-          Les informations relatives à la collecte et au traitement des données personnelles sont détaillées dans la page Politique de confidentialité. L'utilisation des cookies est expliquée dans la page Gestion des cookies.
-        </p>
-      </section>
-    </div>
-</>
+            <section className="legal-section">
+              <h2 className="legal-section__title">Données personnelles</h2>
+              <p className="legal-section__text">
+                Les informations relatives à la collecte et au traitement des données personnelles sont détaillées dans la page Politique de confidentialité. L'utilisation des cookies est expliquée dans la page Gestion des cookies.
+              </p>
+            </section>
+          </div>
+        </div>
+      </div>
+    </>
   )
 }
 

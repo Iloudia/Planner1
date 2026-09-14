@@ -12,23 +12,20 @@ const ConfidentialitePage = () => {
   }, [])
 
   return (
-  <>
+    <>
       <AdministrativePageHeader eyebrow="La" title="Politique de confidentialité" />
-    <div className="legal-page">
-      <p className="legal-page__intro">
-        La présente politique de confidentialité a pour objectif d’informer les utilisateurs du site sur la manière dont
-        leurs données personnelles sont collectées, utilisées et protégées.
-      </p>
-
-      <section className="legal-section">
+      <div className="legal-page legal-page--confidentialite">
+        <div className="legal-page__columns">
+          <div className="legal-page__column">
+            <section className="legal-section">
         <h2 className="legal-section__title">Responsable du traitement</h2>
         <p className="legal-section__text">
           Le responsable du traitement des données est Vasseur Iloudia, éditrice du site Me&rituals. Pour toute
           question relative aux données personnelles, vous pouvez contacter : contact@meandrituals.com.
         </p>
-      </section>
+            </section>
 
-      <section className="legal-section">
+            <section className="legal-section">
         <h2 className="legal-section__title">Données collectées</h2>
         <p className="legal-section__text">
           Selon l’utilisation du site, les données suivantes peuvent être collectées :
@@ -55,9 +52,9 @@ const ConfidentialitePage = () => {
           </Link>
           .
         </p>
-      </section>
+            </section>
 
-      <section className="legal-section">
+            <section className="legal-section">
         <h2 className="legal-section__title">Finalité de la collecte</h2>
         <p className="legal-section__text">
           Les données personnelles sont collectées pour :
@@ -69,9 +66,9 @@ const ConfidentialitePage = () => {
           <li>gérer les commandes et la facturation → exécution du contrat et obligations légales</li>
           <li>améliorer le fonctionnement du site → intérêt légitime</li>
         </ul>
-      </section>
+            </section>
 
-      <section className="legal-section">
+            <section className="legal-section">
         <h2 className="legal-section__title">Base légale</h2>
         <p className="legal-section__text">
           La collecte des données repose sur :
@@ -81,9 +78,11 @@ const ConfidentialitePage = () => {
           <li>l’exécution d’un contrat (achat de produits)</li>
           <li>le respect d’obligations légales</li>
         </ul>
-      </section>
+            </section>
+          </div>
 
-      <section className="legal-section">
+          <div className="legal-page__column">
+            <section className="legal-section">
         <h2 className="legal-section__title">Durée de conservation</h2>
         <p className="legal-section__text">
           Les durées de conservation varient selon le type de données :
@@ -102,9 +101,9 @@ const ConfidentialitePage = () => {
             obligations légales applicables
           </li>
         </ul>
-      </section>
+            </section>
 
-      <section className="legal-section">
+            <section className="legal-section">
         <h2 className="legal-section__title">Partage des données</h2>
         <p className="legal-section__text">
           Les données peuvent être transmises à des prestataires techniques uniquement dans le cadre du fonctionnement
@@ -120,18 +119,18 @@ const ConfidentialitePage = () => {
           de données sont encadrés par des garanties appropriées (ex. clauses contractuelles types).
         </p>
         <p className="legal-section__text">Aucune donnée personnelle n’est vendue ou cédée à des tiers.</p>
-      </section>
+            </section>
 
-      <section className="legal-section">
+            <section className="legal-section">
         <h2 className="legal-section__title">Sécurité</h2>
         <p className="legal-section__text">
           Le site met en œuvre des mesures de sécurité pour protéger les données personnelles contre tout accès non
           autorisé, perte ou divulgation.
         </p>
         <p className="legal-section__text">Aucune décision automatisée ni profilage n’est mis en œuvre.</p>
-      </section>
+            </section>
 
-      <section className="legal-section">
+            <section className="legal-section">
         <h2 className="legal-section__title">Droits des utilisateurs</h2>
         <p className="legal-section__text">
           Conformément à la réglementation en vigueur, vous disposez des droits suivants :
@@ -150,10 +149,12 @@ const ConfidentialitePage = () => {
           Pour exercer ces droits, il suffit d’envoyer un email à : contact@meandrituals.com
         </p>
 
-      </section>
-      <p className="legal-page__footer">Dernière mise à jour : 6 mars 2026.</p>
-    </div>
-</>
+            </section>
+          </div>
+        </div>
+        <p className="legal-page__footer">Dernière mise à jour : 6 mars 2026.</p>
+      </div>
+    </>
   )
 }
 

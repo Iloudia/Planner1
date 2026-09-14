@@ -61,7 +61,7 @@ const cards: CardItem[] = [
   { image: calendrierHomeImage, alt: "Calendrier", kicker: "Vue globale", title: "Calendrier", path: "/calendrier" },
   { image: planner05, alt: "Wishlist", kicker: "Envies", title: "Wishlist", path: "/wishlist" },
   { image: planner03, alt: "Journaling", kicker: "Reflet", title: "Journaling", path: "/journaling" },
-  { image: planner04, alt: "Self-love", kicker: "Soin", title: "Mindset", path: "/mindset" },
+  { image: planner04, alt: "Self-love", kicker: "Soin", title: "Mindset", path: "/self-love" },
   { image: planner07, alt: "Finances", kicker: "Budget", title: "Finances", path: "/finances" },
   { image: planner08, alt: "Routine", kicker: "Rythme", title: "Routine", path: "/routine" },
   { image: planner09, alt: "Courses & menus", kicker: "Saveurs", title: "Menu de la semaine", path: "/menu" },

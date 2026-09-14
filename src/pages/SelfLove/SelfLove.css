@@ -2756,12 +2756,6 @@ body.self-love-page--lux .self-love-section--qualities h2,
 body.self-love-page--lux .self-love-section--thoughts h2 {
   margin: 0;
   color: #253652 !important;
-  font-family: 'Libre Baskerville', Georgia, serif !important;
-  font-size: clamp(0.84rem, 1.1vw, 1.05rem) !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.14em !important;
-  line-height: 1.35 !important;
-  text-transform: uppercase;
 }
 
 body.self-love-page--lux .self-love-section--qualities p,
@@ -2910,11 +2904,15 @@ body.self-love-page--lux .self-love-section--photos .self-love-photos__intro {
 
 body.self-love-page--lux .self-love-section--photos .self-love-photos__title {
   color: #253652 !important;
-  font-family: 'Libre Baskerville', Georgia, serif !important;
-  font-size: clamp(0.95rem, 1.35vw, 1.25rem) !important;
-  font-weight: 400 !important;
-  letter-spacing: 0;
-  line-height: 1.35 !important;
+}
+
+body.self-love-page--lux .self-love-page h2.self-love-chocolate {
+  font-family: 'Playfair Display', serif !important;
+  font-size: var(--font-size-h2) !important;
+  font-weight: var(--font-weight-h2) !important;
+  letter-spacing: normal !important;
+  line-height: var(--leading-heading) !important;
+  text-transform: none;
 }
 
 body.self-love-page--lux .self-love-section--photos .self-love-photos-frame {

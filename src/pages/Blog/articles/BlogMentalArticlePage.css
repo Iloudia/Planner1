@@ -1,0 +1,272 @@
+body.mental-article-page--tone {
+  background: #f8f6f1;
+}
+
+.mental-article-page {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 1.25rem;
+  color: var(--color-contrast);
+}
+
+.mental-article-page__back {
+  align-self: flex-start;
+  color: var(--color-chocolate);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.mental-article-page__back:focus-visible,
+.mental-article-placeholder a:focus-visible {
+  outline: 2px solid var(--color-chocolate);
+  outline-offset: 3px;
+}
+
+.mental-article {
+  border: 1px solid var(--color-border-strong);
+  background: #ffffff;
+}
+
+.mental-article__header {
+  display: flex;
+  flex-direction: column;
+}
+
+.mental-article__media {
+  width: min(calc(100% - 3rem), 70rem);
+  height: clamp(22rem, 48vw, 36rem);
+  margin: 0 auto clamp(1.5rem, 3vw, 2.5rem);
+  overflow: hidden;
+  border: 1px solid var(--color-border-strong);
+}
+
+.mental-article__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mental-article__headline {
+  display: flex;
+  width: min(calc(100% - 3rem), 70rem);
+  margin: 0 auto;
+  flex-direction: column;
+  align-items: center;
+  padding: clamp(2rem, 4vw, 3.25rem) 0 clamp(1.5rem, 3vw, 2.25rem);
+  text-align: center;
+}
+
+.mental-article__headline > span {
+  color: var(--color-chocolate);
+  font-family: var(--font-body) !important;
+  font-size: var(--font-size-overline) !important;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.mental-article__headline h1 {
+  max-width: 62rem;
+  margin: 0.75rem 0 0.8rem;
+  color: var(--color-contrast) !important;
+  font-family: var(--font-heading) !important;
+  font-size: clamp(1.8rem, 3.2vw, 3rem) !important;
+  font-weight: 600 !important;
+  line-height: 1.08 !important;
+}
+
+.mental-article__headline p {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.8rem !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.mental-article__content {
+  width: min(calc(100% - 3rem), 70rem);
+  margin: 0 auto;
+  padding: clamp(1.75rem, 3vw, 2.75rem) 0 clamp(2.25rem, 4vw, 3.75rem);
+}
+
+.mental-article__content h2 {
+  margin: clamp(2.4rem, 5vw, 4rem) 0 clamp(2.25rem, 4vw, 3.25rem);
+  color: var(--color-contrast) !important;
+  font-family: var(--font-heading) !important;
+  font-size: clamp(1.65rem, 3vw, 2.35rem) !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  text-align: center;
+}
+
+.mental-article__content h3 {
+  margin: 2rem 0 0.75rem;
+  color: var(--color-contrast) !important;
+  font-family: var(--font-heading) !important;
+  font-size: clamp(1.2rem, 2vw, 1.5rem) !important;
+  font-weight: 600;
+}
+
+.mental-article__content p,
+.mental-article__content li {
+  color: #3f3a35;
+  line-height: 1.85 !important;
+}
+
+.mental-article__content p {
+  margin: 0 0 1.15rem;
+}
+
+.mental-article__content ul {
+  margin: 0 0 1.5rem;
+  padding-left: 1.35rem;
+}
+
+.mental-article__content li + li {
+  margin-top: 0.45rem;
+}
+
+.mental-article__content strong {
+  color: #17130f;
+  font-weight: 700;
+}
+
+.mental-article__content hr {
+  width: 5rem;
+  height: 1px;
+  margin: clamp(2.5rem, 6vw, 4.5rem) auto;
+  border: 0;
+  background: rgba(31, 27, 22, 0.22);
+}
+
+.mental-article__published-date {
+  width: min(calc(100% - 3rem), 70rem);
+  margin: 0 auto;
+  padding: 0 0 clamp(2.25rem, 4vw, 3.75rem);
+  color: #6f655c;
+  font-size: 0.9rem;
+  text-align: right;
+}
+
+.mental-article__illustration {
+  width: 100%;
+  margin: clamp(1.5rem, 3vw, 2.5rem) 0 clamp(2rem, 4vw, 3.25rem);
+  overflow: hidden;
+  border: 1px solid var(--color-border-strong);
+  background: #f4efe8;
+}
+
+.mental-article__illustration img {
+  display: block;
+  width: 100%;
+  height: clamp(18rem, 40vw, 31rem);
+  object-fit: cover;
+}
+
+.self-love-rituals.mental-article-recommendations {
+  padding: clamp(1.5rem, 3.5vw, 3rem);
+  border: 1px solid var(--color-border-strong);
+  background: #ffffff;
+}
+
+.mental-article-recommendations .self-love-rituals__header {
+  justify-content: center;
+  margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
+  text-align: center;
+}
+
+.mental-article-recommendations .self-love-rituals__grid {
+  gap: clamp(1.25rem, 2.25vw, 2rem);
+}
+
+.mental-article-recommendation {
+  color: inherit;
+  text-decoration: none;
+}
+
+.mental-article-recommendation .self-love-ritual-card__content {
+  min-height: 14rem;
+  padding: clamp(1.25rem, 2.5vw, 1.75rem);
+}
+
+.mental-article-recommendation .self-love-ritual-card__content h3 {
+  margin-bottom: 0.85rem;
+  overflow-wrap: break-word;
+}
+
+.mental-article-recommendation .self-love-ritual-card__content p {
+  margin-bottom: 1.35rem;
+}
+
+.mental-article-recommendation:focus-visible {
+  outline: 2px solid var(--color-chocolate);
+  outline-offset: 3px;
+}
+
+.mental-article-placeholder {
+  display: flex;
+  min-height: 28rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  border: 1px solid var(--color-border-strong);
+  background: #ffffff;
+  text-align: center;
+}
+
+.mental-article-placeholder > span {
+  color: var(--color-chocolate);
+  font-size: 0.75rem !important;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.mental-article-placeholder h1 {
+  margin: 0.8rem 0;
+  font-family: var(--font-heading) !important;
+  font-size: clamp(2rem, 5vw, 3.5rem) !important;
+}
+
+.mental-article-placeholder p {
+  margin: 0 0 1.25rem;
+}
+
+.mental-article-placeholder a {
+  color: var(--color-chocolate);
+  font-weight: 600;
+}
+
+@media (max-width: 820px) {
+  .mental-article__media {
+    height: clamp(18rem, 58vw, 26rem);
+  }
+
+}
+
+@media (max-width: 560px) {
+  .mental-article__media {
+    width: calc(100% - 2rem);
+    height: 15rem;
+  }
+
+  .mental-article__headline {
+    width: calc(100% - 2rem);
+    padding: 1.75rem 0 1.5rem;
+  }
+
+  .mental-article__content {
+    width: calc(100% - 2rem);
+  }
+
+  .mental-article__illustration img {
+    height: 15rem;
+  }
+}

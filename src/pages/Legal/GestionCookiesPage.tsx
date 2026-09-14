@@ -16,18 +16,19 @@ const GestionCookiesPage = () => {
 
   return (
     <>
-        <AdministrativePageHeader eyebrow="La" title="Gestion des cookies" />
-      <div className="legal-page">
-        <p className="legal-page__intro">
-          Lors de la consultation de ce site, des cookies et traceurs locaux peuvent être déposés sur ton appareil
-          (ordinateur, mobile ou tablette).
-        </p>
-        <h2 className="legal-section__title">Qu'est-ce qu'un cookie ?</h2>
-        <p className="legal-section__text">
-          Un cookie est un petit fichier texte qui permet au site de fonctionner correctement et d’améliorer ton
-          expérience.
-        </p>
-        <section className="legal-section">
+      <AdministrativePageHeader eyebrow="La" title="Gestion des cookies" />
+      <div className="legal-page legal-page--cookies">
+        <div className="legal-page__columns">
+          <div className="legal-page__column">
+            <section className="legal-section">
+              <h2 className="legal-section__title">Qu'est-ce qu'un cookie ?</h2>
+              <p className="legal-section__text">
+                Un cookie est un petit fichier texte qui permet au site de fonctionner correctement et d’améliorer ton
+                expérience.
+              </p>
+            </section>
+
+            <section className="legal-section">
           <h2 className="legal-section__title">Cookies utilisés</h2>
           <p className="legal-section__text">Ce site utilise les types de cookies suivants :</p>
           <ul className="legal-list">
@@ -43,9 +44,9 @@ const GestionCookiesPage = () => {
           <p className="legal-section__text">
             Aucun cookie non essentiel n’est déposé sans ton consentement.
           </p>
-        </section>
+            </section>
 
-        <section className="legal-section">
+            <section className="legal-section">
           <h2 className="legal-section__title">Liste des cookies et traceurs</h2>
           <p className="legal-section__text">
             Ce tableau liste les principaux cookies et stockages locaux utilisés sur le site.
@@ -88,26 +89,28 @@ const GestionCookiesPage = () => {
               </tbody>
             </table>
           </div>
-        </section>
+            </section>
+          </div>
 
-        <section className="legal-section">
+          <div className="legal-page__column">
+            <section className="legal-section">
           <h2 className="legal-section__title">Consentement</h2>
           <p className="legal-section__text">
             Lors de ta première visite, un bandeau te permet d’accepter, de refuser ou de personnaliser ton choix.
             Tu peux modifier ou retirer ton consentement à tout moment.
           </p>
-        </section>
+            </section>
 
-        <section className="legal-section">
+            <section className="legal-section">
           <h2 className="legal-section__title">Durée de conservation</h2>
           <p className="legal-section__text">
             Le choix exprimé via le bandeau cookies est conservé pour une durée maximale de 13 mois. Les cookies et
             traceurs strictement nécessaires ou de personnalisation sont conservés le temps nécessaire à leur finalité
             ou jusqu’à suppression par l’utilisateur.
           </p>
-        </section>
+            </section>
 
-        <section className="legal-section">
+            <section className="legal-section">
           <h2 className="legal-section__title">Gestion des cookies</h2>
           <p className="legal-section__text">
             Pour modifier tes choix, utilise le bouton "Personnaliser" du bandeau cookies ou clique sur "Personnaliser" présent en bas de page. Tes préférences sont appliquées immédiatement.
@@ -119,9 +122,9 @@ const GestionCookiesPage = () => {
             </Link>
             .
           </p>
-        </section>
+            </section>
 
-        <section className="legal-section">
+            <section className="legal-section">
           <h2 className="legal-section__title">Comment désactiver les cookies ?</h2>
           <p className="legal-section__text">
             Tu peux aussi gérer les cookies depuis ton navigateur (paramètres &gt; confidentialité &gt; cookies). Tu
@@ -130,7 +133,9 @@ const GestionCookiesPage = () => {
           <p className="legal-section__text">
             Attention : désactiver les cookies essentiels bloque l'accès à l'espace sécurisé (connexion, sauvegarde).
           </p>
-        </section>
+            </section>
+          </div>
+        </div>
 
         <div className="cookie-actions">
           <button type="button" className="cookie-banner__action cookie-banner__action--ghost" onClick={rejectAll}>
@@ -144,7 +149,7 @@ const GestionCookiesPage = () => {
           </button>
         </div>
       </div>
-</>
+    </>
   )
 }
 

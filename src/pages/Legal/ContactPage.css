@@ -82,7 +82,7 @@
   gap: 0;
   padding: 0;
   border: 1px solid #dcd3ca;
-  background: #faf7f3;
+  background: #ffffff;
   font-family: "Inter", "Times New Roman", sans-serif;
 }
 
@@ -417,7 +417,7 @@ body.legal-page--lux .legal-page.contact-page {
   gap: 0;
   padding: 0;
   border: 1px solid #dcd3ca;
-  background: #faf7f3;
+  background: #ffffff;
 }
 
 body.legal-page--lux .contact-page .contact-form__title,

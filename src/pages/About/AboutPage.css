@@ -6,10 +6,10 @@
   --about-accent: #b59b7a;
   --about-line: rgba(31, 26, 20, 0.16);
   --about-paper: #fffdf8;
-  --about-shadow: 0 28px 60px rgba(31, 26, 20, 0.14);
   position: relative;
   padding: clamp(0.3rem, 1vw, 0.8rem) 0 clamp(2.5rem, 6vw, 4rem);
   color: var(--about-ink);
+  background: #f8f6f1;
 }
 
 .about-page--loading {
@@ -42,7 +42,6 @@
 .about-article {
   background: #ffffff;
   border: 1px solid var(--about-line);
-  box-shadow: var(--about-shadow);
   padding: clamp(1.6rem, 4vw, 2.8rem);
   margin: 0;
 }
@@ -113,7 +112,6 @@
   height: clamp(340px, 48vw, 520px);
   object-fit: cover;
   border-radius: 0;
-  box-shadow: none;
   display: block;
 }
 
@@ -133,7 +131,6 @@
   background: #ffffff;
   border: 1px solid var(--about-line);
   padding: clamp(1.2rem, 2.6vw, 1.8rem);
-  box-shadow: 0 16px 32px rgba(31, 26, 20, 0.08);
 }
 
 .about-feature__summary h3 {
@@ -183,7 +180,6 @@
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
-  box-shadow: 0 16px 32px rgba(31, 26, 20, 0.08);
 }
 
 .value-block img {
@@ -229,7 +225,6 @@
   padding: clamp(1.2rem, 2.2vw, 1.6rem);
   width: 100%;
   max-width: none;
-  box-shadow: var(--about-shadow);
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
@@ -327,7 +322,7 @@
 }
 
 body.about-page--lux {
-  background: #f4efe6;
+  background: #f8f6f1;
 }
 
 body.about-page--lux .about-page h1,

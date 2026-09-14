@@ -231,7 +231,6 @@ import curryIngredientImg from "../../assets/Aliments/Curry.png"
 import garamMassalaIngredientImg from "../../assets/Aliments/Garam massala.png"
 import curcumaIngredientImg from "../../assets/Aliments/Curcuma.png"
 import coriandreFraicheIngredientImg from "../../assets/Aliments/Coriandre fraiche.png"
-import PageHeading from "../../components/PageHeading"
 import "./DietPage.css"
 
 export type Recipe = {
@@ -5408,35 +5407,6 @@ export const healthyRecipes: Recipe[] = [
 },
 ]
 
-const DIET_HEADINGS = {
-  sweet: {
-    eyebrow: "Sucre",
-    title: "Ma Diet",
-    description: "Toutes les idees sucrees du moment.",
-  },
-  savory: {
-    eyebrow: "Sale",
-    title: "Ma Diet",
-    description: "Toutes les idees salees du moment.",
-  },
-  drinks: {
-    eyebrow: "Boissons",
-    title: "Ma Diet",
-    description: "Toutes les idees boissons du moment.",
-  },
-  condiments: {
-    eyebrow: "Condiments",
-    title: "Ma Diet",
-    description: "Tous les condiments du moment.",
-  },
-} as const
-
-const getDietHeadingLabel = (eyebrow: string) => {
-  if (eyebrow === "Sucre") return "Sucré"
-  if (eyebrow === "Sale") return "Salé"
-  return eyebrow
-}
-
 const CONDIMENT_RECIPE_IDS = [
   "mass-houmous-maison",
   "mass-tzatziki",
@@ -5530,6 +5500,8 @@ const DietClassicPage = () => {
     }
   }, [])
   const [tab, setTab] = useState<DietTab>("savory")
+  const [recipeSearch, setRecipeSearch] = useState("")
+  const [recipeSort, setRecipeSort] = useState<"recent" | "alphabetical">("recent")
   const [selectedRecipe, setSelectedRecipe] = useState<RenderRecipe | null>(null)
   const [isIngredientsOpen, setIsIngredientsOpen] = useState(true)
   const [planDay, setPlanDay] = useState<typeof weekDays[number]>(weekDays[0])
@@ -5615,7 +5587,6 @@ const DietClassicPage = () => {
     }
     navigate(location.pathname, { replace: true, state: null })
   }, [allRecipes, location.pathname, location.state, navigate])
-  const currentHeading = tab === "favorites" || tab === "custom" ? null : DIET_HEADINGS[tab]
   const getFlavorLabel = (flavor: Recipe["flavor"]) => {
     if (flavor === "sucre") return "Sucré"
     if (flavor === "sale") return "Salé"
@@ -5659,6 +5630,19 @@ const DietClassicPage = () => {
     }
     return []
   }, [favoriteRecipes, tab])
+  const visibleRecipes = useMemo(() => {
+    const recipes = tab === "favorites" ? favoriteRecipes : tab === "custom" ? customRecipes : filteredRecipes
+    const normalizedSearch = recipeSearch.trim().toLocaleLowerCase("fr")
+    const matchingRecipes = normalizedSearch
+      ? recipes.filter((recipe) => recipe.title.toLocaleLowerCase("fr").includes(normalizedSearch))
+      : recipes
+
+    if (recipeSort === "alphabetical") {
+      return [...matchingRecipes].sort((first, second) => first.title.localeCompare(second.title, "fr"))
+    }
+
+    return matchingRecipes
+  }, [customRecipes, favoriteRecipes, filteredRecipes, recipeSearch, recipeSort, tab])
 
   useEffect(() => {
     window.localStorage.setItem(DIET_TAB_STORAGE_KEY, tab)
@@ -5979,21 +5963,13 @@ const DietClassicPage = () => {
       {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer tes recettes et favoris.</p> : null}
       {error ? <p className="routine-note__composer-hint">{error}</p> : null}
       <article className="diet-blog">
-        {currentHeading ? (
-          <>
-            <PageHeading
-              eyebrow={getDietHeadingLabel(currentHeading.eyebrow)}
-              title="Diet"
-            />
-          </>
-        ) : (
-          <>
-            <PageHeading
-              eyebrow={tab === "custom" ? "Mes recettes" : "Favoris"}
-              title="Diet"
-            />
-          </>
-        )}
+        <header className="diet-classic-page__heading">
+          <div>
+            <span className="diet-classic-page__heading-eyebrow">Ma</span>
+            <h1>Diet</h1>
+          </div>
+          <p>Un espace pour découvrir tes recettes, retrouver tes favoris et nourrir ton équilibre au quotidien.</p>
+        </header>
         <div className="diet-crosslink">
           <div>
             <p className="diet-crosslink__label">Planifier ta semaine</p>
@@ -6005,57 +5981,85 @@ const DietClassicPage = () => {
             Planifier les repas
           </Link>
         </div>
-        <div className="diet-toggle diet-toggle--heading">
-          <button
-            type="button"
-            className={tab === "savory" ? "is-active" : ""}
-            onClick={() => setTab("savory")}
-          >
-            Salé
-          </button>
-          <button
-            type="button"
-            className={tab === "sweet" ? "is-active" : ""}
-            onClick={() => setTab("sweet")}
-          >
-            Sucré
-          </button>
-          <button
-            type="button"
-            className={tab === "drinks" ? "is-active" : ""}
-            onClick={() => setTab("drinks")}
-          >
-            Boissons
-          </button>
-          <button
-            type="button"
-            className={tab === "condiments" ? "is-active" : ""}
-            onClick={() => setTab("condiments")}
-          >
-            Condiments
-          </button>
-          <button
-            type="button"
-            className={tab === "custom" ? "is-active" : ""}
-            onClick={() => setTab("custom")}
-          >
-            Mes recettes
-          </button>
-          <button
-            type="button"
-            className={tab === "favorites" ? "is-active" : ""}
-            onClick={() => setTab("favorites")}
-          >
-            Favoris
-          </button>
-        </div>
       </article>
 
-      <section className="diet-blog">
+      <div className="diet-catalog">
+        <div className="diet-toggle diet-toggle--heading">
+          <div className="diet-toggle__categories">
+            <button
+              type="button"
+              className={tab === "savory" ? "is-active" : ""}
+              onClick={() => setTab("savory")}
+            >
+              Salé
+            </button>
+            <button
+              type="button"
+              className={tab === "sweet" ? "is-active" : ""}
+              onClick={() => setTab("sweet")}
+            >
+              Sucré
+            </button>
+            <button
+              type="button"
+              className={tab === "drinks" ? "is-active" : ""}
+              onClick={() => setTab("drinks")}
+            >
+              Boissons
+            </button>
+            <button
+              type="button"
+              className={tab === "condiments" ? "is-active" : ""}
+              onClick={() => setTab("condiments")}
+            >
+              Condiments
+            </button>
+            <button
+              type="button"
+              className={tab === "custom" ? "is-active" : ""}
+              onClick={() => setTab("custom")}
+            >
+              Mes recettes
+            </button>
+            <button
+              type="button"
+              className={tab === "favorites" ? "is-active" : ""}
+              onClick={() => setTab("favorites")}
+            >
+              Favoris
+            </button>
+          </div>
+          <div className="diet-toggle__tools">
+            <label className="diet-toggle__search">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="11" cy="11" r="7" />
+                <path d="m16 16 4 4" />
+              </svg>
+              <input
+                type="search"
+                value={recipeSearch}
+                onChange={(event) => setRecipeSearch(event.target.value)}
+                placeholder="Rechercher une recette..."
+                aria-label="Rechercher une recette"
+              />
+            </label>
+            <select
+              className="diet-toggle__sort"
+              value={recipeSort}
+              onChange={(event) => setRecipeSort(event.target.value as "recent" | "alphabetical")}
+              aria-label="Trier les recettes"
+            >
+              <option value="recent">Les plus récentes</option>
+              <option value="alphabetical">Ordre alphabétique</option>
+            </select>
+          </div>
+        </div>
+
+        <section className="diet-blog">
         {tab === "favorites" ? (
-          favoriteRecipes.length > 0 ? (
+          visibleRecipes.length > 0 ? (
             <div className="diet-recipe-grid">
-              {favoriteRecipes.map((recipe) => (
+              {visibleRecipes.map((recipe) => (
                 <article
                   key={recipe.id}
                   className="diet-recipe-card"
@@ -6122,9 +6126,9 @@ const DietClassicPage = () => {
                 Créer une recette
               </button>
             </div>
-            {customRecipes.length > 0 ? (
+            {visibleRecipes.length > 0 ? (
               <div className="diet-recipe-grid">
-                  {customRecipes.map((recipe) => (
+                  {visibleRecipes.map((recipe) => (
                     <article
                       key={recipe.id}
                       className="diet-recipe-card"
@@ -6223,7 +6227,7 @@ const DietClassicPage = () => {
           </>
         ) : (
           <div className="diet-recipe-grid">
-            {filteredRecipes.map((recipe) => (
+            {visibleRecipes.map((recipe) => (
               <article
                 key={recipe.id}
                 className="diet-recipe-card"
@@ -6273,7 +6277,8 @@ const DietClassicPage = () => {
             ))}
           </div>
         )}
-      </section>
+        </section>
+      </div>
 
         {isCreateOpen ? (
           <div className="diet-recipe-modal" role="dialog" aria-label="Créer une recette">

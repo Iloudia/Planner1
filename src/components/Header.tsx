@@ -504,9 +504,26 @@ function Header() {
               Mes achats
             </NavLink>
           ) : null}
-          <NavLink to="/blog" className={({ isActive }) => `site-header__nav-link${isActive ? " is-active" : ""}`}>
-            Blog
-          </NavLink>
+          <div className="site-header__nav-dropdown">
+            <NavLink
+              to="/blog"
+              className={({ isActive }) =>
+                `site-header__nav-link site-header__nav-link--dropdown${isActive ? " is-active" : ""}`
+              }
+            >
+              <span>Blog</span>
+              <span className="site-header__nav-arrow" aria-hidden="true">
+                ▾
+              </span>
+            </NavLink>
+            <div className="site-header__nav-submenu" aria-label="Catégories du blog">
+              <Link to="/blog/sante-beaute">Santé &amp; Beauté</Link>
+              <Link to="/blog/mode">Mode</Link>
+              <Link to="/blog/mental">Mental</Link>
+              <Link to="/blog/sport-nutrition">Sport &amp; Nutrition</Link>
+              <Link to="/blog/lifestyle">Lifestyle</Link>
+            </div>
+          </div>
           <NavLink to="/contact" className={({ isActive }) => `site-header__nav-link${isActive ? " is-active" : ""}`}>
             Contact
           </NavLink>
