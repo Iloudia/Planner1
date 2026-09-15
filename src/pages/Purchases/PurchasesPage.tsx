@@ -75,9 +75,9 @@ const PurchasesPage = () => {
         <div>
           <span className="boutique-eyebrow">Bibliothèque</span>
           <h1>Mes achats</h1>
-          <p>Retrouve ici tous les produits que tu as acheté.</p>
+          <h4>Retrouve ici tous les produits que tu as acheté.</h4>
         </div>
-        <Link to="/boutique" className="boutique-button boutique-button--ghost">
+        <Link to="/boutique" className="boutique-button boutique-button--ghost sport-cancel-button-match">
           Continuer mes achats
         </Link>
       </section>
@@ -107,7 +107,7 @@ const PurchasesPage = () => {
                 <div className="purchases-card__header">
                   <div>
                     <h2>{item.title}</h2>
-                    <p>Acheté le {formatPurchasedAt(item.purchasedAt)}</p>
+                    <h4>Acheté le {formatPurchasedAt(item.purchasedAt)}</h4>
                   </div>
                   <div className="purchases-card__meta">
                     <span>{item.price}</span>
@@ -116,7 +116,7 @@ const PurchasesPage = () => {
                 </div>
                 <div className="purchases-card__downloads">
                   {item.downloads.map((download) => (
-                    <a key={download.downloadUrl} href={download.downloadUrl} className="boutique-button boutique-button--primary">
+                    <a key={download.downloadUrl} href={download.downloadUrl} className="boutique-button boutique-button--primary sport-workout-button-match">
                       Télécharger
                     </a>
                   ))}

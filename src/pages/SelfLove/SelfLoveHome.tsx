@@ -74,7 +74,7 @@ const SelfLoveHome = () => {
           <header className="self-love-rituals__header">
             <div>
               <h2 id="self-love-rituals-title">Mes rituels de self love</h2>
-              <p>Approfondis chaque rituel avec les articles du blog.</p>
+              <h4>Approfondis chaque rituel avec les articles du blog.</h4>
             </div>
           </header>
           <div className="self-love-rituals__grid">

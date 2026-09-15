@@ -5972,10 +5972,10 @@ const DietClassicPage = () => {
         </header>
         <div className="diet-crosslink">
           <div>
-            <p className="diet-crosslink__label">Planifier ta semaine</p>
-            <p className="diet-crosslink__text">
+            <h2 className="diet-crosslink__label">Planifier ta semaine</h2>
+            <h4 className="diet-crosslink__text">
               Passe sur la page Alimentation pour organiser tes repas et ta liste de courses.
-            </p>
+            </h4>
           </div>
           <Link to="/alimentation" className="pill pill--diet">
             Planifier les repas
@@ -6625,7 +6625,7 @@ const DietClassicPage = () => {
                 </header>
                 <div className="diet-recipe-modal__body">
                   <section className="diet-recipe-plan">
-                    <h4>Ajouter au planning</h4>
+                    <h2>Ajouter au planning</h2>
                     <div className="diet-recipe-plan__row">
                       <label>
                         Jour
@@ -6738,7 +6738,7 @@ const DietClassicPage = () => {
                   {selectedRecipe.ingredients.length > 0 ? (
                     <section>
                       <div className="diet-recipe-section__header">
-                        <h4>Ingrédients</h4>
+                        <h2>Ingrédients</h2>
                         <button
                           type="button"
                           className={`diet-recipe-section__toggle${isIngredientsOpen ? " is-open" : ""}`}
@@ -6782,7 +6782,7 @@ const DietClassicPage = () => {
                   ) : null}
                   {selectedRecipe.steps.length > 0 ? (
                     <section>
-                      <h4>Étapes</h4>
+                      <h2>Étapes</h2>
                       <ul className="diet-steps-list">
                         {selectedRecipe.steps.map((step, index, allSteps) => {
                           const normalizeStep = (value: string) => value.replace(/\u00A0/g, " ").trim()

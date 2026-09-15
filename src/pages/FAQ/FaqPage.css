@@ -77,6 +77,17 @@
   max-width: 640px;
 }
 
+.faq-page__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.faq-page__intro h2,
+.faq-page__intro h4 {
+  margin: 0;
+}
+
 .faq-floating-figure {
   margin: 0;
   overflow: hidden;

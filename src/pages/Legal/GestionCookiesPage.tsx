@@ -138,13 +138,13 @@ const GestionCookiesPage = () => {
         </div>
 
         <div className="cookie-actions">
-          <button type="button" className="cookie-banner__action cookie-banner__action--ghost" onClick={rejectAll}>
+          <button type="button" className="cookie-banner__action cookie-banner__action--ghost sport-cancel-button-match" onClick={rejectAll}>
             Refuser
           </button>
-          <button type="button" className="cookie-banner__action cookie-banner__action--outline" onClick={openPreferences}>
+          <button type="button" className="cookie-banner__action cookie-banner__action--outline sport-cancel-button-match" onClick={openPreferences}>
             Personnaliser
           </button>
-          <button type="button" className="cookie-banner__action cookie-banner__action--primary" onClick={acceptAll}>
+          <button type="button" className="cookie-banner__action cookie-banner__action--primary sport-workout-button-match" onClick={acceptAll}>
             Accepter
           </button>
         </div>

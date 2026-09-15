@@ -86,7 +86,7 @@ const BlogPage = () => {
           <h2>Le journal</h2>
           <p>Un espace de réflexion et de ressources pour mieux s’organiser, prendre soin de soi et construire un quotidien qui nous ressemble.</p>
           <p>Tu y trouveras des idées concrètes autour du journaling, du bien-être, du mouvement et de l’organisation personnelle.</p>
-          <a className="blog-button" href="#articles-a-la-une">Découvrir le blog</a>
+          <a className="blog-button sport-workout-button-match" href="#articles-a-la-une">Découvrir le blog</a>
         </div>
       </header>
 
@@ -110,7 +110,7 @@ const BlogPage = () => {
           <h2 id="editorial-title">{editorialArticle.title}</h2>
           <p>{editorialArticle.description}</p>
           <p>Apprends à reconnaître les boucles mentales et à retrouver davantage de calme et de recul au quotidien.</p>
-          <Link className="blog-button" to={editorialArticle.href}>Lire l’article</Link>
+          <Link className="blog-button sport-workout-button-match" to={editorialArticle.href}>Lire l’article</Link>
         </div>
       </section>
 
@@ -149,7 +149,7 @@ const BlogPage = () => {
             <span>Guide complet</span>
             <span>Format numérique</span>
           </div>
-          <Link className="blog-button" to="/boutique/produit/le-guide-complet-pour-devenir-la-meilleure-version-de-toi-meme-1774631866049">
+          <Link className="blog-button sport-workout-button-match" to="/boutique/produit/le-guide-complet-pour-devenir-la-meilleure-version-de-toi-meme-1774631866049">
             Découvrir l’ebook
           </Link>
         </div>

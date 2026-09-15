@@ -331,8 +331,8 @@ const ProjectPage = () => {
                 </label>
 
                 <div className="project-create__actions">
-                  <button type="submit">Créer le projet</button>
                   <button type="button" onClick={() => setIsProjectModalOpen(false)}>Annuler</button>
+                  <button type="submit">Créer le projet</button>
                 </div>
               </div>
 

@@ -19,6 +19,7 @@
 
   --font-display: "Playfair Display", "Times New Roman", serif;
   --font-heading: "Playfair Display", "Times New Roman", serif;
+  --font-subheading: "Manrope", "Inter", sans-serif;
   --font-body: "Inter", "Times New Roman", sans-serif;
 
   --font-size-display: 2.5rem;
@@ -27,7 +28,9 @@
   --font-weight-h2: 600;
   --color-h2: #000000;
   --font-size-h3: 1.25rem;
-  --font-size-h4: 1.125rem;
+  --font-size-h4: 0.9375rem;
+  --font-weight-h4: 400;
+  --color-h4: var(--lux-ink-soft);
   --font-size-body: 1rem;
   --font-size-small: 0.875rem;
   --font-size-caption: 0.75rem;
@@ -36,6 +39,7 @@
   --font-size-input: 0.9375rem;
   --leading-display: 1.12;
   --leading-heading: 1.25;
+  --leading-h4: 1.4;
   --leading-body: 1.7;
 
   /* Editorial details shared with the blog. Header typography stays local. */
@@ -150,10 +154,13 @@ h3,
 
 h4,
 .h4 {
-  font-family: var(--font-heading);
+  font-family: var(--font-subheading);
   font-size: var(--font-size-h4);
+  line-height: var(--leading-h4);
   margin: 0 0 var(--space-2xs);
-  color: var(--color-contrast);
+  font-weight: var(--font-weight-h4);
+  color: var(--color-h4);
+  letter-spacing: -0.01em;
 }
 
 p {
@@ -1763,39 +1770,56 @@ p {
 .cookie-modal__switch {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.65rem;
   font-weight: 600;
   color: var(--cookie-ink);
   cursor: pointer;
 }
 
 .cookie-modal__switch input {
-  width: 42px;
-  height: 22px;
+  width: 46px;
+  height: 26px;
+  flex: 0 0 46px;
+  margin: 0;
   appearance: none;
-  background: #e6dfd6;
-  border: 1px solid var(--cookie-line);
+  background: #ded9d2;
+  border: 1px solid #bcb3aa;
+  border-radius: 999px;
   position: relative;
-  transition: background 0.2s ease;
+  cursor: pointer;
+  box-shadow: inset 0 1px 2px rgba(20, 41, 71, 0.08);
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .cookie-modal__switch input:checked {
-  background: var(--cookie-ink);
+  background: #142947;
+  border-color: #142947;
+}
+
+.cookie-modal__switch input:hover {
+  border-color: #7f8b9c;
+}
+
+.cookie-modal__switch input:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(20, 41, 71, 0.18);
 }
 
 .cookie-modal__switch input::after {
   content: "";
   position: absolute;
   top: 3px;
-  left: 4px;
-  width: 16px;
-  height: 16px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
   background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(20, 41, 71, 0.28);
   transition: transform 0.2s ease;
 }
 
 .cookie-modal__switch input:checked::after {
-  transform: translateX(16px);
+  transform: translateX(20px);
 }
 
 .cookie-modal__switch--locked {
@@ -2262,9 +2286,9 @@ h1 {
 }
 
 :where(h4, .h4) {
-  font-family: var(--font-heading) !important;
+  font-family: var(--font-subheading) !important;
   font-size: calc(var(--font-size-h4) * var(--user-font-scale)) !important;
-  line-height: var(--leading-heading) !important;
+  line-height: var(--leading-h4) !important;
 }
 
 :where(p, li, dd, dt, blockquote, label) {
@@ -2297,6 +2321,32 @@ h1 {
 :where(input, textarea, select, option) {
   font-family: var(--font-body) !important;
   font-size: calc(var(--font-size-input) * var(--user-font-scale)) !important;
+}
+
+.sport-workout-button-match {
+  border-color: #142947 !important;
+  background: #142947 !important;
+  color: #ffffff !important;
+  font-family: var(--font-body) !important;
+  font-size: calc(var(--font-size-button) * var(--user-font-scale)) !important;
+  font-weight: var(--font-weight-action) !important;
+  line-height: var(--leading-control) !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+
+.sport-cancel-button-match,
+.project-active__actions > button:last-child,
+.project-create__actions > button[type="button"] {
+  border: 1px solid #263b59 !important;
+  background: transparent !important;
+  color: #263b59 !important;
+  font-family: var(--font-body) !important;
+  font-size: calc(var(--font-size-button) * var(--user-font-scale)) !important;
+  font-weight: var(--font-weight-action) !important;
+  line-height: var(--leading-control) !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
 }
 
 :where(

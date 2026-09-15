@@ -72,9 +72,8 @@
   font-size: 1.2rem;
 }
 
-.purchases-card__header p {
+.purchases-card__header h4 {
   margin: 0;
-  color: rgba(31, 27, 22, 0.7);
 }
 
 .purchases-card__meta {
@@ -91,6 +90,11 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.8rem;
+}
+
+.purchases-card__downloads .boutique-button--primary.sport-workout-button-match {
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
 }
 
 @media (max-width: 768px) {

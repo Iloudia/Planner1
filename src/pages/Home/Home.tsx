@@ -996,16 +996,16 @@ function HomePage() {
           <div className="profile-actions">{profileError ? <p className="profile-error">{profileError}</p> : null}</div>
         </div>
 
-        <p className="profile-welcome">
+        <h4 className="profile-welcome">
           {`C'est un plaisir de te revoir${profileUsername ? `, ${profileUsername}` : ""}`}
           <img className="profile-welcome__bow" src={noeudPapillon} alt="" aria-hidden="true" loading="eager" decoding="async" />
-        </p>
+        </h4>
 
         <div className="progress-panel">
           <div className="progress-row">
             <div className="progress-label">
               <span>Année</span>
-              <span>{progress.year.toFixed(1)}%</span>
+              <span className="progress-label__value">{progress.year.toFixed(1)}%</span>
             </div>
             <div className="progress-bar">
               <div className="progress-fill" style={{ width: `${progress.year}%` }} />
@@ -1014,7 +1014,7 @@ function HomePage() {
           <div className="progress-row">
             <div className="progress-label">
               <span>Mois</span>
-              <span>{progress.month.toFixed(1)}%</span>
+              <span className="progress-label__value">{progress.month.toFixed(1)}%</span>
             </div>
             <div className="progress-bar">
               <div className="progress-fill" style={{ width: `${progress.month}%` }} />
@@ -1023,7 +1023,7 @@ function HomePage() {
           <div className="progress-row">
             <div className="progress-label">
               <span>Journée</span>
-              <span>{progress.day.toFixed(1)}%</span>
+              <span className="progress-label__value">{progress.day.toFixed(1)}%</span>
             </div>
             <div className="progress-bar">
               <div className="progress-fill" style={{ width: `${progress.day}%` }} />
@@ -1164,7 +1164,7 @@ function HomePage() {
             ) : (
               <article className="task-card" role="button" tabIndex={0} onClick={handleCalendarOpen} onKeyDown={handleCalendarCardKeyDown}>
                 <p className="task-title">Aucune tâche prévue</p>
-                <p className="task-note">Ajoute une tâche dans le calendrier.</p>
+                <h4 className="task-note">Ajoute une tâche dans le calendrier.</h4>
               </article>
             )}
           </div>

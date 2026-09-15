@@ -436,10 +436,9 @@
   color: #000000;
 }
 
-.workout-creators__header p {
+.workout-page .workout-creators__header h4 {
   margin: 0;
   color: #5b5249;
-  font-size: 0.95rem;
 }
 
 .workout-creators__carousel {
@@ -1459,6 +1458,11 @@ body.workout-page--lux .workout-card__menu-panel.workout-card__menu-panel--float
   line-height: var(--leading-control);
 }
 
+.workout-video-form button[type="submit"] {
+  border-color: #142947;
+  background: #142947;
+}
+
 .workout-form button[type="submit"]:focus-visible,
 .workout-modal__series-form button:focus-visible,
 .workout-video-form button:focus-visible {
@@ -1631,23 +1635,14 @@ body.workout-page--lux .workout-card__menu-panel.workout-card__menu-panel--float
   align-items: center;
   justify-content: center;
   align-self: flex-end;
-  gap: 0.75rem;
-  width: min(100%, 252px);
-  min-height: 54px;
-  padding: 0.9rem 1.4rem;
+  width: min(100%, 180px);
+  min-height: 44px;
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  white-space: nowrap;
   border: 1px solid #142947;
   background: #142947;
   color: #ffffff;
-}
-
-.workout-exercises .workout-form button[type="submit"] svg {
-  width: 1.25rem;
-  height: 1.25rem;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
 }
 
 @media (max-width: 800px) {
@@ -1657,7 +1652,7 @@ body.workout-page--lux .workout-card__menu-panel.workout-card__menu-panel--float
   }
 
   .workout-exercises .workout-form button[type="submit"] {
-    width: 100%;
+    width: min(100%, 180px);
   }
 }
 

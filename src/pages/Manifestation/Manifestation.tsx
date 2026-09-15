@@ -66,7 +66,7 @@ const ManifestationPage = () => {
           <div className="sport-habits__header">
             <div className="sport-habits__header-content">
               <h2 id="manifestation-tracker-title">Tracker de manifestation</h2>
-              <p className="muted">Coche chaque pratique réalisée au fil de la semaine.</p>
+              <h4>Coche chaque pratique réalisée au fil de la semaine.</h4>
             </div>
           </div>
 

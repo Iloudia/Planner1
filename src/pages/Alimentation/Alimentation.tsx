@@ -358,10 +358,10 @@ function DietPage() {
       {error ? <p className="routine-note__composer-hint">{error}</p> : null}
         <section className="page-section diet-crosslink">
           <div>
-            <p className="diet-crosslink__label">Besoin d'idées ?</p>
-            <p className="diet-crosslink__text">
+            <h2 className="diet-crosslink__label">Besoin d'idées ?</h2>
+            <h4 className="diet-crosslink__text">
               Va sur la page Diet pour découvrir des recettes et les utiliser dans ton planning.
-            </p>
+            </h4>
           </div>
           <Link to="/diet" className="pill pill--diet">
             Voir les recettes
@@ -458,11 +458,11 @@ function DietPage() {
             <h2 className="diet-section__intro">Idées à garder sous la main</h2>
             <div className="diet-ideas__tips">
               <article>
-                <h4>Batch cooking</h4>
+                <h3>Batch cooking</h3>
                 <p>Sélectionne deux bases (quinoa, riz) et deux sources de protéines afin de les combiner facilement tout au long de la semaine.</p>
               </article>
               <article>
-                <h4>Réutilise les restes</h4>
+                <h3>Réutilise les restes</h3>
                 <p>les légumes rôtis ou les sauces maison peuvent être utilisés sur plusieurs repas.</p>
               </article>
             </div>

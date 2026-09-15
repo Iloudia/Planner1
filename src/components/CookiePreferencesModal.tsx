@@ -37,9 +37,8 @@ const CookiePreferencesModal = () => {
       <div className="cookie-modal__panel">
         <header className="cookie-modal__header">
           <div>
-            <p className="cookie-modal__eyebrow">Centre de préférences</p>
             <h2 id="cookie-modal-title">Choisis les cookies que tu acceptes</h2>
-            <p>Les cookies essentiels sont toujours actifs pour des raisons de sécurité.</p>
+            <h4>Les cookies essentiels sont toujours actifs pour des raisons de sécurité.</h4>
           </div>
           <button type="button" className="modal__close" aria-label="Fermer" onClick={closePreferences}>
             ×
@@ -49,7 +48,7 @@ const CookiePreferencesModal = () => {
         <div className="cookie-modal__groups">
           <article className="cookie-modal__group">
             <div>
-              <p className="cookie-modal__group-title">Essentiels (toujours actifs)</p>
+              <h3 className="cookie-modal__group-title">Essentiels (toujours actifs)</h3>
               <p className="cookie-modal__group-text">
                 Accès sécurisé, authentification, conservation de tes paramètres système. Impossible de les désactiver.
               </p>
@@ -61,7 +60,7 @@ const CookiePreferencesModal = () => {
 
           <article className="cookie-modal__group">
             <div>
-              <p className="cookie-modal__group-title">Préférences</p>
+              <h3 className="cookie-modal__group-title">Préférences</h3>
               <p className="cookie-modal__group-text">
                 Retiennent tes thèmes, ta langue et les dernières vues consultées pour personnaliser ton espace.
               </p>
@@ -78,13 +77,13 @@ const CookiePreferencesModal = () => {
         </div>
 
         <div className="cookie-modal__actions">
-          <button type="button" className="cookie-banner__action cookie-banner__action--ghost" onClick={rejectAll}>
+          <button type="button" className="cookie-banner__action cookie-banner__action--ghost sport-cancel-button-match" onClick={rejectAll}>
             Refuser tout
           </button>
-          <button type="button" className="cookie-banner__action cookie-banner__action--outline" onClick={acceptAll}>
+          <button type="button" className="cookie-banner__action cookie-banner__action--outline sport-cancel-button-match" onClick={acceptAll}>
             Accepter tout
           </button>
-          <button type="button" className="cookie-banner__action cookie-banner__action--primary" onClick={handleSave}>
+          <button type="button" className="cookie-banner__action cookie-banner__action--primary sport-workout-button-match" onClick={handleSave}>
             Enregistrer mes choix
           </button>
         </div>

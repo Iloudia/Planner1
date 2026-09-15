@@ -234,7 +234,7 @@ const SelfLovePage = () => {
 
       <section className="self-love-section self-love-section--photos">
         <div className="self-love-photos__intro">
-          <h2 className="self-love-chocolate self-love-photos__title">Choisis 6 photos sur lesquelles tu te sens belle</h2>
+          <h2 className="self-love-photos__title">Choisis 6 photos sur lesquelles tu te sens belle</h2>
         </div>
         <div className="self-love-photos-frame">
           <div className="self-love-photos">
@@ -267,7 +267,7 @@ const SelfLovePage = () => {
         <section className="self-love-section self-love-section--qualities">
           <div>
             <h2 className="self-love-chocolate">Liste tes qualités</h2>
-            <p className="self-love-chocolate">Regarde-toi avec plus de douceur et d'honnêteté.</p>
+            <h4>Regarde-toi avec plus de douceur et d'honnêteté.</h4>
           </div>
           <form className="self-love-form-row" onSubmit={handleAddQuality}>
             <textarea
@@ -320,7 +320,7 @@ const SelfLovePage = () => {
         <section className="self-love-section self-love-section--thoughts">
           <div>
             <h2 className="self-love-chocolate">Pensées négatives à laisser derrière toi</h2>
-            <p className="self-love-chocolate">Clique sur une pensée pour la laisser s'envoler.</p>
+            <h4>Clique sur une pensée pour la laisser s'envoler.</h4>
           </div>
           <form className="self-love-form-row" onSubmit={handleAddThought}>
             <textarea
@@ -361,9 +361,9 @@ const SelfLovePage = () => {
         <div className="self-love-exercise__grid">
           <article className="self-love-exercise__card">
             <h2 className="self-love-chocolate">Reconnecte-toi avec ton enfant intérieur</h2>
-            <p className="self-love-chocolate">
+            <h4>
               Offre à ton enfant intérieur les mots qu’il aurait eu besoin d’entendre.
-            </p>
+            </h4>
             <label className="self-love-exercise__prompt">
               <span>Que souhaiterais-tu lui dire maintenant ?</span>
               <textarea
@@ -401,9 +401,9 @@ const SelfLovePage = () => {
 
           <article className="self-love-exercise__card">
             <h2 className="self-love-chocolate">Le meilleur ami comme boussole</h2>
-            <p className="self-love-chocolate">
+            <h4>
               Imagine qu'un ami vive exactement la même situation que toi.
-            </p>
+            </h4>
             <label className="self-love-exercise__prompt">
               <span>Que lui dirais-tu ?</span>
               <textarea
@@ -446,9 +446,9 @@ const SelfLovePage = () => {
       <section className="self-love-section self-love-letter">
         <div className="self-love-photos__intro self-love-photos__intro--tight">
           <h2 className="self-love-chocolate self-love-photos__title">Écris à ton futur toi</h2>
-          <p className="self-love-chocolate self-love-photos__subtitle">
+          <h4 className="self-love-photos__subtitle">
             Tu peux écrire ce que tu traverses maintenant, ce que tu espères voir disparaître dans ta vie ou encore tes peurs actuelles.
-          </p>
+          </h4>
         </div>
         <div className="self-love-letter__cards">
           <div className="self-love-letter__frame self-love-letter__card self-love-letter__card--classic is-active">

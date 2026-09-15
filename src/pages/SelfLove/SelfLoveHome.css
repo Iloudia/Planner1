@@ -79,11 +79,8 @@
   line-height: 1.05;
 }
 
-.self-love-rituals__header p {
+.self-love-rituals__header h4 {
   margin: 0.45rem 0 0;
-  color: #71675e;
-  font-family: "Libre Baskerville", Georgia, serif;
-  font-size: clamp(0.75rem, 0.9vw, 0.9rem);
 }
 
 .self-love-rituals__header > span {
@@ -239,11 +236,11 @@
   background: #132642;
   color: #ffffff;
   font-family: var(--font-body);
-  font-size: var(--font-size-editorial-action);
+  font-size: calc(var(--font-size-button) * var(--user-font-scale));
   font-weight: var(--font-weight-action);
-  letter-spacing: var(--tracking-editorial-action);
+  letter-spacing: 0;
   text-decoration: none;
-  text-transform: uppercase;
+  text-transform: none;
   transition: background-color 180ms ease, color 180ms ease;
   line-height: var(--leading-control);
 }

@@ -115,17 +115,17 @@ const CartPage = () => {
         <div>
           <span className="boutique-eyebrow">Panier</span>
           <h1>Ton panier</h1>
-          <p>Retrouve ici toutes les ressources ajoutées.</p>
+          <h4>Retrouve ici toutes les ressources ajoutées.</h4>
         </div>
-        <Link to="/boutique" className="boutique-button boutique-button--ghost">
+        <Link to="/boutique" className="boutique-button boutique-button--ghost sport-cancel-button-match">
           Continuer mes achats
         </Link>
       </section>
 
       {lineItems.length === 0 ? (
         <section className="cart-empty">
-          <p>Ton panier est vide pour le moment.</p>
-          <Link to="/boutique" className="boutique-button boutique-button--primary">
+          <h4>Ton panier est vide pour le moment.</h4>
+          <Link to="/boutique" className="boutique-button boutique-button--primary sport-workout-button-match">
             Voir la boutique
           </Link>
         </section>

@@ -296,7 +296,7 @@ const JournalingPage = () => {
         <header className="journaling-section__header">
           <div>
             <h2>Check-in émotionnel</h2>
-            <p>Comment tu te sens aujourd'hui ? </p>
+            <h4>Comment tu te sens aujourd'hui ?</h4>
           </div>
           <div className="journaling-checkin__date">{displayDate}</div>
         </header>
@@ -393,7 +393,7 @@ const JournalingPage = () => {
         <header className="journaling-section__header">
           <div>
             <h2>Zone d'écriture libre</h2>
-            <p>Écris sans filtre, tu es libre de t’arrêter quand tu veux.</p>
+            <h4>Écris sans filtre, tu es libre de t’arrêter quand tu veux.</h4>
           </div>
         </header>
         <textarea
@@ -415,7 +415,7 @@ const JournalingPage = () => {
         <div className="journaling-closure__grid">
           <div className="journaling-closure__block">
             <h3>Gratitude</h3>
-            <p>3 choses pour lesquelles je suis reconnaissante</p>
+            <h4>3 choses pour lesquelles je suis reconnaissante</h4>
             {draft.gratitudeItems.map((item, index) => (
               <label key={`gratitude-${index}`} className="journaling-reflection__line">
                 <span>{index + 1}.</span>
@@ -434,7 +434,7 @@ const JournalingPage = () => {
           </div>
           <div className="journaling-closure__block">
             <h3>Petites victoires</h3>
-            <p>Mes réussites du jour, même toutes petites</p>
+            <h4>Mes réussites du jour, même toutes petites</h4>
             {draft.victoryItems.map((item, index) => (
               <label key={`victory-${index}`} className="journaling-reflection__line">
                 <span>{index + 1}.</span>
@@ -453,7 +453,7 @@ const JournalingPage = () => {
           </div>
           <div className="journaling-closure__block journaling-closure__block--intention">
             <h3>Intention pour demain</h3>
-            <p>Ce que je veux nourrir ou accomplir</p>
+            <h4>Ce que je veux nourrir ou accomplir</h4>
             <textarea
               value={draft.tomorrowIntention}
               onChange={(event: ChangeEvent<HTMLTextAreaElement>) => setDraft((previous) => ({ ...previous, tomorrowIntention: event.target.value }))}
@@ -482,7 +482,6 @@ const JournalingPage = () => {
 }
 
 export default JournalingPage
-
 
 
 

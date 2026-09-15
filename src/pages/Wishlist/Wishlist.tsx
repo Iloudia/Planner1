@@ -811,9 +811,6 @@ const WishlistPage = () => {
                     />
                   </label>
                   <div className="wishlist-create__actions">
-                    <button type="submit" disabled={!canEdit}>
-                      {editingCategoryId ? "Enregistrer" : "Créer la catégorie"}
-                    </button>
                     <button
                       type="button"
                       onClick={() => {
@@ -822,6 +819,9 @@ const WishlistPage = () => {
                       }}
                     >
                       Annuler
+                    </button>
+                    <button type="submit" disabled={!canEdit}>
+                      {editingCategoryId ? "Enregistrer" : "Créer la catégorie"}
                     </button>
                   </div>
                 </div>
@@ -976,7 +976,7 @@ const WishlistPage = () => {
 
               {!moveItemDraft && (isItemComposerOpen || Boolean(editingItemId)) ? (
               <form className="wishlist-modal__form" onSubmit={handleSubmitItem}>
-                <h3>{editingItemId ? "Modifier un élément" : "Ajouter un élément"}</h3>
+                <h2>{editingItemId ? "Modifier un élément" : "Ajouter un élément"}</h2>
                 <div className="wishlist-modal__form-top">
                   <div className="wishlist-modal__form-photo">
                     <label className={`wishlist-modal__photo-slot${itemPreview ? " wishlist-modal__photo-slot--filled" : ""}`}>
@@ -1016,7 +1016,7 @@ const WishlistPage = () => {
                   </div>
                   <div className="wishlist-modal__form-main">
                     <label className="wishlist-modal__title-field">
-                      Titre
+                      <span>Titre</span>
                       <input
                         type="text"
                         className="wishlist-modal__title-input"
@@ -1027,7 +1027,7 @@ const WishlistPage = () => {
                       />
                     </label>
                     <label className="wishlist-modal__subtitle-field">
-                      Sous-titre
+                      <span>Sous-titre</span>
                       <input
                         type="text"
                         className="wishlist-modal__subtitle-input"
@@ -1040,7 +1040,7 @@ const WishlistPage = () => {
                   </div>
                 </div>
                 <label>
-                  Lien
+                  <span>Lien</span>
                   <input
                     type="text"
                     placeholder="Ex : https://www.sephora.fr/produit/..."
@@ -1050,7 +1050,7 @@ const WishlistPage = () => {
                   />
                 </label>
                 <label ref={categoryFieldRef} className="wishlist-modal__category-group">
-                  Catégorie
+                  <span>Catégorie</span>
                   <input
                     type="text"
                     className="wishlist-modal__category-input wishlist-modal__category-field"

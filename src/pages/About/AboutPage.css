@@ -132,7 +132,7 @@
   padding: clamp(1.2rem, 2.6vw, 1.8rem);
 }
 
-.about-feature__summary h3 {
+.about-feature__summary h2 {
   margin: 0;
   color: var(--about-ink);
   margin-bottom: 0.4rem;
@@ -225,7 +225,7 @@
   color: var(--about-ink);
 }
 
-.about-details__card p {
+.about-details__card h4 {
   margin: 0;
 }
 

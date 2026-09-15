@@ -728,7 +728,7 @@ const viewToggle = (
 const weeklyHeader = (
   <header className="sport-header calendar-weekly__header">
     <span className="calendar-heading__eyebrow">Calendrier hebdomadaire</span>
-    <h1 className="calendar-heading__title calendar-heading__title--mobile">
+    <div className="calendar-heading__title calendar-heading__title--mobile">
       <button
         type="button"
         className="calendar-heading__arrow"
@@ -737,7 +737,7 @@ const weeklyHeader = (
       >
         {'<'}
       </button>
-      <span>{`Semaine du ${weekRangeLabel}`}</span>
+      <h2>{`Semaine du ${weekRangeLabel}`}</h2>
       <button
         type="button"
         className="calendar-heading__arrow"
@@ -746,7 +746,7 @@ const weeklyHeader = (
       >
         {'>'}
       </button>
-    </h1>
+    </div>
   </header>
 )
 
@@ -1052,7 +1052,7 @@ return (
       <header className="sport-header calendar-weekly__header">
           <div className="calendar-heading">
             <span className="calendar-heading__eyebrow">Calendrier mensuel</span>
-            <h1 className="calendar-heading__title calendar-heading__title--mobile">
+            <div className="calendar-heading__title calendar-heading__title--mobile">
               <button
                 type="button"
                 className="calendar-heading__arrow"
@@ -1061,7 +1061,7 @@ return (
               >
                 {'<'}
               </button>
-              <span>{formatMonthTitle(currentMonthDate)}</span>
+              <h2>{formatMonthTitle(currentMonthDate)}</h2>
               <button
                 type="button"
                 className="calendar-heading__arrow"
@@ -1070,7 +1070,7 @@ return (
               >
                 {'>'}
               </button>
-            </h1>
+            </div>
           </div>
       </header>
       <div className="calendar-weekly__layout">
@@ -1142,13 +1142,11 @@ return (
           <header className="calendar-modal__header">
             <div>
               <h2 id="calendar-modal-title">{activeDateLabel}</h2>
-              <p>
-                {activeDateTasks.length > 0
-                  ? activeDateTasks.length === 1
-                    ? "1 créneau."
-                    : `${activeDateTasks.length} créneaux.`
-                  : "Aucun créneau pour l'instant, profite pour en poser un."}
-              </p>
+              {activeDateTasks.length > 0 ? (
+                <p>{activeDateTasks.length === 1 ? "1 créneau." : `${activeDateTasks.length} créneaux.`}</p>
+              ) : (
+                <h4>Aucun créneau pour l'instant, profite pour en poser un.</h4>
+              )}
             </div>
             <button type="button" className="modal__close" onClick={handleCloseModal} aria-label="Fermer">
               <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -1285,13 +1283,13 @@ return (
               <button
                 type="submit"
                 form="calendar-new-task-form"
-                className="calendar-hero__cta calendar-hero__cta--primary calendar-new-task__submit"
+                className="calendar-hero__cta calendar-hero__cta--primary calendar-new-task__submit sport-workout-button-match"
               >
                 Programmer
               </button>
               <button
                 type="button"
-                className="calendar-hero__cta calendar-hero__cta--ghost"
+                className="calendar-hero__cta calendar-hero__cta--ghost sport-cancel-button-match"
                 onClick={handleResetDay}
               >
                 Réinitialiser la journée

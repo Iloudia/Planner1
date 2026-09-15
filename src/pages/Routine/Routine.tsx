@@ -115,7 +115,7 @@ const RoutineComposer = ({
         <span className="routine-note__composer-hint">Limite de 35 caractères atteinte.</span>
       ) : null}
     </label>
-    <button type="submit" className="routine-note__composer-submit" disabled={disabled}>
+    <button type="submit" className="routine-note__composer-submit sport-workout-button-match" disabled={disabled}>
       {disabled ? "Connecte-toi pour modifier" : buttonLabel}
     </button>
   </form>
@@ -272,20 +272,20 @@ const RoutinePage = () => {
       </header>
       <section className="routine-page__stats" aria-label="Résumé des routines">
         <div className="routine-page__stat">
-          <strong>12 jours</strong>
-          <span>Série actuelle</span>
+          <h2>12 jours</h2>
+          <h4>Série actuelle</h4>
         </div>
         <div className="routine-page__stat">
-          <strong>16</strong>
-          <span>Tâches planifiées</span>
+          <h2>16</h2>
+          <h4>Tâches planifiées</h4>
         </div>
         <div className="routine-page__stat">
-          <strong>2</strong>
-          <span>Routines actives</span>
+          <h2>2</h2>
+          <h4>Routines actives</h4>
         </div>
         <div className="routine-page__stat">
-          <strong>87%</strong>
-          <span>Complétion</span>
+          <h2>87%</h2>
+          <h4>Complétion</h4>
         </div>
       </section>
       {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer tes routines.</p> : null}

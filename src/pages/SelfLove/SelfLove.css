@@ -571,6 +571,10 @@
   margin: 0;
 }
 
+.self-love-exercise__card > h4 {
+  margin: 0;
+}
+
 .self-love-exercise__prompt {
   display: flex;
   flex-direction: column;
@@ -2755,6 +2759,11 @@ body.self-love-page--lux .self-love-section--thoughts p {
   font-style: normal;
 }
 
+body.self-love-page--lux .self-love-section--qualities > div:first-child > h4,
+body.self-love-page--lux .self-love-section--thoughts > div:first-child > h4 {
+  margin: 0.85rem 0 0;
+}
+
 body.self-love-page--lux .self-love-list-pad {
   padding: 0;
   background: transparent;
@@ -2890,7 +2899,7 @@ body.self-love-page--lux .self-love-section--photos .self-love-photos__intro {
 }
 
 body.self-love-page--lux .self-love-section--photos .self-love-photos__title {
-  color: #253652 !important;
+  color: #000000 !important;
 }
 
 body.self-love-page--lux .self-love-page h2.self-love-chocolate {
@@ -2954,6 +2963,19 @@ body.self-love-page--lux .self-love-section--photos .body-goal-slot__upload {
   body.self-love-page--lux .self-love-section--photos .self-love-photos {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+}
+
+body.self-love-page--lux .self-love-form-row button,
+body.self-love-page--lux .self-love-future-letter__seal {
+  border: 1px solid #142947;
+  background: #142947;
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: calc(var(--font-size-button) * var(--user-font-scale)) !important;
+  font-weight: var(--font-weight-action);
+  line-height: var(--leading-control);
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 

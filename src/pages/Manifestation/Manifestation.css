@@ -147,10 +147,8 @@ body.manifestation-page--lux {
   gap: 0.25rem;
 }
 
-.manifestation-tracker .sport-habits__header-content p {
-  color: #5b5249;
-  font-family: "Libre Baskerville", Georgia, serif;
-  font-size: 0.85rem;
+.manifestation-tracker .sport-habits__header-content h4 {
+  margin: 0 0 0.4rem;
 }
 
 @media (max-width: 760px) {

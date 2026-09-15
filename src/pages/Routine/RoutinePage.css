@@ -88,20 +88,12 @@
   border-left: 1px solid rgba(41, 37, 32, 0.22);
 }
 
-.routine-page__stat strong {
-  font-family: 'Italiana', 'Times New Roman', serif;
-  font-size: clamp(1.45rem, 2.1vw, 1.95rem);
-  font-weight: 400;
-  line-height: 1;
+.routine-page__stat h2 {
+  margin: 0;
 }
 
-.routine-page__stat span {
-  margin-top: 0.2rem;
-  font-family: 'Libre Baskerville', Georgia, serif;
-  font-size: clamp(0.68rem, 0.85vw, 0.82rem);
-  letter-spacing: 0.1em;
-  line-height: 1.2;
-  text-transform: uppercase;
+.routine-page__stat h4 {
+  margin: 0.2rem 0 0;
 }
 
 .routine-page {

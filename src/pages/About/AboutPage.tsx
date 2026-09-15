@@ -104,7 +104,7 @@ const AboutPage = () => {
           </article>
           <section className="about-feature__summary" aria-label="Public et proposition">
             <div className="about-feature__summary-block">
-              <h3>À qui s'adresse Me&rituals ?</h3>
+              <h2>À qui s'adresse Me&rituals ?</h2>
               <p>
                 À celles et ceux qui souhaitent retrouver une organisation plus simple, se recentrer sur l’essentiel et avancer pas à pas vers leurs objectifs personnels.
 
@@ -114,7 +114,7 @@ const AboutPage = () => {
               </p>
             </div>
             <div className="about-feature__summary-block">
-              <h3>Ce que propose le site</h3>
+              <h2>Ce que propose le site</h2>
               <p>
                 Me&rituals propose des ressources digitales pensées pour t’aider au quotidien : des templates prêts à
                 l’emploi pour t’organiser, des supports de journaling pour clarifier tes idées, des guides pratiques pour
@@ -126,7 +126,7 @@ const AboutPage = () => {
           </section>
         </div>
         <section className="about-values" aria-label="Valeurs du site">
-          <h3 className="values-intro">Les valeurs du site sont :</h3>
+          <h2 className="values-intro">Les valeurs du site sont :</h2>
           <div className="values-stack">
             {siteValues.map((value) => (
               <article className="value-block" key={value.title}>
@@ -143,13 +143,13 @@ const AboutPage = () => {
           <div className="about-details__grid">
             <article className="about-details__card">
               <h3>Me contacter</h3>
-              <p>
+              <h4>
                 Une question ou une idée ? Écris-moi via la page{" "}
                 <a className="legal-link" href="/contact">
                   Contact
                 </a>
                 .
-              </p>
+              </h4>
             </article>
           </div>
         </section>

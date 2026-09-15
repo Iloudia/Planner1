@@ -89,6 +89,10 @@ body.project-page--lux {
 .project-section { padding: clamp(1rem, 2.4vw, 1.4rem); }
 .project-section h2, .project-projects h2, .project-tasks > h3 { margin: 0 0 1rem; color: var(--project-ink); font-size: 1rem; letter-spacing: 0.08em; text-transform: uppercase; }
 
+body.project-page--lux h2 {
+  text-transform: none !important;
+}
+
 .project-overview__stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.9rem; }
 .project-overview__stats article { display: grid; place-items: center; min-height: 104px; padding: 0.8rem; border: 1px solid var(--project-line); background: var(--project-muted); text-align: center; }
 .project-overview__stats span { color: var(--project-ink-soft); font-size: 0.66rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; }
@@ -481,6 +485,19 @@ body.project-page--lux {
 .project-create__actions button:hover {
   box-shadow: none;
   transform: none;
+}
+
+.project-active__actions button:first-child,
+.project-create__actions button[type="submit"] {
+  border-color: #142947 !important;
+  background: #142947 !important;
+  color: #ffffff !important;
+  font-family: var(--font-body) !important;
+  font-size: calc(var(--font-size-button) * var(--user-font-scale)) !important;
+  font-weight: var(--font-weight-action) !important;
+  line-height: var(--leading-control) !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
 }
 
 .project-create__preview-area {

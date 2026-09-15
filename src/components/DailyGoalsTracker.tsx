@@ -438,8 +438,8 @@ const DailyGoalsTracker = ({ onLoadingStateChange }: DailyGoalsTrackerProps) => 
     <div className="sport-habits__table-wrapper">
       <div className="sport-habits__header">
         <div className="sport-habits__header-content">
-          <h3>Objectifs quotidiens</h3>
-          <p className="muted">Coche tes objectifs pour chaque jour.</p>
+          <h2>Objectifs quotidiens</h2>
+          <h4>Coche tes objectifs pour chaque jour.</h4>
           {habitWeekRange ? <p className="sport-habits__week">Semaine du {habitWeekRange}</p> : null}
           {trackerError ? <p className="muted">{trackerError}</p> : null}
         </div>

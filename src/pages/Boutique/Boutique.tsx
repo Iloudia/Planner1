@@ -208,10 +208,10 @@ const BoutiquePage = () => {
               Ebooks, templates Canva, carrousels Instagram, vision boards et bien plus.
             </p>
             <div className="boutique-hero__actions">
-              <a className="boutique-button boutique-button--primary" href="#produits">
+              <a className="boutique-button boutique-button--primary sport-workout-button-match" href="#produits">
                 Voir la boutique
               </a>
-              <a className="boutique-button boutique-button--ghost" href="#promesse">
+              <a className="boutique-button boutique-button--ghost sport-cancel-button-match" href="#promesse">
                 La promesse
               </a>
             </div>
@@ -338,7 +338,7 @@ const BoutiquePage = () => {
                       <strong>{pricing.currentPrice}</strong>
                     </span>
                   </div>
-                  <span className={`boutique-button boutique-button--primary${ownedProductsSet.has(product.id) ? " is-disabled" : ""}`}>
+                  <span className={`boutique-button boutique-button--primary${ownedProductsSet.has(product.id) ? " is-disabled" : " sport-workout-button-match"}`}>
                     {ownedProductsSet.has(product.id) ? "Disponible dans mes achats" : "En savoir plus"}
                   </span>
                 </div>

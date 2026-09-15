@@ -152,7 +152,7 @@ const ConfidentialitePage = () => {
             </section>
           </div>
         </div>
-        <p className="legal-page__footer">Dernière mise à jour : 6 mars 2026.</p>
+        <h4 className="legal-page__footer">Dernière mise à jour : 6 mars 2026.</h4>
       </div>
     </>
   )

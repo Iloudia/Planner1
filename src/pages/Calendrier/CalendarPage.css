@@ -469,9 +469,9 @@
   font-weight: 700;
 }
 
-.calendar-heading__title span {
+.calendar-heading__title h2 {
   display: inline-block;
-  font-family: inherit;
+  margin: 0;
 }
 
 .calendar-heading__arrow {
@@ -3558,6 +3558,11 @@ body.calendar-page--lux .calendar-modal__header p {
   letter-spacing: 0.13em;
   line-height: 1.4;
   text-transform: uppercase;
+}
+
+body.calendar-page--lux .calendar-modal__header h4 {
+  margin: 0.6rem 0 0;
+  color: var(--color-h4) !important;
 }
 
 body.calendar-page--lux .calendar-modal .modal__close {

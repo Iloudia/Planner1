@@ -927,9 +927,15 @@ body.journaling-page--lux {
 }
 
 .journaling-save__button {
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  font-size: 0.8rem;
+  border: 1px solid #142947;
+  background: #142947;
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: calc(var(--font-size-button) * var(--user-font-scale)) !important;
+  font-weight: var(--font-weight-action);
+  line-height: var(--leading-control);
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .journaling-modal__backdrop {
@@ -1151,6 +1157,21 @@ body.journaling-page--lux {
 .journaling-question .journaling-section__header h2::before {
   display: none !important;
   content: none !important;
+}
+
+body.journaling-page--lux h2 {
+  text-transform: none !important;
+}
+
+body.journaling-page--lux .journaling-section__header h4 {
+  margin: 0.4rem 0 0;
+  max-width: 640px;
+  color: var(--color-h4) !important;
+}
+
+body.journaling-page--lux .journaling-closure__block h4 {
+  margin: 0.35rem 0 0.7rem;
+  color: var(--color-h4) !important;
 }
 
 /* Réflexions & alignement : trois cartes d'écriture concises. */

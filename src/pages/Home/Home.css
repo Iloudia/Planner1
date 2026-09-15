@@ -358,6 +358,10 @@
   vertical-align: middle;
 }
 
+.progress-label__value {
+  color: var(--color-chocolate);
+}
+
 .notes {
   display: flex;
   flex-direction: column;
@@ -909,6 +913,12 @@ body.home-page--lux {
   color: var(--lux-ink);
 }
 
+.page.home-page h4.profile-welcome,
+.page.home-page h4.task-note {
+  color: var(--color-h4) !important;
+  font-weight: var(--font-weight-h4);
+}
+
 .page.home-page .notes,
 .page.home-page .progress-panel {
   border-radius: 0;
@@ -922,7 +932,7 @@ body.home-page--lux {
 }
 
 .page.home-page .progress-label span:last-child {
-  color: #64748b;
+  color: var(--color-chocolate);
 }
 
 .page.home-page .progress-bar {
@@ -962,8 +972,15 @@ body.home-page--lux {
 
 .page.home-page .todo-add {
   border-radius: 0;
-  background: #000000;
+  border: 1px solid #142947;
+  background: #142947;
   color: #ffffff;
+  font-family: var(--font-body);
+  font-size: calc(1rem * var(--user-font-scale)) !important;
+  font-weight: var(--font-weight-action);
+  line-height: var(--leading-control);
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .page.home-page .task-time-chip {

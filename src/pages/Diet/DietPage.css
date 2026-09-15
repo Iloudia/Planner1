@@ -145,18 +145,19 @@
   box-shadow: 0 16px 30px rgba(114, 92, 63, 0.12);
 }
 
+.diet-crosslink > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
 .diet-crosslink__label {
-  margin: 0 0 0.35rem;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: 0.75rem;
-  color: var(--color-chocolate);
-  font-weight: 700;
+  margin: 0;
+  text-transform: none !important;
 }
 
 .diet-crosslink__text {
   margin: 0;
-  color: var(--color-chocolate);
   max-width: 52ch;
 }
 
@@ -806,7 +807,8 @@
   gap: 0.55rem;
 }
 
-.diet-recipe-modal__body h4 {
+.diet-recipe-modal__body h4,
+.diet-recipe-modal__body h2 {
   margin: 0 0 0.3rem;
   color: var(--color-chocolate);
 }
@@ -1181,6 +1183,18 @@ body.diet-page--lux {
   min-height: 46px;
 }
 
+.diet-gymgirl-page button.pill.pill--diet {
+  border-color: #142947;
+  background: #142947;
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: calc(var(--font-size-button) * var(--user-font-scale)) !important;
+  font-weight: var(--font-weight-action);
+  line-height: var(--leading-control);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
 .diet-toggle button,
 .diet-info-pill {
   border-radius: 0;
@@ -1298,5 +1312,30 @@ body.diet-page--lux {
 .diet-recipe-modal__panel .diet-plan-modal__meta,
 .diet-recipe-modal__panel .diet-plan-modal__meta span {
   color: #6b7280;
+}
+
+.diet-recipe-modal__panel .diet-recipe-form__file-button,
+.diet-recipe-modal__panel .diet-recipe-modal__actions button[type="button"] {
+  border: 1px solid #142947;
+  background: #142947;
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: calc(var(--font-size-button) * var(--user-font-scale)) !important;
+  font-weight: var(--font-weight-action);
+  line-height: var(--leading-control);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.diet-recipe-modal__panel .diet-recipe-modal__actions button[type="button"]:first-child {
+  border: 1px solid #263b59;
+  background: transparent;
+  color: #263b59;
+  font-family: var(--font-body);
+  font-size: calc(var(--font-size-button) * var(--user-font-scale)) !important;
+  font-weight: var(--font-weight-action);
+  line-height: var(--leading-control);
+  letter-spacing: normal;
+  text-transform: none;
 }
 

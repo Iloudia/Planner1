@@ -68,7 +68,10 @@ const FAQPage = () => {
       <AdministrativePageHeader eyebrow="La" title="FAQ" />
       <div className="faq-wrapper">
         <div className="legal-page faq-page">
-          <p className="legal-page__intro">Toutes les réponses essentielles pour tirer le meilleur du site.</p>
+          <header className="faq-page__intro">
+            <h2>Questions réponses</h2>
+            <h4 className="legal-page__intro">Toutes les réponses essentielles pour tirer le meilleur du site.</h4>
+          </header>
 
           <div className="faq-accordion">
             {faqItems.map((item, index) => {

@@ -1271,7 +1271,7 @@ const ArchivesPage = ({ section }: ArchivesPageProps) => {
               )}
             </div>
             <footer className="archives-modal__footer">
-              <button type="button" className="archives-modal__delete" onClick={handleDeleteSelectedEntry}>
+              <button type="button" className="archives-modal__delete sport-workout-button-match" onClick={handleDeleteSelectedEntry}>
                 Supprimer
               </button>
             </footer>

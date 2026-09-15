@@ -283,7 +283,11 @@
   color: #20304d;
   font-weight: 500;
   letter-spacing: 0.08em;
-  text-transform: uppercase;
+  text-transform: none;
+}
+
+.contact-page h2 {
+  text-transform: none !important;
 }
 
 .contact-info__section p,

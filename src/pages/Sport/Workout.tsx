@@ -586,9 +586,6 @@ const WorkoutPage = () => {
             </div>
             <button type="submit">
               <span>Ajouter la carte</span>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M5 12h14M14 7l5 5-5 5" />
-              </svg>
             </button>
           </form>
         </section>
@@ -758,7 +755,7 @@ const WorkoutPage = () => {
         <section className="workout-creators workout-section--full" aria-label="Recommandations YouTube et Instagram">
           <header className="workout-creators__header">
             <h2>Recommandations YouTube &amp; Instagram</h2>
-            <p>Des comptes efficaces et faciles à intégrer dans ta routine.</p>
+            <h4>Des comptes efficaces et faciles à intégrer dans ta routine.</h4>
           </header>
           <div className={`workout-creators__carousel${hasMultipleCreators ? "" : " workout-creators__carousel--static"}`}>
             {hasMultipleCreators ? (

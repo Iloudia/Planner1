@@ -610,7 +610,7 @@
   gap: 1rem;
 }
 
-.wishlist-modal__form h3 {
+.wishlist-modal__form h2 {
   color: var(--color-chocolate);
   margin: 0;
 }
@@ -1241,6 +1241,15 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-chocolate);
+}
+
+.wishlist-modal__form-main label > span,
+.wishlist-modal__form > label > span {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--color-chocolate);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .wishlist-modal__group-chevron {
@@ -2381,6 +2390,18 @@ body.wishlist-page--lux .wishlist-note__add {
   box-shadow: none;
 }
 
+body.wishlist-page--lux .wishlist-heading-row__button {
+  border: 1px solid #142947;
+  background: #142947;
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: calc(var(--font-size-button) * var(--user-font-scale)) !important;
+  font-weight: var(--font-weight-action);
+  line-height: var(--leading-control);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
 body.wishlist-page--lux .wishlist-modal__actions button:first-child {
   background: #ffffff;
   border: 1px solid var(--lux-ink);
@@ -2390,6 +2411,18 @@ body.wishlist-page--lux .wishlist-modal__actions button:first-child {
 body.wishlist-page--lux .wishlist-modal__actions button:first-child svg {
   fill: #000000;
   color: #000000;
+}
+
+body.wishlist-page--lux .wishlist-modal__actions button[aria-label="Ajouter un élément"] {
+  border: 1px solid #142947;
+  background: #142947;
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: calc(var(--font-size-button) * var(--user-font-scale)) !important;
+  font-weight: var(--font-weight-action);
+  line-height: var(--leading-control);
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 body.wishlist-page--lux .wishlist-modal__photo-remove {
@@ -2659,10 +2692,12 @@ body.wishlist-page--lux .wishlist-create__actions button {
   min-height: 2.65rem;
   padding: 0.7rem 0.85rem;
   border-radius: 0;
-  font-family: "Libre Baskerville", Georgia, serif;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.11em;
+  font-family: var(--font-body);
+  font-size: calc(var(--font-size-button) * var(--user-font-scale)) !important;
+  font-weight: var(--font-weight-action) !important;
+  line-height: var(--leading-control);
+  letter-spacing: normal;
+  text-transform: none;
 }
 
 body.wishlist-page--lux .wishlist-create__actions button[type="submit"] {
