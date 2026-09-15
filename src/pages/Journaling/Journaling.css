@@ -34,7 +34,6 @@
   border: 0;
 }
 
-@import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@500;600;700&display=swap");
 
 .journaling-page__heading {
   position: relative;
@@ -1382,4 +1381,3 @@ body.journaling-page--lux {
   display: none !important;
   content: none !important;
 }
-

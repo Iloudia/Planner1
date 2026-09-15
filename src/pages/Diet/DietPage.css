@@ -56,7 +56,6 @@
   margin: 0;
   color: var(--color-chocolate);
 }
-@import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@500;600;700&display=swap");
 
 .diet-classic-page__heading {
   position: relative;
@@ -480,9 +479,7 @@
 
 .diet-recipe-card h3 {
   margin: 0;
-  font-size: 1.25rem;
   color: inherit;
-  line-height: 1.2;
 }
 
 .diet-recipe-meta {
@@ -898,9 +895,6 @@
 
 .diet-ingredient-visual p {
   margin: 0;
-  font-size: 0.86rem;
-  line-height: 1.35;
-  color: var(--color-chocolate);
 }
 
 @media (min-width: 720px) {
@@ -929,7 +923,6 @@
   margin-bottom: 0.3rem;
   padding-left: 0.55rem;
   border-left: 2px solid #b79b7b;
-  font-family: "Montserrat", "Segoe UI", sans-serif;
   font-weight: 600;
   font-size: 0.82rem;
   color: #7a6247;

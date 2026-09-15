@@ -803,7 +803,7 @@ return (
                 </button>
 
                 <div className="calendar-mobile__panel-heading">
-                  <span className="calendar-mobile__week-label">{`Semaine du ${weekRangeLabel}`}</span>
+                  <h2 className="calendar-mobile__week-label">{`Semaine du ${weekRangeLabel}`}</h2>
                 </div>
 
                 <button

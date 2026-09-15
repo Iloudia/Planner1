@@ -152,10 +152,6 @@
 .faq-item__body p {
   margin: 0;
   padding: 0 1.4rem 1.3rem;
-  font-size: 0.95rem;
-  color: var(--color-chocolate);
-  line-height: 1.7;
-  font-family: "Inter", "Times New Roman", sans-serif;
 }
 
 @media (max-width: 640px) {

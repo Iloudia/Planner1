@@ -38,6 +38,15 @@
   --leading-heading: 1.25;
   --leading-body: 1.7;
 
+  /* Editorial details shared with the blog. Header typography stays local. */
+  --font-weight-card-title: 500;
+  --font-weight-action: 600;
+  --font-size-editorial-action: 0.66rem;
+  --leading-control: 1.2;
+  --tracking-editorial-action: 0.24em;
+  --tracking-text-link: 0.16em;
+  --card-content-padding: clamp(1rem, 2vw, 1.35rem);
+
   --hero-visual-height: 320px;
 
   --space-3xs: 0.25rem;

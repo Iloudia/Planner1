@@ -477,8 +477,6 @@
 
 .wishlist-card__title h2 {
   margin: 0;
-  font-size: 1.6rem;
-  color: #a31f52;
 }
 
 .wishlist-card__favorite {
@@ -488,8 +486,6 @@
 
 .wishlist-card__content p {
   margin: 0;
-  font-size: 0.96rem;
-  color: rgba(159, 3, 79, 0.78);
 }
 
 @keyframes wishlist-card-enter {
@@ -1242,11 +1238,9 @@
 
 .wishlist-modal__group-toggle h3 {
   margin: 0;
-  font-size: 0.5rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-chocolate);
-  font-family: inherit;
 }
 
 .wishlist-modal__group-chevron {
@@ -1523,7 +1517,6 @@
 
 .wishlist-move h3 {
   margin: 0;
-  font-size: clamp(1.5rem, 2.6vw, 2rem);
   color: #1f1a2f;
 }
 
@@ -1742,7 +1735,6 @@
 
 .wishlist-create h3 {
   margin: 0;
-  font-size: 1.65rem;
   color: var(--color-chocolate);
 }
 
@@ -1774,7 +1766,6 @@
   margin: 0;
   font-weight: 600;
   font-size: 0.9rem !important;
-  color: var(--color-chocolate);
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -1833,7 +1824,6 @@
 
 .wishlist-create__cover-preview-panel p {
   margin: 0;
-  color: var(--color-chocolate);
   font-weight: 500;
 }
 
@@ -1986,7 +1976,6 @@
 
 .wishlist-rename h3 {
   margin: 0;
-  font-size: 1.7rem;
   color: #1f1a2f;
 }
 
@@ -2214,9 +2203,6 @@
     background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.97) 50%, #ffffff 100%);
   }
 
-  .wishlist-card__title h2 {
-    font-size: 1.1rem;
-  }
 }
 
 @media (max-width: 614px) {
@@ -2229,7 +2215,6 @@
   }
 
   .wishlist-modal__group-toggle h3 {
-    font-size: 0.44rem;
     letter-spacing: 0.06em;
   }
 }

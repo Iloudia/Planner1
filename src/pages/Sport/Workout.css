@@ -262,7 +262,6 @@
 
 .workout-form__photo-preview p {
   margin: 0;
-  color: var(--color-chocolate);
   font-weight: 500;
 }
 
@@ -399,9 +398,7 @@
   background: var(--color-caramel);
   border: none;
   padding: 0.9rem 2rem;
-  font-weight: 700;
   color: var(--color-chocolate);
-  font-size: 1.05rem;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
@@ -547,6 +544,7 @@
 }
 
 .workout-creator-card {
+  font-family: var(--font-body);
   background: #ffffff;
   border: 1px solid #e5dcd4;
   width: min(100%, 19rem);
@@ -572,10 +570,7 @@
 .workout-creator-card__top h3 {
   margin: 0;
   color: #142947;
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 1.35rem;
   font-weight: 600;
-  line-height: 1.2;
 }
 
 .workout-creator-card__platform {
@@ -588,7 +583,7 @@
   border-radius: 6px;
   background: #f4f0eb;
   color: #51483f;
-  font-size: 0.76rem;
+  font-size: var(--font-size-caption);
   font-weight: 600;
   letter-spacing: 0;
   text-transform: none;
@@ -615,16 +610,6 @@
   stroke: none;
 }
 
-.workout-creator-card__platform--youtube {
-  background: #f4f0eb;
-  color: #51483f;
-}
-
-.workout-creator-card__platform--instagram {
-  background: #f4f0eb;
-  color: #51483f;
-}
-
 .workout-creator-card__description {
   margin: 0;
   color: #625a52;
@@ -643,7 +628,7 @@
   border: 0;
   background: #f4f0eb;
   color: #51483f;
-  font-size: 0.74rem;
+  font-size: var(--font-size-caption);
   font-weight: 500;
 }
 
@@ -655,8 +640,9 @@
   border: 1px solid #142947;
   background: #142947;
   color: #ffffff;
-  font-weight: 600;
-  font-size: 0.82rem;
+  font-weight: var(--font-weight-action);
+  font-size: calc(var(--font-size-button) * var(--user-font-scale));
+  line-height: var(--leading-control);
   text-transform: none;
   letter-spacing: 0;
   padding: 0.68rem 0.9rem;
@@ -689,7 +675,6 @@
 .workout-library h2,
 .workout-videos h2 {
   margin: 0;
-  color: #0f172a;
 }
 
 .workout-cards {
@@ -865,7 +850,6 @@
 
 .workout-card__body h3 {
   margin: 0;
-  font-size: 1rem;
   color: var(--color-chocolate);
 }
 
@@ -954,8 +938,6 @@
   padding: 0.85rem 1.7rem;
   background: var(--color-caramel);
   color: var(--color-chocolate);
-  font-weight: 700;
-  font-size: 1rem;
   cursor: pointer;
 }
 
@@ -1023,9 +1005,7 @@
 
 .workout-video-card__body p {
   margin: 0;
-  color: var(--color-chocolate);
   font-weight: 800;
-  font-size: 0.97rem;
 }
 
 .workout-video-card__source {
@@ -1350,7 +1330,6 @@
   }
 
   .workout-card__body h3 {
-    font-size: 0.95rem;
     overflow-wrap: anywhere;
   }
 
@@ -1476,6 +1455,15 @@ body.workout-page--lux .workout-card__menu-panel.workout-card__menu-panel--float
   border: 1px solid var(--lux-line);
   background: var(--lux-ink);
   color: #ffffff;
+  font-weight: var(--font-weight-action);
+  line-height: var(--leading-control);
+}
+
+.workout-form button[type="submit"]:focus-visible,
+.workout-modal__series-form button:focus-visible,
+.workout-video-form button:focus-visible {
+  outline: 2px solid var(--color-chocolate);
+  outline-offset: 3px;
 }
 
 .workout-card__meta span,
@@ -1634,8 +1622,8 @@ body.workout-page--lux .workout-card__menu-panel.workout-card__menu-panel--float
 
 .workout-exercises .workout-form__photo-hint {
   color: #aaa29a;
-  font-family: "Libre Baskerville", Georgia, serif;
-  font-size: 0.75rem;
+  font-family: var(--font-body);
+  font-size: var(--font-size-caption);
 }
 
 .workout-exercises .workout-form button[type="submit"] {
@@ -1650,7 +1638,6 @@ body.workout-page--lux .workout-card__menu-panel.workout-card__menu-panel--float
   border: 1px solid #142947;
   background: #142947;
   color: #ffffff;
-  font-size: 0.92rem;
 }
 
 .workout-exercises .workout-form button[type="submit"] svg {

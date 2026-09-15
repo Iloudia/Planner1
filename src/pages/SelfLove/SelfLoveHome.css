@@ -44,9 +44,7 @@
   margin: 0;
   padding: 1.05rem 1.2rem 1.2rem;
   color: #132642;
-  font-family: "Italiana", "Times New Roman", serif;
-  font-size: clamp(1.2rem, 1.7vw, 1.55rem);
-  font-weight: 400;
+  font-weight: var(--font-weight-card-title);
 }
 
 .self-love-editorial-section {
@@ -153,33 +151,26 @@
   min-width: 0;
   flex-direction: column;
   align-items: flex-start;
-  padding: clamp(1rem, 2vw, 1.35rem);
+  padding: var(--card-content-padding);
 }
 
 .self-love-ritual-card__content h3 {
-  margin: 0 0 0.6rem;
+  margin: 0 0 var(--space-xs);
   color: #132642;
-  font-family: "Italiana", "Times New Roman", serif;
-  font-size: clamp(1.2rem, 2vw, 1.55rem);
-  font-weight: 400;
-  line-height: 1.2;
+  font-weight: var(--font-weight-card-title);
 }
 
 .self-love-ritual-card__content p {
-  margin: 0 0 1rem;
-  color: #4b5563;
-  font-family: "Libre Baskerville", Georgia, serif;
-  font-size: clamp(0.78rem, 0.9vw, 0.9rem);
-  line-height: 1.55;
+  margin: 0 0 var(--space-md);
 }
 
 .self-love-ritual-card__action {
   margin-top: auto;
   color: #6f4f3f;
-  font-family: "Inter", sans-serif;
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.16em;
+  font-family: var(--font-body);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-action);
+  letter-spacing: var(--tracking-text-link);
   text-transform: uppercase;
 }
 
@@ -231,20 +222,11 @@
 
 .self-love-blog-banner__content h2 {
   margin: 0.4rem 0 0.6rem;
-  color: #132642;
-  font-family: "Italiana", "Times New Roman", serif;
-  font-size: clamp(1.8rem, 3.5vw, 3rem);
-  font-weight: 400;
-  line-height: 1.12;
 }
 
 .self-love-blog-banner__content p {
   max-width: 34rem;
   margin: 0 0 0.9rem;
-  color: #5b5249;
-  font-family: "Libre Baskerville", Georgia, serif;
-  font-size: clamp(0.8rem, 0.95vw, 0.95rem);
-  line-height: 1.65;
 }
 
 .self-love-blog-banner__button {
@@ -256,13 +238,14 @@
   border: 1px solid #132642;
   background: #132642;
   color: #ffffff;
-  font-family: "Inter", sans-serif;
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-family: var(--font-body);
+  font-size: var(--font-size-editorial-action);
+  font-weight: var(--font-weight-action);
+  letter-spacing: var(--tracking-editorial-action);
   text-decoration: none;
   text-transform: uppercase;
   transition: background-color 180ms ease, color 180ms ease;
+  line-height: var(--leading-control);
 }
 
 .self-love-blog-banner__button:hover {

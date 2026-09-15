@@ -386,10 +386,6 @@ body.boutique-page--tone {
   display: block;
 }
 
-.boutique-category-card h3 {
-  font-size: clamp(1.05rem, 2vw, 1.35rem);
-  line-height: 1.25;
-}
 
 .boutique-link-button {
   border: none;
@@ -967,7 +963,6 @@ body.boutique-page--tone {
 }
 
 .boutique-detail__features h2 {
-  font-size: 1.1rem;
   margin-bottom: 0.6rem;
 }
 

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Allura&family=Italiana&family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Italiana&family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@400;600;700&display=swap');
 
 .routine-page__heading {
   position: relative;
@@ -219,9 +219,6 @@
 
 .routine-note__title-band h2 {
   margin: 0;
-  font-size: 1.55rem;
-  color: var(--color-chocolate);
-  letter-spacing: -0.01em;
 }
 
 .routine-note__illustration {
@@ -572,9 +569,6 @@
     padding: 0.7rem 1.2rem;
   }
 
-  .routine-note__title-band h2 {
-    font-size: 1.2rem;
-  }
 
   .routine-hero-image {
     max-height: 320px;
@@ -703,9 +697,6 @@ body.routine-page--lux .routine-note__item-detail {
     background: transparent;
   }
 
-  .routine-note__title-band h2 {
-    font-size: clamp(1.45rem, 3vw, 1.9rem);
-  }
 
   .routine-note__body {
     --routine-content-inset: 0.6rem;

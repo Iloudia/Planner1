@@ -79,7 +79,6 @@
 
 .about-feature__text p {
   margin: 0;
-  color: var(--about-ink-soft);
 }
 
 .about-feature__pull {
@@ -135,17 +134,12 @@
 
 .about-feature__summary h3 {
   margin: 0;
-  font-size: clamp(1.2rem, 0.8vw + 1rem, 1.6rem);
   color: var(--about-ink);
-  font-family: "Playfair Display", "Times New Roman", serif;
   margin-bottom: 0.4rem;
 }
 
 .about-feature__summary p {
   margin: 0;
-  font-size: 0.98rem;
-  line-height: 1.7;
-  color: var(--about-ink-soft);
 }
 
 .about-values {
@@ -192,16 +186,11 @@
 
 .value-block h3 {
   margin: 0;
-  font-size: clamp(1.05rem, 0.6vw + 0.9rem, 1.35rem);
   color: var(--about-ink);
-  font-family: "Playfair Display", "Times New Roman", serif;
 }
 
 .value-block p {
   margin: 0;
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: var(--about-ink-soft);
 }
 
 .about-details {
@@ -233,15 +222,11 @@
 
 .about-details__card h3 {
   margin: 0;
-  font-size: 1.3rem;
   color: var(--about-ink);
-  font-family: "Playfair Display", "Times New Roman", serif;
 }
 
 .about-details__card p {
   margin: 0;
-  color: var(--about-ink-soft);
-  line-height: 1.6;
 }
 
 .about-details__card .legal-link {

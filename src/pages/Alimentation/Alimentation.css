@@ -427,8 +427,6 @@
 
 .diet-ideas__tips p {
   margin: 0;
-  color: var(--color-chocolate);
-  line-height: 1.5;
 }
 
 @media (max-width: 1200px) {

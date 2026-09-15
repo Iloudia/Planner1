@@ -80,12 +80,10 @@
 
 .cart-item__body h2 {
   margin: 0 0 0.4rem;
-  font-size: 1.1rem;
 }
 
 .cart-item__body p {
   margin: 0 0 0.8rem;
-  color: rgba(31, 27, 22, 0.7);
 }
 
 .cart-item__meta {
@@ -116,7 +114,6 @@
 
 .cart-summary__card h2 {
   margin: 0;
-  font-size: 1.1rem;
 }
 
 @media (max-width: 768px) {

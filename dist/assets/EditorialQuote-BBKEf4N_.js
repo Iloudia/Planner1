@@ -1,1 +1,0 @@
-import{j as e}from"./index-BafC9gJd.js";const t=({quote:s,eyebrow:i="À garder près de soi",ariaLabel:o="Pensée inspirante",className:a=""})=>e.jsxs("aside",{className:["editorial-quote",a].filter(Boolean).join(" "),"aria-label":o,children:[e.jsx("span",{className:"editorial-quote__eyebrow",children:i}),e.jsx("blockquote",{children:s})]});export{t as E};
