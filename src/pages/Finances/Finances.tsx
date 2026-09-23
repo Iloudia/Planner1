@@ -10,6 +10,7 @@ import HighchartsAccessibility from 'highcharts/modules/accessibility'
 import HighchartsAdaptiveTheme from 'highcharts/themes/adaptive'
 import PageHero from '../../components/PageHero'
 import PageLoader from '../../components/PageLoader'
+import ModalCloseButton from '../../components/ModalCloseButton'
 import { useAuth } from '../../context/AuthContext'
 import useUserFinanceData from '../../hooks/useUserFinanceData'
 import financeMood01 from '../../assets/katie-huber-rhoades-dupe (2).webp'
@@ -895,13 +896,12 @@ const FinancePage = () => {
           <section className="finance-transaction-modal__panel">
             <header className="finance-transaction-modal__header">
               <h2 id="finance-transaction-modal-title">Ajouter une transaction</h2>
-              <button type="button" onClick={() => setTransactionModalOpen(false)} aria-label="Fermer">
-                ×
-              </button>
+              <p>Enregistre une dépense ou un revenu pour garder une vue claire sur tes finances.</p>
+              <ModalCloseButton onClick={() => setTransactionModalOpen(false)} />
             </header>
             <form onSubmit={handleSubmit} className="finance-transaction-form">
               <div className="finance-transaction-form__field finance-transaction-form__field--type">
-                <span>1. Type de transaction</span>
+                <p className="editorial-field-label">Type de transaction</p>
                 <div className="finance-transaction-form__types">
                   <button
                     type="button"
@@ -923,7 +923,7 @@ const FinancePage = () => {
               </div>
 
               <label className="finance-transaction-form__field finance-transaction-form__field--amount">
-                <span>2. Montant</span>
+                <p className="editorial-field-label">Montant</p>
                 <div className="finance-transaction-form__amount-input">
                   <input
                     type="text"
@@ -938,22 +938,27 @@ const FinancePage = () => {
 
               {draft.direction === 'out' ? (
                 <label className="finance-transaction-form__field finance-transaction-form__field--category">
-                  <span>3. Catégorie</span>
-                  <select value={draft.category} onChange={(event) => handleDraftChange('category', event.target.value as ExpenseCategory)}>
-                    {Object.entries(categoryDefinitions).map(([value, definition]) => (
-                      <option key={value} value={value}>{definition.label}</option>
-                    ))}
-                  </select>
+                  <p className="editorial-field-label">Catégorie</p>
+                  <div className="finance-transaction-form__select">
+                    <select value={draft.category} onChange={(event) => handleDraftChange('category', event.target.value as ExpenseCategory)}>
+                      {Object.entries(categoryDefinitions).map(([value, definition]) => (
+                        <option key={value} value={value}>{definition.label}</option>
+                      ))}
+                    </select>
+                    <svg className="calendar-select__chevron" viewBox="0 0 20 20" aria-hidden="true">
+                      <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
                 </label>
               ) : (
                 <div className="finance-transaction-form__field finance-transaction-form__field--category">
-                  <span>3. Catégorie</span>
+                  <p className="editorial-field-label">Catégorie</p>
                   <div className="finance-transaction-form__income-category">Revenus</div>
                 </div>
               )}
 
               <label className="finance-transaction-form__field finance-transaction-form__field--date">
-                <span>4. Date</span>
+                <p className="editorial-field-label">Date</p>
                 <input
                   type="date"
                   value={draft.date}
@@ -963,7 +968,7 @@ const FinancePage = () => {
               </label>
 
               <label className="finance-transaction-form__field finance-transaction-form__field--label">
-                <span>5. Bénéficiaire / Libellé</span>
+                <p className="editorial-field-label">Bénéficiaire / Libellé</p>
                 <input
                   type="text"
                   value={draft.label}
@@ -993,14 +998,10 @@ const FinancePage = () => {
               <div>
                 <h3>{selectedMonthLabel}</h3>
               </div>
-              <button
-                type="button"
-                className="modal__close"
+              <ModalCloseButton
                 onClick={() => setHistoryModalOpen(false)}
-                aria-label="Fermer l'historique"
-              >
-                
-              </button>
+                ariaLabel="Fermer l'historique"
+              />
             </header>
             <div className="finance-history-modal__content">
               {selectedMonthEntries.length === 0 ? (

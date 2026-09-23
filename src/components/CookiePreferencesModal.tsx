@@ -5,12 +5,14 @@ const CookiePreferencesModal = () => {
   const { isPreferenceCenterOpen, closePreferences, preferences, saveCustomPreferences, acceptAll, rejectAll } =
     useCookieConsent()
   const [preferencesEnabled, setPreferencesEnabled] = useState(preferences.preferences)
+  const [analyticsEnabled, setAnalyticsEnabled] = useState(preferences.analytics)
 
   useEffect(() => {
     if (isPreferenceCenterOpen) {
       setPreferencesEnabled(preferences.preferences)
+      setAnalyticsEnabled(preferences.analytics)
     }
-  }, [isPreferenceCenterOpen, preferences.preferences])
+  }, [isPreferenceCenterOpen, preferences.analytics, preferences.preferences])
 
   useEffect(() => {
     if (!isPreferenceCenterOpen) return
@@ -28,7 +30,7 @@ const CookiePreferencesModal = () => {
   }
 
   const handleSave = () => {
-    saveCustomPreferences({ preferences: preferencesEnabled })
+    saveCustomPreferences({ preferences: preferencesEnabled, analytics: analyticsEnabled })
   }
 
   return (
@@ -38,7 +40,7 @@ const CookiePreferencesModal = () => {
         <header className="cookie-modal__header">
           <div>
             <h2 id="cookie-modal-title">Choisis les cookies que tu acceptes</h2>
-            <h4>Les cookies essentiels sont toujours actifs pour des raisons de sécurité.</h4>
+            <p>Les cookies essentiels sont toujours actifs pour des raisons de sécurité.</p>
           </div>
           <button type="button" className="modal__close" aria-label="Fermer" onClick={closePreferences}>
             ×
@@ -56,6 +58,24 @@ const CookiePreferencesModal = () => {
             <div className="cookie-modal__switch cookie-modal__switch--locked">
               <span>Actifs</span>
             </div>
+          </article>
+
+          <article className="cookie-modal__group">
+            <div>
+              <h3 className="cookie-modal__group-title">Mesure d’audience</h3>
+              <p className="cookie-modal__group-text">
+                Nous aide à comprendre l’utilisation du site et à l’améliorer grâce à Firebase Analytics. Ces traceurs
+                restent désactivés tant que tu ne les acceptes pas.
+              </p>
+            </div>
+            <label className="cookie-modal__switch">
+              <input
+                type="checkbox"
+                checked={analyticsEnabled}
+                onChange={(event) => setAnalyticsEnabled(event.target.checked)}
+              />
+              <span>{analyticsEnabled ? "Actif" : "Désactivé"}</span>
+            </label>
           </article>
 
           <article className="cookie-modal__group">

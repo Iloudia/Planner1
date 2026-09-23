@@ -344,7 +344,7 @@
 }
 
 .profile-welcome {
-  margin: 0.8rem 0 0;
+  margin: 0;
   text-align: center;
   font-weight: 600;
   color: var(--color-chocolate);
@@ -357,6 +357,7 @@
   margin-left: 10px;
   vertical-align: middle;
 }
+
 
 .progress-label__value {
   color: var(--color-chocolate);
@@ -410,11 +411,36 @@
 }
 
 .todo-limit-message {
-  margin: 0.55rem 0 0;
-  font-size: 0.66rem;
-  line-height: 1.2;
-  white-space: nowrap;
-  color: #b45309;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0.7rem 0 0;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid rgba(180, 83, 9, 0.18);
+  border-left: 3px solid #b45309;
+  background: rgba(180, 83, 9, 0.06);
+  color: #78350f;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+}
+
+.todo-limit-message::before {
+  content: "!";
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  border: 1px solid rgba(180, 83, 9, 0.35);
+  border-radius: 50%;
+  color: #92400e;
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .todo-list {
@@ -911,6 +937,7 @@ body.home-page--lux {
 
 .page.home-page .profile-welcome {
   color: var(--lux-ink);
+  margin-top: -0.75rem;
 }
 
 .page.home-page h4.profile-welcome,
@@ -1218,4 +1245,117 @@ body.home-page--lux .account-menu__item.is-selected {
     max-height: min(82vh, 420px);
     object-fit: cover;
   }
+}
+
+/* Upcoming events: structured professional panel */
+.page.home-page .aside-left {
+  position: relative;
+  padding: clamp(1.25rem, 2vw, 1.75rem);
+  background: #ffffff;
+  border: 1px solid rgba(31, 27, 22, 0.18);
+  border-radius: 0;
+  box-shadow: 0 16px 38px rgba(31, 27, 22, 0.07);
+}
+
+.page.home-page .aside-left .aside-title {
+  margin: 0;
+  padding: 0 0 1.1rem;
+  gap: 0.9rem;
+  font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  border-bottom: 1px solid rgba(31, 27, 22, 0.2);
+}
+
+.page.home-page .aside-left .aside-title::after {
+  content: "";
+  flex: 1 1 auto;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(31, 27, 22, 0.28), transparent);
+}
+
+.page.home-page .aside-left .task-window {
+  margin-top: 1rem;
+}
+
+.page.home-page .aside-left .task-list {
+  gap: 0.8rem;
+  padding: 0;
+}
+
+.page.home-page .aside-left .task-card {
+  min-height: 0;
+  padding: 1rem 1.05rem;
+  gap: 0.5rem;
+  background: #ffffff;
+  border: 1px solid rgba(31, 27, 22, 0.14);
+  border-left: 3px solid var(--lux-accent);
+  border-radius: 0;
+  box-shadow: 0 5px 16px rgba(31, 27, 22, 0.045);
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.page.home-page .aside-left .task-card:hover {
+  background: #fdfcf9;
+  border-color: rgba(31, 27, 22, 0.3);
+  border-left-color: var(--lux-ink);
+  box-shadow: 0 9px 22px rgba(31, 27, 22, 0.08);
+  transform: translateY(-2px);
+}
+
+.page.home-page .aside-left .task-card:focus-visible {
+  outline: 2px solid var(--lux-ink);
+  outline-offset: -2px;
+}
+
+.page.home-page .aside-left .task-card__header {
+  align-items: center;
+}
+
+.page.home-page .aside-left .task-date {
+  margin: 0;
+  color: var(--lux-ink-soft);
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.page.home-page .aside-left .task-title {
+  margin: 0;
+  color: var(--lux-ink);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+.page.home-page .aside-left .task-note {
+  margin: 0;
+  color: var(--lux-ink-soft) !important;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.page.home-page .aside-left .task-meta {
+  margin-top: 0.15rem;
+  gap: 0.4rem;
+}
+
+.page.home-page .aside-left .task-time-chip {
+  padding: 0.28rem 0.55rem;
+  background: #eee9e1;
+  color: var(--lux-ink-soft);
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  font-weight: 650;
+  line-height: 1.2;
 }

@@ -1,6 +1,8 @@
 ﻿import { useEffect, useMemo, useRef, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
+import ImageUploadPanel from "../../components/ImageUploadPanel"
 import MediaImage from "../../components/MediaImage"
+import ModalCloseButton from "../../components/ModalCloseButton"
 import PageLoader from "../../components/PageLoader"
 import { useAuth } from "../../context/AuthContext"
 import useUserDietData from "../../hooks/useUserDietData"
@@ -14,223 +16,223 @@ import avocadoToastImg from "../../assets/avocado-toast.webp"
 import curryPoischicheImg from "../../assets/curry-poischiche.webp"
 import smoothieBananeImg from "../../assets/smoothie-banane.webp"
 import brownieProteineImg from "../../assets/brownie-proteine.webp"
-import overnightOatsImg from "../../assets/Overnight oats.png"
+import overnightOatsImg from "../../assets/Overnight oats.webp"
 import fruitsRougesGranolaImg from "../../assets/fruitsrouges-granola.webp"
-import bowlThonImg from "../../assets/Bowl au thon.png"
+import bowlThonImg from "../../assets/Bowl au thon.webp"
 import bowlMediteraneenImg from "../../assets/bowl-mediteraneen.webp"
 import soupeDetoxImg from "../../assets/soupe-detox.webp"
 import bananaBreadImg from "../../assets/banana-bread.webp"
-import brownieSaleImg from "../../assets/Brownie salé.png"
+import brownieSaleImg from "../../assets/Brownie salé.webp"
 import biscuitsAvoineImg from "../../assets/biscuits-avoine.webp"
-import saumonCitronImg from "../../assets/Saumon au four citron.png"
+import saumonCitronImg from "../../assets/Saumon au four citron.webp"
 import puddingChiaCocoFraisesImg from "../../assets/Pudding de chia coco & fraises1.webp"
 import saladeCesarImg from "../../assets/salade-cesar.webp"
 import granolaMaisonImg from "../../assets/granola-maison.webp"
 import brochettesImg from "../../assets/brochettes.webp"
-import smoothieMangueImg from "../../assets/Smoothie glow mangue passion.png"
+import smoothieMangueImg from "../../assets/Smoothie glow mangue passion.webp"
 import saladeDeFruitImg from "../../assets/salade-de-fruit.webp"
-import omeletteFetaImg from "../../assets/Omelette feta epinards.png"
-import steackPommeDeTerreImg from "../../assets/Steak, pommes de terre & haricots verts.png"
-import saumonBowlImg from "../../assets/Saumon marininé sriracha & riz.png"
-import bowlPouletImg from "../../assets/Burrito bowl healthy.png"
-import bagelSaumonImg from "../../assets/Bagel saumon & cream cheese avocat1.jpg"
-import dattesBeurreCacahueteImg from "../../assets/Dattes au beurre de cacahuete.png"
-import bananaOatBarsImg from "../../assets/Banana Oat Bars.png"
-import barresSnickersCaramelImg from "../../assets/Barres type Snickers au caramel.png"
-import cookiesChocolatFleurSelImg from "../../assets/Cookies chocolat & fleur de sel.png"
-import carrotCakeBreadImg from "../../assets/Carrot Cake Bread1.png"
-import saladeDeFruitsAnanasImg from "../../assets/Salade de fruits ananas.png"
-import saumonGrilleSalsaTomateAvocatImg from "../../assets/Saumon grille, salsa tomate-avocat.png"
-import saladeBurrataJambonSecImg from "../../assets/Salade burrata, jambon sec, tomates cerises & basilic.png"
-import patesPestoPouletParmesanImg from "../../assets/Pates pesto, poulet, parmesan & tomates cerises.png"
-import houmousMaisonUltraCremeuxImg from "../../assets/Houmous maison ultra cremeux.png"
-import saladePastequeFetaImg from "../../assets/Salade pasteque & feta.png"
-import saladeGrecqueImg from "../../assets/Salade grecque.png"
-import wrapPouletCroquantImg from "../../assets/Wrap poulet croquant.png"
-import smoothieFraiseBananeWheyImg from "../../assets/Smoothie fraise, banane, eau de coco & whey vanille.jpeg"
-import boissonDetoxPommeCeleriCitronImg from "../../assets/Boisson detox pomme, celeri & citron.png"
-import boissonDetoxOrangeCarotteGingembreImg from "../../assets/Boisson detox orange, carotte & gingembre.png"
-import eauDetoxConcombreCitronVertImg from "../../assets/Eau detox concombre, citron, citron vert.png"
-import cafeLatteVanilleImg from "../../assets/Cafe latte a la vanille.jpeg"
-import matchaLatteCremeuxImg from "../../assets/Matcha latte cremeux.jpeg"
-import mokaChocolatCafeImg from "../../assets/Moka chocolat & cafe.png"
-import smoothieSainAvocatBananeAmandesImg from "../../assets/Smoothie sain avocat, banane & amandes.jpeg"
-import boissonSaineEpinardPommeConcombreImg from "../../assets/Boisson saine epinard, pomme & concombre.jpeg"
-import eauInfuseePamplemousseRomarinImg from "../../assets/Eau infusee pamplemousse & romarin.png"
-import eauInfuseeMyrtillesOrangeMentheImg from "../../assets/Eau infusee myrtilles, orange & menthe.png"
-import eauInfuseeFraiseCitronJauneMentheImg from "../../assets/Eau infusee fraise, citron jaune & menthe.png"
-import boissonAvoineCacahueteLaitAmandeImg from "../../assets/Boisson avoine, beurre de cacahuete & lait d'amande.jpeg"
-import jusSainBetteraveCeleriPommeImg from "../../assets/Jus sain betterave, celeri & pomme.png"
-import smoothieBananeBeurreCacahueteImg from "../../assets/Smoothie banane beurre de cacahuete.png"
-import focacciaBurrataMortadelleRoquetteImg from "../../assets/Focaccia garnie burrata, mortadelle & roquette.jpeg"
-import tzatzikiImg from "../../assets/Tzatziki.jpeg"
-import vinaigretteMielMoutardeBalsamiqueImg from "../../assets/Vinaigrette miel, moutarde & balsamique.png"
-import sauceTahiniCremeuseImg from "../../assets/Sauce tahini cremeuse.png"
-import caviarAubergineImg from "../../assets/Caviar d'aubergine.png"
-import saucePestoMaisonImg from "../../assets/Sauce pesto maison.jpeg"
-import guacamoleMaisonImg from "../../assets/Guacamole maison.png"
-import sauceViergeImg from "../../assets/Sauce vierge.png"
-import chimichurriLegerementSucreImg from "../../assets/Chimichurri legerement sucre.png"
-import saucePoivreImg from "../../assets/Sauce au poivre.png"
-import tapenadeImg from "../../assets/Tapenade.png"
-import sauceTeriyakiImg from "../../assets/Sauce teriyaki.png"
-import huilePimenteeImg from "../../assets/Huile pimentee.png"
-import oignonsConfitsImg from "../../assets/Oignons confits.png"
-import ailConfitImg from "../../assets/Ail confit.png"
-import sauceAuberginesPoivronsGrillesImg from "../../assets/Sauce aux aubergines & poivrons grilles.png"
-import picklesOignonsImg from "../../assets/Pickles d'oignons.png"
-import sauceAsiatiqueCacahuetesImg from "../../assets/Sauce asiatique aux cacahuetes.png"
-import citronsConfitsImg from "../../assets/Citrons confits.png"
-import sauceBlancheHerbesImg from "../../assets/Sauce blanche aux herbes.png"
-import picklesConcombreImg from "../../assets/Pickles de concombre.png"
-import picklesCarottesImg from "../../assets/Pickles de carottes.png"
-import picklesChouFleurImg from "../../assets/Pickles de chou-fleur.png"
-import chutneyMangueImg from "../../assets/Chutney de mangue.png"
-import thonCuitIngredientImg from "../../assets/Aliments/Thon cuit.png"
-import rizIngredientImg from "../../assets/Aliments/Riz.png"
-import avocatIngredientImg from "../../assets/Aliments/Avocat.png"
-import concombreIngredientImg from "../../assets/Aliments/Concombre.png"
-import tomateIngredientImg from "../../assets/Aliments/Tomate.png"
-import grainesSesameIngredientImg from "../../assets/Aliments/Graines de sesame.png"
-import huileOliveIngredientImg from "../../assets/Aliments/Huile d'olive.png"
-import vinaigreBalsamiqueIngredientImg from "../../assets/Aliments/Vinaigre balsamique.png"
-import vinaigreCidreIngredientImg from "../../assets/Aliments/Vinaigre de cidre.png"
-import vinaigreRizIngredientImg from "../../assets/Aliments/Vinaigre de riz.png"
-import selIngredientImg from "../../assets/Aliments/Sel.png"
-import poivreIngredientImg from "../../assets/Aliments/Poivre.png"
-import pommeIngredientImg from "../../assets/Aliments/Pomme.png"
-import moutardeIngredientImg from "../../assets/Aliments/Moutarde.png"
-import mielIngredientImg from "../../assets/Aliments/Miel.png"
-import oeufIngredientImg from "../../assets/Aliments/Oeuf.png"
-import tomatesCerisesIngredientImg from "../../assets/Aliments/Tomates cerises.png"
-import olivesNoiresIngredientImg from "../../assets/Aliments/Olives noires.png"
-import olivesVertesIngredientImg from "../../assets/Aliments/Olives vertes.png"
-import capresIngredientImg from "../../assets/Aliments/Capres.png"
-import anchoisIngredientImg from "../../assets/Aliments/Anchois.png"
-import burrataIngredientImg from "../../assets/Aliments/Burrata.png"
-import fetaIngredientImg from "../../assets/Aliments/Feta.png"
-import basilicIngredientImg from "../../assets/Aliments/Basilic.png"
-import cibouletteIngredientImg from "../../assets/Aliments/Ciboulette.png"
-import origanIngredientImg from "../../assets/Aliments/Origan.png"
-import feuilleLaurierIngredientImg from "../../assets/Aliments/Feuille de laurier.png"
-import pignonsPinIngredientImg from "../../assets/Aliments/Pignons de pin.png"
-import painIngredientImg from "../../assets/Aliments/Pain.png"
-import oignonRougeIngredientImg from "../../assets/Aliments/Oignon rouge.png"
-import oignonJauneIngredientImg from "../../assets/Aliments/Oignon jaune.png"
-import echalotteIngredientImg from "../../assets/Aliments/Echalotte.png"
-import orangeIngredientImg from "../../assets/Aliments/Orange.png"
-import pamplemousseIngredientImg from "../../assets/Aliments/Pamplemousse.png"
-import matchaIngredientImg from "../../assets/Aliments/Matcha.png"
-import jambonSecIngredientImg from "../../assets/Aliments/Jambon sec.png"
-import saumonFumeIngredientImg from "../../assets/Aliments/Saumon fume.png"
-import anethIngredientImg from "../../assets/Aliments/Aneth.png"
-import bagelIngredientImg from "../../assets/Aliments/Bagel.png"
-import creamCheeseIngredientImg from "../../assets/Aliments/Cream cheese.png"
-import pastequeIngredientImg from "../../assets/Aliments/Pasteque.png"
-import mentheIngredientImg from "../../assets/Aliments/Menthe.png"
-import brancheRomarinIngredientImg from "../../assets/Aliments/Branche de Romarin.png"
-import ailIngredientImg from "../../assets/Aliments/Ail.png"
-import epinardIngredientImg from "../../assets/Aliments/Epinard.png"
-import saumonIngredientImg from "../../assets/Aliments/Saumon.png"
-import citronIngredientImg from "../../assets/Aliments/Citron.png"
-import citronVertIngredientImg from "../../assets/Aliments/Citron vert.png"
-import beurreIngredientImg from "../../assets/Aliments/Beurre.png"
-import aspergesIngredientImg from "../../assets/Aliments/Asperges.png"
-import eauIngredientImg from "../../assets/Aliments/Eau.png"
-import eauCocoIngredientImg from "../../assets/Aliments/Eau de coco.png"
-import cognacIngredientImg from "../../assets/Aliments/Cognac.png"
-import tahiniIngredientImg from "../../assets/Aliments/Tahini.png"
-import expressoIngredientImg from "../../assets/Aliments/Expresso.png"
-import glaconsIngredientImg from "../../assets/Aliments/Glaçons.png"
-import laitueIngredientImg from "../../assets/Aliments/Laitue.png"
-import melangeSaladeIngredientImg from "../../assets/Aliments/Melange de salade.png"
-import pouletIngredientImg from "../../assets/Aliments/Poulet.png"
-import parmesanIngredientImg from "../../assets/Aliments/Parmesan.png"
-import yaourtGrecIngredientImg from "../../assets/Aliments/Yaourt grecque.png"
-import croutonsIngredientImg from "../../assets/Aliments/Croutons.png"
-import cubeBouillonIngredientImg from "../../assets/Aliments/Cube bouillon de legume.png"
-import brocolisIngredientImg from "../../assets/Aliments/Brocolis.png"
-import aubergineIngredientImg from "../../assets/Aliments/Aubergine.png"
-import chouFleurIngredientImg from "../../assets/Aliments/Chou-fleur.png"
-import paprikaIngredientImg from "../../assets/Aliments/Paprika.png"
-import poivronRougeIngredientImg from "../../assets/Aliments/Poivron rouge.png"
-import cuminIngredientImg from "../../assets/Aliments/Cumin.png"
-import coriandreIngredientImg from "../../assets/Aliments/Coriandre.png"
-import boulgourIngredientImg from "../../assets/Aliments/Boulgour.png"
-import concentreTomateIngredientImg from "../../assets/Aliments/Concentre de tomate.png"
-import edamameIngredientImg from "../../assets/Aliments/Edamame.png"
-import haricotsRougesIngredientImg from "../../assets/Aliments/Haricots rouges.png"
-import floconsPimentIngredientImg from "../../assets/Aliments/Flocons de piment.png"
-import persilIngredientImg from "../../assets/Aliments/Persil.png"
-import pestoIngredientImg from "../../assets/Aliments/Pesto.png"
-import poudreOignonIngredientImg from "../../assets/Aliments/Poudre d'oignon.png"
-import tagliatellesIngredientImg from "../../assets/Aliments/Tagliatelles.png"
-import wrapIngredientImg from "../../assets/Aliments/Wrap.png"
-import foccaciaIngredientImg from "../../assets/Aliments/Foccacia.png"
-import farineIngredientImg from "../../assets/Aliments/Farine.png"
-import floconsAvoineIngredientImg from "../../assets/Aliments/Flocons d'avoine.png"
-import laitIngredientImg from "../../assets/Aliments/Lait.png"
-import laitVegetalIngredientImg from "../../assets/Aliments/Lait vegetal.png"
-import aromeVanilleIngredientImg from "../../assets/Aliments/Arome vanille.png"
-import levureChimiqueIngredientImg from "../../assets/Aliments/Levure chimique.png"
-import bicarbonateSoudeIngredientImg from "../../assets/Aliments/Bicarbonate de soude.png"
-import wheyIngredientImg from "../../assets/Aliments/Whey.png"
-import sucreBlancIngredientImg from "../../assets/Aliments/Sucre blanc.png"
-import sucreRouxIngredientImg from "../../assets/Aliments/Sucre roux.png"
-import sucreGlaceIngredientImg from "../../assets/Aliments/Sucre glace.png"
-import chocolatNoirIngredientImg from "../../assets/Aliments/Chocolat noir.png"
-import chocolatPoudreIngredientImg from "../../assets/Aliments/Chocolat en poudre.png"
-import framboisesIngredientImg from "../../assets/Aliments/Framboises.png"
-import fruitsRougesIngredientImg from "../../assets/Aliments/Fruits rouges.png"
-import huileCocoIngredientImg from "../../assets/Aliments/Huile de coco.png"
-import dattesIngredientImg from "../../assets/Aliments/Dattes.png"
-import raisinsSecsIngredientImg from "../../assets/Aliments/Raisins secs.png"
-import beurreCacahueteIngredientImg from "../../assets/Aliments/Beurre de cacahuete.png"
-import noixIngredientImg from "../../assets/Aliments/Noix.png"
-import amandesIngredientImg from "../../assets/Aliments/Amandes.png"
-import noixPecanIngredientImg from "../../assets/Aliments/Noix de pecan.png"
-import ananasIngredientImg from "../../assets/Aliments/Ananas.png"
-import biscuitsSpeculosIngredientImg from "../../assets/Aliments/Biscuits speculos.png"
-import pateTartinerBiscoffIngredientImg from "../../assets/Aliments/Pate a tartiner biscoff.png"
-import siropChocolatIngredientImg from "../../assets/Aliments/Sirop de chocolat.png"
-import bananeIngredientImg from "../../assets/Aliments/Banane.png"
-import fraisesIngredientImg from "../../assets/Aliments/Fraises.png"
-import myrtillesIngredientImg from "../../assets/Aliments/Myrtilles.png"
-import granolaIngredientImg from "../../assets/Aliments/Granola.png"
-import grainesChiaIngredientImg from "../../assets/Aliments/Graines de chia.png"
-import copeauxNoixCocoIngredientImg from "../../assets/Aliments/Copeaux de noix de coco.png"
-import carottesIngredientImg from "../../assets/Aliments/Carottes.png"
-import betteraveIngredientImg from "../../assets/Aliments/Betterave.png"
-import cannelleIngredientImg from "../../assets/Aliments/Cannelle.png"
-import noixMuscadeIngredientImg from "../../assets/Aliments/Noix de muscade.png"
-import lardonsIngredientImg from "../../assets/Aliments/Lardons.png"
-import mortadelleIngredientImg from "../../assets/Aliments/Mortadelle.png"
-import roquetteIngredientImg from "../../assets/Aliments/Roquette.png"
-import pistachesIngredientImg from "../../assets/Aliments/Pistaches.png"
-import ailPoudreIngredientImg from "../../assets/Aliments/Ail en poudre.png"
-import comteRapeIngredientImg from "../../assets/Aliments/Comté râpé.png"
-import celeriIngredientImg from "../../assets/Aliments/Céléri.png"
-import haricotsVertsIngredientImg from "../../assets/Aliments/Haricots verts.png"
-import herbesProvenceIngredientImg from "../../assets/Aliments/Herbes de provence.png"
-import thymIngredientImg from "../../assets/Aliments/Thym.png"
-import mangueIngredientImg from "../../assets/Aliments/Mangue.png"
-import fruitPassionIngredientImg from "../../assets/Aliments/Fruit de la passion.png"
-import steakIngredientImg from "../../assets/Aliments/Steak.png"
-import quinoaIngredientImg from "../../assets/Aliments/Quinoa.png"
-import poisChicheIngredientImg from "../../assets/Aliments/pois chiche.png"
-import mayonnaiseIngredientImg from "../../assets/Aliments/Mayonnaise.png"
-import srirachaIngredientImg from "../../assets/Aliments/Sriracha.png"
-import feuilleNoriIngredientImg from "../../assets/Aliments/Feuille de nori.png"
-import sauceSojaIngredientImg from "../../assets/Aliments/Sauce soja.png"
-import mirinIngredientImg from "../../assets/Aliments/Mirin.png"
-import huileSesameIngredientImg from "../../assets/Aliments/Huile de sesame.png"
-import gingembrePoudreIngredientImg from "../../assets/Aliments/Gingembre en poudre.png"
-import gingembreIngredientImg from "../../assets/Aliments/Gingembre.png"
-import laitCocoIngredientImg from "../../assets/Aliments/Lait de coco.png"
-import curryIngredientImg from "../../assets/Aliments/Curry.png"
-import garamMassalaIngredientImg from "../../assets/Aliments/Garam massala.png"
-import curcumaIngredientImg from "../../assets/Aliments/Curcuma.png"
-import coriandreFraicheIngredientImg from "../../assets/Aliments/Coriandre fraiche.png"
+import omeletteFetaImg from "../../assets/Omelette feta epinards.webp"
+import steackPommeDeTerreImg from "../../assets/Steak, pommes de terre & haricots verts.webp"
+import saumonBowlImg from "../../assets/Saumon marininé sriracha & riz.webp"
+import bowlPouletImg from "../../assets/Burrito bowl healthy.webp"
+import bagelSaumonImg from "../../assets/Bagel saumon & cream cheese avocat1.webp"
+import dattesBeurreCacahueteImg from "../../assets/Dattes au beurre de cacahuete.webp"
+import bananaOatBarsImg from "../../assets/Banana Oat Bars.webp"
+import barresSnickersCaramelImg from "../../assets/Barres type Snickers au caramel.webp"
+import cookiesChocolatFleurSelImg from "../../assets/Cookies chocolat & fleur de sel.webp"
+import carrotCakeBreadImg from "../../assets/Carrot Cake Bread1.webp"
+import saladeDeFruitsAnanasImg from "../../assets/Salade de fruits ananas.webp"
+import saumonGrilleSalsaTomateAvocatImg from "../../assets/Saumon grille, salsa tomate-avocat.webp"
+import saladeBurrataJambonSecImg from "../../assets/Salade burrata, jambon sec, tomates cerises & basilic.webp"
+import patesPestoPouletParmesanImg from "../../assets/Pates pesto, poulet, parmesan & tomates cerises.webp"
+import houmousMaisonUltraCremeuxImg from "../../assets/Houmous maison ultra cremeux.webp"
+import saladePastequeFetaImg from "../../assets/Salade pasteque & feta.webp"
+import saladeGrecqueImg from "../../assets/Salade grecque.webp"
+import wrapPouletCroquantImg from "../../assets/Wrap poulet croquant.webp"
+import smoothieFraiseBananeWheyImg from "../../assets/Smoothie fraise, banane, eau de coco & whey vanille.webp"
+import boissonDetoxPommeCeleriCitronImg from "../../assets/Boisson detox pomme, celeri & citron-png.webp"
+import boissonDetoxOrangeCarotteGingembreImg from "../../assets/Boisson detox orange, carotte & gingembre.webp"
+import eauDetoxConcombreCitronVertImg from "../../assets/Eau detox concombre, citron, citron vert.webp"
+import cafeLatteVanilleImg from "../../assets/Cafe latte a la vanille.webp"
+import matchaLatteCremeuxImg from "../../assets/Matcha latte cremeux.webp"
+import mokaChocolatCafeImg from "../../assets/Moka chocolat & cafe.webp"
+import smoothieSainAvocatBananeAmandesImg from "../../assets/Smoothie sain avocat, banane & amandes.webp"
+import boissonSaineEpinardPommeConcombreImg from "../../assets/Boisson saine epinard, pomme & concombre.webp"
+import eauInfuseePamplemousseRomarinImg from "../../assets/Eau infusee pamplemousse & romarin.webp"
+import eauInfuseeMyrtillesOrangeMentheImg from "../../assets/Eau infusee myrtilles, orange & menthe.webp"
+import eauInfuseeFraiseCitronJauneMentheImg from "../../assets/Eau infusee fraise, citron jaune & menthe.webp"
+import boissonAvoineCacahueteLaitAmandeImg from "../../assets/Boisson avoine, beurre de cacahuete & lait d'amande.webp"
+import jusSainBetteraveCeleriPommeImg from "../../assets/Jus sain betterave, celeri & pomme.webp"
+import smoothieBananeBeurreCacahueteImg from "../../assets/Smoothie banane beurre de cacahuete.webp"
+import focacciaBurrataMortadelleRoquetteImg from "../../assets/Focaccia garnie burrata, mortadelle & roquette.webp"
+import tzatzikiImg from "../../assets/Tzatziki.webp"
+import vinaigretteMielMoutardeBalsamiqueImg from "../../assets/Vinaigrette miel, moutarde & balsamique.webp"
+import sauceTahiniCremeuseImg from "../../assets/Sauce tahini cremeuse.webp"
+import caviarAubergineImg from "../../assets/Caviar d'aubergine.webp"
+import saucePestoMaisonImg from "../../assets/Sauce pesto maison.webp"
+import guacamoleMaisonImg from "../../assets/Guacamole maison.webp"
+import sauceViergeImg from "../../assets/Sauce vierge.webp"
+import chimichurriLegerementSucreImg from "../../assets/Chimichurri legerement sucre.webp"
+import saucePoivreImg from "../../assets/Sauce au poivre.webp"
+import tapenadeImg from "../../assets/Tapenade.webp"
+import sauceTeriyakiImg from "../../assets/Sauce teriyaki.webp"
+import huilePimenteeImg from "../../assets/Huile pimentee.webp"
+import oignonsConfitsImg from "../../assets/Oignons confits.webp"
+import ailConfitImg from "../../assets/Ail confit.webp"
+import sauceAuberginesPoivronsGrillesImg from "../../assets/Sauce aux aubergines & poivrons grilles.webp"
+import picklesOignonsImg from "../../assets/Pickles d'oignons.webp"
+import sauceAsiatiqueCacahuetesImg from "../../assets/Sauce asiatique aux cacahuetes.webp"
+import citronsConfitsImg from "../../assets/Citrons confits.webp"
+import sauceBlancheHerbesImg from "../../assets/Sauce blanche aux herbes.webp"
+import picklesConcombreImg from "../../assets/Pickles de concombre.webp"
+import picklesCarottesImg from "../../assets/Pickles de carottes.webp"
+import picklesChouFleurImg from "../../assets/Pickles de chou-fleur.webp"
+import chutneyMangueImg from "../../assets/Chutney de mangue.webp"
+import thonCuitIngredientImg from "../../assets/Aliments/Thon cuit.webp"
+import rizIngredientImg from "../../assets/Aliments/Riz.webp"
+import avocatIngredientImg from "../../assets/Aliments/Avocat.webp"
+import concombreIngredientImg from "../../assets/Aliments/Concombre.webp"
+import tomateIngredientImg from "../../assets/Aliments/Tomate.webp"
+import grainesSesameIngredientImg from "../../assets/Aliments/Graines de sesame.webp"
+import huileOliveIngredientImg from "../../assets/Aliments/Huile d'olive.webp"
+import vinaigreBalsamiqueIngredientImg from "../../assets/Aliments/Vinaigre balsamique.webp"
+import vinaigreCidreIngredientImg from "../../assets/Aliments/Vinaigre de cidre.webp"
+import vinaigreRizIngredientImg from "../../assets/Aliments/Vinaigre de riz.webp"
+import selIngredientImg from "../../assets/Aliments/Sel.webp"
+import poivreIngredientImg from "../../assets/Aliments/Poivre.webp"
+import pommeIngredientImg from "../../assets/Aliments/Pomme.webp"
+import moutardeIngredientImg from "../../assets/Aliments/Moutarde.webp"
+import mielIngredientImg from "../../assets/Aliments/Miel.webp"
+import oeufIngredientImg from "../../assets/Aliments/Oeuf.webp"
+import tomatesCerisesIngredientImg from "../../assets/Aliments/Tomates cerises.webp"
+import olivesNoiresIngredientImg from "../../assets/Aliments/Olives noires.webp"
+import olivesVertesIngredientImg from "../../assets/Aliments/Olives vertes.webp"
+import capresIngredientImg from "../../assets/Aliments/Capres.webp"
+import anchoisIngredientImg from "../../assets/Aliments/Anchois.webp"
+import burrataIngredientImg from "../../assets/Aliments/Burrata.webp"
+import fetaIngredientImg from "../../assets/Aliments/Feta.webp"
+import basilicIngredientImg from "../../assets/Aliments/Basilic.webp"
+import cibouletteIngredientImg from "../../assets/Aliments/Ciboulette.webp"
+import origanIngredientImg from "../../assets/Aliments/Origan.webp"
+import feuilleLaurierIngredientImg from "../../assets/Aliments/Feuille de laurier.webp"
+import pignonsPinIngredientImg from "../../assets/Aliments/Pignons de pin.webp"
+import painIngredientImg from "../../assets/Aliments/Pain.webp"
+import oignonRougeIngredientImg from "../../assets/Aliments/Oignon rouge.webp"
+import oignonJauneIngredientImg from "../../assets/Aliments/Oignon jaune.webp"
+import echalotteIngredientImg from "../../assets/Aliments/Echalotte.webp"
+import orangeIngredientImg from "../../assets/Aliments/Orange.webp"
+import pamplemousseIngredientImg from "../../assets/Aliments/Pamplemousse.webp"
+import matchaIngredientImg from "../../assets/Aliments/Matcha.webp"
+import jambonSecIngredientImg from "../../assets/Aliments/Jambon sec.webp"
+import saumonFumeIngredientImg from "../../assets/Aliments/Saumon fume.webp"
+import anethIngredientImg from "../../assets/Aliments/Aneth.webp"
+import bagelIngredientImg from "../../assets/Aliments/Bagel.webp"
+import creamCheeseIngredientImg from "../../assets/Aliments/Cream cheese.webp"
+import pastequeIngredientImg from "../../assets/Aliments/Pasteque.webp"
+import mentheIngredientImg from "../../assets/Aliments/Menthe.webp"
+import brancheRomarinIngredientImg from "../../assets/Aliments/Branche de Romarin.webp"
+import ailIngredientImg from "../../assets/Aliments/Ail.webp"
+import epinardIngredientImg from "../../assets/Aliments/Epinard.webp"
+import saumonIngredientImg from "../../assets/Aliments/Saumon.webp"
+import citronIngredientImg from "../../assets/Aliments/Citron.webp"
+import citronVertIngredientImg from "../../assets/Aliments/Citron vert.webp"
+import beurreIngredientImg from "../../assets/Aliments/Beurre.webp"
+import aspergesIngredientImg from "../../assets/Aliments/Asperges.webp"
+import eauIngredientImg from "../../assets/Aliments/Eau.webp"
+import eauCocoIngredientImg from "../../assets/Aliments/Eau de coco.webp"
+import cognacIngredientImg from "../../assets/Aliments/Cognac.webp"
+import tahiniIngredientImg from "../../assets/Aliments/Tahini.webp"
+import expressoIngredientImg from "../../assets/Aliments/Expresso.webp"
+import glaconsIngredientImg from "../../assets/Aliments/Glaçons.webp"
+import laitueIngredientImg from "../../assets/Aliments/Laitue.webp"
+import melangeSaladeIngredientImg from "../../assets/Aliments/Melange de salade.webp"
+import pouletIngredientImg from "../../assets/Aliments/Poulet.webp"
+import parmesanIngredientImg from "../../assets/Aliments/Parmesan.webp"
+import yaourtGrecIngredientImg from "../../assets/Aliments/Yaourt grecque.webp"
+import croutonsIngredientImg from "../../assets/Aliments/Croutons.webp"
+import cubeBouillonIngredientImg from "../../assets/Aliments/Cube bouillon de legume.webp"
+import brocolisIngredientImg from "../../assets/Aliments/Brocolis.webp"
+import aubergineIngredientImg from "../../assets/Aliments/Aubergine.webp"
+import chouFleurIngredientImg from "../../assets/Aliments/Chou-fleur.webp"
+import paprikaIngredientImg from "../../assets/Aliments/Paprika.webp"
+import poivronRougeIngredientImg from "../../assets/Aliments/Poivron rouge.webp"
+import cuminIngredientImg from "../../assets/Aliments/Cumin.webp"
+import coriandreIngredientImg from "../../assets/Aliments/Coriandre.webp"
+import boulgourIngredientImg from "../../assets/Aliments/Boulgour.webp"
+import concentreTomateIngredientImg from "../../assets/Aliments/Concentre de tomate.webp"
+import edamameIngredientImg from "../../assets/Aliments/Edamame.webp"
+import haricotsRougesIngredientImg from "../../assets/Aliments/Haricots rouges.webp"
+import floconsPimentIngredientImg from "../../assets/Aliments/Flocons de piment.webp"
+import persilIngredientImg from "../../assets/Aliments/Persil.webp"
+import pestoIngredientImg from "../../assets/Aliments/Pesto.webp"
+import poudreOignonIngredientImg from "../../assets/Aliments/Poudre d'oignon.webp"
+import tagliatellesIngredientImg from "../../assets/Aliments/Tagliatelles.webp"
+import wrapIngredientImg from "../../assets/Aliments/Wrap.webp"
+import foccaciaIngredientImg from "../../assets/Aliments/Foccacia.webp"
+import farineIngredientImg from "../../assets/Aliments/Farine.webp"
+import floconsAvoineIngredientImg from "../../assets/Aliments/Flocons d'avoine.webp"
+import laitIngredientImg from "../../assets/Aliments/Lait.webp"
+import laitVegetalIngredientImg from "../../assets/Aliments/Lait vegetal.webp"
+import aromeVanilleIngredientImg from "../../assets/Aliments/Arome vanille.webp"
+import levureChimiqueIngredientImg from "../../assets/Aliments/Levure chimique.webp"
+import bicarbonateSoudeIngredientImg from "../../assets/Aliments/Bicarbonate de soude.webp"
+import wheyIngredientImg from "../../assets/Aliments/Whey.webp"
+import sucreBlancIngredientImg from "../../assets/Aliments/Sucre blanc.webp"
+import sucreRouxIngredientImg from "../../assets/Aliments/Sucre roux.webp"
+import sucreGlaceIngredientImg from "../../assets/Aliments/Sucre glace.webp"
+import chocolatNoirIngredientImg from "../../assets/Aliments/Chocolat noir.webp"
+import chocolatPoudreIngredientImg from "../../assets/Aliments/Chocolat en poudre.webp"
+import framboisesIngredientImg from "../../assets/Aliments/Framboises.webp"
+import fruitsRougesIngredientImg from "../../assets/Aliments/Fruits rouges.webp"
+import huileCocoIngredientImg from "../../assets/Aliments/Huile de coco.webp"
+import dattesIngredientImg from "../../assets/Aliments/Dattes.webp"
+import raisinsSecsIngredientImg from "../../assets/Aliments/Raisins secs.webp"
+import beurreCacahueteIngredientImg from "../../assets/Aliments/Beurre de cacahuete.webp"
+import noixIngredientImg from "../../assets/Aliments/Noix.webp"
+import amandesIngredientImg from "../../assets/Aliments/Amandes.webp"
+import noixPecanIngredientImg from "../../assets/Aliments/Noix de pecan.webp"
+import ananasIngredientImg from "../../assets/Aliments/Ananas.webp"
+import biscuitsSpeculosIngredientImg from "../../assets/Aliments/Biscuits speculos.webp"
+import pateTartinerBiscoffIngredientImg from "../../assets/Aliments/Pate a tartiner biscoff.webp"
+import siropChocolatIngredientImg from "../../assets/Aliments/Sirop de chocolat.webp"
+import bananeIngredientImg from "../../assets/Aliments/Banane.webp"
+import fraisesIngredientImg from "../../assets/Aliments/Fraises.webp"
+import myrtillesIngredientImg from "../../assets/Aliments/Myrtilles.webp"
+import granolaIngredientImg from "../../assets/Aliments/Granola.webp"
+import grainesChiaIngredientImg from "../../assets/Aliments/Graines de chia.webp"
+import copeauxNoixCocoIngredientImg from "../../assets/Aliments/Copeaux de noix de coco.webp"
+import carottesIngredientImg from "../../assets/Aliments/Carottes.webp"
+import betteraveIngredientImg from "../../assets/Aliments/Betterave.webp"
+import cannelleIngredientImg from "../../assets/Aliments/Cannelle.webp"
+import noixMuscadeIngredientImg from "../../assets/Aliments/Noix de muscade.webp"
+import lardonsIngredientImg from "../../assets/Aliments/Lardons.webp"
+import mortadelleIngredientImg from "../../assets/Aliments/Mortadelle.webp"
+import roquetteIngredientImg from "../../assets/Aliments/Roquette.webp"
+import pistachesIngredientImg from "../../assets/Aliments/Pistaches.webp"
+import ailPoudreIngredientImg from "../../assets/Aliments/Ail en poudre.webp"
+import comteRapeIngredientImg from "../../assets/Aliments/Comté râpé.webp"
+import celeriIngredientImg from "../../assets/Aliments/Céléri.webp"
+import haricotsVertsIngredientImg from "../../assets/Aliments/Haricots verts.webp"
+import herbesProvenceIngredientImg from "../../assets/Aliments/Herbes de provence.webp"
+import thymIngredientImg from "../../assets/Aliments/Thym.webp"
+import mangueIngredientImg from "../../assets/Aliments/Mangue.webp"
+import fruitPassionIngredientImg from "../../assets/Aliments/Fruit de la passion.webp"
+import steakIngredientImg from "../../assets/Aliments/Steak.webp"
+import quinoaIngredientImg from "../../assets/Aliments/Quinoa.webp"
+import poisChicheIngredientImg from "../../assets/Aliments/pois chiche.webp"
+import mayonnaiseIngredientImg from "../../assets/Aliments/Mayonnaise.webp"
+import srirachaIngredientImg from "../../assets/Aliments/Sriracha.webp"
+import feuilleNoriIngredientImg from "../../assets/Aliments/Feuille de nori.webp"
+import sauceSojaIngredientImg from "../../assets/Aliments/Sauce soja.webp"
+import mirinIngredientImg from "../../assets/Aliments/Mirin.webp"
+import huileSesameIngredientImg from "../../assets/Aliments/Huile de sesame.webp"
+import gingembrePoudreIngredientImg from "../../assets/Aliments/Gingembre en poudre.webp"
+import gingembreIngredientImg from "../../assets/Aliments/Gingembre.webp"
+import laitCocoIngredientImg from "../../assets/Aliments/Lait de coco.webp"
+import curryIngredientImg from "../../assets/Aliments/Curry.webp"
+import garamMassalaIngredientImg from "../../assets/Aliments/Garam massala.webp"
+import curcumaIngredientImg from "../../assets/Aliments/Curcuma.webp"
+import coriandreFraicheIngredientImg from "../../assets/Aliments/Coriandre fraiche.webp"
 import "./DietPage.css"
 
 export type Recipe = {
@@ -5459,7 +5461,6 @@ const PLAN_DAY_PLACEHOLDER = "Sélectionner un jour"
 const PLAN_SLOT_PLACEHOLDER = "Sélectionner un moment"
 type WeeklyPlan = Record<typeof dietWeekDays[number], Record<MealSlotId, string>>
 type DietTab = "sweet" | "savory" | "drinks" | "condiments" | "favorites" | "custom"
-const DIET_TAB_STORAGE_KEY = "dietPageActiveTab"
 const DIET_TABS: DietTab[] = ["sweet", "savory", "drinks", "condiments", "favorites", "custom"]
 type DietNavigationState = {
   openRecipeId?: string
@@ -5536,7 +5537,6 @@ const DietClassicPage = () => {
   const [isEditFlavorMenuOpen, setIsEditFlavorMenuOpen] = useState(false)
   const [isPlanDayMenuOpen, setIsPlanDayMenuOpen] = useState(false)
   const [isPlanSlotMenuOpen, setIsPlanSlotMenuOpen] = useState(false)
-  const draftImageInputRef = useRef<HTMLInputElement | null>(null)
   const editImageInputRef = useRef<HTMLInputElement | null>(null)
   const flavorMenuRef = useRef<HTMLDivElement | null>(null)
   const editFlavorMenuRef = useRef<HTMLDivElement | null>(null)
@@ -5643,10 +5643,6 @@ const DietClassicPage = () => {
 
     return matchingRecipes
   }, [customRecipes, favoriteRecipes, filteredRecipes, recipeSearch, recipeSort, tab])
-
-  useEffect(() => {
-    window.localStorage.setItem(DIET_TAB_STORAGE_KEY, tab)
-  }, [tab])
 
   useEffect(() => {
     if (!selectedRecipe) return
@@ -6281,43 +6277,31 @@ const DietClassicPage = () => {
       </div>
 
         {isCreateOpen ? (
-          <div className="diet-recipe-modal" role="dialog" aria-label="Créer une recette">
+          <div className="diet-recipe-modal diet-recipe-modal--create" role="dialog" aria-labelledby="diet-create-recipe-title">
             <div className="diet-recipe-modal__backdrop" onClick={() => setIsCreateOpen(false)} />
-            <div className="diet-recipe-modal__panel">
-              {draftImage ? (
-                <div className="diet-recipe-modal__cover">
-                  <MediaImage
-                    src={draftImage}
-                    alt="Aperçu recette"
-                    className="diet-recipe-modal__image"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  <button
-                    type="button"
-                    className="diet-recipe-close-icon diet-recipe-close-icon--cover"
-                    onClick={() => setIsCreateOpen(false)}
-                    aria-label="Fermer"
-                  >
-                    <span aria-hidden="true" />
-                  </button>
-                </div>
-              ) : null}
+            <div className="diet-recipe-modal__panel diet-recipe-modal__panel--create">
+              <button
+                type="button"
+                className="diet-recipe-modal__close"
+                onClick={() => setIsCreateOpen(false)}
+                aria-label="Fermer"
+              >
+                ×
+              </button>
               <div className="diet-recipe-modal__content">
                 <header className="diet-recipe-modal__header">
-                  <div>
-                    <h3>Créer une recette</h3>
-                  </div>
+                  <h2 id="diet-create-recipe-title">Créer une recette</h2>
+                  <p>Ajoute ta recette et rassemble toutes les informations utiles au même endroit.</p>
                 </header>
                 <div className="diet-recipe-modal__body">
                   <div className="diet-recipe-form">
                     <label>
-                      Titre
+                      <p className="editorial-field-label">Titre</p>
                       <input type="text" value={draftTitle} onChange={(event) => setDraftTitle(event.target.value)} />
                     </label>
                     <div className="diet-recipe-form__row">
                       <label>
-                        Type
+                        <p className="editorial-field-label">Type</p>
                         <div className="workout-form__select" ref={flavorMenuRef}>
                           <button
                             type="button"
@@ -6370,61 +6354,51 @@ const DietClassicPage = () => {
                         </div>
                       </label>
                       <label>
-                        Préparation
+                        <p className="editorial-field-label">Préparation</p>
                         <input type="text" value={draftPrepTime} onChange={(event) => setDraftPrepTime(event.target.value)} placeholder="Ex : 20 min" />
                       </label>
                       <label>
-                        Portions
+                        <p className="editorial-field-label">Portions</p>
                         <input type="text" value={draftServings} onChange={(event) => setDraftServings(event.target.value)} placeholder="Ex : 2 pers" />
                       </label>
                     </div>
-                    <label className="diet-recipe-form__file">
-                      Image
-                      <input
-                        ref={draftImageInputRef}
-                        type="file"
-                        accept="image/*"
-                        className="diet-recipe-form__file-input"
-                        onChange={(event) => {
-                          handleDraftImageChange(event.target.files?.[0])
-                          event.target.value = ""
-                        }}
-                      />
-                      <button
-                        type="button"
-                        className="diet-recipe-form__file-button"
-                        onClick={() => draftImageInputRef.current?.click()}
-                      >
-                        Choisir une image
-                      </button>
-                    </label>
                     <label>
-                      Ingrédients (1 par ligne)
+                      <p className="editorial-field-label">Ingrédients (1 par ligne)</p>
                       <textarea value={draftIngredients} onChange={(event) => setDraftIngredients(event.target.value)} rows={5} />
                     </label>
                     <label>
-                      Étapes (1 par ligne)
+                      <p className="editorial-field-label">Étapes (1 par ligne)</p>
                       <textarea value={draftSteps} onChange={(event) => setDraftSteps(event.target.value)} rows={6} />
                     </label>
-                    <label>
-                      Toppings (optionnel)
-                      <textarea value={draftToppings} onChange={(event) => setDraftToppings(event.target.value)} rows={3} />
-                    </label>
-                    <label>
-                      Astuces (optionnel)
-                      <textarea value={draftTips} onChange={(event) => setDraftTips(event.target.value)} rows={3} />
-                    </label>
+                    <div className="diet-recipe-create__side">
+                      <div className="diet-recipe-create__cover-field">
+                        <p className="editorial-field-label">Image</p>
+                        <ImageUploadPanel
+                          previewSrc={draftImage}
+                          previewAlt="Aperçu de la recette"
+                          onFileSelect={(file) => handleDraftImageChange(file ?? undefined)}
+                        />
+                      </div>
+                      <label>
+                        <p className="editorial-field-label">Toppings (optionnel)</p>
+                        <textarea value={draftToppings} onChange={(event) => setDraftToppings(event.target.value)} rows={3} />
+                      </label>
+                      <label>
+                        <p className="editorial-field-label">Astuces (optionnel)</p>
+                        <textarea value={draftTips} onChange={(event) => setDraftTips(event.target.value)} rows={3} />
+                      </label>
+                      <footer className="diet-recipe-modal__actions">
+                        <button type="button" onClick={() => setIsCreateOpen(false)}>
+                          Annuler
+                        </button>
+                        <button type="button" onClick={() => void handleCreateRecipe()} disabled={!canEdit}>
+                          Enregistrer
+                        </button>
+                      </footer>
+                    </div>
                   </div>
                 </div>
               </div>
-              <footer className="diet-recipe-modal__actions">
-                <button type="button" onClick={() => setIsCreateOpen(false)}>
-                  Annuler
-                </button>
-                <button type="button" onClick={() => void handleCreateRecipe()} disabled={!canEdit}>
-                  Enregistrer
-                </button>
-              </footer>
             </div>
           </div>
         ) : null}
@@ -6443,22 +6417,17 @@ const DietClassicPage = () => {
                 <div className="diet-recipe-modal__cover">
                   <MediaImage
                     src={editImage}
-                    alt="Aperçu recette"
+                    alt="Aperçu de la recette"
                     className="diet-recipe-modal__image"
                     loading="lazy"
                     decoding="async"
                   />
-                  <button
-                    type="button"
-                    className="diet-recipe-close-icon diet-recipe-close-icon--cover"
+                  <ModalCloseButton
                     onClick={() => {
                       setIsEditOpen(false)
                       resetEdit()
                     }}
-                    aria-label="Fermer"
-                  >
-                    <span aria-hidden="true" />
-                  </button>
+                  />
                 </div>
               ) : null}
               <div className="diet-recipe-modal__content">
@@ -6603,14 +6572,7 @@ const DietClassicPage = () => {
             <div className="diet-recipe-modal__panel">
               <div className="diet-recipe-modal__cover">
                 <MediaImage src={selectedRecipe.image} alt={selectedRecipe.title} className="diet-recipe-modal__image" loading="lazy" decoding="async" />
-                <button
-                  type="button"
-                  className="diet-recipe-close-icon diet-recipe-close-icon--cover"
-                  onClick={() => setSelectedRecipe(null)}
-                  aria-label="Fermer"
-                >
-                  <span aria-hidden="true" />
-                </button>
+                <ModalCloseButton onClick={() => setSelectedRecipe(null)} />
               </div>
               <div className="diet-recipe-modal__content">
                 <header className="diet-recipe-modal__header">

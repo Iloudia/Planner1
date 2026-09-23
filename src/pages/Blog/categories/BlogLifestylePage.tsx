@@ -1,5 +1,5 @@
 import lifestyleImage from "../../../assets/l-b-dupe.webp"
-import cosyImage from "../../../assets/Photo bienvenue.jpeg"
+import cosyImage from "../../../assets/Photo bienvenue.webp"
 import BlogCategoryTemplate from "./BlogCategoryTemplate"
 
 const BlogLifestylePage = () => (
@@ -7,7 +7,7 @@ const BlogLifestylePage = () => (
     category="Lifestyle"
     slug="lifestyle"
     headerImage={lifestyleImage}
-    headerImageAlt="Inspiration pour un art de vivre doux et équilibré"
+    headerImageAlt="Livre ouvert et tasse de thé sur un lit"
     headlineEyebrow="L’art du quotidien"
     introEyebrow="Vivre avec intention"
     introTitle="Créer un quotidien qui te ressemble"

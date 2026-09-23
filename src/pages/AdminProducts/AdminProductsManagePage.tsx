@@ -333,7 +333,7 @@ const AdminProductsManagePage = () => {
                       className="admin-products-preview"
                       onClick={() => handleImageBrowse(index)}
                     >
-                      <img src={item.url} alt={item.name || `Photo ${index + 1}`} />
+                      <img src={item.url} alt={item.name || `Visuel du produit ${index + 1}`} />
                       {index === 0 ? <span className="admin-products-edit__slot-label">Couverture</span> : null}
                       <button
                         type="button"

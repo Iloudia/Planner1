@@ -865,8 +865,8 @@ const WorkoutPage = () => {
             <div className="workout-modal__body">
               <header className="workout-modal__header">
                 <div>
-                  <p className="workout-modal__eyebrow">Ajoute tes exercices pour cette session.</p>
-                  <h3 id="workout-modal-title">{selectedExercise.title}</h3>
+                  <h2 id="workout-modal-title">{selectedExercise.title}</h2>
+                  <p className="workout-modal__subtitle">Ajoute tes exercices pour cette session.</p>
                 </div>
               </header>
               <div className="workout-modal__content">
@@ -892,11 +892,11 @@ const WorkoutPage = () => {
                     placeholder="Ex : Charge (kg)"
                     className="workout-modal__series-weight-input"
                   />
-                  <button type="submit">Ajouter une série</button>
+                  <button type="submit" className="finance-transaction-form__submit">Ajouter une série</button>
                 </form>
                 <div className="workout-modal__note">
                   <label>
-                    <span>Notes de séance</span>
+                    <p className="editorial-field-label">Notes de séance</p>
                     <textarea
                       rows={3}
                       value={noteDraft}

@@ -2,6 +2,7 @@
 import { Link } from "react-router-dom"
 import PageHeading from "../../components/PageHeading"
 import PageLoader from "../../components/PageLoader"
+import ModalCloseButton from "../../components/ModalCloseButton"
 import { useAuth } from "../../context/AuthContext"
 import useUserJournalEntries from "../../hooks/useUserJournalEntries"
 import useUserSelfLove from "../../hooks/useUserSelfLove"
@@ -946,11 +947,7 @@ const ArchivesPage = ({ section }: ArchivesPageProps) => {
                   <h3>{formatArchiveDate(selectedEntry.dateKey)}</h3>
                 </div>
               )}
-              <button type="button" className="modal__close" aria-label="Fermer" onClick={() => setSelectedEntry(null)}>
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                </svg>
-              </button>
+              <ModalCloseButton onClick={() => setSelectedEntry(null)} />
             </header>
             <div className={`archives-modal__body${selectedLetter ? " archives-modal__body--letter" : ""}`}>
               {selectedLetter ? (
@@ -997,8 +994,8 @@ const ArchivesPage = ({ section }: ArchivesPageProps) => {
                     </div>
                     <div className="self-love-future-letter__footer">
                       <div className="self-love-future-letter__stamp">
-                        <img src={stampLove} alt="Timbre souvenir" loading="lazy" decoding="async" />
-                        <img src={stampKey} alt="Timbre secret" loading="lazy" decoding="async" />
+                        <img src={stampLove} alt="" loading="lazy" decoding="async" />
+                        <img src={stampKey} alt="" loading="lazy" decoding="async" />
                       </div>
                       <div>
                         <span className="self-love-letter__date">{selectedLetterDate}</span>
@@ -1025,10 +1022,10 @@ const ArchivesPage = ({ section }: ArchivesPageProps) => {
                       </div>
                       <div className="self-love-letter__stamps" aria-hidden="true">
                         <div className="self-love-letter__stamp self-love-letter__stamp--love">
-                          <img src={stampLove} alt="Timbre d'amour" loading="lazy" decoding="async" />
+                          <img src={stampLove} alt="" loading="lazy" decoding="async" />
                         </div>
                         <div className="self-love-letter__stamp self-love-letter__stamp--key">
-                          <img src={stampKey} alt="Timbre secret" loading="lazy" decoding="async" />
+                          <img src={stampKey} alt="" loading="lazy" decoding="async" />
                         </div>
                       </div>
                     </div>
@@ -1152,8 +1149,8 @@ const ArchivesPage = ({ section }: ArchivesPageProps) => {
                       </div>
                       <div className="self-love-future-letter__footer">
                         <div className="self-love-future-letter__stamp">
-                          <img src={stampLove} alt="Timbre souvenir" loading="lazy" decoding="async" />
-                          <img src={stampKey} alt="Timbre secret" loading="lazy" decoding="async" />
+                          <img src={stampLove} alt="" loading="lazy" decoding="async" />
+                          <img src={stampKey} alt="" loading="lazy" decoding="async" />
                         </div>
                       </div>
                     </div>

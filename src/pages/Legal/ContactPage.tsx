@@ -7,6 +7,7 @@ const ContactPage = () => {
   const [isContactLoading, setIsContactLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitState, setSubmitState] = useState<{ type: "success" | "error"; message: string } | null>(null)
+  const [antiSpamToken, setAntiSpamToken] = useState("")
 
   useEffect(() => {
     document.body.classList.add("legal-page--lux")
@@ -24,6 +25,27 @@ const ContactPage = () => {
     }
   }, [])
 
+  useEffect(() => {
+    let isCancelled = false
+    const loadAntiSpamChallenge = async () => {
+      try {
+        const response = await fetchApi("/api/anti-spam/challenge?purpose=contact")
+        const result = (await response.json().catch(() => null)) as { token?: string } | null
+        if (!isCancelled && response.ok && result?.token) {
+          setAntiSpamToken(result.token)
+        }
+      } catch {
+        if (!isCancelled) {
+          setAntiSpamToken("")
+        }
+      }
+    }
+    void loadAntiSpamChallenge()
+    return () => {
+      isCancelled = true
+    }
+  }, [])
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setIsSubmitting(true)
@@ -38,6 +60,7 @@ const ContactPage = () => {
       subject: String(formData.get("subject") || ""),
       message: String(formData.get("message") || ""),
       website: String(formData.get("website") || ""),
+      antiSpamToken,
     }
 
     try {
@@ -89,19 +112,19 @@ const ContactPage = () => {
           <h2 className="contact-form__title">Envoie-moi un message</h2>
           <form className="contact-form__body" onSubmit={handleSubmit}>
             <label>
-              <span>Prénom</span>
+              <p className="editorial-field-label">Prénom</p>
               <input type="text" name="firstName" placeholder="Ex. Sofia" required disabled={isSubmitting} />
             </label>
             <label>
-              <span>Nom</span>
+              <p className="editorial-field-label">Nom</p>
               <input type="text" name="lastName" placeholder="Ex. Martin" required disabled={isSubmitting} />
             </label>
             <label className="contact-form__field--full">
-              <span>Email</span>
+              <p className="editorial-field-label">Email</p>
               <input type="email" name="email" placeholder="toi@exemple.com" required disabled={isSubmitting} />
             </label>
             <label className="contact-form__field--full">
-              <span>Sujet</span>
+              <p className="editorial-field-label">Sujet</p>
               <input
                 type="text"
                 name="subject"
@@ -111,7 +134,7 @@ const ContactPage = () => {
               />
             </label>
             <label className="contact-form__field--full">
-              <span>Message</span>
+              <p className="editorial-field-label">Message</p>
               <textarea
                 name="message"
                 placeholder="Écris ton message ici..."
@@ -138,21 +161,21 @@ const ContactPage = () => {
           <h2>Informations</h2>
           <section className="contact-info__section">
             <h3>Me contacter</h3>
-            <a href="mailto:contact@meandrituals.com">contact@meandrituals.com</a>
+            <a className="contact-info__text" href="mailto:contact@meandrituals.com">contact@meandrituals.com</a>
           </section>
           <section className="contact-info__section">
             <h3>Collaborations</h3>
-            <a href="mailto:contact@meandrituals.com">contact@meandrituals.com</a>
+            <a className="contact-info__text" href="mailto:contact@meandrituals.com">contact@meandrituals.com</a>
           </section>
           <section className="contact-info__section">
             <h3>Réseaux</h3>
-            <a href="https://www.instagram.com/meandrituals?igsh=YmdwbmRmbTB1cW4w&utm_source=qr" target="_blank" rel="noreferrer noopener">
+            <a className="contact-info__text" href="https://www.instagram.com/meandrituals?igsh=YmdwbmRmbTB1cW4w&utm_source=qr" target="_blank" rel="noreferrer noopener">
               Instagram
             </a>
           </section>
           <section className="contact-info__section">
             <h3>Temps de réponse</h3>
-            <p>Je réponds généralement sous 24 à 48h.</p>
+            <p className="contact-info__text">Je réponds généralement sous 24 à 48h.</p>
           </section>
         </aside>
       </div>

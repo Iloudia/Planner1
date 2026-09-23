@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react"
 import { useAuth } from "../../context/AuthContext"
+import { useCookieConsent } from "../../context/CookieConsentContext"
 import { buildUserScopedKey } from "../../utils/userScopedKey"
 
 const DISPLAY_STORAGE_KEY = "planner.display.preferences"
@@ -9,6 +10,11 @@ type BackgroundTone = "light" | "dark"
 type DisplayPreferences = {
   fontScale: number
   backgroundTone: BackgroundTone
+}
+
+const DEFAULT_DISPLAY_PREFERENCES: DisplayPreferences = {
+  fontScale: 1,
+  backgroundTone: "light",
 }
 
 const FONT_SCALE_OPTIONS = [
@@ -26,33 +32,46 @@ const BACKGROUND_OPTIONS: { id: BackgroundTone; label: string; description: stri
 
 const SettingsDisplay = () => {
   const { userEmail } = useAuth()
+  const { preferences: cookiePreferences, openPreferences } = useCookieConsent()
   const storageKey = useMemo(() => buildUserScopedKey(userEmail, DISPLAY_STORAGE_KEY), [userEmail])
-  const [preferences, setPreferences] = useState<DisplayPreferences>(() => ({
-    fontScale: 1,
-    backgroundTone: "light",
-  }))
+  const [preferences, setPreferences] = useState<DisplayPreferences>(DEFAULT_DISPLAY_PREFERENCES)
+  const [loadedStorageKey, setLoadedStorageKey] = useState("")
 
   useEffect(() => {
     try {
+      if (!cookiePreferences.preferences) {
+        localStorage.removeItem(storageKey)
+        setPreferences(DEFAULT_DISPLAY_PREFERENCES)
+        setLoadedStorageKey("")
+        return
+      }
       const saved = localStorage.getItem(storageKey)
-      if (!saved) return
-      const parsed = JSON.parse(saved) as Partial<DisplayPreferences>
-      setPreferences((prev) => ({
-        fontScale: typeof parsed.fontScale === "number" ? parsed.fontScale : prev.fontScale,
-        backgroundTone: parsed.backgroundTone === "dark" ? "dark" : prev.backgroundTone,
-      }))
+      if (saved) {
+        const parsed = JSON.parse(saved) as Partial<DisplayPreferences>
+        setPreferences({
+          fontScale: typeof parsed.fontScale === "number" ? parsed.fontScale : DEFAULT_DISPLAY_PREFERENCES.fontScale,
+          backgroundTone: parsed.backgroundTone === "dark" ? "dark" : DEFAULT_DISPLAY_PREFERENCES.backgroundTone,
+        })
+      } else {
+        setPreferences(DEFAULT_DISPLAY_PREFERENCES)
+      }
+      setLoadedStorageKey(storageKey)
     } catch {
-      // ignore malformed storage
+      setPreferences(DEFAULT_DISPLAY_PREFERENCES)
+      setLoadedStorageKey(storageKey)
     }
-  }, [storageKey])
+  }, [cookiePreferences.preferences, storageKey])
 
   useEffect(() => {
     try {
+      if (!cookiePreferences.preferences || loadedStorageKey !== storageKey) {
+        return
+      }
       localStorage.setItem(storageKey, JSON.stringify(preferences))
     } catch {
       // ignore quota errors
     }
-  }, [preferences, storageKey])
+  }, [cookiePreferences.preferences, loadedStorageKey, preferences, storageKey])
 
   useEffect(() => {
     document.documentElement.style.setProperty("--user-font-scale", preferences.fontScale.toString())
@@ -63,6 +82,14 @@ const SettingsDisplay = () => {
     const option = FONT_SCALE_OPTIONS.find((choice) => choice.value === preferences.fontScale)
     return option?.label ?? "M"
   }, [preferences.fontScale])
+
+  const updatePreferences = (next: DisplayPreferences) => {
+    if (!cookiePreferences.preferences) {
+      openPreferences()
+      return
+    }
+    setPreferences(next)
+  }
 
   return (
     <div className="settings-section">
@@ -83,7 +110,7 @@ const SettingsDisplay = () => {
               key={option.id}
               type="button"
               className={preferences.fontScale === option.value ? "font-scale-option is-active" : "font-scale-option"}
-              onClick={() => setPreferences((prev) => ({ ...prev, fontScale: option.value }))}
+              onClick={() => updatePreferences({ ...preferences, fontScale: option.value })}
               aria-pressed={preferences.fontScale === option.value}
             >
               <span className="font-scale-option__sample" aria-hidden="true" style={{ transform: `scale(${option.value + 0.1})` }}>
@@ -120,7 +147,7 @@ const SettingsDisplay = () => {
               key={option.id}
               type="button"
               className={preferences.backgroundTone === option.id ? "tone-option is-active" : "tone-option"}
-              onClick={() => setPreferences((prev) => ({ ...prev, backgroundTone: option.id }))}
+              onClick={() => updatePreferences({ ...preferences, backgroundTone: option.id })}
               aria-pressed={preferences.backgroundTone === option.id}
             >
               <span className="tone-option__label">{option.label}</span>

@@ -1,11 +1,12 @@
 import { useEffect } from "react"
 import { Link, useSearchParams } from "react-router-dom"
 import BlogPublicationDate from "../BlogPublicationDate"
-import beautyImage from "../../../assets/beauty.jpeg"
+import LatestBlogArticlesSection from "../LatestBlogArticlesSection"
+import beautyImage from "../../../assets/beauty.webp"
 import makeupImage from "../../../assets/makeup.webp"
 import selfLoveImage from "../../../assets/selflove.webp"
 import plantImage from "../../../assets/Plante-verte.webp"
-import smoothieImage from "../../../assets/Smoothie glow mangue passion.png"
+import smoothieImage from "../../../assets/Smoothie glow mangue passion.webp"
 import vitaminCImage from "../../../assets/Fleurs-blanches.webp"
 import "../BlogPage.css"
 import "./BlogHealthBeautyPage.css"
@@ -72,7 +73,7 @@ const BlogHealthBeautyPage = () => {
     <div className="blog-health-page">
       <header className="blog-header">
         <div className="blog-header__media">
-          <img src={beautyImage} alt="Univers consacré à la santé et à la beauté" />
+          <img src={beautyImage} alt="Masques en tissu disposés sur le visage imprimé dans un magazine" />
           <div className="blog-header__headline">
             <span className="blog-eyebrow">Prendre soin de soi</span>
             <h1>Santé et beauté</h1>
@@ -89,6 +90,8 @@ const BlogHealthBeautyPage = () => {
           </p>
         </div>
       </header>
+
+      <LatestBlogArticlesSection category="Santé & Beauté" id="sante-beaute-derniers-articles" />
 
       <section
         className="blog-health-page__articles"

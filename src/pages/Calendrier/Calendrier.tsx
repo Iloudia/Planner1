@@ -4,6 +4,7 @@ import { getDateKey } from '../../data/sampleData'
 import type { ScheduledTask } from '../../data/sampleData'
 import { useTasks } from '../../context/TasksContext'
 import useUserSportDashboard from '../../hooks/useUserSportDashboard'
+import ModalCloseButton from '../../components/ModalCloseButton'
 import './CalendarPage.css'
 const weekDays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
 const hours = Array.from({ length: 18 }, (_, index) => index + 6)
@@ -1140,19 +1141,15 @@ return (
         <div className="calendar-modal__backdrop" onClick={handleCloseModal} aria-hidden="true" />
         <div className={`calendar-modal__panel${hideCompactWeeklyAgenda ? ' calendar-modal__panel--compact-weekly' : ''}`}>
           <header className="calendar-modal__header">
-            <div>
+            <div className="wishlist-create__header">
               <h2 id="calendar-modal-title">{activeDateLabel}</h2>
               {activeDateTasks.length > 0 ? (
                 <p>{activeDateTasks.length === 1 ? "1 créneau." : `${activeDateTasks.length} créneaux.`}</p>
               ) : (
-                <h4>Aucun créneau pour l'instant, profite pour en poser un.</h4>
+                <p>Aucun créneau pour l'instant, profite pour en poser un.</p>
               )}
             </div>
-            <button type="button" className="modal__close" onClick={handleCloseModal} aria-label="Fermer">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              </svg>
-            </button>
+            <ModalCloseButton onClick={handleCloseModal} />
           </header>
 
           {showCompactModalToggle ? (
@@ -1184,7 +1181,7 @@ return (
             </div>
             <form id="calendar-new-task-form" className="calendar-new-task" onSubmit={handleSubmitNewTask}>
               <label className="calendar-task__field calendar-task__field--full">
-                <span>Titre</span>
+                <p className="editorial-field-label">Titre</p>
                 <input
                   type="text"
                   value={newTaskForm.title}
@@ -1196,7 +1193,7 @@ return (
               </label>
               <div className="calendar-task__form-row">
                 <label className="calendar-task__field">
-                  <span>Début</span>
+                  <p className="editorial-field-label">Début</p>
                   <input
                     type="time"
                     value={newTaskForm.start}
@@ -1205,7 +1202,7 @@ return (
                   />
                 </label>
                 <label className="calendar-task__field">
-                  <span>Fin</span>
+                  <p className="editorial-field-label">Fin</p>
                   <input
                     type="time"
                     value={newTaskForm.end}
@@ -1216,7 +1213,7 @@ return (
               </div>
               <div className="calendar-task__form-row">
                 <label className="calendar-task__field">
-                  <span>Du</span>
+                  <p className="editorial-field-label">Du</p>
                   <input
                     type="date"
                     value={newTaskForm.repeatStart}
@@ -1224,7 +1221,7 @@ return (
                   />
                 </label>
                 <label className="calendar-task__field">
-                  <span>Au</span>
+                  <p className="editorial-field-label">Au</p>
                   <input
                     type="date"
                     value={newTaskForm.repeatEnd}
@@ -1235,7 +1232,7 @@ return (
               </div>
               <div className="calendar-task__form-row calendar-task__form-row--split">
                 <label className="calendar-task__field">
-                  <span>Type</span>
+                  <p className="editorial-field-label">Type</p>
                   <div className="calendar-select" ref={categoryMenuRef}>
                     <button
                       type="button"

@@ -40,6 +40,10 @@ const GestionCookiesPage = () => {
               <strong>Cookies de personnalisation (optionnels)</strong> – Retiennent tes choix (ex. langue,
               préférences) pour personnaliser l’expérience.
             </li>
+            <li>
+              <strong>Cookies de mesure d’audience (optionnels)</strong> – Nous aident à comprendre l’utilisation du
+              site et à l’améliorer grâce à Firebase Analytics.
+            </li>
           </ul>
           <p className="legal-section__text">
             Aucun cookie non essentiel n’est déposé sans ton consentement.
@@ -77,7 +81,19 @@ const GestionCookiesPage = () => {
                 <tr>
                   <td>planner.language.preference (stockage local)</td>
                   <td>Mémoriser la langue choisie</td>
-                  <td>Jusqu’à suppression</td>
+                  <td>Jusqu’au retrait du consentement</td>
+                  <td>Personnalisation</td>
+                </tr>
+                <tr>
+                  <td>planner.display.preferences (stockage local)</td>
+                  <td>Mémoriser les préférences d’affichage</td>
+                  <td>Jusqu’au retrait du consentement</td>
+                  <td>Personnalisation</td>
+                </tr>
+                <tr>
+                  <td>planner.auth.remember, planner.auth.email_history.v1 (stockage local)</td>
+                  <td>Mémoriser la connexion et les adresses utilisées récemment</td>
+                  <td>Jusqu’au retrait du consentement</td>
                   <td>Personnalisation</td>
                 </tr>
                 <tr>
@@ -85,6 +101,12 @@ const GestionCookiesPage = () => {
                   <td>Préférences de traduction (Google Translate)</td>
                   <td>Session</td>
                   <td>Personnalisation</td>
+                </tr>
+                <tr>
+                  <td>_ga, _ga_* (cookies)</td>
+                  <td>Mesure d’audience avec Firebase Analytics</td>
+                  <td>Jusqu’à 2 ans</td>
+                  <td>Mesure d’audience — optionnel</td>
                 </tr>
               </tbody>
             </table>
@@ -113,7 +135,8 @@ const GestionCookiesPage = () => {
             <section className="legal-section">
           <h2 className="legal-section__title">Gestion des cookies</h2>
           <p className="legal-section__text">
-            Pour modifier tes choix, utilise le bouton "Personnaliser" du bandeau cookies ou clique sur "Personnaliser" présent en bas de page. Tes préférences sont appliquées immédiatement.
+            Pour modifier tes choix, utilise le bouton "Personnaliser" du bandeau ou ouvre cette page depuis le lien
+            "Gestion des cookies" du pied de page. Tes préférences sont appliquées immédiatement.
           </p>
           <p className="legal-section__text">
             Pour plus d’informations sur le traitement des données personnelles, consulte la{" "}

@@ -378,7 +378,7 @@ const SportPage = () => {
               return (
                 <Link key={card.id} className="sport-life-card" to={card.route} aria-label={`Ouvrir ${card.label}`}>
                   <div className="sport-life-card__media">
-                    <img src={image} alt={card.label} loading="lazy" decoding="async" />
+                    <img src={image} alt={card.key === "workout" ? "Chaussures de sport et accessoires d’entraînement" : card.key === "diet" ? "Petit-déjeuner composé de tartines, fruits et café" : "Femme réalisant un exercice au sol en tenue de sport"} loading="lazy" decoding="async" />
                   </div>
                   <h3>{card.label}</h3>
                 </Link>

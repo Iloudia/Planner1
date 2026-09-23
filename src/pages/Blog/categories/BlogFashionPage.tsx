@@ -1,4 +1,4 @@
-import modeImage from "../../../assets/Mode.jpeg"
+import modeImage from "../../../assets/Mode.webp"
 import styleImage from "../../../assets/noeud-papillon.webp"
 import wardrobeImage from "../../../assets/l-b-dupe.webp"
 import materialImage from "../../../assets/tuany-kohler-dupe.webp"
@@ -11,7 +11,7 @@ const BlogFashionPage = () => (
     slug="mode"
     articleBasePath="/blog/mode"
     headerImage={modeImage}
-    headerImageAlt="Univers de la mode et du style"
+    headerImageAlt="Vêtements aux tons neutres et motifs à carreaux suspendus sur une tringle"
     headlineEyebrow="Style et inspiration"
     introEyebrow="Exprimer son style"
     introTitle="Une mode qui te ressemble"

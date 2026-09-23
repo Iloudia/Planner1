@@ -17,7 +17,7 @@ body.manifestation-page--lux {
   min-height: clamp(16rem, 23vw, 20rem);
   padding: clamp(2rem, 4vw, 3.25rem) clamp(1.75rem, 5vw, 3.5rem);
   overflow: hidden;
-  border: 1px solid rgba(41, 37, 32, 0.14);
+  border: 1px solid var(--lux-line);
   background:
     linear-gradient(90deg, #ffffff 0%, rgba(255, 255, 255, 0.97) 36%, rgba(255, 255, 255, 0.28) 65%, rgba(255, 255, 255, 0) 100%),
     url("../../assets/MoodBoard.webp") center 44% / cover no-repeat;
@@ -149,6 +149,27 @@ body.manifestation-page--lux {
 
 .manifestation-tracker .sport-habits__header-content h4 {
   margin: 0 0 0.4rem;
+}
+
+.manifestation-tracker__table {
+  display: grid;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(31, 27, 22, 0.18);
+  background: #ffffff;
+  color: #1f1b16;
+  font-family: "Playfair Display", "Times New Roman", serif;
+}
+
+@media (max-width: 871px) {
+  .manifestation-tracker__table {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    overflow: visible;
+    border: 0;
+    background: transparent;
+  }
 }
 
 @media (max-width: 760px) {

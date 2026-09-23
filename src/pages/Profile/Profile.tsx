@@ -13,7 +13,6 @@ import PageLoader from "../../components/PageLoader"
 import "./Profile.css"
 
 const CHANGE_LIMITS_KEY = "planner.profile.changeLimits.v1"
-const DISPLAY_STORAGE_KEY = "planner.display.preferences"
 
 type ProfileData = {
   personalInfo?: {
@@ -42,16 +41,6 @@ type ChangeLimits = {
   birthDateAt?: string
 }
 
-type BackgroundTone = "light" | "dark"
-
-type ThemeTone = "rose" | "caramel" | "mint"
-
-type DisplayPreferences = {
-  fontScale: number
-  backgroundTone: BackgroundTone
-  themeTone: ThemeTone
-}
-
 const basicRows: AccountRow[] = [
   { key: "firstName", label: "Prénom" },
   { key: "lastName", label: "Nom" },
@@ -66,27 +55,7 @@ const accountRows: AccountRow[] = [
 
 const settingsSections = [
   { id: "account", title: "Ton compte", description: "Gérer les informations personnelles et la sécurité." },
-  { id: "display", title: "Affichage", description: "Modifier la taille de la police et l'ambiance visuelle." },
   { id: "languages", title: "Langues", description: "Choisir la langue principale de l'interface." },
-]
-
-const FONT_SCALE_OPTIONS = [
-  { id: "xs", label: "XS", value: 0.9, sample: "Aa" },
-  { id: "sm", label: "S", value: 0.97, sample: "Aa" },
-  { id: "md", label: "M", value: 1, sample: "Aa" },
-  { id: "lg", label: "L", value: 1.08, sample: "Aa" },
-  { id: "xl", label: "XL", value: 1.18, sample: "Aa" },
-]
-
-const BACKGROUND_OPTIONS: { id: BackgroundTone; label: string; description: string }[] = [
-  { id: "light", label: "Clair", description: "Fond lumineux et aéré" },
-  { id: "dark", label: "Sombre", description: "Fond doux et contraste" },
-]
-
-const THEME_OPTIONS: { id: ThemeTone; label: string; description: string }[] = [
-  { id: "rose", label: "Rose", description: "Notes douces et romantiques" },
-  { id: "caramel", label: "Caramel", description: "Beige chaud et naturel" },
-  { id: "mint", label: "Menthe", description: "Fraîcheur et douceur" },
 ]
 
 const MS_IN_DAY = 1000 * 60 * 60 * 24
@@ -112,11 +81,6 @@ const ProfilePage = () => {
   const [dangerReason, setDangerReason] = useState("")
   const [dangerPassword, setDangerPassword] = useState("")
   const [dangerError, setDangerError] = useState("")
-  const [displayPrefs, setDisplayPrefs] = useState<DisplayPreferences>({
-    fontScale: 1,
-    backgroundTone: "light",
-    themeTone: "rose",
-  })
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const panelRef = useRef<HTMLDivElement | null>(null)
   const navigate = useNavigate()
@@ -134,7 +98,6 @@ const ProfilePage = () => {
 
   const safeEmail = userEmail ?? "anonymous"
   const changeLimitsKey = useMemo(() => buildUserScopedKey(safeEmail, CHANGE_LIMITS_KEY), [safeEmail])
-  const displayPrefsKey = useMemo(() => buildUserScopedKey(safeEmail, DISPLAY_STORAGE_KEY), [safeEmail])
 
   const activeSection = useMemo(
     () => settingsSections.find((section) => section.id === activeId) ?? settingsSections[0],
@@ -149,40 +112,11 @@ const ProfilePage = () => {
   }, [userProfile])
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(displayPrefsKey)
-      if (!saved) return
-      const parsed = JSON.parse(saved) as Partial<DisplayPreferences>
-      setDisplayPrefs((prev) => ({
-        fontScale: typeof parsed.fontScale === "number" ? parsed.fontScale : prev.fontScale,
-        backgroundTone: parsed.backgroundTone === "dark" ? "dark" : prev.backgroundTone,
-        themeTone: parsed.themeTone === "caramel" || parsed.themeTone === "mint" ? parsed.themeTone : prev.themeTone,
-      }))
-    } catch {
-      // ignore
-    }
-  }, [displayPrefsKey])
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(displayPrefsKey, JSON.stringify(displayPrefs))
-    } catch {
-      // ignore
-    }
-  }, [displayPrefs, displayPrefsKey])
-
-  useEffect(() => {
     document.body.classList.add("profile-page--lux")
     return () => {
       document.body.classList.remove("profile-page--lux")
     }
   }, [])
-
-  useEffect(() => {
-    document.documentElement.style.setProperty("--user-font-scale", displayPrefs.fontScale.toString())
-    document.documentElement.dataset.backgroundTone = displayPrefs.backgroundTone
-    document.documentElement.dataset.theme = displayPrefs.themeTone
-  }, [displayPrefs])
 
   useEffect(() => {
     const handleOutside = (event: MouseEvent) => {
@@ -440,11 +374,6 @@ const ProfilePage = () => {
     return value ? value : "Non renseigné"
   }
 
-  const currentFontLabel = useMemo(() => {
-    const option = FONT_SCALE_OPTIONS.find((choice) => choice.value === displayPrefs.fontScale)
-    return option?.label ?? "M"
-  }, [displayPrefs.fontScale])
-
   const isProfileLoading = !isAuthReady || !isProfilePhotoLoaded
 
   if (isProfileLoading) {
@@ -481,7 +410,7 @@ const ProfilePage = () => {
                   <h2>Informations de base</h2>
                   <div className="account-avatar-row">
                     <button type="button" className="account-avatar" onClick={() => fileInputRef.current?.click()} disabled={isAvatarBusy}>
-                      {avatarSrc ? <MediaImage src={avatarSrc} alt="Profil" loading="eager" decoding="async" width={64} height={64} /> : null}
+                      {avatarSrc ? <MediaImage src={avatarSrc} alt="Photo de profil" loading="eager" decoding="async" width={64} height={64} /> : null}
                     </button>
                     <div className="account-avatar-actions">
                       <button type="button" onClick={() => fileInputRef.current?.click()} disabled={isAvatarBusy}>
@@ -705,67 +634,6 @@ const ProfilePage = () => {
                     </div>
                   ) : null}
                 </div>
-              </div>
-            ) : activeSection?.id === "display" ? (
-              <div className="settings-section">
-                <h2>Affichage</h2>
-                <p className="settings-section__intro">Modifier la taille de la police et l'ambiance visuelle.</p>
-
-                <section className="settings-display-group">
-                  <header className="settings-display-group__header">
-                    <div>
-                      <h3>Taille de la police</h3>
-                      <p>Ajuste la taille globale du texte pour tout le site.</p>
-                    </div>
-                    <span className="settings-display-group__value">{currentFontLabel}</span>
-                  </header>
-                  <div className="font-scale-selector" role="group" aria-label="Choisir la taille de police">
-                    {FONT_SCALE_OPTIONS.map((option) => (
-                      <button
-                        key={option.id}
-                        type="button"
-                        className={displayPrefs.fontScale === option.value ? "font-scale-option is-active" : "font-scale-option"}
-                        onClick={() => setDisplayPrefs((prev) => ({ ...prev, fontScale: option.value }))}
-                        aria-pressed={displayPrefs.fontScale === option.value}
-                      >
-                        <span className="font-scale-option__sample" aria-hidden="true" style={{ transform: `scale(${option.value + 0.1})` }}>
-                          {option.sample}
-                        </span>
-                        <span>{option.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </section>
-
-                <section className="settings-display-group">
-                  <header className="settings-display-group__header">
-                    <div>
-                      <h3>Couleurs</h3>
-                      <p>Personnalisation des couleurs du site</p>
-                    </div>
-                  </header>
-                  <div className="settings-options">
-                    <div className="settings-option">
-                      <span className="settings-option__label">Bientôt disponible</span>
-                      <span className="settings-option__description">Le choix précis des couleurs arrive bientôt.</span>
-                    </div>
-                  </div>
-                </section>
-
-                <section className="settings-display-group">
-                  <header className="settings-display-group__header">
-                    <div>
-                      <h3>Arrière-plan</h3>
-                      <p>Ambiance claire ou plus sombre</p>
-                    </div>
-                  </header>
-                  <div className="settings-options">
-                    <div className="settings-option">
-                      <span className="settings-option__label">Bientôt disponible</span>
-                      <span className="settings-option__description">Le choix de l'arrière-plan arrive bientôt.</span>
-                    </div>
-                  </div>
-                </section>
               </div>
             ) : (
               <>

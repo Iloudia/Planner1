@@ -20,7 +20,7 @@
   background:
     linear-gradient(90deg, #ffffff 0%, rgba(255, 255, 255, 0.97) 36%, rgba(255, 255, 255, 0.28) 65%, rgba(255, 255, 255, 0) 100%),
     url('../../assets/Fleurs-blanches.webp') center / cover no-repeat;
-  border: 1px solid rgba(41, 37, 32, 0.14);
+  border: 1px solid var(--lux-line);
 }
 
 .contact-page__heading > div {
@@ -186,21 +186,34 @@
   text-transform: uppercase;
 }
 
+.contact-form__body .editorial-field-label {
+  margin: 0;
+}
+
 .contact-form__body input,
 .contact-form__body textarea {
-  border: 1px solid #ddd4ca;
+  min-width: 0;
+  border: 1px solid #d9d3cb;
   border-radius: 0;
-  padding: 0.55rem 0.7rem;
-  color: #20304d;
+  padding: 0.8rem 0.9rem;
+  color: #263652;
   font-family: "Libre Baskerville", Georgia, serif;
-  font-size: 0.76rem;
-  background: rgba(255, 255, 255, 0.38);
+  font-size: 0.9rem;
+  background: #fffdfb;
   box-shadow: none;
 }
 
 .contact-form__body input::placeholder,
 .contact-form__body textarea::placeholder {
-  font-family: "Inter", "Times New Roman", sans-serif;
+  color: #aaa29a;
+  font: inherit;
+}
+
+.contact-form__body input:focus,
+.contact-form__body textarea:focus {
+  outline: none;
+  border-color: #263b59;
+  box-shadow: none;
 }
 
 .contact-form__body textarea {
@@ -290,13 +303,12 @@
   text-transform: none !important;
 }
 
-.contact-info__section p,
-.contact-info__section a {
+.contact-info__section .contact-info__text {
   margin: 0;
-  color: #20304d;
+  color: var(--lux-ink-soft) !important;
   font-family: "Libre Baskerville", Georgia, serif;
-  font-size: 0.7rem;
-  line-height: 1.6;
+  font-size: 0.8rem !important;
+  line-height: 1.55 !important;
   text-decoration: none;
 }
 
@@ -380,15 +392,24 @@ body.legal-page--lux .contact-form__body label {
 
 body.legal-page--lux .contact-form__body input,
 body.legal-page--lux .contact-form__body textarea {
-  border: 1px solid #ddd4ca;
-  background: rgba(255, 255, 255, 0.38);
+  border: 1px solid #d9d3cb;
+  background: #fffdfb;
+  color: #263652;
   box-shadow: none;
   font-family: "Libre Baskerville", Georgia, serif;
+  font-size: 0.9rem;
 }
 
 body.legal-page--lux .contact-form__body input::placeholder,
 body.legal-page--lux .contact-form__body textarea::placeholder {
-  font-family: "Inter", "Times New Roman", sans-serif;
+  color: #aaa29a;
+  font: inherit;
+}
+
+body.legal-page--lux .contact-form__body input:focus,
+body.legal-page--lux .contact-form__body textarea:focus {
+  border-color: #263b59;
+  box-shadow: none;
 }
 
 body.legal-page--lux .contact-form__submit {

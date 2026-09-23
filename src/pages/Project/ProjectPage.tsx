@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react"
+import ImageUploadPanel from "../../components/ImageUploadPanel"
 import usePersistentState from "../../hooks/usePersistentState"
-import projectMoodboard from "../../assets/Moodboardsite.png"
+import projectMoodboard from "../../assets/Moodboardsite.webp"
 import "./ProjectPage.css"
 
 type ProjectStatus = "À commencer" | "En cours" | "Terminé"
@@ -115,8 +116,7 @@ const ProjectPage = () => {
     setProjects((currentProjects) => currentProjects.map((project) => project.id === selectedProject.id ? update(project) : project))
   }
 
-  const handleProjectImage = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
+  const handleProjectImage = async (file: File | null) => {
     if (!file) return
     const image = await new Promise<string>((resolve, reject) => {
       const reader = new FileReader()
@@ -267,7 +267,7 @@ const ProjectPage = () => {
             <div className="project-create__layout">
               <div className="project-create__fields">
                 <label>
-                  Titre
+                  <p className="editorial-field-label">Titre</p>
                   <input
                     value={newProject.title}
                     onChange={(event) => setNewProject({ ...newProject, title: event.target.value })}
@@ -278,7 +278,7 @@ const ProjectPage = () => {
                 </label>
 
                 <label>
-                  Description
+                  <p className="editorial-field-label">Description</p>
                   <textarea
                     value={newProject.description}
                     onChange={(event) => setNewProject({ ...newProject, description: event.target.value })}
@@ -288,75 +288,62 @@ const ProjectPage = () => {
 
                 <div className="project-create__fields-row">
                   <label>
-                    Date de début
+                    <p className="editorial-field-label">Date de début</p>
                     <input type="date" value={newProject.startDate} onChange={(event) => setNewProject({ ...newProject, startDate: event.target.value })} />
                   </label>
                   <label>
-                    Date objectif
+                    <p className="editorial-field-label">Date objectif</p>
                     <input type="date" value={newProject.targetDate} onChange={(event) => setNewProject({ ...newProject, targetDate: event.target.value })} />
                   </label>
                 </div>
 
                 <div className="project-create__fields-row">
                   <label>
-                    Statut
-                    <select value={newProject.status} onChange={(event) => setNewProject({ ...newProject, status: event.target.value as ProjectStatus })}>
-                      <option>À commencer</option>
-                      <option>En cours</option>
-                      <option>Terminé</option>
-                    </select>
+                    <p className="editorial-field-label">Statut</p>
+                    <div className="project-create__select">
+                      <select value={newProject.status} onChange={(event) => setNewProject({ ...newProject, status: event.target.value as ProjectStatus })}>
+                        <option>À commencer</option>
+                        <option>En cours</option>
+                        <option>Terminé</option>
+                      </select>
+                      <svg className="calendar-select__chevron" viewBox="0 0 20 20" aria-hidden="true">
+                        <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
                   </label>
                   <label>
-                    Priorité
-                    <select value={newProject.priority} onChange={(event) => setNewProject({ ...newProject, priority: event.target.value as Priority })}>
-                      <option>Basse</option>
-                      <option>Moyenne</option>
-                      <option>Haute</option>
-                    </select>
+                    <p className="editorial-field-label">Priorité</p>
+                    <div className="project-create__select">
+                      <select value={newProject.priority} onChange={(event) => setNewProject({ ...newProject, priority: event.target.value as Priority })}>
+                        <option>Basse</option>
+                        <option>Moyenne</option>
+                        <option>Haute</option>
+                      </select>
+                      <svg className="calendar-select__chevron" viewBox="0 0 20 20" aria-hidden="true">
+                        <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
                   </label>
                 </div>
 
-                <label className="project-create__cover-field">
-                  Image
-                  <span className="project-create__cover-preview-panel">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <rect x="3" y="4" width="18" height="16" rx="1" />
-                      <circle cx="9" cy="9" r="1.5" />
-                      <path d="m5 18 5-5 3 3 2-2 4 4" />
-                    </svg>
-                    <span>Choisir un fichier</span>
-                    <small>{newProject.image === projectMoodboard ? "Aucun fichier choisi" : "Image sélectionnée"}</small>
-                  </span>
-                  <input type="file" accept="image/*" onChange={handleProjectImage} />
-                </label>
+              </div>
+
+              <div className="project-create__side">
+                <div className="project-create__cover-field">
+                  <p className="editorial-field-label">Image</p>
+                  <ImageUploadPanel
+                    previewSrc={newProject.image === projectMoodboard ? "" : newProject.image}
+                    previewAlt="Aperçu du projet"
+                    onFileSelect={(file) => void handleProjectImage(file)}
+                    onRemove={() => setNewProject((current) => ({ ...current, image: projectMoodboard }))}
+                  />
+                </div>
 
                 <div className="project-create__actions">
                   <button type="button" onClick={() => setIsProjectModalOpen(false)}>Annuler</button>
                   <button type="submit">Créer le projet</button>
                 </div>
               </div>
-
-              <aside className="project-create__preview-area" aria-label="Aperçu du projet">
-                <p>Aperçu</p>
-                <article className="project-create__preview-card">
-                  <img src={newProject.image} alt="" />
-                  <div className="project-create__preview-content">
-                    <h3>{newProject.title.trim() || "Nouveau projet"}</h3>
-                    <p>Statut : {newProject.status}</p>
-                    <p>Priorité : {newProject.priority}</p>
-                    <div className="project-create__preview-dates">
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <rect x="3" y="5" width="18" height="16" rx="2" />
-                        <path d="M3 10h18M8 3v4m8-4v4" />
-                      </svg>
-                      <span>{newProject.startDate ? formatDate(newProject.startDate) : "Date de début"}</span>
-                      <i>–</i>
-                      <span>{newProject.targetDate ? formatDate(newProject.targetDate) : "Date objectif"}</span>
-                    </div>
-                  </div>
-                </article>
-                <small>Ceci est un aperçu. L’apparence peut varier une fois le projet créé.</small>
-              </aside>
             </div>
           </form>
         </div>

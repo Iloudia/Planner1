@@ -4,8 +4,10 @@ import sharp from "sharp"
 
 const rootDir = process.cwd()
 const assetsDir = path.join(rootDir, "src", "assets")
+const publicDir = path.join(rootDir, "public")
 const srcDir = path.join(rootDir, "src")
 const maxRasterSide = 2200
+const conversionConcurrency = 4
 const webpOptions = {
   quality: 78,
   alphaQuality: 80,
@@ -14,7 +16,6 @@ const webpOptions = {
 
 const rasterExtensions = new Set([".jpg", ".jpeg", ".png"])
 const shouldConvert = (fileName) => rasterExtensions.has(path.extname(fileName).toLowerCase())
-const toWebpPath = (filePath) => filePath.replace(/\.(png|jpe?g)$/i, ".webp")
 
 async function exists(filePath) {
   try {
@@ -39,49 +40,82 @@ async function walk(dir) {
   return files
 }
 
-async function convertImages() {
-  const files = await walk(assetsDir)
-  const targets = files.filter((file) => shouldConvert(file))
+async function runWithConcurrency(items, worker) {
+  let nextIndex = 0
+  const workers = Array.from({ length: Math.min(conversionConcurrency, items.length) }, async () => {
+    while (nextIndex < items.length) {
+      const item = items[nextIndex]
+      nextIndex += 1
+      await worker(item)
+    }
+  })
+  await Promise.all(workers)
+}
 
-  if (targets.length === 0) {
-    console.log("No raster assets found to convert.")
+async function buildConversionPlan() {
+  const files = await walk(assetsDir)
+  const targets = files.filter(shouldConvert)
+  const reservedOutputs = new Set(
+    files
+      .filter((file) => path.extname(file).toLowerCase() === ".webp")
+      .map((file) => file.toLowerCase()),
+  )
+  const baseOutputCounts = new Map()
+
+  for (const file of targets) {
+    const baseOutput = file.replace(/\.(png|jpe?g)$/i, ".webp").toLowerCase()
+    baseOutputCounts.set(baseOutput, (baseOutputCounts.get(baseOutput) ?? 0) + 1)
+  }
+
+  return targets.map((source) => {
+    const baseOutput = source.replace(/\.(png|jpe?g)$/i, ".webp")
+    const hasCollision = (baseOutputCounts.get(baseOutput.toLowerCase()) ?? 0) > 1 || reservedOutputs.has(baseOutput.toLowerCase())
+    const sourceExtension = path.extname(source).slice(1).toLowerCase()
+    const output = hasCollision
+      ? source.replace(/\.(png|jpe?g)$/i, `-${sourceExtension}.webp`)
+      : baseOutput
+
+    return { source, output }
+  })
+}
+
+async function convertImages(plan) {
+  if (plan.length === 0) {
+    console.log("No JPG or PNG assets found to convert.")
     return
   }
 
-  let converted = 0
-  let reused = 0
+  await runWithConcurrency(plan, async ({ source, output }) => {
+    await sharp(source)
+      .rotate()
+      .resize({ width: maxRasterSide, height: maxRasterSide, fit: "inside", withoutEnlargement: true })
+      .webp(webpOptions)
+      .toFile(output)
+  })
 
-  await Promise.all(
-    targets.map(async (file) => {
-      const output = toWebpPath(file)
-      if (await exists(output)) {
-        reused += 1
-        return
-      }
-
-      await sharp(file)
-        .rotate()
-        .resize({ width: maxRasterSide, height: maxRasterSide, fit: "inside", withoutEnlargement: true })
-        .webp(webpOptions)
-        .toFile(output)
-      converted += 1
-    }),
-  )
-
-  console.log(`Converted ${converted} assets to WebP and kept ${reused} existing WebP files.`)
+  console.log(`Converted ${plan.length} site assets to WebP.`)
 }
 
-const textExtensions = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".css"])
-const assetRefRegex = /(assets\/[^"']+?)\.(png|jpe?g)\b/gi
+async function updateAssetReferences(plan) {
+  if (plan.length === 0) {
+    return
+  }
 
-async function updateAssetReferences() {
   const files = await walk(srcDir)
+  const textExtensions = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".css"])
   const targets = files.filter((file) => textExtensions.has(path.extname(file).toLowerCase()))
+  const replacements = plan.map(({ source, output }) => ({
+    previous: path.relative(srcDir, source).split(path.sep).join("/"),
+    next: path.relative(srcDir, output).split(path.sep).join("/"),
+  }))
 
   let updated = 0
   for (const file of targets) {
     const raw = await fs.readFile(file, "utf8")
-    const next = raw.replace(assetRefRegex, "$1.webp")
+    let next = raw
+    for (const replacement of replacements) {
+      next = next.split(replacement.previous).join(replacement.next)
+    }
     if (next !== raw) {
       await fs.writeFile(file, next, "utf8")
       updated += 1
@@ -91,47 +125,34 @@ async function updateAssetReferences() {
   console.log(`Updated ${updated} source files to reference WebP assets.`)
 }
 
-async function optimizeWebpAssets() {
-  const files = await walk(assetsDir)
-  const targets = files.filter((file) => path.extname(file).toLowerCase() === ".webp")
+async function removeOriginalImages(plan) {
+  await Promise.all(plan.map(({ source }) => fs.unlink(source)))
+  console.log(`Removed ${plan.length} replaced JPG and PNG assets.`)
+}
 
+async function optimizePublicPngs() {
+  if (!(await exists(publicDir))) {
+    return
+  }
+
+  const files = await walk(publicDir)
+  const targets = files.filter((file) => path.extname(file).toLowerCase() === ".png")
   let optimized = 0
-  await Promise.all(
-    targets.map(async (file) => {
-      const buffer = await sharp(file)
-        .rotate()
-        .resize({ width: maxRasterSide, height: maxRasterSide, fit: "inside", withoutEnlargement: true })
-        .webp(webpOptions)
-        .toBuffer()
 
-      await fs.writeFile(file, buffer)
+  for (const file of targets) {
+    const original = await fs.readFile(file)
+    const compressed = await sharp(original).png({ compressionLevel: 9, adaptiveFiltering: true }).toBuffer()
+    if (compressed.length < original.length) {
+      await fs.writeFile(file, compressed)
       optimized += 1
-    }),
-  )
+    }
+  }
 
-  console.log(`Optimized ${optimized} WebP assets.`)
+  console.log(`Losslessly optimized ${optimized} public PNG files.`)
 }
 
-async function removeOriginalImages() {
-  const files = await walk(assetsDir)
-  const targets = files.filter((file) => shouldConvert(file))
-
-  let removed = 0
-  await Promise.all(
-    targets.map(async (file) => {
-      if (!(await exists(toWebpPath(file)))) {
-        return
-      }
-
-      await fs.unlink(file)
-      removed += 1
-    }),
-  )
-
-  console.log(`Removed ${removed} original raster assets.`)
-}
-
-await convertImages()
-await updateAssetReferences()
-await optimizeWebpAssets()
-await removeOriginalImages()
+const conversionPlan = await buildConversionPlan()
+await convertImages(conversionPlan)
+await updateAssetReferences(conversionPlan)
+await removeOriginalImages(conversionPlan)
+await optimizePublicPngs()

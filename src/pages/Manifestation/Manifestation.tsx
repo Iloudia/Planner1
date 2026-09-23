@@ -70,7 +70,7 @@ const ManifestationPage = () => {
             </div>
           </div>
 
-          <div className="sport-habits__table" role="table" aria-label="Tracker hebdomadaire de manifestation">
+          <div className="manifestation-tracker__table" role="table" aria-label="Tracker hebdomadaire de manifestation">
             <div className="sport-habits__row sport-habits__row--head" role="row">
               <div className="sport-habits__cell sport-habits__cell--head" role="columnheader">Pratique</div>
               {trackerDays.map((day) => (

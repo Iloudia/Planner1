@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type FormEvent } from "react"
 import { createPortal } from "react-dom"
+import ImageUploadPanel from "../../components/ImageUploadPanel"
 import MediaImage from "../../components/MediaImage"
+import ModalCloseButton from "../../components/ModalCloseButton"
 import PageLoader from "../../components/PageLoader"
 import { useAuth } from "../../context/AuthContext"
 import useUserWishlist from "../../hooks/useUserWishlist"
@@ -195,7 +197,6 @@ const WishlistPage = () => {
   const [moveItemDraft, setMoveItemDraft] = useState<{ itemId: string; targetCategoryId: string; targetSubcategory: string } | null>(null)
   const [wishlistSearch, setWishlistSearch] = useState("")
   const [wishlistSort, setWishlistSort] = useState<WishlistSort>("")
-  const newCategoryCoverRef = useRef<HTMLInputElement | null>(null)
   const categoryCoverRef = useRef<HTMLInputElement | null>(null)
   const itemImageRef = useRef<HTMLInputElement | null>(null)
   const categoryFieldRef = useRef<HTMLDivElement | null>(null)
@@ -448,9 +449,6 @@ const WishlistPage = () => {
       setNewCategoryDraft(emptyNewCategoryDraft())
       setNewCategoryCoverPreview("")
       setNewCategoryCoverFile(null)
-      if (newCategoryCoverRef.current) {
-        newCategoryCoverRef.current.value = ""
-      }
       return
     }
 
@@ -473,9 +471,6 @@ const WishlistPage = () => {
     setNewCategoryDraft(emptyNewCategoryDraft())
     setNewCategoryCoverPreview("")
     setNewCategoryCoverFile(null)
-    if (newCategoryCoverRef.current) {
-      newCategoryCoverRef.current.value = ""
-    }
     if (categoryId) {
       setSelectedCategoryId(categoryId)
     }
@@ -539,9 +534,6 @@ const WishlistPage = () => {
     })
     setNewCategoryCoverPreview(category.cover)
     setNewCategoryCoverFile(null)
-    if (newCategoryCoverRef.current) {
-      newCategoryCoverRef.current.value = ""
-    }
     setShowCreateCategory(true)
     setActiveCardMenuId(null)
   }
@@ -742,17 +734,12 @@ const WishlistPage = () => {
               onSubmit={handleCreateCategory}
               onClick={(event) => event.stopPropagation()}
             >
-              <button
-                className="wishlist-create__close"
-                type="button"
-                aria-label="Fermer"
+              <ModalCloseButton
                 onClick={() => {
                   setShowCreateCategory(false)
                   setEditingCategoryId(null)
                 }}
-              >
-                ×
-              </button>
+              />
               <header className="wishlist-create__header">
                 <h2>{editingCategoryId ? "Modifier la catégorie" : "Nouvelle catégorie"}</h2>
                 <p>Crée une nouvelle catégorie pour organiser toutes tes envies au même endroit.</p>
@@ -760,47 +747,20 @@ const WishlistPage = () => {
               <div className="wishlist-create__layout">
                 <div className="wishlist-create__fields">
                   <div className="wishlist-create__cover-field">
-                    <p className="wishlist-create__cover-label">Image de couverture</p>
-                    <div className={`wishlist-create__cover-preview-panel${newCategoryCoverPreview ? " wishlist-create__cover-preview-panel--has-image" : ""}`}>
-                      <div className="wishlist-create__cover-actions">
-                        {!newCategoryCoverPreview ? (
-                          <label>
-                            <input
-                              className="wishlist-create__cover-input"
-                              ref={newCategoryCoverRef}
-                              type="file"
-                              accept="image/*"
-                              onChange={(event) => {
-                                handlePreviewFile(event.target.files?.[0] ?? null, setNewCategoryCoverPreview, setNewCategoryCoverFile)
-                                event.target.value = ""
-                              }}
-                              disabled={!canEdit}
-                            />
-                            <svg viewBox="0 0 24 24" aria-hidden="true">
-                              <rect x="3" y="4" width="18" height="16" rx="1" />
-                              <circle cx="9" cy="10" r="1.5" />
-                              <path d="m4 18 5-5 3 3 3-3 5 5" />
-                            </svg>
-                            <span>Ajouter une image</span>
-                          </label>
-                        ) : null}
-                        {newCategoryCoverPreview ? (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setNewCategoryCoverPreview("")
-                              setNewCategoryCoverFile(null)
-                            }}
-                            disabled={!canEdit}
-                          >
-                            Retirer l’image
-                          </button>
-                        ) : null}
-                      </div>
-                    </div>
+                    <p className="editorial-field-label">Image de couverture</p>
+                    <ImageUploadPanel
+                      previewSrc={newCategoryCoverPreview}
+                      previewAlt="Aperçu de la catégorie"
+                      disabled={!canEdit}
+                      onFileSelect={(file) => handlePreviewFile(file, setNewCategoryCoverPreview, setNewCategoryCoverFile)}
+                      onRemove={() => {
+                        setNewCategoryCoverPreview("")
+                        setNewCategoryCoverFile(null)
+                      }}
+                    />
                   </div>
                   <label className="wishlist-create__title-field">
-                    <p>Nom de la catégorie</p>
+                    <p className="editorial-field-label">Nom de la catégorie</p>
                     <input
                       type="text"
                       className="wishlist-create__title-input"
@@ -826,7 +786,7 @@ const WishlistPage = () => {
                   </div>
                 </div>
                 <aside className="wishlist-create__preview-area">
-                  <p>Aperçu</p>
+                  <p className="editorial-field-label">Aperçu</p>
                   <article className="wishlist-create__preview-card">
                     <MediaImage
                       src={newCategoryCoverPreview || fallbackCoverForId(newCategoryDraft.title || "wishlist-preview")}
@@ -916,12 +876,7 @@ const WishlistPage = () => {
           <div className="wishlist-modal__backdrop" onClick={() => setSelectedCategoryId(null)} />
           <section className="wishlist-modal" role="dialog" aria-label={selectedCategory.title}>
             <div className="wishlist-modal__cover">
-              <button type="button" className="modal__close wishlist-modal__close" onClick={() => setSelectedCategoryId(null)} aria-label="Fermer">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M6 6L18 18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-                  <path d="M18 6L6 18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-                </svg>
-              </button>
+              <ModalCloseButton onClick={() => setSelectedCategoryId(null)} />
               <MediaImage src={categoryCoverPreview || selectedCategory.cover} alt={selectedCategory.title} loading="lazy" decoding="async" />
             </div>
             <div className="wishlist-modal__body">
@@ -991,7 +946,7 @@ const WishlistPage = () => {
                         disabled={!canEdit}
                       />
                       {itemPreview ? (
-                        <MediaImage className="wishlist-modal__photo-preview" src={itemPreview} alt="Aperçu élément" />
+                        <MediaImage className="wishlist-modal__photo-preview" src={itemPreview} alt="Aperçu de l’élément" />
                       ) : (
                         <span>Ajouter une photo</span>
                       )}

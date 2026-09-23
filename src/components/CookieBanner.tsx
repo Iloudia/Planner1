@@ -14,8 +14,8 @@ const CookieBanner = () => {
         <div className="cookie-banner__content">
           <h2>Cookies & confidentialité</h2>
           <p>
-            Nous utilisons des cookies essentiels pour faire fonctionner Me&rituals. Nous aimerions également activer les
-            cookies de préférences (pour garder tes choix visuels). Rien n'est déposé sans ton accord.
+            Nous utilisons des stockages essentiels pour faire fonctionner Me&rituals. Avec ton accord, nous pouvons
+            aussi mémoriser tes préférences et mesurer l’audience. Les traceurs optionnels restent désactivés par défaut.
           </p>
           <ul className="cookie-banner__list">
             <li>
@@ -24,16 +24,19 @@ const CookieBanner = () => {
             <li>
               <strong>Préférences :</strong> garder ton thème, ta langue, tes vues favorites.
             </li>
+            <li>
+              <strong>Mesure d’audience :</strong> comprendre l’utilisation du site pour l’améliorer.
+            </li>
           </ul>
         </div>
         <div className="cookie-banner__actions">
-          <button type="button" className="cookie-banner__action cookie-banner__action--ghost" onClick={rejectAll}>
+          <button type="button" className="cookie-banner__action cookie-banner__action--ghost sport-cancel-button-match" onClick={rejectAll}>
             Refuser
           </button>
-          <button type="button" className="cookie-banner__action cookie-banner__action--outline" onClick={openPreferences}>
+          <button type="button" className="cookie-banner__action cookie-banner__action--outline sport-cancel-button-match" onClick={openPreferences}>
             Personnaliser
           </button>
-          <button type="button" className="cookie-banner__action cookie-banner__action--primary" onClick={acceptAll}>
+          <button type="button" className="cookie-banner__action cookie-banner__action--primary sport-workout-button-match" onClick={acceptAll}>
             Accepter
           </button>
         </div>

@@ -2,10 +2,10 @@ import { Fragment, useEffect, type ReactNode } from "react"
 import { Link, useParams } from "react-router-dom"
 import BlogPublicationDate from "../BlogPublicationDate"
 import soloDateImage from "../../../assets/l-b-dupe.webp"
-import cafeImage from "../../../assets/Photo bienvenue.jpeg"
+import cafeImage from "../../../assets/Photo bienvenue.webp"
 import cityImage from "../../../assets/voyage.webp"
-import reflectionImage from "../../../assets/selfconfidence3.jpeg"
-import practiceImage from "../../../assets/selflove5.jpeg"
+import reflectionImage from "../../../assets/selfconfidence3.webp"
+import practiceImage from "../../../assets/selflove5.webp"
 import articleMarkdown from "./solo-dates.md?raw"
 import cosyActivitiesMarkdown from "./activites-cosy-pluie.md?raw"
 import "../../SelfLove/SelfLoveHome.css"
@@ -16,30 +16,30 @@ type ArticleIllustration = { image: string; alt: string }
 const soloDateIllustrations: Record<string, ArticleIllustration> = {
   "2. Le sentiment de choix change beaucoup de choses": {
     image: cafeImage,
-    alt: "Moment choisi pour profiter calmement de sa propre compagnie",
+    alt: "Fleur rose posée sur les pages ouvertes d’un livre",
   },
   "8. Restaurant seul : le niveau supérieur": {
     image: reflectionImage,
-    alt: "Sortie en solo pour apprendre à apprécier sa propre compagnie",
+    alt: "Ombre d’une femme portant un sac projetée sur un mur clair",
   },
   "29. Un défi solo date sur 4 semaines": {
     image: practiceImage,
-    alt: "Rendez-vous avec soi-même organisé comme un rituel personnel",
+    alt: "Bouquet de lys roses et de fleurs claires dans un vase",
   },
 }
 
 const cosyActivitiesIllustrations: Record<string, ArticleIllustration> = {
   "2. Crée une nouvelle playlist": {
     image: cafeImage,
-    alt: "Ambiance cosy accompagnée d’une playlist pour une journée pluvieuse",
+    alt: "Fleur rose posée sur les pages ouvertes d’un livre",
   },
   "8. Organise une soirée jeux": {
     image: reflectionImage,
-    alt: "Activité calme et chaleureuse à faire chez soi lorsqu’il pleut",
+    alt: "Ombre d’une femme portant un sac projetée sur un mur clair",
   },
   "20. Joue à un jeu vidéo": {
     image: practiceImage,
-    alt: "Moment de détente confortable à la maison pendant une journée pluvieuse",
+    alt: "Bouquet de lys roses et de fleurs claires dans un vase",
   },
 }
 
@@ -161,7 +161,7 @@ const lifestyleArticles: Record<string, {
     eyebrow: "Lifestyle · Solo dates",
     readingTime: "26 min de lecture",
     image: soloDateImage,
-    imageAlt: "Moment calme consacré à une sortie en solo",
+    imageAlt: "Livre ouvert et tasse de thé sur un lit",
     illustrations: soloDateIllustrations,
     recommendationsDescription: "Continue ta lecture autour du quotidien, des expériences en solo et de l’art de vivre.",
   },
@@ -170,7 +170,7 @@ const lifestyleArticles: Record<string, {
     eyebrow: "Lifestyle · Journée cosy",
     readingTime: "18 min de lecture",
     image: cafeImage,
-    imageAlt: "Ambiance chaleureuse pour profiter d’une journée pluvieuse à la maison",
+    imageAlt: "Fleur rose posée sur les pages ouvertes d’un livre",
     illustrations: cosyActivitiesIllustrations,
     recommendationsDescription: "Continue ta lecture autour des moments cosy, de la créativité et de l’art de vivre.",
   },

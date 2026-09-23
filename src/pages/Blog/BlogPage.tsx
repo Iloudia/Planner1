@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { Link } from "react-router-dom"
 import journalingImage from "../../assets/Journaling.webp"
-import glowUpEbookImage from "../../assets/couverture glow-up.png"
+import glowUpEbookImage from "../../assets/couverture glow-up.webp"
 import EditorialQuote from "../../components/EditorialQuote"
 import {
   formatPublicationDate,
@@ -75,7 +75,7 @@ const BlogPage = () => {
     <div className="blog-page">
       <header className="blog-header">
         <div className="blog-header__media">
-          <img src={journalingImage} alt="Carnet ouvert pour prendre le temps d’écrire" />
+          <img src={journalingImage} alt="Carnet ligné ouvert avec un stylo sur une table en bois" />
           <div className="blog-header__headline">
             <span className="blog-eyebrow">Le blog Me&amp;rituals</span>
             <h1>Des mots pour avancer avec douceur et intention</h1>

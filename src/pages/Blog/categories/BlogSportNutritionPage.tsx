@@ -1,4 +1,4 @@
-import sportImage from "../../../assets/sport1.jpeg"
+import sportImage from "../../../assets/sport1.webp"
 import foodImage from "../../../assets/food2.webp"
 import workoutImage from "../../../assets/Backday.webp"
 import BlogCategoryTemplate from "./BlogCategoryTemplate"
@@ -9,7 +9,7 @@ const BlogSportNutritionPage = () => (
     slug="sport-nutrition"
     articleBasePath="/blog/sport-nutrition"
     headerImage={sportImage}
-    headerImageAlt="Univers consacré au sport et à la nutrition"
+    headerImageAlt="Joueuse tenant une raquette de padel sur un terrain bleu"
     headlineEyebrow="Bouger et se nourrir"
     introEyebrow="Énergie au quotidien"
     introTitle="Trouver son équilibre"

@@ -16,7 +16,7 @@
   background:
     linear-gradient(90deg, #ffffff 0%, rgba(255, 255, 255, 0.97) 36%, rgba(255, 255, 255, 0.28) 65%, rgba(255, 255, 255, 0) 100%),
     url('../../assets/katie-huber-rhoades-dupe (2).webp') center / cover no-repeat;
-  border: 1px solid rgba(41, 37, 32, 0.14);
+  border: 1px solid var(--lux-line);
 }
 
 .finance-page__heading > div {
@@ -345,9 +345,17 @@
   grid-column: 2;
 }
 
-.finance-transaction-form__field--date,
+.finance-transaction-form__field--category {
+  grid-row: 1;
+}
+
 .finance-transaction-form__field--label {
   grid-row: 3;
+}
+
+.finance-transaction-form__field--date {
+  grid-row: 2;
+  transform: translateY(-2.7rem);
 }
 
 .finance-transaction-form__types {
@@ -1942,8 +1950,13 @@
   }
 
   .finance-transaction-form__field--date,
-  .finance-transaction-form__field--label {
+  .finance-transaction-form__field--label,
+  .finance-transaction-form__field--category {
     grid-row: auto;
+  }
+
+  .finance-transaction-form__field--date {
+    transform: none;
   }
 
   .finance-transaction-form__footer {
@@ -2735,6 +2748,226 @@ body.finance-page--lux .finance-transaction-form select:focus {
 body.finance-page--lux .finance-transaction-form__types button.is-selected {
   border-color: var(--color-chocolate);
   box-shadow: 0 0 0 1px rgba(114, 92, 63, 0.16), 0 6px 16px rgba(114, 92, 63, 0.08);
+}
+
+/* Transaction dialog — visual parity with Wishlist's create-category dialog. */
+body.finance-page--lux .finance-transaction-modal__backdrop {
+  background: rgba(26, 21, 44, 0.52);
+  backdrop-filter: blur(8px);
+}
+
+body.finance-page--lux .finance-transaction-modal__panel {
+  position: relative;
+  width: min(60rem, calc(100vw - 3rem));
+  max-height: calc(100vh - 5rem);
+  padding: clamp(1.5rem, 3vw, 3rem);
+  overflow-y: auto;
+  gap: 1.65rem;
+  border: 1px solid #d9d3cb;
+  border-radius: 0;
+  background: #fcfaf7;
+  color: #1a2c49;
+  box-shadow: 0 20px 52px rgba(19, 38, 66, 0.13);
+}
+
+body.finance-page--lux .finance-transaction-modal__header {
+  display: block;
+  padding: 0 1.5rem;
+  text-align: center;
+}
+
+body.finance-page--lux .finance-transaction-modal__header h2 {
+  margin: 0;
+  color: #142947;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(2.35rem, 4vw, 3.15rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+body.finance-page--lux .finance-transaction-modal__header p {
+  margin: 0.7rem 0 0;
+  color: #536073;
+  font-family: "Libre Baskerville", Georgia, serif;
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+body.finance-page--lux .finance-transaction-form {
+  --finance-transaction-divider-space: 2.35rem;
+  position: relative;
+  gap: 1.15rem calc(var(--finance-transaction-divider-space) + var(--finance-transaction-divider-space));
+}
+
+body.finance-page--lux .finance-transaction-form::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 3.85rem;
+  left: 50%;
+  border-left: 1px solid #e3ddd6;
+  pointer-events: none;
+}
+
+body.finance-page--lux .finance-transaction-form__field {
+  gap: 0.65rem;
+}
+
+body.finance-page--lux .finance-transaction-form__types {
+  gap: 0.8rem;
+}
+
+body.finance-page--lux .finance-transaction-form__types button {
+  min-height: 5.35rem;
+  padding: 0.7rem 0.85rem;
+  gap: 0.6rem;
+  border: 1px solid #d9d3cb;
+  border-radius: 0;
+  background: #fffdfb;
+  color: #263b59;
+  font-family: var(--font-body);
+  font-size: calc(var(--font-size-button) * var(--user-font-scale));
+  font-weight: var(--font-weight-action);
+  line-height: var(--leading-control);
+  box-shadow: none;
+}
+
+body.finance-page--lux .finance-transaction-form__types button i,
+body.finance-page--lux .finance-transaction-form__types button.is-income i {
+  border-radius: 0;
+  background: transparent;
+  color: #263b59;
+}
+
+body.finance-page--lux .finance-transaction-form__types button.is-selected {
+  border-color: #263b59;
+  background: #f4efe8;
+  box-shadow: none;
+}
+
+body.finance-page--lux .finance-transaction-form input,
+body.finance-page--lux .finance-transaction-form select,
+body.finance-page--lux .finance-transaction-form__income-category {
+  min-width: 0;
+  min-height: 2.65rem;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid #d9d3cb;
+  border-radius: 0;
+  background: #fffdfb;
+  color: #263652;
+  font-family: "Libre Baskerville", Georgia, serif;
+  font-size: 0.9rem;
+  box-shadow: none;
+}
+
+body.finance-page--lux .finance-transaction-form input::placeholder {
+  color: #aaa29a;
+}
+
+body.finance-page--lux .finance-transaction-form input:focus,
+body.finance-page--lux .finance-transaction-form select:focus {
+  outline: none;
+  border-color: #263b59;
+  box-shadow: none;
+}
+
+body.finance-page--lux .finance-transaction-form__select {
+  position: relative;
+  width: 100%;
+}
+
+body.finance-page--lux .finance-transaction-form__select select {
+  appearance: none;
+  padding-right: 2.75rem;
+}
+
+body.finance-page--lux .finance-transaction-form__select .calendar-select__chevron {
+  position: absolute;
+  top: 50%;
+  right: 0.75rem;
+  width: 18px;
+  height: 18px;
+  color: rgba(15, 23, 42, 0.6);
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+body.finance-page--lux .finance-transaction-form__income-category {
+  color: #263652;
+}
+
+body.finance-page--lux .finance-transaction-form__amount-input input {
+  padding-right: 2.2rem;
+  color: #263652;
+  font-family: "Libre Baskerville", Georgia, serif;
+  font-size: 0.9rem;
+}
+
+body.finance-page--lux .finance-transaction-form__amount-input b {
+  color: #536073;
+  font-family: "Libre Baskerville", Georgia, serif;
+}
+
+body.finance-page--lux .finance-transaction-form__footer {
+  justify-content: stretch;
+  gap: 0.8rem;
+  margin: 0.2rem 0 0;
+  padding: 0;
+  border-top: 0;
+}
+
+body.finance-page--lux .finance-transaction-form__footer button {
+  flex: 1 1 0;
+  min-height: 2.65rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: 0;
+  font-family: var(--font-body);
+  font-size: calc(var(--font-size-button) * var(--user-font-scale));
+  font-weight: var(--font-weight-action);
+  line-height: var(--leading-control);
+  letter-spacing: normal;
+  text-transform: none;
+  box-shadow: none;
+}
+
+body.finance-page--lux .finance-transaction-form__cancel {
+  border: 1px solid #263b59;
+  background: transparent;
+  color: #263b59;
+}
+
+body.finance-page--lux .finance-transaction-form__submit {
+  border: 1px solid #132947;
+  background: #132947;
+  color: #ffffff;
+}
+
+@media (max-width: 767px) {
+  body.finance-page--lux .finance-transaction-modal__panel {
+    width: min(calc(100% - 1.5rem), 700px);
+    max-height: calc(100vh - 2rem);
+    padding: 1.25rem;
+  }
+
+  body.finance-page--lux .finance-transaction-form__footer {
+    margin: 0.2rem 0 0;
+    padding: 0;
+  }
+
+  body.finance-page--lux .finance-transaction-form::before {
+    display: none;
+  }
+}
+
+/* Harmonisation des surfaces de la page finances. */
+.finance-page,
+.finance-page *,
+.finance-page *::before,
+.finance-page *::after {
+  box-shadow: none !important;
+  border-color: rgba(41, 37, 32, 0.14) !important;
+  border-width: 1px !important;
 }
 
 

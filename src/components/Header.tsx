@@ -1,6 +1,7 @@
 ﻿import { Link, NavLink, useNavigate } from "react-router-dom"
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react"
 import { useAuth } from "../context/AuthContext"
+import PrimaryActionButton from "./PrimaryActionButton"
 
 function Header() {
   const { isAuthenticated, isAdmin, userEmail, logout } = useAuth()
@@ -203,6 +204,16 @@ function Header() {
                       </Link>
                     </li>
                     <li>
+                      <Link to="/panier" className="header-menu__item" onClick={() => setIsMenuOpen(false)}>
+                        Panier
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/blog" className="header-menu__item" onClick={() => setIsMenuOpen(false)}>
+                        Blog
+                      </Link>
+                    </li>
+                    <li>
                       <Link to="/a-propos" className="header-menu__item" onClick={() => setIsMenuOpen(false)}>
                         À propos
                       </Link>
@@ -350,9 +361,9 @@ function Header() {
                           }
                         }}
                       />
-                      <button type="button" className="nav-search__mobile-cancel" onClick={handleSearchClose}>
+                      <PrimaryActionButton className="nav-search__mobile-cancel" onClick={handleSearchClose}>
                         Annuler
-                      </button>
+                      </PrimaryActionButton>
                     </div>
                     <div className="nav-search__mobile-content">
                       <p className="nav-search__mobile-title">Suggestions</p>
@@ -381,15 +392,15 @@ function Header() {
             </div>
 
             {isAuthenticated && isAdmin ? (
-              <button className="admin-button" onClick={() => navigate("/admin")}>
+              <PrimaryActionButton className="admin-button" onClick={() => navigate("/admin")}>
                 Back-office
-              </button>
+              </PrimaryActionButton>
             ) : null}
 
             {!isAuthenticated ? (
-              <button className="auth-button auth-button--login" onClick={() => navigate("/login")}>
+              <PrimaryActionButton className="auth-button auth-button--login" onClick={() => navigate("/login")}>
                 Se connecter
-              </button>
+              </PrimaryActionButton>
             ) : (
               <div className="account-menu" ref={accountRef}>
                 <button

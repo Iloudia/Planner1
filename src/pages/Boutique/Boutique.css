@@ -390,11 +390,12 @@ body.boutique-page--tone {
 .boutique-link-button {
   border: none;
   background: transparent;
-  color: var(--accent-strong);
+  color: var(--color-chocolate);
+  font-family: var(--font-body);
   font-weight: 600;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;

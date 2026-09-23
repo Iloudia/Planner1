@@ -109,6 +109,7 @@ const LandingPage = () => {
     <div className="landing-page">
       <section className="landing-hero" style={{ backgroundImage: `url(${heroBackdrop})` }}>
         <div className="landing-hero__content">
+          <span className="landing-hero__eyebrow">Planifie · Respire · Avance</span>
           <h1>L’espace qui transforme ton quotidien en une vie plus fluide, plus douce et plus alignée.</h1>
           <p className="landing-hero__accent">Parce que tu mérites une vie sans pression, et où tout est plus simple.</p>
           <div className="landing-hero__actions">
@@ -133,17 +134,9 @@ const LandingPage = () => {
       </section>
 
       <section className="landing-daily-hub" aria-labelledby="landing-daily-hub-title">
-        <div className="landing-section-heading">
-          <h2
-            id="landing-daily-hub-title"
-            style={{
-              fontSize: "clamp(0.78rem, 0.72rem + 0.45vw, 1.35rem)",
-              lineHeight: 1.18,
-              whiteSpace: "nowrap",
-            }}
-          >
-            Sur ce site tu as accès à :
-          </h2>
+        <div className="landing-section-heading landing-daily-hub__heading">
+          <h2 id="landing-daily-hub-title">Tout ton quotidien, réuni au même endroit</h2>
+          <p>Planifie, organise et prends soin de toi grâce à des outils pensés pour avancer avec plus de clarté et de sérénité.</p>
         </div>
         <div className="landing-carousel">
           <button type="button" className="landing-carousel__arrow landing-carousel__arrow--left" aria-label="Cartes précédentes" onClick={handleCarouselPrev}>
@@ -151,11 +144,11 @@ const LandingPage = () => {
               <path d="M14 6 8 12l6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
-          <div className="landing-carousel__grid" style={{ gridTemplateColumns: `repeat(${cardsPerView}, minmax(0, 1fr))` }}>
+          <div className="landing-carousel__grid" aria-live="polite" style={{ gridTemplateColumns: `repeat(${cardsPerView}, minmax(0, 1fr))` }}>
             {visibleCards.map((card) => (
               <article key={card.title} className="landing-carousel__card">
                 <div className="landing-carousel__image">
-                  <img src={card.image} alt={card.title} loading="lazy" decoding="async" />
+                  <img src={card.image} alt="" loading="lazy" decoding="async" />
                 </div>
                 <div className="landing-carousel__body">
                   <h3>{card.title}</h3>
@@ -185,7 +178,8 @@ const LandingPage = () => {
       </section>
 
       <section className="landing-differentiator" aria-labelledby="landing-differentiator-title">
-        <div className="landing-section-heading">
+        <div className="landing-section-heading landing-differentiator__heading">
+          <span className="landing-differentiator__eyebrow">Une approche plus douce</span>
           <h2 id="landing-differentiator-title">Bien plus qu'un outil d'organisation</h2>
           <p>
             Fini les carnets éparpillés, les notes sur ton téléphone et les applis dans tous les sens. Ici, tout est centralisé pour
@@ -204,13 +198,14 @@ const LandingPage = () => {
         aria-labelledby="landing-final-cta-title"
         style={{ backgroundImage: `url(${finalCtaBackdrop})` }}
       >
-        <h2 id="landing-final-cta-title">Et si tu t'offrais enfin une organisation qui te fait du bien ?</h2>
-        <p>
-          <span style={{ color: "#ffffff" }}>Parfois, tout commence par un espace qui offre de l’air, de la clarté et la possibilité de s’épanouir pleinement.</span>
-        </p>
-        <button type="button" className="landing-cta-button" onClick={() => navigate("/register")}>
-          Créer mon espace
-        </button>
+        <div className="landing-final-cta__content">
+          <span className="landing-final-cta__eyebrow">Ton espace, à ton rythme</span>
+          <h2 id="landing-final-cta-title">Et si tu t'offrais enfin une organisation qui te fait du bien ?</h2>
+          <p>Parfois, tout commence par un espace qui offre de l’air, de la clarté et la possibilité de s’épanouir pleinement.</p>
+          <button type="button" className="landing-cta-button" onClick={() => navigate("/register")}>
+            Créer mon espace
+          </button>
+        </div>
       </section>
     </div>
   )

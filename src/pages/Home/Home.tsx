@@ -10,7 +10,7 @@ import { saveHomeTodos, subscribeToHomeTodos, type HomeTodoItem } from "../../se
 import { buildUserScopedKey, normalizeUserEmail } from "../../utils/userScopedKey"
 
 import planner01 from "../../assets/sport.webp"
-import planner02 from "../../assets/Moodboardsite.png"
+import planner02 from "../../assets/Moodboardsite.webp"
 import planner03 from "../../assets/Journaling.webp"
 import planner04 from "../../assets/Aimer.webp"
 import planner05 from "../../assets/Habits.webp"
@@ -18,10 +18,10 @@ import planner06 from "../../assets/katie-huber-rhoades-dupe (1).webp"
 import planner07 from "../../assets/ebony-forsyth-dupe.webp"
 import planner08 from "../../assets/Routine.webp"
 import planner09 from "../../assets/avocado-toast.webp"
-import projetsImage from "../../assets/Projets.jpeg"
-import calendrierHomeImage from "../../assets/Calendrierhome.png"
+import projetsImage from "../../assets/Projets.webp"
+import calendrierHomeImage from "../../assets/Calendrierhome.webp"
 import noeudPapillon from "../../assets/noeud-papillon.webp"
-import citationImage from "../../assets/Citation.png"
+import citationImage from "../../assets/Citation.webp"
 
 import "./Home.css"
 
@@ -57,15 +57,15 @@ type TaskDisplay = {
 type TodoItem = HomeTodoItem
 
 const cards: CardItem[] = [
-  { image: planner01, alt: "Sport", kicker: "Énergie", title: "Sport", path: "/sport" },
-  { image: calendrierHomeImage, alt: "Calendrier", kicker: "Vue globale", title: "Calendrier", path: "/calendrier" },
-  { image: planner05, alt: "Wishlist", kicker: "Envies", title: "Wishlist", path: "/wishlist" },
-  { image: planner03, alt: "Journaling", kicker: "Reflet", title: "Journaling", path: "/journaling" },
-  { image: planner04, alt: "Self-love", kicker: "Soin", title: "Mindset", path: "/self-love" },
-  { image: planner07, alt: "Finances", kicker: "Budget", title: "Finances", path: "/finances" },
-  { image: planner08, alt: "Routine", kicker: "Rythme", title: "Routine", path: "/routine" },
-  { image: planner09, alt: "Courses & menus", kicker: "Saveurs", title: "Menu de la semaine", path: "/menu" },
-  { image: projetsImage, alt: "Projet", kicker: "Organisation", title: "Projet", path: "/project" },
+  { image: planner01, alt: "Baskets blanches entre deux haltères sur le sol d’une salle de sport", kicker: "Énergie", title: "Sport", path: "/sport" },
+  { image: calendrierHomeImage, alt: "Calendrier du mois de janvier avec un stylo et une plante", kicker: "Vue globale", title: "Calendrier", path: "/calendrier" },
+  { image: planner05, alt: "Vêtements blancs suspendus dans une penderie en bois", kicker: "Envies", title: "Wishlist", path: "/wishlist" },
+  { image: planner03, alt: "Carnet ligné ouvert avec un stylo sur une table en bois", kicker: "Reflet", title: "Journaling", path: "/journaling" },
+  { image: planner04, alt: "Ombres de deux personnes formant un cœur avec leurs mains sur le sable", kicker: "Soin", title: "Mindset", path: "/self-love" },
+  { image: planner07, alt: "Ordinateur portable ouvert sur un canapé beige", kicker: "Budget", title: "Finances", path: "/finances" },
+  { image: planner08, alt: "Tasse de matcha posée sur des draps blancs", kicker: "Rythme", title: "Routine", path: "/routine" },
+  { image: planner09, alt: "Tartine à l’avocat garnie d’un œuf poché", kicker: "Saveurs", title: "Menu de la semaine", path: "/menu" },
+  { image: projetsImage, alt: "Carnet d’objectifs, café glacé et lunettes sur une table en marbre", kicker: "Organisation", title: "Projet", path: "/project" },
 ]
 
 const CARD_PATHS = cards.map((card) => card.path)
@@ -937,7 +937,7 @@ function HomePage() {
       })
       .filter((task) => task.endTs > nowTs)
       .sort((a, b) => a.startTs - b.startTs)
-      .slice(0, 2)
+      .slice(0, 4)
 
     return normalized.map(({ startTs: _startTs, endTs: _endTs, ...task }) => task)
   }, [now, tasks])
@@ -955,7 +955,7 @@ function HomePage() {
       <aside className="aside-right">
         <div className="profile-card">
           <div className="profile-photo">
-            <MediaImage src={profileSrc} alt="Profil" loading="eager" decoding="async" width={220} height={220} />
+            <MediaImage src={profileSrc} alt="Photo de profil" loading="eager" decoding="async" width={220} height={220} />
             <div className="home-profile-card__menu">
               <button
                 className="profile-menu"
@@ -988,6 +988,7 @@ function HomePage() {
               ref={fileInputRef}
               type="file"
               accept="image/*"
+              aria-label="Choisir une photo de profil"
               className="profile-file-input"
               onChange={handleProfileInput}
             />
@@ -1041,8 +1042,9 @@ function HomePage() {
           <div className="todo-input">
             <input
               type="text"
+              aria-label="Ajouter une note"
               value={todoInput}
-              maxLength={17}
+              maxLength={21}
               onChange={(event) => setTodoInput(event.target.value)}
               onKeyDown={(event) => {
                 if (event.key === "Enter") {
@@ -1186,7 +1188,7 @@ function HomePage() {
         {moodboardError ? <p className="home-moodboard__error">{moodboardError}</p> : null}
 
         <div className="home-moodboard__preview">
-          <img src={homeMoodboardSrc} alt="Moodboard personnalisé" loading="lazy" decoding="async" />
+          <img src={homeMoodboardSrc} alt="Tableau d’inspiration personnalisé" loading="lazy" decoding="async" />
           <div className="home-moodboard__menu">
             <button
               className="profile-menu home-moodboard__button"

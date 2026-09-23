@@ -62,6 +62,12 @@ const SettingsLanguages = () => {
 
   useEffect(() => {
     try {
+      if (!preferences.preferences) {
+        localStorage.removeItem(storageKey)
+        setSavedLanguage("fr-FR")
+        setSelectedLanguage("fr-FR")
+        return
+      }
       const saved = localStorage.getItem(storageKey)
       if (saved) {
         setSavedLanguage(saved)
@@ -70,7 +76,7 @@ const SettingsLanguages = () => {
     } catch {
       // ignore storage read errors
     }
-  }, [storageKey])
+  }, [preferences.preferences, storageKey])
 
   const filteredLanguages = useMemo(() => {
     const term = searchTerm.trim().toLowerCase()

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom"
 import PageHeading from "../../components/PageHeading"
 import aimerImage from "../../assets/Aimer.webp"
 import journalingImage from "../../assets/Journaling.webp"
-import projetsImage from "../../assets/Projets.jpeg"
+import projetsImage from "../../assets/Projets.webp"
 import "./ArchivesHome.css"
 
 const categories = [
@@ -21,8 +21,9 @@ const ArchivesHome = () => {
   return (
   <div className="archives-home aesthetic-page boutique-page">
     <PageHeading eyebrow="Archives" title="Que souhaitez-vous consulter ?" />
-    <p>Explorez vos archives par catégorie et retrouvez tout ce qui compte.</p>
     <div className="archives-home__grid">
+      <h2 className="archives-home__heading">Tes archives</h2>
+      <p className="archives-home__intro">Explore tes archives par catégorie et retrouve tout ce qui compte pour toi.</p>
       {categories.map((category) => (
         <Link key={category.path} to={category.path} className="archives-home__card">
           <span className="archives-home__image" style={{ backgroundImage: `url(${category.image})` }} aria-hidden="true" />

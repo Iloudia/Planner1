@@ -1,7 +1,7 @@
-import { Suspense, lazy, useEffect } from "react"
-import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom"
+import { Suspense, lazy, useEffect, useLayoutEffect } from "react"
+import { Navigate, Route, Routes, useLocation } from "react-router-dom"
 import { useCookieConsent } from "./context/CookieConsentContext"
-import { initAnalytics } from "./utils/firebase"
+import { setAnalyticsConsent } from "./utils/firebase"
 import Header from "./components/Header"
 import Footer from "./components/Footer"
 import ProtectedRoute from "./components/ProtectedRoute"
@@ -11,6 +11,7 @@ import AppUpdateBanner from "./components/AppUpdateBanner"
 import AdminRoute from "./components/AdminRoute"
 import AdminProductsRoute from "./components/AdminProductsRoute"
 import PageLoader from "./components/PageLoader"
+import PrimaryActionButton from "./components/PrimaryActionButton"
 
 const AuthPage = lazy(() => import("./pages/Auth/AuthPage"))
 const OnboardingPage = lazy(() => import("./pages/Onboarding/Onboarding"))
@@ -66,21 +67,96 @@ const CartPage = lazy(() => import("./pages/Cart/CartPage"))
 const PurchasesPage = lazy(() => import("./pages/Purchases/PurchasesPage"))
 const ProjectPage = lazy(() => import("./pages/Project/ProjectPage"))
 
-function NotFound() {
-  return (
-    <div className="content-page notfound-page">
+const LANDING_PAGE_TITLE = "Me&rituals | Planner, journaling, routines et organisation du quotidien"
 
-      <div className="page-hero">
-        <div className="hero-chip">Oups</div>
-        <h1>Page introuvable</h1>
-        <p className="muted">Le lien est cassé ou la page a été déplacée.</p>
-        <div className="hero-actions">
-          <Link to="/" className="pill">
-            Retour à l'accueil
-          </Link>
+const pageTitles: Record<string, string> = {
+  "/login": "Connexion",
+  "/register": "Création de compte",
+  "/faq": "Faq",
+  "/a-propos": "À propos",
+  "/blog": "Blog",
+  "/blog/sante-beaute": "Santé & beauté",
+  "/blog/mode": "Mode",
+  "/blog/mental": "Mental",
+  "/blog/sport-nutrition": "Sport & nutrition",
+  "/blog/lifestyle": "Lifestyle",
+  "/boutique": "Boutique",
+  "/panier": "Panier",
+  "/merci": "Merci",
+  "/confidentialite": "Confidentialité",
+  "/contact": "Contact",
+  "/cookies": "Cookies",
+  "/mentions-legales": "Mentions légales",
+  "/bienvenue": "Bienvenue",
+  "/home": "Accueil",
+  "/sport": "Sport",
+  "/journaling": "Journaling",
+  "/mindset": "Mindset",
+  "/self-love": "Self love",
+  "/manifestation": "Manifestation",
+  "/wishlist": "Wishlist",
+  "/calendrier": "Calendrier",
+  "/finances": "Finances",
+  "/routine": "Routines",
+  "/goals": "Goals",
+  "/diet": "Diet",
+  "/menu": "Menu",
+  "/profil": "Paramètres",
+  "/archives": "Archives",
+  "/archives/mindset": "Archives mindset",
+  "/archives/journaling": "Archives journaling",
+  "/archives/projets": "Archives projets",
+  "/mes-achats": "Mes achats",
+  "/project": "Projets",
+  "/parametres": "Paramètres",
+  "/parametres/affichage": "Affichage",
+  "/parametres/langues": "Langues",
+  "/parametres/cookies": "Paramètres des cookies",
+  "/admin": "Administration",
+  "/admin/produits": "Produits",
+  "/admin/produits/publies": "Produits publiés",
+}
+
+const getPageTitle = (pathname: string) => {
+  const normalizedPath = pathname !== "/" ? pathname.replace(/\/$/, "") : pathname
+
+  if (normalizedPath === "/") {
+    return LANDING_PAGE_TITLE
+  }
+
+  const pageName = pageTitles[normalizedPath]
+    ?? (normalizedPath.startsWith("/sport/workout") ? "Exercices" : undefined)
+    ?? (normalizedPath.startsWith("/blog/") ? "Article de blog" : undefined)
+    ?? (normalizedPath.startsWith("/boutique/produit/") ? "Produit" : undefined)
+    ?? (normalizedPath.startsWith("/boutique/") ? "Boutique" : undefined)
+    ?? "Page introuvable"
+
+  return `${pageName} | Me&rituals`
+}
+
+function NotFound() {
+  useEffect(() => {
+    document.body.classList.add("notfound-page--active")
+    return () => document.body.classList.remove("notfound-page--active")
+  }, [])
+
+  return (
+    <div className="notfound-page">
+      <section className="notfound-page__panel" aria-labelledby="notfound-title">
+        <p className="notfound-page__eyebrow">Erreur 404</p>
+        <div className="notfound-page__visual" aria-hidden="true">404</div>
+        <div className="notfound-page__content">
+          <h1 id="notfound-title">Page introuvable</h1>
+          <p className="notfound-page__description">
+            La page que tu recherches n’existe plus ou a été déplacée. Tu peux revenir à l’accueil pour poursuivre ta visite.
+          </p>
+          <PrimaryActionButton to="/home" className="notfound-page__link">
+            Retour à l’accueil
+            <span aria-hidden="true">→</span>
+          </PrimaryActionButton>
         </div>
-      </div>
-</div>
+      </section>
+    </div>
   )
 }
 
@@ -98,15 +174,22 @@ function RouteFallback() {
   return <PageLoader />
 }
 
+function PageTitle() {
+  const { pathname } = useLocation()
+
+  useLayoutEffect(() => {
+    document.title = getPageTitle(pathname)
+  }, [pathname])
+
+  return null
+}
+
 function App() {
   const { preferences } = useCookieConsent()
 
   useEffect(() => {
-    if (!preferences.preferences) {
-      return
-    }
-    void initAnalytics()
-  }, [preferences.preferences])
+    void setAnalyticsConsent(preferences.analytics)
+  }, [preferences.analytics])
 
   useEffect(() => {
     const scriptId = "google-translate-script"
@@ -146,6 +229,7 @@ function App() {
   }, [preferences.preferences])
   return (
     <div className="app-shell">
+      <PageTitle />
       <ScrollToTop />
       {preferences.preferences ? (
         <div id="google_translate_element" className="google-translate-element" aria-hidden="true" />

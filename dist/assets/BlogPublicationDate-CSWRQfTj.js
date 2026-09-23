@@ -1,0 +1,1 @@
+import{j as i}from"./index-wZBOtDD6.js";import{g as a,f as o}from"./blogArticles-C3YuQS9O.js";const s=({href:e,className:r})=>{const t=a(e);return t?i.jsxs("p",{className:r,children:["Publié le ",i.jsx("time",{dateTime:t.publicationDate,children:o(t.publicationDate)}),"."]}):null};export{s as B};

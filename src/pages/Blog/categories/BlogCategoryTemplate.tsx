@@ -1,11 +1,13 @@
 import { useEffect } from "react"
 import { Link, useSearchParams } from "react-router-dom"
 import BlogPublicationDate from "../BlogPublicationDate"
+import LatestBlogArticlesSection from "../LatestBlogArticlesSection"
+import type { BlogCategory } from "../blogArticles"
 import "../BlogPage.css"
 import "./BlogHealthBeautyPage.css"
 
 type BlogCategoryTemplateProps = {
-  category: string
+  category: BlogCategory
   slug: string
   headerImage: string
   headerImageAlt: string
@@ -247,6 +249,8 @@ const BlogCategoryTemplate = ({
           <p>{introParagraphs[1]}</p>
         </div>
       </header>
+
+      <LatestBlogArticlesSection category={category} id={`${slug}-derniers-articles`} />
 
       <section className="blog-health-page__articles" id={articlesId} aria-labelledby={articlesTitleId}>
         <header className="blog-section__header">

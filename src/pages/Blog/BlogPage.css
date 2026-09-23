@@ -541,3 +541,29 @@ body.blog-page--tone {
     text-align: left;
   }
 }
+
+@media (max-width: 494px) {
+  .blog-header {
+    padding-bottom: 0;
+  }
+
+  .blog-header__intro {
+    position: static;
+    margin: clamp(0.75rem, 2vw, 1.25rem) auto 0;
+    transform: none;
+  }
+}
+
+@media (min-width: 495px) and (max-width: 1053px) {
+  .blog-header {
+    padding-bottom: 0;
+  }
+
+  .blog-header__intro {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    margin: clamp(-8.5rem, -13vw, -6rem) auto 0;
+    transform: none;
+  }
+}

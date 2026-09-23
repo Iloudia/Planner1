@@ -1,16 +1,16 @@
 import { Fragment, useEffect, type ReactNode } from "react"
 import { Link, useParams } from "react-router-dom"
 import BlogPublicationDate from "../BlogPublicationDate"
-import articleImage from "../../../assets/selfconfidence.jpeg"
-import emotionsArticleImage from "../../../assets/sante.jpeg"
-import comparisonArticleImage from "../../../assets/Selfconfidence2.jpeg"
+import articleImage from "../../../assets/selfconfidence.webp"
+import emotionsArticleImage from "../../../assets/sante.webp"
+import comparisonArticleImage from "../../../assets/Selfconfidence2.webp"
 import strengthImage from "../../../assets/Journaling.webp"
 import boundariesImage from "../../../assets/selflove.webp"
-import innerDialogueImage from "../../../assets/selfconfidence3.jpeg"
-import practiceImage from "../../../assets/selflove5.jpeg"
+import innerDialogueImage from "../../../assets/selfconfidence3.webp"
+import practiceImage from "../../../assets/selflove5.webp"
 import solitudeImage from "../../../assets/Plante-verte.webp"
 import habitsImage from "../../../assets/Routine.webp"
-import procrastinationImage from "../../../assets/Projets.jpeg"
+import procrastinationImage from "../../../assets/Projets.webp"
 import resilienceImage from "../../../assets/Perseverance.webp"
 import socialComparisonImage from "../../../assets/MoodBoard.webp"
 import articleMarkdown from "./confiance-en-soi.md?raw"
@@ -87,135 +87,135 @@ type ArticleIllustration = { image: string; alt: string }
 const confidenceIllustrations: Record<string, ArticleIllustration> = {
   "2. Arrêter de se comparer constamment aux autres": {
     image: comparisonArticleImage,
-    alt: "Illustration sur la comparaison aux autres",
+    alt: "Femme blonde assise au bord de l’eau, vue de dos",
   },
   "8. Faire attention à son dialogue intérieur": {
     image: innerDialogueImage,
-    alt: "Illustration sur le dialogue intérieur",
+    alt: "Ombre d’une femme portant un sac projetée sur un mur clair",
   },
   "Un exercice de 7 jours pour renforcer sa confiance": {
     image: practiceImage,
-    alt: "Moment calme consacré à une routine personnelle",
+    alt: "Bouquet de lys roses et de fleurs claires dans un vase",
   },
 }
 
 const emotionsIllustrations: Record<string, ArticleIllustration> = {
   "2. Apprendre à nommer précisément ce que l’on ressent": {
     image: comparisonArticleImage,
-    alt: "Moment de réflexion pour identifier précisément ses émotions",
+    alt: "Femme blonde assise au bord de l’eau, vue de dos",
   },
   "8. Éviter le piège de la rumination": {
     image: innerDialogueImage,
-    alt: "Moment calme pour prendre du recul sur ses pensées",
+    alt: "Ombre d’une femme portant un sac projetée sur un mur clair",
   },
   "Une méthode en 5 étapes pour les moments émotionnellement difficiles": {
     image: practiceImage,
-    alt: "Routine personnelle pour mieux traverser un moment émotionnel difficile",
+    alt: "Bouquet de lys roses et de fleurs claires dans un vase",
   },
 }
 
 const boundariesIllustrations: Record<string, ArticleIllustration> = {
   "2. Vous n’avez pas besoin d’un procès pour dire non": {
     image: comparisonArticleImage,
-    alt: "Moment de réflexion avant de poser une limite avec calme",
+    alt: "Femme blonde assise au bord de l’eau, vue de dos",
   },
   "8. Arrêter de dire oui immédiatement": {
     image: innerDialogueImage,
-    alt: "Pause nécessaire avant de répondre à une demande",
+    alt: "Ombre d’une femme portant un sac projetée sur un mur clair",
   },
   "Un exercice de 7 jours pour moins chercher l’approbation": {
     image: practiceImage,
-    alt: "Routine personnelle pour apprendre à poser ses limites",
+    alt: "Bouquet de lys roses et de fleurs claires dans un vase",
   },
 }
 
 const negativeThoughtsIllustrations: Record<string, ArticleIllustration> = {
   "2. Une pensée n’est pas forcément un fait": {
     image: comparisonArticleImage,
-    alt: "Moment de réflexion pour distinguer une pensée d’un fait",
+    alt: "Femme blonde assise au bord de l’eau, vue de dos",
   },
   "8. Faire attention à son dialogue intérieur": {
     image: innerDialogueImage,
-    alt: "Moment calme pour observer son dialogue intérieur",
+    alt: "Ombre d’une femme portant un sac projetée sur un mur clair",
   },
   "Une méthode en 5 étapes pour sortir d’une boucle mentale": {
     image: practiceImage,
-    alt: "Routine personnelle pour prendre du recul sur ses pensées",
+    alt: "Bouquet de lys roses et de fleurs claires dans un vase",
   },
 }
 
 const solitudeIllustrations: Record<string, ArticleIllustration> = {
   "2. Apprendre à être seul ne signifie pas devenir antisocial": {
     image: comparisonArticleImage,
-    alt: "Moment paisible passé seul sans rompre avec les autres",
+    alt: "Femme blonde assise au bord de l’eau, vue de dos",
   },
   "8. Construire une vie que l’on apprécie même lorsqu’on est seul": {
     image: innerDialogueImage,
-    alt: "Temps calme consacré à une activité personnelle",
+    alt: "Ombre d’une femme portant un sac projetée sur un mur clair",
   },
   "Un exercice de 7 jours pour apprendre à mieux vivre la solitude": {
     image: practiceImage,
-    alt: "Routine personnelle pour mieux vivre les moments de solitude",
+    alt: "Bouquet de lys roses et de fleurs claires dans un vase",
   },
 }
 
 const mentalHabitsIllustrations: Record<string, ArticleIllustration> = {
   "2. La méditation : apprendre à observer sans réagir immédiatement": {
     image: comparisonArticleImage,
-    alt: "Moment calme consacré à la méditation et à l’observation de ses pensées",
+    alt: "Femme blonde assise au bord de l’eau, vue de dos",
   },
   "8. Ne pas transformer les bonnes habitudes en nouvelles obligations": {
     image: innerDialogueImage,
-    alt: "Routine mentale simple et adaptée à son quotidien",
+    alt: "Ombre d’une femme portant un sac projetée sur un mur clair",
   },
   "Un défi de 7 jours pour construire ses premières habitudes mentales": {
     image: practiceImage,
-    alt: "Pratique quotidienne pour construire de nouvelles habitudes mentales",
+    alt: "Bouquet de lys roses et de fleurs claires dans un vase",
   },
 }
 
 const procrastinationIllustrations: Record<string, ArticleIllustration> = {
   "2. La procrastination peut être une stratégie émotionnelle": {
     image: comparisonArticleImage,
-    alt: "Moment de réflexion pour comprendre ce qui conduit à repousser une tâche",
+    alt: "Femme blonde assise au bord de l’eau, vue de dos",
   },
   "8. Préparer le démarrage à l’avance": {
     image: innerDialogueImage,
-    alt: "Organisation simple pour faciliter le démarrage d’une tâche",
+    alt: "Ombre d’une femme portant un sac projetée sur un mur clair",
   },
   "25. Un exercice de 7 jours contre la procrastination": {
     image: practiceImage,
-    alt: "Routine quotidienne pour commencer plus facilement et moins procrastiner",
+    alt: "Bouquet de lys roses et de fleurs claires dans un vase",
   },
 }
 
 const resilienceIllustrations: Record<string, ArticleIllustration> = {
   "2. La honte après un échec : pourquoi elle est si forte": {
     image: comparisonArticleImage,
-    alt: "Moment de recul pour traverser la honte après un échec",
+    alt: "Femme blonde assise au bord de l’eau, vue de dos",
   },
   "8. Parler à soi comme à quelqu’un que l’on entraîne": {
     image: innerDialogueImage,
-    alt: "Dialogue intérieur constructif après une difficulté",
+    alt: "Ombre d’une femme portant un sac projetée sur un mur clair",
   },
   "26. Un exercice de 7 jours pour recommencer après un échec": {
     image: practiceImage,
-    alt: "Étapes quotidiennes pour reprendre confiance et recommencer",
+    alt: "Bouquet de lys roses et de fleurs claires dans un vase",
   },
 }
 
 const socialComparisonIllustrations: Record<string, ArticleIllustration> = {
   "2. Pourquoi les réseaux sociaux amplifient-ils la comparaison ?": {
     image: comparisonArticleImage,
-    alt: "Réflexion sur la comparaison sociale à travers les réseaux sociaux",
+    alt: "Femme blonde assise au bord de l’eau, vue de dos",
   },
   "8. Comparer des dimensions comparables": {
     image: innerDialogueImage,
-    alt: "Moment de recul pour comparer des trajectoires de manière plus juste",
+    alt: "Ombre d’une femme portant un sac projetée sur un mur clair",
   },
   "29. Un exercice de 7 jours pour réduire la comparaison sociale": {
     image: practiceImage,
-    alt: "Pratique quotidienne pour réduire la comparaison sociale",
+    alt: "Bouquet de lys roses et de fleurs claires dans un vase",
   },
 }
 
@@ -310,7 +310,7 @@ const mentalArticles: Record<string, {
     eyebrow: "Mental · Confiance en soi",
     readingTime: "18 min de lecture",
     image: articleImage,
-    imageAlt: "Moment calme consacré à la confiance en soi",
+    imageAlt: "Femme debout sur un rocher face à l’océan",
     illustrations: confidenceIllustrations,
     recommendationsDescription: "Continue ta lecture autour de la confiance en soi et du bien-être mental.",
   },
@@ -319,7 +319,7 @@ const mentalArticles: Record<string, {
     eyebrow: "Mental · Gestion des émotions",
     readingTime: "22 min de lecture",
     image: emotionsArticleImage,
-    imageAlt: "Moment calme consacré à la gestion des émotions",
+    imageAlt: "Grandes feuilles vertes devant un mur clair",
     illustrations: emotionsIllustrations,
     recommendationsDescription: "Continue ta lecture autour des émotions, de la confiance en soi et du bien-être mental.",
   },
@@ -328,7 +328,7 @@ const mentalArticles: Record<string, {
     eyebrow: "Mental · Assertivité",
     readingTime: "20 min de lecture",
     image: boundariesImage,
-    imageAlt: "Moment calme consacré à l’affirmation de soi et aux limites personnelles",
+    imageAlt: "Bouquet de ballons roses en forme de cœur",
     illustrations: boundariesIllustrations,
     recommendationsDescription: "Continue ta lecture autour de l’assertivité, des limites personnelles et du bien-être mental.",
   },
@@ -337,7 +337,7 @@ const mentalArticles: Record<string, {
     eyebrow: "Mental · Pensées négatives",
     readingTime: "24 min de lecture",
     image: strengthImage,
-    imageAlt: "Carnet ouvert pour prendre du recul sur ses pensées",
+    imageAlt: "Carnet ligné ouvert avec un stylo sur une table en bois",
     illustrations: negativeThoughtsIllustrations,
     recommendationsDescription: "Continue ta lecture autour des pensées, des émotions et du bien-être mental.",
   },
@@ -346,7 +346,7 @@ const mentalArticles: Record<string, {
     eyebrow: "Mental · Solitude",
     readingTime: "23 min de lecture",
     image: solitudeImage,
-    imageAlt: "Moment calme consacré à soi dans un environnement apaisant",
+    imageAlt: "Grandes feuilles vertes devant un mur clair",
     illustrations: solitudeIllustrations,
     recommendationsDescription: "Continue ta lecture autour de la solitude, des relations et du bien-être mental.",
   },
@@ -355,7 +355,7 @@ const mentalArticles: Record<string, {
     eyebrow: "Mental · Habitudes mentales",
     readingTime: "25 min de lecture",
     image: habitsImage,
-    imageAlt: "Moment calme consacré à une routine mentale quotidienne",
+    imageAlt: "Tasse de matcha posée sur des draps blancs",
     illustrations: mentalHabitsIllustrations,
     recommendationsDescription: "Continue ta lecture autour des habitudes, des pensées et du bien-être mental.",
   },
@@ -364,7 +364,7 @@ const mentalArticles: Record<string, {
     eyebrow: "Mental · Procrastination",
     readingTime: "28 min de lecture",
     image: procrastinationImage,
-    imageAlt: "Espace de travail consacré au passage à l’action",
+    imageAlt: "Carnet d’objectifs, café glacé et lunettes sur une table en marbre",
     illustrations: procrastinationIllustrations,
     recommendationsDescription: "Continue ta lecture autour de la motivation, des habitudes et du bien-être mental.",
   },
@@ -373,7 +373,7 @@ const mentalArticles: Record<string, {
     eyebrow: "Mental · Résilience",
     readingTime: "25 min de lecture",
     image: resilienceImage,
-    imageAlt: "Moment de persévérance après une difficulté",
+    imageAlt: "Ordinateur portable, tasse et magazines sur une table sombre",
     illustrations: resilienceIllustrations,
     recommendationsDescription: "Continue ta lecture autour de la résilience, de la confiance et du bien-être mental.",
   },
@@ -382,7 +382,7 @@ const mentalArticles: Record<string, {
     eyebrow: "Mental · Comparaison sociale",
     readingTime: "27 min de lecture",
     image: socialComparisonImage,
-    imageAlt: "Composition visuelle consacrée aux aspirations et à son propre chemin",
+    imageAlt: "Tableau de visualisation consacré à l’indépendance financière et à la création de contenu",
     illustrations: socialComparisonIllustrations,
     recommendationsDescription: "Continue ta lecture autour de la comparaison, de la confiance et du bien-être mental.",
   },

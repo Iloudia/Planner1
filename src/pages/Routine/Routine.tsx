@@ -87,7 +87,7 @@ const RoutineComposer = ({
 }: RoutineComposerProps) => (
   <form className="routine-note__composer" onSubmit={onSubmit}>
     <label>
-      <span>Nouvelle action</span>
+      <p className="editorial-field-label">Nouvelle action</p>
       <input
         type="text"
         value={draft.title}
@@ -102,7 +102,7 @@ const RoutineComposer = ({
       ) : null}
     </label>
     <label>
-      <span>Détail (optionnel)</span>
+      <p className="editorial-field-label">Détail (optionnel)</p>
       <textarea
         value={draft.detail}
         onChange={(event) => onDraftChange("detail", event.target.value.slice(0, ROUTINE_DETAIL_MAX_LENGTH))}

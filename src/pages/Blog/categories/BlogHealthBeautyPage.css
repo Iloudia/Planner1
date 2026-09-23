@@ -21,6 +21,12 @@ body.blog-health-page--solid {
   gap: clamp(1.75rem, 3vw, 2.5rem);
 }
 
+.blog-section + .blog-health-page__articles {
+  margin-top: clamp(1rem, 2.5vw, 2rem);
+  padding-top: clamp(3rem, 6vw, 5rem);
+  border-top: 1px solid var(--color-border-strong);
+}
+
 .blog-pagination {
   display: flex;
   align-items: center;

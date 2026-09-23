@@ -934,7 +934,7 @@ const isAdminToken = (decodedToken) => {
   return Boolean(email && adminEmails.has(email))
 }
 
-const createRateLimiter = ({ windowMs, max, keyPrefix }) => {
+const createRateLimiter = ({ windowMs, max, keyPrefix, keyGenerator }) => {
   const hits = new Map()
   const cleanup = () => {
     const now = Date.now()
@@ -951,9 +951,17 @@ const createRateLimiter = ({ windowMs, max, keyPrefix }) => {
 
   return (req, res, next) => {
     const ip = req.ip || req.socket?.remoteAddress || "unknown"
-    const key = `${keyPrefix}:${ip}`
+    const identifier = keyGenerator?.(req) || ip
+    const key = `${keyPrefix}:${identifier}`
     const now = Date.now()
     const current = hits.get(key)
+    const resetAt = current?.resetAt > now ? current.resetAt : now + windowMs
+    const currentCount = current?.resetAt > now ? current.count : 0
+    const resetAfterSeconds = Math.max(Math.ceil((resetAt - now) / 1000), 1)
+
+    res.setHeader("RateLimit-Limit", String(max))
+    res.setHeader("RateLimit-Remaining", String(Math.max(max - currentCount - 1, 0)))
+    res.setHeader("RateLimit-Reset", String(resetAfterSeconds))
 
     if (!current || current.resetAt <= now) {
       hits.set(key, { count: 1, resetAt: now + windowMs })
@@ -969,6 +977,56 @@ const createRateLimiter = ({ windowMs, max, keyPrefix }) => {
     current.count += 1
     hits.set(key, current)
     return next()
+  }
+}
+
+const antiSpamChallengeMaxAgeMs = 2 * 60 * 60 * 1000
+const antiSpamChallengeMinAgeMs = 800
+
+const createAntiSpamChallenge = (purpose) => {
+  const payload = Buffer.from(JSON.stringify({
+    purpose,
+    issuedAt: Date.now(),
+    nonce: crypto.randomBytes(18).toString("base64url"),
+  })).toString("base64url")
+  const signature = crypto
+    .createHmac("sha256", downloadTokenSecret)
+    .update(`anti-spam:${payload}`)
+    .digest("base64url")
+  return `${payload}.${signature}`
+}
+
+const verifyAntiSpamChallenge = (token, expectedPurpose) => {
+  const [payload, signature, extraPart] = String(token || "").split(".")
+  if (!payload || !signature || extraPart) {
+    return false
+  }
+
+  const expectedSignature = crypto
+    .createHmac("sha256", downloadTokenSecret)
+    .update(`anti-spam:${payload}`)
+    .digest()
+  let receivedSignature
+  try {
+    receivedSignature = Buffer.from(signature, "base64url")
+  } catch {
+    return false
+  }
+  if (receivedSignature.length !== expectedSignature.length || !crypto.timingSafeEqual(receivedSignature, expectedSignature)) {
+    return false
+  }
+
+  try {
+    const challenge = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"))
+    const age = Date.now() - Number(challenge?.issuedAt)
+    return challenge?.purpose === expectedPurpose
+      && typeof challenge?.nonce === "string"
+      && challenge.nonce.length >= 20
+      && Number.isFinite(age)
+      && age >= antiSpamChallengeMinAgeMs
+      && age <= antiSpamChallengeMaxAgeMs
+  } catch {
+    return false
   }
 }
 
@@ -990,10 +1048,27 @@ app.use((req, res, next) => {
 })
 
 app.use("/api/stripe-webhook", express.raw({ type: "application/json" }))
+app.use(["/api/email/contact", "/api/email/password-reset/request"], express.json({ limit: "16kb" }))
 app.use(express.json({ limit: "50mb" }))
 
+const hashRateLimitIdentity = (value) => crypto.createHash("sha256").update(String(value || "")).digest("hex")
 const apiRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 180, keyPrefix: "api" })
 const sensitiveApiRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 30, keyPrefix: "sensitive" })
+const antiSpamChallengeRateLimit = createRateLimiter({ windowMs: 15 * 60 * 1000, max: 20, keyPrefix: "anti-spam-challenge" })
+const contactRateLimit = createRateLimiter({ windowMs: 15 * 60 * 1000, max: 5, keyPrefix: "contact" })
+const passwordResetRequestRateLimit = createRateLimiter({ windowMs: 15 * 60 * 1000, max: 5, keyPrefix: "password-reset-request" })
+const contactEmailRateLimit = createRateLimiter({
+  windowMs: 60 * 60 * 1000,
+  max: 3,
+  keyPrefix: "contact-email",
+  keyGenerator: (req) => hashRateLimitIdentity(normalizeEmailValue(req.body?.email)),
+})
+const passwordResetEmailRateLimit = createRateLimiter({
+  windowMs: 60 * 60 * 1000,
+  max: 3,
+  keyPrefix: "password-reset-email",
+  keyGenerator: (req) => hashRateLimitIdentity(normalizeEmailValue(req.body?.email)),
+})
 
 app.use("/api", apiRateLimit)
 app.use("/api/auth", sensitiveApiRateLimit)
@@ -1005,6 +1080,20 @@ app.use("/api/my-purchases", sensitiveApiRateLimit)
 app.use("/api/download", sensitiveApiRateLimit)
 app.use("/api/email", sensitiveApiRateLimit)
 app.use("/api/admin", sensitiveApiRateLimit)
+app.use("/api/anti-spam/challenge", antiSpamChallengeRateLimit)
+app.use("/api/email/contact", contactRateLimit)
+app.use("/api/email/contact", contactEmailRateLimit)
+app.use("/api/email/password-reset/request", passwordResetRequestRateLimit)
+app.use("/api/email/password-reset/request", passwordResetEmailRateLimit)
+
+app.get("/api/anti-spam/challenge", (req, res) => {
+  const purpose = sanitizeText(req.query?.purpose, 40)
+  if (purpose !== "contact") {
+    return res.status(400).json({ error: "Protection anti-spam invalide." })
+  }
+  res.setHeader("Cache-Control", "no-store")
+  return res.json({ token: createAntiSpamChallenge(purpose) })
+})
 
 const firebaseAuth = async (req, res, next) => {
   if (!isFirebaseTokenVerificationConfigured) {
@@ -1569,7 +1658,7 @@ const sendDownloadEmail = async ({ to, items, attachments, attachedPdfCount = 0,
     imageHtml: renderEmailHeroImage({
       attachment: purchasePhotoAttachment,
       contentId: "purchase-photo",
-      alt: "Photo achat",
+      alt: "Merci beaucoup accompagné d’un cœur rouge",
       fallbackLabel: "Photo achat",
     }),
     ctaDescription: "",
@@ -1942,7 +2031,7 @@ const sendWelcomeEmail = async ({ to, firstName }) => {
     imageHtml: renderEmailHeroImage({
       attachment: welcomePhotoAttachment,
       contentId: "welcome-photo",
-      alt: "Photo bienvenue",
+      alt: "Ordinateur portable, tasse et magazines sur une table sombre",
       fallbackLabel: "Photo bienvenue",
     }),
     ctaDescription: "Commence d&egrave;s maintenant et simplifie ton quotidien",
@@ -2216,9 +2305,13 @@ app.post("/api/email/contact", async (req, res) => {
     const subject = sanitizeText(req.body?.subject, 160)
     const message = sanitizeText(req.body?.message, 5000)
     const website = sanitizeText(req.body?.website, 120)
+    const antiSpamToken = sanitizeText(req.body?.antiSpamToken, 1000)
 
     if (website) {
       return res.json({ ok: true })
+    }
+    if (!verifyAntiSpamChallenge(antiSpamToken, "contact")) {
+      return res.status(400).json({ error: "La vérification anti-spam est invalide ou a expiré. Actualise la page puis réessaie." })
     }
     if (!firstName || !lastName || !email || !subject || !message) {
       return res.status(400).json({ error: "Tous les champs du formulaire sont requis." })

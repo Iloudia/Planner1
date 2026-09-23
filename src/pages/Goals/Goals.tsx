@@ -242,7 +242,7 @@ const GoalsPage = () => {
                 <div key={index} className="body-goal-slot">
                   {image ? (
                     <>
-                      <MediaImage src={image} alt={`Body goal ${index + 1}`} loading="lazy" decoding="async" />
+                      <MediaImage src={image} alt={`Inspiration pour l’objectif physique ${index + 1}`} loading="lazy" decoding="async" />
                       <button
                         type="button"
                         className="body-goal-slot__action"

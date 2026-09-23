@@ -46,7 +46,7 @@ const SelfLoveHome = () => {
           {selfLoveCards.map((card) => (
             <Link key={card.route} className="self-love-life-card" to={card.route} aria-label={`Ouvrir ${card.label}`}>
               <div className="self-love-life-card__media">
-                <img src={card.image} alt={card.label} loading="lazy" decoding="async" />
+                <img src={card.image} alt="" loading="lazy" decoding="async" />
               </div>
               <h3>{card.label}</h3>
             </Link>
@@ -57,7 +57,7 @@ const SelfLoveHome = () => {
       <section className="self-love-editorial-section">
         <section className="self-love-blog-banner" aria-labelledby="self-love-blog-title">
           <div className="self-love-blog-banner__media">
-            <img src={blogImage} alt="Carnet ouvert dans une ambiance calme" loading="lazy" decoding="async" />
+            <img src={blogImage} alt="Carnet ligné ouvert avec un stylo sur une table en bois" loading="lazy" decoding="async" />
           </div>
           <div className="self-love-blog-banner__content">
             <span className="self-love-blog-banner__eyebrow">Aller plus loin</span>

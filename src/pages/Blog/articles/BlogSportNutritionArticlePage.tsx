@@ -1,10 +1,10 @@
 import { Fragment, useEffect, type ReactNode } from "react"
 import { Link, useParams } from "react-router-dom"
 import BlogPublicationDate from "../BlogPublicationDate"
-import sportImage from "../../../assets/sport1.jpeg"
+import sportImage from "../../../assets/sport1.webp"
 import nutritionImage from "../../../assets/food2.webp"
 import mealImage from "../../../assets/avocado-toast.webp"
-import smoothieImage from "../../../assets/Smoothie glow mangue passion.png"
+import smoothieImage from "../../../assets/Smoothie glow mangue passion.webp"
 import routineImage from "../../../assets/Routine.webp"
 import workoutImage from "../../../assets/Backday.webp"
 import habitsImage from "../../../assets/Habits.webp"
@@ -19,45 +19,45 @@ type ArticleIllustration = { image: string; alt: string }
 const flexibleEatingIllustrations: Record<string, ArticleIllustration> = {
   "2. Arrêter de classer les aliments en « bons » et « mauvais »": {
     image: nutritionImage,
-    alt: "Alimentation variée associant équilibre nutritionnel et plaisir",
+    alt: "Deux cafés glacés vus de dessus",
   },
   "17. Construis tes repas autour d’une base simple": {
     image: mealImage,
-    alt: "Repas simple et équilibré composé d’aliments variés",
+    alt: "Tartine à l’avocat garnie d’un œuf poché",
   },
   "36. Un exercice de 7 jours pour rendre ton alimentation plus flexible": {
     image: smoothieImage,
-    alt: "Habitudes alimentaires souples intégrées progressivement au quotidien",
+    alt: "Smoothie à la mangue servi dans un grand verre",
   },
 }
 
 const creatineIllustrations: Record<string, ArticleIllustration> = {
   "2. Pourquoi quelques répétitions supplémentaires peuvent faire une différence": {
     image: workoutImage,
-    alt: "Entraînement de musculation soutenu par une progression régulière",
+    alt: "Femme effectuant un tirage vertical à la salle de sport",
   },
   "8. Quelle créatine choisir ?": {
     image: smoothieImage,
-    alt: "Complément intégré simplement à une routine sportive quotidienne",
+    alt: "Smoothie à la mangue servi dans un grand verre",
   },
   "35. Une routine de créatine extrêmement simple": {
     image: routineImage,
-    alt: "Routine quotidienne simple pour prendre régulièrement de la créatine",
+    alt: "Tasse de matcha posée sur des draps blancs",
   },
 }
 
 const sportDisciplineIllustrations: Record<string, ArticleIllustration> = {
   "2. Commence avec une fréquence réaliste": {
     image: workoutImage,
-    alt: "Séance de sport intégrée à une fréquence réaliste et durable",
+    alt: "Femme effectuant un tirage vertical à la salle de sport",
   },
   "18. Construire une habitude prend du temps": {
     image: habitsImage,
-    alt: "Habitudes sportives construites progressivement avec régularité",
+    alt: "Vêtements blancs suspendus dans une penderie en bois",
   },
   "36. Une semaine sportive réaliste pour débuter": {
     image: routineImage,
-    alt: "Organisation simple d’une semaine sportive adaptée au quotidien",
+    alt: "Tasse de matcha posée sur des draps blancs",
   },
 }
 
@@ -179,7 +179,7 @@ const sportNutritionArticles: Record<string, {
     eyebrow: "Sport & Nutrition · Alimentation",
     readingTime: "28 min de lecture",
     image: nutritionImage,
-    imageAlt: "Alimentation variée et équilibrée laissant une place aux aliments plaisir",
+    imageAlt: "Deux cafés glacés vus de dessus",
     illustrations: flexibleEatingIllustrations,
     recommendationsDescription: "Continue ta lecture autour de l’alimentation, du mouvement et d’un équilibre durable.",
   },
@@ -188,7 +188,7 @@ const sportNutritionArticles: Record<string, {
     eyebrow: "Sport & Nutrition · Compléments",
     readingTime: "27 min de lecture",
     image: sportImage,
-    imageAlt: "Entraînement sportif associé à une supplémentation en créatine",
+    imageAlt: "Joueuse tenant une raquette de padel sur un terrain bleu",
     illustrations: creatineIllustrations,
     recommendationsDescription: "Continue ta lecture autour de la performance, de la nutrition et d’une pratique sportive équilibrée.",
   },
@@ -197,7 +197,7 @@ const sportNutritionArticles: Record<string, {
     eyebrow: "Sport & Nutrition · Discipline",
     readingTime: "28 min de lecture",
     image: workoutImage,
-    imageAlt: "Routine sportive régulière construite avec souplesse et discipline",
+    imageAlt: "Femme effectuant un tirage vertical à la salle de sport",
     illustrations: sportDisciplineIllustrations,
     recommendationsDescription: "Continue ta lecture autour de la régularité, du mouvement et d’une pratique sportive durable.",
   },

@@ -505,8 +505,8 @@ const SelfLovePage = () => {
             </div>
             <div className="self-love-future-letter__footer">
               <div className="self-love-future-letter__stamp">
-                <img src={stampLove} alt="Timbre souvenir" loading="lazy" decoding="async" />
-                <img src={stampKey} alt="Timbre secret" loading="lazy" decoding="async" />
+                <img src={stampLove} alt="" loading="lazy" decoding="async" />
+                <img src={stampKey} alt="" loading="lazy" decoding="async" />
               </div>
             </div>
           </div>

@@ -18,60 +18,60 @@ type ArticleIllustration = { image: string; alt: string }
 const styleIllustrations: Record<string, ArticleIllustration> = {
   "7. Crée tes formules de tenue": {
     image: wardrobeImage,
-    alt: "Tenue personnelle composée à partir de silhouettes faciles à porter",
+    alt: "Livre ouvert et tasse de thé sur un lit",
   },
   "21. Pinterest doit servir à trouver des motifs, pas à copier des personnes": {
     image: moodboardImage,
-    alt: "Moodboard utilisé pour identifier les éléments récurrents d’un style personnel",
+    alt: "Tableau de visualisation consacré à l’indépendance financière et à la création de contenu",
   },
   "40. Le défi de 7 jours pour trouver ton style": {
     image: signatureImage,
-    alt: "Expérimentation quotidienne pour construire un style personnel cohérent",
+    alt: "Chaussures de sport et sac rouge posés sur le sol d’une salle",
   },
 }
 
 const capsuleWardrobeIllustrations: Record<string, ArticleIllustration> = {
   "7. Choisis une palette facile à associer": {
     image: moodboardImage,
-    alt: "Palette vestimentaire cohérente facilitant les associations entre les pièces",
+    alt: "Tableau de visualisation consacré à l’indépendance financière et à la création de contenu",
   },
   "25. Adapte la capsule selon les saisons": {
     image: styleImage,
-    alt: "Sélection de pièces adaptée aux différentes saisons de l’année",
+    alt: "Nœud en ruban rose pâle",
   },
   "40. Une méthode simple pour construire ta capsule": {
     image: wardrobeImage,
-    alt: "Garde-robe capsule simple, cohérente et adaptée au quotidien",
+    alt: "Livre ouvert et tasse de thé sur un lit",
   },
 }
 
 const clothingMaterialsIllustrations: Record<string, ArticleIllustration> = {
   "3. Le coton : le classique polyvalent": {
     image: styleImage,
-    alt: "Texture textile illustrant les qualités d’une matière en coton",
+    alt: "Nœud en ruban rose pâle",
   },
   "22. Le polyester : beaucoup plus complexe que sa mauvaise réputation": {
     image: wardrobeImage,
-    alt: "Vêtement choisi selon sa matière, sa construction et son usage",
+    alt: "Livre ouvert et tasse de thé sur un lit",
   },
   "42. Comment choisir un vêtement en magasin ?": {
     image: signatureImage,
-    alt: "Observation attentive de la matière et de la construction d’un vêtement",
+    alt: "Chaussures de sport et sac rouge posés sur le sol d’une salle",
   },
 }
 
 const clothingQualityIllustrations: Record<string, ArticleIllustration> = {
   "2. Regarde si les coutures sont régulières": {
     image: qualityImage,
-    alt: "Inspection attentive des coutures et des finitions d’un vêtement",
+    alt: "Miroir à main, brosse à cheveux et accessoires roses",
   },
   "23. La matière compte, mais pas uniquement sa composition": {
     image: styleImage,
-    alt: "Détail textile observé pour évaluer sa matière et sa construction",
+    alt: "Nœud en ruban rose pâle",
   },
   "50. Le test des 60 secondes en magasin": {
     image: wardrobeImage,
-    alt: "Vêtement examiné rapidement avant un achat en magasin",
+    alt: "Livre ouvert et tasse de thé sur un lit",
   },
 }
 
@@ -193,7 +193,7 @@ const fashionArticles: Record<string, {
     eyebrow: "Mode · Style personnel",
     readingTime: "29 min de lecture",
     image: styleImage,
-    imageAlt: "Détails vestimentaires choisis pour construire un style personnel",
+    imageAlt: "Nœud en ruban rose pâle",
     illustrations: styleIllustrations,
     recommendationsDescription: "Continue ta lecture autour du style, des inspirations et d’une garde-robe qui te ressemble.",
   },
@@ -202,7 +202,7 @@ const fashionArticles: Record<string, {
     eyebrow: "Mode · Capsule wardrobe",
     readingTime: "27 min de lecture",
     image: wardrobeImage,
-    imageAlt: "Garde-robe capsule composée de pièces simples et faciles à associer",
+    imageAlt: "Livre ouvert et tasse de thé sur un lit",
     illustrations: capsuleWardrobeIllustrations,
     recommendationsDescription: "Continue ta lecture autour du style, des associations et d’une garde-robe plus cohérente.",
   },
@@ -211,7 +211,7 @@ const fashionArticles: Record<string, {
     eyebrow: "Mode · Matières",
     readingTime: "29 min de lecture",
     image: signatureImage,
-    imageAlt: "Vêtement observé pour comprendre sa matière, sa texture et sa construction",
+    imageAlt: "Chaussures de sport et sac rouge posés sur le sol d’une salle",
     illustrations: clothingMaterialsIllustrations,
     recommendationsDescription: "Continue ta lecture autour des matières, du style et de choix vestimentaires plus adaptés.",
   },
@@ -220,7 +220,7 @@ const fashionArticles: Record<string, {
     eyebrow: "Mode · Qualité",
     readingTime: "31 min de lecture",
     image: qualityImage,
-    imageAlt: "Vêtement examiné pour évaluer la qualité de sa construction et de ses finitions",
+    imageAlt: "Miroir à main, brosse à cheveux et accessoires roses",
     illustrations: clothingQualityIllustrations,
     recommendationsDescription: "Continue ta lecture autour de la qualité, des matières et de choix vestimentaires plus durables.",
   },

@@ -1,6 +1,7 @@
 ﻿import { useState, useMemo, useEffect, useRef, useCallback, type FormEvent } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../../context/AuthContext"
+import { useCookieConsent } from "../../context/CookieConsentContext"
 import { fetchApi } from "../../utils/apiUrl"
 import { buildUserScopedKey, normalizeUserEmail } from "../../utils/userScopedKey"
 import { useMoodboard } from "../../context/MoodboardContext"
@@ -110,11 +111,15 @@ const AuthPage = ({ mode }: AuthFormProps) => {
   const navigate = useNavigate()
   const location = useLocation()
   const { isAuthReady, isAuthenticated, login, register, userEmail, loginWithGoogle } = useAuth()
+  const { preferences: cookiePreferences, openPreferences } = useCookieConsent()
   const { moodboardSrc } = useMoodboard()
 
   const [email, setEmail] = useState("")
   const [emailHistory, setEmailHistory] = useState<string[]>(() => {
     if (typeof window === "undefined") {
+      return []
+    }
+    if (!cookiePreferences.preferences) {
       return []
     }
     try {
@@ -130,7 +135,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
     if (typeof window === "undefined") {
       return false
     }
-    return window.localStorage.getItem(REMEMBER_PREFERENCE_KEY) === "true"
+    return cookiePreferences.preferences && window.localStorage.getItem(REMEMBER_PREFERENCE_KEY) === "true"
   })
   const [error, setError] = useState("")
   const [info, setInfo] = useState("")
@@ -199,11 +204,25 @@ const AuthPage = ({ mode }: AuthFormProps) => {
     if (typeof window === "undefined") {
       return
     }
+    if (!cookiePreferences.preferences) {
+      window.localStorage.removeItem(REMEMBER_PREFERENCE_KEY)
+      if (remember) {
+        setRemember(false)
+      }
+      return
+    }
     window.localStorage.setItem(REMEMBER_PREFERENCE_KEY, remember ? "true" : "false")
-  }, [remember])
+  }, [cookiePreferences.preferences, remember])
 
   useEffect(() => {
     if (typeof window === "undefined") {
+      return
+    }
+    if (!cookiePreferences.preferences) {
+      window.localStorage.removeItem(EMAIL_HISTORY_KEY)
+      if (emailHistory.length > 0) {
+        setEmailHistory([])
+      }
       return
     }
     try {
@@ -211,7 +230,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
     } catch {
       // ignore
     }
-  }, [emailHistory])
+  }, [cookiePreferences.preferences, emailHistory])
 
   useEffect(() => {
     setRegisterStep(0)
@@ -226,6 +245,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
   )
 
   const rememberEmail = (emailValue: string) => {
+    if (!cookiePreferences.preferences) return
     const normalized = emailValue.trim()
     if (!normalized) return
     setEmailHistory((prev) => {
@@ -308,11 +328,11 @@ const AuthPage = ({ mode }: AuthFormProps) => {
     }
     const attempt =
       mode === "login"
-        ? await login({ email: normalizedEmail, password, remember })
+        ? await login({ email: normalizedEmail, password, remember: remember && cookiePreferences.preferences })
         : await register({
           email: normalizedEmail,
           password,
-          remember,
+          remember: remember && cookiePreferences.preferences,
           profile: {
             firstName,
             lastName,
@@ -403,22 +423,36 @@ const AuthPage = ({ mode }: AuthFormProps) => {
     )
   }
   return (
-    <div className="auth-page">
+    <div className={`auth-page auth-page--modern auth-page--${mode}`}>
 
       <div className="auth-hero">
         <div className="auth-visual">
-          <img src={moodboardSrc} alt="Moodboard Planner" loading="eager" decoding="async" />
+          <img src={moodboardSrc} alt="Tableau d’inspiration personnalisé" loading="eager" decoding="async" />
+          <div className="auth-visual__caption">
+            <span>Planner</span>
+            <p>{mode === "login" ? "Un espace calme pour organiser ce qui compte vraiment." : "Crée un espace personnel pour avancer avec plus de clarté et de sérénité."}</p>
+          </div>
         </div>
         <div className="auth-panel">
-          <h1 className="auth-title">{panelHeading}</h1>
-          {mode === "login" && loginPanelMode === "forgot" ? (
-            <p className="auth-lead">Entre ton email pour recevoir un lien de réinitialisation.</p>
-          ) : (
-            <div className="auth-switch">
-              <span>{switchLabel}</span>
-              <Link to={switchTo}>{mode === "login" ? "Créer un compte" : "Se connecter"}</Link>
-            </div>
-          )}
+          <header className="auth-panel__header">
+            {mode === "login" && loginPanelMode === "login" ? <span className="auth-panel__eyebrow">Heureuse de te retrouver</span> : null}
+            {mode === "register" ? <span className="auth-panel__eyebrow">Un espace pensé pour toi</span> : null}
+            <h1 className="auth-title">{panelHeading}</h1>
+            {mode === "login" && loginPanelMode === "login" ? (
+              <p className="auth-panel__intro">Reconnecte-toi à ton espace et reprends ton organisation là où tu l’as laissée.</p>
+            ) : null}
+            {mode === "register" ? (
+              <p className="auth-panel__intro">Renseigne quelques informations pour créer ton espace et commencer à organiser ton quotidien.</p>
+            ) : null}
+            {mode === "login" && loginPanelMode === "forgot" ? (
+              <p className="auth-lead">Entre ton email pour recevoir un lien de réinitialisation.</p>
+            ) : (
+              <div className="auth-switch">
+                <span>{switchLabel}</span>
+                <Link to={switchTo}>{mode === "login" ? "Créer un compte" : "Se connecter"}</Link>
+              </div>
+            )}
+          </header>
 
           {isAuthenticated && mode !== "register" ? (
             <p className="auth-status">
@@ -663,7 +697,17 @@ const AuthPage = ({ mode }: AuthFormProps) => {
                 {mode === "login" ? (
                   <>
                     <label className="auth-remember">
-                      <input type="checkbox" checked={remember} onChange={(event) => setRemember(event.target.checked)} />
+                      <input
+                        type="checkbox"
+                        checked={remember}
+                        onChange={(event) => {
+                          if (event.target.checked && !cookiePreferences.preferences) {
+                            openPreferences()
+                            return
+                          }
+                          setRemember(event.target.checked)
+                        }}
+                      />
                       Se souvenir de moi
                     </label>
                     <button type="submit" className="auth-submit">

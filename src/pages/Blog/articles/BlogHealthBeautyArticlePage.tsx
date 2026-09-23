@@ -18,60 +18,60 @@ type ArticleIllustration = { image: string; alt: string }
 const darkCirclesIllustrations: Record<string, ArticleIllustration> = {
   "2. Les cernes vasculaires : quand les vaisseaux deviennent visibles": {
     image: selfCareImage,
-    alt: "Soin doux consacré à la zone fragile du contour des yeux",
+    alt: "Bouquet de ballons roses en forme de cœur",
   },
   "8. Combien faut-il dormir pour avoir l’air reposé ?": {
     image: plantImage,
-    alt: "Environnement calme associé au repos et à un sommeil régulier",
+    alt: "Grandes feuilles vertes devant un mur clair",
   },
   "25. Une routine simple pour avoir le regard plus frais": {
     image: routineImage,
-    alt: "Routine quotidienne simple pour prendre soin du contour des yeux",
+    alt: "Tasse de matcha posée sur des draps blancs",
   },
 }
 
 const vitaminCIllustrations: Record<string, ArticleIllustration> = {
   "2. La vitamine C est avant tout un antioxydant": {
     image: selfCareImage,
-    alt: "Soin antioxydant intégré à une routine douce pour la peau",
+    alt: "Bouquet de ballons roses en forme de cœur",
   },
   "8. Quelle forme de vitamine C choisir ?": {
     image: plantImage,
-    alt: "Sélection attentive d’un soin à la vitamine C adapté à sa peau",
+    alt: "Grandes feuilles vertes devant un mur clair",
   },
   "28. Une routine simple avec vitamine C": {
     image: routineImage,
-    alt: "Routine quotidienne simple intégrant un soin à la vitamine C",
+    alt: "Tasse de matcha posée sur des draps blancs",
   },
 }
 
 const hairGrowthIllustrations: Record<string, ArticleIllustration> = {
   "2. Pousse lente ou casse : comment faire la différence ?": {
     image: plantImage,
-    alt: "Observation attentive de la croissance et de l’état des longueurs",
+    alt: "Grandes feuilles vertes devant un mur clair",
   },
   "8. Faut-il laver souvent son cuir chevelu ?": {
     image: vitaminCImage,
-    alt: "Routine douce adaptée aux besoins du cuir chevelu",
+    alt: "Bouquet de tulipes blanches dans un vase",
   },
   "27. Une routine simple pour conserver davantage de longueur": {
     image: routineImage,
-    alt: "Routine capillaire simple pour limiter la casse et conserver les longueurs",
+    alt: "Tasse de matcha posée sur des draps blancs",
   },
 }
 
 const strongNailsIllustrations: Record<string, ArticleIllustration> = {
   "2. Le dédoublement : quand l’ongle se sépare en couches": {
     image: plantImage,
-    alt: "Soin doux pour protéger des ongles fragiles et dédoublés",
+    alt: "Grandes feuilles vertes devant un mur clair",
   },
   "8. Arrête d’arracher les petites peaux": {
     image: selfCareImage,
-    alt: "Soin hydratant pour les mains, les ongles et les cuticules",
+    alt: "Bouquet de ballons roses en forme de cœur",
   },
   "27. Une routine simple pour des ongles plus forts": {
     image: routineImage,
-    alt: "Routine simple pour renforcer les ongles et protéger les cuticules",
+    alt: "Tasse de matcha posée sur des draps blancs",
   },
 }
 
@@ -193,7 +193,7 @@ const healthBeautyArticles: Record<string, {
     eyebrow: "Santé & Beauté · Regard",
     readingTime: "22 min de lecture",
     image: darkCirclesImage,
-    imageAlt: "Soin et maquillage pour avoir le regard plus reposé",
+    imageAlt: "Palette de fards, rouge à lèvres et produits de maquillage",
     illustrations: darkCirclesIllustrations,
     recommendationsDescription: "Continue ta lecture autour des soins, de la beauté et du bien-être au quotidien.",
   },
@@ -202,7 +202,7 @@ const healthBeautyArticles: Record<string, {
     eyebrow: "Santé & Beauté · Soin de la peau",
     readingTime: "24 min de lecture",
     image: vitaminCImage,
-    imageAlt: "Soin lumineux à la vitamine C intégré à une routine pour la peau",
+    imageAlt: "Bouquet de tulipes blanches dans un vase",
     illustrations: vitaminCIllustrations,
     recommendationsDescription: "Continue ta lecture autour des actifs, des soins de la peau et de la beauté au quotidien.",
   },
@@ -211,7 +211,7 @@ const healthBeautyArticles: Record<string, {
     eyebrow: "Santé & Beauté · Cheveux",
     readingTime: "26 min de lecture",
     image: selfCareImage,
-    imageAlt: "Routine douce consacrée au soin et à la croissance des cheveux",
+    imageAlt: "Bouquet de ballons roses en forme de cœur",
     illustrations: hairGrowthIllustrations,
     recommendationsDescription: "Continue ta lecture autour des cheveux, des soins et du bien-être au quotidien.",
   },
@@ -220,7 +220,7 @@ const healthBeautyArticles: Record<string, {
     eyebrow: "Santé & Beauté · Ongles",
     readingTime: "25 min de lecture",
     image: darkCirclesImage,
-    imageAlt: "Soin des mains pour renforcer les ongles et protéger les cuticules",
+    imageAlt: "Palette de fards, rouge à lèvres et produits de maquillage",
     illustrations: strongNailsIllustrations,
     recommendationsDescription: "Continue ta lecture autour des ongles, des soins et de la beauté au quotidien.",
   },

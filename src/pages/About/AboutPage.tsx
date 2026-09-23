@@ -23,7 +23,7 @@ const siteValues = [
   {
     title: "Bien-être",
     image: planteVerte,
-    imageAlt: "Plante verte inspiration bien-être",
+    imageAlt: "Grandes feuilles vertes devant un mur clair",
     description: [
       "Créer un espace où l'on peut ralentir, respirer et retrouver un équilibre intérieur.",
       "Un lieu pour apaiser le mental, alléger la charge émotionnelle et cultiver un mieux-être durable.",
@@ -32,7 +32,7 @@ const siteValues = [
   {
     title: "Bienveillance",
     image: valuePhotoTwo,
-    imageAlt: "Portrait inspiration bienveillance",
+    imageAlt: "Ballons rouges en forme de cœur disposés sur un mur blanc",
     description: [
       "Apprendre à se parler avec douceur, sans jugement ni auto-critique.",
       "Avancer en se respectant, en s'accueillant pleinement, même dans les moments de doute.",
@@ -41,7 +41,7 @@ const siteValues = [
   {
     title: "Persévérance",
     image: valuePhotoThree,
-    imageAlt: "Portrait inspiration persévérance",
+    imageAlt: "Ordinateur portable, tasse et magazines sur une table sombre",
     description: [
       "Rappeler que chaque petit pas compte.",
       "Continuer d'avancer, même lentement, avec confiance et constance, un jour à la fois.",
@@ -98,7 +98,7 @@ const AboutPage = () => {
                 </div>
               </div>
               <figure className="about-feature__media">
-                <img src={portrait} alt="Portrait de la créatrice du site" loading="lazy" decoding="async" />
+                <img src={portrait} alt="Bouquet de tulipes blanches dans un vase" loading="lazy" decoding="async" />
               </figure>
             </div>
           </article>
