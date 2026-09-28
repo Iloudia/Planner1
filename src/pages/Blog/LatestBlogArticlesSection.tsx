@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom"
+import ResponsiveSiteImage from "../../components/ResponsiveSiteImage"
 import {
   formatPublicationDate,
   getLatestBlogArticlesByCategory,
@@ -26,7 +27,7 @@ const LatestBlogArticlesSection = ({ category, id }: LatestBlogArticlesSectionPr
         {latestArticles.map((article) => (
           <article className="blog-card" key={article.href}>
             <Link className="blog-card__image" to={article.href} aria-label={`Lire : ${article.title}`}>
-              <img src={article.image} alt={article.imageAlt} loading="lazy" decoding="async" />
+              <ResponsiveSiteImage src={article.image} alt={article.imageAlt} loading="lazy" decoding="async" />
             </Link>
             <div className="blog-card__body">
               <div className="blog-card__meta">

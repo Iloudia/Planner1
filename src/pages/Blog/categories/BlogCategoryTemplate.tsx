@@ -1,5 +1,6 @@
 import { useEffect } from "react"
 import { Link, useSearchParams } from "react-router-dom"
+import ResponsiveSiteImage from "../../../components/ResponsiveSiteImage"
 import BlogPublicationDate from "../BlogPublicationDate"
 import LatestBlogArticlesSection from "../LatestBlogArticlesSection"
 import type { BlogCategory } from "../blogArticles"
@@ -236,7 +237,7 @@ const BlogCategoryTemplate = ({
     <div className="blog-health-page">
       <header className="blog-header">
         <div className="blog-header__media">
-          <img src={headerImage} alt={headerImageAlt} />
+          <ResponsiveSiteImage src={headerImage} alt={headerImageAlt} preload />
           <div className="blog-header__headline">
             <span className="blog-eyebrow">{headlineEyebrow}</span>
             <h1>{category}</h1>
@@ -264,7 +265,7 @@ const BlogCategoryTemplate = ({
             const cardContent = (
               <>
               <div className="blog-card__image">
-                <img src={article.image} alt="" loading="lazy" decoding="async" />
+                <ResponsiveSiteImage src={article.image} alt="" loading="lazy" decoding="async" />
               </div>
               <div className="blog-card__body">
                 <div className="blog-card__meta">

@@ -1,4 +1,5 @@
 ﻿import { useEffect } from "react"
+import { Link } from "react-router-dom"
 import AdministrativePageHeader from "../../components/AdministrativePageHeader"
 import "./MentionsLegalesPage.css"
 
@@ -39,13 +40,13 @@ const MentionsLegalesPage = () => {
               <p className="legal-section__text">
                 Le site est hébergé par :
                 <br />
-                IONOS SE
+                Google LLC — Firebase Hosting
                 <br />
-                Elgendorfer Str. 57
+                1600 Amphitheatre Parkway
                 <br />
-                56410 Montabaur, Allemagne
+                Mountain View, California 94043, États-Unis
                 <br />
-                Téléphone : 0970 808 911
+                Téléphone : +1 650 253 0000
               </p>
             </section>
           </div>
@@ -68,7 +69,28 @@ const MentionsLegalesPage = () => {
             <section className="legal-section">
               <h2 className="legal-section__title">Données personnelles</h2>
               <p className="legal-section__text">
-                Les informations relatives à la collecte et au traitement des données personnelles sont détaillées dans la page Politique de confidentialité. L'utilisation des cookies est expliquée dans la page Gestion des cookies.
+                Les informations relatives à la collecte et au traitement des données personnelles sont détaillées dans
+                la page{" "}
+                <Link to="/confidentialite" className="legal-link">
+                  Politique de confidentialité
+                </Link>
+                . L'utilisation des cookies est expliquée dans la page{" "}
+                <Link to="/cookies" className="legal-link">
+                  Gestion des cookies
+                </Link>
+                .
+                <br />
+                <br />
+                Les conditions applicables aux achats réalisés dans la boutique sont accessibles sur la page{" "}
+                <Link to="/cgv" className="legal-link">
+                  Conditions générales de vente
+                </Link>
+                .
+                <br />
+                <br />
+                En cas de réclamation, le consommateur est invité à contacter préalablement Me&amp;rituals à l’adresse
+                contact@meandrituals.com. Les coordonnées du médiateur de la consommation seront publiées dans cette
+                rubrique dès sa désignation.
               </p>
             </section>
           </div>

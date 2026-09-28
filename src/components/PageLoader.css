@@ -132,12 +132,19 @@
 
 @media (max-width: 640px) {
   .page-loader {
-    min-height: 55vh;
+    min-height: 100vh;
+    min-height: 100svh;
   }
 
   .page-loader__mark {
     width: 78px;
     height: 78px;
+  }
+
+  .page-loader__brand {
+    width: 12rem;
+    min-height: 3.15rem;
+    text-align: center;
   }
 }
 

@@ -9,6 +9,7 @@ import { useAuth } from "../../context/AuthContext"
 import { createCheckoutSession } from "../../services/boutique/checkout"
 import { getProductPricing } from "../../utils/productPricing"
 import PageLoader from "../../components/PageLoader"
+import DigitalContentConsent from "../../components/DigitalContentConsent"
 
 const formatCents = (cents: number) => {
   const euros = (cents / 100).toFixed(2).replace(".", ",")
@@ -24,6 +25,7 @@ const CartPage = () => {
   const [customProducts, setCustomProducts] = useState(() => loadCustomProducts())
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false)
   const [checkoutError, setCheckoutError] = useState<string | null>(null)
+  const [digitalContentConsent, setDigitalContentConsent] = useState(false)
 
   useEffect(() => {
     document.body.classList.add("boutique-page--tone")
@@ -72,7 +74,7 @@ const CartPage = () => {
   )
 
   const handleCheckout = async () => {
-    if (lineItems.length === 0 || unavailableItems.length > 0) return
+    if (lineItems.length === 0 || unavailableItems.length > 0 || !digitalContentConsent) return
 
     if (!isAuthenticated) {
       navigate("/login", {
@@ -93,7 +95,10 @@ const CartPage = () => {
         productId: item.productId,
         quantity: item.quantity,
       }))
-      const checkoutUrl = await createCheckoutSession({ items: payloadItems })
+      const checkoutUrl = await createCheckoutSession({
+        items: payloadItems,
+        digitalContentConsent,
+      })
       window.location.href = checkoutUrl
     } catch (error) {
       console.error(error)
@@ -172,11 +177,16 @@ const CartPage = () => {
                 <span>Total</span>
                 <strong>{formatCents(totalCents)}</strong>
               </div>
+              <DigitalContentConsent
+                id="cart-digital-content-consent"
+                checked={digitalContentConsent}
+                onChange={setDigitalContentConsent}
+              />
               <button
                 type="button"
                 className="boutique-button boutique-button--primary"
                 onClick={handleCheckout}
-                disabled={isCheckoutLoading || unavailableItems.length > 0}
+                disabled={isCheckoutLoading || unavailableItems.length > 0 || !digitalContentConsent}
               >
                 {isCheckoutLoading ? "Redirection..." : "Passer au paiement"}
               </button>

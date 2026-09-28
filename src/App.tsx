@@ -1,19 +1,31 @@
 import { Suspense, lazy, useEffect, useLayoutEffect } from "react"
 import { Navigate, Route, Routes, useLocation } from "react-router-dom"
 import { useCookieConsent } from "./context/CookieConsentContext"
-import { setAnalyticsConsent } from "./utils/firebase"
 import Header from "./components/Header"
 import Footer from "./components/Footer"
 import ProtectedRoute from "./components/ProtectedRoute"
 import CookieBanner from "./components/CookieBanner"
-import CookiePreferencesModal from "./components/CookiePreferencesModal"
 import AppUpdateBanner from "./components/AppUpdateBanner"
 import AdminRoute from "./components/AdminRoute"
 import AdminProductsRoute from "./components/AdminProductsRoute"
 import PageLoader from "./components/PageLoader"
 import PrimaryActionButton from "./components/PrimaryActionButton"
+import landingHero from "./assets/frances-leynes-dupe.webp"
+import landingHeroMobile from "./assets/frances-leynes-dupe-mobile.webp"
+
+let analyticsModulePromise: Promise<typeof import("./utils/firebaseAnalytics")> | null = null
+
+const updateAnalyticsConsent = (enabled: boolean) => {
+  if (!enabled && !analyticsModulePromise) {
+    return Promise.resolve()
+  }
+
+  analyticsModulePromise ??= import("./utils/firebaseAnalytics")
+  return analyticsModulePromise.then(({ setAnalyticsConsent }) => setAnalyticsConsent(enabled)).then(() => undefined)
+}
 
 const AuthPage = lazy(() => import("./pages/Auth/AuthPage"))
+const CookiePreferencesModal = lazy(() => import("./components/CookiePreferencesModal"))
 const OnboardingPage = lazy(() => import("./pages/Onboarding/Onboarding"))
 const LandingPage = lazy(() => import("./pages/Landing/Landing"))
 const HomePage = lazy(() => import("./pages/Home/Home"))
@@ -35,6 +47,7 @@ const ConfidentialitePage = lazy(() => import("./pages/Legal/ConfidentialitePage
 const ContactPage = lazy(() => import("./pages/Legal/ContactPage"))
 const GestionCookiesPage = lazy(() => import("./pages/Legal/GestionCookiesPage"))
 const MentionsLegalesPage = lazy(() => import("./pages/Legal/MentionsLegalesPage"))
+const CgvPage = lazy(() => import("./pages/Legal/CgvPage"))
 const AdminPage = lazy(() => import("./pages/Admin/AdminPage"))
 const AdminProductsPage = lazy(() => import("./pages/AdminProducts/AdminProductsPage"))
 const AdminProductsManagePage = lazy(() => import("./pages/AdminProducts/AdminProductsManagePage"))
@@ -87,6 +100,7 @@ const pageTitles: Record<string, string> = {
   "/contact": "Contact",
   "/cookies": "Cookies",
   "/mentions-legales": "Mentions légales",
+  "/cgv": "Conditions générales de vente",
   "/bienvenue": "Bienvenue",
   "/home": "Accueil",
   "/sport": "Sport",
@@ -171,6 +185,12 @@ function ScrollToTop() {
 }
 
 function RouteFallback() {
+  const { pathname } = useLocation()
+
+  if (pathname === "/") {
+    return <div aria-hidden="true" style={{ minHeight: "100svh" }} />
+  }
+
   return <PageLoader />
 }
 
@@ -184,11 +204,33 @@ function PageTitle() {
   return null
 }
 
+function PageResourceHints() {
+  const { pathname } = useLocation()
+
+  useLayoutEffect(() => {
+    if (pathname !== "/") return
+
+    const preload = document.createElement("link")
+    preload.rel = "preload"
+    preload.as = "image"
+    preload.type = "image/webp"
+    preload.href = landingHeroMobile
+    preload.imageSrcset = `${landingHeroMobile} 800w, ${landingHero} 1572w`
+    preload.imageSizes = "100vw"
+    preload.setAttribute("fetchpriority", "high")
+    document.head.appendChild(preload)
+
+    return () => preload.remove()
+  }, [pathname])
+
+  return null
+}
+
 function App() {
-  const { preferences } = useCookieConsent()
+  const { isPreferenceCenterOpen, preferences } = useCookieConsent()
 
   useEffect(() => {
-    void setAnalyticsConsent(preferences.analytics)
+    void updateAnalyticsConsent(preferences.analytics)
   }, [preferences.analytics])
 
   useEffect(() => {
@@ -230,6 +272,7 @@ function App() {
   return (
     <div className="app-shell">
       <PageTitle />
+      <PageResourceHints />
       <ScrollToTop />
       {preferences.preferences ? (
         <div id="google_translate_element" className="google-translate-element" aria-hidden="true" />
@@ -263,6 +306,7 @@ function App() {
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/cookies" element={<GestionCookiesPage />} />
             <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
+            <Route path="/cgv" element={<CgvPage />} />
 
             <Route element={<ProtectedRoute />}>
               <Route path="/bienvenue" element={<OnboardingPage />} />
@@ -313,7 +357,11 @@ function App() {
       <Footer />
       <AppUpdateBanner />
       <CookieBanner />
-      <CookiePreferencesModal />
+      {isPreferenceCenterOpen ? (
+        <Suspense fallback={null}>
+          <CookiePreferencesModal />
+        </Suspense>
+      ) : null}
     </div>
   )
 }

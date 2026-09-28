@@ -719,6 +719,8 @@ const normalizeCheckoutItems = ({ productId, items }) => {
   return [...uniqueItems.values()]
 }
 
+const digitalContentConsentVersion = "L221-28-v1-2026-09-24"
+
 const createDownloadToken = ({ productId, assetId, sessionId, uid, expiresInHours = 48 }) => {
   const exp = Date.now() + expiresInHours * 60 * 60 * 1000
   const payload = JSON.stringify({ productId, assetId, sessionId, uid, exp })
@@ -1823,6 +1825,12 @@ const normalizePurchaseRecord = (entry, existingRecord) => {
     items,
     stripeCustomerId: sanitizeText(entry?.stripeCustomerId || existingRecord?.stripeCustomerId, 255),
     paymentIntentId: sanitizeText(entry?.paymentIntentId || existingRecord?.paymentIntentId, 255),
+    digitalContentConsent:
+      entry?.digitalContentConsent === true || existingRecord?.digitalContentConsent === true,
+    digitalContentConsentAt:
+      sanitizeText(entry?.digitalContentConsentAt || existingRecord?.digitalContentConsentAt, 80) || null,
+    digitalContentConsentVersion:
+      sanitizeText(entry?.digitalContentConsentVersion || existingRecord?.digitalContentConsentVersion, 80) || null,
     emailSentAt: sanitizeText(entry?.emailSentAt || existingRecord?.emailSentAt, 80) || null,
   }
 }
@@ -1917,6 +1925,9 @@ const buildPurchaseRecordFromSession = (session, existingRecord) => {
         typeof session?.payment_intent === "string"
           ? session.payment_intent
           : sanitizeText(session?.payment_intent?.id, 255),
+      digitalContentConsent: session?.metadata?.digitalContentConsent === "granted",
+      digitalContentConsentAt: sanitizeText(session?.metadata?.digitalContentConsentAt, 80),
+      digitalContentConsentVersion: sanitizeText(session?.metadata?.digitalContentConsentVersion, 80),
     },
     existingRecord,
   )
@@ -2724,6 +2735,7 @@ app.post("/api/create-checkout-session", firebaseAuth, async (req, res) => {
     const isCartCheckout = Array.isArray(req.body?.items)
     const requestAppBaseUrl = getRequestAppBaseUrl(req)
     const cartItems = normalizeCheckoutItems(req.body || {})
+    const hasDigitalContentConsent = req.body?.digitalContentConsent === true
 
     if (!uid) {
       return res.status(401).json({ error: "Authentification requise." })
@@ -2731,6 +2743,13 @@ app.post("/api/create-checkout-session", firebaseAuth, async (req, res) => {
     if (cartItems.length === 0) {
       return res.status(400).json({ error: "Produit introuvable." })
     }
+    if (!hasDigitalContentConsent) {
+      return res.status(400).json({
+        error: "Le consentement à l’accès immédiat au contenu numérique est obligatoire.",
+      })
+    }
+
+    const digitalContentConsentAt = new Date().toISOString()
 
     const ownedProductIds = new Set(buildOwnedDigitalProducts(uid).map((item) => item.productId))
     const alreadyOwnedItems = cartItems.filter((item) => ownedProductIds.has(item.productId))
@@ -2770,6 +2789,9 @@ app.post("/api/create-checkout-session", firebaseAuth, async (req, res) => {
         uid,
         email,
         items: JSON.stringify(cartItems),
+        digitalContentConsent: "granted",
+        digitalContentConsentAt,
+        digitalContentConsentVersion,
       },
       allow_promotion_codes: true,
     })

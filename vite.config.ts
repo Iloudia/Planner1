@@ -27,6 +27,22 @@ export default defineConfig(({ mode }) => {
           })
         },
       },
+      {
+        name: "defer-global-stylesheet",
+        transformIndexHtml: {
+          order: "post",
+          handler(html, context) {
+            if (!context.bundle) return html
+
+            return html.replace(
+              /<link rel="stylesheet" crossorigin href="(\/assets\/index-[^"]+\.css)">/,
+              (_, href: string) =>
+                `<link rel="preload" as="style" href="${href}" onload="this.onload=null;this.rel='stylesheet'">\n` +
+                `    <noscript><link rel="stylesheet" href="${href}"></noscript>`,
+            )
+          },
+        },
+      },
     ],
     define: {
       __APP_VERSION__: JSON.stringify(buildVersion),

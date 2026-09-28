@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import journalingImage from "../../assets/Journaling.webp"
 import glowUpEbookImage from "../../assets/couverture glow-up.webp"
 import EditorialQuote from "../../components/EditorialQuote"
+import ResponsiveSiteImage from "../../components/ResponsiveSiteImage"
 import {
   formatPublicationDate,
   getBlogArticleByHref,
@@ -46,7 +47,13 @@ const editorialArticle = getBlogArticleByHref("/blog/mental/article-4")!
 const ArticleCard = ({ article, featured = false }: { article: BlogArticle; featured?: boolean }) => (
   <article className={`blog-card${featured ? " blog-card--featured" : ""}`}>
     <Link className="blog-card__image" to={article.href} aria-label={`Lire : ${article.title}`}>
-      <img src={article.image} alt={article.imageAlt} loading="lazy" decoding="async" />
+      <ResponsiveSiteImage
+        src={article.image}
+        alt={article.imageAlt}
+        sizes="(max-width: 767px) calc(100vw - 2rem), (max-width: 1100px) 45vw, 360px"
+        loading="lazy"
+        decoding="async"
+      />
     </Link>
     <div className="blog-card__body">
       <div className="blog-card__meta">
@@ -75,7 +82,7 @@ const BlogPage = () => {
     <div className="blog-page">
       <header className="blog-header">
         <div className="blog-header__media">
-          <img src={journalingImage} alt="Carnet ligné ouvert avec un stylo sur une table en bois" />
+          <ResponsiveSiteImage src={journalingImage} alt="Carnet ligné ouvert avec un stylo sur une table en bois" sizes="100vw" preload />
           <div className="blog-header__headline">
             <span className="blog-eyebrow">Le blog Me&amp;rituals</span>
             <h1>Des mots pour avancer avec douceur et intention</h1>
@@ -103,7 +110,13 @@ const BlogPage = () => {
 
       <section className="blog-editorial" id="article-focus" aria-labelledby="editorial-title">
         <div className="blog-editorial__media">
-          <img src={editorialArticle.image} alt={editorialArticle.imageAlt} loading="lazy" decoding="async" />
+          <ResponsiveSiteImage
+            src={editorialArticle.image}
+            alt={editorialArticle.imageAlt}
+            sizes="(max-width: 767px) calc(100vw - 2rem), 50vw"
+            loading="lazy"
+            decoding="async"
+          />
         </div>
         <div className="blog-editorial__content">
           <span className="blog-eyebrow">Le dossier du moment</span>
@@ -133,9 +146,10 @@ const BlogPage = () => {
           to="/boutique/produit/le-guide-complet-pour-devenir-la-meilleure-version-de-toi-meme-1774631866049"
           aria-label="Découvrir l’ebook Le guide complet pour devenir la meilleure version de toi-même"
         >
-          <img
+          <ResponsiveSiteImage
             src={glowUpEbookImage}
             alt="Couverture de l’ebook Le guide complet pour devenir la meilleure version de toi-même"
+            sizes="(max-width: 767px) calc(100vw - 5rem), 390px"
             loading="lazy"
             decoding="async"
           />

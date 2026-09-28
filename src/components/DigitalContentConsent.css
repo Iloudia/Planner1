@@ -1,0 +1,35 @@
+.digital-content-consent {
+  display: grid;
+  grid-template-columns: 1.15rem minmax(0, 1fr);
+  align-items: start;
+  gap: 0.7rem;
+  margin-top: 0.5rem;
+  color: var(--ink-soft, #5b5249);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.digital-content-consent input {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin: 0.15rem 0 0;
+  accent-color: var(--ink, #1f1b16);
+  cursor: pointer;
+}
+
+.digital-content-consent label {
+  cursor: pointer;
+}
+
+.digital-content-consent a {
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.digital-content-consent a:focus-visible,
+.digital-content-consent input:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}

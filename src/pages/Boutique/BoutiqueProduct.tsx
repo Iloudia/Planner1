@@ -7,6 +7,7 @@ import { addToCart } from "./cartStorage"
 import { useAuth } from "../../context/AuthContext"
 import { createCheckoutSession } from "../../services/boutique/checkout"
 import { getProductPricing } from "../../utils/productPricing"
+import DigitalContentConsent from "../../components/DigitalContentConsent"
 
 type ProductMedia = {
   type: "image" | "video"
@@ -37,6 +38,7 @@ const BoutiqueProductPage = () => {
   )
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false)
   const [checkoutError, setCheckoutError] = useState<string | null>(null)
+  const [digitalContentConsent, setDigitalContentConsent] = useState(false)
   const [isCartAnimating, setIsCartAnimating] = useState(false)
   const [isCartToastVisible, setIsCartToastVisible] = useState(false)
   const cartAnimationTimeoutRef = useRef<number | null>(null)
@@ -139,7 +141,7 @@ const BoutiqueProductPage = () => {
   }
 
   const handleCheckout = async () => {
-    if (!product || !isCheckoutAvailable) {
+    if (!product || !isCheckoutAvailable || !digitalContentConsent) {
       return
     }
 
@@ -158,7 +160,10 @@ const BoutiqueProductPage = () => {
     setIsCheckoutLoading(true)
     setCheckoutError(null)
     try {
-      const checkoutUrl = await createCheckoutSession({ productId: product.id })
+      const checkoutUrl = await createCheckoutSession({
+        productId: product.id,
+        digitalContentConsent,
+      })
       window.location.href = checkoutUrl
     } catch (error) {
       console.error(error)
@@ -257,11 +262,16 @@ const BoutiqueProductPage = () => {
               <span>{product.format}</span>
               <span>Acces immediat</span>
             </div>
+            <DigitalContentConsent
+              id="product-digital-content-consent"
+              checked={digitalContentConsent}
+              onChange={setDigitalContentConsent}
+            />
             <button
               type="button"
               className="boutique-button boutique-button--primary"
               onClick={handleCheckout}
-              disabled={isCheckoutLoading || !isCheckoutAvailable}
+              disabled={isCheckoutLoading || !isCheckoutAvailable || !digitalContentConsent}
             >
               {!isCheckoutAvailable ? "Produit bientot disponible" : isCheckoutLoading ? "Redirection..." : "Acheter maintenant"}
             </button>
@@ -352,5 +362,4 @@ const BoutiqueProductPage = () => {
 }
 
 export default BoutiqueProductPage
-
 

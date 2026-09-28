@@ -1,29 +1,53 @@
 import { useEffect, useMemo, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../../context/AuthContext"
-import PageLoader from "../../components/PageLoader"
 import "./Landing.css"
 
 import heroBackdrop from "../../assets/frances-leynes-dupe.webp"
+import heroBackdropMobile from "../../assets/frances-leynes-dupe-mobile.webp"
 import finalCtaBackdrop from "../../assets/camille-coss-dupe.webp"
 import cardEbony from "../../assets/ebony-forsyth-dupe.webp"
+import cardEbonySmall from "../../assets/ebony-forsyth-dupe-512.webp"
+import cardEbonyCompact from "../../assets/ebony-forsyth-dupe-640.webp"
+import cardEbonyMobile from "../../assets/ebony-forsyth-dupe-mobile.webp"
 import cardMedhanshi from "../../assets/medhanshi-mandawewala-dupe.webp"
+import cardMedhanshiSmall from "../../assets/medhanshi-mandawewala-dupe-512.webp"
+import cardMedhanshiCompact from "../../assets/medhanshi-mandawewala-dupe-640.webp"
+import cardMedhanshiMobile from "../../assets/medhanshi-mandawewala-dupe-mobile.webp"
 import cardSelflove from "../../assets/selflove.webp"
+import cardSelfloveSmall from "../../assets/selflove-512.webp"
+import cardSelfloveCompact from "../../assets/selflove-640.webp"
+import cardSelfloveMobile from "../../assets/selflove-mobile.webp"
 import cardLB from "../../assets/l-b-dupe.webp"
+import cardLBSmall from "../../assets/l-b-dupe-512.webp"
+import cardLBCompact from "../../assets/l-b-dupe-640.webp"
+import cardLBMobile from "../../assets/l-b-dupe-mobile.webp"
 import cardKatieMansfield from "../../assets/katie-mansfield-dupe.webp"
+import cardKatieMansfieldSmall from "../../assets/katie-mansfield-dupe-512.webp"
+import cardKatieMansfieldCompact from "../../assets/katie-mansfield-dupe-640.webp"
+import cardKatieMansfieldMobile from "../../assets/katie-mansfield-dupe-mobile.webp"
 import cardMallika from "../../assets/mallika-jain-dupe.webp"
+import cardMallikaSmall from "../../assets/mallika-jain-dupe-512.webp"
+import cardMallikaCompact from "../../assets/mallika-jain-dupe-640.webp"
+import cardMallikaMobile from "../../assets/mallika-jain-dupe-mobile.webp"
 import cardKatieHuber from "../../assets/katie-huber-rhoades-dupe (1).webp"
+import cardKatieHuberSmall from "../../assets/katie-huber-rhoades-dupe (1)-512.webp"
+import cardKatieHuberCompact from "../../assets/katie-huber-rhoades-dupe (1)-640.webp"
+import cardKatieHuberMobile from "../../assets/katie-huber-rhoades-dupe (1)-mobile.webp"
 import cardSport from "../../assets/sport.webp"
+import cardSportSmall from "../../assets/sport-512.webp"
+import cardSportCompact from "../../assets/sport-640.webp"
+import cardSportMobile from "../../assets/sport-mobile.webp"
 
 const carouselItems = [
-  { title: "Sport", text: "Planifie tes séances de sport.", image: cardSport },
-  { title: "Journaling", text: "Écris et clarifie tes pensées.", image: cardMallika },
-  { title: "Mindset", text: "Apprends à mieux te connaître.", image: cardSelflove },
-  { title: "Wishlist", text: "Garde tes envies au même endroit.", image: cardMedhanshi },
-  { title: "Calendrier", text: "Organise ton mois.", image: cardKatieHuber },
-  { title: "Finances", text: "Suis ton budget et tes dépenses.", image: cardEbony },
-  { title: "Routine", text: "Structure tes routines du matin et du soir.", image: cardLB },
-  { title: "Menu de la semaine", text: "Planifie tes repas de la semaine.", image: cardKatieMansfield },
+  { title: "Sport", text: "Planifie tes séances de sport.", image: cardSport, smallImage: cardSportSmall, compactImage: cardSportCompact, mobileImage: cardSportMobile, width: 1650 },
+  { title: "Journaling", text: "Écris et clarifie tes pensées.", image: cardMallika, smallImage: cardMallikaSmall, compactImage: cardMallikaCompact, mobileImage: cardMallikaMobile, width: 1650 },
+  { title: "Mindset", text: "Apprends à mieux te connaître.", image: cardSelflove, smallImage: cardSelfloveSmall, compactImage: cardSelfloveCompact, mobileImage: cardSelfloveMobile, width: 1467 },
+  { title: "Wishlist", text: "Garde tes envies au même endroit.", image: cardMedhanshi, smallImage: cardMedhanshiSmall, compactImage: cardMedhanshiCompact, mobileImage: cardMedhanshiMobile, width: 1549 },
+  { title: "Calendrier", text: "Organise ton mois.", image: cardKatieHuber, smallImage: cardKatieHuberSmall, compactImage: cardKatieHuberCompact, mobileImage: cardKatieHuberMobile, width: 1650 },
+  { title: "Finances", text: "Suis ton budget et tes dépenses.", image: cardEbony, smallImage: cardEbonySmall, compactImage: cardEbonyCompact, mobileImage: cardEbonyMobile, width: 1650 },
+  { title: "Routine", text: "Structure tes routines du matin et du soir.", image: cardLB, smallImage: cardLBSmall, compactImage: cardLBCompact, mobileImage: cardLBMobile, width: 1440 },
+  { title: "Menu de la semaine", text: "Planifie tes repas de la semaine.", image: cardKatieMansfield, smallImage: cardKatieMansfieldSmall, compactImage: cardKatieMansfieldCompact, mobileImage: cardKatieMansfieldMobile, width: 1650 },
 ]
 
 const differentiatorHighlights = [
@@ -37,7 +61,7 @@ const differentiatorHighlights = [
 const LandingPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const { isAuthReady, isAuthenticated, userEmail, logout } = useAuth()
+  const { isAuthenticated, userEmail, logout } = useAuth()
   const [carouselIndex, setCarouselIndex] = useState(0)
   const [cardsPerView, setCardsPerView] = useState(1)
 
@@ -97,17 +121,21 @@ const LandingPage = () => {
     }
   }, [destinationPath, isAuthenticated, navigate])
 
-  const isLandingLoading = !isAuthReady
-
-  if (isLandingLoading) {
-    return (
-      <PageLoader />
-    )
-  }
-
   return (
     <div className="landing-page">
-      <section className="landing-hero" style={{ backgroundImage: `url(${heroBackdrop})` }}>
+      <section className="landing-hero">
+        <picture className="landing-hero__media" aria-hidden="true">
+          <img
+            src={heroBackdrop}
+            srcSet={`${heroBackdropMobile} 800w, ${heroBackdrop} 1572w`}
+            sizes="100vw"
+            alt=""
+            width="1572"
+            height="2200"
+            fetchPriority="high"
+            decoding="async"
+          />
+        </picture>
         <div className="landing-hero__content">
           <span className="landing-hero__eyebrow">Planifie · Respire · Avance</span>
           <h1>L’espace qui transforme ton quotidien en une vie plus fluide, plus douce et plus alignée.</h1>
@@ -148,7 +176,14 @@ const LandingPage = () => {
             {visibleCards.map((card) => (
               <article key={card.title} className="landing-carousel__card">
                 <div className="landing-carousel__image">
-                  <img src={card.image} alt="" loading="lazy" decoding="async" />
+                  <img
+                    src={card.image}
+                    srcSet={`${card.smallImage} 512w, ${card.compactImage} 640w, ${card.mobileImage} 800w, ${card.image} ${card.width}w`}
+                    sizes="(max-width: 559px) calc(100vw - 4rem), (max-width: 899px) 45vw, (max-width: 1179px) 30vw, 280px"
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
                 </div>
                 <div className="landing-carousel__body">
                   <h3>{card.title}</h3>

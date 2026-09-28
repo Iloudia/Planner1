@@ -2,12 +2,6 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import type { ReactNode } from "react"
 import type { ScheduledTask } from "../data/sampleData"
 import { useAuth } from "./AuthContext"
-import {
-  createCalendarEvent,
-  deleteCalendarEvent,
-  subscribeToCalendarEvents,
-  updateCalendarEvent,
-} from "../services/firestore/calendarEvents"
 
 type TasksContextValue = {
   tasks: ScheduledTask[]
@@ -47,20 +41,38 @@ export const TasksProvider = ({ children }: TasksProviderProps) => {
     setError(null)
     setIsLoading(true)
 
-    return subscribeToCalendarEvents(
-      userId,
-      (nextTasks) => {
-        setTasks(nextTasks)
-        setError(null)
-        setIsLoading(false)
-      },
-      (loadError) => {
-        console.error("Calendar events load failed", loadError)
-        setTasks([])
+    let isActive = true
+    let unsubscribe: (() => void) | undefined
+
+    void import("../services/firestore/calendarEvents")
+      .then(({ subscribeToCalendarEvents }) => {
+        if (!isActive) return
+        unsubscribe = subscribeToCalendarEvents(
+          userId,
+          (nextTasks) => {
+            setTasks(nextTasks)
+            setError(null)
+            setIsLoading(false)
+          },
+          (loadError) => {
+            console.error("Calendar events load failed", loadError)
+            setTasks([])
+            setError("Impossible de charger votre agenda.")
+            setIsLoading(false)
+          },
+        )
+      })
+      .catch((loadError) => {
+        if (!isActive) return
+        console.error("Calendar events module load failed", loadError)
         setError("Impossible de charger votre agenda.")
         setIsLoading(false)
-      },
-    )
+      })
+
+    return () => {
+      isActive = false
+      unsubscribe?.()
+    }
   }, [isAuthReady, userId])
 
   const addTask = useCallback(
@@ -73,6 +85,7 @@ export const TasksProvider = ({ children }: TasksProviderProps) => {
 
       try {
         setError(null)
+        const { createCalendarEvent } = await import("../services/firestore/calendarEvents")
         await createCalendarEvent(userId, task)
       } catch (createError) {
         console.error("Calendar event create failed", createError)
@@ -91,6 +104,7 @@ export const TasksProvider = ({ children }: TasksProviderProps) => {
 
       try {
         setError(null)
+        const { updateCalendarEvent } = await import("../services/firestore/calendarEvents")
         await updateCalendarEvent(userId, { ...currentTask, ...updates })
       } catch (updateError) {
         console.error("Calendar event update failed", updateError)
@@ -105,6 +119,7 @@ export const TasksProvider = ({ children }: TasksProviderProps) => {
       if (!userId) return
       try {
         setError(null)
+        const { deleteCalendarEvent } = await import("../services/firestore/calendarEvents")
         await deleteCalendarEvent(userId, taskId)
       } catch (removeError) {
         console.error("Calendar event delete failed", removeError)

@@ -1,5 +1,6 @@
 import { useEffect } from "react"
 import { Link, useSearchParams } from "react-router-dom"
+import ResponsiveSiteImage from "../../../components/ResponsiveSiteImage"
 import BlogPublicationDate from "../BlogPublicationDate"
 import LatestBlogArticlesSection from "../LatestBlogArticlesSection"
 import beautyImage from "../../../assets/beauty.webp"
@@ -73,7 +74,7 @@ const BlogHealthBeautyPage = () => {
     <div className="blog-health-page">
       <header className="blog-header">
         <div className="blog-header__media">
-          <img src={beautyImage} alt="Masques en tissu disposés sur le visage imprimé dans un magazine" />
+          <ResponsiveSiteImage src={beautyImage} alt="Masques en tissu disposés sur le visage imprimé dans un magazine" preload />
           <div className="blog-header__headline">
             <span className="blog-eyebrow">Prendre soin de soi</span>
             <h1>Santé et beauté</h1>
@@ -112,7 +113,7 @@ const BlogHealthBeautyPage = () => {
               key={article.id}
             >
               <div className="blog-card__image">
-                <img src={article.image} alt="" loading="lazy" decoding="async" />
+                <ResponsiveSiteImage src={article.image} alt="" loading="lazy" decoding="async" />
               </div>
               <div className="blog-card__body">
                 <div className="blog-card__meta">

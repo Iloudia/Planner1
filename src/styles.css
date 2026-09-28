@@ -1,3 +1,59 @@
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("/fonts/inter-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Playfair Display";
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url("/fonts/playfair-display-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Playfair Display";
+  font-style: italic;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url("/fonts/playfair-display-italic-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Manrope";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/manrope-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Kapakana";
+  font-style: normal;
+  font-weight: 300 400;
+  font-display: swap;
+  src: url("/fonts/kapakana-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Libre Baskerville";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/libre-baskerville-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Italiana";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/italiana-latin.woff2") format("woff2");
+}
+
 :root {
   --color-mint: #d8d7b2;
   --color-chocolate: #725c3f;
@@ -1973,6 +2029,32 @@ body.notfound-page--active,
 @media (max-width: 767px) {
   .cookie-banner {
     inset: auto 1rem 1rem 1rem;
+    min-height: min(clamp(24rem, calc(39rem - 32vw), 31rem), calc(100dvh - 2rem));
+    max-height: calc(100dvh - 2rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .cookie-banner__content h2 {
+    font-family: Georgia, "Times New Roman", serif !important;
+    line-height: 1.25 !important;
+  }
+
+  .cookie-banner__content p,
+  .cookie-banner__list,
+  .cookie-banner__list li {
+    font-family: Arial, Helvetica, sans-serif !important;
+    line-height: 1.55 !important;
+  }
+
+  .cookie-banner .cookie-banner__action {
+    font-family: Arial, Helvetica, sans-serif !important;
+    line-height: 1.2 !important;
+  }
+
+  .cookie-banner__actions {
+    margin-top: auto;
   }
 
   .cookie-modal__group {

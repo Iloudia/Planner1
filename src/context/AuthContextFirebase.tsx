@@ -1,0 +1,1088 @@
+import { useCallback, useEffect, useMemo, useState } from "react"
+import { FirebaseError } from "firebase/app"
+import {
+  type User,
+  type UserCredential,
+  GoogleAuthProvider,
+  EmailAuthProvider,
+  browserLocalPersistence,
+  browserSessionPersistence,
+  createUserWithEmailAndPassword,
+  deleteUser,
+  onIdTokenChanged,
+  onAuthStateChanged,
+  reauthenticateWithCredential,
+  setPersistence,
+  signInWithCredential,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+  updatePassword,
+  updateProfile,
+} from "firebase/auth"
+import { type FirebaseUserDocument } from "../models/firebase"
+import { buildApiUrl, fetchApi, getApiTargetLabel } from "../utils/apiUrl"
+import { app, auth } from "../utils/firebase"
+import { buildUserScopedKey, normalizeUserEmail } from "../utils/userScopedKey"
+import {
+  type AccountActionResult,
+  type AccountStatus,
+  type AdminUserRecord,
+  type AuthContextValue,
+  type ChangePasswordResult,
+  type RegistrationProfile,
+  type UserProfileData,
+} from "./AuthContext"
+
+const loadFirestore = async () => {
+  const firestore = await import("firebase/firestore")
+  return {
+    ...firestore,
+    db: firestore.getFirestore(app),
+  }
+}
+const THIRTY_DAYS_MS = 1000 * 60 * 60 * 24 * 30
+const PROFILE_STORAGE_KEY = "planner.profile.preferences.v1"
+
+const normalizeEmail = (value: string) => String(value ?? "").trim().toLowerCase()
+
+const asRecord = (value: unknown): Record<string, unknown> =>
+  value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : {}
+
+const cleanAdminText = (value: unknown) => {
+  if (typeof value === "string") return value.trim()
+  if (typeof value === "number" || typeof value === "boolean") return String(value)
+  return ""
+}
+
+const cleanAdminList = (value: unknown) => {
+  if (!Array.isArray(value)) return []
+  return value.map((entry) => cleanAdminText(entry)).filter(Boolean)
+}
+
+const sortAdminUsers = (users: AdminUserRecord[]) =>
+  [...users].sort((left, right) => {
+    const leftTime = Date.parse(left.createdAt || "")
+    const rightTime = Date.parse(right.createdAt || "")
+    const leftValue = Number.isFinite(leftTime) ? leftTime : 0
+    const rightValue = Number.isFinite(rightTime) ? rightTime : 0
+    if (rightValue !== leftValue) {
+      return rightValue - leftValue
+    }
+    return left.email.localeCompare(right.email)
+  })
+
+const mapAdminUserRecord = (docId: string, value: unknown): AdminUserRecord => {
+  const data = asRecord(value)
+  const personalInfo = asRecord(data.personalInfo)
+  const identityInfo = asRecord(data.identityInfo)
+  const onboarding = asRecord(data.onboarding)
+
+  return {
+    email: cleanAdminText(data.email) || cleanAdminText(docId),
+    createdAt: cleanAdminText(data.createdAt) || null,
+    status: data.status === "desactive" ? "desactive" : "actif",
+    deletionPlannedAt: cleanAdminText(data.deletionPlannedAt) || null,
+    personalInfo: {
+      firstName: cleanAdminText(personalInfo.firstName),
+      lastName: cleanAdminText(personalInfo.lastName),
+    },
+    identityInfo: {
+      username: cleanAdminText(identityInfo.username),
+      gender: cleanAdminText(identityInfo.gender),
+    },
+    onboarding: {
+      source: cleanAdminText(onboarding.source),
+      sourceOther: cleanAdminText(onboarding.sourceOther),
+      reasons: cleanAdminList(onboarding.reasons),
+      reasonsOther: cleanAdminText(onboarding.reasonsOther),
+      categories: cleanAdminList(onboarding.categories),
+      priority: cleanAdminList(onboarding.priority),
+      completedAt: cleanAdminText(onboarding.completedAt) || null,
+    },
+  }
+}
+
+const nowIso = () => new Date().toISOString()
+
+const emptyUserProfile: UserProfileData = {
+  personalInfo: {},
+  identityInfo: {},
+}
+
+const readLocalProfile = (email: string | null | undefined): UserProfileData => {
+  if (typeof window === "undefined") {
+    return emptyUserProfile
+  }
+
+  const key = buildUserScopedKey(normalizeUserEmail(email), PROFILE_STORAGE_KEY)
+
+  try {
+    const raw = window.localStorage.getItem(key)
+    if (!raw) {
+      return emptyUserProfile
+    }
+    const parsed = JSON.parse(raw) as UserProfileData
+    return {
+      personalInfo: parsed.personalInfo ?? {},
+      identityInfo: parsed.identityInfo ?? {},
+    }
+  } catch {
+    // ignore malformed storage entries
+  }
+
+  return emptyUserProfile
+}
+
+const writeLocalProfile = (email: string | null | undefined, profile: UserProfileData) => {
+  if (typeof window === "undefined") {
+    return
+  }
+
+  const key = buildUserScopedKey(normalizeUserEmail(email), PROFILE_STORAGE_KEY)
+  try {
+    window.localStorage.setItem(
+      key,
+      JSON.stringify({
+        personalInfo: profile.personalInfo ?? {},
+        identityInfo: profile.identityInfo ?? {},
+      }),
+    )
+  } catch {
+    // ignore storage failures
+  }
+}
+
+const mergeProfileData = (base: UserProfileData, fallback?: UserProfileData, email?: string | null): UserProfileData => {
+  const personalInfo = {
+    firstName: base.personalInfo?.firstName?.trim() || fallback?.personalInfo?.firstName?.trim() || "",
+    lastName: base.personalInfo?.lastName?.trim() || fallback?.personalInfo?.lastName?.trim() || "",
+    email: base.personalInfo?.email?.trim() || fallback?.personalInfo?.email?.trim() || email || "",
+  }
+
+  const identityInfo = {
+    username: base.identityInfo?.username?.trim() || fallback?.identityInfo?.username?.trim() || "",
+    birthday: base.identityInfo?.birthday?.trim() || fallback?.identityInfo?.birthday?.trim() || "",
+    gender: base.identityInfo?.gender?.trim() || fallback?.identityInfo?.gender?.trim() || "",
+  }
+
+  return { personalInfo, identityInfo }
+}
+
+const hasProfileDiff = (left: UserProfileData, right: UserProfileData) =>
+  JSON.stringify(mergeProfileData(left)) !== JSON.stringify(mergeProfileData(right))
+
+const notifyWelcomeEmail = async (firstName?: string) => {
+  const user = auth.currentUser
+  if (!user) return
+  const token = await user.getIdToken()
+  const response = await fetch(buildApiUrl("/api/email/welcome"), {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      firstName: firstName?.trim() || "",
+    }),
+  })
+
+  if (!response.ok) {
+    let reason = `status ${response.status}`
+    try {
+      const payload = (await response.json()) as { error?: string }
+      if (payload?.error) {
+        reason = payload.error
+      }
+    } catch {
+      // ignore malformed payloads
+    }
+    throw new Error(reason)
+  }
+}
+
+const clearServerMediaSession = async () => {
+  try {
+    await fetchApi("/api/auth/media-session", {
+      method: "DELETE",
+      credentials: "include",
+    })
+  } catch (error) {
+    if (error instanceof TypeError) {
+      console.warn(`Media session clear skipped: server unreachable (${getApiTargetLabel()})`)
+      return
+    }
+    console.error("Media session clear failed", error)
+  }
+}
+
+const syncServerMediaSession = async (user: User) => {
+  const token = await user.getIdToken()
+  const response = await fetchApi("/api/auth/media-session", {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  if (!response.ok) {
+    let reason = `status ${response.status}`
+    try {
+      const payload = (await response.json()) as { error?: string }
+      if (payload?.error) {
+        reason = payload.error
+      }
+    } catch {
+      // ignore malformed payloads
+    }
+    throw new Error(reason)
+  }
+
+  const payload = (await response.json().catch(() => ({}))) as { isAdmin?: boolean }
+  return {
+    isAdmin: Boolean(payload?.isAdmin),
+  }
+}
+
+const buildUserDocument = (
+  user: User,
+  profile?: RegistrationProfile,
+  options?: { includeCreatedAt?: boolean; status?: AccountStatus; admin?: boolean },
+) => {
+  const email = user.email ?? ""
+  const payload: FirebaseUserDocument = {
+    email,
+    emailLower: normalizeEmail(email),
+    updatedAt: nowIso(),
+  }
+
+  if (options?.includeCreatedAt) {
+    payload.createdAt = user.metadata.creationTime ?? nowIso()
+    payload.admin = options?.admin ?? false
+  }
+
+  if (options?.status) {
+    payload.status = options.status
+  }
+
+  if (profile) {
+    payload.personalInfo = {
+      firstName: profile.firstName?.trim() || "",
+      lastName: profile.lastName?.trim() || "",
+      email,
+    }
+    payload.identityInfo = {
+      username: profile.username?.trim() || "",
+      birthday: profile.birthday?.trim() || "",
+      gender: profile.gender?.trim() || "",
+    }
+    payload.acceptTerms = Boolean(profile.acceptTerms)
+  }
+
+  return payload
+}
+
+const ensureUserDocument = async (user: User, profile?: RegistrationProfile) => {
+  const { db, doc, getDoc, setDoc, updateDoc } = await loadFirestore()
+  const docRef = doc(db, "users", user.uid)
+  const snapshot = await getDoc(docRef)
+
+  if (!snapshot.exists()) {
+    const payload = buildUserDocument(user, profile, { includeCreatedAt: true, status: "actif", admin: false })
+    payload.deletionPlannedAt = null
+    await setDoc(docRef, payload)
+    return payload
+  }
+
+  const data = snapshot.data() as FirebaseUserDocument
+  const updates: Partial<FirebaseUserDocument> = {}
+  if (!data.createdAt) {
+    updates.createdAt = user.metadata.creationTime ?? nowIso()
+  }
+  if (!data.email && user.email) {
+    updates.email = user.email
+  }
+  if (!data.emailLower && user.email) {
+    updates.emailLower = normalizeEmail(user.email)
+  }
+  if (data.admin === undefined) {
+    updates.admin = false
+  }
+
+  if (Object.keys(updates).length > 0) {
+    updates.updatedAt = nowIso()
+    await updateDoc(docRef, updates)
+  }
+
+  if (profile) {
+    const payload = buildUserDocument(user, profile)
+    await setDoc(docRef, payload, { merge: true })
+  }
+
+  const refreshed = await getDoc(docRef)
+  return (refreshed.data() as FirebaseUserDocument) ?? data
+}
+
+type FirebaseAuthBridgeProps = {
+  onValue: (value: AuthContextValue) => void
+}
+
+export const FirebaseAuthBridge = ({ onValue }: FirebaseAuthBridgeProps) => {
+  const [authUser, setAuthUser] = useState<User | null>(auth.currentUser)
+  const [userDoc, setUserDoc] = useState<FirebaseUserDocument | null>(null)
+  const [isAdminApproved, setIsAdminApproved] = useState(false)
+  const [accountCreatedAt, setAccountCreatedAt] = useState<string | null>(null)
+  const [scheduledDeletionDate, setScheduledDeletionDate] = useState<string | null>(null)
+  const [authReady, setAuthReady] = useState(false)
+
+  useEffect(() => {
+    let isMounted = true
+    const unsubscribe = onAuthStateChanged(auth, async (nextUser) => {
+      setAuthUser(nextUser)
+      if (!nextUser) {
+        setUserDoc(null)
+        setIsAdminApproved(false)
+        setAccountCreatedAt(null)
+        setScheduledDeletionDate(null)
+        if (isMounted) {
+          setAuthReady(true)
+        }
+        void clearServerMediaSession()
+        return
+      }
+
+      const documentLoadPromise = (async () => {
+        let data = await ensureUserDocument(nextUser)
+        const localProfile = readLocalProfile(nextUser.email)
+        const mergedProfile = mergeProfileData(
+          {
+            personalInfo: data.personalInfo,
+            identityInfo: data.identityInfo,
+          },
+          localProfile,
+          nextUser.email,
+        )
+
+        if (
+          hasProfileDiff({ personalInfo: data.personalInfo, identityInfo: data.identityInfo }, mergedProfile)
+        ) {
+          const { db, doc, setDoc } = await loadFirestore()
+          const updates: Partial<FirebaseUserDocument> = {
+            personalInfo: mergedProfile.personalInfo,
+            identityInfo: mergedProfile.identityInfo,
+            updatedAt: nowIso(),
+          }
+          await setDoc(doc(db, "users", nextUser.uid), updates, { merge: true })
+          data = {
+            ...data,
+            ...updates,
+          }
+        }
+
+        writeLocalProfile(nextUser.email, {
+          personalInfo: data.personalInfo ?? {},
+          identityInfo: data.identityInfo ?? {},
+        })
+
+        return data
+      })()
+
+      try {
+        try {
+          const sessionState = await syncServerMediaSession(nextUser)
+          if (isMounted) {
+            setIsAdminApproved(sessionState.isAdmin)
+          }
+        } catch (error) {
+          if (error instanceof TypeError) {
+            console.warn(`Media session sync skipped: server unreachable (${getApiTargetLabel()})`)
+          } else {
+            console.error("Media session sync failed", error)
+          }
+          if (isMounted) {
+            setIsAdminApproved(false)
+          }
+        } finally {
+          if (isMounted) {
+            setAuthReady(true)
+          }
+        }
+
+        const data = await documentLoadPromise
+        if (!isMounted) {
+          return
+        }
+
+        setUserDoc(data)
+        setAccountCreatedAt(data.createdAt ?? nextUser.metadata.creationTime ?? null)
+        setScheduledDeletionDate(data.deletionPlannedAt ?? null)
+        if (data.status === "desactive") {
+          await signOut(auth)
+        }
+      } catch (error) {
+        console.error("Firebase user load failed", error)
+      } finally {
+        if (isMounted) {
+          setAuthReady(true)
+        }
+      }
+    })
+
+    return () => {
+      isMounted = false
+      unsubscribe()
+    }
+  }, [])
+
+  useEffect(() => {
+    const unsubscribe = onIdTokenChanged(auth, async (nextUser) => {
+      if (!nextUser) {
+        return
+      }
+
+      try {
+        const sessionState = await syncServerMediaSession(nextUser)
+        setIsAdminApproved(sessionState.isAdmin)
+      } catch (error) {
+        if (error instanceof TypeError) {
+          console.warn(`Media session refresh skipped: server unreachable (${getApiTargetLabel()})`)
+          return
+        }
+        console.error("Media session refresh failed", error)
+      }
+    })
+
+    return () => {
+      unsubscribe()
+    }
+  }, [])
+
+  const applyPersistence = useCallback(async (remember?: boolean) => {
+    try {
+      await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence)
+    } catch (error) {
+      console.error("Auth persistence failed", error)
+    }
+  }, [])
+
+  const login = useCallback(
+    async (credentials: { email: string; password: string; remember?: boolean }) => {
+      const { email, password, remember = false } = credentials
+      const trimmedEmail = email.trim()
+      if (!trimmedEmail || !password) return { success: false, errorCode: "auth/missing-credentials" }
+      try {
+        await applyPersistence(remember)
+        const result = await signInWithEmailAndPassword(auth, trimmedEmail, password)
+        const data = await ensureUserDocument(result.user)
+        if (data.status === "desactive") {
+          await signOut(auth)
+          return { success: false, errorCode: "auth/user-disabled" }
+        }
+        if (data.deletionPlannedAt) {
+          const deleteAtTime = new Date(data.deletionPlannedAt).getTime()
+          if (Number.isFinite(deleteAtTime) && deleteAtTime <= Date.now()) {
+            await signOut(auth)
+            return { success: false, errorCode: "app/account-deleted" }
+          }
+        }
+        return { success: true }
+      } catch (error) {
+        console.error("Login failed", error)
+        return {
+          success: false,
+          errorCode: error instanceof FirebaseError ? error.code : "auth/unknown",
+        }
+      }
+    },
+    [applyPersistence],
+  )
+
+  const register = useCallback(
+    async (credentials: { email: string; password: string; remember?: boolean; profile?: RegistrationProfile }) => {
+      const { email, password, remember = false, profile } = credentials
+      const trimmedEmail = email.trim()
+      if (!trimmedEmail || !password) return { success: false, errorCode: "auth/missing-credentials" }
+      try {
+        await applyPersistence(remember)
+        if (profile) {
+          writeLocalProfile(trimmedEmail, {
+            personalInfo: {
+              firstName: profile.firstName?.trim() || "",
+              lastName: profile.lastName?.trim() || "",
+              email: trimmedEmail,
+            },
+            identityInfo: {
+              username: profile.username?.trim() || "",
+              birthday: profile.birthday?.trim() || "",
+              gender: profile.gender?.trim() || "",
+            },
+          })
+        }
+        const result = await createUserWithEmailAndPassword(auth, trimmedEmail, password)
+        const displayName = profile?.username || [profile?.firstName, profile?.lastName].filter(Boolean).join(" ")
+        if (displayName) {
+          await updateProfile(result.user, { displayName })
+        }
+        await ensureUserDocument(result.user, profile)
+        // Send welcome email asynchronously to keep signup flow fast and resilient.
+        void notifyWelcomeEmail(profile?.firstName).catch((error) => {
+          if (error instanceof TypeError) {
+            console.warn(`Welcome email skipped: server unreachable (${getApiTargetLabel()})`)
+            return
+          }
+          console.error("Welcome email dispatch failed", error)
+        })
+        return { success: true }
+      } catch (error) {
+        console.error("Register failed", error)
+        return {
+          success: false,
+          errorCode: error instanceof FirebaseError ? error.code : "auth/unknown",
+        }
+      }
+    },
+    [applyPersistence],
+  )
+
+  const loginWithGoogle = useCallback(
+    async (credential?: string) => {
+      try {
+        await applyPersistence(true)
+        const result: UserCredential = credential
+          ? await signInWithCredential(auth, GoogleAuthProvider.credential(credential))
+          : await signInWithPopup(auth, new GoogleAuthProvider())
+        const data = await ensureUserDocument(result.user)
+        if (data.status === "desactive") {
+          await signOut(auth)
+          return { success: false, errorCode: "auth/user-disabled" }
+        }
+        return { success: true }
+      } catch (error) {
+        console.error("Google login failed", error)
+        return {
+          success: false,
+          errorCode: error instanceof FirebaseError ? error.code : "auth/unknown",
+        }
+      }
+    },
+    [applyPersistence],
+  )
+
+  const logout = useCallback(async () => {
+    try {
+      await signOut(auth)
+    } catch (error) {
+      console.error("Logout failed", error)
+    }
+  }, [])
+
+  const updateUserProfile = useCallback(
+    async (profile: UserProfileData) => {
+      const currentUser = auth.currentUser
+      if (!currentUser) {
+        throw new Error("Utilisateur non connecte.")
+      }
+
+      const mergedProfile = mergeProfileData(profile, undefined, currentUser.email)
+      const updates: Partial<FirebaseUserDocument> = {
+        personalInfo: mergedProfile.personalInfo,
+        identityInfo: mergedProfile.identityInfo,
+        updatedAt: nowIso(),
+      }
+
+      const { db, doc, setDoc } = await loadFirestore()
+      await setDoc(doc(db, "users", currentUser.uid), updates, { merge: true })
+      writeLocalProfile(currentUser.email, mergedProfile)
+      setUserDoc((prev) => (prev ? { ...prev, ...updates } : ({ ...updates } as FirebaseUserDocument)))
+    },
+    [],
+  )
+
+  const verifyPassword = useCallback(async (input: string) => {
+    if (!auth.currentUser?.email) return false
+    if (!input) return false
+    try {
+      const credential = EmailAuthProvider.credential(auth.currentUser.email, input)
+      await reauthenticateWithCredential(auth.currentUser, credential)
+      return true
+    } catch (error) {
+      console.error("Password verification failed", error)
+      return false
+    }
+  }, [])
+
+  const changePassword = useCallback(async (currentPassword: string, newPassword: string): Promise<ChangePasswordResult> => {
+    const currentUser = auth.currentUser
+    if (!currentUser?.email) {
+      return { success: false, error: "Tu dois être connecté pour changer ton mot de passe." }
+    }
+    if (!currentPassword || !newPassword) {
+      return { success: false, error: "Tous les champs sont obligatoires." }
+    }
+    if (newPassword.length < 6) {
+      return { success: false, error: "Le nouveau mot de passe doit contenir au moins 6 caractères." }
+    }
+    if (newPassword === currentPassword) {
+      return { success: false, error: "Le nouveau mot de passe doit être différent de l’actuel." }
+    }
+    try {
+      const credential = EmailAuthProvider.credential(currentUser.email, currentPassword)
+      await reauthenticateWithCredential(currentUser, credential)
+      await updatePassword(currentUser, newPassword)
+      return { success: true }
+    } catch (error) {
+      console.error("Password change failed", error)
+      return { success: false, error: "Mot de passe actuel invalide ou session expirée." }
+    }
+  }, [])
+
+  const deactivateAccount = useCallback(async (): Promise<AccountActionResult> => {
+    const currentUser = auth.currentUser
+    if (!currentUser) {
+      return { success: false, error: "Tu dois être connecté pour désactiver ton compte." }
+    }
+    const deleteAt = new Date(Date.now() + THIRTY_DAYS_MS).toISOString()
+    try {
+      const { db, doc, updateDoc } = await loadFirestore()
+      await updateDoc(doc(db, "users", currentUser.uid), {
+        deletionPlannedAt: deleteAt,
+        updatedAt: nowIso(),
+      })
+      setScheduledDeletionDate(deleteAt)
+      return { success: true, deleteAt }
+    } catch (error) {
+      console.error("Account deactivation failed", error)
+      return { success: false, error: "Impossible de planifier la désactivation." }
+    }
+  }, [])
+
+  const deleteAccount = useCallback(async (): Promise<AccountActionResult> => {
+    const currentUser = auth.currentUser
+    if (!currentUser) {
+      return { success: false, error: "Tu dois être connecté pour supprimer ton compte." }
+    }
+    try {
+      const { db, deleteDoc, doc } = await loadFirestore()
+      await deleteDoc(doc(db, "users", currentUser.uid))
+    } catch (error) {
+      console.error("User document delete failed", error)
+    }
+
+    try {
+      await deleteUser(currentUser)
+      return { success: true }
+    } catch (error) {
+      console.error("Account delete failed", error)
+      return {
+        success: false,
+        error: "Suppression impossible sans reconnexion récente. Reconnecte-toi puis réessaie.",
+      }
+    }
+  }, [])
+
+  const deleteAccountViaServer = useCallback(async (): Promise<AccountActionResult> => {
+    const currentUser = auth.currentUser
+    if (!currentUser) {
+      return { success: false, error: "Tu dois Ãªtre connectÃ© pour supprimer ton compte." }
+    }
+
+    try {
+      const token = await currentUser.getIdToken()
+      const response = await fetch(buildApiUrl("/api/account/delete"), {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+
+      if (!response.ok) {
+        let reason = `status ${response.status}`
+        try {
+          const payload = (await response.json()) as { error?: string }
+          if (payload?.error) {
+            reason = payload.error
+          }
+        } catch {
+          // ignore malformed response bodies
+        }
+        return { success: false, error: reason }
+      }
+
+      await signOut(auth)
+      return { success: true }
+    } catch (error) {
+      if (error instanceof TypeError) {
+        return { success: false, error: `Serveur compte inaccessible (${getApiTargetLabel()}).` }
+      }
+      console.error("Account delete failed", error)
+      return {
+        success: false,
+        error: "Suppression complete impossible pour le moment.",
+      }
+    }
+  }, [])
+
+  const deleteAccountFinal = useCallback(async (): Promise<AccountActionResult> => {
+    const currentUser = auth.currentUser
+    if (!currentUser) {
+      return { success: false, error: "Tu dois etre connecte pour supprimer ton compte." }
+    }
+
+    try {
+      const token = await currentUser.getIdToken()
+      const response = await fetch(buildApiUrl("/api/account/delete"), {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+
+      if (!response.ok) {
+        let reason = `status ${response.status}`
+        try {
+          const payload = (await response.json()) as { error?: string }
+          if (payload?.error) {
+            reason = payload.error
+          }
+        } catch {
+          // ignore malformed response bodies
+        }
+        return { success: false, error: reason }
+      }
+
+      await signOut(auth)
+      return { success: true }
+    } catch (error) {
+      if (error instanceof TypeError) {
+        return { success: false, error: `Serveur compte inaccessible (${getApiTargetLabel()}).` }
+      }
+      console.error("Account delete failed", error)
+      return {
+        success: false,
+        error: "Suppression complete impossible pour le moment.",
+      }
+    }
+  }, [])
+
+  const adminListUsers = useCallback(async () => {
+    const currentUser = auth.currentUser
+    if (!currentUser) {
+      return []
+    }
+
+    try {
+      const { collection, db, getDocs } = await loadFirestore()
+      const snapshot = await getDocs(collection(db, "users"))
+      return sortAdminUsers(snapshot.docs.map((docSnap) => mapAdminUserRecord(docSnap.id, docSnap.data())))
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        console.warn("Admin users Firestore load failed, fallback to API", {
+          code: error.code,
+          message: error.message,
+        })
+      } else {
+        console.warn("Admin users Firestore load failed, fallback to API", error)
+      }
+    }
+
+    try {
+      const token = await currentUser.getIdToken()
+      const response = await fetch(buildApiUrl("/api/admin/users"), {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (!response.ok) {
+        let reason = `status ${response.status}`
+        try {
+          const payload = (await response.json()) as { error?: string }
+          if (payload?.error) {
+            reason = payload.error
+          }
+        } catch {
+          // ignore malformed response bodies
+        }
+        throw new Error(reason)
+      }
+
+      const payload = (await response.json().catch(() => ({}))) as { users?: AdminUserRecord[] }
+      return Array.isArray(payload?.users) ? sortAdminUsers(payload.users) : []
+    } catch (error) {
+      if (error instanceof TypeError) {
+        console.error("Admin users load network error", {
+          target: getApiTargetLabel(),
+        })
+        return []
+      }
+      console.error("Admin users load failed", error)
+      return []
+    }
+  }, [])
+
+  const adminUpdateStatus = useCallback(async (email: string, status: AccountStatus): Promise<AccountActionResult> => {
+    if (!email) {
+      return { success: false, error: "E-mail requis pour mettre à jour le statut." }
+    }
+
+    const currentUser = auth.currentUser
+    if (!currentUser) {
+      return { success: false, error: "Tu dois etre connecte pour effectuer cette action." }
+    }
+
+    try {
+      const token = await currentUser.getIdToken()
+      const response = await fetch(buildApiUrl("/api/admin/users/status"), {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: normalizeEmail(email),
+          status,
+        }),
+      })
+
+      if (!response.ok) {
+        let reason = `status ${response.status}`
+        try {
+          const payload = (await response.json()) as { error?: string }
+          if (payload?.error) {
+            reason = payload.error
+          }
+        } catch {
+          // ignore malformed response bodies
+        }
+        return { success: false, error: reason }
+      }
+
+      if (normalizeEmail(currentUser.email ?? "") === normalizeEmail(email) && status === "desactive") {
+        await signOut(auth)
+      }
+
+      return { success: true }
+    } catch (error) {
+      if (error instanceof TypeError) {
+        console.error("Admin status update network error", {
+          email,
+          status,
+          target: getApiTargetLabel(),
+        })
+        return { success: false, error: `Serveur admin inaccessible (${getApiTargetLabel()}).` }
+      }
+      console.error("Admin status update failed", error)
+      return { success: false, error: "Mise à jour impossible." }
+    }
+  }, [])
+  const adminDeleteUser = useCallback(async (email: string): Promise<AccountActionResult> => {
+    if (!email) {
+      return { success: false, error: "E-mail requis pour supprimer le compte." }
+    }
+    const currentEmail = auth.currentUser?.email
+    if (currentEmail && normalizeEmail(currentEmail) === normalizeEmail(email)) {
+      return { success: false, error: "Utilise la suppression de compte depuis tes paramètres." }
+    }
+
+    const currentUser = auth.currentUser
+    if (!currentUser) {
+      return { success: false, error: "Tu dois etre connecte pour effectuer cette action." }
+    }
+
+    try {
+      const normalizedEmail = normalizeEmail(email)
+      const token = await currentUser.getIdToken()
+      const response = await fetch(buildApiUrl("/api/admin/users/delete"), {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: normalizedEmail,
+        }),
+      })
+
+      if (!response.ok) {
+        let reason = `status ${response.status}`
+        try {
+          const payload = (await response.json()) as { error?: string }
+          if (payload?.error) {
+            reason = payload.error
+          }
+        } catch {
+          // ignore malformed response bodies
+        }
+        console.error("Admin delete failed", {
+          email: normalizedEmail,
+          status: response.status,
+          reason,
+        })
+        return { success: false, error: reason }
+      }
+
+      return { success: true }
+    } catch (error) {
+      if (error instanceof TypeError) {
+        console.error("Admin delete network error", {
+          email,
+          target: getApiTargetLabel(),
+        })
+        return { success: false, error: `Serveur admin inaccessible (${getApiTargetLabel()}).` }
+      }
+      console.error("Admin delete failed", error)
+      return { success: false, error: "Suppression impossible avec les droits actuels." }
+    }
+  }, [])
+
+  const adminResendWelcomeEmail = useCallback(
+    async ({ email, firstName }: { email: string; firstName?: string }): Promise<AccountActionResult> => {
+      const to = normalizeEmail(email)
+      if (!to) {
+        return { success: false, error: "E-mail requis pour renvoyer le message de bienvenue." }
+      }
+
+      const currentUser = auth.currentUser
+      if (!currentUser) {
+        return { success: false, error: "Tu dois etre connecte pour effectuer cette action." }
+      }
+
+      try {
+        console.log("Admin welcome resend started", { to })
+        const token = await currentUser.getIdToken()
+        const response = await fetch(buildApiUrl("/api/email/welcome/admin-resend"), {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: to,
+            firstName: firstName?.trim() || "",
+          }),
+        })
+
+        if (!response.ok) {
+          let reason = `status ${response.status}`
+          try {
+            const payload = (await response.json()) as { error?: string }
+            if (payload?.error) {
+              reason = payload.error
+            }
+          } catch {
+            // ignore malformed response bodies
+          }
+          console.error("Admin welcome resend failed", {
+            to,
+            status: response.status,
+            reason,
+          })
+          return { success: false, error: reason }
+        }
+
+        const payload = (await response.json().catch(() => ({}))) as {
+          message?: string
+          emailId?: string | null
+          to?: string
+        }
+        console.log("Admin welcome resend succeeded", {
+          to,
+          emailId: payload?.emailId ?? null,
+          backendTo: payload?.to ?? null,
+        })
+        return {
+          success: true,
+          message: payload?.emailId
+            ? `E-mail envoye (id: ${payload.emailId}).`
+            : payload?.message || "E-mail de bienvenue envoye.",
+        }
+      } catch (error) {
+        if (error instanceof TypeError) {
+          console.error("Admin welcome resend network error", {
+            to,
+            target: getApiTargetLabel(),
+          })
+          return { success: false, error: `Serveur email inaccessible (${getApiTargetLabel()}).` }
+        }
+        console.error("Admin welcome email resend failed", error)
+        return { success: false, error: "Envoi du mail impossible avec les droits actuels." }
+      }
+    },
+    [],
+  )
+
+  const userId = authUser?.uid ?? null
+
+  const value = useMemo<AuthContextValue>(() => {
+    const email = authUser?.email ?? null
+    const isAdmin = isAdminApproved || Boolean(userDoc?.admin)
+    const username = userDoc?.identityInfo?.username?.trim() || null
+    const userProfile = mergeProfileData(
+      {
+        personalInfo: userDoc?.personalInfo,
+        identityInfo: userDoc?.identityInfo,
+      },
+      undefined,
+      email,
+    )
+    return {
+      isAuthReady: authReady,
+      isAuthenticated: Boolean(authUser),
+      isAdmin,
+      userId,
+      userEmail: email,
+      username,
+      userProfile,
+      createdAt: accountCreatedAt,
+      updateUserProfile,
+      login,
+      register,
+      loginWithGoogle,
+      logout,
+      verifyPassword,
+      changePassword,
+      deactivateAccount,
+      deleteAccount: deleteAccountFinal,
+      scheduledDeletionDate,
+      adminListUsers,
+      adminUpdateStatus,
+      adminDeleteUser,
+      adminResendWelcomeEmail,
+    }
+  }, [
+    accountCreatedAt,
+    adminDeleteUser,
+    adminListUsers,
+    adminResendWelcomeEmail,
+    adminUpdateStatus,
+    authReady,
+    authUser,
+    changePassword,
+    deactivateAccount,
+    deleteAccountFinal,
+    isAdminApproved,
+    login,
+    loginWithGoogle,
+    logout,
+    register,
+    scheduledDeletionDate,
+    updateUserProfile,
+    userDoc?.admin,
+    userDoc?.identityInfo,
+    userDoc?.personalInfo,
+    userId,
+    verifyPassword,
+  ])
+
+  useEffect(() => {
+    onValue(value)
+  }, [onValue, value])
+
+  return null
+}

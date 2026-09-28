@@ -1,5 +1,6 @@
 import { Fragment, useEffect, type ReactNode } from "react"
 import { Link, useParams } from "react-router-dom"
+import ResponsiveSiteImage from "../../../components/ResponsiveSiteImage"
 import BlogPublicationDate from "../BlogPublicationDate"
 import sportImage from "../../../assets/sport1.webp"
 import nutritionImage from "../../../assets/food2.webp"
@@ -130,7 +131,7 @@ const renderMarkdown = (markdown: string, illustrations: Record<string, ArticleI
       if (illustration) {
         blocks.push(
           <figure className="mental-article__illustration" key={`illustration-${index}`}>
-            <img src={illustration.image} alt={illustration.alt} loading="lazy" decoding="async" />
+            <ResponsiveSiteImage src={illustration.image} alt={illustration.alt} loading="lazy" decoding="async" />
           </figure>,
         )
       }
@@ -246,7 +247,7 @@ const BlogSportNutritionArticlePage = () => {
             <p>{article.readingTime}</p>
           </div>
           <div className="mental-article__media">
-            <img src={article.image} alt={article.imageAlt} />
+            <ResponsiveSiteImage src={article.image} alt={article.imageAlt} preload />
           </div>
         </header>
 
@@ -265,7 +266,7 @@ const BlogSportNutritionArticlePage = () => {
           {recommendations.map((recommendation) => (
             <Link className="self-love-ritual-card mental-article-recommendation" to={recommendation.href} key={recommendation.href}>
               <div className="self-love-ritual-card__media">
-                <img src={recommendation.image} alt="" loading="lazy" decoding="async" />
+                <ResponsiveSiteImage src={recommendation.image} alt="" loading="lazy" decoding="async" />
               </div>
               <div className="self-love-ritual-card__content">
                 <h3>{recommendation.title}</h3>

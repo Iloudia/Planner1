@@ -29,6 +29,7 @@ export type OwnedDigitalProduct = {
 type CheckoutPayload = {
   productId?: string
   items?: Array<{ productId: string; quantity: number }>
+  digitalContentConsent: boolean
 }
 
 const parseErrorMessage = async (response: Response, fallback: string) => {

@@ -8,6 +8,7 @@ import { useAuth } from "../../context/AuthContext"
 import { fetchOwnedDigitalProducts } from "../../services/boutique/checkout"
 import { getProductPricing } from "../../utils/productPricing"
 import PageLoader from "../../components/PageLoader"
+import ResponsiveSiteImage from "../../components/ResponsiveSiteImage"
 
 type BoutiqueFilter = "all" | "ebook" | "template" | "carousel" | "moodboard"
 
@@ -193,14 +194,24 @@ const BoutiquePage = () => {
   const bestSellers = allProducts.filter((product) => product.bestSeller)
   if (isBoutiqueLoading) {
     return (
-      <PageLoader />
+      <div className="boutique-page boutique-page--loading">
+        <PageLoader label="La boutique se prépare" />
+      </div>
     )
   }
 
   return (
     <div className="boutique-page">
       <section className="boutique-hero reveal" aria-labelledby="boutique-hero-title">
-        <div className="boutique-hero__media" style={{ backgroundImage: `url(${boutiqueHeroBackdrop})` }}>
+        <div className="boutique-hero__media">
+          <ResponsiveSiteImage
+            className="boutique-hero__backdrop"
+            src={boutiqueHeroBackdrop}
+            alt=""
+            aria-hidden="true"
+            sizes="100vw"
+            preload
+          />
           <div className="boutique-hero__content">
             <span className="boutique-eyebrow">Boutique</span>
             <h1 id="boutique-hero-title">Des ressources digitales pour t'aider à t'organiser, gagner en confiance et faire grandir tes projets.</h1>
@@ -237,7 +248,13 @@ const BoutiquePage = () => {
               className="boutique-category-card"
             >
               <div className="boutique-category-card__image">
-                <img src={category.image} alt="" loading="lazy" decoding="async" />
+                <ResponsiveSiteImage
+                  src={category.image}
+                  alt=""
+                  sizes="(max-width: 767px) calc(100vw - 3rem), (max-width: 1100px) 45vw, 320px"
+                  loading="lazy"
+                  decoding="async"
+                />
               </div>
               <div className="boutique-category-card__top">
                 <h3>{category.title}</h3>

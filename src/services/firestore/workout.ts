@@ -20,7 +20,7 @@ import {
   workoutVideoDocRef,
   workoutVideosCollectionRef,
 } from "./userPaths"
-import { db } from "../../utils/firebase"
+import { db } from "../../utils/firebaseFirestore"
 import { toMillis } from "./shared"
 
 type WorkoutExerciseDoc = Omit<WorkoutExercise, "id" | "createdAt" | "updatedAt"> & {
