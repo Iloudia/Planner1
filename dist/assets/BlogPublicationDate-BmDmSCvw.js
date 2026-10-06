@@ -1,0 +1,1 @@
+import{j as i}from"./index-BXR4V106.js";import{g as a,f as o}from"./blogArticles-CzL9c-e4.js";const s=({href:e,className:r})=>{const t=a(e);return t?i.jsxs("p",{className:r,children:["Publié le ",i.jsx("time",{dateTime:t.publicationDate,children:o(t.publicationDate)}),"."]}):null};export{s as B};

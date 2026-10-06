@@ -10,6 +10,7 @@ import { createCheckoutSession } from "../../services/boutique/checkout"
 import { getProductPricing } from "../../utils/productPricing"
 import PageLoader from "../../components/PageLoader"
 import DigitalContentConsent from "../../components/DigitalContentConsent"
+import { openExternalUrl } from "../../platform/runtime"
 
 const formatCents = (cents: number) => {
   const euros = (cents / 100).toFixed(2).replace(".", ",")
@@ -99,7 +100,7 @@ const CartPage = () => {
         items: payloadItems,
         digitalContentConsent,
       })
-      window.location.href = checkoutUrl
+      await openExternalUrl(checkoutUrl)
     } catch (error) {
       console.error(error)
       setCheckoutError(error instanceof Error ? error.message : "Impossible de lancer le paiement. Reessaie dans quelques secondes.")

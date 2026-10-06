@@ -1091,7 +1091,7 @@ const WishlistPage = () => {
                                     <div className="wishlist-item__header">
                                       <div className="wishlist-item__media">
                                         {item.imageUrl ? (
-                                          <MediaImage src={item.imageUrl} alt={item.title} loading="lazy" decoding="async" />
+                                          <MediaImage src={item.imageUrl} alt={item.title} loading="eager" decoding="async" />
                                         ) : (
                                           <div className="wishlist-item__placeholder">Sans image</div>
                                         )}

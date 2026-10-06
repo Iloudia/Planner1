@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Me&amp;rituals</string>
+    <string name="title_activity_main">Me&amp;rituals</string>
+    <string name="package_name">com.meandrituals.app</string>
+    <string name="custom_url_scheme">com.meandrituals.app</string>
+</resources>

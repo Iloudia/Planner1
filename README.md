@@ -37,6 +37,38 @@ npm run build
 npm run preview
 ```
 
+## Applications Android et iOS (Capacitor)
+
+La couche Capacitor est additive : le build et les commandes web ci-dessus restent inchangés. Le build natif utilise le mode Vite `mobile`, le même dossier `dist/` et l'API publique définie dans `.env.mobile`.
+
+```bash
+# Construire puis synchroniser les deux projets natifs
+npm run mobile:sync
+
+# Synchroniser puis ouvrir Android Studio
+npm run mobile:android
+
+# Synchroniser puis ouvrir Xcode (macOS uniquement)
+npm run mobile:ios
+```
+
+Pour tester directement sur un appareil ou un émulateur :
+
+```bash
+npm run mobile:run:android
+npm run mobile:run:ios
+```
+
+Prérequis : Node.js 22+, Android Studio avec le SDK Android pour Android, et macOS avec Xcode pour iOS.
+
+L'API doit autoriser les origines natives sans remplacer les origines web existantes :
+
+```env
+MOBILE_CORS_ORIGINS=capacitor://localhost,https://localhost
+```
+
+Avant une publication, remplace les icônes et écrans de lancement générés, configure la signature Android/iOS et vérifie l'identifiant définitif `com.meandrituals.app`. La connexion Google utilise encore le flux Firebase Web ; un fournisseur Firebase natif et les fichiers `google-services.json` / `GoogleService-Info.plist` seront nécessaires si ce bouton doit être garanti dans les applications des stores.
+
 ## Production
 - Front statique servi par Nginx ou Firebase Hosting
 - API Node derrière Nginx sur `/api`

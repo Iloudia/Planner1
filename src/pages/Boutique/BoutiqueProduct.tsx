@@ -8,6 +8,7 @@ import { useAuth } from "../../context/AuthContext"
 import { createCheckoutSession } from "../../services/boutique/checkout"
 import { getProductPricing } from "../../utils/productPricing"
 import DigitalContentConsent from "../../components/DigitalContentConsent"
+import { openExternalUrl } from "../../platform/runtime"
 
 type ProductMedia = {
   type: "image" | "video"
@@ -164,7 +165,7 @@ const BoutiqueProductPage = () => {
         productId: product.id,
         digitalContentConsent,
       })
-      window.location.href = checkoutUrl
+      await openExternalUrl(checkoutUrl)
     } catch (error) {
       console.error(error)
       setCheckoutError(error instanceof Error ? error.message : "Impossible de lancer le paiement. Reessaie dans quelques secondes.")

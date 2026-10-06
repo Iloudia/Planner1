@@ -784,7 +784,10 @@ const buildProductDownloads = (cartItems, ownerContext) => {
 }
 
 const parseOrigins = () => {
-  const raw = process.env.CORS_ORIGINS || appBaseUrl
+  const raw = [
+    process.env.CORS_ORIGINS || appBaseUrl,
+    process.env.MOBILE_CORS_ORIGINS || "",
+  ].filter(Boolean).join(",")
   return raw
     .split(",")
     .map((entry) => entry.trim())
@@ -803,12 +806,12 @@ const getUrlOrigin = (value) => {
 
 const getTrustedRequestOrigin = (req) => {
   const originHeader = String(req.headers.origin || "").trim()
-  if (originHeader && allowedOrigins.includes(originHeader)) {
+  if (originHeader && allowedOrigins.includes(originHeader) && /^https?:\/\//i.test(originHeader)) {
     return originHeader
   }
 
   const refererOrigin = getUrlOrigin(req.headers.referer)
-  if (refererOrigin && allowedOrigins.includes(refererOrigin)) {
+  if (refererOrigin && allowedOrigins.includes(refererOrigin) && /^https?:\/\//i.test(refererOrigin)) {
     return refererOrigin
   }
 
@@ -845,11 +848,20 @@ const isSecureRequest = (req) => {
 }
 
 const createCookieHeader = ({ name, value, maxAgeSeconds, req }) => {
-  const segments = [`${name}=${encodeURIComponent(value)}`, "Path=/", "HttpOnly", "SameSite=Lax"]
+  const secure = isSecureRequest(req)
+  // The web app and the media API can run on different origins (local/mobile
+  // app against the production API). A secure, read-only media cookie must be
+  // allowed on those image requests or every image needs a slower JS fallback.
+  const segments = [
+    `${name}=${encodeURIComponent(value)}`,
+    "Path=/",
+    "HttpOnly",
+    secure ? "SameSite=None" : "SameSite=Lax",
+  ]
   if (typeof maxAgeSeconds === "number") {
     segments.push(`Max-Age=${Math.max(Math.floor(maxAgeSeconds), 0)}`)
   }
-  if (isSecureRequest(req)) {
+  if (secure) {
     segments.push("Secure")
   }
   return segments.join("; ")

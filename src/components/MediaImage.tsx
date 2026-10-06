@@ -1,4 +1,4 @@
-import { useEffect, useState, type ImgHTMLAttributes } from "react"
+import { useEffect, useRef, useState, type ImgHTMLAttributes } from "react"
 import { useAuth } from "../context/AuthContext"
 import { resolveMediaUrl } from "../services/media/api"
 import { auth } from "../utils/firebase"
@@ -21,6 +21,7 @@ type CachedResolvedSource = {
 
 const resolvedSourceCache = new Map<string, CachedResolvedSource>()
 let cacheCleanupRegistered = false
+const LOAD_RETRY_DELAYS_MS = [0, 400, 1200, 3000] as const
 
 const cleanupResolvedSourceCache = () => {
   for (const entry of resolvedSourceCache.values()) {
@@ -57,6 +58,10 @@ const rememberCachedSource = (cacheKey: string, entry: CachedResolvedSource) => 
   resolvedSourceCache.set(cacheKey, entry)
 }
 
+const forgetCachedSource = (cacheKey: string) => {
+  resolvedSourceCache.delete(cacheKey)
+}
+
 const buildMediaCandidates = (value: string) => {
   const resolved = resolveMediaUrl(value)
   const candidates: string[] = []
@@ -65,13 +70,13 @@ const buildMediaCandidates = (value: string) => {
     return candidates
   }
 
-  candidates.push(resolved)
-
   if (typeof window !== "undefined") {
     try {
       const url = new URL(resolved, window.location.origin)
       if (url.pathname.startsWith("/media/")) {
         const sameOriginPath = `${url.pathname}${url.search}${url.hash}`
+        candidates.push(resolveMediaUrl(sameOriginPath))
+        candidates.push(resolved)
         if (url.origin !== window.location.origin) {
           candidates.push(sameOriginPath)
         }
@@ -80,6 +85,8 @@ const buildMediaCandidates = (value: string) => {
       // ignore malformed values
     }
   }
+
+  candidates.push(resolved)
 
   return Array.from(new Set(candidates.filter(Boolean)))
 }
@@ -100,6 +107,26 @@ const isProtectedMediaUrl = (value: string) => {
 }
 
 const createAbortError = () => new Error("media-load-aborted")
+
+const waitForRetry = (delayMs: number, signal: AbortSignal) =>
+  new Promise<void>((resolve, reject) => {
+    if (signal.aborted) {
+      reject(createAbortError())
+      return
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      signal.removeEventListener("abort", handleAbort)
+      resolve()
+    }, delayMs)
+
+    const handleAbort = () => {
+      window.clearTimeout(timeoutId)
+      reject(createAbortError())
+    }
+
+    signal.addEventListener("abort", handleAbort, { once: true })
+  })
 
 const preloadImageSource = (value: string, signal: AbortSignal) =>
   new Promise<string>((resolve, reject) => {
@@ -139,8 +166,26 @@ const preloadImageSource = (value: string, signal: AbortSignal) =>
 const getMediaCacheKey = (src: string, userId: string | null, protectedMedia: boolean) =>
   protectedMedia ? `protected:${userId ?? "anonymous"}:${src}` : `public:${src}`
 
-const resolveProtectedSource = async (candidates: string[], signal: AbortSignal) => {
-  const token = await auth.currentUser?.getIdToken()
+type SourceResolution = {
+  src: string | null
+  retryable: boolean
+  refreshToken?: boolean
+}
+
+const resolveProtectedSource = async (
+  candidates: string[],
+  signal: AbortSignal,
+  forceTokenRefresh = false,
+): Promise<SourceResolution> => {
+  let token: string | undefined
+  try {
+    token = await auth.currentUser?.getIdToken(forceTokenRefresh)
+  } catch {
+    return { src: null, retryable: true }
+  }
+
+  let retryable = false
+  let refreshToken = false
 
   for (const candidate of candidates) {
     if (signal.aborted) {
@@ -159,6 +204,12 @@ const resolveProtectedSource = async (candidates: string[], signal: AbortSignal)
       })
 
       if (!response.ok) {
+        if (response.status === 401) {
+          refreshToken = true
+        }
+        if (response.status === 401 || response.status === 408 || response.status === 425 || response.status === 429 || response.status >= 500) {
+          retryable = true
+        }
         continue
       }
 
@@ -171,7 +222,7 @@ const resolveProtectedSource = async (candidates: string[], signal: AbortSignal)
 
       try {
         await preloadImageSource(objectUrl, signal)
-        return objectUrl
+        return { src: objectUrl, retryable: false }
       } catch (error) {
         URL.revokeObjectURL(objectUrl)
         if (signal.aborted) {
@@ -182,17 +233,18 @@ const resolveProtectedSource = async (candidates: string[], signal: AbortSignal)
       if (signal.aborted) {
         throw error
       }
+      retryable = true
     }
   }
 
-  return null
+  return { src: null, retryable, refreshToken }
 }
 
-const resolvePublicSource = async (candidates: string[], signal: AbortSignal) => {
+const resolvePublicSource = async (candidates: string[], signal: AbortSignal): Promise<SourceResolution> => {
   for (const candidate of candidates) {
     try {
       await preloadImageSource(candidate, signal)
-      return candidate
+      return { src: candidate, retryable: false }
     } catch (error) {
       if (signal.aborted) {
         throw error
@@ -200,13 +252,16 @@ const resolvePublicSource = async (candidates: string[], signal: AbortSignal) =>
     }
   }
 
-  return null
+  return { src: null, retryable: true }
 }
 
 const MediaImage = ({ src, alt, onError, onLoad, ...props }: MediaImageProps) => {
   const { isAuthReady, userId } = useAuth()
   const [displaySrc, setDisplaySrc] = useState(PLACEHOLDER_SRC)
   const [hasResolvedSource, setHasResolvedSource] = useState(false)
+  const [reloadVersion, setReloadVersion] = useState(0)
+  const cacheKeyRef = useRef("")
+  const fallbackCacheKeyRef = useRef("")
 
   useEffect(() => {
     const normalizedSrc = src.trim()
@@ -226,9 +281,19 @@ const MediaImage = ({ src, alt, onError, onLoad, ...props }: MediaImageProps) =>
     }
 
     const cacheKey = getMediaCacheKey(normalizedSrc, userId, protectedMedia)
+    cacheKeyRef.current = cacheKey
     const cachedSource = readCachedSource(cacheKey)
     if (cachedSource) {
       setDisplaySrc(cachedSource)
+      setHasResolvedSource(true)
+      return
+    }
+
+    // The media session cookie is ready when auth is ready, so let the browser
+    // load and cache the image directly. The authenticated fetch below is only
+    // a fallback for browsers/environments where that cookie cannot be sent.
+    if (fallbackCacheKeyRef.current !== cacheKey) {
+      setDisplaySrc(nextCandidates[0])
       setHasResolvedSource(true)
       return
     }
@@ -240,9 +305,28 @@ const MediaImage = ({ src, alt, onError, onLoad, ...props }: MediaImageProps) =>
       setHasResolvedSource(false)
 
       try {
-        const resolvedSource = protectedMedia
-          ? await resolveProtectedSource(nextCandidates, controller.signal)
-          : await resolvePublicSource(nextCandidates, controller.signal)
+        let resolvedSource: string | null = null
+        let forceTokenRefresh = false
+
+        for (let attemptIndex = 0; attemptIndex < LOAD_RETRY_DELAYS_MS.length; attemptIndex += 1) {
+          const delayMs = LOAD_RETRY_DELAYS_MS[attemptIndex]
+          if (delayMs > 0) {
+            await waitForRetry(delayMs, controller.signal)
+          }
+
+          const resolution = protectedMedia
+            ? await resolveProtectedSource(nextCandidates, controller.signal, forceTokenRefresh)
+            : await resolvePublicSource(nextCandidates, controller.signal)
+          resolvedSource = resolution.src
+          forceTokenRefresh = Boolean(resolution.refreshToken)
+
+          if (resolvedSource) {
+            break
+          }
+          if (!resolution.retryable) {
+            break
+          }
+        }
 
         if (!resolvedSource || controller.signal.aborted) {
           return
@@ -265,7 +349,7 @@ const MediaImage = ({ src, alt, onError, onLoad, ...props }: MediaImageProps) =>
     return () => {
       controller.abort()
     }
-  }, [isAuthReady, src, userId])
+  }, [isAuthReady, reloadVersion, src, userId])
 
   return (
     <img
@@ -273,8 +357,11 @@ const MediaImage = ({ src, alt, onError, onLoad, ...props }: MediaImageProps) =>
       alt={hasResolvedSource ? alt : ""}
       onError={(event) => {
         if (displaySrc !== PLACEHOLDER_SRC) {
+          fallbackCacheKeyRef.current = cacheKeyRef.current
+          forgetCachedSource(cacheKeyRef.current)
           setDisplaySrc(PLACEHOLDER_SRC)
           setHasResolvedSource(false)
+          setReloadVersion((version) => version + 1)
         }
         onError?.(event)
       }}

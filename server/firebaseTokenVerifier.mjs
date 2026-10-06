@@ -9,6 +9,7 @@ let certCache = {
   certs: {},
   importedKeys: new Map(),
 }
+let certLoadPromise = null
 
 const parseMaxAge = (cacheControl) => {
   const match = String(cacheControl || "").match(/max-age=(\d+)/i)
@@ -21,18 +22,33 @@ const loadCerts = async (forceRefresh = false) => {
     return certCache.certs
   }
 
-  const response = await fetch(certsUrl)
-  if (!response.ok) {
-    throw new Error("firebase-public-certs-fetch-failed")
+  if (!forceRefresh && certLoadPromise) {
+    return certLoadPromise
   }
 
-  const certs = (await response.json()) ?? {}
-  certCache = {
-    expiresAt: now + parseMaxAge(response.headers.get("cache-control")) * 1000,
-    certs,
-    importedKeys: new Map(),
+  const request = (async () => {
+    const response = await fetch(certsUrl)
+    if (!response.ok) {
+      throw new Error("firebase-public-certs-fetch-failed")
+    }
+
+    const certs = (await response.json()) ?? {}
+    certCache = {
+      expiresAt: Date.now() + parseMaxAge(response.headers.get("cache-control")) * 1000,
+      certs,
+      importedKeys: new Map(),
+    }
+    return certs
+  })()
+
+  certLoadPromise = request
+  try {
+    return await request
+  } finally {
+    if (certLoadPromise === request) {
+      certLoadPromise = null
+    }
   }
-  return certs
 }
 
 const getKeyForToken = async (token) => {
