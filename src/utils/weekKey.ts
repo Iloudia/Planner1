@@ -5,6 +5,8 @@ export const formatLocalISODate = (date: Date) => {
   return `${year}-${month}-${day}`
 }
 
+export const SPORT_BOARD_DRAFTS_STORAGE_KEY = "planner.sport.board.drafts.v1"
+
 export const getWeekStart = (reference: Date) => {
   const date = new Date(reference)
   const day = date.getDay()

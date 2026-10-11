@@ -96,6 +96,9 @@ const expenseChartColors: Record<ExpenseCategory, string> = {
   friends: '#aa6c95',
 }
 
+const isExpenseCategory = (value: unknown): value is ExpenseCategory =>
+  typeof value === 'string' && Object.prototype.hasOwnProperty.call(categoryDefinitions, value)
+
 const financeMoodboard = [
   { src: financeMood01, alt: 'Moodboard budget' },
   { src: financeMood02, alt: "Carnet d'épargne inspirant" },
@@ -444,7 +447,7 @@ const FinancePage = () => {
 
   const totals = useMemo(() => {
     return monthlyOutflows.reduce<Record<ExpenseCategory, number>>((accumulator, entry) => {
-      if (!entry.category) {
+      if (!isExpenseCategory(entry.category)) {
         return accumulator
       }
       accumulator[entry.category] = (accumulator[entry.category] ?? 0) + entry.amount

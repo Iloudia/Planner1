@@ -384,6 +384,29 @@ const useUserWorkoutData = () => {
     [mutate, series, userId],
   )
 
+  const resetExerciseSeriesCompletion = useCallback(
+    async (exerciseId: string) => {
+      if (!userId) return
+      const completedItems = series.filter((item) => item.exerciseId === exerciseId && item.completed)
+      if (completedItems.length === 0) return
+
+      const completedItemIds = new Set(completedItems.map((item) => item.id))
+      setSeries((current) =>
+        current.map((item) => (completedItemIds.has(item.id) ? { ...item, completed: false } : item)),
+      )
+
+      try {
+        await mutate(() => resetWorkoutSeriesCompletion(userId, completedItems))
+      } catch (mutationError) {
+        setSeries((current) =>
+          current.map((item) => (completedItemIds.has(item.id) ? { ...item, completed: true } : item)),
+        )
+        throw mutationError
+      }
+    },
+    [mutate, series, userId],
+  )
+
   const removeSeries = useCallback(
     async (seriesId: string) => {
       if (!userId) return
@@ -449,6 +472,7 @@ const useUserWorkoutData = () => {
       deleteVideo: removeVideo,
       createSeries,
       updateSeries,
+      resetExerciseSeriesCompletion,
       deleteSeries: removeSeries,
       resetCompletedSeriesIfNeeded,
     }),
@@ -462,6 +486,7 @@ const useUserWorkoutData = () => {
       removeExercise,
       removeSeries,
       removeVideo,
+      resetExerciseSeriesCompletion,
       resetCompletedSeriesIfNeeded,
       seriesByExercise,
       updateExercise,

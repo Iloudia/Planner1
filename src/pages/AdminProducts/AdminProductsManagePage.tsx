@@ -121,12 +121,19 @@ const AdminProductsManagePage = () => {
     pendingImageSlotRef.current = null
   }
 
-  const handleDelete = (productId: string) => {
+  const handleDelete = async (productId: string) => {
     const confirmed = window.confirm("Supprimer cette fiche produit ?")
     if (!confirmed) return
-    deleteCustomProduct(productId)
-    if (editingId === productId) {
-      cancelEdit()
+
+    try {
+      const nextProducts = await deleteCustomProduct(productId)
+      setProducts(nextProducts)
+      if (editingId === productId) {
+        cancelEdit()
+      }
+    } catch (error) {
+      console.error("Delete product error:", error)
+      window.alert(error instanceof Error ? error.message : "Impossible de supprimer cette fiche produit pour le moment.")
     }
   }
 
@@ -280,7 +287,7 @@ const AdminProductsManagePage = () => {
                   <button type="button" className="boutique-button boutique-button--primary" onClick={() => startEdit(product)}>
                     Modifier
                   </button>
-                  <button type="button" className="boutique-button boutique-button--ghost" onClick={() => handleDelete(product.id)}>
+                  <button type="button" className="boutique-button boutique-button--ghost" onClick={() => void handleDelete(product.id)}>
                     Supprimer
                   </button>
                 </div>

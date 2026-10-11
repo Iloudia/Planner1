@@ -1,10 +1,19 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { eveningRoutine as defaultEveningRoutine, morningRoutine as defaultMorningRoutine } from "../data/sampleData"
 import { useAuth } from "../context/AuthContext"
-import type { RoutineRecord, RoutineSettings } from "../types/personalization"
+import type { RoutineDailyProgress, RoutineRecord, RoutineSettings } from "../types/personalization"
 import { createClientId } from "../utils/clientId"
 import { formatLocalISODate } from "../utils/weekKey"
-import { deleteRoutineItem, getRoutineSettings, saveRoutineItem, saveRoutineSettings, subscribeToRoutineItems } from "../services/firestore/routine"
+import {
+  deleteRoutineItem,
+  getRoutineSettings,
+  saveRoutineItem,
+  saveRoutineDailyProgress,
+  saveRoutineItemOrder,
+  saveRoutineSettings,
+  subscribeToRoutineDailyProgress,
+  subscribeToRoutineItems,
+} from "../services/firestore/routine"
 
 const ROUTINE_LOAD_ERROR = "Impossible de charger tes routines."
 const ROUTINE_MUTATION_ERROR = "Impossible de mettre à jour tes routines."
@@ -20,6 +29,19 @@ const isItemCompletedOnDate = (item: RoutineRecord, dateKey: string) => {
     return false
   }
   return formatLocalISODate(new Date(item.updatedAt)) === dateKey
+}
+
+const buildRoutineDailyProgress = (items: RoutineRecord[], dateKey: string): RoutineDailyProgress => {
+  const plannedItemIds = items.map((item) => item.id)
+  const completedItemIds = items
+    .filter((item) => isItemCompletedOnDate(item, dateKey))
+    .map((item) => item.id)
+  return {
+    dateKey,
+    completedItemIds,
+    plannedItemIds,
+    isComplete: plannedItemIds.length > 0 && completedItemIds.length === plannedItemIds.length,
+  }
 }
 
 const seededDefaults: RoutineRecord[] = [
@@ -46,6 +68,7 @@ const seededDefaults: RoutineRecord[] = [
 const useUserRoutine = () => {
   const { isAuthReady, userId } = useAuth()
   const [items, setItems] = useState<RoutineRecord[]>([])
+  const [dailyProgress, setDailyProgress] = useState<RoutineDailyProgress[]>([])
   const [settings, setSettings] = useState<RoutineSettings | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -82,6 +105,7 @@ const useUserRoutine = () => {
 
     if (!userId) {
       setItems([])
+      setDailyProgress([])
       setSettings(null)
       setError(null)
       setIsLoading(false)
@@ -92,6 +116,7 @@ const useUserRoutine = () => {
     }
 
     setItems([])
+    setDailyProgress([])
     setSettings(null)
     setError(null)
     setIsLoading(true)
@@ -100,8 +125,9 @@ const useUserRoutine = () => {
     migrationAttemptRef.current = false
 
     let itemsLoaded = false
+    let progressLoaded = false
     let settingsLoaded = false
-    const syncLoadingState = () => setIsLoading(!(itemsLoaded && settingsLoaded))
+    const syncLoadingState = () => setIsLoading(!(itemsLoaded && progressLoaded && settingsLoaded))
 
     const unsubscribeItems = subscribeToRoutineItems(
       userId,
@@ -115,6 +141,23 @@ const useUserRoutine = () => {
         console.error("Routine load failed", loadError)
         itemsLoaded = true
         setItems([])
+        setError(ROUTINE_LOAD_ERROR)
+        syncLoadingState()
+      },
+    )
+
+    const unsubscribeProgress = subscribeToRoutineDailyProgress(
+      userId,
+      (nextProgress) => {
+        progressLoaded = true
+        setDailyProgress(nextProgress)
+        setError(null)
+        syncLoadingState()
+      },
+      (loadError) => {
+        console.error("Routine progress load failed", loadError)
+        progressLoaded = true
+        setDailyProgress([])
         setError(ROUTINE_LOAD_ERROR)
         syncLoadingState()
       },
@@ -134,7 +177,10 @@ const useUserRoutine = () => {
         syncLoadingState()
       })
 
-    return unsubscribeItems
+    return () => {
+      unsubscribeItems()
+      unsubscribeProgress()
+    }
   }, [isAuthReady, userId])
 
   useEffect(() => {
@@ -222,6 +268,14 @@ const useUserRoutine = () => {
     [],
   )
 
+  const persistTodayProgress = useCallback(
+    async (nextItems: RoutineRecord[]) => {
+      if (!userId) return
+      await saveRoutineDailyProgress(userId, buildRoutineDailyProgress(nextItems, todayKey))
+    },
+    [todayKey, userId],
+  )
+
   const addItem = useCallback(
     async (input: { period: "morning" | "evening"; title: string; detail?: string }) => {
       if (!userId) return null
@@ -237,18 +291,25 @@ const useUserRoutine = () => {
         sortOrder: nextSortOrder,
         createdAt: Date.now(),
       }
-      await mutate(() => saveRoutineItem(userId, item))
+      await mutate(async () => {
+        await saveRoutineItem(userId, item)
+        await persistTodayProgress([...items, item])
+      })
       return item.id
     },
-    [items, mutate, userId],
+    [items, mutate, persistTodayProgress, userId],
   )
 
   const removeItem = useCallback(
     async (itemId: string) => {
       if (!userId) return
-      await mutate(() => deleteRoutineItem(userId, itemId))
+      const nextItems = items.filter((item) => item.id !== itemId)
+      await mutate(async () => {
+        await deleteRoutineItem(userId, itemId)
+        await persistTodayProgress(nextItems)
+      })
     },
-    [mutate, userId],
+    [items, mutate, persistTodayProgress, userId],
   )
 
   const toggleItem = useCallback(
@@ -257,14 +318,53 @@ const useUserRoutine = () => {
       const current = items.find((item) => item.id === itemId)
       if (!current) return
       const isCompletedToday = isItemCompletedOnDate(current, todayKey)
-      await mutate(() =>
-        saveRoutineItem(userId, {
-          ...current,
-          isCompleted: !isCompletedToday,
-        }),
-      )
+      const nextItem = {
+        ...current,
+        isCompleted: !isCompletedToday,
+      }
+      const progressItem = { ...nextItem, updatedAt: Date.now() }
+      const nextItems = items.map((item) => (item.id === itemId ? progressItem : item))
+      await mutate(async () => {
+        await saveRoutineItem(userId, nextItem)
+        await persistTodayProgress(nextItems)
+      })
     },
-    [items, mutate, todayKey, userId],
+    [items, mutate, persistTodayProgress, todayKey, userId],
+  )
+
+  const reorderItems = useCallback(
+    async (period: RoutineRecord["period"], orderedItemIds: string[]) => {
+      if (!userId) return
+      const periodItems = items.filter((item) => item.period === period)
+      if (
+        orderedItemIds.length !== periodItems.length ||
+        new Set(orderedItemIds).size !== periodItems.length ||
+        orderedItemIds.some((id) => !periodItems.some((item) => item.id === id))
+      ) {
+        return
+      }
+
+      const itemsById = new Map(periodItems.map((item) => [item.id, item]))
+      const reorderedItems = orderedItemIds.map((id, sortOrder) => ({
+        ...(itemsById.get(id) as RoutineRecord),
+        sortOrder,
+      }))
+      const previousItems = items
+      setItems((current) => {
+        let reorderedIndex = 0
+        return current.map((item) =>
+          item.period === period ? (reorderedItems[reorderedIndex++] ?? item) : item,
+        )
+      })
+
+      try {
+        await mutate(() => saveRoutineItemOrder(userId, reorderedItems))
+      } catch (mutationError) {
+        setItems(previousItems)
+        throw mutationError
+      }
+    },
+    [items, mutate, userId],
   )
 
   const completedSet = useMemo(
@@ -275,14 +375,17 @@ const useUserRoutine = () => {
   return useMemo(
     () => ({
       items,
+      dailyProgress,
+      todayKey,
       completedSet,
       isLoading,
       error,
       addItem,
       removeItem,
       toggleItem,
+      reorderItems,
     }),
-    [addItem, completedSet, error, isLoading, items, removeItem, toggleItem],
+    [addItem, completedSet, dailyProgress, error, isLoading, items, removeItem, reorderItems, todayKey, toggleItem],
   )
 }
 

@@ -1,1 +1,0 @@
-const o=t=>{const e=t.getFullYear(),a=`${t.getMonth()+1}`.padStart(2,"0"),n=`${t.getDate()}`.padStart(2,"0");return`${e}-${a}-${n}`},s=t=>{const e=new Date(t),a=e.getDay(),n=a===0?-6:1-a;return e.setDate(e.getDate()+n),e.setHours(0,0,0,0),e},r=(t=new Date)=>o(s(t));export{r as a,o as f,s as g};

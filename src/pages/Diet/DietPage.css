@@ -182,7 +182,7 @@
   flex-wrap: nowrap;
   gap: 1.5rem;
   width: 100%;
-  overflow-x: auto;
+  overflow: visible;
 }
 
 .diet-toggle__categories,
@@ -195,6 +195,8 @@
 
 .diet-toggle__categories {
   justify-content: flex-start;
+  min-width: 0;
+  overflow-x: auto;
 }
 
 .diet-toggle__tools {
@@ -256,14 +258,25 @@
   cursor: pointer;
 }
 
-.diet-toggle__search:focus-within,
-.diet-toggle__sort:focus {
+.diet-toggle__search:focus-within {
   border-color: #000000;
   box-shadow: 0 10px 26px rgba(0, 0, 0, 0.12);
 }
 
-.diet-toggle__sort {
+.diet-toggle__sort:focus {
+  border-color: #000000;
+  box-shadow: none;
+}
+
+.diet-toggle__sort-control {
+  position: relative;
   width: 13rem;
+  flex: 0 0 auto;
+  z-index: 10;
+}
+
+.diet-toggle__sort-control .diet-toggle__sort {
+  width: 100%;
   height: 44px;
   padding: 0 2.2rem 0 1rem;
   border: 1px solid var(--lux-line);
@@ -273,7 +286,19 @@
   color: var(--lux-ink);
   font: inherit;
   font-weight: 600;
+  text-align: left;
   cursor: pointer;
+}
+
+.diet-toggle__sort-chevron {
+  position: absolute;
+  top: 50%;
+  right: 0.75rem;
+  width: 18px;
+  height: 18px;
+  color: rgba(15, 23, 42, 0.6);
+  pointer-events: none;
+  transform: translateY(-50%);
 }
 
 .diet-recipe-grid {
@@ -643,7 +668,8 @@
   flex: 0 0 auto;
 }
 
-.diet-recipe-modal__content .workout-form__select-menu {
+.diet-recipe-modal__content .workout-form__select-menu,
+.diet-toggle__sort-control .workout-form__select-menu {
   position: absolute;
   top: calc(100% + 0.4rem);
   left: 0;
@@ -659,7 +685,8 @@
   z-index: 5;
 }
 
-.diet-recipe-modal__content .workout-form__select-menu button {
+.diet-recipe-modal__content .workout-form__select-menu button,
+.diet-toggle__sort-control .workout-form__select-menu button {
   background: none;
   border: none;
   text-align: left;
@@ -673,7 +700,10 @@
 
 .diet-recipe-modal__content .workout-form__select-menu button:hover,
 .diet-recipe-modal__content .workout-form__select-menu button:focus-visible,
-.diet-recipe-modal__content .workout-form__select-menu button.is-selected {
+.diet-recipe-modal__content .workout-form__select-menu button.is-selected,
+.diet-toggle__sort-control .workout-form__select-menu button:hover,
+.diet-toggle__sort-control .workout-form__select-menu button:focus-visible,
+.diet-toggle__sort-control .workout-form__select-menu button.is-selected {
   background: #f1ece4;
   color: #000000;
   outline: none;
@@ -682,11 +712,8 @@
 
 .diet-recipe-plan__add {
   align-self: flex-end;
-  border: none;
-  padding: 0.6rem 1.2rem;
-  background: var(--color-caramel);
-  color: var(--color-chocolate);
-  font-weight: 700;
+  min-height: 2.65rem;
+  padding: 0.7rem 1.15rem;
   cursor: pointer;
 }
 .diet-recipe-modal__actions {
@@ -1183,6 +1210,37 @@ body.diet-page--lux {
   border: 1px solid var(--lux-line);
   background: var(--lux-ink);
   color: #ffffff;
+}
+
+.diet-recipe-modal__panel .diet-recipe-plan__add {
+  border: 1px solid #132542;
+  border-radius: 0;
+  background: #132542;
+  color: #ffffff;
+  box-shadow: none;
+  font-family: var(--font-body);
+  font-size: calc(var(--font-size-button) * var(--user-font-scale));
+  font-weight: var(--font-weight-action);
+  line-height: var(--leading-control);
+  letter-spacing: 0;
+  text-transform: none;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+.diet-recipe-modal__panel .diet-recipe-plan__add:hover:not(:disabled) {
+  border-color: #1b3355;
+  background: #1b3355;
+}
+
+.diet-recipe-modal__panel .diet-recipe-plan__add:focus-visible {
+  outline: 2px solid rgba(19, 37, 66, 0.24);
+  outline-offset: 2px;
+}
+
+.diet-recipe-modal__panel .diet-recipe-plan__add:disabled {
+  border-color: rgba(19, 37, 66, 0.42);
+  background: rgba(19, 37, 66, 0.42);
+  cursor: not-allowed;
 }
 
 .diet-recipe-form {

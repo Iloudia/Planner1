@@ -197,11 +197,13 @@ const WishlistPage = () => {
   const [moveItemDraft, setMoveItemDraft] = useState<{ itemId: string; targetCategoryId: string; targetSubcategory: string } | null>(null)
   const [wishlistSearch, setWishlistSearch] = useState("")
   const [wishlistSort, setWishlistSort] = useState<WishlistSort>("")
+  const [isWishlistSortMenuOpen, setIsWishlistSortMenuOpen] = useState(false)
   const categoryCoverRef = useRef<HTMLInputElement | null>(null)
   const itemImageRef = useRef<HTMLInputElement | null>(null)
   const categoryFieldRef = useRef<HTMLDivElement | null>(null)
   const itemMenuRef = useRef<HTMLDivElement | null>(null)
   const activeCardMenuPopoverRef = useRef<HTMLDivElement | null>(null)
+  const wishlistSortMenuRef = useRef<HTMLDivElement | null>(null)
   const cardMenuButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({})
 
   useEffect(() => {
@@ -355,6 +357,28 @@ const WishlistPage = () => {
       document.removeEventListener("mousedown", handlePointerDown)
     }
   }, [activeCardMenuId, activeItemMenuId, isCategorySuggestionsOpen])
+
+  useEffect(() => {
+    if (!isWishlistSortMenuOpen) return
+
+    const handlePointerDown = (event: MouseEvent) => {
+      if (!wishlistSortMenuRef.current?.contains(event.target as Node)) {
+        setIsWishlistSortMenuOpen(false)
+      }
+    }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsWishlistSortMenuOpen(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handlePointerDown)
+    document.addEventListener("keydown", handleKeyDown)
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown)
+      document.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [isWishlistSortMenuOpen])
 
   useEffect(() => {
     if (!activeCardMenuId) {
@@ -684,14 +708,54 @@ const WishlistPage = () => {
       <div className="wishlist-content">
       <div className="wishlist-toolbar" aria-label="Filtres de la wishlist">
         <div className="wishlist-toolbar__filters">
-          <label className="wishlist-toolbar__sort">
+          <div className="wishlist-toolbar__sort">
             <span>Trier par :</span>
-            <select value={wishlistSort} onChange={(event) => setWishlistSort(event.target.value as WishlistSort)}>
-              <option value="">Les plus utilisées</option>
-              <option value="date">Le plus récent</option>
-              <option value="name">Nom A–Z</option>
-            </select>
-          </label>
+            <div className="wishlist-toolbar__sort-control" ref={wishlistSortMenuRef}>
+              <button
+                type="button"
+                className="wishlist-toolbar__sort-trigger workout-form__select-trigger"
+                aria-haspopup="listbox"
+                aria-expanded={isWishlistSortMenuOpen}
+                onClick={() => setIsWishlistSortMenuOpen((previous) => !previous)}
+              >
+                <span>
+                  {wishlistSort === "date" ? "Le plus récent" : wishlistSort === "name" ? "Nom A–Z" : "Les plus utilisées"}
+                </span>
+                <svg className="workout-form__select-chevron" viewBox="0 0 20 20" aria-hidden="true">
+                  <path
+                    d="M5 7.5L10 12.5L15 7.5"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+              {isWishlistSortMenuOpen ? (
+                <div className="wishlist-toolbar__sort-menu workout-form__select-menu" role="listbox">
+                  {[
+                    { value: "" as WishlistSort, label: "Les plus utilisées" },
+                    { value: "date" as WishlistSort, label: "Le plus récent" },
+                    { value: "name" as WishlistSort, label: "Nom A–Z" },
+                  ].map((option) => (
+                    <button
+                      key={option.value || "used"}
+                      type="button"
+                      role="option"
+                      aria-selected={wishlistSort === option.value}
+                      className={wishlistSort === option.value ? "is-selected" : undefined}
+                      onClick={() => {
+                        setWishlistSort(option.value)
+                        setIsWishlistSortMenuOpen(false)
+                      }}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          </div>
         </div>
 
         <div className="wishlist-toolbar__actions">

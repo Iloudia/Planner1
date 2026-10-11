@@ -1,0 +1,1 @@
+const n=t=>{const e=t.getFullYear(),a=`${t.getMonth()+1}`.padStart(2,"0"),s=`${t.getDate()}`.padStart(2,"0");return`${e}-${a}-${s}`},r="planner.sport.board.drafts.v1",o=t=>{const e=new Date(t),a=e.getDay(),s=a===0?-6:1-a;return e.setDate(e.getDate()+s),e.setHours(0,0,0,0),e},c=(t=new Date)=>n(o(t));export{r as S,o as a,n as f,c as g};

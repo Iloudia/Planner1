@@ -25,6 +25,7 @@ type Project = {
   attachments: ProjectAttachment[]
   notes: string
   archived: boolean
+  archivedAt?: string
 }
 
 const createId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
@@ -169,7 +170,8 @@ const ProjectPage = () => {
   const validateProject = () => {
     if (!selectedProject) return
     const nextProject = activeProjects.find((project) => project.id !== selectedProject.id) ?? null
-    setProjects((currentProjects) => currentProjects.map((project) => project.id === selectedProject.id ? { ...project, status: "Terminé", archived: true } : project))
+    const archivedAt = new Date().toISOString()
+    setProjects((currentProjects) => currentProjects.map((project) => project.id === selectedProject.id ? { ...project, status: "Terminé", archived: true, archivedAt } : project))
     setSelectedProjectId(nextProject?.id ?? null)
   }
   const deleteProject = () => {
@@ -180,7 +182,7 @@ const ProjectPage = () => {
   }
 
   const restoreProject = (projectId: string) => {
-    setProjects((currentProjects) => currentProjects.map((project) => project.id === projectId ? { ...project, archived: false, status: "En cours" } : project))
+    setProjects((currentProjects) => currentProjects.map((project) => project.id === projectId ? { ...project, archived: false, archivedAt: undefined, status: "En cours" } : project))
     setSelectedProjectId(projectId)
   }
 

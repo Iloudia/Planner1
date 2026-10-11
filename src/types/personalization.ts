@@ -271,6 +271,14 @@ export type RoutineSettings = {
   seededAt: number
 }
 
+export type RoutineDailyProgress = {
+  dateKey: string
+  completedItemIds: string[]
+  plannedItemIds: string[]
+  isComplete: boolean
+  updatedAt?: number
+}
+
 export type DailyGoalsTrackerRecord = {
   weekKey: string
   rows: string[]

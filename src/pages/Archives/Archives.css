@@ -694,7 +694,7 @@
   gap: 1.2rem;
 }
 
-.archives-exercise-card h3 {
+.archives-exercise-card h2 {
   margin: 0;
   color: #1f1b16;
   font-size: 1.35rem;
@@ -775,7 +775,8 @@
   color: rgba(71, 21, 49, 0.6);
 }
 
-.archives-modal__header h3 {
+.archives-modal__header h3,
+.archives-modal__header h2 {
   margin: 0.35rem 0 0;
   font-size: 1.5rem;
   color: #1f1a2f;
@@ -1079,6 +1080,69 @@ body.boutique-page--tone .archives-modal__content:not(.archives-modal__content--
   color: var(--ink);
 }
 
+.archives-modal__content--journaling,
+.archives-modal__content--journaling h2,
+.archives-modal__content--journaling p,
+.archives-modal__content--journaling span {
+  font-family: 'Libre Baskerville', Georgia, serif;
+}
+
+.archives-modal__content--journaling .archives-modal__section {
+  gap: 0.9rem;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  background: #fffdfb;
+}
+
+.archives-modal__content--journaling .archives-modal__section h2 {
+  margin: 0;
+  color: #253652;
+  font-size: clamp(0.84rem, 1.1vw, 1.05rem);
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.archives-modal__content--journaling .archives-modal__detail,
+.archives-modal__content--journaling .archives-modal__qa {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: clamp(1rem, 2vw, 1.25rem);
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  background: #ffffff;
+}
+
+.archives-modal__content--journaling .archives-modal__qa,
+.archives-modal__content--journaling .archives-modal__qa:first-child {
+  padding-top: clamp(1rem, 2vw, 1.25rem);
+  border-top: 1px solid rgba(15, 23, 42, 0.14);
+}
+
+.archives-modal__content--journaling .archives-modal__detail span,
+.archives-modal__content--journaling .archives-modal__qa span {
+  color: #000000;
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.45;
+  text-transform: none;
+}
+
+.archives-modal__content--journaling .archives-modal__detail p,
+.archives-modal__content--journaling .archives-modal__qa-question,
+.archives-modal__content--journaling .archives-modal__qa-answer {
+  min-height: 3.5rem;
+  margin: 0;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid rgba(15, 23, 42, 0.18);
+  background: #ffffff;
+  color: #1f1a2f;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+
 /* Une archive se lit comme une page continue, sans défilement dans son contenu. */
 .archives-modal {
   align-items: flex-start;
@@ -1106,7 +1170,6 @@ body.boutique-page--tone .archives-modal__content:not(.archives-modal__content--
   width: 100%;
 }
 
-.archives-mindset-copy__panel,
 .archives-mindset-copy__exercises,
 .archives-mindset-copy__letter {
   border: 1px solid rgba(15, 23, 42, 0.14);
@@ -1114,12 +1177,11 @@ body.boutique-page--tone .archives-modal__content:not(.archives-modal__content--
   padding: clamp(1.25rem, 2.4vw, 1.75rem);
 }
 
-.archives-mindset-copy__letter-intro,
-.archives-mindset-copy__panel-heading {
+.archives-mindset-copy__letter-intro {
   text-align: center;
 }
 
-.archives-mindset-copy h3,
+.archives-mindset-copy h2,
 .archives-mindset-copy p,
 .archives-mindset-copy span,
 .archives-mindset-copy li,
@@ -1127,70 +1189,37 @@ body.boutique-page--tone .archives-modal__content:not(.archives-modal__content--
   font-family: 'Libre Baskerville', Georgia, serif;
 }
 
-.archives-mindset-copy__letter-intro h3 {
+.archives-mindset-copy__letter-intro h2 {
   margin: 0;
   color: #253652;
   font-size: clamp(0.95rem, 1.35vw, 1.25rem);
   font-weight: 400;
 }
 
-.archives-mindset-copy__letter-intro p,
-.archives-mindset-copy__panel-heading p {
+.archives-mindset-copy__letter-intro p {
   margin: 0.7rem 0 0;
   color: #6f7784;
   font-size: 0.72rem;
   line-height: 1.55;
 }
 
-.archives-mindset-copy__duo,
 .archives-mindset-copy__exercise-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: clamp(1rem, 2vw, 1.5rem);
 }
 
-.archives-mindset-copy__panel-heading {
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #e1d8cf;
+.archives-mindset-copy__exercise-grid--single {
+  grid-template-columns: minmax(0, 1fr);
 }
 
-.archives-mindset-copy__panel-heading h3,
-.archives-mindset-copy__exercise-card h3 {
+.archives-mindset-copy__exercise-card h2 {
   margin: 0;
   color: #253652;
   font-size: clamp(0.84rem, 1.1vw, 1.05rem);
   letter-spacing: 0.1em;
   line-height: 1.4;
   text-transform: uppercase;
-}
-
-.archives-mindset-copy__list {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  margin: 1rem 0 0;
-  padding: 0;
-  list-style: none;
-  counter-reset: mindset-list;
-}
-
-.archives-mindset-copy__list li {
-  min-height: 2.7rem;
-  padding: 0.7rem 0 0.7rem 2.7rem;
-  position: relative;
-  border-bottom: 1px solid #e1d8cf;
-  color: #000000;
-  font-size: 0.9rem;
-  line-height: 1.35;
-  counter-increment: mindset-list;
-}
-
-.archives-mindset-copy__list li::before {
-  content: counter(mindset-list, decimal-leading-zero);
-  position: absolute;
-  left: 0;
-  color: #77808d;
-  font-size: 0.62rem;
 }
 
 .archives-mindset-copy__exercise-card {
@@ -1248,12 +1277,6 @@ body.boutique-page--tone .archives-modal__content:not(.archives-modal__content--
 }
 
 @media (max-width: 719px) {
-  .archives-mindset-copy__duo,
-  .archives-mindset-copy__exercise-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .archives-mindset-copy__duo,
   .archives-mindset-copy__exercise-grid {
     grid-template-columns: 1fr;
   }

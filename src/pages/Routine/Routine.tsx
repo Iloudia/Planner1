@@ -1,9 +1,10 @@
-import type { FormEvent } from "react"
-import { useEffect, useMemo, useState } from "react"
+import type { FormEvent, KeyboardEvent, PointerEvent } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import type { RoutineItem } from "../../data/sampleData"
 import { useAuth } from "../../context/AuthContext"
 import useUserRoutine from "../../hooks/useUserRoutine"
 import PageLoader from "../../components/PageLoader"
+import { formatLocalISODate } from "../../utils/weekKey"
 import "./RoutinePage.css"
 
 type RoutineId = string
@@ -19,18 +20,189 @@ const ROUTINE_DETAIL_MAX_LENGTH = 35
 const truncateText = (value: string, max = ROUTINE_TITLE_MAX_LENGTH) =>
   value.length > max ? `${value.slice(0, max - 3).trimEnd()}...` : value
 
+const shiftDateKey = (dateKey: string, dayOffset: number) => {
+  const date = new Date(`${dateKey}T12:00:00`)
+  date.setDate(date.getDate() + dayOffset)
+  return formatLocalISODate(date)
+}
+
 type RoutineChecklistProps = {
   items: RoutineItem[]
   completedSet: Set<RoutineId>
   toggleRoutine: (id: RoutineId) => void
+  onReorderItems: (orderedItemIds: RoutineId[]) => void | Promise<void>
   onRemoveItem?: (id: RoutineId) => void
   disabled?: boolean
 }
 
-const RoutineChecklist = ({ items, completedSet, toggleRoutine, onRemoveItem, disabled = false }: RoutineChecklistProps) => (
-  <ul className="routine-note__list">
-    {items.map((item, index) => (
-      <li className="routine-note__item" key={item.id}>
+const RoutineChecklist = ({
+  items,
+  completedSet,
+  toggleRoutine,
+  onReorderItems,
+  onRemoveItem,
+  disabled = false,
+}: RoutineChecklistProps) => {
+  const [draggedItemId, setDraggedItemId] = useState<RoutineId | null>(null)
+  const [dragOverItemId, setDragOverItemId] = useState<RoutineId | null>(null)
+  const [isReordering, setIsReordering] = useState(false)
+  const draggedItemIdRef = useRef<RoutineId | null>(null)
+  const dragOverItemIdRef = useRef<RoutineId | null>(null)
+  const pointerInteractionRef = useRef<{
+    pointerId: number
+    itemId: RoutineId
+    startX: number
+    startY: number
+    sourceElement: HTMLLIElement
+  } | null>(null)
+  const suppressClickRef = useRef(false)
+  const isInteractionDisabled = disabled || isReordering
+
+  const setDraggedItem = (id: RoutineId | null) => {
+    draggedItemIdRef.current = id
+    setDraggedItemId(id)
+  }
+
+  const setDragOverItem = (id: RoutineId | null) => {
+    dragOverItemIdRef.current = id
+    setDragOverItemId(id)
+  }
+
+  const clearDragState = () => {
+    pointerInteractionRef.current = null
+    setDraggedItem(null)
+    setDragOverItem(null)
+  }
+
+  const commitReorder = async (sourceId: RoutineId, targetId: RoutineId) => {
+    const sourceIndex = items.findIndex((item) => item.id === sourceId)
+    const targetIndex = items.findIndex((item) => item.id === targetId)
+    if (sourceIndex < 0 || targetIndex < 0 || sourceIndex === targetIndex || isInteractionDisabled) {
+      clearDragState()
+      return
+    }
+
+    const reorderedIds = items.map((item) => item.id)
+    const [movedId] = reorderedIds.splice(sourceIndex, 1)
+    if (!movedId) {
+      clearDragState()
+      return
+    }
+    reorderedIds.splice(targetIndex, 0, movedId)
+    setIsReordering(true)
+    clearDragState()
+    try {
+      await onReorderItems(reorderedIds)
+    } catch {
+      // L'erreur de sauvegarde est déjà affichée par le hook de la page.
+    } finally {
+      setIsReordering(false)
+    }
+  }
+
+  const isControlTarget = (target: EventTarget | null) =>
+    target instanceof Element && Boolean(target.closest("input, button, a, textarea, select"))
+
+  const handlePointerDown = (event: PointerEvent<HTMLLIElement>, itemId: RoutineId) => {
+    if (
+      isInteractionDisabled ||
+      isControlTarget(event.target) ||
+      (event.pointerType === "mouse" && event.button !== 0)
+    ) {
+      return
+    }
+    pointerInteractionRef.current = {
+      pointerId: event.pointerId,
+      itemId,
+      startX: event.clientX,
+      startY: event.clientY,
+      sourceElement: event.currentTarget,
+    }
+  }
+
+  const handlePointerMove = (event: PointerEvent<HTMLLIElement>) => {
+    const interaction = pointerInteractionRef.current
+    if (!interaction || interaction.pointerId !== event.pointerId) return
+
+    if (!draggedItemIdRef.current) {
+      const distance = Math.hypot(event.clientX - interaction.startX, event.clientY - interaction.startY)
+      if (distance < 6) return
+      suppressClickRef.current = true
+      interaction.sourceElement.setPointerCapture(event.pointerId)
+      setDraggedItem(interaction.itemId)
+      setDragOverItem(interaction.itemId)
+    }
+
+    event.preventDefault()
+    const target = document.elementFromPoint(event.clientX, event.clientY)?.closest<HTMLElement>("[data-routine-item-id]")
+    const targetId = target?.dataset.routineItemId
+    if (targetId && items.some((item) => item.id === targetId)) {
+      setDragOverItem(targetId)
+    }
+  }
+
+  const handlePointerEnd = (event: PointerEvent<HTMLLIElement>) => {
+    const interaction = pointerInteractionRef.current
+    if (!interaction || interaction.pointerId !== event.pointerId) return
+    if (interaction.sourceElement.hasPointerCapture(event.pointerId)) {
+      interaction.sourceElement.releasePointerCapture(event.pointerId)
+    }
+    const sourceId = draggedItemIdRef.current
+    const targetId = dragOverItemIdRef.current
+    if (sourceId && targetId) {
+      void commitReorder(sourceId, targetId)
+    } else {
+      clearDragState()
+    }
+
+    window.setTimeout(() => {
+      suppressClickRef.current = false
+    }, 0)
+  }
+
+  const handlePointerCancel = (event: PointerEvent<HTMLLIElement>) => {
+    const interaction = pointerInteractionRef.current
+    if (interaction?.sourceElement.hasPointerCapture(event.pointerId)) {
+      interaction.sourceElement.releasePointerCapture(event.pointerId)
+    }
+    suppressClickRef.current = false
+    clearDragState()
+  }
+
+  const handleKeyboardMove = (event: KeyboardEvent<HTMLLIElement>, itemId: RoutineId) => {
+    if (event.target !== event.currentTarget || (event.key !== "ArrowUp" && event.key !== "ArrowDown")) return
+    event.preventDefault()
+    const currentIndex = items.findIndex((item) => item.id === itemId)
+    const targetIndex = currentIndex + (event.key === "ArrowUp" ? -1 : 1)
+    const target = items[targetIndex]
+    if (target) {
+      void commitReorder(itemId, target.id)
+    }
+  }
+
+  return (
+    <ul className="routine-note__list">
+      {items.map((item, index) => (
+        <li
+          className={`routine-note__item${draggedItemId === item.id ? " is-dragging" : ""}${dragOverItemId === item.id && draggedItemId !== item.id ? " is-drag-over" : ""}`}
+          key={item.id}
+          data-routine-item-id={item.id}
+          data-reorder-disabled={isInteractionDisabled ? "true" : undefined}
+          tabIndex={isInteractionDisabled ? -1 : 0}
+          aria-label={`${item.title}. Faire glisser pour réorganiser, ou utiliser les flèches haut et bas.`}
+          title="Faire glisser pour réorganiser"
+          onPointerDown={(event) => handlePointerDown(event, item.id)}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerEnd}
+          onPointerCancel={handlePointerCancel}
+          onClickCapture={(event) => {
+            if (!suppressClickRef.current) return
+            event.preventDefault()
+            event.stopPropagation()
+            suppressClickRef.current = false
+          }}
+          onKeyDown={(event) => handleKeyboardMove(event, item.id)}
+        >
         <div className="routine-note__row">
           <label className={`routine-note__label${item.detail ? "" : " routine-note__label--title-only"}`}>
             <span className="routine-note__index">{String(index + 1).padStart(2, "0")}</span>
@@ -54,17 +226,18 @@ const RoutineChecklist = ({ items, completedSet, toggleRoutine, onRemoveItem, di
                 className="routine-note__remove"
                 onClick={() => onRemoveItem(item.id)}
                 aria-label={`Supprimer ${item.title}`}
-                disabled={disabled}
+                disabled={isInteractionDisabled}
               >
                 x
               </button>
             </div>
           ) : null}
         </div>
-      </li>
-    ))}
-  </ul>
-)
+        </li>
+      ))}
+    </ul>
+  )
+}
 
 type RoutineComposerProps = {
   draft: RoutineDraft
@@ -123,7 +296,18 @@ const RoutineComposer = ({
 
 const RoutinePage = () => {
   const { isAuthReady, userId } = useAuth()
-  const { items, completedSet, isLoading, error, addItem, removeItem, toggleItem } = useUserRoutine()
+  const {
+    items,
+    dailyProgress,
+    todayKey,
+    completedSet,
+    isLoading,
+    error,
+    addItem,
+    removeItem,
+    toggleItem,
+    reorderItems,
+  } = useUserRoutine()
   const canEdit = Boolean(userId)
   const isRoutineLoading = !isAuthReady || isLoading
   const [activeRoutinePeriod, setActiveRoutinePeriod] = useState<RoutinePeriod>("morning")
@@ -149,6 +333,26 @@ const RoutinePage = () => {
         .map((item) => ({ id: item.id, title: item.title, detail: item.detail })),
     [items],
   )
+  const plannedTaskCount = items.length
+  const completedTaskCount = completedSet.size
+  const completionPercentage = plannedTaskCount > 0
+    ? Math.round((completedTaskCount / plannedTaskCount) * 100)
+    : 0
+  const isTodayComplete = plannedTaskCount > 0 && completedTaskCount === plannedTaskCount
+  const currentStreakDays = useMemo(() => {
+    const completedDateKeys = new Set(
+      dailyProgress.filter((progress) => progress.isComplete).map((progress) => progress.dateKey),
+    )
+    let cursor = isTodayComplete ? todayKey : shiftDateKey(todayKey, -1)
+    let streak = 0
+
+    while ((cursor === todayKey && isTodayComplete) || completedDateKeys.has(cursor)) {
+      streak += 1
+      cursor = shiftDateKey(cursor, -1)
+    }
+    return streak
+  }, [dailyProgress, isTodayComplete, todayKey])
+  const completedWeekCount = Math.floor(currentStreakDays / 7)
 
   useEffect(() => {
     document.body.classList.add("routine-page--lux")
@@ -230,6 +434,11 @@ const RoutinePage = () => {
     }
   }
 
+  const handleRoutineReorder = async (period: RoutinePeriod, orderedItemIds: RoutineId[]) => {
+    if (!canEdit) return
+    await reorderItems(period, orderedItemIds)
+  }
+
   if (isRoutineLoading) {
     return (
       <PageLoader />
@@ -272,20 +481,20 @@ const RoutinePage = () => {
       </header>
       <section className="routine-page__stats" aria-label="Résumé des routines">
         <div className="routine-page__stat">
-          <h2>12 jours</h2>
+          <h2>{currentStreakDays} {currentStreakDays === 1 ? "jour" : "jours"}</h2>
           <h4>Série actuelle</h4>
         </div>
         <div className="routine-page__stat">
-          <h2>16</h2>
-          <h4>Tâches planifiées</h4>
+          <h2>{completedWeekCount} {completedWeekCount === 1 ? "semaine" : "semaines"}</h2>
+          <h4>Série complète</h4>
         </div>
         <div className="routine-page__stat">
-          <h2>2</h2>
-          <h4>Routines actives</h4>
+          <h2>{completedTaskCount}/{plannedTaskCount}</h2>
+          <h4>{plannedTaskCount === 1 ? "Tâche cochée" : "Tâches cochées"}</h4>
         </div>
         <div className="routine-page__stat">
-          <h2>87%</h2>
-          <h4>Complétion</h4>
+          <h2>{completionPercentage}%</h2>
+          <h4>Complétion du jour</h4>
         </div>
       </section>
       {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer tes routines.</p> : null}
@@ -309,6 +518,7 @@ const RoutinePage = () => {
               items={morningRoutines}
               completedSet={completedSet}
               toggleRoutine={handleRoutineToggle}
+              onReorderItems={(orderedItemIds) => handleRoutineReorder("morning", orderedItemIds)}
               onRemoveItem={handleRoutineRemoval}
               disabled={!canEdit}
             />
@@ -342,6 +552,7 @@ const RoutinePage = () => {
               items={eveningRoutines}
               completedSet={completedSet}
               toggleRoutine={handleRoutineToggle}
+              onReorderItems={(orderedItemIds) => handleRoutineReorder("evening", orderedItemIds)}
               onRemoveItem={handleRoutineRemoval}
               disabled={!canEdit}
             />

@@ -5,48 +5,29 @@ import BlogPublicationDate from "../BlogPublicationDate"
 import LatestBlogArticlesSection from "../LatestBlogArticlesSection"
 import beautyImage from "../../../assets/beauty.webp"
 import makeupImage from "../../../assets/makeup.webp"
-import selfLoveImage from "../../../assets/selflove.webp"
-import plantImage from "../../../assets/Plante-verte.webp"
-import smoothieImage from "../../../assets/Smoothie glow mangue passion.webp"
-import vitaminCImage from "../../../assets/Fleurs-blanches.webp"
+import manicure2Image from "../../../assets/Manicure2.jpeg"
 import "../BlogPage.css"
 import "./BlogHealthBeautyPage.css"
 
 const ARTICLES_PER_PAGE = 12
-const testImages = [makeupImage, selfLoveImage, plantImage, smoothieImage]
-
-const testArticles = Array.from({ length: 4 }, (_, index) => ({
-  id: index + 1,
-  title: index === 0
-    ? "Cernes : comprendre pourquoi tu en as et comment avoir l’air plus reposé"
-    : index === 1
-      ? "Vitamine C : pourquoi elle est si populaire et comment bien l’utiliser"
-      : index === 2
-        ? "Pousse des cheveux : ce qui influence vraiment la croissance et comment éviter la casse"
-        : index === 3
-          ? "Ongles : comment les rendre plus forts, éviter les cassures et protéger ses cuticules"
-    : `Article Santé & Beauté ${index + 1}`,
-  description: index === 0
-    ? "Comprendre les différents types de cernes et adopter des gestes adaptés pour avoir le regard plus reposé."
-    : index === 1
-      ? "Comprendre les bénéfices de la vitamine C, choisir une formule adaptée et l’intégrer correctement à sa routine."
-      : index === 2
-        ? "Comprendre la croissance des cheveux, distinguer la pousse de la casse et adopter une routine plus adaptée."
-        : index === 3
-          ? "Comprendre ce qui fragilise les ongles et adopter des gestes simples pour limiter les cassures et protéger les cuticules."
-    : "Un article de test consacré aux conseils, aux inspirations et aux rituels pour prendre soin de soi.",
-  image: index === 1 ? vitaminCImage : index === 2 ? selfLoveImage : index === 3 ? makeupImage : testImages[index % testImages.length],
-  readingTime: index === 0
-    ? "22 min de lecture"
-    : index === 1
-      ? "24 min de lecture"
-      : index === 2
-        ? "26 min de lecture"
-        : index === 3
-          ? "25 min de lecture"
-      : `${4 + (index % 5)} min de lecture`,
-  href: `/blog/sante-beaute/${index === 0 ? "cernes" : `article-${index + 1}`}`,
-}))
+const testArticles = [
+  {
+    id: 1,
+    title: "Cernes : comprendre pourquoi tu en as et comment avoir l’air plus reposé",
+    description: "Comprendre les différents types de cernes et adopter des gestes adaptés pour avoir le regard plus reposé.",
+    image: makeupImage,
+    readingTime: "22 min de lecture",
+    href: "/blog/sante-beaute/cernes",
+  },
+  {
+    id: 4,
+    title: "Ongles : comment les rendre plus forts, éviter les cassures et protéger ses cuticules",
+    description: "Comprendre ce qui fragilise les ongles et adopter des gestes simples pour limiter les cassures et protéger les cuticules.",
+    image: manicure2Image,
+    readingTime: "25 min de lecture",
+    href: "/blog/sante-beaute/article-4",
+  },
+]
 
 const BlogHealthBeautyPage = () => {
   const [searchParams, setSearchParams] = useSearchParams()

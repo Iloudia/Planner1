@@ -4,6 +4,7 @@ import type { MediaRef, SportDashboardRecord, SportLifeCardKey, SportQuickItem, 
 import { formatLocalISODate, getWeekStart } from "../utils/weekKey"
 import {
   clearSportLifeCardMedia,
+  getLatestSportWeekBoardBefore,
   saveSportDashboard,
   saveSportWeekBoard,
   subscribeToSportDashboard,
@@ -36,6 +37,28 @@ const buildEmptyBoard = (weekKey: string): SportWeekBoardRecord => {
   }
 }
 
+const buildBoardForNewWeek = (
+  weekKey: string,
+  previousBoard: SportWeekBoardRecord | null,
+): SportWeekBoardRecord => {
+  const nextBoard = buildEmptyBoard(weekKey)
+  if (!previousBoard) return nextBoard
+
+  return {
+    ...nextBoard,
+    days: nextBoard.days.map((day, index) => {
+      const previousDay = previousBoard.days.find((item) => item.label === day.label) ?? previousBoard.days[index]
+      return {
+        ...day,
+        activity: previousDay?.activity ?? "",
+        startTime: previousDay?.startTime ?? "",
+        endTime: previousDay?.endTime ?? "",
+        done: false,
+      }
+    }),
+  }
+}
+
 const emptyDashboard: SportDashboardRecord = {
   quickItems: [],
   lifeCardMedia: {},
@@ -55,6 +78,7 @@ const useUserSportDashboard = (weekKey: string) => {
   const [dashboard, setDashboard] = useState<SportDashboardRecord>(emptyDashboard)
   const [board, setBoard] = useState<SportWeekBoardRecord | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isInitializingBoard, setIsInitializingBoard] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const seedAttemptRef = useRef(false)
 
@@ -69,6 +93,7 @@ const useUserSportDashboard = (weekKey: string) => {
       setBoard(null)
       setError(null)
       setIsLoading(false)
+      setIsInitializingBoard(false)
       seedAttemptRef.current = false
       return
     }
@@ -81,6 +106,7 @@ const useUserSportDashboard = (weekKey: string) => {
     setBoard(null)
     setError(null)
     setIsLoading(true)
+    setIsInitializingBoard(false)
     seedAttemptRef.current = false
 
     const unsubscribeDashboard = subscribeToSportDashboard(
@@ -109,6 +135,7 @@ const useUserSportDashboard = (weekKey: string) => {
       (nextBoard) => {
         boardLoaded = true
         setBoard(nextBoard)
+        setIsInitializingBoard(nextBoard === null)
         setError(null)
         syncLoadingState()
       },
@@ -116,6 +143,7 @@ const useUserSportDashboard = (weekKey: string) => {
         console.error("Sport week board load failed", loadError)
         boardLoaded = true
         setBoard(null)
+        setIsInitializingBoard(false)
         setError(SPORT_LOAD_ERROR)
         syncLoadingState()
       },
@@ -132,7 +160,6 @@ const useUserSportDashboard = (weekKey: string) => {
       return
     }
 
-    const currentBoard = board ?? buildEmptyBoard(weekKey)
     const shouldSeed = !board || dashboard.quickItems.length === 0
     if (!shouldSeed) {
       return
@@ -141,16 +168,32 @@ const useUserSportDashboard = (weekKey: string) => {
     seedAttemptRef.current = true
     void (async () => {
       try {
-        await Promise.all([
-          saveSportDashboard(userId, {
-            quickItems: dashboard.quickItems,
-            lifeCardMedia: dashboard.lifeCardMedia,
-          }),
-          board ? Promise.resolve() : saveSportWeekBoard(userId, currentBoard),
-        ])
+        const operations: Array<Promise<void>> = []
+
+        if (dashboard.quickItems.length === 0) {
+          operations.push(
+            saveSportDashboard(userId, {
+              quickItems: dashboard.quickItems,
+              lifeCardMedia: dashboard.lifeCardMedia,
+            }),
+          )
+        }
+
+        if (!board) {
+          operations.push(
+            (async () => {
+              const previousBoard = await getLatestSportWeekBoardBefore(userId, weekKey)
+              await saveSportWeekBoard(userId, buildBoardForNewWeek(weekKey, previousBoard))
+            })(),
+          )
+        }
+
+        await Promise.all(operations)
       } catch (seedError) {
         console.error("Sport seed failed", seedError)
         setError(SPORT_MUTATION_ERROR)
+      } finally {
+        setIsInitializingBoard(false)
       }
     })()
   }, [board, dashboard.lifeCardMedia, dashboard.quickItems, isLoading, userId, weekKey])
@@ -219,13 +262,13 @@ const useUserSportDashboard = (weekKey: string) => {
     () => ({
       board: board ?? buildEmptyBoard(weekKey),
       dashboard,
-      isLoading,
+      isLoading: isLoading || isInitializingBoard,
       error,
       updateBoardDay,
       saveQuickItems,
       updateLifeCardMedia,
     }),
-    [board, dashboard, error, isLoading, saveQuickItems, updateBoardDay, updateLifeCardMedia, weekKey],
+    [board, dashboard, error, isInitializingBoard, isLoading, saveQuickItems, updateBoardDay, updateLifeCardMedia, weekKey],
   )
 }
 

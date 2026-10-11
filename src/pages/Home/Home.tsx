@@ -5,9 +5,11 @@ import { useAuth } from "../../context/AuthContext"
 import MediaImage from "../../components/MediaImage"
 import PageLoader from "../../components/PageLoader"
 import { useUserProfilePhoto } from "../../hooks/useUserProfilePhoto"
+import useUserSportDashboard from "../../hooks/useUserSportDashboard"
 import { saveHomeCardsState, subscribeToHomeCardsState } from "../../services/firestore/homeCards"
 import { saveHomeTodos, subscribeToHomeTodos, type HomeTodoItem } from "../../services/firestore/homeTodos"
 import { buildUserScopedKey, normalizeUserEmail } from "../../utils/userScopedKey"
+import { getWeekKey } from "../../utils/weekKey"
 
 import planner01 from "../../assets/sport.webp"
 import planner02 from "../../assets/Moodboardsite.webp"
@@ -469,6 +471,7 @@ function HomePage() {
   )
 
   const [now, setNow] = useState(() => new Date())
+  const { board: sportBoard, isLoading: isSportBoardLoading } = useUserSportDashboard(getWeekKey(now))
 
   const { photoSrc: profileSrc, error: profileError, isLoaded: isProfilePhotoLoaded, uploadPhoto } = useUserProfilePhoto({
     fallbackSrc: DEFAULT_PROFILE_PHOTO,
@@ -496,7 +499,6 @@ function HomePage() {
   const isTodoLimitReached = todos.length >= MAX_TODOS
   const [showTodoLimitMessage, setShowTodoLimitMessage] = useState(false)
   const [isProfilePhotoMenuOpen, setIsProfilePhotoMenuOpen] = useState(false)
-  const [isMoodboardMenuOpen, setIsMoodboardMenuOpen] = useState(false)
   const [cardOrder, setCardOrder] = useState<string[]>([])
   const [cardClickProgress, setCardClickProgress] = useState<Record<string, number>>({})
   const [isHomeCardsLoaded, setIsHomeCardsLoaded] = useState(false)
@@ -782,23 +784,6 @@ function HomePage() {
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [isProfilePhotoMenuOpen])
 
-  useEffect(() => {
-    if (!isMoodboardMenuOpen) {
-      return
-    }
-
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as HTMLElement
-      if (target.closest(".home-moodboard__menu")) {
-        return
-      }
-      setIsMoodboardMenuOpen(false)
-    }
-
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [isMoodboardMenuOpen])
-
   const addTodo = () => {
     const text = todoInput.trim()
     if (!text) return
@@ -916,8 +901,22 @@ function HomePage() {
 
   const upcomingTasks = useMemo(() => {
     const nowTs = now.getTime()
+    const scheduledSportTasks: TaskDisplay[] = sportBoard.days.flatMap((day) => {
+      const title = day.activity.trim()
+      if (!title || !day.startTime || !day.endTime || day.endTime <= day.startTime) {
+        return []
+      }
 
-    const normalized = tasks
+      return [{
+        id: `sport-board-${day.dateISO}-${day.id}`,
+        title,
+        date: day.dateISO,
+        start: day.startTime,
+        end: day.endTime,
+      }]
+    })
+
+    const normalized = [...tasks, ...scheduledSportTasks]
       .map((task) => {
         const dateTs = new Date(`${task.date}T00:00`).getTime()
         const startDate = new Date(`${task.date}T${task.start ?? "00:00"}`)
@@ -940,7 +939,7 @@ function HomePage() {
       .slice(0, 4)
 
     return normalized.map(({ startTs: _startTs, endTs: _endTs, ...task }) => task)
-  }, [now, tasks])
+  }, [now, sportBoard.days, tasks])
 
   const isHomeLoading = !isAuthReady || !isProfilePhotoLoaded || !isHomeCardsLoaded || !isHomeTodosLoaded
 
@@ -1127,7 +1126,7 @@ function HomePage() {
                 <p className="task-title">Agenda indisponible</p>
                 <p className="task-note">{tasksError}</p>
               </article>
-            ) : isTasksLoading ? (
+            ) : isTasksLoading || isSportBoardLoading ? (
               <article
                 className="task-card"
                 aria-busy="true"
@@ -1143,7 +1142,7 @@ function HomePage() {
             ) : upcomingTasks.length > 0 ? (
               upcomingTasks.map((task) => (
                 <article
-                  key={`${task.title}-${task.date}`}
+                  key={task.id}
                   className="task-card"
                   role="button"
                   tabIndex={0}
@@ -1192,30 +1191,15 @@ function HomePage() {
           <div className="home-moodboard__menu">
             <button
               className="profile-menu home-moodboard__button"
-              aria-label="Options du visionboard"
-              aria-expanded={isMoodboardMenuOpen}
+              aria-label="Changer l'image du visionboard"
               type="button"
               onClick={(event) => {
                 event.stopPropagation()
-                setIsMoodboardMenuOpen((previous) => !previous)
+                moodboardInputRef.current?.click()
               }}
             >
               <span aria-hidden="true">...</span>
             </button>
-            {isMoodboardMenuOpen ? (
-              <div className="home-profile-card__menu-popover" role="menu" onClick={(event) => event.stopPropagation()}>
-                <button
-                  type="button"
-                  className="home-profile-card__menu-item"
-                  onClick={() => {
-                    setIsMoodboardMenuOpen(false)
-                    moodboardInputRef.current?.click()
-                  }}
-                >
-                  Changer l'image
-                </button>
-              </div>
-            ) : null}
           </div>
         </div>
       </section>

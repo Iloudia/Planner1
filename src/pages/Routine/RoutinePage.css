@@ -277,6 +277,33 @@
   background: rgba(255, 255, 255, 0.6);
   box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
   overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  transition: border-color 160ms ease, background-color 160ms ease, opacity 160ms ease;
+}
+
+.routine-note__item[data-reorder-disabled="true"] {
+  cursor: default;
+  touch-action: auto;
+}
+
+.routine-note__item:active {
+  cursor: grabbing;
+}
+
+.routine-note__item:focus-visible {
+  outline: 2px solid rgba(19, 37, 66, 0.32);
+  outline-offset: 3px;
+}
+
+.routine-note__item.is-dragging {
+  opacity: 0.45;
+  user-select: none;
+}
+
+.routine-note__item.is-drag-over {
+  border-color: #132542 !important;
+  background: rgba(19, 37, 66, 0.055) !important;
 }
 
 .routine-note__label {
@@ -845,6 +872,7 @@ body.routine-page--lux .routine-note__item-detail {
     height: 26px;
     font-size: 0.82rem;
   }
+
 }
 
 @media (max-width: 640px) {

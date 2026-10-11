@@ -70,6 +70,10 @@ export const selfLoveArchiveEntryDocRef = (userId: string, entryId: string) =>
 
 export const routineItemsCollectionRef = (userId: string) => collection(userDocRef(userId), "routineItems")
 export const routineItemDocRef = (userId: string, itemId: string) => doc(routineItemsCollectionRef(userId), itemId)
+export const routineDailyProgressCollectionRef = (userId: string) =>
+  collection(userDocRef(userId), "routineDailyProgress")
+export const routineDailyProgressDocRef = (userId: string, dateKey: string) =>
+  doc(routineDailyProgressCollectionRef(userId), dateKey)
 
 export const dietWeeklyPlansCollectionRef = (userId: string) => collection(userDocRef(userId), "dietWeeklyPlans")
 export const dietWeeklyPlanDocRef = (userId: string, weekKey: string) => doc(dietWeeklyPlansCollectionRef(userId), weekKey)

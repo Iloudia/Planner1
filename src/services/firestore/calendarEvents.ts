@@ -22,6 +22,7 @@ type CalendarEventRecord = {
   tag: string
   startsAt?: Timestamp | null
   endsAt?: Timestamp | null
+  recurrence?: ScheduledTask["recurrence"]
 }
 
 const parseDateTime = (dateKey: string, time: string) => {
@@ -39,6 +40,7 @@ const toCalendarEventPayload = (task: ScheduledTask) => ({
   tag: task.tag,
   startsAt: Timestamp.fromDate(parseDateTime(task.date, task.start)),
   endsAt: Timestamp.fromDate(parseDateTime(task.date, task.end)),
+  ...(task.recurrence ? { recurrence: task.recurrence } : {}),
   updatedAt: serverTimestamp(),
 })
 
@@ -50,6 +52,7 @@ const mapCalendarEvent = (id: string, record: CalendarEventRecord): ScheduledTas
   date: record.dateKey,
   color: record.color,
   tag: record.tag,
+  ...(record.recurrence ? { recurrence: record.recurrence } : {}),
 })
 
 export const subscribeToCalendarEvents = (

@@ -5503,6 +5503,7 @@ const DietClassicPage = () => {
   const [tab, setTab] = useState<DietTab>("savory")
   const [recipeSearch, setRecipeSearch] = useState("")
   const [recipeSort, setRecipeSort] = useState<"recent" | "alphabetical">("recent")
+  const [isRecipeSortMenuOpen, setIsRecipeSortMenuOpen] = useState(false)
   const [selectedRecipe, setSelectedRecipe] = useState<RenderRecipe | null>(null)
   const [isIngredientsOpen, setIsIngredientsOpen] = useState(true)
   const [planDay, setPlanDay] = useState<typeof weekDays[number]>(weekDays[0])
@@ -5542,6 +5543,7 @@ const DietClassicPage = () => {
   const editFlavorMenuRef = useRef<HTMLDivElement | null>(null)
   const planDayMenuRef = useRef<HTMLDivElement | null>(null)
   const planSlotMenuRef = useRef<HTMLDivElement | null>(null)
+  const recipeSortMenuRef = useRef<HTMLDivElement | null>(null)
   const customMenuRef = useRef<HTMLDivElement | null>(null)
   const planConfirmationTimeout = useRef<number | null>(null)
   const customRecipes = useMemo<RenderRecipe[]>(
@@ -5651,17 +5653,19 @@ const DietClassicPage = () => {
   }, [selectedRecipe])
 
   useEffect(() => {
-    if (!isFlavorMenuOpen && !isEditFlavorMenuOpen && !isPlanDayMenuOpen && !isPlanSlotMenuOpen) return
+    if (!isFlavorMenuOpen && !isEditFlavorMenuOpen && !isPlanDayMenuOpen && !isPlanSlotMenuOpen && !isRecipeSortMenuOpen) return
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node
       if (flavorMenuRef.current?.contains(target)) return
       if (editFlavorMenuRef.current?.contains(target)) return
       if (planDayMenuRef.current?.contains(target)) return
       if (planSlotMenuRef.current?.contains(target)) return
+      if (recipeSortMenuRef.current?.contains(target)) return
       setIsFlavorMenuOpen(false)
       setIsEditFlavorMenuOpen(false)
       setIsPlanDayMenuOpen(false)
       setIsPlanSlotMenuOpen(false)
+      setIsRecipeSortMenuOpen(false)
     }
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -5669,6 +5673,7 @@ const DietClassicPage = () => {
         setIsEditFlavorMenuOpen(false)
         setIsPlanDayMenuOpen(false)
         setIsPlanSlotMenuOpen(false)
+        setIsRecipeSortMenuOpen(false)
       }
     }
     window.addEventListener("mousedown", handleClickOutside)
@@ -5677,7 +5682,7 @@ const DietClassicPage = () => {
       window.removeEventListener("mousedown", handleClickOutside)
       window.removeEventListener("keydown", handleKeyDown)
     }
-  }, [isEditFlavorMenuOpen, isFlavorMenuOpen, isPlanDayMenuOpen, isPlanSlotMenuOpen])
+  }, [isEditFlavorMenuOpen, isFlavorMenuOpen, isPlanDayMenuOpen, isPlanSlotMenuOpen, isRecipeSortMenuOpen])
 
   useEffect(() => {
     if (!customMenuOpenId) return
@@ -6039,15 +6044,59 @@ const DietClassicPage = () => {
                 aria-label="Rechercher une recette"
               />
             </label>
-            <select
-              className="diet-toggle__sort"
-              value={recipeSort}
-              onChange={(event) => setRecipeSort(event.target.value as "recent" | "alphabetical")}
-              aria-label="Trier les recettes"
-            >
-              <option value="recent">Les plus récentes</option>
-              <option value="alphabetical">Ordre alphabétique</option>
-            </select>
+            <div className="diet-toggle__sort-control" ref={recipeSortMenuRef}>
+              <button
+                type="button"
+                className="diet-toggle__sort workout-form__select-trigger"
+                aria-label="Trier les recettes"
+                aria-haspopup="listbox"
+                aria-expanded={isRecipeSortMenuOpen}
+                onClick={() => setIsRecipeSortMenuOpen((prev) => !prev)}
+              >
+                <span>{recipeSort === "recent" ? "Les plus récentes" : "Ordre alphabétique"}</span>
+                <svg
+                  className="workout-form__select-chevron diet-toggle__sort-chevron"
+                  viewBox="0 0 20 20"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M5 7.5L10 12.5L15 7.5"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+              {isRecipeSortMenuOpen ? (
+                <div className="workout-form__select-menu" role="listbox" aria-label="Trier les recettes">
+                  <button
+                    type="button"
+                    role="option"
+                    aria-selected={recipeSort === "recent"}
+                    className={recipeSort === "recent" ? "is-selected" : undefined}
+                    onClick={() => {
+                      setRecipeSort("recent")
+                      setIsRecipeSortMenuOpen(false)
+                    }}
+                  >
+                    Les plus récentes
+                  </button>
+                  <button
+                    type="button"
+                    role="option"
+                    aria-selected={recipeSort === "alphabetical"}
+                    className={recipeSort === "alphabetical" ? "is-selected" : undefined}
+                    onClick={() => {
+                      setRecipeSort("alphabetical")
+                      setIsRecipeSortMenuOpen(false)
+                    }}
+                  >
+                    Ordre alphabétique
+                  </button>
+                </div>
+              ) : null}
+            </div>
           </div>
         </div>
 

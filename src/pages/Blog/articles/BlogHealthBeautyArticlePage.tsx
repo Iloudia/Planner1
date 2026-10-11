@@ -2,79 +2,82 @@ import { Fragment, useEffect, type ReactNode } from "react"
 import { Link, useParams } from "react-router-dom"
 import ResponsiveSiteImage from "../../../components/ResponsiveSiteImage"
 import BlogPublicationDate from "../BlogPublicationDate"
-import darkCirclesImage from "../../../assets/makeup.webp"
+import darkCirclesImage from "../../../assets/En finir avec les cernes.jpeg"
 import selfCareImage from "../../../assets/selflove.webp"
-import plantImage from "../../../assets/Plante-verte.webp"
 import routineImage from "../../../assets/Routine.webp"
-import vitaminCImage from "../../../assets/Fleurs-blanches.webp"
+import sleepImage from "../../../assets/Sommeil.jpeg"
+import betterSleepImage from "../../../assets/Avoir un meilleure sommeil.jpeg"
+import iceCubesImage from "../../../assets/glaçons.jpeg"
+import darkCirclesTypesImage from "../../../assets/Les différents types de cernes.png"
+import manicure2Image from "../../../assets/Manicure2.jpeg"
+import manicureImage from "../../../assets/Manicure.jpeg"
+import manicure3Image from "../../../assets/Manicure3.jpeg"
+import manicure4Image from "../../../assets/Manicure4.jpeg"
+import manicure8Image from "../../../assets/Manucure8.jpeg"
+import goldenCuticleOilImage from "../../../assets/Soin des cuticules à l’huile dorée.png"
+import waterImage from "../../../assets/Eau.jpeg"
+import nailAnatomyImage from "../../../assets/Anatomie détaillée de l’ongle.png"
+import sheaButterImage from "../../../assets/beurre de karité.png"
 import articleMarkdown from "./cernes.md?raw"
-import vitaminCMarkdown from "./vitamine-c.md?raw"
-import hairGrowthMarkdown from "./pousse-des-cheveux.md?raw"
 import strongNailsMarkdown from "./ongles-forts.md?raw"
 import "../../SelfLove/SelfLoveHome.css"
 import "./BlogMentalArticlePage.css"
 
-type ArticleIllustration = { image: string; alt: string }
+type ArticleIllustration = {
+  image: string
+  alt: string
+  objectPosition?: string
+  objectFit?: "cover" | "contain"
+}
 
 const darkCirclesIllustrations: Record<string, ArticleIllustration> = {
-  "2. Les cernes vasculaires : quand les vaisseaux deviennent visibles": {
-    image: selfCareImage,
-    alt: "Bouquet de ballons roses en forme de cœur",
+  "Qu’est-ce qu’un cerne exactement ?": {
+    image: darkCirclesTypesImage,
+    alt: "Les différents types de cernes",
+    objectFit: "contain",
+  },
+  "7. Est-ce réellement à cause du manque de sommeil ?": {
+    image: sleepImage,
+    alt: "Sommeil",
   },
   "8. Combien faut-il dormir pour avoir l’air reposé ?": {
-    image: plantImage,
-    alt: "Grandes feuilles vertes devant un mur clair",
+    image: betterSleepImage,
+    alt: "Avoir un meilleur sommeil",
   },
-  "25. Une routine simple pour avoir le regard plus frais": {
-    image: routineImage,
-    alt: "Tasse de matcha posée sur des draps blancs",
-  },
-}
-
-const vitaminCIllustrations: Record<string, ArticleIllustration> = {
-  "2. La vitamine C est avant tout un antioxydant": {
-    image: selfCareImage,
-    alt: "Bouquet de ballons roses en forme de cœur",
-  },
-  "8. Quelle forme de vitamine C choisir ?": {
-    image: plantImage,
-    alt: "Grandes feuilles vertes devant un mur clair",
-  },
-  "28. Une routine simple avec vitamine C": {
-    image: routineImage,
-    alt: "Tasse de matcha posée sur des draps blancs",
-  },
-}
-
-const hairGrowthIllustrations: Record<string, ArticleIllustration> = {
-  "2. Pousse lente ou casse : comment faire la différence ?": {
-    image: plantImage,
-    alt: "Grandes feuilles vertes devant un mur clair",
-  },
-  "8. Faut-il laver souvent son cuir chevelu ?": {
-    image: vitaminCImage,
-    alt: "Bouquet de tulipes blanches dans un vase",
-  },
-  "27. Une routine simple pour conserver davantage de longueur": {
-    image: routineImage,
-    alt: "Tasse de matcha posée sur des draps blancs",
+  "13. Le froid peut aider surtout sur les poches": {
+    image: iceCubesImage,
+    alt: "Glaçons",
+    objectPosition: "center 65%",
   },
 }
 
 const strongNailsIllustrations: Record<string, ArticleIllustration> = {
-  "2. Le dédoublement : quand l’ongle se sépare en couches": {
-    image: plantImage,
-    alt: "Grandes feuilles vertes devant un mur clair",
+  "De quoi est composé un ongle ?": {
+    image: nailAnatomyImage,
+    alt: "Schéma de l’anatomie de l’ongle vu de dessus et en coupe",
+    objectFit: "contain",
   },
-  "8. Arrête d’arracher les petites peaux": {
+  "2. Pourquoi l’eau peut-elle dédoubler et fragiliser les ongles ?": {
+    image: waterImage,
+    alt: "Eau",
+    objectPosition: "center 85%",
+  },
+  "6. Arrête d’arracher les petites peaux": {
     image: selfCareImage,
     alt: "Bouquet de ballons roses en forme de cœur",
   },
-  "27. Une routine simple pour des ongles plus forts": {
-    image: routineImage,
-    alt: "Tasse de matcha posée sur des draps blancs",
+  "11. Manucure gel : comment éviter de fragiliser ses ongles ?": {
+    image: manicure8Image,
+    alt: "Soin des ongles après une manucure gel",
+  },
+  "14. Une huile à cuticules est-elle utile ?": {
+    image: goldenCuticleOilImage,
+    alt: "Soin des cuticules à l’huile dorée",
   },
 }
+
+const strongNailsRoutineImages = [manicureImage, manicure3Image, manicure4Image]
+const darkCirclesRoutineImages = [darkCirclesImage, routineImage, selfCareImage]
 
 const suggestedArticles = [
   {
@@ -84,28 +87,18 @@ const suggestedArticles = [
     href: "/blog/sante-beaute/cernes",
   },
   {
-    title: "Vitamine C : pourquoi elle est si populaire et comment bien l’utiliser",
-    description: "Choisir une formule adaptée et intégrer correctement la vitamine C à sa routine de soin.",
-    image: vitaminCImage,
-    href: "/blog/sante-beaute/article-2",
-  },
-  {
-    title: "Pousse des cheveux : ce qui influence vraiment la croissance et comment éviter la casse",
-    description: "Comprendre la croissance des cheveux, distinguer la pousse de la casse et adopter une routine adaptée.",
-    image: selfCareImage,
-    href: "/blog/sante-beaute/article-3",
-  },
-  {
     title: "Ongles : comment les rendre plus forts, éviter les cassures et protéger ses cuticules",
     description: "Comprendre ce qui fragilise les ongles et adopter des gestes simples pour limiter les cassures.",
-    image: darkCirclesImage,
+    image: manicure2Image,
     href: "/blog/sante-beaute/article-4",
   },
 ]
 
 const renderInline = (text: string, keyPrefix: string): ReactNode[] =>
-  text.split(/(\*\*.*?\*\*)/g).filter(Boolean).map((part, index) =>
-    part.startsWith("**") && part.endsWith("**") ? (
+  text.split(/(\*\*.*?\*\*|<br\s*\/?\s*>)/gi).filter(Boolean).map((part, index) =>
+    /^<br\s*\/?\s*>$/i.test(part) ? (
+      <br key={`${keyPrefix}-${index}`} />
+    ) : part.startsWith("**") && part.endsWith("**") ? (
       <strong key={`${keyPrefix}-${index}`}>{part.slice(2, -2)}</strong>
     ) : (
       <Fragment key={`${keyPrefix}-${index}`}>{part}</Fragment>
@@ -141,15 +134,186 @@ const renderMarkdown = (markdown: string, illustrations: Record<string, ArticleI
       } else {
         blocks.push(<h2 key={`heading-${index}`}>{renderInline(heading, `heading-${index}`)}</h2>)
       }
+
+      if (heading.endsWith("Une routine simple pour des ongles plus forts")) {
+        const cards: Array<{ title: string; items: string[] }> = []
+        index += 1
+
+        while (index < lines.length && lines[index].trim() !== "---") {
+          const currentLine = lines[index].trim()
+          if (!currentLine) {
+            index += 1
+            continue
+          }
+
+          const titleMatch = currentLine.match(/^\*\*(.+)\*\*$/)
+          if (!titleMatch) {
+            index += 1
+            continue
+          }
+
+          const items: string[] = []
+          const title = titleMatch[1]
+          index += 1
+
+          while (index < lines.length) {
+            const itemLine = lines[index].trim()
+            if (itemLine === "---" || /^\*\*(.+)\*\*$/.test(itemLine)) {
+              break
+            }
+            if (itemLine.startsWith("* ")) {
+              items.push(itemLine.slice(2))
+            }
+            index += 1
+          }
+
+          cards.push({ title, items })
+        }
+
+        blocks.push(
+          <div className="nail-routine-grid" key={`routine-grid-${index}`}>
+            {cards.map((card, cardIndex) => (
+              <section className="nail-routine-card" key={card.title}>
+                <ResponsiveSiteImage
+                  className="nail-routine-card__image"
+                  src={strongNailsRoutineImages[cardIndex]}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div className="nail-routine-card__content">
+                  <h3>{card.title}</h3>
+                  <ul>
+                    {card.items.map((item, itemIndex) => (
+                      <li key={itemIndex}>{renderInline(item, `routine-${cardIndex}-${itemIndex}`)}</li>
+                    ))}
+                  </ul>
+                </div>
+              </section>
+            ))}
+          </div>,
+        )
+        continue
+      }
+
+      if (heading.endsWith("Une routine simple pour avoir le regard plus frais")) {
+        const cards: Array<{ title: string; items: string[] }> = []
+        index += 1
+
+        while (index < lines.length && lines[index].trim() !== "---") {
+          const currentLine = lines[index].trim()
+          if (!currentLine) {
+            index += 1
+            continue
+          }
+
+          const titleMatch = currentLine.match(/^\*\*(.+)\*\*$/)
+          if (!titleMatch) {
+            index += 1
+            continue
+          }
+
+          const items: string[] = []
+          const title = titleMatch[1]
+          index += 1
+
+          while (index < lines.length) {
+            const itemLine = lines[index].trim()
+            if (itemLine === "---" || /^\*\*(.+)\*\*$/.test(itemLine)) {
+              break
+            }
+            if (itemLine.startsWith("* ")) {
+              items.push(itemLine.slice(2))
+            }
+            index += 1
+          }
+
+          cards.push({ title, items })
+        }
+
+        blocks.push(
+          <div className="cerne-routine-grid" key={`cerne-routine-grid-${index}`}>
+            {cards.map((card, cardIndex) => (
+              <section className="cerne-routine-card" key={card.title}>
+                <ResponsiveSiteImage
+                  className="cerne-routine-card__image"
+                  src={darkCirclesRoutineImages[cardIndex]}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div className="cerne-routine-card__content">
+                  <h3>{card.title}</h3>
+                  <ul>
+                    {card.items.map((item, itemIndex) => (
+                      <li key={itemIndex}>{renderInline(item, `cerne-routine-${cardIndex}-${itemIndex}`)}</li>
+                    ))}
+                  </ul>
+                </div>
+              </section>
+            ))}
+          </div>,
+        )
+        continue
+      }
+
       const illustration = illustrations[heading]
       if (illustration) {
         blocks.push(
           <figure className="mental-article__illustration" key={`illustration-${index}`}>
-            <ResponsiveSiteImage src={illustration.image} alt={illustration.alt} loading="lazy" decoding="async" />
+            <ResponsiveSiteImage
+              src={illustration.image}
+              alt={illustration.alt}
+              loading="lazy"
+              decoding="async"
+              style={{
+                objectFit: illustration.objectFit,
+                objectPosition: illustration.objectPosition,
+              }}
+            />
           </figure>,
         )
       }
       index += 1
+      continue
+    }
+
+    if (line === "**Crèmes riches pour les mains :**") {
+      const items: string[] = []
+      index += 1
+
+      while (index < lines.length) {
+        const itemLine = lines[index].trim()
+        if (!itemLine) {
+          index += 1
+          continue
+        }
+        if (!itemLine.startsWith("* ")) {
+          break
+        }
+        items.push(itemLine.slice(2))
+        index += 1
+      }
+
+      blocks.push(
+        <aside className="hand-cream-feature" key={`hand-creams-${index}`}>
+          <ResponsiveSiteImage
+            className="hand-cream-feature__image"
+            src={sheaButterImage}
+            alt="Beurre de karité"
+            loading="lazy"
+            decoding="async"
+          />
+          <div className="hand-cream-feature__content">
+            <p><strong>Crèmes riches pour les mains :</strong></p>
+            <ul>
+              {items.map((item, itemIndex) => (
+                <li key={itemIndex}>{renderInline(item, `hand-cream-${itemIndex}`)}</li>
+              ))}
+            </ul>
+          </div>
+        </aside>,
+      )
       continue
     }
 
@@ -198,30 +362,12 @@ const healthBeautyArticles: Record<string, {
     illustrations: darkCirclesIllustrations,
     recommendationsDescription: "Continue ta lecture autour des soins, de la beauté et du bien-être au quotidien.",
   },
-  "article-2": {
-    markdown: vitaminCMarkdown,
-    eyebrow: "Santé & Beauté · Soin de la peau",
-    readingTime: "24 min de lecture",
-    image: vitaminCImage,
-    imageAlt: "Bouquet de tulipes blanches dans un vase",
-    illustrations: vitaminCIllustrations,
-    recommendationsDescription: "Continue ta lecture autour des actifs, des soins de la peau et de la beauté au quotidien.",
-  },
-  "article-3": {
-    markdown: hairGrowthMarkdown,
-    eyebrow: "Santé & Beauté · Cheveux",
-    readingTime: "26 min de lecture",
-    image: selfCareImage,
-    imageAlt: "Bouquet de ballons roses en forme de cœur",
-    illustrations: hairGrowthIllustrations,
-    recommendationsDescription: "Continue ta lecture autour des cheveux, des soins et du bien-être au quotidien.",
-  },
   "article-4": {
     markdown: strongNailsMarkdown,
     eyebrow: "Santé & Beauté · Ongles",
     readingTime: "25 min de lecture",
-    image: darkCirclesImage,
-    imageAlt: "Palette de fards, rouge à lèvres et produits de maquillage",
+    image: manicure2Image,
+    imageAlt: "Manucure et soin des ongles",
     illustrations: strongNailsIllustrations,
     recommendationsDescription: "Continue ta lecture autour des ongles, des soins et de la beauté au quotidien.",
   },
@@ -270,7 +416,12 @@ const BlogHealthBeautyArticlePage = () => {
             <p>{article.readingTime}</p>
           </div>
           <div className="mental-article__media">
-            <ResponsiveSiteImage src={article.image} alt={article.imageAlt} preload />
+            <ResponsiveSiteImage
+              src={article.image}
+              alt={article.imageAlt}
+              preload
+              style={articleSlug === "cernes" ? { objectPosition: "center -120px" } : undefined}
+            />
           </div>
         </header>
 

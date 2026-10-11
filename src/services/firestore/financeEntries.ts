@@ -10,7 +10,7 @@ import {
   type FirestoreError,
   type Unsubscribe,
 } from "firebase/firestore"
-import type { FinanceEntry, FinanceEntryInput, MonthlySnapshot } from "../../types/personalization"
+import type { ExpenseCategory, FinanceEntry, FinanceEntryInput, MonthlySnapshot } from "../../types/personalization"
 import {
   financeEntriesCollectionRef,
   financeEntryDocRef,
@@ -24,7 +24,7 @@ type FinanceEntryRecord = {
   dateKey: string
   monthKey: string
   direction: FinanceEntry["direction"]
-  category?: FinanceEntry["category"]
+  category?: unknown
   createdAt?: Timestamp | null
 }
 
@@ -32,13 +32,27 @@ type FinanceMonthlySnapshotRecord = MonthlySnapshot
 
 const getMonthKeyFromISO = (value: string) => (value.length >= 7 ? value.slice(0, 7) : "")
 
+const expenseCategories = new Set<ExpenseCategory>([
+  "food",
+  "housing",
+  "transport",
+  "clothing",
+  "beauty",
+  "leisure",
+  "health",
+  "friends",
+])
+
+const isExpenseCategory = (value: unknown): value is ExpenseCategory =>
+  typeof value === "string" && expenseCategories.has(value as ExpenseCategory)
+
 const mapFinanceEntry = (id: string, record: FinanceEntryRecord): FinanceEntry => ({
   id,
   label: record.label,
   amount: record.amount,
   date: record.dateKey,
   direction: record.direction,
-  category: record.category,
+  category: isExpenseCategory(record.category) ? record.category : undefined,
 })
 
 export const subscribeToFinanceEntries = (

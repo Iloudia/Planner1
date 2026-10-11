@@ -1,5 +1,6 @@
 import {
   deleteDoc,
+  getDoc,
   onSnapshot,
   orderBy,
   query,
@@ -127,6 +128,28 @@ const normalizeDietWeekPlan = (plan: DietWeekPlan, fallbackWeekKey?: string): Di
   }
 }
 
+const mapDietWeekPlanDoc = (data: DietWeekPlanDoc, weekKey: string) =>
+  normalizeDietWeekPlan(
+    {
+      weekKey: data.weekKey,
+      weekStartDate: data.weekStartDate,
+      meals: data.meals,
+      recipeRefs: data.recipeRefs,
+      shoppingNotes: data.shoppingNotes,
+      cuisineGoalIds: data.cuisineGoalIds,
+      fillOnlyEmpty: data.fillOnlyEmpty,
+    },
+    weekKey,
+  )
+
+export const getDietWeekPlan = async (userId: string, weekKey: string): Promise<DietWeekPlan | null> => {
+  const snapshot = await getDoc(dietWeeklyPlanDocRef(userId, weekKey))
+  if (!snapshot.exists()) {
+    return null
+  }
+  return mapDietWeekPlanDoc(snapshot.data() as DietWeekPlanDoc, weekKey)
+}
+
 export const subscribeToDietWeekPlan = (
   userId: string,
   weekKey: string,
@@ -141,20 +164,7 @@ export const subscribeToDietWeekPlan = (
         return
       }
       const data = snapshot.data() as DietWeekPlanDoc
-      onPlan(
-        normalizeDietWeekPlan(
-          {
-            weekKey: data.weekKey,
-            weekStartDate: data.weekStartDate,
-            meals: data.meals,
-            recipeRefs: data.recipeRefs,
-            shoppingNotes: data.shoppingNotes,
-            cuisineGoalIds: data.cuisineGoalIds,
-            fillOnlyEmpty: data.fillOnlyEmpty,
-          },
-          weekKey,
-        ),
-      )
+      onPlan(mapDietWeekPlanDoc(data, weekKey))
     },
     onError,
   )

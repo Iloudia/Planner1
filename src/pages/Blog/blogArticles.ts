@@ -1,10 +1,8 @@
 import makeupImage from "../../assets/makeup.webp"
-import vitaminCImage from "../../assets/Fleurs-blanches.webp"
 import selfCareImage from "../../assets/selflove.webp"
 import styleImage from "../../assets/noeud-papillon.webp"
 import wardrobeImage from "../../assets/l-b-dupe.webp"
 import materialImage from "../../assets/tuany-kohler-dupe.webp"
-import qualityImage from "../../assets/ruby--dupe.webp"
 import confidenceImage from "../../assets/selfconfidence.webp"
 import mentalImage from "../../assets/sante.webp"
 import thoughtsImage from "../../assets/Journaling.webp"
@@ -17,6 +15,8 @@ import nutritionImage from "../../assets/food2.webp"
 import sportImage from "../../assets/sport1.webp"
 import workoutImage from "../../assets/Backday.webp"
 import cosyImage from "../../assets/Photo bienvenue.webp"
+import manicure2Image from "../../assets/Manicure2.jpeg"
+import natureColorsImage from "../../assets/nature-match-paon.webp"
 
 export type BlogCategory = "Santé & Beauté" | "Mode" | "Mental" | "Sport & Nutrition" | "Lifestyle"
 
@@ -33,6 +33,16 @@ export type BlogArticleMetadata = {
 
 export const blogArticles: BlogArticleMetadata[] = [
   {
+    category: "Mode",
+    title: "Si la nature dit que c’est un match, c’est un match",
+    description: "Observer les palettes naturelles pour oser de nouvelles associations de couleurs et les adapter à son style.",
+    image: natureColorsImage,
+    imageAlt: "Détail de plumes de paon aux nuances bleues, vertes et bronze",
+    readingTime: "14 min de lecture",
+    href: "/blog/mode/couleurs-nature",
+    publicationDate: "2026-10-10",
+  },
+  {
     category: "Lifestyle",
     title: "20 activités cosy à faire quand il pleut",
     description: "Vingt idées simples pour créer, ralentir, prendre soin de soi et profiter pleinement d’une journée pluvieuse.",
@@ -46,8 +56,8 @@ export const blogArticles: BlogArticleMetadata[] = [
     category: "Santé & Beauté",
     title: "Ongles : comment les rendre plus forts, éviter les cassures et protéger ses cuticules",
     description: "Comprendre ce qui fragilise les ongles et adopter des gestes simples pour limiter les cassures et protéger les cuticules.",
-    image: makeupImage,
-    imageAlt: "Palette de fards, rouge à lèvres et produits de maquillage",
+    image: manicure2Image,
+    imageAlt: "Manucure et soin des ongles",
     readingTime: "25 min de lecture",
     href: "/blog/sante-beaute/article-4",
     publicationDate: "2026-09-13",
@@ -73,16 +83,6 @@ export const blogArticles: BlogArticleMetadata[] = [
     publicationDate: "2026-09-11",
   },
   {
-    category: "Mode",
-    title: "Qualité : comment reconnaître un vêtement bien construit sans se fier uniquement au prix",
-    description: "Apprendre à inspecter les coutures, les finitions, la matière et la coupe pour mieux évaluer un vêtement.",
-    image: qualityImage,
-    imageAlt: "Miroir à main, brosse à cheveux et accessoires roses",
-    readingTime: "31 min de lecture",
-    href: "/blog/mode/article-4",
-    publicationDate: "2026-09-10",
-  },
-  {
     category: "Mental",
     title: "Confiance en soi : comment la développer, arrêter de se comparer et oser prendre sa place",
     description: "Des repères concrets pour agir malgré le doute, sortir de la comparaison et construire une confiance plus solide.",
@@ -91,16 +91,6 @@ export const blogArticles: BlogArticleMetadata[] = [
     readingTime: "18 min de lecture",
     href: "/blog/mental/confiance-en-soi",
     publicationDate: "2026-09-09",
-  },
-  {
-    category: "Santé & Beauté",
-    title: "Pousse des cheveux : ce qui influence vraiment la croissance et comment éviter la casse",
-    description: "Comprendre la croissance des cheveux, distinguer la pousse de la casse et adopter une routine plus adaptée.",
-    image: selfCareImage,
-    imageAlt: "Bouquet de ballons roses en forme de cœur",
-    readingTime: "26 min de lecture",
-    href: "/blog/sante-beaute/article-3",
-    publicationDate: "2026-09-08",
   },
   {
     category: "Mode",
@@ -151,16 +141,6 @@ export const blogArticles: BlogArticleMetadata[] = [
     readingTime: "28 min de lecture",
     href: "/blog/mental/article-7",
     publicationDate: "2026-08-30",
-  },
-  {
-    category: "Santé & Beauté",
-    title: "Vitamine C : pourquoi elle est si populaire et comment bien l’utiliser",
-    description: "Comprendre les bénéfices de la vitamine C, choisir une formule adaptée et l’intégrer correctement à sa routine.",
-    image: vitaminCImage,
-    imageAlt: "Bouquet de tulipes blanches dans un vase",
-    readingTime: "24 min de lecture",
-    href: "/blog/sante-beaute/article-2",
-    publicationDate: "2026-08-28",
   },
   {
     category: "Mode",

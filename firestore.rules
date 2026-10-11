@@ -51,6 +51,7 @@ service cloud.firestore {
         collectionName == "selfLoveThoughts" ||
         collectionName == "selfLoveArchiveEntries" ||
         collectionName == "routineItems" ||
+        collectionName == "routineDailyProgress" ||
         collectionName == "goalsDailyTrackers" ||
         collectionName == "dietWeeklyPlans" ||
         collectionName == "dietCustomRecipes" ||

@@ -6,6 +6,11 @@
   date: string
   color: string
   tag: string
+  recurrence?: {
+    frequency: 'weekly'
+    weekdays: number[]
+    startsOn: string
+  }
 }
 
 export const getDateKey = (value: Date) => {

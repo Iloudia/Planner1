@@ -683,6 +683,19 @@ const ArchivesPage = ({ section }: ArchivesPageProps) => {
         year: "numeric",
       })
     : ""
+  const selectedMindsetInnerChild = selectedMindset?.mindset?.innerChild
+  const selectedMindsetBestFriend = selectedMindset?.mindset?.bestFriend
+  const selectedMindsetHasInnerChild = Boolean(
+    selectedMindsetInnerChild &&
+      [selectedMindsetInnerChild.message, selectedMindsetInnerChild.reassurance, selectedMindsetInnerChild.neededWords]
+        .some((value) => value.trim().length > 0),
+  )
+  const selectedMindsetHasBestFriend = Boolean(
+    selectedMindsetBestFriend &&
+      [selectedMindsetBestFriend.advice, selectedMindsetBestFriend.selfTalk, selectedMindsetBestFriend.selfKindness]
+        .some((value) => value?.trim().length),
+  )
+  const selectedMindsetHasLetter = Boolean(selectedMindset?.body?.trim())
 
   const isArchivesLoading = !isAuthReady || (section === "journaling" ? isJournalLoading : isSelfLoveLoading)
   const sectionTitle = section === "journaling" ? "Archives de journaling" : "Archives mindset"
@@ -937,14 +950,18 @@ const ArchivesPage = ({ section }: ArchivesPageProps) => {
             onClick={() => setSelectedEntry(null)}
             aria-label="Fermer"
           />
-          <div className={`archives-modal__content${selectedLetter ? " archives-modal__content--letter" : ""}`}>
+          <div
+            className={`archives-modal__content${selectedLetter ? " archives-modal__content--letter" : ""}${
+              section === "journaling" ? " archives-modal__content--journaling" : ""
+            }`}
+          >
             <header className={`archives-modal__header${selectedLetter ? " archives-modal__header--letter" : ""}`}>
               {selectedLetter ? (
                 <div />
               ) : (
                 <div>
                   <p>{selectedEntry.sectionLabel}</p>
-                  <h3>{formatArchiveDate(selectedEntry.dateKey)}</h3>
+                  <h2>{formatArchiveDate(selectedEntry.dateKey)}</h2>
                 </div>
               )}
               <ModalCloseButton onClick={() => setSelectedEntry(null)} />
@@ -1042,123 +1059,130 @@ const ArchivesPage = ({ section }: ArchivesPageProps) => {
                 )
               ) : selectedMindset ? (
                 <div className="archives-mindset-copy">
-                  <div className="archives-mindset-copy__duo">
-                    <section className="archives-mindset-copy__panel">
-                      <div className="archives-mindset-copy__panel-heading">
-                        <h3>Liste tes qualités</h3>
-                        <p>Regarde-toi avec plus de douceur et d&apos;honnêteté.</p>
-                      </div>
-                      <ul className="archives-mindset-copy__list">
-                        {selectedMindset.mindset?.qualities.map((quality, index) => (
-                          <li key={`${selectedMindset.id}-quality-${index}`}>{quality}</li>
-                        ))}
-                      </ul>
-                    </section>
-                    <section className="archives-mindset-copy__panel">
-                      <div className="archives-mindset-copy__panel-heading">
-                        <h3>Pensées négatives à laisser derrière toi</h3>
-                        <p>Les pensées que tu as choisi de laisser s&apos;envoler.</p>
-                      </div>
-                      <ul className="archives-mindset-copy__list">
-                        {selectedMindset.mindset?.thoughts.map((thought, index) => (
-                          <li key={`${selectedMindset.id}-thought-${index}`}>{thought}</li>
-                        ))}
-                      </ul>
-                    </section>
-                  </div>
-
-                  <section className="archives-mindset-copy__exercises">
-                    <div className="archives-mindset-copy__exercise-grid">
-                      <article className="archives-mindset-copy__exercise-card">
-                        <h3>Reconnecte-toi avec ton enfant intérieur</h3>
-                        <p>Offre à ton enfant intérieur les mots qu&apos;il aurait eu besoin d&apos;entendre.</p>
-                        <label>
-                          <span>Que souhaiterais-tu lui dire maintenant ?</span>
-                          <textarea value={selectedMindset.mindset?.innerChild?.message ?? ""} readOnly />
-                        </label>
-                        <label>
-                          <span>Comment pourrais-tu le rassurer ?</span>
-                          <textarea value={selectedMindset.mindset?.innerChild?.reassurance ?? ""} readOnly />
-                        </label>
-                        <label>
-                          <span>De quoi aurait-il eu besoin d&apos;entendre ?</span>
-                          <textarea value={selectedMindset.mindset?.innerChild?.neededWords ?? ""} readOnly />
-                        </label>
-                      </article>
-                      <article className="archives-mindset-copy__exercise-card">
-                        <h3>Le meilleur ami comme boussole</h3>
-                        <p>Imagine qu&apos;un ami vive exactement la même situation que toi.</p>
-                        <label>
-                          <span>Que lui dirais-tu ?</span>
-                          <textarea value={selectedMindset.mindset?.bestFriend?.advice ?? ""} readOnly />
-                        </label>
-                        <label>
-                          <span>Quelle est la différence avec ce que tu te dis à toi-même ?</span>
-                          <textarea value={selectedMindset.mindset?.bestFriend?.selfTalk ?? ""} readOnly />
-                        </label>
-                        <label>
-                          <span>Maintenant, sois aussi doux avec toi-même.</span>
-                          <textarea value={selectedMindset.mindset?.bestFriend?.selfKindness ?? ""} readOnly />
-                        </label>
-                      </article>
-                    </div>
-                  </section>
-
-                  <section className="archives-mindset-copy__letter">
-                    <div className="archives-mindset-copy__letter-intro">
-                      <h3>Écris à ton futur toi</h3>
-                      <p>Une lettre à relire au moment choisi.</p>
-                    </div>
-                    <div className="self-love-letter__frame self-love-letter__card self-love-letter__card--classic is-active archives-letter-card">
-                      <div className="self-love-future-letter__head">
-                        <div>
-                          <p className="self-love-letter__title">Lettre à mon moi du futur</p>
-                          <p className="self-love-future-letter__subtitle">Écris-la aujourd&apos;hui, laisse le temps faire le reste.</p>
-                        </div>
-                        <div className={`self-love-future-letter__status${selectedMindsetLetterLocked ? " is-locked" : ""}`}>
-                          <span>{selectedMindsetLetterLocked ? "SCELLÉE" : "ARCHIVÉE"}</span>
-                          <strong>{selectedMindsetOpenDate || "Sans date d'ouverture"}</strong>
-                        </div>
-                      </div>
-                      <div className="self-love-letter__addresses self-love-future-letter__addresses">
-                        <label>
-                          <span>De</span>
-                          <input type="text" value={selectedMindset.from ?? ""} readOnly />
-                        </label>
-                        <label>
-                          <span>À</span>
-                          <input type="text" value={selectedMindset.to ?? ""} readOnly />
-                        </label>
-                        <label>
-                          <span>Date d&apos;ouverture</span>
-                          <input type="date" value={selectedMindset.openDate ?? ""} readOnly />
-                        </label>
-                      </div>
-                      <div className="self-love-letter__body self-love-future-letter__body">
-                        <p className="self-love-letter__salutation">Cher moi,</p>
-                        <textarea value={selectedMindsetLetterLocked ? "" : selectedMindset.body ?? ""} readOnly />
-                        {selectedMindsetLetterLocked ? (
-                          <div className="self-love-future-letter__lock">
-                            <div className="self-love-future-letter__lock-body">
-                              <span>Lettre scellée</span>
-                              <strong>Rendez-vous le {selectedMindsetOpenDate}</strong>
-                              <p>Garde cette promesse. Le futur toi t&apos;attend.</p>
-                            </div>
-                          </div>
+                  {selectedMindsetHasInnerChild || selectedMindsetHasBestFriend ? (
+                    <section className="archives-mindset-copy__exercises">
+                      <div
+                        className={`archives-mindset-copy__exercise-grid${
+                          selectedMindsetHasInnerChild && selectedMindsetHasBestFriend
+                            ? ""
+                            : " archives-mindset-copy__exercise-grid--single"
+                        }`}
+                      >
+                        {selectedMindsetHasInnerChild ? (
+                          <article className="archives-mindset-copy__exercise-card">
+                            <h2>Reconnecte-toi avec ton enfant intérieur</h2>
+                            <p>Offre à ton enfant intérieur les mots qu&apos;il aurait eu besoin d&apos;entendre.</p>
+                            {selectedMindsetInnerChild?.message.trim() ? (
+                              <label>
+                                <span>Que souhaiterais-tu lui dire maintenant ?</span>
+                                <textarea value={selectedMindsetInnerChild.message} readOnly />
+                              </label>
+                            ) : null}
+                            {selectedMindsetInnerChild?.reassurance.trim() ? (
+                              <label>
+                                <span>Comment pourrais-tu le rassurer ?</span>
+                                <textarea value={selectedMindsetInnerChild.reassurance} readOnly />
+                              </label>
+                            ) : null}
+                            {selectedMindsetInnerChild?.neededWords.trim() ? (
+                              <label>
+                                <span>De quoi aurait-il eu besoin d&apos;entendre ?</span>
+                                <textarea value={selectedMindsetInnerChild.neededWords} readOnly />
+                              </label>
+                            ) : null}
+                          </article>
+                        ) : null}
+                        {selectedMindsetHasBestFriend ? (
+                          <article className="archives-mindset-copy__exercise-card">
+                            <h2>Le meilleur ami comme boussole</h2>
+                            <p>Imagine qu&apos;un ami vive exactement la même situation que toi.</p>
+                            {selectedMindsetBestFriend?.advice.trim() ? (
+                              <label>
+                                <span>Que lui dirais-tu ?</span>
+                                <textarea value={selectedMindsetBestFriend.advice} readOnly />
+                              </label>
+                            ) : null}
+                            {selectedMindsetBestFriend?.selfTalk.trim() ? (
+                              <label>
+                                <span>Quelle est la différence avec ce que tu te dis à toi-même ?</span>
+                                <textarea value={selectedMindsetBestFriend.selfTalk} readOnly />
+                              </label>
+                            ) : null}
+                            {selectedMindsetBestFriend?.selfKindness?.trim() ? (
+                              <label>
+                                <span>Maintenant, sois aussi doux avec toi-même.</span>
+                                <textarea value={selectedMindsetBestFriend.selfKindness} readOnly />
+                              </label>
+                            ) : null}
+                          </article>
                         ) : null}
                       </div>
-                      <div className="self-love-future-letter__footer">
-                        <div className="self-love-future-letter__stamp">
-                          <img src={stampLove} alt="" loading="lazy" decoding="async" />
-                          <img src={stampKey} alt="" loading="lazy" decoding="async" />
+                    </section>
+                  ) : null}
+
+                  {selectedMindsetHasLetter ? (
+                    <section className="archives-mindset-copy__letter">
+                      <div className="archives-mindset-copy__letter-intro">
+                        <h2>Écris à ton futur toi</h2>
+                        <p>Une lettre à relire au moment choisi.</p>
+                      </div>
+                      <div className="self-love-letter__frame self-love-letter__card self-love-letter__card--classic is-active archives-letter-card">
+                        <div className="self-love-future-letter__head">
+                          <div>
+                            <p className="self-love-letter__title">Lettre à mon moi du futur</p>
+                            <p className="self-love-future-letter__subtitle">Écris-la aujourd&apos;hui, laisse le temps faire le reste.</p>
+                          </div>
+                          <div className={`self-love-future-letter__status${selectedMindsetLetterLocked ? " is-locked" : ""}`}>
+                            <span>{selectedMindsetLetterLocked ? "SCELLÉE" : "ARCHIVÉE"}</span>
+                            <strong>{selectedMindsetOpenDate || "Sans date d'ouverture"}</strong>
+                          </div>
+                        </div>
+                        <div className="self-love-letter__addresses self-love-future-letter__addresses">
+                          {selectedMindset.from?.trim() ? (
+                            <label>
+                              <span>De</span>
+                              <input type="text" value={selectedMindset.from} readOnly />
+                            </label>
+                          ) : null}
+                          {selectedMindset.to?.trim() ? (
+                            <label>
+                              <span>À</span>
+                              <input type="text" value={selectedMindset.to} readOnly />
+                            </label>
+                          ) : null}
+                          {selectedMindset.openDate ? (
+                            <label>
+                              <span>Date d&apos;ouverture</span>
+                              <input type="date" value={selectedMindset.openDate} readOnly />
+                            </label>
+                          ) : null}
+                        </div>
+                        <div className="self-love-letter__body self-love-future-letter__body">
+                          <p className="self-love-letter__salutation">Cher moi,</p>
+                          <textarea value={selectedMindsetLetterLocked ? "" : selectedMindset.body ?? ""} readOnly />
+                          {selectedMindsetLetterLocked ? (
+                            <div className="self-love-future-letter__lock">
+                              <div className="self-love-future-letter__lock-body">
+                                <span>Lettre scellée</span>
+                                <strong>Rendez-vous le {selectedMindsetOpenDate}</strong>
+                                <p>Garde cette promesse. Le futur toi t&apos;attend.</p>
+                              </div>
+                            </div>
+                          ) : null}
+                        </div>
+                        <div className="self-love-future-letter__footer">
+                          <div className="self-love-future-letter__stamp">
+                            <img src={stampLove} alt="" loading="lazy" decoding="async" />
+                            <img src={stampKey} alt="" loading="lazy" decoding="async" />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </section>
+                    </section>
+                  ) : null}
                 </div>
               ) : selectedExercise ? (
                 <div className="archives-exercise-card">
-                  <h3>{selectedEntry.title}</h3>
+                  <h2>{selectedEntry.title}</h2>
                   {selectedExercise.entryType === "bestFriend" ? (
                     <div className="archives-exercise-card__content">
                       <section className="archives-exercise-card__section archives-exercise-card__section--intro">
@@ -1217,7 +1241,7 @@ const ArchivesPage = ({ section }: ArchivesPageProps) => {
                     <div className="archives-modal__details">
                       {selectedTopDetails.length > 0 ? (
                         <section className="archives-modal__section">
-                          <h4>Check-in émotionnel</h4>
+                          <h2>Check-in émotionnel</h2>
                           {selectedTopDetails.map((detail) => (
                             <div key={`${selectedEntry.id}-${detail.label}`} className="archives-modal__detail">
                               <span>{formatArchiveDetailLabel(detail.label)}</span>
@@ -1228,7 +1252,7 @@ const ArchivesPage = ({ section }: ArchivesPageProps) => {
                       ) : null}
                       {selectedGuidedPairs.length > 0 ? (
                         <section className="archives-modal__section">
-                          <h4>Question guidée du jour</h4>
+                          <h2>Question guidée du jour</h2>
                           {selectedGuidedPairs.map((pair, index) => (
                             <div key={`${selectedEntry.id}-qa-${index}`} className="archives-modal__qa">
                               <span>Question {index + 1}</span>
@@ -1241,7 +1265,7 @@ const ArchivesPage = ({ section }: ArchivesPageProps) => {
                       ) : null}
                       {selectedFreeWritingDetails.length > 0 ? (
                         <section className="archives-modal__section">
-                          <h4>Zone d'écriture libre</h4>
+                          <h2>Zone d'écriture libre</h2>
                           {selectedFreeWritingDetails.map((detail) => (
                             <div key={`${selectedEntry.id}-${detail.label}`} className="archives-modal__detail">
                               <p>{detail.value}</p>
@@ -1251,7 +1275,7 @@ const ArchivesPage = ({ section }: ArchivesPageProps) => {
                       ) : null}
                       {selectedClosureDetails.length > 0 ? (
                         <section className="archives-modal__section">
-                          <h4>Clôture émotionnelle</h4>
+                          <h2>Clôture émotionnelle</h2>
                           {selectedClosureDetails.map((detail) => (
                             <div key={`${selectedEntry.id}-${detail.label}`} className="archives-modal__detail">
                               <span>{formatArchiveDetailLabel(detail.label)}</span>

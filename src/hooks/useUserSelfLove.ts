@@ -48,8 +48,7 @@ const defaultDraft = (): SelfLoveDraft => ({
     "Je suis fier de toi. Merci de te relever, de rire, de pleurer et de croire encore en toi quand c'est compliqué.",
   futureLetterTo: "Moi du futur",
   futureLetterFrom: "Moi du présent",
-  futureLetterBody:
-    "Ex : Si tu lis ces mots, c'est que tu as tenu bon. J'espère que tu te souviens de nos promesses et de nos petites victoires...",
+  futureLetterBody: "",
   futureLetterOpenDate: getDefaultFutureOpenDate(),
   innerChildMessage: "",
   innerChildReassurance: "",

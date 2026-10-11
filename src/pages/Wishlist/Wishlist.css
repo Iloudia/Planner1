@@ -181,17 +181,83 @@
   padding: 0.4rem 1.75rem 0.4rem 0;
 }
 
-.wishlist-toolbar__sort::after {
-  content: "⌄";
+.wishlist-toolbar__sort > span {
+  flex: 0 0 auto;
+}
+
+.wishlist-toolbar__sort-control {
+  position: static;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.wishlist-toolbar__sort-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 2rem;
+  padding: 0.4rem 0;
+  border: 0;
+  background: transparent;
+  color: #33302b;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.wishlist-toolbar__sort-trigger .workout-form__select-chevron {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  color: rgba(15, 23, 42, 0.6);
+}
+
+.wishlist-toolbar__sort-trigger:focus-visible {
+  outline: none;
+}
+
+.wishlist-toolbar__sort-menu.workout-form__select-menu {
   position: absolute;
-  right: 0.65rem;
-  top: 44%;
-  color: #6c655d;
-  font-family: Arial, sans-serif;
-  font-size: 0.9rem;
-  line-height: 1;
-  pointer-events: none;
-  transform: translateY(-50%);
+  top: calc(100% + 0.4rem);
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  width: auto;
+  min-width: 0;
+  padding: 0.4rem 0;
+  border: 1px solid #e6e1d9;
+  border-radius: 0;
+  background: #ffffff;
+  box-shadow: none;
+  z-index: 20;
+}
+
+.wishlist-toolbar__sort-menu.workout-form__select-menu button {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #000000;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 400;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.wishlist-toolbar__sort-menu.workout-form__select-menu button:hover,
+.wishlist-toolbar__sort-menu.workout-form__select-menu button:focus-visible,
+.wishlist-toolbar__sort-menu.workout-form__select-menu button.is-selected {
+  background: #f1ece4;
+  color: #000000;
+  outline: none;
 }
 
 .wishlist-toolbar__search {

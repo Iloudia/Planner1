@@ -1099,12 +1099,149 @@
   gap: 1.2rem;
 }
 
+.workout-modal__scheduler {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  background: #fffdfb;
+}
+
+.workout-modal__scheduler-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.workout-modal__scheduler-heading h3 {
+  margin: 0;
+  color: #253652;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.workout-modal__panel .workout-modal__scheduler-heading > span {
+  flex: 0 0 auto;
+  color: #6f7784;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.workout-modal__scheduler-fields {
+  display: grid;
+  grid-template-columns: minmax(9rem, 1.6fr) minmax(6.5rem, 0.75fr) minmax(6.5rem, 0.75fr) auto;
+  align-items: end;
+  gap: 0.55rem;
+}
+
+.workout-modal__scheduler-field {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.workout-modal__panel .workout-modal__scheduler-field > span {
+  color: #6f7784;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.workout-modal__scheduler-field select,
+.workout-modal__scheduler-field input {
+  width: 100%;
+  min-height: 2.35rem;
+  padding: 0.48rem 0.6rem;
+  border: 1px solid rgba(15, 23, 42, 0.18);
+  border-radius: 0;
+  background: #ffffff;
+  color: #1f1a2f;
+  font: inherit;
+  font-size: 0.78rem;
+}
+
+.workout-modal__scheduler-field select:focus,
+.workout-modal__scheduler-field input:focus {
+  border-color: #253652;
+  outline: 2px solid rgba(37, 54, 82, 0.12);
+  outline-offset: 1px;
+}
+
+.workout-modal__scheduler-warning {
+  margin: 0;
+  padding: 0.45rem 0.6rem;
+  border-left: 2px solid #9d1d46;
+  background: rgba(157, 29, 70, 0.06);
+  color: #6f233e;
+  font-family: "Libre Baskerville", Georgia, serif;
+  font-size: 0.68rem;
+  line-height: 1.4;
+}
+
+.workout-modal__scheduler-submit {
+  min-height: 2.35rem;
+  padding: 0.48rem 0.9rem;
+  border: 1px solid #132947;
+  background: #132947;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.workout-modal__scheduler-submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.workout-modal__scheduler-feedback {
+  margin: 0;
+  font-family: "Libre Baskerville", Georgia, serif;
+  font-size: 0.75rem;
+}
+
+.workout-modal__scheduler-feedback.is-success {
+  color: #166534;
+}
+
+.workout-modal__scheduler-feedback.is-error {
+  color: #9d1d46;
+}
+
+@media (max-width: 760px) {
+  .workout-modal__scheduler-fields {
+    grid-template-columns: minmax(0, 1fr) minmax(5.5rem, 0.65fr) minmax(5.5rem, 0.65fr);
+  }
+
+  .workout-modal__scheduler-submit {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 480px) {
+  .workout-modal__scheduler-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .workout-modal__scheduler-field--day {
+    grid-column: 1 / -1;
+  }
+}
+
 .workout-modal__series-form {
   margin-top: 0;
 }
 
 
-.workout-modal__content p:not(.workout-modal__empty) {
+.workout-modal__note .editorial-field-label {
   margin: 0;
   color: #7c2d12;
 }
@@ -1272,6 +1409,40 @@
   padding-top: 0.2rem;
   font-weight: 700;
   color: var(--color-chocolate);
+}
+
+.workout-modal__reset-series {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.5rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid #132542;
+  border-radius: 0;
+  background: #ffffff;
+  color: #132542;
+  font-family: var(--font-body);
+  font-size: calc(var(--font-size-button) * var(--user-font-scale));
+  font-weight: var(--font-weight-action);
+  line-height: var(--leading-control);
+  cursor: pointer;
+  box-shadow: none;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.workout-modal__reset-series:hover:not(:disabled) {
+  background: #132542;
+  color: #ffffff;
+}
+
+.workout-modal__reset-series:focus-visible {
+  outline: 2px solid rgba(19, 37, 66, 0.35);
+  outline-offset: 3px;
+}
+
+.workout-modal__reset-series:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
 }
 
 @media (max-width: 900px) {

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom"
 import { useAuth } from "../../context/AuthContext"
 import PageLoader from "../../components/PageLoader"
 import useUserSportDashboard from "../../hooks/useUserSportDashboard"
-import { getWeekKey } from "../../utils/weekKey"
+import { getWeekKey, SPORT_BOARD_DRAFTS_STORAGE_KEY } from "../../utils/weekKey"
 import { buildUserScopedKey, normalizeUserEmail } from "../../utils/userScopedKey"
 import heroWorkout from "../../assets/tuany-kohler-dupe.webp"
 import heroDiet from "../../assets/thayna-queiroz-dupe.webp"
@@ -67,8 +67,6 @@ const lifeCardDefinitions = [
   { id: "life-goals", label: "Goals", route: "/goals", key: "goals" as const, image: heroGoals },
 ]
 
-const SPORT_BOARD_DRAFTS_STORAGE_KEY = "planner.sport.board.drafts.v1"
-
 const SportPage = () => {
   const { isAuthReady, userEmail, userId } = useAuth()
   const [weekKey, setWeekKey] = useState(() => getWeekKey())
@@ -127,19 +125,17 @@ const SportPage = () => {
   }, [activityDrafts])
 
   useEffect(() => {
-    setTimeDrafts((currentDrafts) => {
-      const nextDrafts = Object.fromEntries(
+    setTimeDrafts(
+      Object.fromEntries(
         board.days.map((day) => [
           day.id,
           {
-            startTime: currentDrafts[day.id]?.startTime ?? normalizeTimeValue(day.startTime),
-            endTime: currentDrafts[day.id]?.endTime ?? normalizeTimeValue(day.endTime),
+            startTime: normalizeTimeValue(day.startTime),
+            endTime: normalizeTimeValue(day.endTime),
           },
         ]),
-      )
-
-      return JSON.stringify(nextDrafts) === JSON.stringify(currentDrafts) ? currentDrafts : nextDrafts
-    })
+      ),
+    )
   }, [board.days])
 
   useEffect(() => {

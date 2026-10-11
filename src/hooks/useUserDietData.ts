@@ -13,6 +13,7 @@ import { createClientId } from "../utils/clientId"
 import { importLegacyDietIfNeeded } from "../services/firestore/plannerMigrations"
 import {
   deleteDietCustomRecipe,
+  getDietWeekPlan,
   saveDietCustomRecipe,
   saveDietPreferences,
   saveDietWeekPlan,
@@ -129,6 +130,8 @@ const removeRecipeRefFromPlan = (plan: DietWeekPlan, day: DietWeekDay, slot: Die
 
 const sameRecipeRef = (left: DietFavoriteRecipeRef, right: DietFavoriteRecipeRef) =>
   left.source === right.source && left.recipeId === right.recipeId
+
+type DuplicateDietWeekResult = "copied" | "empty"
 
 const useUserDietData = (weekKey: string) => {
   const { isAuthReady, userId, userEmail } = useAuth()
@@ -345,6 +348,46 @@ const useUserDietData = (weekKey: string) => {
     [activePlan, mutate, userId],
   )
 
+  const duplicateWeekPlan = useCallback(
+    async (sourceWeekKey: string): Promise<DuplicateDietWeekResult> => {
+      if (!userId) return "empty"
+
+      const sourcePlan = await getDietWeekPlan(userId, sourceWeekKey)
+      const hasMeals = sourcePlan
+        ? weekDays.some((day) => mealSlots.some((slot) => sourcePlan.meals[day]?.[slot]?.trim()))
+        : false
+      if (!sourcePlan || !hasMeals) {
+        return "empty"
+      }
+
+      const meals = weekDays.reduce<DietWeekPlan["meals"]>((accumulator, day) => {
+        accumulator[day] = { ...sourcePlan.meals[day] }
+        return accumulator
+      }, {} as DietWeekPlan["meals"])
+      const recipeRefs = weekDays.reduce<DietWeekPlan["recipeRefs"]>((accumulator, day) => {
+        accumulator[day] = { ...(sourcePlan.recipeRefs[day] ?? {}) }
+        return accumulator
+      }, {} as DietWeekPlan["recipeRefs"])
+      const nextPlan: DietWeekPlan = {
+        ...activePlan,
+        weekKey,
+        weekStartDate: weekKey,
+        meals,
+        recipeRefs,
+      }
+      const previousPlan = weekPlan
+      setWeekPlan(nextPlan)
+      try {
+        await mutate(() => saveDietWeekPlan(userId, nextPlan))
+        return "copied"
+      } catch (error) {
+        setWeekPlan(previousPlan)
+        throw error
+      }
+    },
+    [activePlan, mutate, userId, weekKey, weekPlan],
+  )
+
   const assignRecipeToSlot = useCallback(
     async (day: DietWeekDay, slot: DietMealSlotId, mealName: string, recipeRef: DietRecipeRef) => {
       if (!userId) return
@@ -464,6 +507,7 @@ const useUserDietData = (weekKey: string) => {
       saveShoppingNotes,
       saveCuisineGoals,
       saveFillOnlyEmpty,
+      duplicateWeekPlan,
       assignRecipeToSlot,
       removeRecipeFromSlot,
       toggleFavoriteRecipe,
@@ -477,6 +521,7 @@ const useUserDietData = (weekKey: string) => {
       assignRecipeToSlot,
       createCustomRecipe,
       customRecipes,
+      duplicateWeekPlan,
       error,
       isLoading,
       removeCustomRecipe,

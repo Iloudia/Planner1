@@ -2,8 +2,12 @@ import { useEffect, useMemo, useRef, useState, type CSSProperties, type FormEven
 import { createPortal } from "react-dom"
 import MediaImage from "../../components/MediaImage"
 import PageLoader from "../../components/PageLoader"
+import { useAuth } from "../../context/AuthContext"
+import useUserSportDashboard from "../../hooks/useUserSportDashboard"
 import useUserWorkoutData from "../../hooks/useUserWorkoutData"
 import { deleteMedia, uploadImage } from "../../services/media/api"
+import { buildUserScopedKey, normalizeUserEmail } from "../../utils/userScopedKey"
+import { getWeekKey, SPORT_BOARD_DRAFTS_STORAGE_KEY } from "../../utils/weekKey"
 import backdayImage from "../../assets/Backday.webp"
 import legdayImage from "../../assets/legday.webp"
 import heroWorkout from "../../assets/tuany-kohler-dupe.webp"
@@ -56,6 +60,9 @@ const MUSCLE_OPTIONS = [
 
 const MUSCLE_PLACEHOLDER = "Sélectionner un muscle"
 const YOUTUBE_API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY as string | undefined
+
+const formatScheduleDate = (dateISO: string) =>
+  new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "short" }).format(new Date(`${dateISO}T00:00:00`))
 
 const CREATOR_RECOMMENDATIONS: CreatorRecommendation[] = [
   { id: "sissy-mua-youtube", name: "Sissy Mua", platform: "YouTube", focus: "HIIT / Renfo", level: "Tous niveaux", description: "Séances énergiques de renfo et HIIT avec un coaching motivé et progressif.", url: "https://www.youtube.com/@SissyMUA" },
@@ -123,6 +130,8 @@ const getCreatorCardsPerView = () => {
 }
 
 const WorkoutPage = () => {
+  const { userEmail } = useAuth()
+  const [weekKey] = useState(() => getWeekKey())
   const {
     exercises,
     videos,
@@ -137,8 +146,15 @@ const WorkoutPage = () => {
     deleteVideo,
     createSeries,
     updateSeries,
+    resetExerciseSeriesCompletion,
     deleteSeries,
   } = useUserWorkoutData()
+  const {
+    board: sportBoard,
+    isLoading: isSportBoardLoading,
+    error: sportBoardError,
+    updateBoardDay,
+  } = useUserSportDashboard(weekKey)
 
   const [form, setForm] = useState<ExerciseFormState>({ title: "", muscle: "", category: "" })
   const [formImageFile, setFormImageFile] = useState<File | null>(null)
@@ -148,6 +164,16 @@ const WorkoutPage = () => {
   const [seriesInput, setSeriesInput] = useState("")
   const [seriesWeightInput, setSeriesWeightInput] = useState("")
   const [noteDraft, setNoteDraft] = useState("")
+  const [selectedScheduleDayId, setSelectedScheduleDayId] = useState<string | null>(null)
+  const [scheduleStartTime, setScheduleStartTime] = useState("")
+  const [scheduleEndTime, setScheduleEndTime] = useState("")
+  const [scheduleFeedback, setScheduleFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null)
+  const [isScheduling, setIsScheduling] = useState(false)
+  const [isResettingSeries, setIsResettingSeries] = useState(false)
+  const boardDraftsStorageKey = useMemo(
+    () => buildUserScopedKey(normalizeUserEmail(userEmail), `${SPORT_BOARD_DRAFTS_STORAGE_KEY}.${weekKey}`),
+    [userEmail, weekKey],
+  )
   const [isMuscleMenuOpen, setIsMuscleMenuOpen] = useState(false)
   const [openExerciseMenuId, setOpenExerciseMenuId] = useState<string | null>(null)
   const [isModalMenuOpen, setIsModalMenuOpen] = useState(false)
@@ -273,6 +299,10 @@ const WorkoutPage = () => {
     () => selectedSeries.filter((item) => item.completed).length,
     [selectedSeries],
   )
+  const selectedScheduleDay = useMemo(
+    () => sportBoard.days.find((day) => day.id === selectedScheduleDayId) ?? null,
+    [selectedScheduleDayId, sportBoard.days],
+  )
   const maxCreatorIndex = Math.max(0, CREATOR_RECOMMENDATIONS.length - creatorCardsPerView)
   const creatorPositionCount = maxCreatorIndex + 1
   const hasMultipleCreators = creatorPositionCount > 1
@@ -284,6 +314,10 @@ const WorkoutPage = () => {
     setSeriesInput("")
     setSeriesWeightInput("")
     setNoteDraft(selectedExercise?.note ?? "")
+    setSelectedScheduleDayId(null)
+    setScheduleStartTime("")
+    setScheduleEndTime("")
+    setScheduleFeedback(null)
   }, [selectedExercise])
 
   useEffect(() => {
@@ -462,7 +496,61 @@ const WorkoutPage = () => {
     await updateExerciseNote(selectedExerciseId, noteDraft)
   }
 
-  const isWorkoutLoading = isLoading
+  const handleResetSeriesCompletion = async () => {
+    if (!selectedExerciseId || completedSeriesCount === 0 || isResettingSeries) return
+    setIsResettingSeries(true)
+    try {
+      await resetExerciseSeriesCompletion(selectedExerciseId)
+    } catch {
+      // Le hook affiche déjà l'erreur de sauvegarde globale de la page.
+    } finally {
+      setIsResettingSeries(false)
+    }
+  }
+
+  const handleScheduleExercise = async () => {
+    if (!selectedExercise || !selectedScheduleDay) {
+      setScheduleFeedback({ type: "error", message: "Choisis un jour pour programmer cette séance." })
+      return
+    }
+
+    if (scheduleStartTime && scheduleEndTime && scheduleEndTime <= scheduleStartTime) {
+      setScheduleFeedback({ type: "error", message: "L’heure de fin doit être après l’heure de début." })
+      return
+    }
+
+    setIsScheduling(true)
+    setScheduleFeedback(null)
+    try {
+      await updateBoardDay(selectedScheduleDay.id, {
+        activity: selectedExercise.title,
+        startTime: scheduleStartTime,
+        endTime: scheduleEndTime,
+        done: false,
+      })
+      try {
+        const storedDrafts = JSON.parse(window.localStorage.getItem(boardDraftsStorageKey) ?? "{}") as Record<string, string>
+        delete storedDrafts[selectedScheduleDay.id]
+        if (Object.keys(storedDrafts).length > 0) {
+          window.localStorage.setItem(boardDraftsStorageKey, JSON.stringify(storedDrafts))
+        } else {
+          window.localStorage.removeItem(boardDraftsStorageKey)
+        }
+      } catch {
+        // La programmation Firestore reste prioritaire si le stockage local est indisponible.
+      }
+      setScheduleFeedback({
+        type: "success",
+        message: `${selectedExercise.title} a bien été programmé pour ${selectedScheduleDay.label.toLowerCase()}${scheduleStartTime ? ` à ${scheduleStartTime}` : ""}.`,
+      })
+    } catch {
+      setScheduleFeedback({ type: "error", message: "Impossible de programmer cette séance pour le moment." })
+    } finally {
+      setIsScheduling(false)
+    }
+  }
+
+  const isWorkoutLoading = isLoading || isSportBoardLoading
 
   if (isWorkoutLoading) {
     return (
@@ -482,7 +570,7 @@ const WorkoutPage = () => {
         </div>
         <p>Un espace pour composer tes séances, suivre tes séries et progresser à ton rythme.</p>
       </header>
-      {error ? <p className="routine-note__composer-hint">{error}</p> : null}
+      {error || sportBoardError ? <p className="routine-note__composer-hint">{error ?? sportBoardError}</p> : null}
 
       <div className="workout-layout">
         <section className="workout-exercises">
@@ -870,6 +958,78 @@ const WorkoutPage = () => {
                 </div>
               </header>
               <div className="workout-modal__content">
+                <section className="workout-modal__scheduler" aria-labelledby="workout-scheduler-title">
+                  <div className="workout-modal__scheduler-heading">
+                    <h3 id="workout-scheduler-title">Programmer</h3>
+                    <span>Semaine en cours</span>
+                  </div>
+                  <div className="workout-modal__scheduler-fields">
+                    <label className="workout-modal__scheduler-field workout-modal__scheduler-field--day">
+                      <span>Jour</span>
+                      <select
+                        value={selectedScheduleDayId ?? ""}
+                        onChange={(event) => {
+                          const day = sportBoard.days.find((item) => item.id === event.target.value)
+                          setSelectedScheduleDayId(day?.id ?? null)
+                          setScheduleStartTime(day?.startTime ?? "")
+                          setScheduleEndTime(day?.endTime ?? "")
+                          setScheduleFeedback(null)
+                        }}
+                      >
+                        <option value="">Choisir un jour</option>
+                        {sportBoard.days.map((day) => (
+                          <option key={day.id} value={day.id}>
+                            {day.label} · {formatScheduleDate(day.dateISO)}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="workout-modal__scheduler-field">
+                      <span>Début</span>
+                      <input
+                        type="time"
+                        value={scheduleStartTime}
+                        onChange={(event) => {
+                          setScheduleStartTime(event.target.value)
+                          setScheduleFeedback(null)
+                        }}
+                      />
+                    </label>
+                    <label className="workout-modal__scheduler-field">
+                      <span>Fin</span>
+                      <input
+                        type="time"
+                        value={scheduleEndTime}
+                        onChange={(event) => {
+                          setScheduleEndTime(event.target.value)
+                          setScheduleFeedback(null)
+                        }}
+                      />
+                    </label>
+                    <button
+                      type="button"
+                      className="workout-modal__scheduler-submit"
+                      disabled={!selectedScheduleDayId || isScheduling}
+                      onClick={() => void handleScheduleExercise()}
+                    >
+                      {isScheduling ? "Programmation..." : "Programmer"}
+                    </button>
+                  </div>
+                  {selectedScheduleDay?.activity && selectedScheduleDay.activity !== selectedExercise.title ? (
+                    <p className="workout-modal__scheduler-warning">
+                      La séance « {selectedScheduleDay.activity} » déjà prévue ce jour-là sera remplacée.
+                    </p>
+                  ) : null}
+                  {scheduleFeedback ? (
+                    <p
+                      className={`workout-modal__scheduler-feedback is-${scheduleFeedback.type}`}
+                      role="status"
+                      aria-live="polite"
+                    >
+                      {scheduleFeedback.message}
+                    </p>
+                  ) : null}
+                </section>
                 <form
                   className="workout-modal__series-form"
                   onSubmit={(event) => {
@@ -941,6 +1101,14 @@ const WorkoutPage = () => {
               <div className="workout-modal__summary">
                 {completedSeriesCount}/{selectedSeries.length} séries cochées
               </div>
+              <button
+                type="button"
+                className="workout-modal__reset-series"
+                onClick={() => void handleResetSeriesCompletion()}
+                disabled={completedSeriesCount === 0 || isResettingSeries}
+              >
+                {isResettingSeries ? "Réinitialisation…" : "Tout décocher"}
+              </button>
             </footer>
           </div>
         </div>

@@ -40,6 +40,7 @@ const SelfLovePage = () => {
   const [thoughtDraft, setThoughtDraft] = useState("")
   const [releasingThoughtIds, setReleasingThoughtIds] = useState<Set<string>>(new Set())
   const [exerciseSaveConfirmationVisible, setExerciseSaveConfirmationVisible] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
   const [draftState, setDraftState] = useState(draft)
   const exerciseSaveConfirmationTimeout = useRef<number | null>(null)
 
@@ -134,6 +135,7 @@ const SelfLovePage = () => {
   }
 
   const handleSaveMindsetPage = async () => {
+    setSaveError(null)
     const innerChildSnapshot = {
       message: draftState.innerChildMessage.trim(),
       reassurance: draftState.innerChildReassurance.trim(),
@@ -150,7 +152,7 @@ const SelfLovePage = () => {
     const savedQualities = qualities.map((quality) => quality.text.trim()).filter(Boolean)
     const savedThoughts = thoughts.map((thought) => thought.text.trim()).filter(Boolean)
     const letterBody = draftState.futureLetterBody.trim()
-    if (!hasInnerChildContent && !hasBestFriendContent && savedQualities.length === 0 && savedThoughts.length === 0 && !letterBody) {
+    if (!hasInnerChildContent && !hasBestFriendContent && !letterBody) {
       window.alert("Ajoute du contenu avant d'enregistrer la page.")
       return
     }
@@ -163,35 +165,41 @@ const SelfLovePage = () => {
       }
     }
 
-    await saveMindsetArchive({
-      to: draftState.futureLetterTo.trim() || undefined,
-      from: draftState.futureLetterFrom.trim() || undefined,
-      body: letterBody || undefined,
-      openDate: draftState.futureLetterOpenDate || undefined,
-      sealedAt: letterBody ? new Date().toISOString() : undefined,
-      mindset: {
-        photos: photos.map((photo) => ({ id: photo.id, imageUrl: photo.imageUrl })),
-        qualities: savedQualities,
-        thoughts: savedThoughts,
-        innerChild: hasInnerChildContent ? innerChildSnapshot : undefined,
-        bestFriend: hasBestFriendContent ? bestFriendSnapshot : undefined,
-      },
-    })
-    const clearedFields = {
-      futureLetterTo: "",
-      futureLetterFrom: "",
-      futureLetterBody: "",
-      futureLetterOpenDate: "",
-      innerChildMessage: "",
-      innerChildReassurance: "",
-      innerChildNeededWords: "",
-      bestFriendAdvice: "",
-      bestFriendSelfTalk: "",
-      bestFriendSelfKindness: "",
+    try {
+      await saveMindsetArchive({
+        to: draftState.futureLetterTo.trim() || undefined,
+        from: draftState.futureLetterFrom.trim() || undefined,
+        body: letterBody || undefined,
+        openDate: draftState.futureLetterOpenDate || undefined,
+        sealedAt: letterBody ? new Date().toISOString() : undefined,
+        mindset: {
+          photos: photos.map((photo) =>
+            photo.imageUrl ? { id: photo.id, imageUrl: photo.imageUrl } : { id: photo.id },
+          ),
+          qualities: savedQualities,
+          thoughts: savedThoughts,
+          ...(hasInnerChildContent ? { innerChild: innerChildSnapshot } : {}),
+          ...(hasBestFriendContent ? { bestFriend: bestFriendSnapshot } : {}),
+        },
+      })
+      const clearedFields = {
+        futureLetterTo: "",
+        futureLetterFrom: "",
+        futureLetterBody: "",
+        futureLetterOpenDate: "",
+        innerChildMessage: "",
+        innerChildReassurance: "",
+        innerChildNeededWords: "",
+        bestFriendAdvice: "",
+        bestFriendSelfTalk: "",
+        bestFriendSelfKindness: "",
+      }
+      await updateDraft(clearedFields)
+      setDraftState((previous) => ({ ...previous, ...clearedFields }))
+      showExerciseConfirmation()
+    } catch {
+      setSaveError("Impossible d'enregistrer cette page pour le moment.")
     }
-    await updateDraft(clearedFields)
-    setDraftState((previous) => ({ ...previous, ...clearedFields }))
-    showExerciseConfirmation()
   }
 
   const today = useMemo(
@@ -516,6 +524,7 @@ const SelfLovePage = () => {
           <button type="button" className="self-love-future-letter__seal" onClick={() => void handleSaveMindsetPage()}>
             Enregistrer la page dans les archives
           </button>
+          {saveError || error ? <p>{saveError ?? error}</p> : null}
         </div>
         <div className={`self-love-toast self-love-toast--page${exerciseSaveConfirmationVisible ? " is-visible" : ""}`} role="status" aria-live="polite">
           <div className="self-love-toast__card">

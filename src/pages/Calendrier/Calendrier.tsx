@@ -7,6 +7,15 @@ import useUserSportDashboard from '../../hooks/useUserSportDashboard'
 import ModalCloseButton from '../../components/ModalCloseButton'
 import './CalendarPage.css'
 const weekDays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
+const recurrenceWeekdays = [
+  { value: 1, shortLabel: 'Lun', label: 'Lundi' },
+  { value: 2, shortLabel: 'Mar', label: 'Mardi' },
+  { value: 3, shortLabel: 'Mer', label: 'Mercredi' },
+  { value: 4, shortLabel: 'Jeu', label: 'Jeudi' },
+  { value: 5, shortLabel: 'Ven', label: 'Vendredi' },
+  { value: 6, shortLabel: 'Sam', label: 'Samedi' },
+  { value: 7, shortLabel: 'Dim', label: 'Dimanche' },
+] as const
 const hours = Array.from({ length: 18 }, (_, index) => index + 6)
 const hourHeight = 56
 const newTaskColors = ['#D9E1E8', '#C7D0D8', '#E7DDCF', '#EFE8DE', '#D6C8BA', '#CBB8A6', '#BCA692']
@@ -107,6 +116,8 @@ const getTaskDisplayColor = (task: Pick<ScheduledTask, 'tag' | 'color'>) => lege
 type CalendarTaskItem = ScheduledTask & {
   source: 'calendar' | 'sport'
   done?: boolean
+  seriesId?: string
+  isRecurring?: boolean
 }
 
 const isSportTaskItem = (task: CalendarTaskItem) => task.source === 'sport'
@@ -155,6 +166,8 @@ const parseDateKey = (value: string) => {
   const [year, month, day] = value.split('-').map(Number)
   return new Date(year ?? 1970, (month ?? 1) - 1, day ?? 1)
 }
+
+const getIsoWeekday = (date: Date) => date.getDay() || 7
 
 const parseTaskDate = (task: ScheduledTask) => {
   const [taskYear, taskMonth, taskDay] = task.date.split('-').map(Number)
@@ -218,8 +231,11 @@ const CalendrierPage = () => {
   const [weekAnchorDate, setWeekAnchorDate] = useState(() => new Date())
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
   const [duplicateTask, setDuplicateTask] = useState<ScheduledTask | null>(null)
+  const [duplicateMode, setDuplicateMode] = useState<'consecutive' | 'weekly'>('consecutive')
   const [duplicateDays, setDuplicateDays] = useState('3')
+  const [duplicateWeekdays, setDuplicateWeekdays] = useState<number[]>([])
   const [duplicateError, setDuplicateError] = useState<string | null>(null)
+  const [isDuplicating, setIsDuplicating] = useState(false)
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false)
   const categoryMenuRef = useRef<HTMLDivElement | null>(null)
   const [activeDateKey, setActiveDateKey] = useState<string | null>(null)
@@ -316,10 +332,43 @@ const CalendrierPage = () => {
   })
   const weekRangeLabel = formatWeekRange(weekStartDate)
   const weekDateKeys = useMemo(() => weekDates.map((date) => getDateKey(date)), [weekDates])
+  const monthGridStart = new Date(year, month, 1 - offset)
+  const monthGridEnd = new Date(monthGridStart)
+  monthGridEnd.setDate(monthGridStart.getDate() + totalCells - 1)
+  const weekEndDate = new Date(weekStartDate)
+  weekEndDate.setDate(weekStartDate.getDate() + 6)
+  const recurrenceRangeStartKey = getDateKey(
+    monthGridStart.getTime() < weekStartDate.getTime() ? monthGridStart : weekStartDate,
+  )
+  const recurrenceRangeEndKey = getDateKey(monthGridEnd.getTime() > weekEndDate.getTime() ? monthGridEnd : weekEndDate)
 
   const tasksByDate = useMemo(() => {
     const map = new Map<string, CalendarTaskItem[]>()
     tasks.forEach((task) => {
+      if (task.recurrence?.frequency === 'weekly') {
+        const rangeStart = parseDateKey(recurrenceRangeStartKey)
+        const startsOn = parseDateKey(task.recurrence.startsOn)
+        const cursor = rangeStart.getTime() > startsOn.getTime() ? rangeStart : startsOn
+        const rangeEnd = parseDateKey(recurrenceRangeEndKey)
+        const weekdays = new Set(task.recurrence.weekdays)
+
+        for (const occurrenceDate = new Date(cursor); occurrenceDate <= rangeEnd; occurrenceDate.setDate(occurrenceDate.getDate() + 1)) {
+          if (!weekdays.has(getIsoWeekday(occurrenceDate))) continue
+          const dateKey = getDateKey(occurrenceDate)
+          const list = map.get(dateKey) ?? []
+          list.push({
+            ...task,
+            id: `${task.id}--${dateKey}`,
+            date: dateKey,
+            source: 'calendar',
+            seriesId: task.id,
+            isRecurring: true,
+          })
+          map.set(dateKey, list)
+        }
+        return
+      }
+
       const list = map.get(task.date) ?? []
       list.push({
         ...task,
@@ -358,7 +407,7 @@ const CalendrierPage = () => {
     })
 
     return map
-  }, [sportBoard.days, tasks])
+  }, [recurrenceRangeEndKey, recurrenceRangeStartKey, sportBoard.days, tasks])
 
   const activeDateTasks = activeDateKey ? tasksByDate.get(activeDateKey) ?? [] : []
   const showCompactModalToggle = isCompact && calendarView === 'monthly'
@@ -403,13 +452,8 @@ const CalendrierPage = () => {
     })
   }
 
-  const handleEditClick = (taskId: string) => {
-    const task = tasks.find((item) => item.id === taskId)
-    if (!task) {
-      return
-    }
-
-    setEditingTaskId(taskId)
+  const handleEditClick = (task: CalendarTaskItem) => {
+    setEditingTaskId(task.id)
     setEditDraft({
       start: task.start,
       end: task.end,
@@ -428,7 +472,7 @@ const CalendrierPage = () => {
     }))
   }
 
-  const handleSubmitEdit = (event: FormEvent<HTMLFormElement>, taskId: string) => {
+  const handleSubmitEdit = (event: FormEvent<HTMLFormElement>, task: CalendarTaskItem) => {
     event.preventDefault()
     const editStartMinutes = parseTimeToMinutes(editDraft.start)
     const editEndMinutes = parseTimeToMinutes(editDraft.end)
@@ -441,7 +485,7 @@ const CalendrierPage = () => {
       window.alert('Les horaires autorisés sont de 06:00 à 23:00.')
       return
     }
-    updateTask(taskId, {
+    updateTask(task.seriesId ?? task.id, {
       start: editDraft.start,
       end: editDraft.end,
       color: editDraft.color,
@@ -449,18 +493,23 @@ const CalendrierPage = () => {
     setEditingTaskId(null)
   }
 
-  const handleDeleteTask = (taskId: string) => {
-    const confirmation = window.confirm('Supprimer cette tâche ?')
+  const handleDeleteTask = (task: CalendarTaskItem) => {
+    const confirmation = window.confirm(
+      task.isRecurring ? 'Supprimer toute cette récurrence ?' : 'Supprimer cette tâche ?',
+    )
     if (!confirmation) {
       return
     }
-    removeTask(taskId)
-    setEditingTaskId((previous) => (previous === taskId ? null : previous))
+    removeTask(task.seriesId ?? task.id)
+    setEditingTaskId((previous) => (previous === task.id ? null : previous))
   }
 
   const handleDuplicateTask = (task: ScheduledTask) => {
+    const taskDate = parseDateKey(task.date)
     setDuplicateTask(task)
+    setDuplicateMode('consecutive')
     setDuplicateDays('3')
+    setDuplicateWeekdays([getIsoWeekday(taskDate)])
     setDuplicateError(null)
   }
 
@@ -468,36 +517,73 @@ const CalendrierPage = () => {
     if (!duplicateTask) {
       return
     }
-    const days = Number.parseInt(duplicateDays, 10)
-    if (!Number.isFinite(days) || days <= 0) {
-      setDuplicateError('Nombre de jours invalide.')
-      return
-    }
     const [yearValue, monthValue, dayValue] = duplicateTask.date.split('-').map(Number)
     const baseDate = new Date(yearValue, (monthValue ?? 1) - 1, dayValue ?? 1)
+    setIsDuplicating(true)
+    setDuplicateError(null)
     try {
-      await Promise.all(
-        Array.from({ length: days }, (_, index) => {
-          const nextDate = new Date(baseDate)
-          nextDate.setDate(baseDate.getDate() + index + 1)
-          const dateKey = getDateKey(nextDate)
-          return addTask({
-            id: `task-${dateKey}-${Math.random().toString(36).slice(2, 8)}`,
-            title: duplicateTask.title,
-            start: duplicateTask.start,
-            end: duplicateTask.end,
-            date: dateKey,
-            color: duplicateTask.color,
-            tag: duplicateTask.tag,
-          })
-        }),
-      )
+      if (duplicateMode === 'weekly') {
+        if (duplicateWeekdays.length === 0) {
+          setDuplicateError('Choisis au moins un jour de récurrence.')
+          return
+        }
+
+        const selectedWeekdays = [...duplicateWeekdays].sort((left, right) => left - right)
+        const firstOccurrence = new Date(baseDate)
+        for (let offset = 1; offset <= 7; offset += 1) {
+          firstOccurrence.setTime(baseDate.getTime())
+          firstOccurrence.setDate(baseDate.getDate() + offset)
+          if (selectedWeekdays.includes(getIsoWeekday(firstOccurrence))) break
+        }
+        const startsOn = getDateKey(firstOccurrence)
+        await addTask({
+          id: `recurring-${startsOn}-${Math.random().toString(36).slice(2, 8)}`,
+          title: duplicateTask.title,
+          start: duplicateTask.start,
+          end: duplicateTask.end,
+          date: startsOn,
+          color: duplicateTask.color,
+          tag: duplicateTask.tag,
+          recurrence: {
+            frequency: 'weekly',
+            weekdays: selectedWeekdays,
+            startsOn,
+          },
+        })
+      } else {
+        const days = Number.parseInt(duplicateDays, 10)
+        if (!Number.isFinite(days) || days <= 0) {
+          setDuplicateError('Nombre de jours invalide.')
+          return
+        }
+
+        await Promise.all(
+          Array.from({ length: days }, (_, index) => {
+            const nextDate = new Date(baseDate)
+            nextDate.setDate(baseDate.getDate() + index + 1)
+            const dateKey = getDateKey(nextDate)
+            return addTask({
+              id: `task-${dateKey}-${Math.random().toString(36).slice(2, 8)}`,
+              title: duplicateTask.title,
+              start: duplicateTask.start,
+              end: duplicateTask.end,
+              date: dateKey,
+              color: duplicateTask.color,
+              tag: duplicateTask.tag,
+            })
+          }),
+        )
+      }
     } catch {
       setDuplicateError("Impossible de dupliquer cet événement.")
       return
+    } finally {
+      setIsDuplicating(false)
     }
     setDuplicateTask(null)
+    setDuplicateMode('consecutive')
     setDuplicateDays('3')
+    setDuplicateWeekdays([])
     setDuplicateError(null)
   }
 
@@ -548,7 +634,11 @@ const CalendrierPage = () => {
 
   const handleCloseDuplicate = () => {
     setDuplicateTask(null)
+    setDuplicateMode('consecutive')
+    setDuplicateDays('3')
+    setDuplicateWeekdays([])
     setDuplicateError(null)
+    setIsDuplicating(false)
   }
 
   const handleNewTaskFieldChange = (field: keyof NewTaskFormState, value: string) => {
@@ -925,7 +1015,7 @@ return (
                               if (mobileAgendaDateKey) {
                                 handleDaySelect(mobileAgendaDateKey)
                               }
-                              handleEditClick(task.id)
+                              handleEditClick(task)
                             }}
                           >
                             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -1327,11 +1417,11 @@ return (
                           if (editingTaskId === task.id) {
                             return
                           }
-                          handleEditClick(task.id)
+                          handleEditClick(task)
                         }}
                       >
                         {!isSportTaskItem(task) && editingTaskId === task.id ? (
-                          <form className="calendar-task__form" onSubmit={(event) => handleSubmitEdit(event, task.id)}>
+                          <form className="calendar-task__form" onSubmit={(event) => handleSubmitEdit(event, task)}>
                             <div className="calendar-task__form-row">
                               <label className="calendar-task__field">
                                 <span>Début</span>
@@ -1355,15 +1445,15 @@ return (
                             <div className="calendar-task__actions">
                               <button
                                 type="button"
-                                className="calendar-task__button calendar-task__button--ghost"
+                                className="calendar-task__button calendar-task__button--secondary"
                                 onClick={handleCancelEdit}
                               >
                                 Annuler
                               </button>
                               <button
                                 type="button"
-                                className="calendar-task__button calendar-task__button--ghost"
-                                onClick={() => handleDeleteTask(task.id)}
+                                className="calendar-task__button calendar-task__button--danger"
+                                onClick={() => handleDeleteTask(task)}
                               >
                                 Supprimer
                               </button>
@@ -1385,6 +1475,9 @@ return (
                                   </span>
                                 ) : (
                                   <>
+                                    {task.isRecurring ? (
+                                      <span className="calendar-task__recurrence-label">Récurrent</span>
+                                    ) : null}
                                     <button
                                       type="button"
                                       className="calendar-task__edit"
@@ -1394,23 +1487,9 @@ return (
                                       }}
                                       aria-label={`Dupliquer ${task.title}`}
                                     >
-                                      <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-                                        <path
-                                          d="M7 3.75A2.25 2.25 0 0 1 9.25 1.5h6A2.25 2.25 0 0 1 17.5 3.75v6A2.25 2.25 0 0 1 15.25 12h-6A2.25 2.25 0 0 1 7 9.75v-6Z"
-                                          fill="none"
-                                          stroke="currentColor"
-                                          strokeWidth="1.5"
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                        />
-                                        <path
-                                          d="M4.75 7.75A2.25 2.25 0 0 1 2.5 5.5v-1A2.25 2.25 0 0 1 4.75 2.25h1.5"
-                                          fill="none"
-                                          stroke="currentColor"
-                                          strokeWidth="1.5"
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                        />
+                                      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                        <rect x="9" y="9" width="11" height="11" rx="2" fill="none" stroke="currentColor" strokeWidth="1.7" />
+                                        <path d="M15 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
                                       </svg>
                                     </button>
                                     <button
@@ -1418,19 +1497,27 @@ return (
                                       className="calendar-task__edit"
                                       onClick={(event) => {
                                         event.stopPropagation()
-                                        handleEditClick(task.id)
+                                        handleEditClick(task)
                                       }}
                                       aria-label={`Modifier ${task.title}`}
                                     >
-                                      <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-                                        <path
-                                          d="m13.9 3.6 2.5 2.5M5.1 14.9 3.75 16.25l1.35-4.05L13.2 4.1a1.6 1.6 0 0 1 2.25 0l.45.45a1.6 1.6 0 0 1 0 2.25L7.8 14.9 5.1 15.6"
-                                          fill="none"
-                                          stroke="currentColor"
-                                          strokeWidth="1.5"
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                        />
+                                      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                        <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="m14.5 5.5 4 4" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+                                      </svg>
+                                    </button>
+                                    <button
+                                      type="button"
+                                      className="calendar-task__edit"
+                                      onClick={(event) => {
+                                        event.stopPropagation()
+                                        handleDeleteTask(task)
+                                      }}
+                                      aria-label={`Supprimer ${task.title}`}
+                                    >
+                                      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                        <path d="M4 7h16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+                                        <path d="M9 7V4h6v3M6.5 7l.8 13h9.4l.8-13M10 11v5M14 11v5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
                                       </svg>
                                     </button>
                                   </>
@@ -1456,31 +1543,97 @@ return (
           <div className="calendar-duplicate__backdrop" onClick={handleCloseDuplicate} aria-hidden="true" />
           <div className="calendar-duplicate__panel">
             <header className="calendar-duplicate__header">
-              <h2 id="calendar-duplicate-title">Dupliquer</h2>
+              <div className="wishlist-create__header">
+                <h2 id="calendar-duplicate-title">Dupliquer ou répéter</h2>
+                <p>« {duplicateTask.title} »</p>
+              </div>
               <button type="button" className="modal__close" onClick={handleCloseDuplicate} aria-label="Fermer">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                 </svg>
               </button>
             </header>
-            <p className="calendar-duplicate__subtitle">Dupliquer "{duplicateTask.title}"</p>
-            <label className="calendar-duplicate__field">
-              <span>Nombre de jours</span>
-              <input
-                className="calendar-duplicate__input"
-                type="number"
-                min={1}
-                value={duplicateDays}
-                onChange={(event) => setDuplicateDays(event.target.value)}
-              />
-            </label>
+            <div className="calendar-duplicate__mode calendar-view-toggle" role="group" aria-label="Type de duplication">
+              <button
+                type="button"
+                className={`calendar-view-toggle__button${duplicateMode === 'consecutive' ? ' is-active' : ''}`}
+                aria-pressed={duplicateMode === 'consecutive'}
+                onClick={() => {
+                  setDuplicateMode('consecutive')
+                  setDuplicateError(null)
+                }}
+              >
+                Jours consécutifs
+              </button>
+              <button
+                type="button"
+                className={`calendar-view-toggle__button${duplicateMode === 'weekly' ? ' is-active' : ''}`}
+                aria-pressed={duplicateMode === 'weekly'}
+                onClick={() => {
+                  setDuplicateMode('weekly')
+                  setDuplicateError(null)
+                }}
+              >
+                Récurrence
+              </button>
+            </div>
+            {duplicateMode === 'consecutive' ? (
+              <label className="calendar-duplicate__field">
+                <p className="editorial-field-label">Nombre de jours</p>
+                <input
+                  className="calendar-duplicate__input"
+                  type="number"
+                  min={1}
+                  value={duplicateDays}
+                  onChange={(event) => setDuplicateDays(event.target.value)}
+                />
+              </label>
+            ) : (
+              <fieldset className="calendar-duplicate__recurrence">
+                <legend className="editorial-field-label">Répéter chaque semaine</legend>
+                <div className="calendar-duplicate__weekdays">
+                  {recurrenceWeekdays.map((weekday) => {
+                    const isSelected = duplicateWeekdays.includes(weekday.value)
+                    return (
+                      <button
+                        key={weekday.value}
+                        type="button"
+                        className={`calendar-view-toggle__button${isSelected ? ' is-active' : ''}`}
+                        aria-pressed={isSelected}
+                        aria-label={weekday.label}
+                        onClick={() => {
+                          setDuplicateWeekdays((current) =>
+                            current.includes(weekday.value)
+                              ? current.filter((value) => value !== weekday.value)
+                              : [...current, weekday.value],
+                          )
+                          setDuplicateError(null)
+                        }}
+                      >
+                        {weekday.shortLabel}
+                      </button>
+                    )
+                  })}
+                </div>
+                <p>La série continuera sans date de fin. Supprime une occurrence pour arrêter toute la récurrence.</p>
+              </fieldset>
+            )}
             {duplicateError ? <p className="calendar-duplicate__error">{duplicateError}</p> : null}
-            <div className="calendar-duplicate__actions">
-              <button type="button" className="calendar-task__button calendar-task__button--ghost" onClick={handleCloseDuplicate}>
+            <div className="calendar-duplicate__actions calendar-modal__footer-actions">
+              <button
+                type="button"
+                className="calendar-hero__cta calendar-hero__cta--ghost sport-cancel-button-match"
+                onClick={handleCloseDuplicate}
+              >
                 Annuler
               </button>
-              <button type="button" className="calendar-task__button calendar-task__button--primary" onClick={handleConfirmDuplicate}>
-                Dupliquer
+              <button
+                type="button"
+                className="calendar-hero__cta calendar-hero__cta--primary sport-workout-button-match"
+                onClick={handleConfirmDuplicate}
+                disabled={isDuplicating}
+              >
+                {isDuplicating ? 'Enregistrement...' : duplicateMode === 'weekly' ? 'Créer la récurrence' : 'Dupliquer'}
               </button>
             </div>
           </div>

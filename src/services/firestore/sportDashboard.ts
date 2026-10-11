@@ -1,15 +1,20 @@
 import {
   deleteField,
+  documentId,
+  getDocs,
+  limit,
   onSnapshot,
+  orderBy,
+  query,
   serverTimestamp,
   setDoc,
   Timestamp,
+  where,
   type FirestoreError,
   type Unsubscribe,
 } from "firebase/firestore"
 import type { SportDashboardRecord, SportWeekBoardRecord } from "../../types/personalization"
-import { sportDashboardDocRef, sportWeeklyBoardDocRef } from "./userPaths"
-import { toMillis } from "./shared"
+import { sportDashboardDocRef, sportWeeklyBoardDocRef, sportWeeklyBoardsCollectionRef } from "./userPaths"
 
 type SportDashboardDoc = {
   quickItems?: SportDashboardRecord["quickItems"]
@@ -70,6 +75,26 @@ export const subscribeToSportWeekBoard = (
     },
     onError,
   )
+
+export const getLatestSportWeekBoardBefore = async (userId: string, weekKey: string) => {
+  const snapshot = await getDocs(
+    query(
+      sportWeeklyBoardsCollectionRef(userId),
+      where(documentId(), "<", weekKey),
+      orderBy(documentId(), "desc"),
+      limit(1),
+    ),
+  )
+  const document = snapshot.docs[0]
+  if (!document) return null
+
+  const data = document.data() as SportWeekBoardDoc
+  return {
+    weekKey: data.weekKey,
+    weekStartDate: data.weekStartDate,
+    days: Array.isArray(data.days) ? data.days : [],
+  } satisfies SportWeekBoardRecord
+}
 
 export const saveSportDashboard = async (userId: string, dashboard: SportDashboardRecord) => {
   await setDoc(

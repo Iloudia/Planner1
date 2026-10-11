@@ -44,6 +44,8 @@ const cosyActivitiesIllustrations: Record<string, ArticleIllustration> = {
   },
 }
 
+const cosyActivityGridImages = [reflectionImage, cafeImage, practiceImage, cityImage]
+
 const suggestedArticles = [
   {
     title: "Solo dates : apprendre à sortir seul et apprécier sa propre compagnie",
@@ -104,6 +106,81 @@ const renderMarkdown = (markdown: string, illustrations: Record<string, ArticleI
     const headingMatch = line.match(/^(#{1,3})\s+(.+)$/)
     if (headingMatch) {
       const heading = headingMatch[2]
+
+      if (heading === "Si tu as envie d’être productif") {
+        const categoryHeadings = new Set([
+          "Si tu as envie d’être productif",
+          "Si tu veux surtout te détendre",
+          "Si tu veux créer",
+          "Si tu as besoin de bouger",
+        ])
+        const cards: Array<{ title: string; introduction: string; items: string[] }> = []
+
+        while (index < lines.length && cards.length < 4) {
+          while (index < lines.length && (!lines[index].trim() || lines[index].trim() === "---")) {
+            index += 1
+          }
+
+          const categoryMatch = lines[index]?.trim().match(/^#{1,3}\s+(.+)$/)
+          if (!categoryMatch || !categoryHeadings.has(categoryMatch[1])) {
+            break
+          }
+
+          const title = categoryMatch[1]
+          let introduction = ""
+          const items: string[] = []
+          index += 1
+
+          while (index < lines.length && lines[index].trim() !== "---") {
+            const categoryLine = lines[index].trim()
+            if (!categoryLine) {
+              index += 1
+              continue
+            }
+
+            const itemMatch = categoryLine.match(/^\*\*(.+)\*\*$/)
+            if (itemMatch) {
+              items.push(itemMatch[1])
+            } else if (!introduction) {
+              introduction = categoryLine
+            }
+            index += 1
+          }
+
+          cards.push({ title, introduction, items })
+        }
+
+        while (index < lines.length && (!lines[index].trim() || lines[index].trim() === "---")) {
+          index += 1
+        }
+
+        blocks.push(
+          <div className="cosy-activity-grid" key={`cosy-activity-grid-${index}`}>
+            {cards.map((card, cardIndex) => (
+              <section className="cosy-activity-card" key={card.title}>
+                <ResponsiveSiteImage
+                  className="cosy-activity-card__image"
+                  src={cosyActivityGridImages[cardIndex]}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div className="cosy-activity-card__content">
+                  <h3>{card.title}</h3>
+                  {card.introduction && <p>{card.introduction}</p>}
+                  <ul>
+                    {card.items.map((item, itemIndex) => (
+                      <li key={itemIndex}>{renderInline(`**${item}**`, `cosy-activity-${cardIndex}-${itemIndex}`)}</li>
+                    ))}
+                  </ul>
+                </div>
+              </section>
+            ))}
+          </div>,
+        )
+        continue
+      }
+
       if (headingMatch[1].length === 3) {
         blocks.push(<h3 key={`heading-${index}`}>{renderInline(heading, `heading-${index}`)}</h3>)
       } else {

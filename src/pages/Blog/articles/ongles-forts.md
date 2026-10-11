@@ -1,46 +1,12 @@
 # Ongles : comment les rendre plus forts, éviter les cassures et protéger ses cuticules
 
-Tu essaies de faire pousser tes ongles.
+Tu essaies de faire pousser tes ongles et tout se passe bien pendant quelques semaines. Puis, un ongle se casse, un autre se dédouble, une petite peau apparaît autour de la cuticule… et tu as l’impression de devoir tout recommencer.
 
-Tout se passe bien pendant quelques semaines.
+Les ongles fragiles sont extrêmement fréquents. Ils peuvent se dédoubler, casser sur les côtés, se fissurer, devenir mous, présenter des stries ou simplement ne jamais réussir à conserver une certaine longueur.
 
-Puis l’un d’eux se casse.
+Face à ces problèmes, le premier réflexe est souvent de chercher un durcisseur, une huile miracle, de la biotine ou un soin censé accélérer la pousse des ongles.
 
-Un autre se dédouble.
-
-Une petite peau apparaît autour de la cuticule.
-
-Et tu as l’impression de devoir tout recommencer.
-
-Les ongles fragiles sont extrêmement fréquents.
-
-Ils peuvent :
-
-se dédoubler ;
-
-casser sur les côtés ;
-
-se fissurer ;
-
-devenir mous ;
-
-présenter des stries ;
-
-ou simplement ne jamais réussir à conserver une longueur importante.
-
-Le premier réflexe est souvent de chercher :
-
-un durcisseur ;
-
-une huile miracle ;
-
-de la biotine ;
-
-ou un soin censé faire pousser les ongles plus vite.
-
-Mais pour avoir des ongles plus solides, la première étape est souvent beaucoup plus simple :
-
-**réduire ce qui les fragilise au quotidien.**
+Pourtant, pour avoir des ongles plus solides, la première étape est souvent beaucoup plus simple : **réduire ce qui les fragilise au quotidien.**
 
 Les dermatologues identifient notamment l’exposition répétée à l’eau, certains produits ménagers, les traumatismes et la déshydratation comme des facteurs fréquents de fragilité des ongles.
 
@@ -48,955 +14,307 @@ Les dermatologues identifient notamment l’exposition répétée à l’eau, ce
 
 # De quoi est composé un ongle ?
 
-La partie dure que tu vois s’appelle la **plaque unguéale**.
+La partie dure que tu vois s’appelle la **plaque unguéale**. Elle est principalement constituée de kératine et produite par une structure située à sa base : **la matrice de l’ongle**.
 
-Elle est constituée principalement de kératine.
+Autour de cette plaque se trouvent plusieurs structures, notamment le lit de l’ongle, les replis de peau, l’hyponychium situé sous l’extrémité libre et la cuticule.
 
-Cette plaque est produite par une structure située à sa base :
+Ces différentes structures ne jouent pas seulement un rôle esthétique. Elles participent à la protection du doigt et forment une barrière contre les bactéries, les champignons et d’autres agressions extérieures.
 
-**la matrice de l’ongle.**
-
-Autour se trouvent notamment :
-
-le lit de l’ongle ;
-
-les replis de peau ;
-
-l’hyponychium sous l’extrémité libre ;
-
-et la cuticule.
-
-Ces différentes structures ne sont pas seulement esthétiques.
-
-Elles participent à la protection du doigt et créent une barrière contre les bactéries, les champignons et d’autres agressions extérieures.
-
-Cela explique pourquoi certaines pratiques de manucure très agressives peuvent provoquer plus de problèmes qu’elles n’en résolvent.
+C’est pourquoi certaines pratiques de manucure trop agressives peuvent finalement provoquer plus de problèmes qu’elles n’en résolvent.
 
 ---
 
 # 1. Pourquoi tes ongles cassent-ils ?
 
-Un ongle cassant n’a pas forcément une seule cause.
+Un ongle cassant n’a pas forcément une seule cause. Sa fragilité peut être liée à des lavages fréquents, des contacts répétés avec l’eau, l’utilisation de produits ménagers ou de dissolvants, des manucures répétées ou encore des traumatismes.
 
-La fragilité peut être liée à :
+D’autres facteurs peuvent également entrer en jeu, comme certaines maladies de l’ongle, des infections, le vieillissement ou, plus rarement, certains problèmes de santé générale.
 
-des lavages fréquents ;
+Une revue dermatologique consacrée aux ongles fragiles décrit plusieurs manifestations possibles : le dédoublement en couches, les fissures longitudinales, les ongles mous, la perte d’élasticité ou encore l’effritement.
 
-des contacts répétés avec l’eau ;
-
-des produits ménagers ;
-
-des dissolvants ;
-
-des manucures répétées ;
-
-des traumatismes ;
-
-certaines maladies de l’ongle ;
-
-certaines infections ;
-
-le vieillissement ;
-
-ou plus rarement certains problèmes de santé générale.
-
-Une revue dermatologique sur les ongles fragiles décrit notamment plusieurs manifestations :
-
-dédoublement en couches ;
-
-fissures longitudinales ;
-
-ongles mous ;
-
-perte d’élasticité ;
-
-effritement.
-
-Autrement dit :
-
-**“ongles fragiles” est un symptôme, pas forcément un diagnostic.**
+Autrement dit, **les « ongles fragiles » sont un symptôme, pas forcément un diagnostic.**
 
 ---
 
-# 2. Le dédoublement : quand l’ongle se sépare en couches
+# 2. Pourquoi l’eau peut-elle dédoubler et fragiliser les ongles ?
 
-Si le bord de ton ongle semble se décoller en petites couches, il peut s’agir d’un phénomène appelé **onychoschizie**.
+Si le bord de ton ongle se décolle en petites couches, il peut s’agir d’un phénomène appelé **onychoschizie**. Ce problème fréquent est notamment favorisé par des cycles répétés d’humidité et de séchage.
 
-C’est très fréquent.
+En effet, la plaque de l’ongle gonfle légèrement lorsqu’elle absorbe de l’eau, puis se rétracte en séchant. À force de se répéter, ce phénomène peut fragiliser sa structure et favoriser les dédoublements et les cassures.
 
-L’ongle subit des cycles répétés :
-
-mouillé ;
-
-sec ;
-
-mouillé ;
-
-sec.
-
-La plaque gonfle légèrement lorsqu’elle absorbe de l’eau puis se rétracte en séchant.
-
-Lorsque ce phénomène se répète continuellement, la structure peut devenir plus fragile.
-
-C’est notamment pour cela que les personnes qui :
-
-font beaucoup de vaisselle ;
-
-nettoient souvent ;
-
-travaillent régulièrement avec les mains dans l’eau
-
-peuvent développer davantage d’ongles cassants.
+Le problème n’est donc pas que **l’eau est mauvaise pour les ongles**, mais plutôt que **l’alternance répétée entre humidité et séchage**, surtout lorsqu’elle s’accompagne de savons, de détergents ou de produits nettoyants, peut les rendre plus fragiles.
 
 ---
 
-# 3. L’eau peut fragiliser les ongles
+# 3. Porte des gants pour les tâches ménagères
 
-Cela semble étrange.
+C’est probablement l’une des habitudes les plus efficaces, mais aussi les moins glamour de toute ta routine pour les ongles : **porter des gants** lorsque tu fais la vaisselle, nettoies la salle de bain, utilises des produits ménagers ou gardes les mains longtemps dans l’eau.
 
-On associe souvent l’eau à l’hydratation.
+Cette précaution est particulièrement importante si tu remarques que tes mains deviennent sèches, irritées ou que tes ongles commencent à se dédoubler.
 
-Mais laisser les ongles longtemps dans l’eau puis les laisser sécher encore et encore peut contribuer à leur fragilité.
+L’American Academy of Dermatology recommande d’ailleurs de limiter l’exposition prolongée à l’eau et aux produits chimiques agressifs lorsqu’on souffre d’ongles cassants.
 
-Le problème n’est pas :
-
-**“l’eau est mauvaise pour les ongles.”**
-
-Le problème est surtout :
-
-**l’alternance répétée eau-séchage**, particulièrement lorsqu’elle s’accompagne de savon, détergents et produits nettoyants.
-
-Le NHS recommande d’ailleurs de porter des gants lorsque les mains sont fréquemment dans l’eau ou exposées aux produits ménagers.
+Car même une huile très coûteuse ne pourra pas forcément compenser les effets de plusieurs heures passées quotidiennement au contact de détergents sans protection.
 
 ---
 
-# 4. Porte des gants pour les tâches ménagères
+# 4. Hydrate et protège tes mains, tes ongles et tes cuticules
 
-C’est probablement l’une des habitudes les plus efficaces et les moins glamour de toute ta routine ongles.
+La santé de tes ongles est étroitement liée à celle de tes mains. Lorsque la peau est constamment sèche, craquelée ou irritée, **le contour des ongles peut lui aussi se fragiliser**, favorisant l’inconfort, les petites peaux et les cassures.
 
-Vaisselle.
+**Hydratation quotidienne :**<br>
+Lorsque tu appliques une crème pour les mains, ne t’arrête pas à la peau des doigts. Masse également les ongles, les cuticules et la peau qui les entoure afin de maintenir une bonne hydratation. L’American Academy of Dermatology (AAD) recommande **d’hydrater régulièrement l’ensemble de ces zones**, notamment après les lavages ou l’utilisation de désinfectants.
 
-Nettoyage de la salle de bain.
+**Crèmes hydratantes légères, naturelles ou certifiées bio :**
 
-Produits ménagers.
+* Florame – Crème Mains Hydratante à l’Aloe Vera Bio
+* Avril Crème mains bio
+* Weleda – Crème Mains Apaisante
+* Melvita – Gelée Embellissante Mains & Ongles Bio
 
-Lavage prolongé.
+**Soin du soir et protection :**<br>
+L’idéal est d’appliquer une crème hydratante après chaque lavage et de privilégier, le soir, un soin plus riche comme une crème épaisse, un baume ou un peu de vaseline sur les zones très sèches. En complément du port de gants pour le ménage, choisir des produits nettoyants doux permet aussi de limiter les irritations.
 
-Porte des gants.
+**Crèmes riches pour les mains :**
 
-Particulièrement si tu remarques que tes mains deviennent :
+* Cattier Crème Mains Ultra-nourrissante
+* Crème Mains Nourrissante Melvita
+* Weleda Skin Food Soin réparateur
+* L’Occitane Crème Mains Karité 20 %
+* Beurre de Karité 100 % Bio Cattier
 
-sèches ;
+**Crème solaire :**<br>
+La protection des mains passe également par la prévention des effets du soleil. Souvent oubliées lors de l’application d’un soin solaire, **elles sont pourtant régulièrement exposées aux rayons UV**, qui peuvent favoriser les taches pigmentaires, les rides et d’autres signes de vieillissement cutané.
 
-irritées ;
-
-ou que tes ongles commencent à se dédoubler.
-
-L’American Academy of Dermatology recommande également de réduire l’exposition prolongée aux mains mouillées et aux produits chimiques agressifs lorsqu’on souffre d’ongles cassants.
-
-Une huile coûteuse ne compensera pas forcément des heures quotidiennes passées dans des détergents sans protection.
-
----
-
-# 5. Hydrate aussi tes ongles, pas uniquement tes mains
-
-Lorsque tu mets de la crème pour les mains, ne t’arrête pas aux doigts.
-
-Masse également :
-
-les ongles ;
-
-les cuticules ;
-
-la peau autour.
-
-L’AAD recommande notamment de réhydrater régulièrement les ongles, les cuticules et la peau environnante en cas d’ongles fragiles.
-
-Après avoir lavé tes mains :
-
-applique une crème.
-
-Le soir :
-
-tu peux utiliser quelque chose de plus riche.
-
-Par exemple :
-
-une crème épaisse ;
-
-un baume ;
-
-ou de la vaseline sur les zones très sèches.
-
-L’AAD conseille d’ailleurs l’utilisation régulière d’un hydratant sur les mains, les ongles et les cuticules pour limiter la sécheresse et les ongles cassants.
+**Lampes UV ou LED :**<br>
+Si tu réalises une manucure au gel nécessitant ce type de lampe, **applique une protection solaire à large spectre SPF 30 minimum sur les mains ou porte des gants de protection anti-UV** afin de limiter l’exposition de la peau pendant la séance.
 
 ---
 
-# 6. Les cuticules ne sont pas inutiles
+# 5. Les cuticules : à quoi servent-elles et faut-il les repousser ?
 
-La cuticule est souvent traitée comme un morceau de peau gênant qu’il faudrait supprimer pour obtenir une manucure propre.
+Souvent considérée comme une petite peau gênante, la cuticule joue pourtant **un rôle essentiel dans la protection de l’ongle**. Elle contribue à fermer l’espace entre la plaque unguéale et la peau située à sa base, formant ainsi une barrière naturelle contre les bactéries, les germes et les autres agressions extérieures.
 
-Mais elle joue un rôle de protection.
+C’est pourquoi l’American Academy of Dermatology (AAD) recommande de **ne pas couper les cuticules**, car leur retrait peut faciliter l’entrée de micro-organismes et augmenter le risque d’infection.
 
-Elle aide à fermer l’espace entre :
+Si tu souhaites les repousser pour des raisons esthétiques, fais-le **avec douceur et sans forcer**, de préférence lorsqu’elles sont ramollies après une douche ou un bain. Le geste doit rester délicat et ne provoquer ni douleur, ni brûlure, ni saignement.
 
-la plaque de l’ongle ;
-
-et la peau située à sa base.
-
-L’American Academy of Dermatology recommande donc de **ne pas couper les cuticules**, car cela facilite l’entrée de bactéries et d’autres germes et augmente le risque d’infection.
-
-La manucure la plus nette n’est donc pas forcément celle où toute la cuticule a disparu.
+**Une manucure soignée ne nécessite donc pas de faire disparaître les cuticules.** L’objectif est de préserver cette barrière protectrice tout en entretenant proprement le contour de l’ongle.
 
 ---
 
-# 7. Faut-il repousser les cuticules ?
+# 6. Arrête d’arracher les petites peaux
 
-Si tu veux les repousser pour des raisons esthétiques, fais-le avec douceur.
+Une petite peau se soulève autour de ton ongle et, presque instinctivement, tu tires dessus. Résultat : tu arraches beaucoup plus de peau que prévu, ce qui peut provoquer une douleur, un saignement ou une inflammation.
 
-Idéalement :
+Pour éviter ce problème, **ne tire jamais sur les petites peaux autour de tes ongles**. Si l’une d’elles te gêne, utilise plutôt un outil propre et adapté pour couper délicatement uniquement la partie de peau morte qui dépasse, sans toucher à la peau saine.
 
-après la douche ;
+Pense ensuite à bien hydrater la zone avec une crème ou un baume pour limiter la sécheresse.
 
-après un bain ;
-
-ou lorsque la peau est ramollie.
-
-Et surtout :
-
-pas besoin de forcer.
-
-L’AAD recommande de ne jamais couper ou repousser brutalement les cuticules. Si elles doivent être repoussées, cela devrait être fait doucement après les avoir ramollies.
-
-Si tu ressens :
-
-douleur ;
-
-brûlure ;
-
-saignement,
-
-tu es probablement allé trop loin.
+**Ce petit geste peut faire une vraie différence**, car il permet d’éviter les traumatismes inutiles et de préserver la peau fragile qui entoure tes ongles.
 
 ---
 
-# 8. Arrête d’arracher les petites peaux
+# 7. Se ronger les ongles fragilise aussi la peau environnante
 
-Une petite peau se soulève autour de l’ongle.
+L’onychophagie, plus connue sous le nom de **rongement des ongles**, ne fragilise pas seulement les ongles et la peau qui les entoure. Lorsqu’elle devient fréquente, cette habitude peut également avoir des conséquences sur les dents, les gencives, la mâchoire et, plus rarement, la santé digestive. Voici les principaux risques à connaître.
 
-Tu tires dessus.
+**Infections cutanées :**<br>
+Les petites fissures et les blessures provoquées autour des cuticules peuvent créer des portes d’entrée pour les bactéries, les champignons ou certains virus. Cela peut notamment favoriser une **paronychie aiguë ou un panaris**, reconnaissable à une zone rouge, chaude, gonflée et douloureuse autour de l’ongle. Le NHS recommande donc d’éviter de se ronger les ongles ou de mordiller la peau qui les entoure afin de limiter les blessures et les risques d’infection.
 
-Et soudain, tu viens d’arracher trois fois plus de peau que prévu.
+**Déformation des ongles :**<br>
+Les traumatismes répétés peuvent endommager les tissus qui participent à la croissance de l’ongle. Dans les formes chroniques ou sévères, **la repousse peut devenir irrégulière et la plaque rester plus courte, fragile ou déformée**.
 
-Le résultat :
+**Usure des dents :**<br>
+Le frottement répété des ongles contre les incisives peut favoriser leur usure et provoquer de petits traumatismes dentaires. À long terme, cette habitude peut également contribuer à des fissures, à une modification de l’alignement des dents ou, dans certains cas, à une atteinte de leurs racines.
 
-douleur ;
+**Problèmes de mâchoire :**<br>
+La pression répétée exercée pendant le rongement peut solliciter excessivement les muscles de la mâchoire et l’articulation temporo-mandibulaire. Chez certaines personnes qui se rongent les ongles de façon chronique, **des douleurs, des tensions ou un dysfonctionnement de cette articulation** peuvent apparaître.
 
-saignement ;
+**Santé des gencives :**<br>
+Les morceaux d’ongles et les bactéries transportées par les doigts peuvent irriter ou blesser les gencives. Des gonflements, des infections ou des abcès gingivaux ont notamment été décrits lorsque des fragments d’ongles se logent dans les tissus.
 
-inflammation.
+**Risques gastro-intestinaux :**<br>
+Porter régulièrement les doigts à la bouche augmente aussi l’exposition aux micro-organismes présents sous les ongles. Certaines bactéries d’origine intestinale, dont **Escherichia coli**, sont retrouvées plus fréquemment chez les personnes qui se rongent les ongles. **Avaler des fragments d’ongles et les germes qu’ils transportent peut donc augmenter le risque d’infection digestive**, même si cette complication n’est pas systématique.
 
-Lorsque tu as une petite peau :
+Si tu as tendance à te ronger les ongles lorsque tu es stressé, que tu t’ennuies ou que tu es concentré, essaie d’identifier les situations dans lesquelles cette habitude apparaît le plus souvent.
 
-ne l’arrache pas.
+**Plutôt que de simplement te répéter « Arrête », essaie de remplacer ce geste par une autre habitude**, comme manipuler un petit objet ou occuper tes mains autrement. Cela peut t’aider à réduire progressivement ce réflexe sans avoir à compter uniquement sur ta volonté.
 
-Coupe uniquement la partie morte avec un outil propre.
-
-Puis hydrate.
-
-Cette petite habitude peut réduire beaucoup de traumatismes autour des ongles.
-
----
-
-# 9. Se ronger les ongles fragilise aussi la peau environnante
-
-L’onychophagie — se ronger les ongles — peut provoquer :
-
-des bords irréguliers ;
-
-des traumatismes répétés ;
-
-des petites blessures autour de l’ongle.
-
-Le NHS recommande d’éviter de mordre les ongles ou la peau autour.
-
-Si tu te ronges les ongles surtout pendant :
-
-le stress ;
-
-l’ennui ;
-
-la concentration,
-
-essaie d’identifier les situations où le comportement apparaît.
-
-Tu peux parfois réduire l’habitude en remplaçant le geste plutôt qu’en essayant simplement de te dire :
-
-**« Arrête. »**
+Tu peux également essayer **un vernis amer anti-rongeage**. Son goût désagréable agit comme un rappel immédiat lorsque tu portes tes doigts à la bouche et peut aider à interrompre ce geste automatique. Cette solution est généralement plus utile lorsqu’elle accompagne l’identification des situations qui déclenchent l’envie de se ronger les ongles.
 
 ---
 
-# 10. Tes ongles ne sont pas des outils
+# 8. Tes ongles ne sont pas des outils
 
-Tu veux ouvrir une canette.
+Ouvrir une canette, décoller une étiquette, gratter une surface ou ouvrir un emballage… Ce sont des gestes du quotidien pour lesquels tu utilises peut-être tes ongles sans même t’en rendre compte.
 
-Décoller une étiquette.
+Pourtant, **utiliser ses ongles comme des outils peut contribuer à les fragiliser**. Chaque fois que tu exerces une pression importante sur leur surface, tu sollicites une plaque relativement fine qui peut, à force de traumatismes répétés, finir par se fissurer, se casser ou se dédoubler.
 
-Gratter quelque chose.
+Pour éviter cela, prends l’habitude **d’utiliser un objet adapté plutôt que tes ongles** lorsque tu dois ouvrir, gratter ou décoller quelque chose.
 
-Ouvrir un emballage.
-
-Et tu utilises ton ongle.
-
-Chaque fois, tu appliques une force importante sur une plaque relativement fine.
-
-Avec le temps, cela peut favoriser :
-
-fissures ;
-
-cassures ;
-
-dédoublements.
-
-Utilise un objet adapté.
-
-Cela semble évident.
-
-Mais c’est exactement le genre de petite habitude répétée qui peut expliquer pourquoi un ongle casse toujours au même endroit.
+Cela peut sembler évident, mais ce sont justement ces petits gestes répétés au quotidien qui peuvent expliquer pourquoi certains ongles finissent toujours par casser au même endroit.
 
 ---
 
-# 11. Lime tes ongles doucement
+# 9. Lime tes ongles doucement
 
-Une lime peut être utile pour éviter qu’un bord irrégulier accroche :
+Utiliser une lime à ongles peut être très utile pour lisser les bords irréguliers et éviter qu’ils ne s’accrochent aux vêtements, aux cheveux ou aux tissus, ce qui pourrait provoquer des cassures.
 
-un vêtement ;
+Cependant, **la manière dont tu limes tes ongles est tout aussi importante que le geste lui-même**. L’American Academy of Dermatology (AAD) recommande de limer les bords dans **une seule direction**, plutôt que d’effectuer des mouvements agressifs d’avant en arrière, qui peuvent contribuer à fragiliser la plaque de l’ongle.
 
-les cheveux ;
+L’objectif n’est donc pas de poncer fortement tes ongles, mais simplement de lisser délicatement les petites irrégularités pour éviter qu’ils ne s’accrochent et ne se cassent.
 
-un tissu.
-
-Mais la technique compte.
-
-L’American Academy of Dermatology recommande de lisser les bords avec une lime et de limer dans **une seule direction**, car un mouvement agressif d’avant en arrière peut fragiliser l’ongle.
-
-Tu n’as pas besoin de poncer fortement.
-
-Le but est simplement de supprimer les accroches.
+**Un limage doux et régulier est souvent préférable à un limage trop énergique**, qui risque d'abîmer davantage les ongles au lieu de les protéger.
 
 ---
 
-# 12. Garde une longueur adaptée à tes ongles
+# 10. Adapte la longueur et coupe tes ongles correctement
 
-Plus un ongle est long, plus son extrémité agit comme un levier.
+Plus un ongle est long, plus son extrémité agit comme un levier, ce qui augmente les contraintes exercées sur sa structure au quotidien. Si tes ongles sont naturellement fragiles, **conserver une longueur importante peut multiplier les risques de fissures, de dédoublements et de cassures**.
 
-Si tes ongles sont naturellement très fragiles :
+Lorsqu’ils sont particulièrement abîmés, réduis légèrement leur longueur afin de limiter les traumatismes et de laisser progressivement pousser une plaque en meilleur état. Cela ne signifie pas que tu dois renoncer définitivement aux ongles longs : **l’objectif est simplement d’adapter leur longueur à leur résistance actuelle**.
 
-garder trois centimètres de bord libre peut simplement multiplier les risques de casse.
+Pour les couper, l’American Academy of Dermatology (AAD) recommande de **suivre une ligne presque droite, puis d’arrondir légèrement les coins avec une lime** afin d’obtenir une forme nette et régulière.
 
-Pendant une période de récupération :
-
-réduis légèrement la longueur.
-
-L’objectif n’est pas d’abandonner définitivement les ongles longs.
-
-Mais parfois, quelques semaines avec des ongles plus courts permettent de limiter les traumatismes.
+Effectue de préférence la coupe après une douche, un bain ou quelques minutes dans l’eau tiède. Les ongles sont alors temporairement plus souples, ce qui facilite le geste et peut aider à limiter les fissures.
 
 ---
 
-# 13. Coupe tes ongles correctement
+# 11. Manucure gel : comment éviter de fragiliser ses ongles ?
 
-L’AAD recommande de couper les ongles des mains presque droit puis d’arrondir légèrement les coins avec une lime.
+Le vernis gel est apprécié pour sa brillance, sa résistance et sa longue tenue. Cependant, **des manucures gel répétées peuvent contribuer à fragiliser les ongles**, en favorisant les dédoublements, les fissures et les cassures.
 
-Un autre détail utile :
+Les dommages peuvent survenir à différentes étapes : préparation trop agressive, ponçage excessif, utilisation répétée d’acétone ou dépose réalisée en grattant la surface de l’ongle. Lorsque le gel commence à se décoller, il est également important de ne pas tirer dessus. **Arracher son vernis gel peut emporter une partie superficielle de la plaque unguéale**, laissant les ongles plus fins, rugueux et cassants.
 
-les ongles sont plus faciles à couper après :
+Pour les préserver, **utilise toujours une méthode de dépose adaptée au type de gel appliqué**. Si le produit est conçu pour être dissous, respecte la méthode et le temps de pose recommandés. S’il nécessite une dépose professionnelle, mieux vaut la confier à une personne qualifiée plutôt que de le gratter ou de l’arracher.
 
-une douche ;
+Cela ne signifie pas que tu dois renoncer définitivement au gel. En revanche, **si tes ongles sont déjà fragiles, espace les poses et prévois des périodes sans manucure artificielle** afin de limiter l’accumulation des agressions chimiques et mécaniques.
 
-un bain ;
-
-ou quelques minutes dans l’eau tiède,
-
-car ils sont temporairement plus souples.
-
-Cela peut limiter certaines fissures pendant la coupe.
+Après avoir retiré ton vernis, lave doucement tes mains, puis lime uniquement les bords irréguliers. Applique ensuite une crème riche et, si tu le souhaites, une huile sur les cuticules afin de réhydrater le contour des ongles.
 
 ---
 
-# 14. Attention au dissolvant
+# 12. Faux ongles et ponçage : comment limiter les dommages ?
 
-Le dissolvant peut assécher l’ongle et la peau autour.
+Les faux ongles peuvent contribuer à fragiliser les ongles naturels, notamment lorsqu’ils sont portés en continu ou retirés de manière trop agressive. À la longue, ils peuvent favoriser **l’amincissement de la plaque, la sécheresse, les fissures et les cassures**.
 
-L’AAD recommande notamment d’hydrater les ongles après avoir retiré du vernis, car les dissolvants peuvent être desséchants.
+Une partie de ces dommages peut survenir pendant la préparation ou la dépose. S’il est parfois nécessaire de travailler légèrement la surface de l’ongle, **un limage ou un ponçage excessif peut amincir la plaque**, la rendre plus souple, plus fragile et parfois plus sensible.
 
-Si tu changes de vernis très souvent :
+L’American Academy of Dermatology (AAD) conseille donc de **réserver les ongles artificiels à certaines occasions plutôt que de les porter en permanence**, surtout lorsque les ongles naturels sont déjà fragilisés. Une pose et une dépose réalisées avec douceur permettent également de limiter les traumatismes mécaniques.
 
-tes ongles subissent peut-être davantage de cycles :
-
-vernis ;
-
-dissolvant ;
-
-vernis ;
-
-dissolvant.
-
-Tu peux éventuellement espacer les changements ou choisir une routine qui demande moins de retrait fréquent.
+Faire une pause ne signifie pas que les ongles ont besoin de « respirer ». Elle sert surtout à **réduire les agressions physiques et chimiques répétées** et à laisser pousser progressivement une plaque moins abîmée. Si tes ongles deviennent aussi fins et souples que du papier après chaque dépose, cela peut indiquer qu’ils ont été trop poncés ou fragilisés.
 
 ---
 
-# 15. Les manucures gel peuvent fragiliser les ongles
+# 13. Les durcisseurs peuvent-ils aider ?
 
-Le gel est pratique.
+Certains durcisseurs et vernis protecteurs peuvent aider à renforcer temporairement les ongles en créant une couche protectrice qui limite les agressions mécaniques. Cependant, **tous les produits ne se valent pas et un ongle trop rigide n’est pas forcément plus résistant**, car il doit conserver une certaine flexibilité pour éviter de se casser.
 
-Brillant.
+Certaines formulations, notamment les plus fortes, peuvent également provoquer des irritations ou accentuer la fragilité des ongles.
 
-Résistant.
-
-Et tient longtemps.
-
-Mais des manucures gel répétées peuvent favoriser :
-
-fragilité ;
-
-dédoublement ;
-
-fissures.
-
-Le problème peut venir :
-
-des préparations agressives ;
-
-du ponçage ;
-
-de la dépose ;
-
-du grattage ;
-
-de l’acétone ;
-
-et de la répétition du processus.
-
-Cela ne signifie pas :
-
-**« Tu ne dois jamais faire de gel. »**
-
-Mais si tes ongles sont très fragiles, il peut être utile de réduire la fréquence et de leur laisser des périodes sans manucure artificielle.
+Si tes ongles sont particulièrement fragiles, **un dermatologue peut te conseiller un soin adapté à leur état et à la cause du problème**. L’American Academy of Dermatology (AAD) mentionne notamment certains vernis spécifiques parmi les solutions possibles lorsque l’hydratation et la réduction des facteurs aggravants ne suffisent pas.
 
 ---
 
-# 16. N’arrache jamais ton gel
+# 14. Une huile à cuticules est-elle utile ?
 
-Tu vois un petit morceau se décoller.
+Oui, une huile pour les ongles peut être utile, notamment grâce à **son effet émollient qui aide à assouplir la peau, à limiter la sécheresse des cuticules et à améliorer le confort de la zone autour des ongles**.
 
-Tu commences à tirer.
+En revanche, elle ne permet pas nécessairement d’accélérer la pousse des ongles. Son principal intérêt est surtout de réduire la sécheresse, l’apparition de petites peaux et l’envie d’arracher les cuticules, ce qui peut contribuer à préserver leur santé.
 
-Et cinq minutes plus tard :
-
-tout le gel est parti.
-
-Le problème est qu’il peut emporter avec lui une partie superficielle de la plaque.
-
-Résultat :
-
-ongle plus fin ;
-
-rugueux ;
-
-fragile.
-
-Si ton vernis gel est conçu pour être dissous :
-
-retire-le correctement.
-
-S’il nécessite une dépose professionnelle :
-
-fais-la correctement.
-
-Arracher le produit est probablement l’un des moyens les plus rapides de fragiliser tes ongles.
+**Pas besoin d’investir dans une huile coûteuse ou une formule particulièrement sophistiquée.** L’essentiel est de choisir un produit adapté et de l’appliquer régulièrement, car la constance fait souvent davantage de différence que le prix du soin.
 
 ---
 
-# 17. Et les faux ongles ?
+# 15. Les compléments sont-ils nécessaires ?
 
-Les faux ongles peuvent eux aussi entraîner :
+Les compléments alimentaires pour les cheveux et les ongles, comme la biotine, le zinc, les vitamines ou le collagène, sont aujourd’hui très populaires. Pourtant, **avoir des ongles fragiles ne signifie pas forcément que tu souffres d’une carence nutritionnelle**, notamment en biotine.
 
-amincissement ;
+Dans de nombreux cas, la fragilité des ongles est davantage liée à des facteurs environnementaux ou mécaniques, comme les lavages fréquents, les produits ménagers ou les manucures répétées.
 
-sécheresse ;
+Certaines études se sont intéressées aux effets de la biotine et d’autres compléments sur les ongles fragiles, mais **cela ne signifie pas qu’une supplémentation est nécessaire ou efficace pour tout le monde**.
 
-fragilité ;
-
-fissures,
-
-particulièrement lorsqu’ils sont utilisés continuellement ou retirés de manière agressive.
-
-L’AAD conseille notamment, si tu utilises des ongles artificiels, de les réserver éventuellement à certaines occasions plutôt que de les porter continuellement lorsque tes ongles naturels sont fragiles.
-
-Une pause ne signifie pas que l’ongle « respire ».
-
-L’ongle n’a pas de poumons.
-
-La pause permet surtout de limiter les agressions physiques et chimiques répétées.
+Si tes ongles deviennent soudainement très fragiles, changent d’apparence sans raison évidente ou présentent des anomalies accompagnées d’autres symptômes, **mieux vaut consulter un professionnel de santé pour en identifier la cause**, plutôt que de multiplier les compléments alimentaires sans savoir si tu en as réellement besoin.
 
 ---
 
-# 18. Fais attention au ponçage excessif
+# 16. L’alimentation compte quand même
 
-Pour préparer un ongle à recevoir certains produits, la surface peut être légèrement travaillée.
+Comme tout tissu produit par l’organisme, **la santé de tes ongles dépend aussi de ton état de santé général et de ton alimentation**. Une alimentation trop restrictive ou certaines carences nutritionnelles peuvent parfois contribuer à leur fragilité ou modifier leur apparence.
 
-Mais trop poncer peut rendre la plaque plus fine.
+Cependant, aucun aliment miracle ne permet de faire pousser les ongles à une vitesse spectaculaire. **Le plus important est d’adopter une alimentation variée et équilibrée**, apportant suffisamment de protéines, de vitamines et de minéraux pour soutenir leur croissance naturelle.
 
-Une plaque plus fine devient généralement :
-
-plus flexible ;
-
-plus fragile ;
-
-plus sensible.
-
-Les complications liées aux cosmétiques pour ongles peuvent justement inclure des dommages mécaniques et un amincissement de l’ongle.
-
-Si ton ongle naturel ressemble à du papier après chaque dépose :
-
-ce n’est pas un signe que le traitement le « renforce ».
+Plutôt que de multiplier les compléments alimentaires, mieux vaut privilégier de bonnes habitudes nutritionnelles. **Si une carence est suspectée, il est préférable de la faire confirmer par un professionnel de santé** afin de bénéficier d’une prise en charge adaptée.
 
 ---
 
-# 19. Les durcisseurs peuvent-ils aider ?
+# 17. Pourquoi les ongles deviennent-ils parfois plus fragiles avec l’âge ?
 
-Certains durcisseurs ou vernis protecteurs peuvent aider certaines personnes.
+Avec l’âge, il est normal que les ongles évoluent. Le NHS indique notamment qu’ils peuvent **devenir plus épais, plus cassants ou plus fragiles au fil du temps**, en raison des changements naturels liés au vieillissement.
 
-Ils créent une couche qui protège temporairement la plaque et peut limiter certaines agressions mécaniques.
+Cela ne signifie pas pour autant qu’il n’existe aucune solution pour en prendre soin. **Une hydratation régulière, une protection contre les contacts prolongés avec l’eau et des soins doux** restent essentiels pour limiter les agressions et préserver leur résistance.
 
-Mais tous les produits ne se valent pas.
-
-Et trop dur n’est pas toujours mieux.
-
-Un ongle doit conserver une certaine flexibilité.
-
-Certaines formulations anciennes ou très fortes peuvent aussi être irritantes.
-
-Si tu souffres réellement d’ongles très fragiles, un dermatologue peut recommander des produits adaptés à la cause. L’AAD mentionne notamment certains vernis spéciaux parmi les options utilisées lorsque l’hydratation et la suppression des facteurs aggravants ne suffisent pas.
+L’important est simplement **d’adapter ta routine et tes attentes à l’évolution naturelle de tes ongles**, plutôt que de chercher à retrouver à tout prix leur apparence d’autrefois.
 
 ---
 
-# 20. Une huile à cuticules est-elle utile ?
+# 18. Une routine simple pour des ongles plus forts
 
-Oui, surtout comme produit émollient.
+**Le matin — 2 minutes**
 
-Elle peut aider à maintenir :
+* Applique une goutte d’huile de jojoba sur chaque cuticule.
+* Masse doucement pendant 30 secondes.
+* Mets une crème hydratante sur tes mains.
 
-la peau plus souple ;
+**Dans la journée**
 
-les cuticules moins sèches ;
+* Évite de te ronger les ongles.
+* Porte des gants pour faire la vaisselle et le ménage.
+* N’utilise jamais tes ongles pour ouvrir des objets.
+* Garde-les légèrement arrondis pour limiter la casse.
 
-la zone autour de l’ongle plus confortable.
+**Le soir — 5 minutes**
 
-Elle ne fait pas forcément pousser l’ongle deux fois plus vite.
-
-Mais si elle t’aide à réduire :
-
-sécheresse ;
-
-petites peaux ;
-
-envie d’arracher les cuticules,
-
-elle peut être très utile dans une routine.
-
-Tu n’as pas nécessairement besoin d’un produit extrêmement sophistiqué.
-
-La régularité compte souvent davantage.
+* Masse tes cuticules avec de l’huile de jojoba.
+* Applique une crème riche ou un peu de vaseline autour des ongles.
+* Laisse agir toute la nuit.
 
 ---
 
-# 21. Tes mains ont également besoin de protection
+# 19. Combien de temps faut-il pour voir une amélioration ?
 
-La santé des ongles et celle des mains sont liées.
+Les ongles poussent lentement, ce qui signifie qu’**une plaque déjà très abîmée ne peut pas retrouver instantanément son état initial grâce à une crème ou à un soin**. Il faut laisser le temps à la nouvelle plaque, produite par la matrice, de pousser progressivement jusqu’à l’extrémité de l’ongle.
 
-Lorsque ta peau est constamment :
+Le NHS indique d’ailleurs qu’un ongle de la main perdu à la suite d’une blessure peut mettre **jusqu’à environ six mois pour repousser complètement**, ce qui donne une idée du temps nécessaire à son renouvellement.
 
-sèche ;
-
-craquelée ;
-
-irritée,
-
-la zone autour des ongles souffre aussi.
-
-Quelques habitudes simples :
-
-crème après le lavage ;
-
-gants pour le ménage ;
-
-produit nettoyant doux lorsque possible ;
-
-hydratation le soir.
-
-L’AAD recommande notamment une hydratation régulière des mains, ongles et cuticules en cas de sécheresse liée aux lavages répétés ou aux désinfectants.
+Si tu décides d’améliorer ta routine aujourd’hui, **ne t’attends donc pas à des résultats spectaculaires en quelques jours**. La patience et la régularité sont essentielles : les changements se remarquent généralement sur plusieurs semaines, voire plusieurs mois.
 
 ---
 
-# 22. Et le soleil sur les mains ?
+# 20. Quand un changement d’ongle mérite-t-il un avis médical ?
 
-Nous pensons souvent au SPF sur :
+La plupart des petits problèmes d’ongles sont sans gravité. Cependant, **certains changements doivent attirer ton attention**, notamment une modification inhabituelle de leur couleur ou de leur forme, un ongle qui se décolle, une douleur persistante ou un gonflement autour de l’ongle.
 
-le visage ;
+Il est également important de consulter si tu remarques **une rougeur accompagnée de chaleur, la présence de pus, des changements touchant plusieurs ongles ou une anomalie qui persiste sans raison évidente**.
 
-le cou.
+Le NHS recommande notamment de consulter lorsqu’un ongle change de couleur ou de forme sans explication, tombe spontanément ou lorsque la peau autour devient rouge, chaude, douloureuse et gonflée.
 
-Beaucoup moins aux mains.
-
-Pourtant, elles sont régulièrement exposées.
-
-L’AAD recommande la protection solaire des mains pour limiter les signes du vieillissement cutané.
-
-Et si tu utilises régulièrement une lampe pour manucure gel, l’AAD recommande également différentes précautions pour limiter l’exposition aux UV, notamment l’utilisation de protection adaptée.
-
----
-
-# 23. Les compléments sont-ils nécessaires ?
-
-Les compléments « cheveux et ongles » sont partout.
-
-Biotine.
-
-Zinc.
-
-Vitamines.
-
-Collagène.
-
-Mais les ongles fragiles ne signifient pas automatiquement :
-
-**« Je manque de biotine. »**
-
-La fragilité est très souvent liée à des facteurs environnementaux ou mécaniques.
-
-Certaines revues ont étudié la biotine et d’autres suppléments chez les personnes ayant des ongles fragiles, mais cela ne signifie pas que tout le monde devrait en prendre systématiquement.
-
-Si tes ongles changent fortement sans raison évidente ou s’accompagnent d’autres symptômes :
-
-il peut être plus utile de rechercher une cause avec un professionnel plutôt que d’acheter plusieurs compléments au hasard.
-
----
-
-# 24. L’alimentation compte quand même
-
-Comme tout tissu produit par l’organisme, l’ongle dépend de ta santé générale.
-
-Une alimentation très restrictive ou certaines carences peuvent parfois contribuer aux changements des ongles.
-
-Mais cela ne signifie pas qu’un aliment précis fera pousser les ongles à une vitesse spectaculaire.
-
-Une alimentation suffisamment :
-
-variée ;
-
-équilibrée ;
-
-avec suffisamment de protéines et de micronutriments
-
-est une base beaucoup plus logique qu’une accumulation de cures.
-
-Si une carence est suspectée :
-
-il vaut mieux la confirmer et la corriger spécifiquement.
-
----
-
-# 25. Pourquoi les ongles deviennent-ils parfois plus fragiles avec l’âge ?
-
-Le NHS indique qu’il est normal que les ongles puissent devenir :
-
-plus épais ;
-
-ou plus cassants
-
-avec l’âge.
-
-Cela ne signifie pas qu’il n’existe rien à faire.
-
-Hydratation.
-
-Protection contre l’eau.
-
-Réduction des agressions.
-
-Soins doux.
-
-Ces habitudes restent utiles.
-
-Mais les attentes doivent parfois être adaptées à l’évolution naturelle de l’ongle.
-
----
-
-# 26. Combien de temps faut-il pour voir une amélioration ?
-
-Un ongle pousse lentement.
-
-Si une partie de la plaque est déjà très abîmée, une crème ne peut pas la transformer immédiatement en ongle neuf.
-
-Il faut attendre que la nouvelle plaque produite par la matrice progresse vers l’extrémité.
-
-Le NHS indique qu’un ongle de la main perdu après une blessure peut mettre jusqu’à environ **six mois** à repousser complètement.
-
-Cela donne une bonne idée du rythme.
-
-Si tu modifies ta routine aujourd’hui :
-
-pense en mois.
-
-Pas en trois jours.
-
----
-
-# 27. Une routine simple pour des ongles plus forts
-
-## Chaque jour
-
-Applique une crème sur :
-
-tes mains ;
-
-tes ongles ;
-
-tes cuticules.
-
----
-
-## Pour le ménage
-
-Porte des gants.
-
----
-
-## Pour les cuticules
-
-Hydrate-les.
-
-Ne les coupe pas systématiquement.
-
----
-
-## Pour la longueur
-
-Lime les accroches.
-
-Garde une longueur compatible avec la résistance actuelle de tes ongles.
-
----
-
-## Pour les manucures
-
-Évite les déposes agressives.
-
-N’arrache jamais gel ou faux ongles.
-
----
-
-## Le soir
-
-Si tes mains sont très sèches :
-
-utilise une crème plus riche ou un baume sur les doigts et les cuticules.
-
-Simple.
-
-Mais beaucoup plus cohérent que dix produits utilisés au hasard.
-
----
-
-# 28. Routine express après une manucure
-
-Après avoir retiré ton vernis :
-
-### 1. Lave doucement tes mains
-
-### 2. Lime uniquement les bords irréguliers
-
-### 3. Applique une crème riche
-
-### 4. Ajoute éventuellement une huile sur les cuticules
-
-### 5. Évite de gratter ou poncer inutilement
-
-Puis laisse simplement tes ongles tranquilles.
-
-Ils n’ont pas besoin d’être manipulés en permanence pour être « entretenus ».
-
----
-
-# 29. Les erreurs qui fragilisent le plus souvent les ongles
-
-## Erreur 1 — Couper les cuticules
-
-Elles participent à la protection contre les infections.
-
-## Erreur 2 — Faire la vaisselle sans gants
-
-Les expositions répétées à l’eau et aux détergents favorisent la fragilité.
-
-## Erreur 3 — Arracher son gel
-
-Cela peut amincir la plaque.
-
-## Erreur 4 — Utiliser ses ongles comme outils
-
-## Erreur 5 — Limer très agressivement
-
-## Erreur 6 — Enchaîner constamment les faux ongles malgré une plaque déjà fragilisée
-
-## Erreur 7 — Négliger l’hydratation
-
-## Erreur 8 — Arracher les petites peaux
-
-## Erreur 9 — Se ronger les ongles
-
-## Erreur 10 — Croire qu’un complément suffit à compenser toutes les agressions quotidiennes
-
----
-
-# 30. Comment faire pousser ses ongles sans qu’ils cassent ?
-
-Le vrai objectif n’est pas forcément de faire pousser tes ongles beaucoup plus vite.
-
-Il est souvent de :
-
-**conserver la longueur déjà produite.**
-
-Si ton ongle pousse mais casse constamment :
-
-tu ne verras jamais cette croissance.
-
-La stratégie devient donc :
-
-moins d’agressions ;
-
-plus de protection ;
-
-plus d’hydratation ;
-
-longueur raisonnable ;
-
-patience.
-
-Exactement comme pour les cheveux :
-
-**la rétention de longueur compte presque autant que la pousse.**
-
----
-
-# 31. Quand un changement d’ongle mérite-t-il un avis médical ?
-
-La plupart des petits problèmes d’ongles ne sont pas graves.
-
-Mais consulte si tu remarques :
-
-un changement important de couleur sans explication ;
-
-une modification inhabituelle de la forme ;
-
-un ongle qui se décolle ;
-
-une douleur persistante ;
-
-un gonflement ;
-
-une zone rouge et chaude autour de l’ongle ;
-
-du pus ;
-
-une modification importante touchant plusieurs ongles ;
-
-ou un changement qui persiste sans raison évidente.
-
-Le NHS recommande notamment de consulter lorsqu’un ongle change de couleur ou de forme sans cause claire, tombe sans explication ou lorsque la peau autour devient douloureuse, rouge, chaude et gonflée.
-
-L’AAD rappelle également que certaines modifications de couleur, texture ou forme peuvent parfois signaler une infection ou, plus rarement, une maladie nécessitant une évaluation.
+L’American Academy of Dermatology (AAD) rappelle également que **certaines modifications de la couleur, de la texture ou de la forme des ongles peuvent révéler une infection ou, plus rarement, un problème de santé nécessitant une évaluation médicale**.
 
 ---
 
 # En résumé : des ongles plus forts viennent surtout de meilleures habitudes
 
-Si tes ongles cassent continuellement, tu n’as pas nécessairement besoin d’un produit miracle.
+Si tes ongles cassent continuellement, tu n’as pas forcément besoin d’investir dans un produit miracle. **La première étape consiste à identifier les habitudes qui peuvent les fragiliser au quotidien** : contacts fréquents avec l’eau, produits ménagers, manucures gel répétées, déposes agressives, cuticules coupées, mains sèches ou encore utilisation des ongles comme outils.
 
-Commence par regarder ce qu’ils subissent chaque jour.
+En effet, **la fragilité des ongles est souvent favorisée par les agressions extérieures, les traumatismes répétés et la sécheresse**. C’est pourquoi les gestes les plus simples peuvent parfois faire une réelle différence.
 
-**Beaucoup d’eau ?**
+Pour préserver tes ongles, privilégie **le port de gants, une hydratation régulière, la protection des cuticules et un limage doux**. Évite également d’arracher ton vernis gel, limite les manucures agressives et laisse le temps à la nouvelle plaque de pousser naturellement.
 
-**Produits ménagers ?**
+N’oublie pas que **tu n’as pas besoin d’avoir des ongles extrêmement longs pour avoir de beaux ongles**. Des ongles courts, réguliers, bien hydratés et confortables peuvent être en bien meilleur état que des ongles longs qui se fissurent constamment.
 
-**Manucures gel répétées ?**
-
-**Déposes agressives ?**
-
-**Cuticules coupées ?**
-
-**Mains très sèches ?**
-
-**Ongles utilisés comme outils ?**
-
-Les ongles fragiles sont souvent favorisés par l’environnement, les traumatismes et l’altération de leur hydratation.
-
-Les gestes les plus simples sont donc parfois les plus efficaces :
-
-**porter des gants ;**
-
-**hydrater régulièrement ;**
-
-**protéger les cuticules ;**
-
-**limer doucement ;**
-
-**éviter d’arracher le gel ;**
-
-**réduire les agressions répétées ;**
-
-**et attendre que la nouvelle plaque pousse.**
-
-Tu n’as pas besoin d’avoir des ongles extrêmement longs pour avoir de beaux ongles.
-
-Des ongles courts, réguliers, hydratés et confortables peuvent être beaucoup plus sains qu’une longueur importante constamment fissurée.
-
-Et surtout :
-
-**tes cuticules ne sont pas ton ennemie.**
-
-Elles font partie du système qui protège tes ongles.
-
----
-
-## La règle simple à retenir
-
-Si tu veux des ongles plus forts :
-
-**Pour les protéger :**
-
-> Gants pour l’eau et les produits ménagers.
-
-**Pour éviter la sécheresse :**
-
-> Crème sur les mains, les ongles et les cuticules.
-
-**Pour les cuticules :**
-
-> Hydrate-les plutôt que de les couper.
-
-**Pour les manucures :**
-
-> Retire les produits correctement, sans arracher.
-
-**Pour la longueur :**
-
-> Évite les traumatismes et laisse le temps à la nouvelle plaque de pousser.
-
-Le résultat ne se joue pas uniquement dans ton flacon d’huile à cuticules.
-
-Il se joue surtout dans ce que tes mains vivent chaque jour.
+Et surtout, **tes cuticules ne sont pas tes ennemies**. Elles jouent un rôle essentiel dans la protection de tes ongles et méritent autant d’attention que le reste de ta routine.
 
 ---
 
@@ -1009,5 +327,7 @@ Il se joue surtout dans ce que tes mains vivent chaque jour.
 * **Nail fragility syndrome and its treatment.** Revue détaillant notamment le rôle des tâches ménagères, de l’exposition environnementale et des différentes causes possibles de fragilité unguéale.
 * **American Academy of Dermatology — Gel manicures: Tips for healthy nails.** Recommandations sur les risques de fragilité, fissures, cuticules et utilisation répétée du gel.
 * **American Academy of Dermatology — Artificial nails: tips for reducing nail damage.** Informations sur les effets possibles des ongles artificiels et les moyens de réduire les dommages.
+* **American Academy of Dermatology — How to stop biting your nails.** Conseils sur les lésions, les infections et les méthodes permettant de réduire progressivement le rongement des ongles.
+* **Update on Diagnosis and Management of Onychophagia and Onychotillomania.** Revue médicale consacrée aux complications unguéales, cutanées, dentaires, gingivales et articulaires de l’onychophagie.
 * Haneke E., **Anatomy of the nail unit and the nail biopsy.** Revue anatomique de la matrice, du lit de l’ongle, de l’hyponychium et de la cuticule.
 

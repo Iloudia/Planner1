@@ -2,7 +2,7 @@ import modeImage from "../../../assets/Mode.webp"
 import styleImage from "../../../assets/noeud-papillon.webp"
 import wardrobeImage from "../../../assets/l-b-dupe.webp"
 import materialImage from "../../../assets/tuany-kohler-dupe.webp"
-import qualityImage from "../../../assets/ruby--dupe.webp"
+import natureColorsImage from "../../../assets/nature-match-paon.webp"
 import BlogCategoryTemplate from "./BlogCategoryTemplate"
 
 const BlogFashionPage = () => (
@@ -44,11 +44,11 @@ const BlogFashionPage = () => (
       image: materialImage,
     }}
     fourthArticle={{
-      slug: "article-4",
-      title: "Qualité : comment reconnaître un vêtement bien construit sans se fier uniquement au prix",
-      description: "Apprendre à inspecter les coutures, les finitions, la matière et la coupe pour mieux évaluer un vêtement.",
-      readingTime: "31 min de lecture",
-      image: qualityImage,
+      slug: "couleurs-nature",
+      title: "Si la nature dit que c’est un match, c’est un match",
+      description: "Observer les palettes naturelles pour oser de nouvelles associations de couleurs et les adapter à son style.",
+      readingTime: "14 min de lecture",
+      image: natureColorsImage,
     }}
   />
 )

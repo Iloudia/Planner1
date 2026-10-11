@@ -6,11 +6,15 @@ import styleImage from "../../../assets/noeud-papillon.webp"
 import moodboardImage from "../../../assets/MoodBoard.webp"
 import wardrobeImage from "../../../assets/l-b-dupe.webp"
 import signatureImage from "../../../assets/tuany-kohler-dupe.webp"
-import qualityImage from "../../../assets/ruby--dupe.webp"
+import natureColorsImage from "../../../assets/nature-match-paon.webp"
+import kingfisherImage from "../../../assets/nature-match-martin-pecheur.webp"
+import sunsetImage from "../../../assets/nature-match-coucher-soleil.webp"
+import flowerImage from "../../../assets/nature-match-fleur.webp"
+import agateImage from "../../../assets/nature-match-agate.webp"
 import styleMarkdown from "./style-personnel.md?raw"
 import capsuleWardrobeMarkdown from "./capsule-wardrobe.md?raw"
 import clothingMaterialsMarkdown from "./matieres-vetements.md?raw"
-import clothingQualityMarkdown from "./qualite-vetement.md?raw"
+import natureColorsMarkdown from "./couleurs-nature.md?raw"
 import "../../SelfLove/SelfLoveHome.css"
 import "./BlogMentalArticlePage.css"
 
@@ -61,18 +65,22 @@ const clothingMaterialsIllustrations: Record<string, ArticleIllustration> = {
   },
 }
 
-const clothingQualityIllustrations: Record<string, ArticleIllustration> = {
-  "2. Regarde si les coutures sont régulières": {
-    image: qualityImage,
-    alt: "Miroir à main, brosse à cheveux et accessoires roses",
+const natureColorsIllustrations: Record<string, ArticleIllustration> = {
+  "3. Le martin-pêcheur : turquoise et orange brûlé": {
+    image: kingfisherImage,
+    alt: "Martin-pêcheur au plumage bleu turquoise et orange brûlé",
   },
-  "23. La matière compte, mais pas uniquement sa composition": {
-    image: styleImage,
-    alt: "Nœud en ruban rose pâle",
+  "4. Le coucher de soleil : corail, terracotta, rose et violet": {
+    image: sunsetImage,
+    alt: "Coucher de soleil aux nuances corail, roses, violettes et bleu profond",
   },
-  "50. Le test des 60 secondes en magasin": {
-    image: wardrobeImage,
-    alt: "Livre ouvert et tasse de thé sur un lit",
+  "5. Les fleurs : bordeaux, magenta et vert": {
+    image: flowerImage,
+    alt: "Fleur bordeaux et magenta entourée de feuillage vert",
+  },
+  "6. Les minéraux : ocre, caramel, crème et bleu ardoise": {
+    image: agateImage,
+    alt: "Strates minérales ocre, caramel, crème et bleu ardoise",
   },
 }
 
@@ -96,10 +104,10 @@ const suggestedArticles = [
     href: "/blog/mode/article-3",
   },
   {
-    title: "Qualité : comment reconnaître un vêtement bien construit sans se fier uniquement au prix",
-    description: "Apprendre à inspecter les coutures, les finitions, la matière et la coupe d’un vêtement.",
-    image: qualityImage,
-    href: "/blog/mode/article-4",
+    title: "Si la nature dit que c’est un match, c’est un match",
+    description: "Observer les palettes naturelles pour créer des associations de couleurs plus audacieuses et cohérentes.",
+    image: natureColorsImage,
+    href: "/blog/mode/couleurs-nature",
   },
 ]
 
@@ -216,14 +224,14 @@ const fashionArticles: Record<string, {
     illustrations: clothingMaterialsIllustrations,
     recommendationsDescription: "Continue ta lecture autour des matières, du style et de choix vestimentaires plus adaptés.",
   },
-  "article-4": {
-    markdown: clothingQualityMarkdown,
-    eyebrow: "Mode · Qualité",
-    readingTime: "31 min de lecture",
-    image: qualityImage,
-    imageAlt: "Miroir à main, brosse à cheveux et accessoires roses",
-    illustrations: clothingQualityIllustrations,
-    recommendationsDescription: "Continue ta lecture autour de la qualité, des matières et de choix vestimentaires plus durables.",
+  "couleurs-nature": {
+    markdown: natureColorsMarkdown,
+    eyebrow: "Mode · Couleurs",
+    readingTime: "14 min de lecture",
+    image: natureColorsImage,
+    imageAlt: "Détail de plumes de paon aux nuances bleues, vertes et bronze",
+    illustrations: natureColorsIllustrations,
+    recommendationsDescription: "Continue ta lecture autour des couleurs, du style personnel et d’une garde-robe plus cohérente.",
   },
 }
 

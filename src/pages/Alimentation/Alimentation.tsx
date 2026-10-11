@@ -2,6 +2,7 @@
 import { Link, useNavigate } from "react-router-dom"
 import type { TouchEvent } from "react"
 import { useAuth } from "../../context/AuthContext"
+import ModalCloseButton from "../../components/ModalCloseButton"
 import PageLoader from "../../components/PageLoader"
 import useUserDietData from "../../hooks/useUserDietData"
 import { getWeekKey } from "../../utils/weekKey"
@@ -72,6 +73,20 @@ const getNextMondayMidnight = (reference: Date) => {
 
 const normalizeMealTitle = (value: string) => value.trim().toLowerCase()
 
+const getPreviousWeekKey = (currentWeekKey: string) => {
+  const currentMonday = new Date(`${currentWeekKey}T12:00:00`)
+  currentMonday.setDate(currentMonday.getDate() - 7)
+  return getWeekKey(currentMonday)
+}
+
+const formatWeekPeriod = (startDate: string) => {
+  const monday = new Date(`${startDate}T12:00:00`)
+  const sunday = new Date(monday)
+  sunday.setDate(monday.getDate() + 6)
+  const format = (date: Date) => date.toLocaleDateString("fr-FR", { day: "numeric", month: "long" })
+  return `${format(monday)} au ${format(sunday)}`
+}
+
 function DietPage() {
   const navigate = useNavigate()
   const { isAuthReady, userId } = useAuth()
@@ -87,17 +102,41 @@ function DietPage() {
     error,
     updateMeal,
     saveShoppingNotes,
+    duplicateWeekPlan,
   } = useUserDietData(weekKey)
   const weekCarouselTouchStartXRef = useRef<number | null>(null)
   const weekCarouselTouchDeltaXRef = useRef(0)
   const canEdit = Boolean(userId)
   const isAlimentationLoading = !isAuthReady || isLoading
+  const [isDuplicateDialogOpen, setIsDuplicateDialogOpen] = useState(false)
+  const [isDuplicatingWeek, setIsDuplicatingWeek] = useState(false)
+  const [duplicateFeedback, setDuplicateFeedback] = useState<{
+    tone: "success" | "warning" | "error"
+    message: string
+  } | null>(null)
   useEffect(() => {
     document.body.classList.add("alimentation-page--lux")
     return () => {
       document.body.classList.remove("alimentation-page--lux")
     }
   }, [])
+
+  useEffect(() => {
+    if (!isDuplicateDialogOpen) return
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !isDuplicatingWeek) {
+        setIsDuplicateDialogOpen(false)
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [isDuplicateDialogOpen, isDuplicatingWeek])
+
+  useEffect(() => {
+    if (!duplicateFeedback) return
+    const timeoutId = window.setTimeout(() => setDuplicateFeedback(null), 5000)
+    return () => window.clearTimeout(timeoutId)
+  }, [duplicateFeedback])
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -156,6 +195,12 @@ function DietPage() {
   const weeklyPlan = weekPlan.meals as WeeklyPlan
   const shoppingNotes = weekPlan.shoppingNotes
   const hasMultipleWeekCards = weekDays.length > 1
+  const previousWeekKey = useMemo(() => getPreviousWeekKey(weekKey), [weekKey])
+  const previousWeekPeriod = useMemo(() => formatWeekPeriod(previousWeekKey), [previousWeekKey])
+  const hasCurrentMeals = useMemo(
+    () => weekDays.some((day) => mealSlots.some((slot) => weeklyPlan[day][slot.id].trim())),
+    [weeklyPlan],
+  )
 
   const recipeLookup = useMemo(() => {
     const map = new Map<string, RecipeSnapshot>()
@@ -232,6 +277,34 @@ function DietPage() {
   const handleMealChange = async (day: typeof weekDays[number], slot: MealSlotId, value: string) => {
     if (!canEdit) return
     await updateMeal(day, slot, value)
+  }
+
+  const handleDuplicatePreviousWeek = async () => {
+    if (!canEdit || isDuplicatingWeek) return
+    setIsDuplicatingWeek(true)
+    setDuplicateFeedback(null)
+    try {
+      const result = await duplicateWeekPlan(previousWeekKey)
+      setIsDuplicateDialogOpen(false)
+      if (result === "empty") {
+        setDuplicateFeedback({
+          tone: "warning",
+          message: "Aucun repas enregistré dans le planning de la semaine précédente.",
+        })
+        return
+      }
+      setDuplicateFeedback({
+        tone: "success",
+        message: "Le planning de la semaine précédente a bien été dupliqué.",
+      })
+    } catch {
+      setDuplicateFeedback({
+        tone: "error",
+        message: "La duplication n’a pas pu être effectuée. Réessaie dans quelques instants.",
+      })
+    } finally {
+      setIsDuplicatingWeek(false)
+    }
   }
 
   const getRecipeForSlot = (day: typeof weekDays[number], slot: MealSlotId) => {
@@ -373,8 +446,31 @@ function DietPage() {
               <h2>Planning des repas de la semaine</h2>
               
             </div>
-            <p className="diet-week__range">{weekRangeLabel}</p>
+            <div className="diet-week__header-actions">
+              <p className="diet-week__range">{weekRangeLabel}</p>
+              <button
+                type="button"
+                className="diet-week__duplicate-button"
+                onClick={() => setIsDuplicateDialogOpen(true)}
+                disabled={!canEdit || isDuplicatingWeek}
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="8" y="8" width="11" height="11" rx="1" />
+                  <path d="M16 8V5H5v11h3" />
+                </svg>
+                Dupliquer la semaine précédente
+              </button>
+            </div>
           </header>
+          {duplicateFeedback ? (
+            <p
+              className={`diet-week__duplicate-feedback is-${duplicateFeedback.tone}`}
+              role="status"
+              aria-live="polite"
+            >
+              {duplicateFeedback.message}
+            </p>
+          ) : null}
           {isMobileWeekCarousel ? (
             <>
               <div className="diet-week__carousel">
@@ -468,6 +564,54 @@ function DietPage() {
             </div>
           </div>
         </section>
+
+        {isDuplicateDialogOpen ? (
+          <div className="diet-week-duplicate" role="presentation">
+            <div
+              className="diet-week-duplicate__backdrop"
+              onClick={() => {
+                if (!isDuplicatingWeek) setIsDuplicateDialogOpen(false)
+              }}
+            />
+            <section
+              className="diet-week-duplicate__panel"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="diet-week-duplicate-title"
+            >
+              <ModalCloseButton
+                onClick={() => {
+                  if (!isDuplicatingWeek) setIsDuplicateDialogOpen(false)
+                }}
+                ariaLabel="Fermer la confirmation"
+              />
+              <span className="diet-week-duplicate__eyebrow">Planning hebdomadaire</span>
+              <h2 id="diet-week-duplicate-title">Dupliquer la semaine précédente&nbsp;?</h2>
+              <p>
+                Les repas du <strong>{previousWeekPeriod}</strong> seront copiés dans le planning de cette semaine.
+                {hasCurrentMeals ? " Les repas déjà saisis seront remplacés." : ""} La liste de courses restera inchangée.
+              </p>
+              <div className="diet-week-duplicate__actions">
+                <button
+                  type="button"
+                  className="diet-week-duplicate__cancel"
+                  onClick={() => setIsDuplicateDialogOpen(false)}
+                  disabled={isDuplicatingWeek}
+                >
+                  Annuler
+                </button>
+                <button
+                  type="button"
+                  className="diet-week-duplicate__confirm"
+                  onClick={() => void handleDuplicatePreviousWeek()}
+                  disabled={isDuplicatingWeek}
+                >
+                  {isDuplicatingWeek ? "Duplication…" : "Dupliquer"}
+                </button>
+              </div>
+            </section>
+          </div>
+        ) : null}
     </>
   )
 }

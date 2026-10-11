@@ -1056,3 +1056,216 @@ body.alimentation-page--lux .diet-generator__ideas span {
   color: var(--lux-ink);
 }
 
+.diet-week__header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+
+body.alimentation-page--lux .diet-week__duplicate-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: 2.65rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid #132542;
+  background: #132542;
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: calc(var(--font-size-button) * var(--user-font-scale));
+  font-weight: var(--font-weight-action);
+  line-height: var(--leading-control);
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.diet-week__duplicate-button svg {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+body.alimentation-page--lux .diet-week__duplicate-button:hover:not(:disabled) {
+  border-color: #1d385f;
+  background: #1d385f;
+}
+
+body.alimentation-page--lux .diet-week__duplicate-button:focus-visible,
+body.alimentation-page--lux .diet-week-duplicate__cancel:focus-visible,
+body.alimentation-page--lux .diet-week-duplicate__confirm:focus-visible {
+  outline: 2px solid rgba(19, 37, 66, 0.35);
+  outline-offset: 3px;
+}
+
+.diet-week__duplicate-button:disabled,
+.diet-week-duplicate__cancel:disabled,
+.diet-week-duplicate__confirm:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.diet-week__duplicate-feedback {
+  margin: 1rem 0 0;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid rgba(19, 37, 66, 0.22);
+  background: rgba(19, 37, 66, 0.05);
+  color: #132542;
+  font-family: var(--font-body);
+  font-size: calc(var(--font-size-body) * var(--user-font-scale));
+  line-height: var(--leading-body);
+}
+
+.diet-week__duplicate-feedback.is-warning {
+  border-color: rgba(137, 90, 20, 0.3);
+  background: rgba(174, 118, 34, 0.08);
+  color: #70470c;
+}
+
+.diet-week__duplicate-feedback.is-error {
+  border-color: rgba(142, 29, 63, 0.28);
+  background: rgba(142, 29, 63, 0.07);
+  color: #7c1c39;
+}
+
+.diet-week-duplicate {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+}
+
+.diet-week-duplicate__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(19, 37, 66, 0.38);
+  backdrop-filter: blur(3px);
+}
+
+.diet-week-duplicate__panel {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 33rem);
+  padding: clamp(1.65rem, 4vw, 2.35rem);
+  padding-right: clamp(3.75rem, 7vw, 4.5rem);
+  border: 1px solid var(--lux-line, #d8d0c7);
+  background: #ffffff;
+  color: #132542;
+  box-shadow: none;
+}
+
+.diet-week-duplicate__eyebrow {
+  display: block;
+  margin-bottom: 0.65rem;
+  color: #687386;
+  font-family: var(--font-body);
+  font-size: calc(var(--font-size-overline) * var(--user-font-scale));
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.diet-week-duplicate__panel h2 {
+  margin: 0;
+  color: #132542;
+  font-family: var(--font-heading);
+  font-size: clamp(1.45rem, 4vw, 2rem);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.diet-week-duplicate__panel p {
+  margin: 1rem 0 0;
+  color: #4d596b;
+  font-family: var(--font-body);
+  font-size: calc(var(--font-size-body) * var(--user-font-scale));
+  line-height: 1.65;
+}
+
+.diet-week-duplicate__panel strong {
+  color: #132542;
+  font-weight: 650;
+}
+
+.diet-week-duplicate__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.6rem;
+}
+
+body.alimentation-page--lux .diet-week-duplicate__cancel,
+body.alimentation-page--lux .diet-week-duplicate__confirm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.65rem;
+  padding: 0.65rem 1.15rem;
+  font-family: var(--font-body);
+  font-size: calc(var(--font-size-button) * var(--user-font-scale));
+  font-weight: var(--font-weight-action);
+  line-height: var(--leading-control);
+  cursor: pointer;
+}
+
+body.alimentation-page--lux .diet-week-duplicate__cancel {
+  border: 1px solid #132542;
+  background: #ffffff;
+  color: #132542;
+}
+
+body.alimentation-page--lux .diet-week-duplicate__cancel:hover:not(:disabled) {
+  background: #f3f5f7;
+}
+
+body.alimentation-page--lux .diet-week-duplicate__confirm {
+  border: 1px solid #132542;
+  background: #132542;
+  color: #ffffff;
+}
+
+body.alimentation-page--lux .diet-week-duplicate__confirm:hover:not(:disabled) {
+  border-color: #1d385f;
+  background: #1d385f;
+}
+
+@media (max-width: 640px) {
+  .diet-week__header-actions {
+    width: 100%;
+    align-items: stretch;
+    justify-content: flex-start;
+  }
+
+  .diet-week__header-actions .diet-week__range,
+  body.alimentation-page--lux .diet-week__duplicate-button {
+    width: 100%;
+    white-space: normal;
+  }
+
+  .diet-week-duplicate__panel {
+    padding: 1.5rem;
+    padding-top: 3.75rem;
+  }
+
+  .diet-week-duplicate__actions {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  body.alimentation-page--lux .diet-week-duplicate__cancel,
+  body.alimentation-page--lux .diet-week-duplicate__confirm {
+    width: 100%;
+  }
+}
+

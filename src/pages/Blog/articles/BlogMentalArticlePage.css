@@ -159,7 +159,7 @@ body.mental-article-page--tone {
   margin: clamp(1.5rem, 3vw, 2.5rem) 0 clamp(2rem, 4vw, 3.25rem);
   overflow: hidden;
   border: 1px solid var(--color-border-strong);
-  background: #f4efe8;
+  background: #ffffff;
 }
 
 .mental-article__illustration img {
@@ -167,6 +167,137 @@ body.mental-article-page--tone {
   width: 100%;
   height: clamp(18rem, 40vw, 31rem);
   object-fit: cover;
+}
+
+.nail-routine-grid,
+.cerne-routine-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1rem, 2vw, 1.5rem);
+  margin: clamp(1.5rem, 3vw, 2.5rem) 0 clamp(2rem, 4vw, 3.25rem);
+}
+
+.nail-routine-card,
+.cerne-routine-card {
+  overflow: hidden;
+  border: 1px solid var(--color-border-strong);
+  background: #ffffff;
+}
+
+.nail-routine-card__image,
+.cerne-routine-card__image {
+  display: block;
+  width: 100%;
+  height: clamp(11rem, 17vw, 14rem);
+  object-fit: cover;
+}
+
+.nail-routine-card__content,
+.cerne-routine-card__content {
+  padding: clamp(1.1rem, 2vw, 1.5rem);
+}
+
+.mental-article__content .nail-routine-card__content h3,
+.mental-article__content .cerne-routine-card__content h3 {
+  margin: 0 0 1rem;
+  font-size: clamp(1.1rem, 1.8vw, 1.35rem) !important;
+}
+
+.mental-article__content .nail-routine-card__content ul,
+.mental-article__content .cerne-routine-card__content ul {
+  margin: 0;
+}
+
+.cosy-activity-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1rem, 2vw, 1.5rem);
+  margin: clamp(1.5rem, 3vw, 2.5rem) 0 clamp(2rem, 4vw, 3.25rem);
+}
+
+.cosy-activity-card {
+  overflow: hidden;
+  border: 1px solid var(--color-border-strong);
+  background: #ffffff;
+}
+
+.cosy-activity-card__image {
+  display: block;
+  width: 100%;
+  height: clamp(11rem, 17vw, 14rem);
+  object-fit: cover;
+}
+
+.cosy-activity-card__content {
+  padding: clamp(1.25rem, 2.5vw, 1.75rem);
+}
+
+.mental-article__content .cosy-activity-card__content h3 {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.1rem, 1.8vw, 1.35rem) !important;
+}
+
+.mental-article__content .cosy-activity-card__content p {
+  margin: 0 0 0.75rem;
+}
+
+.mental-article__content .cosy-activity-card__content ul {
+  margin: 0;
+}
+
+.hand-cream-feature {
+  position: relative;
+  display: flex;
+  min-height: 25rem;
+  align-items: center;
+  justify-content: flex-end;
+  margin: 0.5rem 0 2rem;
+  overflow: hidden;
+  background: #eee9e4;
+}
+
+.hand-cream-feature__content {
+  position: relative;
+  z-index: 1;
+  width: min(56%, 32rem);
+  margin: clamp(1.25rem, 3vw, 2.25rem);
+  padding: clamp(1.4rem, 3vw, 2.2rem);
+  border: 1px solid rgba(74, 59, 49, 0.2);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(0.4rem);
+}
+
+.mental-article__content .hand-cream-feature__content p {
+  margin: 0 0 1rem;
+}
+
+.mental-article__content .hand-cream-feature__content ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mental-article__content .hand-cream-feature__content li {
+  position: relative;
+  padding: 0.65rem 0 0.65rem 1.25rem;
+  border-top: 1px solid rgba(74, 59, 49, 0.16);
+  line-height: 1.45 !important;
+}
+
+.mental-article__content .hand-cream-feature__content li::before {
+  position: absolute;
+  left: 0;
+  color: var(--color-chocolate);
+  content: "—";
+}
+
+.hand-cream-feature__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 52%;
 }
 
 .self-love-rituals.mental-article-recommendations {
@@ -249,6 +380,18 @@ body.mental-article-page--tone {
     height: clamp(18rem, 58vw, 26rem);
   }
 
+  .nail-routine-grid,
+  .cerne-routine-grid,
+  .cosy-activity-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .nail-routine-card__image,
+  .cerne-routine-card__image,
+  .cosy-activity-card__image {
+    height: clamp(13rem, 48vw, 20rem);
+  }
+
 }
 
 @media (max-width: 560px) {
@@ -268,5 +411,24 @@ body.mental-article-page--tone {
 
   .mental-article__illustration img {
     height: 15rem;
+  }
+
+  .hand-cream-feature__content {
+    width: min(68%, 29rem);
+  }
+
+  .mental-article__content .hand-cream-feature__content ul {
+    display: block;
+  }
+
+  .hand-cream-feature {
+    min-height: 29rem;
+    align-items: flex-end;
+  }
+
+  .hand-cream-feature__content {
+    width: calc(100% - 2rem);
+    margin: 1rem;
+    padding: 1.15rem;
   }
 }

@@ -48,7 +48,7 @@ const normalizeProducts = (value: unknown) => {
 
 const mergeProductsPreservingLocalCategory = (localProducts: StoredProduct[], incomingProducts: StoredProduct[]) => {
   const localById = new Map(localProducts.map((product) => [product.id, product]))
-  const merged = incomingProducts.map((product) => {
+  return incomingProducts.map((product) => {
     const localProduct = localById.get(product.id)
     if (!localProduct) {
       return product
@@ -65,10 +65,6 @@ const mergeProductsPreservingLocalCategory = (localProducts: StoredProduct[], in
       mockup: localMockup,
     }
   })
-
-  const incomingIds = new Set(merged.map((product) => product.id))
-  const missingLocalProducts = localProducts.filter((product) => !incomingIds.has(product.id))
-  return [...merged, ...missingLocalProducts]
 }
 
 const readLocalProducts = () => {
@@ -196,16 +192,13 @@ export const updateCustomProduct = (product: BoutiqueProduct) => {
   })()
 }
 
-export const deleteCustomProduct = (productId: string) => {
-  const existing = loadCustomProducts()
-  const next = existing.filter((item) => item.id !== productId)
-  writeProducts(next)
-  void (async () => {
-    const synced = await pushRemoteUpdate({ action: "delete", productId })
-    if (synced) {
-      writeProducts(synced)
-    }
-  })()
+export const deleteCustomProduct = async (productId: string) => {
+  const synced = await pushRemoteUpdate({ action: "delete", productId })
+  if (!synced) {
+    throw new Error("Impossible de supprimer cette fiche produit pour le moment.")
+  }
+  writeProducts(synced)
+  return synced
 }
 
 export const compactCustomProducts = () => {
