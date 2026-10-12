@@ -1,4 +1,5 @@
 import { formatPublicationDate, getBlogArticleByHref } from "./blogArticles"
+import { useBlogPublishing } from "../../context/BlogPublishingContext"
 
 type BlogPublicationDateProps = {
   href: string
@@ -6,13 +7,17 @@ type BlogPublicationDateProps = {
 }
 
 const BlogPublicationDate = ({ href, className }: BlogPublicationDateProps) => {
-  const article = getBlogArticleByHref(href)
+  const { getArticle } = useBlogPublishing()
+  const article = getArticle(href)
+  const staticArticle = getBlogArticleByHref(href)
+  const publicationDate = article?.publicationDate || staticArticle?.publicationDate
 
-  if (!article) return null
+  if (!publicationDate) return null
 
   return (
     <p className={className}>
-      Publié le <time dateTime={article.publicationDate}>{formatPublicationDate(article.publicationDate)}</time>.
+      {article?.status === "draft" ? "Date prévue : " : "Publié le "}
+      <time dateTime={publicationDate}>{formatPublicationDate(publicationDate)}</time>.
     </p>
   )
 }

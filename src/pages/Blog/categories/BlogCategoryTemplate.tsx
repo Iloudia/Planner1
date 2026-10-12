@@ -1,7 +1,10 @@
 import { useEffect } from "react"
 import { Link, useSearchParams } from "react-router-dom"
 import ResponsiveSiteImage from "../../../components/ResponsiveSiteImage"
-import BlogPublicationDate from "../BlogPublicationDate"
+import BlogAdminActions from "../../../components/BlogAdminActions"
+import { useAuth } from "../../../context/AuthContext"
+import { useBlogPublishing } from "../../../context/BlogPublishingContext"
+import { formatPublicationDate } from "../blogArticles"
 import LatestBlogArticlesSection from "../LatestBlogArticlesSection"
 import type { BlogCategory } from "../blogArticles"
 import "../BlogPage.css"
@@ -97,127 +100,18 @@ const BlogCategoryTemplate = ({
   introTitle,
   introParagraphs,
   sectionDescription,
-  articleDescription,
-  articleCount = 24,
-  articleBasePath,
-  firstArticle,
-  secondArticle,
-  thirdArticle,
-  fourthArticle,
-  fifthArticle,
-  sixthArticle,
-  seventhArticle,
-  eighthArticle,
-  ninthArticle,
 }: BlogCategoryTemplateProps) => {
+  const { isAdmin } = useAuth()
+  const { articles } = useBlogPublishing()
   const [searchParams, setSearchParams] = useSearchParams()
-  const testArticles = Array.from({ length: articleCount }, (_, index) => ({
-    id: index + 1,
-    title: index === 0 && firstArticle
-      ? firstArticle.title
-      : index === 1 && secondArticle
-        ? secondArticle.title
-        : index === 2 && thirdArticle
-          ? thirdArticle.title
-          : index === 3 && fourthArticle
-            ? fourthArticle.title
-            : index === 4 && fifthArticle
-              ? fifthArticle.title
-              : index === 5 && sixthArticle
-                ? sixthArticle.title
-                : index === 6 && seventhArticle
-                  ? seventhArticle.title
-                  : index === 7 && eighthArticle
-                    ? eighthArticle.title
-                    : index === 8 && ninthArticle
-                      ? ninthArticle.title
-        : `Article ${category} ${index + 1}`,
-    description: index === 0 && firstArticle
-      ? firstArticle.description
-      : index === 1 && secondArticle
-        ? secondArticle.description
-        : index === 2 && thirdArticle
-          ? thirdArticle.description
-          : index === 3 && fourthArticle
-            ? fourthArticle.description
-            : index === 4 && fifthArticle
-              ? fifthArticle.description
-              : index === 5 && sixthArticle
-                ? sixthArticle.description
-                : index === 6 && seventhArticle
-                  ? seventhArticle.description
-                  : index === 7 && eighthArticle
-                    ? eighthArticle.description
-                    : index === 8 && ninthArticle
-                      ? ninthArticle.description
-        : articleDescription,
-    readingTime: index === 0 && firstArticle
-      ? firstArticle.readingTime
-      : index === 1 && secondArticle
-        ? secondArticle.readingTime
-        : index === 2 && thirdArticle
-          ? thirdArticle.readingTime
-          : index === 3 && fourthArticle
-            ? fourthArticle.readingTime
-            : index === 4 && fifthArticle
-              ? fifthArticle.readingTime
-              : index === 5 && sixthArticle
-                ? sixthArticle.readingTime
-                : index === 6 && seventhArticle
-                  ? seventhArticle.readingTime
-                  : index === 7 && eighthArticle
-                    ? eighthArticle.readingTime
-                    : index === 8 && ninthArticle
-                      ? ninthArticle.readingTime
-        : `${4 + (index % 5)} min de lecture`,
-    image: index === 0 && firstArticle?.image
-      ? firstArticle.image
-      : index === 1 && secondArticle?.image
-        ? secondArticle.image
-        : index === 2 && thirdArticle?.image
-          ? thirdArticle.image
-          : index === 3 && fourthArticle?.image
-            ? fourthArticle.image
-            : index === 4 && fifthArticle?.image
-              ? fifthArticle.image
-              : index === 5 && sixthArticle?.image
-                ? sixthArticle.image
-                : index === 6 && seventhArticle?.image
-                  ? seventhArticle.image
-                  : index === 7 && eighthArticle?.image
-                    ? eighthArticle.image
-                    : index === 8 && ninthArticle?.image
-                      ? ninthArticle.image
-        : headerImage,
-    href: articleBasePath
-      ? `${articleBasePath}/${index === 0 && firstArticle
-        ? firstArticle.slug
-        : index === 1 && secondArticle
-          ? secondArticle.slug
-          : index === 2 && thirdArticle
-            ? thirdArticle.slug
-            : index === 3 && fourthArticle
-              ? fourthArticle.slug
-              : index === 4 && fifthArticle
-                ? fifthArticle.slug
-                : index === 5 && sixthArticle
-                  ? sixthArticle.slug
-                  : index === 6 && seventhArticle
-                    ? seventhArticle.slug
-                    : index === 7 && eighthArticle
-                      ? eighthArticle.slug
-                      : index === 8 && ninthArticle
-                        ? ninthArticle.slug
-          : `article-${index + 1}`}`
-      : undefined,
-  }))
-  const totalPages = Math.ceil(testArticles.length / ARTICLES_PER_PAGE)
+  const categoryArticles = articles.filter((article) => article.category === category)
+  const totalPages = Math.max(1, Math.ceil(categoryArticles.length / ARTICLES_PER_PAGE))
   const requestedPage = Number(searchParams.get("page"))
   const currentPage = Number.isInteger(requestedPage) && requestedPage > 0
     ? Math.min(requestedPage, totalPages)
     : 1
   const firstArticleIndex = (currentPage - 1) * ARTICLES_PER_PAGE
-  const visibleArticles = testArticles.slice(firstArticleIndex, firstArticleIndex + ARTICLES_PER_PAGE)
+  const visibleArticles = categoryArticles.slice(firstArticleIndex, firstArticleIndex + ARTICLES_PER_PAGE)
   const articlesId = `${slug}-articles`
   const articlesTitleId = `${articlesId}-title`
 
@@ -235,6 +129,7 @@ const BlogCategoryTemplate = ({
 
   return (
     <div className="blog-health-page">
+      <BlogAdminActions />
       <header className="blog-header">
         <div className="blog-header__media">
           <ResponsiveSiteImage src={headerImage} alt={headerImageAlt} preload />
@@ -260,19 +155,21 @@ const BlogCategoryTemplate = ({
           <p>{sectionDescription}</p>
         </header>
 
-        <div className="blog-articles-grid">
-          {visibleArticles.map((article) => {
+        {visibleArticles.length > 0 ? (
+          <div className="blog-articles-grid">
+            {visibleArticles.map((article) => {
             const cardContent = (
               <>
               <div className="blog-card__image">
-                <ResponsiveSiteImage src={article.image} alt="" loading="lazy" decoding="async" />
+                <ResponsiveSiteImage src={article.imageUrl || headerImage} alt={article.imageAlt} loading="lazy" decoding="async" />
               </div>
               <div className="blog-card__body">
+                {isAdmin ? <span className={`blog-card__admin-status blog-card__admin-status--${article.status}`}>{article.status === "published" ? "Publié" : "Brouillon"}</span> : null}
                 <div className="blog-card__meta">
                   <span>{category}</span>
                   <span>{article.readingTime}</span>
                 </div>
-                {article.href && <BlogPublicationDate className="blog-card__date" href={article.href} />}
+                {article.publicationDate ? <time className="blog-card__date" dateTime={article.publicationDate}>{article.status === "draft" ? "Date prévue : " : "Publié le "}{formatPublicationDate(article.publicationDate)}</time> : null}
                 <h3>{article.title}</h3>
                 <p>{article.description}</p>
                 <span className="blog-text-link">Lire l’article</span>
@@ -285,15 +182,18 @@ const BlogCategoryTemplate = ({
                 className="blog-card blog-card--clickable"
                 to={article.href}
                 aria-label={`Lire : ${article.title}`}
-                key={article.id}
+                key={article.href}
               >
                 {cardContent}
               </Link>
             ) : (
-              <article className="blog-card" key={article.id}>{cardContent}</article>
+              <article className="blog-card" key={article.href}>{cardContent}</article>
             )
-          })}
-        </div>
+            })}
+          </div>
+        ) : !isAdmin ? (
+          <p className="blog-empty-state">Aucun article n’a encore été publié dans cette catégorie.</p>
+        ) : null}
 
         <nav className="blog-pagination" aria-label={`Pagination des articles ${category}`}>
           <button type="button" onClick={() => changePage(currentPage - 1)} disabled={currentPage === 1}>

@@ -67,5 +67,16 @@ service cloud.firestore {
         allow read, write: if isOwner(userId) && isPlannerCollection(collectionName);
       }
     }
+
+    match /blogArticles/{articleId} {
+      allow get: if isAdmin() || resource.data.status == "published";
+      allow list: if isAdmin() || resource.data.status == "published";
+      allow create, update: if isAdmin() &&
+        request.resource.data.href is string &&
+        request.resource.data.title is string &&
+        request.resource.data.content is string &&
+        request.resource.data.status in ["draft", "published"];
+      allow delete: if isAdmin();
+    }
   }
 }

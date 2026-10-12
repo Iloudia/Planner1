@@ -1,7 +1,11 @@
 import { Fragment, useEffect, type ReactNode } from "react"
 import { Link, useParams } from "react-router-dom"
 import ResponsiveSiteImage from "../../../components/ResponsiveSiteImage"
+import BlogAdminArticleControls from "../../../components/BlogAdminArticleControls"
+import { useBlogPublishing } from "../../../context/BlogPublishingContext"
 import BlogPublicationDate from "../BlogPublicationDate"
+import BlogMarkdownContent from "../BlogMarkdownContent"
+import { buildArticleMarkdown, getMarkdownBody } from "../blogMarkdown"
 import styleImage from "../../../assets/noeud-papillon.webp"
 import moodboardImage from "../../../assets/MoodBoard.webp"
 import wardrobeImage from "../../../assets/l-b-dupe.webp"
@@ -237,7 +241,36 @@ const fashionArticles: Record<string, {
 
 const BlogFashionArticlePage = () => {
   const { articleSlug } = useParams()
-  const article = articleSlug ? fashionArticles[articleSlug] : undefined
+  const articleHref = `/blog/mode/${articleSlug ?? ""}`
+  const { getArticle } = useBlogPublishing()
+  const cmsArticle = getArticle(articleHref)
+  const staticArticle = articleSlug ? fashionArticles[articleSlug] : undefined
+  const hasSavedContent = Boolean(cmsArticle?.isPersisted)
+  const article = staticArticle
+    ? hasSavedContent && cmsArticle
+      ? {
+          ...staticArticle,
+          markdown: buildArticleMarkdown(cmsArticle.title, cmsArticle.content),
+          eyebrow: cmsArticle.eyebrow || staticArticle.eyebrow,
+          readingTime: cmsArticle.readingTime || staticArticle.readingTime,
+          image: cmsArticle.imageUrl || staticArticle.image,
+          imageAlt: cmsArticle.imageAlt || staticArticle.imageAlt,
+        }
+      : staticArticle
+    : cmsArticle
+      ? {
+          markdown: buildArticleMarkdown(cmsArticle.title, cmsArticle.content),
+          eyebrow: cmsArticle.eyebrow || cmsArticle.category,
+          readingTime: cmsArticle.readingTime,
+          image: cmsArticle.imageUrl || styleImage,
+          imageAlt: cmsArticle.imageAlt,
+          illustrations: {},
+          recommendationsDescription: "Continue ta lecture autour du style, des couleurs et d’une garde-robe plus personnelle.",
+        }
+      : undefined
+  const editorArticle = cmsArticle && staticArticle && !cmsArticle.isPersisted
+    ? { ...cmsArticle, eyebrow: staticArticle.eyebrow, content: getMarkdownBody(staticArticle.markdown) }
+    : cmsArticle
 
   useEffect(() => {
     document.body.classList.add("mental-article-page--tone")
@@ -264,11 +297,13 @@ const BlogFashionArticlePage = () => {
   const articleBody = markdownLines.slice(titleIndex + 1).join("\n")
   const recommendations = suggestedArticles
     .filter((suggestion) => suggestion.href !== `/blog/mode/${articleSlug}`)
+    .filter((suggestion) => Boolean(getArticle(suggestion.href)))
     .slice(0, 3)
 
   return (
     <div className="mental-article-page">
       <Link className="mental-article-page__back" to="/blog/mode">← Retour aux articles Mode</Link>
+      {editorArticle ? <BlogAdminArticleControls article={editorArticle} /> : null}
 
       <article className="mental-article">
         <header className="mental-article__header">
@@ -282,7 +317,9 @@ const BlogFashionArticlePage = () => {
           </div>
         </header>
 
-        <div className="mental-article__content">{renderMarkdown(articleBody, article.illustrations)}</div>
+        <div className="mental-article__content">
+          {!staticArticle && cmsArticle ? <BlogMarkdownContent content={cmsArticle.content} /> : renderMarkdown(articleBody, article.illustrations)}
+        </div>
         <BlogPublicationDate className="mental-article__published-date" href={`/blog/mode/${articleSlug}`} />
       </article>
 

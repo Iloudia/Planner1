@@ -1,18 +1,23 @@
 import { Fragment, useEffect, type ReactNode } from "react"
 import { Link, useParams } from "react-router-dom"
 import ResponsiveSiteImage from "../../../components/ResponsiveSiteImage"
+import BlogAdminArticleControls from "../../../components/BlogAdminArticleControls"
+import { useBlogPublishing } from "../../../context/BlogPublishingContext"
 import BlogPublicationDate from "../BlogPublicationDate"
+import BlogMarkdownContent from "../BlogMarkdownContent"
+import { buildArticleMarkdown, getMarkdownBody } from "../blogMarkdown"
 import darkCirclesImage from "../../../assets/En finir avec les cernes.jpeg"
 import selfCareImage from "../../../assets/selflove.webp"
+import pinkManicureImage from "../../../assets/reine-jalloul-dupe.jpeg"
 import routineImage from "../../../assets/Routine.webp"
 import sleepImage from "../../../assets/Sommeil.jpeg"
 import betterSleepImage from "../../../assets/Avoir un meilleure sommeil.jpeg"
 import iceCubesImage from "../../../assets/glaçons.jpeg"
 import darkCirclesTypesImage from "../../../assets/Les différents types de cernes.png"
 import manicure2Image from "../../../assets/Manicure2.jpeg"
-import manicureImage from "../../../assets/Manicure.jpeg"
-import manicure3Image from "../../../assets/Manicure3.jpeg"
-import manicure4Image from "../../../assets/Manicure4.jpeg"
+import glossyNudeManicureImage from "../../../assets/Manucure nude brillante au soleil.png"
+import elegantNudeManicureImage from "../../../assets/Manucure nude sur main élégante.png"
+import babyBoomerFrenchManicureImage from "../../../assets/Manucure française effet baby-boomer.png"
 import manicure8Image from "../../../assets/Manucure8.jpeg"
 import goldenCuticleOilImage from "../../../assets/Soin des cuticules à l’huile dorée.png"
 import waterImage from "../../../assets/Eau.jpeg"
@@ -63,20 +68,21 @@ const strongNailsIllustrations: Record<string, ArticleIllustration> = {
     objectPosition: "center 85%",
   },
   "6. Arrête d’arracher les petites peaux": {
-    image: selfCareImage,
-    alt: "Bouquet de ballons roses en forme de cœur",
+    image: pinkManicureImage,
+    alt: "Main présentant une manucure rose nude",
+    objectPosition: "center 20%",
   },
-  "11. Manucure gel : comment éviter de fragiliser ses ongles ?": {
+  "11. Manucure gel et faux ongles : comment limiter les dommages ?": {
     image: manicure8Image,
     alt: "Soin des ongles après une manucure gel",
   },
-  "14. Une huile à cuticules est-elle utile ?": {
+  "13. Une huile à cuticules est-elle utile ?": {
     image: goldenCuticleOilImage,
     alt: "Soin des cuticules à l’huile dorée",
   },
 }
 
-const strongNailsRoutineImages = [manicureImage, manicure3Image, manicure4Image]
+const strongNailsRoutineImages = [glossyNudeManicureImage, elegantNudeManicureImage, babyBoomerFrenchManicureImage]
 const darkCirclesRoutineImages = [darkCirclesImage, routineImage, selfCareImage]
 
 const suggestedArticles = [
@@ -375,7 +381,36 @@ const healthBeautyArticles: Record<string, {
 
 const BlogHealthBeautyArticlePage = () => {
   const { articleSlug } = useParams()
-  const article = articleSlug ? healthBeautyArticles[articleSlug] : undefined
+  const articleHref = `/blog/sante-beaute/${articleSlug ?? ""}`
+  const { getArticle } = useBlogPublishing()
+  const cmsArticle = getArticle(articleHref)
+  const staticArticle = articleSlug ? healthBeautyArticles[articleSlug] : undefined
+  const hasSavedContent = Boolean(cmsArticle?.isPersisted)
+  const article = staticArticle
+    ? hasSavedContent && cmsArticle
+      ? {
+          ...staticArticle,
+          markdown: buildArticleMarkdown(cmsArticle.title, cmsArticle.content),
+          eyebrow: cmsArticle.eyebrow || staticArticle.eyebrow,
+          readingTime: cmsArticle.readingTime || staticArticle.readingTime,
+          image: cmsArticle.imageUrl || staticArticle.image,
+          imageAlt: cmsArticle.imageAlt || staticArticle.imageAlt,
+        }
+      : staticArticle
+    : cmsArticle
+      ? {
+          markdown: buildArticleMarkdown(cmsArticle.title, cmsArticle.content),
+          eyebrow: cmsArticle.eyebrow || cmsArticle.category,
+          readingTime: cmsArticle.readingTime,
+          image: cmsArticle.imageUrl || darkCirclesImage,
+          imageAlt: cmsArticle.imageAlt,
+          illustrations: {},
+          recommendationsDescription: "Continue ta lecture autour des soins, de la beauté et du bien-être au quotidien.",
+        }
+      : undefined
+  const editorArticle = cmsArticle && staticArticle && !cmsArticle.isPersisted
+    ? { ...cmsArticle, eyebrow: staticArticle.eyebrow, content: getMarkdownBody(staticArticle.markdown) }
+    : cmsArticle
 
   useEffect(() => {
     document.body.classList.add("mental-article-page--tone")
@@ -402,11 +437,13 @@ const BlogHealthBeautyArticlePage = () => {
   const articleBody = markdownLines.slice(titleIndex + 1).join("\n")
   const recommendations = suggestedArticles
     .filter((suggestion) => suggestion.href !== `/blog/sante-beaute/${articleSlug}`)
+    .filter((suggestion) => Boolean(getArticle(suggestion.href)))
     .slice(0, 3)
 
   return (
     <div className="mental-article-page">
       <Link className="mental-article-page__back" to="/blog/sante-beaute">← Retour aux articles Santé &amp; Beauté</Link>
+      {editorArticle ? <BlogAdminArticleControls article={editorArticle} /> : null}
 
       <article className="mental-article">
         <header className="mental-article__header">
@@ -425,7 +462,9 @@ const BlogHealthBeautyArticlePage = () => {
           </div>
         </header>
 
-        <div className="mental-article__content">{renderMarkdown(articleBody, article.illustrations)}</div>
+        <div className="mental-article__content">
+          {!staticArticle && cmsArticle ? <BlogMarkdownContent content={cmsArticle.content} /> : renderMarkdown(articleBody, article.illustrations)}
+        </div>
         <BlogPublicationDate className="mental-article__published-date" href={`/blog/sante-beaute/${articleSlug}`} />
       </article>
 

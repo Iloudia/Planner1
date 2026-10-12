@@ -1,0 +1,3 @@
+import{K as a,r as o,j as t}from"./index-D4n_8SUr.js";import{B as l}from"./BlogAdminArticleControls-CNiVTJV9.js";const c=()=>{const e=a(),r=o.useMemo(()=>({href:"/blog/mental/nouvel-article",slug:"nouvel-article",category:"Mental",title:"Nouvel article",description:"",imageUrl:"",imageAlt:"",eyebrow:"Mental",readingTime:"5 min de lecture",publicationDate:new Date().toISOString().slice(0,10),content:`## Premier sous-titre
+
+Commence à écrire ton article ici.`,status:"draft"}),[]);return t.jsx("div",{className:"blog-creation-page",children:t.jsx(l,{article:r,open:!0,allowIdentityEdit:!0,onClose:()=>e("/blog"),onSaved:i=>e(i.href)})})};export{c as default};

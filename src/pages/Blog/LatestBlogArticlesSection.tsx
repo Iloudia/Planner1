@@ -1,10 +1,8 @@
 import { Link } from "react-router-dom"
 import ResponsiveSiteImage from "../../components/ResponsiveSiteImage"
-import {
-  formatPublicationDate,
-  getLatestBlogArticlesByCategory,
-  type BlogCategory,
-} from "./blogArticles"
+import { useAuth } from "../../context/AuthContext"
+import { useBlogPublishing } from "../../context/BlogPublishingContext"
+import { formatPublicationDate, type BlogCategory } from "./blogArticles"
 
 type LatestBlogArticlesSectionProps = {
   category: BlogCategory
@@ -12,7 +10,12 @@ type LatestBlogArticlesSectionProps = {
 }
 
 const LatestBlogArticlesSection = ({ category, id }: LatestBlogArticlesSectionProps) => {
-  const latestArticles = getLatestBlogArticlesByCategory(category)
+  const { isAdmin } = useAuth()
+  const { articles } = useBlogPublishing()
+  const latestArticles = articles
+    .filter((article) => article.category === category)
+    .sort((first, second) => second.publicationDate.localeCompare(first.publicationDate))
+    .slice(0, 3)
   const titleId = `${id}-title`
 
   return (
@@ -23,27 +26,32 @@ const LatestBlogArticlesSection = ({ category, id }: LatestBlogArticlesSectionPr
         <p>Découvre les publications les plus récentes de la catégorie {category}.</p>
       </header>
 
-      <div className="blog-articles-grid">
-        {latestArticles.map((article) => (
+      {latestArticles.length > 0 ? (
+        <div className="blog-articles-grid">
+          {latestArticles.map((article) => (
           <article className="blog-card" key={article.href}>
             <Link className="blog-card__image" to={article.href} aria-label={`Lire : ${article.title}`}>
-              <ResponsiveSiteImage src={article.image} alt={article.imageAlt} loading="lazy" decoding="async" />
+              <ResponsiveSiteImage src={article.imageUrl} alt={article.imageAlt} loading="lazy" decoding="async" />
             </Link>
             <div className="blog-card__body">
+              {isAdmin ? <span className={`blog-card__admin-status blog-card__admin-status--${article.status}`}>{article.status === "published" ? "Publié" : "Brouillon"}</span> : null}
               <div className="blog-card__meta">
                 <span>{article.category}</span>
                 <span>{article.readingTime}</span>
               </div>
               <time className="blog-card__date" dateTime={article.publicationDate}>
-                Publié le {formatPublicationDate(article.publicationDate)}
+                {article.status === "draft" ? "Date prévue : " : "Publié le "}{formatPublicationDate(article.publicationDate)}
               </time>
               <h3>{article.title}</h3>
               <p>{article.description}</p>
               <Link className="blog-text-link" to={article.href}>Lire l’article</Link>
             </div>
           </article>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : !isAdmin ? (
+        <p className="blog-empty-state">Aucun article n’a encore été publié.</p>
+      ) : null}
     </section>
   )
 }

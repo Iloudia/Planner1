@@ -1,7 +1,11 @@
 import { Fragment, useEffect, type ReactNode } from "react"
 import { Link, useParams } from "react-router-dom"
 import ResponsiveSiteImage from "../../../components/ResponsiveSiteImage"
+import BlogAdminArticleControls from "../../../components/BlogAdminArticleControls"
+import { useBlogPublishing } from "../../../context/BlogPublishingContext"
 import BlogPublicationDate from "../BlogPublicationDate"
+import BlogMarkdownContent from "../BlogMarkdownContent"
+import { buildArticleMarkdown, getMarkdownBody } from "../blogMarkdown"
 import sportImage from "../../../assets/sport1.webp"
 import nutritionImage from "../../../assets/food2.webp"
 import mealImage from "../../../assets/avocado-toast.webp"
@@ -206,7 +210,36 @@ const sportNutritionArticles: Record<string, {
 
 const BlogSportNutritionArticlePage = () => {
   const { articleSlug } = useParams()
-  const article = articleSlug ? sportNutritionArticles[articleSlug] : undefined
+  const articleHref = `/blog/sport-nutrition/${articleSlug ?? ""}`
+  const { getArticle } = useBlogPublishing()
+  const cmsArticle = getArticle(articleHref)
+  const staticArticle = articleSlug ? sportNutritionArticles[articleSlug] : undefined
+  const hasSavedContent = Boolean(cmsArticle?.isPersisted)
+  const article = staticArticle
+    ? hasSavedContent && cmsArticle
+      ? {
+          ...staticArticle,
+          markdown: buildArticleMarkdown(cmsArticle.title, cmsArticle.content),
+          eyebrow: cmsArticle.eyebrow || staticArticle.eyebrow,
+          readingTime: cmsArticle.readingTime || staticArticle.readingTime,
+          image: cmsArticle.imageUrl || staticArticle.image,
+          imageAlt: cmsArticle.imageAlt || staticArticle.imageAlt,
+        }
+      : staticArticle
+    : cmsArticle
+      ? {
+          markdown: buildArticleMarkdown(cmsArticle.title, cmsArticle.content),
+          eyebrow: cmsArticle.eyebrow || cmsArticle.category,
+          readingTime: cmsArticle.readingTime,
+          image: cmsArticle.imageUrl || sportImage,
+          imageAlt: cmsArticle.imageAlt,
+          illustrations: {},
+          recommendationsDescription: "Continue ta lecture autour de l’alimentation, du mouvement et d’un équilibre durable.",
+        }
+      : undefined
+  const editorArticle = cmsArticle && staticArticle && !cmsArticle.isPersisted
+    ? { ...cmsArticle, eyebrow: staticArticle.eyebrow, content: getMarkdownBody(staticArticle.markdown) }
+    : cmsArticle
 
   useEffect(() => {
     document.body.classList.add("mental-article-page--tone")
@@ -233,11 +266,13 @@ const BlogSportNutritionArticlePage = () => {
   const articleBody = markdownLines.slice(titleIndex + 1).join("\n")
   const recommendations = suggestedArticles
     .filter((suggestion) => suggestion.href !== `/blog/sport-nutrition/${articleSlug}`)
+    .filter((suggestion) => Boolean(getArticle(suggestion.href)))
     .slice(0, 3)
 
   return (
     <div className="mental-article-page">
       <Link className="mental-article-page__back" to="/blog/sport-nutrition">← Retour aux articles Sport &amp; Nutrition</Link>
+      {editorArticle ? <BlogAdminArticleControls article={editorArticle} /> : null}
 
       <article className="mental-article">
         <header className="mental-article__header">
@@ -251,7 +286,9 @@ const BlogSportNutritionArticlePage = () => {
           </div>
         </header>
 
-        <div className="mental-article__content">{renderMarkdown(articleBody, article.illustrations)}</div>
+        <div className="mental-article__content">
+          {!staticArticle && cmsArticle ? <BlogMarkdownContent content={cmsArticle.content} /> : renderMarkdown(articleBody, article.illustrations)}
+        </div>
         <BlogPublicationDate className="mental-article__published-date" href={`/blog/sport-nutrition/${articleSlug}`} />
       </article>
 

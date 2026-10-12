@@ -6,6 +6,7 @@ import { AuthProvider } from "./context/AuthContext";
 import App from "./App";
 import { CookieConsentProvider } from "./context/CookieConsentContext";
 import { MoodboardProvider } from "./context/MoodboardContext";
+import { BlogPublishingProvider } from "./context/BlogPublishingContext";
 import MobileRuntimeBridge from "./platform/MobileRuntimeBridge";
 import { initializeAppRuntime } from "./platform/runtime";
 import "./styles.css";
@@ -26,7 +27,9 @@ ReactDOM.createRoot(rootElement).render(
         <TasksProvider>
           <CookieConsentProvider>
             <MoodboardProvider>
-              <App />
+              <BlogPublishingProvider>
+                <App />
+              </BlogPublishingProvider>
             </MoodboardProvider>
           </CookieConsentProvider>
         </TasksProvider>

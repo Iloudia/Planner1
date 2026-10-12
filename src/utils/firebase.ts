@@ -5,6 +5,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyBwpIugx9UYl8EZFSQz2kBUEqdAqkc-xAg",
   authDomain: "meandrituals-72041.firebaseapp.com",
   projectId: "meandrituals-72041",
+  storageBucket: "meandrituals-72041.appspot.com",
   messagingSenderId: "1086898403259",
   appId: "1:1086898403259:web:55bad861fddbd7f229f69e",
   measurementId: "G-J9KPY6T85X",

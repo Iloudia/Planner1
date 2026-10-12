@@ -455,6 +455,18 @@ function Header() {
                     >
                       Archives
                     </button>
+                    {isAdmin ? (
+                      <button
+                        type="button"
+                        className="account-menu__item"
+                        onClick={() => {
+                          handleNavigate("/blog")
+                          setIsAccountOpen(false)
+                        }}
+                      >
+                        Gestion du blog
+                      </button>
+                    ) : null}
                     {canAccessAdminProducts ? (
                       <>
                         <button

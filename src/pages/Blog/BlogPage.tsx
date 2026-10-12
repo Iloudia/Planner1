@@ -4,13 +4,14 @@ import journalingImage from "../../assets/Journaling.webp"
 import glowUpEbookImage from "../../assets/couverture glow-up.webp"
 import EditorialQuote from "../../components/EditorialQuote"
 import ResponsiveSiteImage from "../../components/ResponsiveSiteImage"
+import BlogAdminActions from "../../components/BlogAdminActions"
+import { useAuth } from "../../context/AuthContext"
+import { useBlogPublishing } from "../../context/BlogPublishingContext"
 import {
   formatPublicationDate,
-  getBlogArticleByHref,
-  getLatestBlogArticles,
-  type BlogArticleMetadata,
   type BlogCategory,
 } from "./blogArticles"
+import type { BlogCmsArticle } from "../../services/firestore/blogArticles"
 import "./BlogPage.css"
 
 type BlogArticle = {
@@ -23,28 +24,30 @@ type BlogArticle = {
   meta: string
   href: string
   publicationDate?: string
+  status: "draft" | "published"
 }
 
-const toBlogArticle = (article: BlogArticleMetadata): BlogArticle => ({
-  ...article,
+const toBlogArticle = (article: BlogCmsArticle): BlogArticle => ({
+  category: article.category,
   topic: article.category,
+  title: article.title,
+  description: article.description,
+  image: article.imageUrl,
+  imageAlt: article.imageAlt,
   meta: article.readingTime,
+  href: article.href,
+  publicationDate: article.publicationDate,
+  status: article.status,
 })
 
-const featuredArticles = [
+const featuredHrefs = [
   "/blog/mental/confiance-en-soi",
   "/blog/mental/article-2",
   "/blog/mode/style-personnel",
   "/blog/sport-nutrition/alimentation-flexible",
-].flatMap((href) => {
-  const article = getBlogArticleByHref(href)
-  return article ? [toBlogArticle(article)] : []
-})
+]
 
-const latestArticles: BlogArticle[] = getLatestBlogArticles(6).map(toBlogArticle)
-const editorialArticle = getBlogArticleByHref("/blog/mental/article-4")!
-
-const ArticleCard = ({ article, featured = false }: { article: BlogArticle; featured?: boolean }) => (
+const ArticleCard = ({ article, featured = false, showStatus = false }: { article: BlogArticle; featured?: boolean; showStatus?: boolean }) => (
   <article className={`blog-card${featured ? " blog-card--featured" : ""}`}>
     <Link className="blog-card__image" to={article.href} aria-label={`Lire : ${article.title}`}>
       <ResponsiveSiteImage
@@ -56,13 +59,14 @@ const ArticleCard = ({ article, featured = false }: { article: BlogArticle; feat
       />
     </Link>
     <div className="blog-card__body">
+      {showStatus ? <span className={`blog-card__admin-status blog-card__admin-status--${article.status}`}>{article.status === "published" ? "Publié" : "Brouillon"}</span> : null}
       <div className="blog-card__meta">
         <span>{article.category}</span>
         <span>{article.meta}</span>
       </div>
       {article.publicationDate && (
         <time className="blog-card__date" dateTime={article.publicationDate}>
-          Publié le {formatPublicationDate(article.publicationDate)}
+          {article.status === "draft" ? "Date prévue : " : "Publié le "}{formatPublicationDate(article.publicationDate)}
         </time>
       )}
       <h3>{article.title}</h3>
@@ -73,6 +77,19 @@ const ArticleCard = ({ article, featured = false }: { article: BlogArticle; feat
 )
 
 const BlogPage = () => {
+  const { isAdmin } = useAuth()
+  const { articles } = useBlogPublishing()
+  const visibleArticles = articles.map(toBlogArticle)
+  const articlesByHref = new Map(visibleArticles.map((article) => [article.href, article]))
+  const featuredArticles = featuredHrefs.flatMap((href) => {
+    const article = articlesByHref.get(href)
+    return article ? [article] : []
+  })
+  const latestArticles = [...visibleArticles]
+    .sort((first, second) => (second.publicationDate ?? "").localeCompare(first.publicationDate ?? ""))
+    .slice(0, 6)
+  const editorialArticle = articlesByHref.get("/blog/mental/article-4")
+
   useEffect(() => {
     document.body.classList.add("blog-page--tone")
     return () => document.body.classList.remove("blog-page--tone")
@@ -80,6 +97,7 @@ const BlogPage = () => {
 
   return (
     <div className="blog-page">
+      <BlogAdminActions />
       <header className="blog-header">
         <div className="blog-header__media">
           <ResponsiveSiteImage src={journalingImage} alt="Carnet ligné ouvert avec un stylo sur une table en bois" sizes="100vw" preload />
@@ -103,12 +121,16 @@ const BlogPage = () => {
           <h2 id="featured-title">Articles à la une</h2>
           <p>Des pistes concrètes pour avancer avec plus de douceur dans les différentes facettes du quotidien.</p>
         </header>
-        <div className="blog-featured-grid">
-          {featuredArticles.map((article) => <ArticleCard key={article.title} article={article} featured />)}
-        </div>
+        {featuredArticles.length > 0 ? (
+          <div className="blog-featured-grid">
+            {featuredArticles.map((article) => <ArticleCard key={article.title} article={article} featured showStatus={isAdmin} />)}
+          </div>
+        ) : !isAdmin ? (
+          <p className="blog-empty-state">Aucun article n’a encore été publié.</p>
+        ) : null}
       </section>
 
-      <section className="blog-editorial" id="article-focus" aria-labelledby="editorial-title">
+      {editorialArticle ? <section className="blog-editorial" id="article-focus" aria-labelledby="editorial-title">
         <div className="blog-editorial__media">
           <ResponsiveSiteImage
             src={editorialArticle.image}
@@ -125,7 +147,7 @@ const BlogPage = () => {
           <p>Apprends à reconnaître les boucles mentales et à retrouver davantage de calme et de recul au quotidien.</p>
           <Link className="blog-button sport-workout-button-match" to={editorialArticle.href}>Lire l’article</Link>
         </div>
-      </section>
+      </section> : null}
 
       <EditorialQuote className="blog-quote" quote="« Avancer doucement reste une façon d’avancer. »" />
 
@@ -135,9 +157,13 @@ const BlogPage = () => {
           <h2 id="all-articles-title">Derniers articles</h2>
           <p>Organisation, bien-être, mouvement et inspiration : choisis le sujet qui accompagne ton envie du moment.</p>
         </header>
-        <div className="blog-articles-grid">
-          {latestArticles.map((article) => <ArticleCard key={article.href} article={article} />)}
-        </div>
+        {latestArticles.length > 0 ? (
+          <div className="blog-articles-grid">
+            {latestArticles.map((article) => <ArticleCard key={article.href} article={article} showStatus={isAdmin} />)}
+          </div>
+        ) : !isAdmin ? (
+          <p className="blog-empty-state">Aucun article n’a encore été publié.</p>
+        ) : null}
       </section>
 
       <section className="blog-ebook" aria-labelledby="blog-ebook-title">

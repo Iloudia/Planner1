@@ -8,6 +8,7 @@ import CookieBanner from "./components/CookieBanner"
 import AppUpdateBanner from "./components/AppUpdateBanner"
 import AdminRoute from "./components/AdminRoute"
 import AdminProductsRoute from "./components/AdminProductsRoute"
+import BlogArticlePublicationGate from "./components/BlogArticlePublicationGate"
 import PageLoader from "./components/PageLoader"
 import PrimaryActionButton from "./components/PrimaryActionButton"
 import landingHero from "./assets/frances-leynes-dupe.webp"
@@ -68,6 +69,7 @@ const BlogSportNutritionPage = lazy(() => import("./pages/Blog/categories/BlogSp
 const BlogSportNutritionArticlePage = lazy(() => import("./pages/Blog/articles/BlogSportNutritionArticlePage"))
 const BlogLifestylePage = lazy(() => import("./pages/Blog/categories/BlogLifestylePage"))
 const BlogLifestyleArticlePage = lazy(() => import("./pages/Blog/articles/BlogLifestyleArticlePage"))
+const BlogArticleCreatePage = lazy(() => import("./pages/Blog/BlogArticleCreatePage"))
 const ProfilePage = lazy(() => import("./pages/Profile/Profile"))
 const ArchivesHome = lazy(() => import("./pages/Archives/ArchivesHome"))
 const ArchivesPage = lazy(() => import("./pages/Archives/Archives"))
@@ -129,6 +131,7 @@ const pageTitles: Record<string, string> = {
   "/admin": "Administration",
   "/admin/produits": "Produits",
   "/admin/produits/publies": "Produits publiés",
+  "/blog/nouvel-article": "Nouvel article",
 }
 
 const getPageTitle = (pathname: string) => {
@@ -175,11 +178,129 @@ function NotFound() {
 }
 
 function ScrollToTop() {
-  const { pathname } = useLocation()
+  const { key, pathname } = useLocation()
 
   useEffect(() => {
+    const entryId = `${key}:${pathname}`
+    const storageKey = "planner:last-scroll-reset-entry"
+
+    try {
+      if (window.sessionStorage.getItem(storageKey) === entryId) {
+        return
+      }
+      window.sessionStorage.setItem(storageKey, entryId)
+    } catch {
+      // Keep the navigation behavior working when session storage is unavailable.
+    }
+
     window.scrollTo({ top: 0, left: 0, behavior: "auto" })
   }, [pathname])
+
+  return null
+}
+
+const blogArticlePathPattern = /^\/blog\/(?:sante-beaute|mode|mental|sport-nutrition|lifestyle)\/[^/]+\/?$/
+
+function BlogArticleScrollGuard() {
+  const { key, pathname } = useLocation()
+
+  useEffect(() => {
+    if (!blogArticlePathPattern.test(pathname)) {
+      return
+    }
+
+    const storageKey = `planner:blog-scroll:${key}`
+    const readSavedPosition = () => {
+      try {
+        return Number(window.sessionStorage.getItem(storageKey)) || 0
+      } catch {
+        return 0
+      }
+    }
+    const savePosition = (position: number) => {
+      try {
+        window.sessionStorage.setItem(storageKey, String(Math.max(0, Math.round(position))))
+      } catch {
+        // The in-memory position below still protects the current page session.
+      }
+    }
+
+    let stablePosition = Math.max(window.scrollY, readSavedPosition())
+    let pendingScrollPosition: number | null = null
+    let scrollCommitTimer: number | undefined
+    let resizeFrame: number | undefined
+    let resizeSettleTimer: number | undefined
+    let isResizing = false
+
+    const restorePosition = (position: number) => {
+      if (position <= 0) return
+      window.scrollTo({ top: position, left: 0, behavior: "auto" })
+    }
+
+    const handleScroll = () => {
+      if (isResizing) return
+
+      const nextPosition = window.scrollY
+      const isSuddenJumpToTop = stablePosition > window.innerHeight && nextPosition < stablePosition - window.innerHeight
+
+      if (!isSuddenJumpToTop) {
+        stablePosition = nextPosition
+        savePosition(stablePosition)
+        return
+      }
+
+      pendingScrollPosition = nextPosition
+      window.clearTimeout(scrollCommitTimer)
+      scrollCommitTimer = window.setTimeout(() => {
+        stablePosition = pendingScrollPosition ?? stablePosition
+        pendingScrollPosition = null
+        savePosition(stablePosition)
+      }, 250)
+    }
+
+    const handleResize = () => {
+      isResizing = true
+      pendingScrollPosition = null
+      window.clearTimeout(scrollCommitTimer)
+      window.clearTimeout(resizeSettleTimer)
+      if (resizeFrame !== undefined) {
+        window.cancelAnimationFrame(resizeFrame)
+      }
+
+      const positionToRestore = stablePosition
+      resizeFrame = window.requestAnimationFrame(() => {
+        restorePosition(positionToRestore)
+        resizeSettleTimer = window.setTimeout(() => {
+          restorePosition(positionToRestore)
+          stablePosition = window.scrollY
+          savePosition(stablePosition)
+          isResizing = false
+        }, 180)
+      })
+    }
+
+    const savedPosition = readSavedPosition()
+    if (savedPosition > 0 && window.scrollY === 0) {
+      resizeFrame = window.requestAnimationFrame(() => restorePosition(savedPosition))
+    } else {
+      savePosition(stablePosition)
+    }
+
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    window.addEventListener("resize", handleResize)
+    window.visualViewport?.addEventListener("resize", handleResize)
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+      window.removeEventListener("resize", handleResize)
+      window.visualViewport?.removeEventListener("resize", handleResize)
+      window.clearTimeout(scrollCommitTimer)
+      window.clearTimeout(resizeSettleTimer)
+      if (resizeFrame !== undefined) {
+        window.cancelAnimationFrame(resizeFrame)
+      }
+    }
+  }, [key, pathname])
 
   return null
 }
@@ -274,6 +395,7 @@ function App() {
       <PageTitle />
       <PageResourceHints />
       <ScrollToTop />
+      <BlogArticleScrollGuard />
       {preferences.preferences ? (
         <div id="google_translate_element" className="google-translate-element" aria-hidden="true" />
       ) : null}
@@ -288,15 +410,17 @@ function App() {
             <Route path="/a-propos" element={<AboutPage />} />
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/blog/sante-beaute" element={<BlogHealthBeautyPage />} />
-            <Route path="/blog/sante-beaute/:articleSlug" element={<BlogHealthBeautyArticlePage />} />
             <Route path="/blog/mode" element={<BlogFashionPage />} />
-            <Route path="/blog/mode/:articleSlug" element={<BlogFashionArticlePage />} />
             <Route path="/blog/mental" element={<BlogMentalPage />} />
-            <Route path="/blog/mental/:articleSlug" element={<BlogMentalArticlePage />} />
             <Route path="/blog/sport-nutrition" element={<BlogSportNutritionPage />} />
-            <Route path="/blog/sport-nutrition/:articleSlug" element={<BlogSportNutritionArticlePage />} />
             <Route path="/blog/lifestyle" element={<BlogLifestylePage />} />
-            <Route path="/blog/lifestyle/:articleSlug" element={<BlogLifestyleArticlePage />} />
+            <Route element={<BlogArticlePublicationGate />}>
+              <Route path="/blog/sante-beaute/:articleSlug" element={<BlogHealthBeautyArticlePage />} />
+              <Route path="/blog/mode/:articleSlug" element={<BlogFashionArticlePage />} />
+              <Route path="/blog/mental/:articleSlug" element={<BlogMentalArticlePage />} />
+              <Route path="/blog/sport-nutrition/:articleSlug" element={<BlogSportNutritionArticlePage />} />
+              <Route path="/blog/lifestyle/:articleSlug" element={<BlogLifestyleArticlePage />} />
+            </Route>
             <Route path="/boutique" element={<BoutiquePage />} />
             <Route path="/boutique/:categoryId" element={<BoutiqueCategoryPage />} />
             <Route path="/boutique/produit/:productId" element={<BoutiqueProductPage />} />
@@ -343,6 +467,7 @@ function App() {
 
             <Route element={<AdminRoute />}>
               <Route path="/admin" element={<AdminPage />} />
+              <Route path="/blog/nouvel-article" element={<BlogArticleCreatePage />} />
             </Route>
 
             <Route element={<AdminProductsRoute />}>
