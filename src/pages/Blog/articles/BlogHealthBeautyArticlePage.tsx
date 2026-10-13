@@ -445,7 +445,7 @@ const BlogHealthBeautyArticlePage = () => {
       <Link className="mental-article-page__back" to="/blog/sante-beaute">← Retour aux articles Santé &amp; Beauté</Link>
       {editorArticle ? <BlogAdminArticleControls article={editorArticle} /> : null}
 
-      <article className="mental-article">
+      <article className={`mental-article${articleSlug === "article-4" ? " mental-article--nail-care" : ""}`}>
         <header className="mental-article__header">
           <div className="mental-article__headline">
             <span>{article.eyebrow}</span>

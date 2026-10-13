@@ -145,6 +145,33 @@ body.mental-article-page--tone {
   background: rgba(31, 27, 22, 0.22);
 }
 
+.mental-article--nail-care .mental-article__content hr {
+  position: relative;
+  width: min(70%, 22rem);
+  height: 0.75rem;
+  overflow: visible;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(114, 92, 63, 0.18) 18%,
+    rgba(114, 92, 63, 0.65) 50%,
+    rgba(114, 92, 63, 0.18) 82%,
+    transparent 100%
+  ) center / 100% 1px no-repeat;
+}
+
+.mental-article--nail-care .mental-article__content hr::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
+  border: 1px solid #725c3f;
+  background: #ffffff;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
 .mental-article__published-date {
   width: min(calc(100% - 3rem), 70rem);
   margin: 0 auto;
