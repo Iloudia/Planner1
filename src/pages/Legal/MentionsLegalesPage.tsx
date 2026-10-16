@@ -20,9 +20,7 @@ const MentionsLegalesPage = () => {
             <section className="legal-section">
               <h2 className="legal-section__title">Éditeur du site</h2>
               <p className="legal-section__text">
-                Nom : Vasseur Iloudia
-                <br />
-                Statut : Auto-entrepreneur
+                Nom : Me&amp;rituals
                 <br />
                 Email : contact@meandrituals.com
                 <br />
@@ -32,7 +30,7 @@ const MentionsLegalesPage = () => {
 
             <section className="legal-section">
               <h2 className="legal-section__title">Directeur de la publication</h2>
-              <p className="legal-section__text">Vasseur Iloudia</p>
+              <p className="legal-section__text">Me&amp;rituals</p>
             </section>
 
             <section className="legal-section">

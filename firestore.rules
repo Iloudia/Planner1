@@ -31,9 +31,17 @@ service cloud.firestore {
       return hasAdminClaim() || hasAdminEmail() || hasAdminDocument();
     }
 
+    function hasPremiumAccess() {
+      return isAdmin() ||
+        (isSignedIn() &&
+          (request.auth.token.premium == true || request.auth.token.plan == "premium")) ||
+        (isSignedIn() &&
+          exists(/databases/$(database)/documents/premiumSubscriptions/$(request.auth.uid)) &&
+          get(/databases/$(database)/documents/premiumSubscriptions/$(request.auth.uid)).data.status in ["active", "trialing"]);
+    }
+
     function isPlannerCollection(collectionName) {
-      return collectionName == "calendarEvents" ||
-        collectionName == "journalEntries" ||
+      return collectionName == "journalEntries" ||
         collectionName == "financeEntries" ||
         collectionName == "financeMonthlySnapshots" ||
         collectionName == "wishlistCategories" ||
@@ -63,9 +71,25 @@ service cloud.firestore {
       allow get: if isOwner(userId) || isAdmin();
       allow create, update, delete: if isOwner(userId);
 
+      match /calendarEvents/{docId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) &&
+          (!request.resource.data.keys().hasAny(["recurrence"]) || hasPremiumAccess());
+        allow update: if isOwner(userId) &&
+          (!request.resource.data.keys().hasAny(["recurrence"]) ||
+            resource.data.keys().hasAny(["recurrence"]) ||
+            hasPremiumAccess());
+        allow delete: if isOwner(userId);
+      }
+
       match /{collectionName}/{docId} {
         allow read, write: if isOwner(userId) && isPlannerCollection(collectionName);
       }
+    }
+
+    match /premiumSubscriptions/{userId} {
+      allow get: if isOwner(userId) || isAdmin();
+      allow list, create, update, delete: if isAdmin();
     }
 
     match /blogArticles/{articleId} {

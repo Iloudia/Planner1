@@ -1313,9 +1313,10 @@
 }
 
 .wishlist-modal__group-chevron {
-  color: var(--color-chocolate);
-  font-size: 0.82em;
-  line-height: 1;
+  width: 18px;
+  height: 18px;
+  color: rgba(15, 23, 42, 0.6);
+  flex: 0 0 auto;
   transition: transform 0.2s ease;
 }
 

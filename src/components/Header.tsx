@@ -13,6 +13,7 @@ function Header() {
   const [isMobileSearchPanel, setIsMobileSearchPanel] = useState(() => window.innerWidth <= 768)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isAccountOpen, setIsAccountOpen] = useState(false)
+  const [isHeaderHidden, setIsHeaderHidden] = useState(false)
   const searchRef = useRef<HTMLDivElement | null>(null)
   const searchInputRef = useRef<HTMLInputElement | null>(null)
   const menuRef = useRef<HTMLDivElement | null>(null)
@@ -168,8 +169,41 @@ function Header() {
     }
   }, [isSearchOpen])
 
+  useEffect(() => {
+    let previousScrollY = window.scrollY
+    let animationFrameId: number | null = null
+
+    const updateHeaderVisibility = () => {
+      const currentScrollY = Math.max(window.scrollY, 0)
+
+      if (currentScrollY <= 16 || currentScrollY < previousScrollY) {
+        setIsHeaderHidden(false)
+      } else if (currentScrollY > previousScrollY) {
+        setIsHeaderHidden(true)
+      }
+
+      previousScrollY = currentScrollY
+      animationFrameId = null
+    }
+
+    const handleScroll = () => {
+      if (animationFrameId === null) {
+        animationFrameId = window.requestAnimationFrame(updateHeaderVisibility)
+      }
+    }
+
+    window.addEventListener("scroll", handleScroll, { passive: true })
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+      if (animationFrameId !== null) {
+        window.cancelAnimationFrame(animationFrameId)
+      }
+    }
+  }, [])
+
   return (
-    <header className="site-header">
+    <header className={`site-header${isHeaderHidden ? " site-header--hidden" : ""}${isAccountOpen ? " site-header--account-open" : ""}`}>
       <div className="site-header__inner">
         <div className="site-header__top">
           <div className="site-header__left">

@@ -268,7 +268,7 @@ body.onboarding-page--lux .progress-bar {
 
 body.onboarding-page--lux .progress-fill {
   border-radius: 0;
-  background: var(--lux-ink);
+  background: #142947;
 }
 
 body.onboarding-page--lux .onboarding-option {
@@ -301,11 +301,11 @@ body.onboarding-page--lux .onboarding-option__control {
 
 body.onboarding-page--lux .onboarding-option__control::after {
   border-radius: 0;
-  background: var(--lux-ink);
+  background: #142947;
 }
 
 body.onboarding-page--lux .onboarding-option.is-selected .onboarding-option__control {
-  border-color: var(--lux-ink);
+  border-color: #142947;
   background: #f4efe8;
 }
 
@@ -321,25 +321,43 @@ body.onboarding-page--lux .onboarding-other input {
 }
 
 body.onboarding-page--lux .onboarding-button {
+  display: inline-flex;
+  min-height: 2.65rem;
+  align-items: center;
+  justify-content: center;
   border-radius: 0;
-  border: 1px solid var(--lux-ink);
-  text-transform: uppercase;
-  letter-spacing: 0.24em;
-  font-size: 0.66rem;
-  padding: 0.6rem 1.4rem;
-  background: var(--lux-ink);
+  border: 1px solid #142947;
+  padding: 0.7rem 1.15rem;
+  background: #142947;
   color: #ffffff;
+  font-family: var(--font-body);
+  font-size: calc(var(--font-size-button) * var(--user-font-scale));
+  font-weight: var(--font-weight-action);
+  line-height: var(--leading-control);
+  letter-spacing: normal;
+  text-transform: none;
   box-shadow: none;
 }
 
 body.onboarding-page--lux .onboarding-button--ghost {
+  border-color: #263b59;
   background: transparent;
-  color: var(--lux-ink);
+  color: #263b59;
 }
 
 body.onboarding-page--lux .onboarding-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 12px 24px rgba(31, 27, 22, 0.18);
+  transform: none;
+  box-shadow: none;
+}
+
+body.onboarding-page--lux .onboarding-button:not(.onboarding-button--ghost):hover {
+  border-color: #142947;
+  background: #142947;
+}
+
+body.onboarding-page--lux .onboarding-button--ghost:hover {
+  border-color: #263b59;
+  background: rgba(38, 59, 89, 0.06);
 }
 
 body.onboarding-page--lux .onboarding-button:focus-visible {

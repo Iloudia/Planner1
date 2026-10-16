@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type CSSProperties, type FormEven
 import { createPortal } from "react-dom"
 import MediaImage from "../../components/MediaImage"
 import PageLoader from "../../components/PageLoader"
+import PremiumCalendarModal, { PremiumFeatureCrown } from "../../components/PremiumCalendarModal"
 import { useAuth } from "../../context/AuthContext"
 import useUserSportDashboard from "../../hooks/useUserSportDashboard"
 import useUserWorkoutData from "../../hooks/useUserWorkoutData"
@@ -130,7 +131,7 @@ const getCreatorCardsPerView = () => {
 }
 
 const WorkoutPage = () => {
-  const { userEmail } = useAuth()
+  const { isPremium, userEmail } = useAuth()
   const [weekKey] = useState(() => getWeekKey())
   const {
     exercises,
@@ -170,6 +171,7 @@ const WorkoutPage = () => {
   const [scheduleFeedback, setScheduleFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null)
   const [isScheduling, setIsScheduling] = useState(false)
   const [isResettingSeries, setIsResettingSeries] = useState(false)
+  const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false)
   const boardDraftsStorageKey = useMemo(
     () => buildUserScopedKey(normalizeUserEmail(userEmail), `${SPORT_BOARD_DRAFTS_STORAGE_KEY}.${weekKey}`),
     [userEmail, weekKey],
@@ -411,6 +413,10 @@ const WorkoutPage = () => {
 
   const handleVideoSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    if (!isPremium) {
+      setIsPremiumModalOpen(true)
+      return
+    }
     const title = videoForm.title.trim() || "Session vidéo"
     const id = extractYoutubeId(videoForm.url.trim())
     if (!id) return
@@ -509,6 +515,10 @@ const WorkoutPage = () => {
   }
 
   const handleScheduleExercise = async () => {
+    if (!isPremium) {
+      setIsPremiumModalOpen(true)
+      return
+    }
     if (!selectedExercise || !selectedScheduleDay) {
       setScheduleFeedback({ type: "error", message: "Choisis un jour pour programmer cette séance." })
       return
@@ -764,8 +774,25 @@ const WorkoutPage = () => {
           </section>
         ) : null}
 
-        <section className="workout-videos workout-section--full">
-          <h2>Mes vidéos d'entrainement</h2>
+        <section
+          className={`workout-videos workout-section--full${isPremium ? "" : " is-premium-locked"}`}
+          role={isPremium ? undefined : "button"}
+          tabIndex={isPremium ? undefined : 0}
+          aria-label={isPremium ? undefined : "Débloquer les vidéos d'entraînement avec Premium"}
+          onClickCapture={isPremium ? undefined : (event) => {
+            event.preventDefault()
+            event.stopPropagation()
+            setIsPremiumModalOpen(true)
+          }}
+          onKeyDownCapture={isPremium ? undefined : (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault()
+              event.stopPropagation()
+              setIsPremiumModalOpen(true)
+            }
+          }}
+        >
+          <h2>Mes vidéos d'entrainement {!isPremium ? <PremiumFeatureCrown /> : null}</h2>
           <form className="workout-video-form" onSubmit={handleVideoSubmit}>
             <label>
               <span>Titre</span>
@@ -958,31 +985,53 @@ const WorkoutPage = () => {
                 </div>
               </header>
               <div className="workout-modal__content">
-                <section className="workout-modal__scheduler" aria-labelledby="workout-scheduler-title">
+                <section
+                  className={`workout-modal__scheduler${isPremium ? "" : " is-premium-locked"}`}
+                  aria-labelledby="workout-scheduler-title"
+                  role={isPremium ? undefined : "button"}
+                  tabIndex={isPremium ? undefined : 0}
+                  onClickCapture={isPremium ? undefined : (event) => {
+                    event.preventDefault()
+                    event.stopPropagation()
+                    setIsPremiumModalOpen(true)
+                  }}
+                  onKeyDownCapture={isPremium ? undefined : (event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault()
+                      event.stopPropagation()
+                      setIsPremiumModalOpen(true)
+                    }
+                  }}
+                >
                   <div className="workout-modal__scheduler-heading">
-                    <h3 id="workout-scheduler-title">Programmer</h3>
+                    <h3 id="workout-scheduler-title">Programmer {!isPremium ? <PremiumFeatureCrown /> : null}</h3>
                     <span>Semaine en cours</span>
                   </div>
                   <div className="workout-modal__scheduler-fields">
                     <label className="workout-modal__scheduler-field workout-modal__scheduler-field--day">
                       <span>Jour</span>
-                      <select
-                        value={selectedScheduleDayId ?? ""}
-                        onChange={(event) => {
-                          const day = sportBoard.days.find((item) => item.id === event.target.value)
-                          setSelectedScheduleDayId(day?.id ?? null)
-                          setScheduleStartTime(day?.startTime ?? "")
-                          setScheduleEndTime(day?.endTime ?? "")
-                          setScheduleFeedback(null)
-                        }}
-                      >
-                        <option value="">Choisir un jour</option>
-                        {sportBoard.days.map((day) => (
-                          <option key={day.id} value={day.id}>
-                            {day.label} · {formatScheduleDate(day.dateISO)}
-                          </option>
-                        ))}
-                      </select>
+                      <div className="workout-modal__scheduler-select">
+                        <select
+                          value={selectedScheduleDayId ?? ""}
+                          onChange={(event) => {
+                            const day = sportBoard.days.find((item) => item.id === event.target.value)
+                            setSelectedScheduleDayId(day?.id ?? null)
+                            setScheduleStartTime(day?.startTime ?? "")
+                            setScheduleEndTime(day?.endTime ?? "")
+                            setScheduleFeedback(null)
+                          }}
+                        >
+                          <option value="">Choisir un jour</option>
+                          {sportBoard.days.map((day) => (
+                            <option key={day.id} value={day.id}>
+                              {day.label} · {formatScheduleDate(day.dateISO)}
+                            </option>
+                          ))}
+                        </select>
+                        <svg className="workout-form__select-chevron" viewBox="0 0 20 20" aria-hidden="true">
+                          <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </div>
                     </label>
                     <label className="workout-modal__scheduler-field">
                       <span>Début</span>
@@ -1113,6 +1162,7 @@ const WorkoutPage = () => {
           </div>
         </div>
       ) : null}
+      <PremiumCalendarModal isOpen={isPremiumModalOpen} onClose={() => setIsPremiumModalOpen(false)} />
     </div>
   )
 }

@@ -191,6 +191,20 @@
   cursor: pointer;
 }
 
+.finance-page-header__period-chevron {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+
+.finance-page-header__period-chevron--previous {
+  transform: rotate(90deg);
+}
+
+.finance-page-header__period-chevron--next {
+  transform: rotate(-90deg);
+}
+
 .finance-page-header__period > strong {
   color: var(--color-chocolate);
   font-family: 'Inter', 'Times New Roman', sans-serif;
@@ -2408,7 +2422,7 @@
   border: 0;
   border-radius: 50%;
   background: transparent;
-  color: var(--color-chocolate);
+  color: rgba(15, 23, 42, 0.6);
   cursor: pointer;
   font-family: var(--font-body);
   font-size: 1.3rem;
@@ -2418,6 +2432,20 @@
 
 .finance-balance-evolution__period-arrow:hover {
   background: rgba(114, 92, 63, 0.1);
+}
+
+.finance-balance-evolution__period-chevron {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+
+.finance-balance-evolution__period-chevron--previous {
+  transform: rotate(90deg);
+}
+
+.finance-balance-evolution__period-chevron--next {
+  transform: rotate(-90deg);
 }
 
 .finance-balance-evolution__period-menu {

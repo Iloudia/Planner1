@@ -739,9 +739,17 @@ const FinancePage = () => {
         <div className="finance-page-header__actions">
           <div className="finance-page-header__period">
             <span aria-hidden="true">▣</span>
-            <button type="button" onClick={() => handleFinanceMonthNav('prev')} aria-label="Mois précédent">‹</button>
+            <button type="button" onClick={() => handleFinanceMonthNav('prev')} aria-label="Mois précédent">
+              <svg className="workout-form__select-chevron finance-page-header__period-chevron finance-page-header__period-chevron--previous" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
             <strong>{selectedMonthLabel}</strong>
-            <button type="button" onClick={() => handleFinanceMonthNav('next')} aria-label="Mois suivant">›</button>
+            <button type="button" onClick={() => handleFinanceMonthNav('next')} aria-label="Mois suivant">
+              <svg className="workout-form__select-chevron finance-page-header__period-chevron finance-page-header__period-chevron--next" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
           </div>
           <button type="button" className="finance-page-header__add" onClick={() => setTransactionModalOpen(true)}>
             <span aria-hidden="true">＋</span> Ajouter une transaction
@@ -1254,7 +1262,9 @@ const FinanceTrendChart = ({
             aria-label="Mois précédent"
             onClick={onPreviousMonth}
           >
-            ‹
+            <svg className="workout-form__select-chevron finance-balance-evolution__period-chevron finance-balance-evolution__period-chevron--previous" viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </button>
           <button
             type="button"
@@ -1271,7 +1281,9 @@ const FinanceTrendChart = ({
             aria-label="Mois suivant"
             onClick={onNextMonth}
           >
-            ›
+            <svg className="workout-form__select-chevron finance-balance-evolution__period-chevron finance-balance-evolution__period-chevron--next" viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </button>
           {isPeriodMenuOpen ? (
             <div className="finance-balance-evolution__period-menu" role="listbox" aria-label="Choisir un mois">

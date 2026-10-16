@@ -4,8 +4,10 @@ import ImageUploadPanel from "../../components/ImageUploadPanel"
 import MediaImage from "../../components/MediaImage"
 import ModalCloseButton from "../../components/ModalCloseButton"
 import PageLoader from "../../components/PageLoader"
+import PremiumCalendarModal from "../../components/PremiumCalendarModal"
 import { useAuth } from "../../context/AuthContext"
 import useUserWishlist from "../../hooks/useUserWishlist"
+import { baseWishlistCategoryIds } from "../../services/firestore/wishlistDefinitions"
 import { deleteMedia, uploadImage } from "../../services/media/api"
 import type { WishlistCategoryRecord, WishlistItemRecord } from "../../types/personalization"
 import wishlistHair from "../../assets/ruby--dupe.webp"
@@ -72,6 +74,8 @@ const CATEGORY_DEFINITIONS: CategoryDefinition[] = [
 
 const CUSTOM_ACCENTS = ["#e3d7ca", "#c3d9ff", "#ffe3a7", "#c6eed7", "#e3d7ca", "#d9c5ff"] as const
 const WISHLIST_PROMOTION_CLICKS = 3
+const FREE_WISHLIST_CATEGORY_LIMIT = 5
+const FREE_WISHLIST_ITEM_LIMIT = 20
 const CUSTOM_COVER_POOL = [
   wishlistHair,
   wishlistOutfit,
@@ -153,7 +157,7 @@ const groupItems = (items: WishlistItemRecord[]) => {
 }
 
 const WishlistPage = () => {
-  const { isAuthReady, userId } = useAuth()
+  const { isAuthReady, isPremium, userId } = useAuth()
   const {
     categories,
     items,
@@ -198,6 +202,7 @@ const WishlistPage = () => {
   const [wishlistSearch, setWishlistSearch] = useState("")
   const [wishlistSort, setWishlistSort] = useState<WishlistSort>("")
   const [isWishlistSortMenuOpen, setIsWishlistSortMenuOpen] = useState(false)
+  const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false)
   const categoryCoverRef = useRef<HTMLInputElement | null>(null)
   const itemImageRef = useRef<HTMLInputElement | null>(null)
   const categoryFieldRef = useRef<HTMLDivElement | null>(null)
@@ -215,7 +220,7 @@ const WishlistPage = () => {
 
   const categoryCards = useMemo<CategoryCard[]>(() => {
     const categoryMap = new Map(categories.map((category) => [category.id, category]))
-    const cards = categories.map((category) => {
+    const cards = categories.filter((category) => !category.isDeleted).map((category) => {
       const definition = getCategoryDefinition(category.id)
       return {
         ...category,
@@ -226,7 +231,7 @@ const WishlistPage = () => {
       }
     })
 
-    CATEGORY_DEFINITIONS.forEach((definition, index) => {
+    CATEGORY_DEFINITIONS.filter((definition) => baseWishlistCategoryIds.has(definition.id)).forEach((definition, index) => {
       if (categoryMap.has(definition.id)) return
       cards.push({
         id: definition.id,
@@ -450,6 +455,12 @@ const WishlistPage = () => {
     if (!title) return
     const editingCategory = editingCategoryId ? categoryCards.find((category) => category.id === editingCategoryId) ?? null : null
 
+    if (!editingCategory && !isPremium && categoryCards.length >= FREE_WISHLIST_CATEGORY_LIMIT) {
+      setShowCreateCategory(false)
+      setIsPremiumModalOpen(true)
+      return
+    }
+
     if (editingCategory) {
       let customCoverUrl = editingCategory.customCoverUrl
       let customCoverPath = editingCategory.customCoverPath
@@ -570,13 +581,18 @@ const WishlistPage = () => {
     await deleteCategory(category.id)
     setActiveCardMenuId(null)
     if (selectedCategoryId === category.id) {
-      setSelectedCategoryId(category.isBase ? category.id : null)
+      setSelectedCategoryId(null)
     }
   }
 
   const handleSubmitItem = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!selectedCategory || !canEdit) return
+    if (!editingItemId && !isPremium && items.length >= FREE_WISHLIST_ITEM_LIMIT) {
+      setIsItemComposerOpen(false)
+      setIsPremiumModalOpen(true)
+      return
+    }
     const title = itemDraft.title.trim()
     if (!title) return
     const normalizedLink = itemDraft.link.trim() ? normalizeLink(itemDraft.link) : ""
@@ -649,7 +665,7 @@ const WishlistPage = () => {
       void deleteMedia(selectedCategory.customCoverPath).catch(() => undefined)
     }
     await deleteCategory(selectedCategory.id)
-    setSelectedCategoryId(selectedCategory.isBase ? selectedCategory.id : null)
+    setSelectedCategoryId(null)
   }
 
   const handleDeleteItem = async (item: WishlistItemRecord) => {
@@ -776,6 +792,10 @@ const WishlistPage = () => {
             type="button"
             className="wishlist-heading-row__button"
             onClick={() => {
+              if (!isPremium && categoryCards.length >= FREE_WISHLIST_CATEGORY_LIMIT) {
+                setIsPremiumModalOpen(true)
+                return
+              }
               setEditingCategoryId(null)
               setNewCategoryDraft(emptyNewCategoryDraft())
               setNewCategoryCoverPreview("")
@@ -1143,9 +1163,9 @@ const WishlistPage = () => {
                         <div key={group.key} className={`wishlist-modal__group${isOpen ? " is-open" : ""}`}>
                           <button type="button" className="wishlist-modal__group-toggle" onClick={() => toggleWishlistGroup(group.key)}>
                             <h3>{group.label}</h3>
-                            <span className="wishlist-modal__group-chevron" aria-hidden="true">
-                              v
-                            </span>
+                            <svg className="wishlist-modal__group-chevron workout-form__select-chevron" viewBox="0 0 20 20" aria-hidden="true">
+                              <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
                           </button>
                           {visibleItems.length > 0 ? (
                             <ul>
@@ -1315,6 +1335,10 @@ const WishlistPage = () => {
               <button
                 type="button"
                 onClick={() => {
+                  if (!isPremium && items.length >= FREE_WISHLIST_ITEM_LIMIT) {
+                    setIsPremiumModalOpen(true)
+                    return
+                  }
                   setEditingItemId(null)
                   setIsMemoComposerOpen(false)
                   setIsItemComposerOpen(true)
@@ -1335,6 +1359,7 @@ const WishlistPage = () => {
           </section>
         </>
       ) : null}
+      <PremiumCalendarModal isOpen={isPremiumModalOpen} onClose={() => setIsPremiumModalOpen(false)} />
     </div>
   )
 }

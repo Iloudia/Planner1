@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom"
 import type { TouchEvent } from "react"
 import { useAuth } from "../../context/AuthContext"
 import ModalCloseButton from "../../components/ModalCloseButton"
+import PremiumCalendarModal, { PremiumFeatureCrown } from "../../components/PremiumCalendarModal"
 import PageLoader from "../../components/PageLoader"
 import useUserDietData from "../../hooks/useUserDietData"
 import { getWeekKey } from "../../utils/weekKey"
@@ -89,7 +90,7 @@ const formatWeekPeriod = (startDate: string) => {
 
 function DietPage() {
   const navigate = useNavigate()
-  const { isAuthReady, userId } = useAuth()
+  const { isAuthReady, isPremium, userId } = useAuth()
   const [weekKey, setWeekKey] = useState(() => getWeekKey())
   const [isMobileWeekCarousel, setIsMobileWeekCarousel] = useState(
     () => typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches,
@@ -109,6 +110,7 @@ function DietPage() {
   const canEdit = Boolean(userId)
   const isAlimentationLoading = !isAuthReady || isLoading
   const [isDuplicateDialogOpen, setIsDuplicateDialogOpen] = useState(false)
+  const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false)
   const [isDuplicatingWeek, setIsDuplicatingWeek] = useState(false)
   const [duplicateFeedback, setDuplicateFeedback] = useState<{
     tone: "success" | "warning" | "error"
@@ -281,6 +283,11 @@ function DietPage() {
 
   const handleDuplicatePreviousWeek = async () => {
     if (!canEdit || isDuplicatingWeek) return
+    if (!isPremium) {
+      setIsDuplicateDialogOpen(false)
+      setIsPremiumModalOpen(true)
+      return
+    }
     setIsDuplicatingWeek(true)
     setDuplicateFeedback(null)
     try {
@@ -451,7 +458,13 @@ function DietPage() {
               <button
                 type="button"
                 className="diet-week__duplicate-button"
-                onClick={() => setIsDuplicateDialogOpen(true)}
+                onClick={() => {
+                  if (isPremium) {
+                    setIsDuplicateDialogOpen(true)
+                  } else {
+                    setIsPremiumModalOpen(true)
+                  }
+                }}
                 disabled={!canEdit || isDuplicatingWeek}
               >
                 <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -459,6 +472,7 @@ function DietPage() {
                   <path d="M16 8V5H5v11h3" />
                 </svg>
                 Dupliquer la semaine précédente
+                {!isPremium ? <PremiumFeatureCrown /> : null}
               </button>
             </div>
           </header>
@@ -612,6 +626,7 @@ function DietPage() {
             </section>
           </div>
         ) : null}
+        <PremiumCalendarModal isOpen={isPremiumModalOpen} onClose={() => setIsPremiumModalOpen(false)} />
     </>
   )
 }

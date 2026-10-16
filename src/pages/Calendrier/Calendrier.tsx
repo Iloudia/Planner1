@@ -3,8 +3,11 @@ import type { CSSProperties, FormEvent, KeyboardEvent } from 'react'
 import { getDateKey } from '../../data/sampleData'
 import type { ScheduledTask } from '../../data/sampleData'
 import { useTasks } from '../../context/TasksContext'
+import { useAuth } from '../../context/AuthContext'
 import useUserSportDashboard from '../../hooks/useUserSportDashboard'
 import ModalCloseButton from '../../components/ModalCloseButton'
+import PremiumCalendarModal from '../../components/PremiumCalendarModal'
+import { confirmPremiumCheckoutSession, createPremiumPortalSession } from '../../services/premium/api'
 import './CalendarPage.css'
 const weekDays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
 const recurrenceWeekdays = [
@@ -211,6 +214,8 @@ const getWeeklyTaskPositions = (dayTasks: CalendarTaskItem[]) => {
 
 const CalendrierPage = () => {
   const { tasks, isLoading, error, addTask, updateTask, removeTask } = useTasks()
+  const { isPremium } = useAuth()
+  const premiumReturnHandledRef = useRef(false)
   useEffect(() => {
     document.body.classList.add('calendar-page--lux')
     return () => {
@@ -236,6 +241,10 @@ const CalendrierPage = () => {
   const [duplicateWeekdays, setDuplicateWeekdays] = useState<number[]>([])
   const [duplicateError, setDuplicateError] = useState<string | null>(null)
   const [isDuplicating, setIsDuplicating] = useState(false)
+  const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false)
+  const [isPremiumPortalLoading, setIsPremiumPortalLoading] = useState(false)
+  const [premiumCheckoutState, setPremiumCheckoutState] = useState<'loading' | 'success' | 'error' | null>(null)
+  const [premiumCheckoutMessage, setPremiumCheckoutMessage] = useState('')
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false)
   const categoryMenuRef = useRef<HTMLDivElement | null>(null)
   const [activeDateKey, setActiveDateKey] = useState<string | null>(null)
@@ -272,6 +281,52 @@ const CalendrierPage = () => {
   }, [])
 
   useEffect(() => {
+    if (premiumReturnHandledRef.current) return
+
+    const params = new URLSearchParams(window.location.search)
+    const premiumReturn = params.get('premium')
+    const sessionId = params.get('session_id')
+    if (!premiumReturn) return
+
+    premiumReturnHandledRef.current = true
+    const clearPremiumReturn = () => {
+      const url = new URL(window.location.href)
+      url.searchParams.delete('premium')
+      url.searchParams.delete('session_id')
+      window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`)
+    }
+
+    if (premiumReturn === 'cancelled') {
+      clearPremiumReturn()
+      return
+    }
+    if (premiumReturn !== 'success' || !sessionId) {
+      clearPremiumReturn()
+      return
+    }
+
+    setPremiumCheckoutState('loading')
+    setPremiumCheckoutMessage('Activation de ton accès Premium…')
+    void confirmPremiumCheckoutSession(sessionId)
+      .then((status) => {
+        if (!status.active) {
+          throw new Error("Le paiement n'est pas encore confirmé.")
+        }
+        setPremiumCheckoutState('success')
+        setPremiumCheckoutMessage('Premium est activé. La récurrence et la duplication sont maintenant disponibles.')
+      })
+      .catch((activationError) => {
+        setPremiumCheckoutState('error')
+        setPremiumCheckoutMessage(
+          activationError instanceof Error
+            ? activationError.message
+            : "Impossible d'activer Premium pour le moment.",
+        )
+      })
+      .finally(clearPremiumReturn)
+  }, [])
+
+  useEffect(() => {
     if (!isCompact) return
     setMobileSelectedDateKey(todayKey)
   }, [isCompact, todayKey])
@@ -293,7 +348,7 @@ const CalendrierPage = () => {
       if (categoryMenuRef.current.contains(event.target as Node)) return
       setIsCategoryMenuOpen(false)
     }
-    const handleKeyDown = (event: KeyboardEvent) => {
+    const handleKeyDown = (event: globalThis.KeyboardEvent) => {
       if (event.key === 'Escape') {
         setIsCategoryMenuOpen(false)
       }
@@ -505,6 +560,10 @@ const CalendrierPage = () => {
   }
 
   const handleDuplicateTask = (task: ScheduledTask) => {
+    if (!isPremium) {
+      setIsPremiumModalOpen(true)
+      return
+    }
     const taskDate = parseDateKey(task.date)
     setDuplicateTask(task)
     setDuplicateMode('consecutive')
@@ -514,6 +573,11 @@ const CalendrierPage = () => {
   }
 
   const handleConfirmDuplicate = async () => {
+    if (!isPremium) {
+      setDuplicateTask(null)
+      setIsPremiumModalOpen(true)
+      return
+    }
     if (!duplicateTask) {
       return
     }
@@ -587,6 +651,21 @@ const CalendrierPage = () => {
     setDuplicateError(null)
   }
 
+  const handleManagePremium = async () => {
+    if (isPremiumPortalLoading) return
+    setIsPremiumPortalLoading(true)
+    try {
+      const portalUrl = await createPremiumPortalSession()
+      window.location.assign(portalUrl)
+    } catch (portalError) {
+      setPremiumCheckoutState('error')
+      setPremiumCheckoutMessage(
+        portalError instanceof Error ? portalError.message : "Impossible d'ouvrir la gestion de l'abonnement.",
+      )
+      setIsPremiumPortalLoading(false)
+    }
+  }
+
   const handlePrepareNewTask = (dateKey: string) => {
     setNewTaskForm((previous) => ({
       ...createNewTaskForm(dateKey),
@@ -642,6 +721,18 @@ const CalendrierPage = () => {
   }
 
   const handleNewTaskFieldChange = (field: keyof NewTaskFormState, value: string) => {
+    if (field === 'repeatEnd' && !isPremium && value !== newTaskForm.repeatStart) {
+      setIsPremiumModalOpen(true)
+      return
+    }
+    if (field === 'repeatStart' && !isPremium) {
+      setNewTaskForm((previous) => ({
+        ...previous,
+        repeatStart: value,
+        repeatEnd: value,
+      }))
+      return
+    }
     setNewTaskForm((previous) => ({
       ...previous,
       [field]: value,
@@ -696,6 +787,10 @@ const CalendrierPage = () => {
     }
     if (startDate.getTime() > endDate.getTime()) {
       setNewTaskError('La date de fin doit être postérieure à la date de début.')
+      return
+    }
+    if (!isPremium && startDate.getTime() !== endDate.getTime()) {
+      setIsPremiumModalOpen(true)
       return
     }
 
@@ -822,20 +917,24 @@ const weeklyHeader = (
     <div className="calendar-heading__title calendar-heading__title--mobile">
       <button
         type="button"
-        className="calendar-heading__arrow"
+        className="calendar-mobile__week-nav"
         onClick={() => handleWeekChange(-1)}
         aria-label="Semaine précédente"
       >
-        {'<'}
+        <svg className="workout-form__select-chevron calendar-mobile__week-chevron calendar-mobile__week-chevron--previous" viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
       </button>
       <h2>{`Semaine du ${weekRangeLabel}`}</h2>
       <button
         type="button"
-        className="calendar-heading__arrow"
+        className="calendar-mobile__week-nav"
         onClick={() => handleWeekChange(1)}
         aria-label="Semaine suivante"
       >
-        {'>'}
+        <svg className="workout-form__select-chevron calendar-mobile__week-chevron calendar-mobile__week-chevron--next" viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
       </button>
     </div>
   </header>
@@ -860,6 +959,23 @@ return (
       </div>
       <p>Un espace pour organiser tes journées, planifier tes priorités et avancer avec sérénité.</p>
     </header>
+    {isPremium ? (
+      <div className="calendar-premium-toolbar">
+        <span><i aria-hidden="true">✓</i> Premium actif</span>
+        <button type="button" onClick={handleManagePremium} disabled={isPremiumPortalLoading}>
+          {isPremiumPortalLoading ? 'Ouverture…' : 'Gérer mon abonnement'}
+        </button>
+      </div>
+    ) : null}
+    {premiumCheckoutState ? (
+      <div className={`calendar-premium-notice is-${premiumCheckoutState}`} role="status" aria-live="polite">
+        <span aria-hidden="true">{premiumCheckoutState === 'success' ? '✓' : premiumCheckoutState === 'error' ? '!' : '…'}</span>
+        <p>{premiumCheckoutMessage}</p>
+        {premiumCheckoutState !== 'loading' ? (
+          <button type="button" onClick={() => setPremiumCheckoutState(null)} aria-label="Masquer ce message">×</button>
+        ) : null}
+      </div>
+    ) : null}
     {error ? <p className="calendar-modal__empty">{error}</p> : null}
     {calendarView === 'weekly' ? (
     <section className="calendar-weekly">
@@ -888,8 +1004,8 @@ return (
                   onClick={() => handleWeekChange(-1)}
                   aria-label="Semaine précédente"
                 >
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M14 6 8 12l6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <svg className="workout-form__select-chevron calendar-mobile__week-chevron calendar-mobile__week-chevron--previous" viewBox="0 0 20 20" aria-hidden="true">
+                    <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </button>
 
@@ -903,8 +1019,8 @@ return (
                   onClick={() => handleWeekChange(1)}
                   aria-label="Semaine suivante"
                 >
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="m10 6 6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <svg className="workout-form__select-chevron calendar-mobile__week-chevron calendar-mobile__week-chevron--next" viewBox="0 0 20 20" aria-hidden="true">
+                    <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </button>
               </div>
@@ -998,8 +1114,8 @@ return (
                         <div className="calendar-mobile__event-actions">
                           <button
                             type="button"
-                            className="calendar-mobile__event-action"
-                            aria-label={`Dupliquer ${task.title}`}
+                            className={`calendar-mobile__event-action${isPremium ? '' : ' is-premium-locked'}`}
+                            aria-label={isPremium ? `Dupliquer ${task.title}` : `Débloquer la duplication Premium pour ${task.title}`}
                             onClick={() => handleDuplicateTask(task)}
                           >
                             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -1146,20 +1262,24 @@ return (
             <div className="calendar-heading__title calendar-heading__title--mobile">
               <button
                 type="button"
-                className="calendar-heading__arrow"
+                className="calendar-mobile__week-nav"
                 onClick={() => handleMonthChange(-1)}
                 aria-label="Mois précédent"
               >
-                {'<'}
+                <svg className="workout-form__select-chevron calendar-mobile__week-chevron calendar-mobile__week-chevron--previous" viewBox="0 0 20 20" aria-hidden="true">
+                  <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </button>
               <h2>{formatMonthTitle(currentMonthDate)}</h2>
               <button
                 type="button"
-                className="calendar-heading__arrow"
+                className="calendar-mobile__week-nav"
                 onClick={() => handleMonthChange(1)}
                 aria-label="Mois suivant"
               >
-                {'>'}
+                <svg className="workout-form__select-chevron calendar-mobile__week-chevron calendar-mobile__week-chevron--next" viewBox="0 0 20 20" aria-hidden="true">
+                  <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </button>
             </div>
           </div>
@@ -1298,25 +1418,6 @@ return (
                     value={newTaskForm.end}
                     onChange={(event) => handleNewTaskFieldChange("end", event.target.value)}
                     required
-                  />
-                </label>
-              </div>
-              <div className="calendar-task__form-row">
-                <label className="calendar-task__field">
-                  <p className="editorial-field-label">Du</p>
-                  <input
-                    type="date"
-                    value={newTaskForm.repeatStart}
-                    onChange={(event) => handleNewTaskFieldChange("repeatStart", event.target.value)}
-                  />
-                </label>
-                <label className="calendar-task__field">
-                  <p className="editorial-field-label">Au</p>
-                  <input
-                    type="date"
-                    value={newTaskForm.repeatEnd}
-                    min={newTaskForm.repeatStart}
-                    onChange={(event) => handleNewTaskFieldChange("repeatEnd", event.target.value)}
                   />
                 </label>
               </div>
@@ -1480,12 +1581,12 @@ return (
                                     ) : null}
                                     <button
                                       type="button"
-                                      className="calendar-task__edit"
+                                      className={`calendar-task__edit${isPremium ? '' : ' is-premium-locked'}`}
                                       onClick={(event) => {
                                         event.stopPropagation()
                                         handleDuplicateTask(task)
                                       }}
-                                      aria-label={`Dupliquer ${task.title}`}
+                                      aria-label={isPremium ? `Dupliquer ${task.title}` : `Débloquer la duplication Premium pour ${task.title}`}
                                     >
                                       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                                         <rect x="9" y="9" width="11" height="11" rx="2" fill="none" stroke="currentColor" strokeWidth="1.7" />
@@ -1538,7 +1639,7 @@ return (
         </div>
       </div>
     ) : null}
-      {duplicateTask ? (
+      {duplicateTask && isPremium ? (
         <div className="calendar-duplicate" role="dialog" aria-modal="true" aria-labelledby="calendar-duplicate-title">
           <div className="calendar-duplicate__backdrop" onClick={handleCloseDuplicate} aria-hidden="true" />
           <div className="calendar-duplicate__panel">
@@ -1639,6 +1740,7 @@ return (
           </div>
         </div>
       ) : null}
+      <PremiumCalendarModal isOpen={isPremiumModalOpen} onClose={() => setIsPremiumModalOpen(false)} />
 </div>
   )
 }

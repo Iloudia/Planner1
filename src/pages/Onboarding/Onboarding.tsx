@@ -9,6 +9,34 @@ import "./Onboarding.css"
 
 const ONBOARDING_STORAGE_KEY = "planner.onboarding.answers.v1"
 const MAX_CATEGORY_SELECTIONS = 3
+const HOME_CARD_ORDER_SUFFIX = "home.card-order.v1"
+const HOME_CARD_PROGRESS_SUFFIX = "home.card-progress.v2"
+const HOME_CARD_STATE_FIX_SUFFIX = "home.card-threshold-fix.v1"
+const HOME_CARD_STATE_FIX_TOKEN = "3-click-threshold-reset"
+
+const HOME_CARD_PATHS = [
+  "/sport",
+  "/calendrier",
+  "/wishlist",
+  "/journaling",
+  "/self-love",
+  "/finances",
+  "/routine",
+  "/menu",
+  "/project",
+]
+
+const CATEGORY_TO_HOME_CARD_PATH: Record<string, string> = {
+  Sport: "/sport",
+  Journaling: "/journaling",
+  Mindset: "/self-love",
+  Finances: "/finances",
+  Routine: "/routine",
+  Wishlist: "/wishlist",
+  Calendrier: "/calendrier",
+  "Menu de la semaine": "/menu",
+  Projet: "/project",
+}
 
 const SOURCE_OPTIONS = [
   "Instagram",
@@ -38,6 +66,7 @@ const CATEGORY_OPTIONS = [
   { label: "Wishlist", icon: "Envies" },
   { label: "Calendrier", icon: "Planning" },
   { label: "Menu de la semaine", icon: "Cuisine" },
+  { label: "Projet", icon: "Projet" },
 ]
 
 const CATEGORY_LABELS = new Set(CATEGORY_OPTIONS.map((option) => option.label))
@@ -54,6 +83,14 @@ const sanitizeStringList = (value: unknown, allowedValues?: Set<string>, maxSele
   )
 
   return typeof maxSelections === "number" ? sanitized.slice(0, maxSelections) : sanitized
+}
+
+const buildInitialHomeCardOrder = (categories: string[]) => {
+  const preferredPaths = categories
+    .map((category) => CATEGORY_TO_HOME_CARD_PATH[category])
+    .filter((path): path is string => Boolean(path))
+  const uniquePreferredPaths = Array.from(new Set(preferredPaths))
+  return [...uniquePreferredPaths, ...HOME_CARD_PATHS.filter((path) => !uniquePreferredPaths.includes(path))]
 }
 
 type OnboardingAnswers = {
@@ -118,7 +155,7 @@ const OnboardingPage = () => {
       return true
     }
     if (step === 2) {
-      return answers.categories.length > 0
+      return answers.categories.length === MAX_CATEGORY_SELECTIONS
     }
     return false
   }, [answers, step])
@@ -126,6 +163,10 @@ const OnboardingPage = () => {
   const persistAnswers = (payload: OnboardingAnswers) => {
     try {
       localStorage.setItem(storageKey, JSON.stringify({ ...payload, completedAt: new Date().toISOString() }))
+      const initialHomeCardOrder = buildInitialHomeCardOrder(payload.categories)
+      localStorage.setItem(buildUserScopedKey(normalizeUserEmail(userEmail), HOME_CARD_ORDER_SUFFIX), JSON.stringify(initialHomeCardOrder))
+      localStorage.setItem(buildUserScopedKey(normalizeUserEmail(userEmail), HOME_CARD_PROGRESS_SUFFIX), JSON.stringify({}))
+      localStorage.setItem(buildUserScopedKey(normalizeUserEmail(userEmail), HOME_CARD_STATE_FIX_SUFFIX), HOME_CARD_STATE_FIX_TOKEN)
     } catch {
       // ignore
     }
@@ -136,6 +177,7 @@ const OnboardingPage = () => {
     if (!currentUser) return
     try {
       const completedAt = new Date().toISOString()
+      const initialHomeCardOrder = buildInitialHomeCardOrder(payload.categories)
       await setDoc(
         doc(db, "users", currentUser.uid),
         {
@@ -147,6 +189,8 @@ const OnboardingPage = () => {
             categories: payload.categories,
             completedAt,
           },
+          homeCardOrder: initialHomeCardOrder,
+          homeCardClickProgress: {},
           updatedAt: completedAt,
         },
         { merge: true },
@@ -289,7 +333,7 @@ const OnboardingPage = () => {
           {step === 2 ? (
             <>
               <h2 className="onboarding-question">Quelles catégories t’intéressent le plus ?</h2>
-              <p className="onboarding-hint">Choisis en 3 maximum</p>
+              <p className="onboarding-hint">Choisis-en 3</p>
               <div className="onboarding-options onboarding-options--grid">
                 {CATEGORY_OPTIONS.map((option) => (
                   <label key={option.label} className={`onboarding-option${answers.categories.includes(option.label) ? " is-selected" : ""}`}>

@@ -1132,6 +1132,7 @@
 }
 
 .workout-modal__scheduler-fields {
+  --workout-scheduler-control-height: 2.65rem;
   display: grid;
   grid-template-columns: minmax(9rem, 1.6fr) minmax(6.5rem, 0.75fr) minmax(6.5rem, 0.75fr) auto;
   align-items: end;
@@ -1153,10 +1154,23 @@
   text-transform: uppercase;
 }
 
+.workout-modal__scheduler-select {
+  position: relative;
+}
+
+.workout-modal__scheduler-select .workout-form__select-chevron {
+  position: absolute;
+  top: 50%;
+  right: 0.6rem;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
 .workout-modal__scheduler-field select,
 .workout-modal__scheduler-field input {
   width: 100%;
-  min-height: 2.35rem;
+  height: var(--workout-scheduler-control-height);
+  min-height: var(--workout-scheduler-control-height);
   padding: 0.48rem 0.6rem;
   border: 1px solid rgba(15, 23, 42, 0.18);
   border-radius: 0;
@@ -1164,6 +1178,11 @@
   color: #1f1a2f;
   font: inherit;
   font-size: 0.78rem;
+}
+
+.workout-modal__scheduler-select select {
+  padding-right: 2rem;
+  appearance: none;
 }
 
 .workout-modal__scheduler-field select:focus,
@@ -1185,7 +1204,8 @@
 }
 
 .workout-modal__scheduler-submit {
-  min-height: 2.35rem;
+  height: var(--workout-scheduler-control-height);
+  min-height: var(--workout-scheduler-control-height);
   padding: 0.48rem 0.9rem;
   border: 1px solid #132947;
   background: #132947;

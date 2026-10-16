@@ -65,6 +65,7 @@ export type WishlistCategoryRecord = {
   note: string
   isFavorite: boolean
   isBase: boolean
+  isDeleted?: boolean
   coverMode: "default" | "custom"
   customCoverUrl?: string
   customCoverPath?: string

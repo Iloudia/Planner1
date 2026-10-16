@@ -168,8 +168,8 @@ const LandingPage = () => {
         </div>
         <div className="landing-carousel">
           <button type="button" className="landing-carousel__arrow landing-carousel__arrow--left" aria-label="Cartes précédentes" onClick={handleCarouselPrev}>
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M14 6 8 12l6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <svg className="workout-form__select-chevron landing-carousel__chevron landing-carousel__chevron--left" viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
           <div className="landing-carousel__grid" aria-live="polite" style={{ gridTemplateColumns: `repeat(${cardsPerView}, minmax(0, 1fr))` }}>
@@ -193,8 +193,8 @@ const LandingPage = () => {
             ))}
           </div>
           <button type="button" className="landing-carousel__arrow landing-carousel__arrow--right" aria-label="Cartes suivantes" onClick={handleCarouselNext}>
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="m10 6 6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <svg className="workout-form__select-chevron landing-carousel__chevron landing-carousel__chevron--right" viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
         </div>

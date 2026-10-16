@@ -4,6 +4,7 @@ import type { RoutineItem } from "../../data/sampleData"
 import { useAuth } from "../../context/AuthContext"
 import useUserRoutine from "../../hooks/useUserRoutine"
 import PageLoader from "../../components/PageLoader"
+import PremiumCalendarModal from "../../components/PremiumCalendarModal"
 import { formatLocalISODate } from "../../utils/weekKey"
 import "./RoutinePage.css"
 
@@ -16,6 +17,7 @@ type RoutineDraft = {
 
 const ROUTINE_TITLE_MAX_LENGTH = 50
 const ROUTINE_DETAIL_MAX_LENGTH = 35
+const FREE_ROUTINE_ITEM_LIMIT = 12
 
 const truncateText = (value: string, max = ROUTINE_TITLE_MAX_LENGTH) =>
   value.length > max ? `${value.slice(0, max - 3).trimEnd()}...` : value
@@ -295,7 +297,7 @@ const RoutineComposer = ({
 )
 
 const RoutinePage = () => {
-  const { isAuthReady, userId } = useAuth()
+  const { isAuthReady, isPremium, userId } = useAuth()
   const {
     items,
     dailyProgress,
@@ -310,7 +312,9 @@ const RoutinePage = () => {
   } = useUserRoutine()
   const canEdit = Boolean(userId)
   const isRoutineLoading = !isAuthReady || isLoading
+  const routineCreationPendingRef = useRef(false)
   const [activeRoutinePeriod, setActiveRoutinePeriod] = useState<RoutinePeriod>("morning")
+  const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false)
   const [isMobileRoutineView, setIsMobileRoutineView] = useState(() =>
     typeof window !== "undefined" ? window.innerWidth <= 1160 : false,
   )
@@ -396,7 +400,15 @@ const RoutinePage = () => {
     if (!trimmedTitle) {
       return
     }
+    if (!isPremium && items.length >= FREE_ROUTINE_ITEM_LIMIT) {
+      setIsPremiumModalOpen(true)
+      return
+    }
+    if (routineCreationPendingRef.current) {
+      return
+    }
 
+    routineCreationPendingRef.current = true
     try {
       await addItem({
         period,
@@ -409,6 +421,8 @@ const RoutinePage = () => {
       }))
     } catch {
       return
+    } finally {
+      routineCreationPendingRef.current = false
     }
   }
 
@@ -569,6 +583,7 @@ const RoutinePage = () => {
         </section>
         ) : null}
       </div>
+      <PremiumCalendarModal isOpen={isPremiumModalOpen} onClose={() => setIsPremiumModalOpen(false)} />
     </div>
   )
 }

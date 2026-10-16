@@ -348,6 +348,22 @@ p {
   overflow-x: clip;
   z-index: 20;
   font-family: var(--font-body);
+  transition: transform 0.25s ease;
+}
+
+.site-header--hidden {
+  transform: translateY(-100%);
+}
+
+.site-header--account-open {
+  overflow: visible;
+  z-index: 70;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header {
+    transition: none;
+  }
 }
 
 .site-header__inner {

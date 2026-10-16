@@ -1093,6 +1093,10 @@ body.alimentation-page--lux .diet-week__duplicate-button {
   stroke-linejoin: round;
 }
 
+body.alimentation-page--lux .diet-week__duplicate-button .premium-feature-crown {
+  color: #ffffff;
+}
+
 body.alimentation-page--lux .diet-week__duplicate-button:hover:not(:disabled) {
   border-color: #1d385f;
   background: #1d385f;

@@ -9,6 +9,7 @@ import AppUpdateBanner from "./components/AppUpdateBanner"
 import AdminRoute from "./components/AdminRoute"
 import AdminProductsRoute from "./components/AdminProductsRoute"
 import BlogArticlePublicationGate from "./components/BlogArticlePublicationGate"
+import PremiumArchivesRoute from "./components/PremiumArchivesRoute"
 import PageLoader from "./components/PageLoader"
 import PrimaryActionButton from "./components/PrimaryActionButton"
 import landingHero from "./assets/frances-leynes-dupe.webp"
@@ -452,9 +453,11 @@ function App() {
               <Route path="/alimentation" element={<Navigate to="/menu" replace />} />
               <Route path="/profil" element={<ProfilePage />} />
               <Route path="/archives" element={<ArchivesHome />} />
-              <Route path="/archives/mindset" element={<ArchivesPage section="self-love" />} />
-              <Route path="/archives/journaling" element={<ArchivesPage section="journaling" />} />
-              <Route path="/archives/projets" element={<ProjectArchives />} />
+              <Route element={<PremiumArchivesRoute />}>
+                <Route path="/archives/mindset" element={<ArchivesPage section="self-love" />} />
+                <Route path="/archives/journaling" element={<ArchivesPage section="journaling" />} />
+                <Route path="/archives/projets" element={<ProjectArchives />} />
+              </Route>
               <Route path="/mes-achats" element={<PurchasesPage />} />
               <Route path="/project" element={<ProjectPage />} />
               <Route path="/parametres" element={<SettingsLayout />}>

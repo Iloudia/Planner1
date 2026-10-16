@@ -29,6 +29,21 @@ const mediaSessionCookieName = "planner_media_session"
 const downloadTokenSecret = String(process.env.DOWNLOAD_TOKEN_SECRET || "").trim()
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY || ""
 const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET || ""
+const premiumPlans = Object.freeze({
+  monthly: {
+    id: "monthly",
+    name: "Me&rituals Premium mensuel",
+    amountCents: 599,
+    interval: "month",
+  },
+  yearly: {
+    id: "yearly",
+    name: "Me&rituals Premium annuel",
+    amountCents: 4999,
+    interval: "year",
+  },
+})
+const premiumActiveStatuses = new Set(["active", "trialing"])
 const emailAttachmentMaxBytes = Math.max(Number.parseInt(process.env.EMAIL_ATTACHMENT_MAX_BYTES || "", 10) || 20 * 1024 * 1024, 0)
 const adminEmails = new Set(
   String(process.env.ADMIN_EMAILS || "")
@@ -948,6 +963,100 @@ const isAdminToken = (decodedToken) => {
   return Boolean(email && adminEmails.has(email))
 }
 
+const hasPremiumToken = (decodedToken) =>
+  Boolean(
+    decodedToken &&
+      typeof decodedToken === "object" &&
+      (decodedToken.premium === true || decodedToken.plan === "premium"),
+  )
+
+const resolvePremiumAccess = async (decodedToken) => {
+  if (isAdminToken(decodedToken) || hasPremiumToken(decodedToken)) {
+    return true
+  }
+  if (!isFirebaseAdminConfigured || !decodedToken?.uid) {
+    return false
+  }
+
+  try {
+    const snapshot = await getFirebaseAdminDb().collection("premiumSubscriptions").doc(decodedToken.uid).get()
+    const status = snapshot.exists ? String(snapshot.data()?.status || "") : ""
+    return premiumActiveStatuses.has(status)
+  } catch (error) {
+    console.error("Premium entitlement lookup failed:", error)
+    return false
+  }
+}
+
+const getPremiumSubscriptionUid = async (subscription) => {
+  const metadataUid = sanitizeText(subscription?.metadata?.uid, 128)
+  if (metadataUid) {
+    return metadataUid
+  }
+  if (!isFirebaseAdminConfigured || !subscription?.id) {
+    return ""
+  }
+
+  const snapshot = await getFirebaseAdminDb()
+    .collection("premiumSubscriptions")
+    .where("stripeSubscriptionId", "==", subscription.id)
+    .limit(1)
+    .get()
+  return snapshot.empty ? "" : snapshot.docs[0].id
+}
+
+const syncPremiumSubscription = async (subscription, fallback = {}) => {
+  if (!isFirebaseAdminConfigured) {
+    throw new Error("firebase-admin-not-configured")
+  }
+
+  const uid = sanitizeText(fallback.uid, 128) || (await getPremiumSubscriptionUid(subscription))
+  if (!uid) {
+    throw new Error("premium-subscription-uid-missing")
+  }
+
+  const status = sanitizeText(subscription?.status, 32) || "inactive"
+  const isPremium = premiumActiveStatuses.has(status)
+  const firstItem = subscription?.items?.data?.[0]
+  const interval = sanitizeText(firstItem?.price?.recurring?.interval, 16)
+  const plan = sanitizeText(subscription?.metadata?.plan, 16) || (interval === "year" ? "yearly" : "monthly")
+  const customerId = sanitizeText(
+    typeof subscription?.customer === "string" ? subscription.customer : subscription?.customer?.id,
+    128,
+  )
+  const currentPeriodEnd = Number.isFinite(subscription?.current_period_end)
+    ? new Date(subscription.current_period_end * 1000).toISOString()
+    : null
+  const updatedAt = new Date().toISOString()
+  const adminDb = getFirebaseAdminDb()
+
+  await adminDb.collection("premiumSubscriptions").doc(uid).set(
+    {
+      uid,
+      email: normalizeEmailValue(fallback.email || subscription?.metadata?.email),
+      status,
+      plan,
+      hasAccess: isPremium,
+      stripeCustomerId: customerId || null,
+      stripeSubscriptionId: sanitizeText(subscription?.id, 128) || null,
+      cancelAtPeriodEnd: Boolean(subscription?.cancel_at_period_end),
+      currentPeriodEnd,
+      updatedAt,
+    },
+    { merge: true },
+  )
+
+  const adminAuth = getFirebaseAdminAuth()
+  const userRecord = await adminAuth.getUser(uid)
+  await adminAuth.setCustomUserClaims(uid, {
+    ...(userRecord.customClaims || {}),
+    premium: isPremium,
+    plan: isPremium ? "premium" : "free",
+  })
+
+  return { uid, status, isPremium, plan, currentPeriodEnd }
+}
+
 const createRateLimiter = ({ windowMs, max, keyPrefix, keyGenerator }) => {
   const hits = new Map()
   const cleanup = () => {
@@ -1142,7 +1251,7 @@ const mediaAuth = async (req, res, next) => {
   }
 }
 
-app.post("/api/auth/media-session", firebaseAuth, (req, res) => {
+app.post("/api/auth/media-session", firebaseAuth, async (req, res) => {
   const token = String(req.authToken || "").trim()
   if (!token) {
     return res.status(401).json({ error: "Authentification requise." })
@@ -1158,9 +1267,13 @@ app.post("/api/auth/media-session", firebaseAuth, (req, res) => {
     }),
   )
 
+  const isAdmin = isAdminToken(req.user)
+  const isPremium = isAdmin || (await resolvePremiumAccess(req.user))
+
   return res.json({
     ok: true,
-    isAdmin: isAdminToken(req.user),
+    isAdmin,
+    isPremium,
   })
 })
 
@@ -2740,6 +2853,153 @@ app.post("/api/admin/users/delete", firebaseAuth, adminOnly, async (req, res) =>
     return res.status(500).json({ error: "Impossible de supprimer completement ce compte." })
   }
 })
+app.post("/api/premium/checkout-session", firebaseAuth, async (req, res) => {
+  try {
+    if (!isFirebaseAdminConfigured) {
+      return res.status(503).json({
+        error: "L'abonnement Premium n'est pas encore disponible. Réessaie un peu plus tard.",
+      })
+    }
+
+    const uid = sanitizeText(req.user?.uid, 128)
+    const email = normalizeEmailValue(req.user?.email)
+    const planId = sanitizeText(req.body?.plan, 16)
+    const plan = premiumPlans[planId]
+
+    if (!uid) {
+      return res.status(401).json({ error: "Authentification requise." })
+    }
+    if (!plan) {
+      return res.status(400).json({ error: "Formule Premium invalide." })
+    }
+    if (await resolvePremiumAccess(req.user)) {
+      return res.status(409).json({ error: "Ton compte bénéficie déjà de Me&rituals Premium." })
+    }
+
+    const requestAppBaseUrl = getRequestAppBaseUrl(req)
+    const session = await stripe.checkout.sessions.create({
+      mode: "subscription",
+      success_url: `${requestAppBaseUrl}/calendrier?premium=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${requestAppBaseUrl}/calendrier?premium=cancelled`,
+      client_reference_id: uid,
+      customer_email: email || undefined,
+      line_items: [
+        {
+          price_data: {
+            currency: "eur",
+            unit_amount: plan.amountCents,
+            tax_behavior: "inclusive",
+            recurring: {
+              interval: plan.interval,
+            },
+            product_data: {
+              name: plan.name,
+              description: "Outils avancés pour le calendrier, les repas, les recettes, les routines, les entraînements, les projets, la Wishlist et les archives Me&rituals.",
+            },
+          },
+          quantity: 1,
+        },
+      ],
+      metadata: {
+        kind: "premium",
+        uid,
+        email,
+        plan: plan.id,
+      },
+      subscription_data: {
+        metadata: {
+          kind: "premium",
+          uid,
+          email,
+          plan: plan.id,
+        },
+      },
+      allow_promotion_codes: true,
+    })
+
+    return res.json({ url: session.url })
+  } catch (error) {
+    console.error("Premium checkout session error:", error)
+    return res.status(error?.statusCode || 500).json({
+      error: error instanceof Error ? error.message : "Impossible de lancer l'abonnement Premium.",
+    })
+  }
+})
+
+app.get("/api/premium/checkout-session", firebaseAuth, async (req, res) => {
+  try {
+    if (!isFirebaseAdminConfigured) {
+      return res.status(503).json({ error: "Le statut Premium ne peut pas être vérifié pour le moment." })
+    }
+
+    const uid = sanitizeText(req.user?.uid, 128)
+    const sessionId = sanitizeText(req.query?.session_id, 255)
+    if (!uid) {
+      return res.status(401).json({ error: "Authentification requise." })
+    }
+    if (!sessionId) {
+      return res.status(400).json({ error: "Session Premium invalide." })
+    }
+
+    const session = await stripe.checkout.sessions.retrieve(sessionId, { expand: ["subscription"] })
+    const sessionOwnerUid = getSessionOwnerUid(session)
+    if (sessionOwnerUid !== uid || session.metadata?.kind !== "premium") {
+      return res.status(403).json({ error: "Cette session Premium n'appartient pas à ce compte." })
+    }
+    if (session.status !== "complete" || !session.subscription) {
+      return res.status(200).json({ active: false })
+    }
+
+    const subscription =
+      typeof session.subscription === "string"
+        ? await stripe.subscriptions.retrieve(session.subscription)
+        : session.subscription
+    const entitlement = await syncPremiumSubscription(subscription, {
+      uid,
+      email: req.user?.email,
+    })
+
+    return res.status(200).json({
+      active: entitlement.isPremium,
+      status: entitlement.status,
+      plan: entitlement.plan,
+      currentPeriodEnd: entitlement.currentPeriodEnd,
+    })
+  } catch (error) {
+    console.error("Premium checkout verification error:", error)
+    return res.status(500).json({ error: "Impossible de vérifier l'abonnement Premium." })
+  }
+})
+
+app.post("/api/premium/portal-session", firebaseAuth, async (req, res) => {
+  try {
+    if (!isFirebaseAdminConfigured) {
+      return res.status(503).json({ error: "La gestion de l'abonnement est indisponible pour le moment." })
+    }
+
+    const uid = sanitizeText(req.user?.uid, 128)
+    if (!uid) {
+      return res.status(401).json({ error: "Authentification requise." })
+    }
+
+    const snapshot = await getFirebaseAdminDb().collection("premiumSubscriptions").doc(uid).get()
+    const customerId = snapshot.exists ? sanitizeText(snapshot.data()?.stripeCustomerId, 128) : ""
+    if (!customerId) {
+      return res.status(404).json({ error: "Aucun abonnement Stripe n'est associé à ce compte." })
+    }
+
+    const requestAppBaseUrl = getRequestAppBaseUrl(req)
+    const session = await stripe.billingPortal.sessions.create({
+      customer: customerId,
+      return_url: `${requestAppBaseUrl}/calendrier`,
+    })
+    return res.json({ url: session.url })
+  } catch (error) {
+    console.error("Premium billing portal error:", error)
+    return res.status(500).json({ error: "Impossible d'ouvrir la gestion de l'abonnement." })
+  }
+})
+
 app.post("/api/create-checkout-session", firebaseAuth, async (req, res) => {
   try {
     const uid = sanitizeText(req.user?.uid, 128)
@@ -2936,6 +3196,26 @@ app.post("/api/stripe-webhook", async (req, res) => {
 
   if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
     const session = event.data.object
+    if (session.mode === "subscription" && session.metadata?.kind === "premium") {
+      try {
+        const subscription =
+          typeof session.subscription === "string"
+            ? await stripe.subscriptions.retrieve(session.subscription)
+            : session.subscription
+        if (!subscription) {
+          throw new Error("premium-subscription-missing")
+        }
+        await syncPremiumSubscription(subscription, {
+          uid: getSessionOwnerUid(session),
+          email: getSessionCustomerEmail(session),
+        })
+      } catch (error) {
+        console.error("Webhook premium activation error:", error)
+        return res.status(500).json({ error: "Premium activation failed." })
+      }
+      return res.json({ received: true })
+    }
+
     try {
       const purchaseRecord = upsertPaidPurchaseFromSession(session)
 
@@ -2962,6 +3242,19 @@ app.post("/api/stripe-webhook", async (req, res) => {
       }
     } catch (error) {
       console.error("Webhook purchase persistence error:", error)
+    }
+  }
+
+  if (
+    event.type === "customer.subscription.created" ||
+    event.type === "customer.subscription.updated" ||
+    event.type === "customer.subscription.deleted"
+  ) {
+    try {
+      await syncPremiumSubscription(event.data.object)
+    } catch (error) {
+      console.error("Webhook premium subscription sync error:", error)
+      return res.status(500).json({ error: "Premium subscription sync failed." })
     }
   }
 

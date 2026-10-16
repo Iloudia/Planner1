@@ -76,10 +76,10 @@ const CARD_PATH_SET = new Set(CARD_PATHS)
 const CATEGORY_TO_PATH: Record<string, string> = {
   sport: "/sport",
   journaling: "/journaling",
-  mindset: "/mindset",
-  "mind set": "/mindset",
-  "self love": "/mindset",
-  "self-love": "/mindset",
+  mindset: "/self-love",
+  "mind set": "/self-love",
+  "self love": "/self-love",
+  "self-love": "/self-love",
   finances: "/finances",
   routine: "/routine",
   wishlist: "/wishlist",
@@ -281,18 +281,6 @@ const buildBaseCardOrder = (preferredCardOrder: string[]) => {
   const seen = new Set(preferred)
   const remaining = CARD_PATHS.filter((path) => !seen.has(path))
   return [...preferred, ...remaining]
-}
-
-const prioritizePreferredCardOrder = (paths: string[], preferredCardOrder: string[]) => {
-  const normalizedPaths = toFullCardOrder(paths)
-  const preferred = preferredCardOrder.filter((path) => CARD_PATH_SET.has(path))
-
-  if (preferred.length === 0) {
-    return normalizedPaths
-  }
-
-  const seen = new Set(preferred)
-  return [...preferred, ...normalizedPaths.filter((path) => !seen.has(path))]
 }
 
 const deriveOrderFromLegacyUsage = (legacyUsage: Record<string, number>, preferredCardOrder: string[]) => {
@@ -498,7 +486,6 @@ function HomePage() {
   const profileUsername = useMemo(() => username?.trim() || "", [username])
   const isTodoLimitReached = todos.length >= MAX_TODOS
   const [showTodoLimitMessage, setShowTodoLimitMessage] = useState(false)
-  const [isProfilePhotoMenuOpen, setIsProfilePhotoMenuOpen] = useState(false)
   const [cardOrder, setCardOrder] = useState<string[]>([])
   const [cardClickProgress, setCardClickProgress] = useState<Record<string, number>>({})
   const [isHomeCardsLoaded, setIsHomeCardsLoaded] = useState(false)
@@ -522,9 +509,8 @@ function HomePage() {
   const baseCardOrder = useMemo(() => buildBaseCardOrder(preferredCardOrder), [preferredCardOrder])
 
   const orderedCards = useMemo(() => {
-    const effectiveOrder = prioritizePreferredCardOrder(cardOrder.length > 0 ? cardOrder : baseCardOrder, preferredCardOrder)
-    return buildOrderedCardsFromPaths(effectiveOrder)
-  }, [baseCardOrder, cardOrder, preferredCardOrder])
+    return buildOrderedCardsFromPaths(cardOrder.length > 0 ? cardOrder : baseCardOrder)
+  }, [baseCardOrder, cardOrder])
 
   useEffect(() => {
     const current = safeReadStorage(homeMoodboardKey)
@@ -650,9 +636,8 @@ function HomePage() {
     const legacyUsage = readLegacyCardUsageFromStorage(legacyCardUsageKey)
     const legacyOrder =
       Object.keys(legacyUsage).length > 0 ? deriveOrderFromLegacyUsage(legacyUsage, preferredCardOrder) : []
-    const fallbackOrder = prioritizePreferredCardOrder(
+    const fallbackOrder = toFullCardOrder(
       localOrder.length > 0 ? localOrder : legacyOrder.length > 0 ? legacyOrder : baseCardOrder,
-      preferredCardOrder,
     )
     const fallbackProgress = normalizeCardClickProgress(localProgress)
 
@@ -695,10 +680,7 @@ function HomePage() {
           return
         }
 
-        const nextOrder = prioritizePreferredCardOrder(
-          hasStoredOrder ? remoteState.order : fallbackOrder,
-          preferredCardOrder,
-        )
+        const nextOrder = toFullCardOrder(hasStoredOrder ? remoteState.order : fallbackOrder)
         const nextProgress = hasStoredClickProgress
           ? normalizeCardClickProgress(remoteState.clickProgress)
           : fallbackProgress
@@ -766,23 +748,6 @@ function HomePage() {
 
     return () => window.clearTimeout(timeoutId)
   }, [showTodoLimitMessage])
-
-  useEffect(() => {
-    if (!isProfilePhotoMenuOpen) {
-      return
-    }
-
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as HTMLElement
-      if (target.closest(".home-profile-card__menu") || target.closest(".home-profile-card__menu-popover")) {
-        return
-      }
-      setIsProfilePhotoMenuOpen(false)
-    }
-
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [isProfilePhotoMenuOpen])
 
   const addTodo = () => {
     const text = todoInput.trim()
@@ -958,30 +923,15 @@ function HomePage() {
             <div className="home-profile-card__menu">
               <button
                 className="profile-menu"
-                aria-label="Options photo de profil"
-                aria-expanded={isProfilePhotoMenuOpen}
+                aria-label="Changer la photo de profil"
                 type="button"
                 onClick={(event) => {
                   event.stopPropagation()
-                  setIsProfilePhotoMenuOpen((previous) => !previous)
+                  fileInputRef.current?.click()
                 }}
               >
                 <span aria-hidden="true">...</span>
               </button>
-              {isProfilePhotoMenuOpen ? (
-                <div className="home-profile-card__menu-popover" role="menu" onClick={(event) => event.stopPropagation()}>
-                  <button
-                    type="button"
-                    className="home-profile-card__menu-item"
-                    onClick={() => {
-                      setIsProfilePhotoMenuOpen(false)
-                      fileInputRef.current?.click()
-                    }}
-                  >
-                    Modifier la photo
-                  </button>
-                </div>
-              ) : null}
             </div>
             <input
               ref={fileInputRef}

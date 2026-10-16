@@ -239,9 +239,10 @@ const syncServerMediaSession = async (user: User) => {
     throw new Error(reason)
   }
 
-  const payload = (await response.json().catch(() => ({}))) as { isAdmin?: boolean }
+  const payload = (await response.json().catch(() => ({}))) as { isAdmin?: boolean; isPremium?: boolean }
   return {
     isAdmin: Boolean(payload?.isAdmin),
+    isPremium: Boolean(payload?.isPremium),
   }
 }
 
@@ -332,6 +333,7 @@ export const FirebaseAuthBridge = ({ onValue }: FirebaseAuthBridgeProps) => {
   const [authUser, setAuthUser] = useState<User | null>(auth.currentUser)
   const [userDoc, setUserDoc] = useState<FirebaseUserDocument | null>(null)
   const [isAdminApproved, setIsAdminApproved] = useState(false)
+  const [isPremiumApproved, setIsPremiumApproved] = useState(false)
   const [accountCreatedAt, setAccountCreatedAt] = useState<string | null>(null)
   const [scheduledDeletionDate, setScheduledDeletionDate] = useState<string | null>(null)
   const [authReady, setAuthReady] = useState(false)
@@ -343,6 +345,7 @@ export const FirebaseAuthBridge = ({ onValue }: FirebaseAuthBridgeProps) => {
       if (!nextUser) {
         setUserDoc(null)
         setIsAdminApproved(false)
+        setIsPremiumApproved(false)
         setAccountCreatedAt(null)
         setScheduledDeletionDate(null)
         if (isMounted) {
@@ -393,6 +396,7 @@ export const FirebaseAuthBridge = ({ onValue }: FirebaseAuthBridgeProps) => {
           const sessionState = await syncServerMediaSession(nextUser)
           if (isMounted) {
             setIsAdminApproved(sessionState.isAdmin)
+            setIsPremiumApproved(sessionState.isPremium)
           }
         } catch (error) {
           if (error instanceof TypeError) {
@@ -402,6 +406,7 @@ export const FirebaseAuthBridge = ({ onValue }: FirebaseAuthBridgeProps) => {
           }
           if (isMounted) {
             setIsAdminApproved(false)
+            setIsPremiumApproved(false)
           }
         } finally {
           if (isMounted) {
@@ -444,6 +449,7 @@ export const FirebaseAuthBridge = ({ onValue }: FirebaseAuthBridgeProps) => {
       try {
         const sessionState = await syncServerMediaSession(nextUser)
         setIsAdminApproved(sessionState.isAdmin)
+        setIsPremiumApproved(sessionState.isPremium)
       } catch (error) {
         if (error instanceof TypeError) {
           console.warn(`Media session refresh skipped: server unreachable (${getApiTargetLabel()})`)
@@ -1022,6 +1028,7 @@ export const FirebaseAuthBridge = ({ onValue }: FirebaseAuthBridgeProps) => {
   const value = useMemo<AuthContextValue>(() => {
     const email = authUser?.email ?? null
     const isAdmin = isAdminApproved || Boolean(userDoc?.admin)
+    const isPremium = isAdmin || isPremiumApproved
     const username = userDoc?.identityInfo?.username?.trim() || null
     const userProfile = mergeProfileData(
       {
@@ -1035,6 +1042,7 @@ export const FirebaseAuthBridge = ({ onValue }: FirebaseAuthBridgeProps) => {
       isAuthReady: authReady,
       isAuthenticated: Boolean(authUser),
       isAdmin,
+      isPremium,
       userId,
       userEmail: email,
       username,
@@ -1067,6 +1075,7 @@ export const FirebaseAuthBridge = ({ onValue }: FirebaseAuthBridgeProps) => {
     deactivateAccount,
     deleteAccountFinal,
     isAdminApproved,
+    isPremiumApproved,
     login,
     loginWithGoogle,
     logout,

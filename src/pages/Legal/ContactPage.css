@@ -399,6 +399,12 @@ body.legal-page--lux .contact-form__body textarea {
   font-size: 0.9rem;
 }
 
+body.legal-page--lux .contact-form__body input[type="text"],
+body.legal-page--lux .contact-form__body input[type="email"],
+body.legal-page--lux .contact-form__body textarea[name="message"] {
+  background: #ffffff;
+}
+
 body.legal-page--lux .contact-form__body input::placeholder,
 body.legal-page--lux .contact-form__body textarea::placeholder {
   color: #aaa29a;

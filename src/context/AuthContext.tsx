@@ -59,6 +59,7 @@ export type AuthContextValue = {
   isAuthReady: boolean
   isAuthenticated: boolean
   isAdmin: boolean
+  isPremium: boolean
   userId: string | null
   userEmail: string | null
   username: string | null
@@ -91,6 +92,7 @@ const loadingAuthValue: AuthContextValue = {
   isAuthReady: false,
   isAuthenticated: false,
   isAdmin: false,
+  isPremium: false,
   userId: null,
   userEmail: null,
   username: null,

@@ -309,36 +309,6 @@
   position: static;
 }
 
-.home-profile-card__menu-popover {
-  position: absolute;
-  top: 46px;
-  right: 0;
-  min-width: 220px;
-  padding: 0.4rem 0;
-  display: flex;
-  flex-direction: column;
-  background: #ffffff;
-  border: 1px solid #e6e1d9;
-  border-radius: 0;
-  box-shadow: none;
-  z-index: 20;
-}
-
-.home-profile-card__menu-item {
-  border: none;
-  background: none;
-  padding: 0.6rem 1rem;
-  text-align: left;
-  font-size: 1rem;
-  color: #000000;
-  cursor: pointer;
-}
-
-.home-profile-card__menu-item:hover {
-  background: #f1ece4;
-  color: #000000;
-}
-
 .profile-file-input {
   display: none; /* important : on utilise le bouton + ref.click() */
 }

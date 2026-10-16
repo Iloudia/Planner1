@@ -4,6 +4,7 @@ import ImageUploadPanel from "../../components/ImageUploadPanel"
 import MediaImage from "../../components/MediaImage"
 import ModalCloseButton from "../../components/ModalCloseButton"
 import PageLoader from "../../components/PageLoader"
+import PremiumCalendarModal, { PremiumFeatureCrown } from "../../components/PremiumCalendarModal"
 import { useAuth } from "../../context/AuthContext"
 import useUserDietData from "../../hooks/useUserDietData"
 import { deleteMedia, uploadImage } from "../../services/media/api"
@@ -5480,7 +5481,7 @@ const buildDefaultWeeklyPlan = (): WeeklyPlan => {
 const DietClassicPage = () => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { isAuthReady, userId } = useAuth()
+  const { isAuthReady, isPremium, userId } = useAuth()
   const weekKey = getWeekKey()
   const {
     customRecipes: persistedCustomRecipes,
@@ -5511,6 +5512,7 @@ const DietClassicPage = () => {
   const [planMealName, setPlanMealName] = useState("")
   const [planConfirmationVisible, setPlanConfirmationVisible] = useState(false)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false)
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [customMenuOpenId, setCustomMenuOpenId] = useState<string | null>(null)
   const [draftTitle, setDraftTitle] = useState("")
@@ -5721,6 +5723,10 @@ const DietClassicPage = () => {
   }
   const addRecipeToPlan = async () => {
     if (!selectedRecipe || !canEdit) return
+    if (!isPremium) {
+      setIsPremiumModalOpen(true)
+      return
+    }
     const mealName = planMealName.trim() || selectedRecipe.title
     if (!mealName) return
     await assignRecipeToSlot(planDay, planSlot, mealName, {
@@ -5787,6 +5793,11 @@ const DietClassicPage = () => {
 
   const handleCreateRecipe = async () => {
     if (!canEdit) return
+    if (!isPremium) {
+      setIsCreateOpen(false)
+      setIsPremiumModalOpen(true)
+      return
+    }
     const title = draftTitle.trim()
     if (!title) return
     const ingredients = parseLines(draftIngredients)
@@ -6167,8 +6178,20 @@ const DietClassicPage = () => {
                 <h3>Mes recettes</h3>
                 <p className="diet-custom-header__hint">Clique sur "Créer une recette" pour ajouter tes propres recettes en quelques secondes.</p>
               </div>
-              <button type="button" className="pill pill--diet" onClick={() => setIsCreateOpen(true)} disabled={!canEdit}>
+              <button
+                type="button"
+                className="pill pill--diet"
+                onClick={() => {
+                  if (isPremium) {
+                    setIsCreateOpen(true)
+                  } else {
+                    setIsPremiumModalOpen(true)
+                  }
+                }}
+                disabled={!canEdit}
+              >
                 Créer une recette
+                {!isPremium ? <PremiumFeatureCrown /> : null}
               </button>
             </div>
             {visibleRecipes.length > 0 ? (
@@ -6635,8 +6658,25 @@ const DietClassicPage = () => {
                   </div>
                 </header>
                 <div className="diet-recipe-modal__body">
-                  <section className="diet-recipe-plan">
-                    <h2>Ajouter au planning</h2>
+                  <section
+                    className={`diet-recipe-plan${isPremium ? "" : " is-premium-locked"}`}
+                    role={isPremium ? undefined : "button"}
+                    tabIndex={isPremium ? undefined : 0}
+                    aria-label={isPremium ? undefined : "Débloquer l'ajout d'une recette au planning avec Premium"}
+                    onClickCapture={isPremium ? undefined : (event) => {
+                      event.preventDefault()
+                      event.stopPropagation()
+                      setIsPremiumModalOpen(true)
+                    }}
+                    onKeyDownCapture={isPremium ? undefined : (event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault()
+                        event.stopPropagation()
+                        setIsPremiumModalOpen(true)
+                      }
+                    }}
+                  >
+                    <h2>Ajouter au planning {!isPremium ? <PremiumFeatureCrown /> : null}</h2>
                     <div className="diet-recipe-plan__row">
                       <label>
                         Jour
@@ -6757,7 +6797,9 @@ const DietClassicPage = () => {
                           aria-label={isIngredientsOpen ? "Masquer les ingrédients" : "Afficher les ingrédients"}
                           aria-expanded={isIngredientsOpen}
                         >
-                          v
+                          <svg className="workout-form__select-chevron" viewBox="0 0 20 20" aria-hidden="true">
+                            <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
                         </button>
                       </div>
                       {isIngredientsOpen ? (
@@ -7188,6 +7230,7 @@ const DietClassicPage = () => {
             </div>
           </div>
         ) : null}
+        <PremiumCalendarModal isOpen={isPremiumModalOpen} onClose={() => setIsPremiumModalOpen(false)} />
           </main>
 </>
 )

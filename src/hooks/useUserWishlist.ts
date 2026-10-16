@@ -27,6 +27,7 @@ const buildBaseCategory = (
   note: overrides?.note ?? "",
   isFavorite: overrides?.isFavorite ?? false,
   isBase: true,
+  isDeleted: overrides?.isDeleted ?? false,
   coverMode: overrides?.coverMode ?? "default",
   customCoverUrl: overrides?.customCoverUrl,
   customCoverPath: overrides?.customCoverPath,
@@ -149,6 +150,7 @@ const useUserWishlist = () => {
               existing?.coverMode ?? (existing?.customCoverUrl || existing?.customCoverPath ? "custom" : "default"),
             note: existing?.note,
             isFavorite: existing?.isFavorite,
+            isDeleted: existing?.isDeleted,
             customCoverUrl: existing?.customCoverUrl,
             customCoverPath: existing?.customCoverPath,
             usageCount: existing?.usageCount,
@@ -242,9 +244,7 @@ const useUserWishlist = () => {
       await mutate(async () => {
         await Promise.all(categoryItems.map((item) => deleteWishlistItem(userId, item.id)))
         if (current.isBase) {
-          const definition = baseWishlistCategoryDefinitions.find((item) => item.id === categoryId)
-          if (!definition) return
-          await saveWishlistCategory(userId, buildBaseCategory(definition, { createdAt: current.createdAt }))
+          await saveWishlistCategory(userId, { ...current, isDeleted: true })
           return
         }
         await deleteWishlistCategory(userId, categoryId)

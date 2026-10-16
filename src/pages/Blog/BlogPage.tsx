@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import { Link } from "react-router-dom"
-import journalingImage from "../../assets/Journaling.webp"
+import blogHeroImage from "../../assets/Bouquet de lys roses éclatants.png"
 import glowUpEbookImage from "../../assets/couverture glow-up.webp"
 import EditorialQuote from "../../components/EditorialQuote"
 import ResponsiveSiteImage from "../../components/ResponsiveSiteImage"
@@ -41,6 +41,7 @@ const toBlogArticle = (article: BlogCmsArticle): BlogArticle => ({
 })
 
 const featuredHrefs = [
+  "/blog/sante-beaute/article-4",
   "/blog/mental/confiance-en-soi",
   "/blog/mental/article-2",
   "/blog/mode/style-personnel",
@@ -100,18 +101,18 @@ const BlogPage = () => {
       <BlogAdminActions />
       <header className="blog-header">
         <div className="blog-header__media">
-          <ResponsiveSiteImage src={journalingImage} alt="Carnet ligné ouvert avec un stylo sur une table en bois" sizes="100vw" preload />
+          <ResponsiveSiteImage src={blogHeroImage} alt="Bouquet de lys roses éclatants" sizes="100vw" preload />
           <div className="blog-header__headline">
             <span className="blog-eyebrow">Le blog Me&amp;rituals</span>
-            <h1>Des mots pour avancer avec douceur et intention</h1>
+            <h1>Bienvenue sur le blog</h1>
           </div>
         </div>
         <div className="blog-header__intro">
-          <span className="blog-eyebrow">Bienvenue</span>
-          <h2>Le journal</h2>
-          <p>Un espace de réflexion et de ressources pour mieux s’organiser, prendre soin de soi et construire un quotidien qui nous ressemble.</p>
-          <p>Tu y trouveras des idées concrètes autour du journaling, du bien-être, du mouvement et de l’organisation personnelle.</p>
-          <a className="blog-button sport-workout-button-match" href="#articles-a-la-une">Découvrir le blog</a>
+          <span className="blog-eyebrow">À découvrir</span>
+          <h2>Des conseils pour un quotidien plus équilibré</h2>
+          <p>Retrouve des articles autour du bien-être, de la santé et de la beauté, du mental, de la mode, du sport, de la nutrition et du lifestyle.</p>
+          <p>Des conseils concrets, des idées inspirantes et des ressources accessibles pour prendre soin de toi.</p>
+          <a className="blog-button sport-workout-button-match" href="#articles-a-la-une">Découvrir les articles</a>
         </div>
       </header>
 
