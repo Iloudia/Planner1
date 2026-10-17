@@ -1432,7 +1432,7 @@
 
 
 .self-love-page--gradient {
-  background: #f8f0e6 !important;
+  background: var(--page-background) !important;
   min-height: 100vh;
 }
 
@@ -2517,7 +2517,7 @@
 body.self-love-page--lux {
   --lux-ink: #1f1b16;
   --lux-line: rgba(31, 27, 22, 0.18);
-  background: #f7f3ee;
+  background: var(--page-background);
   color: #1f1a2f;
   font-family: 'Playfair Display', 'Times New Roman', serif;
 }

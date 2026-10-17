@@ -1,6 +1,6 @@
 
 body.boutique-page--tone {
-  background: #f8f6f1;
+  background: var(--page-background);
 }
 
 .boutique-page {
@@ -261,7 +261,7 @@ body.boutique-page--tone {
   width: 84px;
   height: 84px;
   object-fit: cover;
-  background: #f8f6f1;
+  background: var(--page-background);
 }
 
 .boutique-cart-toast__title {
@@ -387,7 +387,7 @@ body.boutique-page--tone {
 
 .boutique-category-card__image {
   border: 1px solid var(--line);
-  background: #f8f6f1;
+  background: var(--page-background);
   padding: 0.4rem;
 }
 

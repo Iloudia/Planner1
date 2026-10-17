@@ -797,7 +797,7 @@
 }
 
 body.home-page--lux {
-  background: #f8f6f1;
+  background: var(--page-background);
 }
 
 .page.home-page {

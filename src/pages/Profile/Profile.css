@@ -570,7 +570,7 @@
 }
 /* Luxury overrides (match boutique design) */
 body.profile-page--lux {
-  background: #f8f6f1;
+  background: var(--page-background);
 }
 
 body.profile-page--lux .content-page.settings-page {

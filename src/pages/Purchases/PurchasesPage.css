@@ -45,7 +45,7 @@
   width: 160px;
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  background: #f8f6f1;
+  background: var(--page-background);
 }
 
 .purchases-card__media img {

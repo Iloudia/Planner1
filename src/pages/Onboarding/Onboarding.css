@@ -222,7 +222,7 @@
 
 /* Luxury overrides (match boutique design) */
 body.onboarding-page--lux {
-  background: #f8f6f1;
+  background: var(--page-background);
 }
 
 body.onboarding-page--lux .onboarding-layout {

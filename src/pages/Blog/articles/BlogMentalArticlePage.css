@@ -1,5 +1,5 @@
 body.mental-article-page--tone {
-  background: #f8f6f1;
+  background: var(--page-background);
 }
 
 .mental-article-page {

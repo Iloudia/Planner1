@@ -1,5 +1,5 @@
 body.admin-page--tone {
-  background: #f8f6f1;
+  background: var(--page-background);
 }
 
 .admin-page {
@@ -413,7 +413,7 @@ body.admin-page--tone {
   margin-top: 1.5rem;
   padding: 1rem;
   border: 1px solid var(--lux-line);
-  background: #f8f6f1;
+  background: var(--page-background);
 }
 
 .admin-quality-highlight span,
@@ -561,7 +561,7 @@ body.admin-page--tone {
   padding: 0.95rem 1.1rem;
   border-radius: 0;
   border: 1px solid var(--lux-line);
-  background: #f8f6f1;
+  background: var(--page-background);
   color: #715740;
   font-size: 0.92rem;
 }
@@ -663,7 +663,7 @@ body.admin-page--tone {
   margin: 0;
   padding: 1rem 1.05rem;
   border-radius: 0;
-  background: #f7f1e8;
+  background: var(--page-background);
   color: #5f5246;
 }
 
@@ -728,7 +728,7 @@ body.admin-page--tone {
   gap: 0.2rem;
   padding: 0.9rem 1rem;
   border-radius: 0;
-  background: #f8f6f1;
+  background: var(--page-background);
   border: 1px solid var(--lux-line);
 }
 

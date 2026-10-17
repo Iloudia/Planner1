@@ -2321,7 +2321,7 @@
 
 /* Luxury overrides (match boutique design) */
 body.wishlist-page--lux {
-  background: #f8f6f1;
+  background: var(--page-background);
   color: #1f1b16;
   font-family: "Playfair Display", "Times New Roman", serif;
   --lux-ink: #1f1b16;

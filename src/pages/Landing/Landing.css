@@ -943,7 +943,7 @@ body.landing-page--lux .landing-daily-hub .landing-carousel__dot.is-active {
 
 /* Luxury overrides (match boutique design) */
 body.landing-page--lux {
-  background: #f8f6f1;
+  background: var(--page-background);
 }
 
 body.landing-page--lux .landing-page {

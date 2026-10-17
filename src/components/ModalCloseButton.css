@@ -12,7 +12,7 @@
   overflow: hidden;
   border: 0;
   border-radius: 0 !important;
-  background: #f7f3ee;
+  background: var(--page-background);
   color: #14243e;
   cursor: pointer;
 }

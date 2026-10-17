@@ -321,7 +321,7 @@
   padding: 0;
   border: none;
   border-radius: 50%;
-  background: #f7f3ee;
+  background: var(--page-background);
   color: #415254;
   font-size: 1.25rem;
   line-height: 1;
@@ -1316,7 +1316,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: #f7f3ee;
+  background: var(--page-background);
   font-family: 'Inter', 'Times New Roman', sans-serif;
   font-size: 0.9rem;
   font-weight: 700;
@@ -2554,7 +2554,7 @@
 }
 /* Luxury overrides (match boutique design) */
 body.finance-page--lux {
-  background: #f7f3ee;
+  background: var(--page-background);
   color: #1f1a2f;
   font-family: 'Playfair Display', 'Times New Roman', serif;
 }

@@ -1,5 +1,5 @@
 body.blog-health-page--solid {
-  background: #f8f6f1;
+  background: var(--page-background);
 }
 
 .blog-health-page {

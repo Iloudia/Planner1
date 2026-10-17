@@ -594,7 +594,7 @@
 }
 /* Luxury overrides (match boutique design) */
 body.routine-page--lux {
-  background: #f7f3ee;
+  background: var(--page-background);
   color: #1f1a2f;
   font-family: 'Playfair Display', 'Times New Roman', serif;
 }

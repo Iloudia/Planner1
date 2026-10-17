@@ -358,7 +358,7 @@
   justify-content: flex-start;
   text-align: left;
   font-weight: 600;
-  background: #f8f6f1;
+  background: var(--page-background);
 }
 
 .sport-habits__label-editor {

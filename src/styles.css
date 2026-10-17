@@ -67,7 +67,7 @@
   --lux-ink-soft: #5b5249;
   --color-border-strong: rgba(15, 23, 42, 0.12);
 
-  --bg: #f8f0e6;
+  --page-background: #f8f6f1;
   --panel: var(--color-surface);
   --panel-alt: #f1ece4;
   --card: var(--color-caramel);
@@ -144,7 +144,7 @@ html.is-capacitor {
   --app-safe-area-left: env(safe-area-inset-left, 0px);
   min-height: 100%;
   min-height: 100dvh;
-  background: #f8f6f1;
+  background: var(--page-background);
 }
 
 html.is-capacitor body {
@@ -176,10 +176,7 @@ body {
   font-size: calc(var(--font-size-body) * var(--user-font-scale));
   line-height: var(--leading-body);
   color: var(--text);
-  background: radial-gradient(circle at 20% 10%, rgba(216, 215, 178, 0.28), transparent 30%),
-    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.6), transparent 40%),
-    radial-gradient(circle at 40% 80%, rgba(114, 92, 63, 0.16), transparent 45%),
-    var(--bg);
+  background: var(--page-background);
   padding: 0;
 }
 
@@ -211,10 +208,7 @@ body {
 }
 
 :root[data-background-tone="dark"] body {
-  background: radial-gradient(circle at 20% 10%, rgba(79, 70, 229, 0.35), transparent 32%),
-    radial-gradient(circle at 75% 15%, rgba(15, 118, 110, 0.35), transparent 35%),
-    radial-gradient(circle at 40% 80%, rgba(15, 23, 42, 0.6), transparent 55%),
-    var(--bg);
+  background: var(--page-background);
 }
 
 input[type="text"]::placeholder {
@@ -274,50 +268,47 @@ p {
 }
 
 .wishlist-page--gradient {
-  background: #f8f0e6;
+  background: var(--page-background);
 }
 
 .finance-page--gradient {
-  background: radial-gradient(circle at 20% 10%, rgba(216, 215, 178, 0.28), transparent 30%),
-    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.6), transparent 40%),
-    radial-gradient(circle at 40% 80%, rgba(114, 92, 63, 0.16), transparent 45%),
-    var(--bg);
+  background: var(--page-background);
 }
 
 .diet-page--beige {
-  background: #f8f0e6;
+  background: var(--page-background);
 }
 
 .sport-page--beige {
-  background: #f8f0e6;
+  background: var(--page-background);
 }
 
 .goals-page--beige {
-  background: #f8f0e6;
+  background: var(--page-background);
 }
 
 .workout-page--beige {
-  background: #f8f0e6;
+  background: var(--page-background);
 }
 
 .journaling-page--beige {
-  background: #f8f0e6;
+  background: var(--page-background);
 }
 
 .calendar-page--beige {
-  background: #f8f0e6;
+  background: var(--page-background);
 }
 
 .finance-page--beige {
-  background: #f8f0e6;
+  background: var(--page-background);
 }
 
 .routine-page--beige {
-  background: #f8f0e6;
+  background: var(--page-background);
 }
 
 .alimentation-page--beige {
-  background: #f8f0e6;
+  background: var(--page-background);
 }
 
 
@@ -341,7 +332,6 @@ p {
   color: #0f172a;
   padding: 0;
   border-bottom: 1px solid rgba(15, 23, 42, 0.08);
-  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
   position: sticky;
   top: 0;
   width: 100%;
@@ -1450,7 +1440,7 @@ p {
 
 body.notfound-page--active,
 .notfound-page {
-  background: #f8f6f1;
+  background: var(--page-background);
 }
 
 .notfound-page {
@@ -2480,7 +2470,6 @@ h1 {
 :root[data-theme="caramel"] {
   --accent: #c28c5f;
   --accent-2: #e3d7ca;
-  --bg: #f8f0e6;
   --panel: #fffaf6;
   --card: #fff0e5;
 }
@@ -2488,7 +2477,6 @@ h1 {
 :root[data-theme="mint"] {
   --accent: #2aa89b;
   --accent-2: #d8f3ee;
-  --bg: #f3faf8;
   --panel: #eef8f5;
   --card: #e6f5f0;
 }

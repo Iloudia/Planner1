@@ -335,7 +335,7 @@
 }
 /* Luxury overrides (match boutique design) */
 body.legal-page--lux {
-  background: #f8f6f1;
+  background: var(--page-background);
   --lux-ink: #1f1b16;
   --lux-ink-soft: #5b5249;
   --lux-accent: #b8a99a;

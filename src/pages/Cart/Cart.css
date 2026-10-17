@@ -69,7 +69,7 @@
   width: 120px;
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  background: #f8f6f1;
+  background: var(--page-background);
 }
 
 .cart-item__media img {

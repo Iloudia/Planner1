@@ -4,7 +4,7 @@
   flex-direction: column;
   gap: 2rem;
   padding: 0;
-  background: #f8f0e6;
+  background: var(--page-background);
 }
 
 .diet-gymgirl-page--loading {
@@ -1105,7 +1105,7 @@
 }
 
 body.diet-page--lux {
-  background: #f8f6f1;
+  background: var(--page-background);
 }
 
 .diet-gymgirl-page {
@@ -1165,6 +1165,10 @@ body.diet-page--lux {
   line-height: var(--leading-control);
   letter-spacing: 0;
   text-transform: none;
+}
+
+.diet-gymgirl-page .pill.pill--diet .premium-feature-crown {
+  color: #ffffff;
 }
 
 .diet-toggle button,

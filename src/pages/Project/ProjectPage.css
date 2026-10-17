@@ -1,5 +1,5 @@
 body.project-page--lux {
-  background: #f8f6f1;
+  background: var(--page-background);
 }
 
 .project-page {

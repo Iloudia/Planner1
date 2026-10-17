@@ -4,7 +4,7 @@
   flex-direction: column;
   gap: clamp(2rem, 4vw, 3rem);
   isolation: isolate;
-  background: #f8f0e6;
+  background: var(--page-background);
   --journal-bg: #fff5f8;
   --journal-panel: #fff9fb;
   --journal-panel-soft: #ffeef5;
@@ -849,7 +849,7 @@ body.journaling-modal-open {
 
 
 body.journaling-page--lux {
-  background: #f8f6f1;
+  background: var(--page-background);
 }
 
 .journaling-page {

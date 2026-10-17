@@ -139,7 +139,7 @@
 }
 /* Luxury overrides (match boutique design) */
 body.legal-page--lux {
-  background: #f8f6f1;
+  background: var(--page-background);
 }
 
 body.legal-page--lux .legal-page {

@@ -2664,7 +2664,7 @@
 
 /* Luxury overrides (match boutique design) */
 body.calendar-page--lux {
-  background: #f8f6f1;
+  background: var(--page-background);
   color: #1f1b16;
   font-family: "Playfair Display", "Times New Roman", serif;
   --lux-ink: #1f1b16;
@@ -2876,9 +2876,7 @@ body.calendar-page--lux .calendar-weekly__day-grid {
 
 @media (max-width: 1023px) {
   body.calendar-page--lux {
-    background:
-      radial-gradient(circle at top left, rgba(247, 223, 230, 0.5), transparent 34%),
-      linear-gradient(180deg, #fcfaf6 0%, #f7f1e8 100%);
+    background: var(--page-background);
   }
 
   body.calendar-page--lux .calendar-page {

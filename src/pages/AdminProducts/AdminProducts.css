@@ -87,7 +87,7 @@
   position: relative;
   aspect-ratio: 1 / 1;
   border: 1px solid var(--line);
-  background: #f8f6f1;
+  background: var(--page-background);
   overflow: hidden;
   display: grid;
   place-items: center;
@@ -166,7 +166,7 @@
   border: 1px dashed var(--line);
   padding: 1.6rem;
   text-align: center;
-  background: #f8f6f1;
+  background: var(--page-background);
   cursor: pointer;
 }
 
@@ -325,7 +325,7 @@
   place-items: center;
   min-height: 180px;
   padding: 1.2rem;
-  background: #f8f6f1;
+  background: var(--page-background);
   border: 1px solid var(--line);
   color: var(--ink-soft);
   text-align: center;
