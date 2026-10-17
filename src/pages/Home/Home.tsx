@@ -10,6 +10,7 @@ import { saveHomeCardsState, subscribeToHomeCardsState } from "../../services/fi
 import { saveHomeTodos, subscribeToHomeTodos, type HomeTodoItem } from "../../services/firestore/homeTodos"
 import { buildUserScopedKey, normalizeUserEmail } from "../../utils/userScopedKey"
 import { getWeekKey } from "../../utils/weekKey"
+import { getCardThemeClassName } from "../../utils/homeCardTheme"
 
 import planner01 from "../../assets/sport.webp"
 import planner02 from "../../assets/Moodboardsite.webp"
@@ -441,7 +442,7 @@ async function fileToCompressedFitDataUrl(
 function HomePage() {
   const navigate = useNavigate()
   const { tasks, isLoading: isTasksLoading, error: tasksError } = useTasks()
-  const { isAuthReady, userEmail, userId, username } = useAuth()
+  const { isAuthReady, userEmail, userId, username, userProfile } = useAuth()
 
   const safeEmail = userEmail ?? "anonymous"
   const scopedKey = useCallback((suffix: string) => buildUserScopedKey(safeEmail, suffix), [safeEmail])
@@ -915,7 +916,7 @@ function HomePage() {
   }
 
   return (
-    <div className="page home-page">
+    <div className={`page home-page ${getCardThemeClassName(userProfile.preferences?.homeCardTheme)}`}>
       <aside className="aside-right">
         <div className="profile-card">
           <div className="profile-photo">

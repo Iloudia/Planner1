@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ComponentType, type ReactNode } from "react"
 import type { FirebaseUserDocument } from "../models/firebase"
 
-export type UserProfileData = Pick<FirebaseUserDocument, "personalInfo" | "identityInfo">
+export type UserProfileData = Pick<FirebaseUserDocument, "personalInfo" | "identityInfo" | "preferences">
 
 export type AccountStatus = "actif" | "desactive"
 
@@ -96,7 +96,7 @@ const loadingAuthValue: AuthContextValue = {
   userId: null,
   userEmail: null,
   username: null,
-  userProfile: { personalInfo: {}, identityInfo: {} },
+  userProfile: { personalInfo: {}, identityInfo: {}, preferences: {} },
   createdAt: null,
   updateUserProfile: async () => undefined,
   login: async () => authNotReady(),

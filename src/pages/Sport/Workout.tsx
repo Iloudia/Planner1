@@ -9,6 +9,7 @@ import useUserWorkoutData from "../../hooks/useUserWorkoutData"
 import { deleteMedia, uploadImage } from "../../services/media/api"
 import { buildUserScopedKey, normalizeUserEmail } from "../../utils/userScopedKey"
 import { getWeekKey, SPORT_BOARD_DRAFTS_STORAGE_KEY } from "../../utils/weekKey"
+import { getCardThemeClassName } from "../../utils/homeCardTheme"
 import backdayImage from "../../assets/Backday.webp"
 import legdayImage from "../../assets/legday.webp"
 import heroWorkout from "../../assets/tuany-kohler-dupe.webp"
@@ -131,7 +132,7 @@ const getCreatorCardsPerView = () => {
 }
 
 const WorkoutPage = () => {
-  const { isPremium, userEmail } = useAuth()
+  const { isPremium, userEmail, userProfile } = useAuth()
   const [weekKey] = useState(() => getWeekKey())
   const {
     exercises,
@@ -569,7 +570,7 @@ const WorkoutPage = () => {
   }
 
   return (
-    <div className="workout-page">
+    <div className={`workout-page ${getCardThemeClassName(userProfile.preferences?.homeCardTheme)}`}>
       <header
         className="workout-page__heading"
         style={{ "--workout-heading-image": `url(${heroWorkout})` } as CSSProperties}

@@ -1,6 +1,9 @@
-import { Suspense, lazy, useEffect, useLayoutEffect } from "react"
+import { Suspense, lazy, useEffect, useLayoutEffect, useState } from "react"
 import { Navigate, Route, Routes, useLocation } from "react-router-dom"
 import { useCookieConsent } from "./context/CookieConsentContext"
+import { useAuth } from "./context/AuthContext"
+import { applyPageBackground, DEFAULT_PAGE_BACKGROUND } from "./utils/pageBackground"
+import { getPageBackgroundPreset } from "./data/pageBackgroundPresets"
 import Header from "./components/Header"
 import Footer from "./components/Footer"
 import ProtectedRoute from "./components/ProtectedRoute"
@@ -12,6 +15,7 @@ import BlogArticlePublicationGate from "./components/BlogArticlePublicationGate"
 import PremiumArchivesRoute from "./components/PremiumArchivesRoute"
 import PageLoader from "./components/PageLoader"
 import PrimaryActionButton from "./components/PrimaryActionButton"
+import MediaImage from "./components/MediaImage"
 import landingHero from "./assets/frances-leynes-dupe.webp"
 import landingHeroMobile from "./assets/frances-leynes-dupe-mobile.webp"
 
@@ -348,8 +352,43 @@ function PageResourceHints() {
   return null
 }
 
+type PageBackgroundMediaProps = {
+  color?: string
+  imageUrl?: string
+  isReady: boolean
+}
+
+const PageBackgroundMedia = ({ color, imageUrl, isReady }: PageBackgroundMediaProps) => {
+  const [resolvedImageUrl, setResolvedImageUrl] = useState("")
+
+  useEffect(() => {
+    if (!isReady) return
+    setResolvedImageUrl("")
+    applyPageBackground(color || DEFAULT_PAGE_BACKGROUND)
+  }, [color, imageUrl, isReady])
+
+  useEffect(() => {
+    if (!isReady || !resolvedImageUrl) return
+    applyPageBackground(color || DEFAULT_PAGE_BACKGROUND, resolvedImageUrl)
+  }, [color, isReady, resolvedImageUrl])
+
+  if (!isReady || !imageUrl) return null
+
+  return (
+    <MediaImage
+      src={imageUrl}
+      alt=""
+      aria-hidden="true"
+      className="page-background-media"
+      onLoad={(event) => setResolvedImageUrl(event.currentTarget.currentSrc || event.currentTarget.src)}
+    />
+  )
+}
+
 function App() {
   const { isPreferenceCenterOpen, preferences } = useCookieConsent()
+  const { isAuthReady, isAuthenticated, userProfile } = useAuth()
+  const selectedBackgroundPreset = getPageBackgroundPreset(userProfile.preferences?.pageBackgroundPresetId)
 
   useEffect(() => {
     void updateAnalyticsConsent(preferences.analytics)
@@ -393,6 +432,11 @@ function App() {
   }, [preferences.preferences])
   return (
     <div className="app-shell">
+      <PageBackgroundMedia
+        color={isAuthenticated ? userProfile.preferences?.pageBackground : DEFAULT_PAGE_BACKGROUND}
+        imageUrl={isAuthenticated ? selectedBackgroundPreset?.src || userProfile.preferences?.pageBackgroundImageUrl : undefined}
+        isReady={isAuthReady}
+      />
       <PageTitle />
       <PageResourceHints />
       <ScrollToTop />

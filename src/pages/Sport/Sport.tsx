@@ -5,6 +5,7 @@ import PageLoader from "../../components/PageLoader"
 import useUserSportDashboard from "../../hooks/useUserSportDashboard"
 import { getWeekKey, SPORT_BOARD_DRAFTS_STORAGE_KEY } from "../../utils/weekKey"
 import { buildUserScopedKey, normalizeUserEmail } from "../../utils/userScopedKey"
+import { getCardThemeClassName } from "../../utils/homeCardTheme"
 import heroWorkout from "../../assets/tuany-kohler-dupe.webp"
 import heroDiet from "../../assets/thayna-queiroz-dupe.webp"
 import heroGoals from "../../assets/sport-1.webp"
@@ -68,7 +69,7 @@ const lifeCardDefinitions = [
 ]
 
 const SportPage = () => {
-  const { isAuthReady, userEmail, userId } = useAuth()
+  const { isAuthReady, userEmail, userId, userProfile } = useAuth()
   const [weekKey, setWeekKey] = useState(() => getWeekKey())
   const { board, dashboard, isLoading, error, updateBoardDay } = useUserSportDashboard(weekKey)
   const canEdit = Boolean(userId)
@@ -351,7 +352,7 @@ const SportPage = () => {
   }
 
   return (
-    <div className="sport-page">
+    <div className={`sport-page ${getCardThemeClassName(userProfile.preferences?.homeCardTheme)}`}>
       <header className="sport-page__heading">
         <div>
           <span className="sport-page__heading-eyebrow">Mon</span>

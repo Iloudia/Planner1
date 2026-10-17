@@ -16,7 +16,7 @@
 }
 
 .settings-page {
-  background: linear-gradient(135deg, rgba(255, 241, 245, 0.9), rgba(255, 255, 255, 0.9));
+  background: #ffffff;
   border: 1px solid rgba(114, 92, 63, 0.12);
   box-shadow: 0 28px 60px rgba(114, 92, 63, 0.12);
   padding: clamp(1.8rem, 3.5vw, 2.6rem);
@@ -568,6 +568,505 @@
   border-color: rgba(79, 70, 229, 0.5);
   box-shadow: 0 16px 34px rgba(79, 70, 229, 0.2);
 }
+
+.personalization-background {
+  gap: 1.2rem;
+}
+
+.personalization-color {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.personalization-color__picker {
+  position: relative;
+  width: 3.25rem;
+  height: 3.25rem;
+  flex: 0 0 auto;
+  border: 1px solid rgba(31, 27, 22, 0.24);
+  background: #ffffff;
+  padding: 0.3rem;
+  cursor: pointer;
+}
+
+.personalization-color__picker input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.personalization-color__picker span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgba(31, 27, 22, 0.12);
+  pointer-events: none;
+}
+
+.personalization-color__picker:focus-within {
+  outline: 2px solid #1f1b16;
+  outline-offset: 3px;
+}
+
+.personalization-color__value {
+  min-width: 6.6rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #1f1b16;
+}
+
+.personalization-color__reset {
+  border: 1px solid rgba(31, 27, 22, 0.3);
+  background: #ffffff;
+  color: #1f1b16;
+  padding: 0.65rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.personalization-color__reset:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.personalization-color__status {
+  margin: 0;
+  min-height: 1.25rem;
+  color: var(--lux-ink-soft, #5b5249);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+}
+
+.personalization-color__status.is-success {
+  color: #39734a;
+}
+
+.personalization-color__status.is-error {
+  color: #b91c1c;
+}
+
+.personalization-background-image {
+  gap: 1rem;
+}
+
+.personalization-library {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.personalization-library__header h4 {
+  margin: 0;
+  color: #1f1b16;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.personalization-library__header p {
+  margin: 0.2rem 0 0 !important;
+  font-size: 0.86rem !important;
+  color: var(--lux-ink-soft, #5b5249) !important;
+}
+
+.personalization-library__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.personalization-library__item {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgba(31, 27, 22, 0.2);
+  background: #eee9e2;
+  cursor: pointer;
+}
+
+.personalization-library__item::after {
+  content: "";
+  position: absolute;
+  inset: 45% 0 0;
+  background: linear-gradient(to bottom, transparent, rgba(17, 15, 12, 0.72));
+  pointer-events: none;
+}
+
+.personalization-library__item img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 220ms ease;
+}
+
+.personalization-library__item:hover img {
+  transform: scale(1.035);
+}
+
+.personalization-library__item:focus-visible {
+  outline: 2px solid #1f1b16;
+  outline-offset: 2px;
+}
+
+.personalization-library__item.is-selected {
+  border-color: #1f1b16;
+  box-shadow: inset 0 0 0 2px #ffffff;
+}
+
+.personalization-library__item:disabled {
+  cursor: wait;
+}
+
+.personalization-library__name {
+  position: absolute;
+  z-index: 1;
+  left: 0.65rem;
+  right: 2rem;
+  bottom: 0.55rem;
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: left;
+}
+
+.personalization-library__check {
+  position: absolute;
+  z-index: 2;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: grid;
+  place-items: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  background: #ffffff;
+  color: #1f1b16;
+  border: 1px solid rgba(31, 27, 22, 0.2);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.personalization-image__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+
+.personalization-image__actions button {
+  border: 1px solid #1f1b16;
+  background: #1f1b16;
+  color: #ffffff;
+  padding: 0.7rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.personalization-image__actions button.is-ghost {
+  background: #ffffff;
+  color: #1f1b16;
+}
+
+.personalization-image__actions button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.personalization-card-theme {
+  gap: 1rem;
+}
+
+.personalization-card-theme__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.personalization-card-theme__option {
+  position: relative;
+  display: grid;
+  grid-template-columns: 5.2rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+  padding: 0.8rem;
+  border: 1px solid rgba(31, 27, 22, 0.2);
+  background: #ffffff;
+  color: #1f1b16;
+  text-align: left;
+  cursor: pointer;
+}
+
+.personalization-card-theme__option:hover {
+  border-color: rgba(31, 27, 22, 0.48);
+}
+
+.personalization-card-theme__option:focus-visible {
+  outline: 2px solid #1f1b16;
+  outline-offset: 2px;
+}
+
+.personalization-card-theme__option.is-selected {
+  border-color: #1f1b16;
+  box-shadow: inset 0 0 0 1px #1f1b16;
+}
+
+.personalization-card-theme__option:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.personalization-card-theme__preview {
+  display: flex;
+  flex-direction: column;
+  height: 4.2rem;
+  overflow: hidden;
+  border: 1px solid rgba(31, 27, 22, 0.2);
+  background: #ffffff;
+  box-shadow: 0 7px 16px rgba(31, 27, 22, 0.08);
+}
+
+.personalization-card-theme__preview-image {
+  flex: 1;
+  background: linear-gradient(135deg, #c9b6a6, #eee6de 55%, #9e8978);
+}
+
+.personalization-card-theme__preview-body {
+  display: grid;
+  gap: 0.28rem;
+  padding: 0.42rem;
+  background: #ffffff;
+}
+
+.personalization-card-theme__preview-body span {
+  display: block;
+  width: 78%;
+  height: 0.22rem;
+  background: #4d433b;
+}
+
+.personalization-card-theme__preview-body span:last-child {
+  width: 48%;
+  opacity: 0.38;
+}
+
+.personalization-card-theme__option--sand .personalization-card-theme__preview,
+.personalization-card-theme__option--sand .personalization-card-theme__preview-body {
+  background: #eee4d8;
+}
+
+.personalization-card-theme__option--glass .personalization-card-theme__preview,
+.personalization-card-theme__option--glass .personalization-card-theme__preview-body {
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.personalization-card-theme__option--ebony .personalization-card-theme__preview,
+.personalization-card-theme__option--ebony .personalization-card-theme__preview-body {
+  background: #241d18;
+  border-color: #241d18;
+}
+
+.personalization-card-theme__option--ebony .personalization-card-theme__preview-body span {
+  background: #ffffff;
+}
+
+.personalization-card-theme__option--blush .personalization-card-theme__preview,
+.personalization-card-theme__option--blush .personalization-card-theme__preview-body {
+  background: #f1dfe2;
+}
+
+.personalization-card-theme__option--blush .personalization-card-theme__preview-body span {
+  background: #633d45;
+}
+
+.personalization-card-theme__option--sage .personalization-card-theme__preview,
+.personalization-card-theme__option--sage .personalization-card-theme__preview-body {
+  background: #dfe6dc;
+}
+
+.personalization-card-theme__option--sage .personalization-card-theme__preview-body span {
+  background: #37433a;
+}
+
+.personalization-card-theme__option--terracotta .personalization-card-theme__preview,
+.personalization-card-theme__option--terracotta .personalization-card-theme__preview-body {
+  background: #e8c0b3;
+}
+
+.personalization-card-theme__option--terracotta .personalization-card-theme__preview-body span {
+  background: #693c31;
+}
+
+.personalization-card-theme__option--midnight .personalization-card-theme__preview,
+.personalization-card-theme__option--midnight .personalization-card-theme__preview-body {
+  background: #1f2a3a;
+  border-color: #1f2a3a;
+}
+
+.personalization-card-theme__option--midnight .personalization-card-theme__preview-body span {
+  background: #ffffff;
+}
+
+.personalization-card-theme__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.22rem;
+  min-width: 0;
+  padding-right: 1.4rem;
+  font-family: var(--font-body);
+}
+
+.personalization-card-theme__copy strong {
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.personalization-card-theme__copy small {
+  color: var(--lux-ink-soft, #5b5249);
+  font-size: 0.78rem;
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+.personalization-card-theme__check {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.65rem;
+  display: grid;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  background: #1f1b16;
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.personalization-calendar-palette {
+  gap: 1rem;
+}
+
+.personalization-calendar-palette__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.personalization-calendar-palette__option {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  min-width: 0;
+  padding: 0.8rem;
+  border: 1px solid rgba(31, 27, 22, 0.2);
+  background: #ffffff;
+  color: #1f1b16;
+  text-align: left;
+  cursor: pointer;
+}
+
+.personalization-calendar-palette__option:hover {
+  border-color: rgba(31, 27, 22, 0.48);
+}
+
+.personalization-calendar-palette__option:focus-visible {
+  outline: 2px solid #1f1b16;
+  outline-offset: 2px;
+}
+
+.personalization-calendar-palette__option.is-selected {
+  border-color: #1f1b16;
+  box-shadow: inset 0 0 0 1px #1f1b16;
+}
+
+.personalization-calendar-palette__option:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.personalization-calendar-palette__swatches {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  width: 100%;
+  height: 2.6rem;
+  overflow: hidden;
+  border: 1px solid rgba(31, 27, 22, 0.14);
+}
+
+.personalization-calendar-palette__swatches span {
+  display: block;
+  min-width: 0;
+}
+
+.personalization-calendar-palette__name {
+  padding-right: 1.5rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.personalization-calendar-palette__check {
+  position: absolute;
+  right: 0.65rem;
+  bottom: 0.58rem;
+  display: grid;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  background: #1f1b16;
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.personalization-calendar-palette__legend {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.35rem;
+  color: var(--lux-ink-soft, #5b5249);
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  line-height: 1.3;
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  .personalization-library__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .personalization-card-theme__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .personalization-calendar-palette__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .personalization-calendar-palette__legend {
+    display: none;
+  }
+}
+
 /* Luxury overrides (match boutique design) */
 body.profile-page--lux {
   background: var(--page-background);
@@ -581,7 +1080,7 @@ body.profile-page--lux .content-page.settings-page {
   --lux-line: rgba(31, 27, 22, 0.18);
   --lux-paper: #ffffff;
   --lux-shadow: 0 12px 30px rgba(31, 27, 22, 0.08);
-  background: transparent;
+  background: #ffffff;
   color: var(--lux-ink);
   font-family: "Playfair Display", "Times New Roman", serif;
   border: 1px solid var(--lux-line);

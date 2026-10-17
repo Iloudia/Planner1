@@ -731,3 +731,62 @@ body.sport-page--lux {
     color: #2f241e;
   }
 }
+
+/* The shared card-theme preference only changes the visual finish of My Life cards. */
+.sport-page.card-theme--sand .sport-life-card {
+  background: #eee4d8;
+  border-color: rgba(92, 72, 57, 0.28);
+}
+
+.sport-page.card-theme--glass .sport-life-card {
+  background: rgba(255, 255, 255, 0.62);
+  border-color: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 10px 28px rgba(31, 27, 22, 0.1);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+.sport-page.card-theme--ebony .sport-life-card {
+  background: #241d18;
+  border-color: #241d18;
+}
+
+.sport-page.card-theme--ebony .sport-life-card h3 {
+  color: #ffffff;
+}
+
+.sport-page.card-theme--blush .sport-life-card {
+  background: #f1dfe2;
+  border-color: rgba(99, 61, 69, 0.26);
+}
+
+.sport-page.card-theme--blush .sport-life-card h3 {
+  color: #633d45;
+}
+
+.sport-page.card-theme--sage .sport-life-card {
+  background: #dfe6dc;
+  border-color: rgba(55, 67, 58, 0.25);
+}
+
+.sport-page.card-theme--sage .sport-life-card h3 {
+  color: #37433a;
+}
+
+.sport-page.card-theme--terracotta .sport-life-card {
+  background: #e8c0b3;
+  border-color: rgba(105, 60, 49, 0.28);
+}
+
+.sport-page.card-theme--terracotta .sport-life-card h3 {
+  color: #693c31;
+}
+
+.sport-page.card-theme--midnight .sport-life-card {
+  background: #1f2a3a;
+  border-color: #1f2a3a;
+}
+
+.sport-page.card-theme--midnight .sport-life-card h3 {
+  color: #ffffff;
+}

@@ -1,3 +1,6 @@
+import type { HomeCardTheme } from "../utils/homeCardTheme"
+import type { CalendarEventPaletteId } from "../utils/calendarEventPalette"
+
 export type FirebaseUserDocument = {
   email: string
   emailLower: string
@@ -18,6 +21,14 @@ export type FirebaseUserDocument = {
     username?: string
     birthday?: string
     gender?: string
+  }
+  preferences?: {
+    pageBackground?: string
+    pageBackgroundPresetId?: string
+    pageBackgroundImageUrl?: string
+    pageBackgroundImagePath?: string
+    homeCardTheme?: HomeCardTheme
+    calendarEventPalette?: CalendarEventPaletteId
   }
   onboarding?: {
     source?: string

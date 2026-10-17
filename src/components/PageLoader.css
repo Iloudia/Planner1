@@ -10,9 +10,7 @@
   gap: 0.65rem;
   overflow: hidden;
   color: #725c3f;
-  background:
-    radial-gradient(circle at 50% 46%, rgba(255, 255, 255, 0.9) 0, rgba(255, 255, 255, 0.42) 24%, transparent 52%),
-    radial-gradient(circle at 36% 42%, rgba(216, 215, 178, 0.2), transparent 30%);
+  background: transparent;
 }
 
 .page-loader::before,

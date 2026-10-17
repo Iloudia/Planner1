@@ -6,6 +6,11 @@ import { useUserProfilePhoto } from "../../hooks/useUserProfilePhoto"
 import { fetchApi } from "../../utils/apiUrl"
 import { buildUserScopedKey } from "../../utils/userScopedKey"
 import { auth } from "../../utils/firebase"
+import { applyPageBackground, DEFAULT_PAGE_BACKGROUND, normalizePageBackground } from "../../utils/pageBackground"
+import { HOME_CARD_THEMES, normalizeHomeCardTheme, type HomeCardTheme } from "../../utils/homeCardTheme"
+import { CALENDAR_EVENT_CATEGORIES, CALENDAR_EVENT_PALETTES, normalizeCalendarEventPalette, type CalendarEventPaletteId } from "../../utils/calendarEventPalette"
+import { deleteMedia } from "../../services/media/api"
+import { getPageBackgroundPreset, pageBackgroundPresets, type PageBackgroundPreset } from "../../data/pageBackgroundPresets"
 import defaultProfilePhoto from "../../assets/katie-huber-rhoades-dupe (1).webp"
 import MediaImage from "../../components/MediaImage"
 import PageHeading from "../../components/PageHeading"
@@ -24,6 +29,14 @@ type ProfileData = {
     username?: string
     birthday?: string
     gender?: string
+  }
+  preferences?: {
+    pageBackground?: string
+    pageBackgroundPresetId?: string
+    pageBackgroundImageUrl?: string
+    pageBackgroundImagePath?: string
+    homeCardTheme?: HomeCardTheme
+    calendarEventPalette?: CalendarEventPaletteId
   }
 }
 
@@ -55,10 +68,16 @@ const accountRows: AccountRow[] = [
 
 const settingsSections = [
   { id: "account", title: "Ton compte", description: "Gérer les informations personnelles et la sécurité." },
+  { id: "personalization", title: "Personnalisation", description: "Choisir la couleur de fond de tes pages." },
   { id: "languages", title: "Langues", description: "Choisir la langue principale de l'interface." },
 ]
 
 const MS_IN_DAY = 1000 * 60 * 60 * 24
+
+const getProfileBackgroundImage = (profile: ProfileData) =>
+  getPageBackgroundPreset(profile.preferences?.pageBackgroundPresetId)?.src
+  || profile.preferences?.pageBackgroundImageUrl
+  || ""
 
 const ProfilePage = () => {
   const { isAuthReady, userEmail, userProfile, updateUserProfile, changePassword, deactivateAccount, deleteAccount, verifyPassword } = useAuth()
@@ -81,6 +100,12 @@ const ProfilePage = () => {
   const [dangerReason, setDangerReason] = useState("")
   const [dangerPassword, setDangerPassword] = useState("")
   const [dangerError, setDangerError] = useState("")
+  const [personalizationStatus, setPersonalizationStatus] = useState<"" | "saving" | "saved" | "error">("")
+  const [backgroundImageError, setBackgroundImageError] = useState("")
+  const [backgroundImageStatus, setBackgroundImageStatus] = useState<"" | "saving" | "saved">("")
+  const [isBackgroundImageBusy, setIsBackgroundImageBusy] = useState(false)
+  const [cardThemeStatus, setCardThemeStatus] = useState<"" | "saving" | "saved" | "error">("")
+  const [calendarPaletteStatus, setCalendarPaletteStatus] = useState<"" | "saving" | "saved" | "error">("")
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const panelRef = useRef<HTMLDivElement | null>(null)
   const navigate = useNavigate()
@@ -108,6 +133,7 @@ const ProfilePage = () => {
     setProfileData({
       personalInfo: userProfile.personalInfo ?? {},
       identityInfo: userProfile.identityInfo ?? {},
+      preferences: userProfile.preferences ?? {},
     })
   }, [userProfile])
 
@@ -186,7 +212,157 @@ const ProfilePage = () => {
     await updateUserProfile({
       personalInfo: next.personalInfo ?? {},
       identityInfo: next.identityInfo ?? {},
+      preferences: next.preferences ?? {},
     })
+  }
+
+  const handlePageBackgroundChange = async (value: string) => {
+    const pageBackground = normalizePageBackground(value)
+    const nextProfileData = {
+      ...profileData,
+      preferences: {
+        ...profileData.preferences,
+        pageBackground,
+      },
+    }
+
+    setProfileData(nextProfileData)
+    applyPageBackground(pageBackground, getProfileBackgroundImage(profileData))
+    setPersonalizationStatus("saving")
+
+    try {
+      await persistProfileData(nextProfileData)
+      setPersonalizationStatus("saved")
+    } catch {
+      setPersonalizationStatus("error")
+    }
+  }
+
+  const handleHomeCardThemeChange = async (homeCardTheme: HomeCardTheme) => {
+    if (normalizeHomeCardTheme(profileData.preferences?.homeCardTheme) === homeCardTheme) return
+
+    const previousProfileData = profileData
+    const nextProfileData = {
+      ...profileData,
+      preferences: {
+        ...profileData.preferences,
+        homeCardTheme,
+      },
+    }
+
+    setProfileData(nextProfileData)
+    setCardThemeStatus("saving")
+
+    try {
+      await persistProfileData(nextProfileData)
+      setCardThemeStatus("saved")
+    } catch {
+      setProfileData(previousProfileData)
+      setCardThemeStatus("error")
+    }
+  }
+
+  const handleCalendarPaletteChange = async (calendarEventPalette: CalendarEventPaletteId) => {
+    if (normalizeCalendarEventPalette(profileData.preferences?.calendarEventPalette) === calendarEventPalette) return
+
+    const previousProfileData = profileData
+    const nextProfileData = {
+      ...profileData,
+      preferences: {
+        ...profileData.preferences,
+        calendarEventPalette,
+      },
+    }
+
+    setProfileData(nextProfileData)
+    setCalendarPaletteStatus("saving")
+
+    try {
+      await persistProfileData(nextProfileData)
+      setCalendarPaletteStatus("saved")
+    } catch {
+      setProfileData(previousProfileData)
+      setCalendarPaletteStatus("error")
+    }
+  }
+
+  const handleBackgroundImageDelete = async () => {
+    const previousProfileData = profileData
+    const previousPath = profileData.preferences?.pageBackgroundImagePath
+    const nextProfileData = {
+      ...profileData,
+      preferences: {
+        ...profileData.preferences,
+        pageBackground: normalizePageBackground(profileData.preferences?.pageBackground),
+        pageBackgroundPresetId: "",
+        pageBackgroundImageUrl: "",
+        pageBackgroundImagePath: "",
+      },
+    }
+
+    setIsBackgroundImageBusy(true)
+    setBackgroundImageError("")
+    setBackgroundImageStatus("saving")
+    applyPageBackground(nextProfileData.preferences.pageBackground)
+
+    try {
+      await persistProfileData(nextProfileData)
+      if (previousPath) {
+        void deleteMedia(previousPath).catch(() => undefined)
+      }
+      setBackgroundImageStatus("saved")
+    } catch (error) {
+      setProfileData(previousProfileData)
+      applyPageBackground(
+        previousProfileData.preferences?.pageBackground,
+        getProfileBackgroundImage(previousProfileData),
+      )
+      setBackgroundImageError(error instanceof Error ? error.message : "Impossible de supprimer cette image")
+      setBackgroundImageStatus("")
+    } finally {
+      setIsBackgroundImageBusy(false)
+    }
+  }
+
+  const handleBackgroundPresetSelect = async (preset: PageBackgroundPreset) => {
+    if (profileData.preferences?.pageBackgroundPresetId === preset.id || isBackgroundImageBusy) return
+
+    const previousProfileData = profileData
+    const previousPath = profileData.preferences?.pageBackgroundImagePath
+    const nextProfileData = {
+      ...profileData,
+      preferences: {
+        ...profileData.preferences,
+        pageBackground: normalizePageBackground(profileData.preferences?.pageBackground),
+        pageBackgroundPresetId: preset.id,
+        pageBackgroundImageUrl: "",
+        pageBackgroundImagePath: "",
+      },
+    }
+
+    setIsBackgroundImageBusy(true)
+    setBackgroundImageError("")
+    setBackgroundImageStatus("saving")
+    setProfileData(nextProfileData)
+    applyPageBackground(nextProfileData.preferences.pageBackground, preset.src)
+
+    try {
+      await persistProfileData(nextProfileData)
+      if (previousPath) {
+        void deleteMedia(previousPath).catch(() => undefined)
+      }
+      setBackgroundImageStatus("saved")
+    } catch (error) {
+      setProfileData(previousProfileData)
+      applyPageBackground(
+        previousProfileData.preferences?.pageBackground,
+        getProfileBackgroundImage(previousProfileData),
+      )
+      setBackgroundImageError(error instanceof Error ? error.message : "Impossible d’enregistrer cette image")
+      setBackgroundImageStatus("")
+    } finally {
+      setIsBackgroundImageBusy(false)
+    }
   }
 
   const startEdit = (key: EditableKey) => {
@@ -375,6 +551,8 @@ const ProfilePage = () => {
   }
 
   const isProfileLoading = !isAuthReady || !isProfilePhotoLoaded
+  const selectedBackgroundPreset = getPageBackgroundPreset(profileData.preferences?.pageBackgroundPresetId)
+  const activeBackgroundImage = selectedBackgroundPreset?.src || profileData.preferences?.pageBackgroundImageUrl || ""
 
   if (isProfileLoading) {
     return (
@@ -634,6 +812,172 @@ const ProfilePage = () => {
                     </div>
                   ) : null}
                 </div>
+              </div>
+            ) : activeSection?.id === "personalization" ? (
+              <div className="settings-section personalization-settings">
+                <div className="settings-panel__header">
+                  <h2>{activeSection.title}</h2>
+                  <p>{activeSection.description}</p>
+                </div>
+                <section className="settings-display-group personalization-background" aria-labelledby="page-background-heading">
+                  <div className="settings-display-group__header">
+                    <div>
+                      <h3 id="page-background-heading">Couleur de fond</h3>
+                      <p>Cette couleur sera appliquée à l’arrière-plan de toutes tes pages.</p>
+                    </div>
+                  </div>
+                  <div className="personalization-color">
+                    <label className="personalization-color__picker">
+                      <input
+                        type="color"
+                        value={normalizePageBackground(profileData.preferences?.pageBackground)}
+                        onChange={(event) => void handlePageBackgroundChange(event.target.value)}
+                        aria-label="Choisir la couleur de fond des pages"
+                      />
+                      <span aria-hidden="true" style={{ backgroundColor: normalizePageBackground(profileData.preferences?.pageBackground) }} />
+                    </label>
+                    <output className="personalization-color__value" aria-live="polite">
+                      {normalizePageBackground(profileData.preferences?.pageBackground).toUpperCase()}
+                    </output>
+                    <button
+                      type="button"
+                      className="personalization-color__reset"
+                      onClick={() => void handlePageBackgroundChange(DEFAULT_PAGE_BACKGROUND)}
+                      disabled={normalizePageBackground(profileData.preferences?.pageBackground) === DEFAULT_PAGE_BACKGROUND}
+                    >
+                      Réinitialiser
+                    </button>
+                  </div>
+                  {personalizationStatus === "saving" ? <p className="personalization-color__status">Enregistrement…</p> : null}
+                  {personalizationStatus === "saved" ? <p className="personalization-color__status is-success">Couleur enregistrée</p> : null}
+                  {personalizationStatus === "error" ? <p className="personalization-color__status is-error">Impossible d’enregistrer la couleur</p> : null}
+                </section>
+                <section className="settings-display-group personalization-background-image" aria-labelledby="page-background-image-heading">
+                  <div className="settings-display-group__header">
+                    <div>
+                      <h3 id="page-background-image-heading">Image de fond</h3>
+                      <p>Choisis une image qui s’adaptera à la taille de l’écran.</p>
+                    </div>
+                  </div>
+                  <div className="personalization-library">
+                    <div className="personalization-library__header">
+                      <h4>Bibliothèque</h4>
+                      <p>Choisis l’une des ambiances proposées.</p>
+                    </div>
+                    <div className="personalization-library__grid" role="group" aria-label="Images de fond prédéfinies">
+                      {pageBackgroundPresets.map((preset) => {
+                        const isSelected = selectedBackgroundPreset?.id === preset.id
+                        return (
+                          <button
+                            key={preset.id}
+                            type="button"
+                            className={`personalization-library__item${isSelected ? " is-selected" : ""}`}
+                            aria-pressed={isSelected}
+                            onClick={() => void handleBackgroundPresetSelect(preset)}
+                            disabled={isBackgroundImageBusy}
+                          >
+                            <img src={preset.src} alt="" loading="lazy" decoding="async" />
+                            <span className="personalization-library__name">{preset.name}</span>
+                            {isSelected ? <span className="personalization-library__check" aria-hidden="true">✓</span> : null}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                  {activeBackgroundImage ? (
+                    <div className="personalization-image__actions">
+                      <button
+                        type="button"
+                        className="is-ghost"
+                        onClick={() => void handleBackgroundImageDelete()}
+                        disabled={isBackgroundImageBusy}
+                      >
+                        Retirer l’image de fond
+                      </button>
+                    </div>
+                  ) : null}
+                  {backgroundImageStatus === "saving" ? <p className="personalization-color__status">Enregistrement…</p> : null}
+                  {backgroundImageStatus === "saved" ? <p className="personalization-color__status is-success">Image enregistrée</p> : null}
+                  {backgroundImageError ? <p className="personalization-color__status is-error">{backgroundImageError}</p> : null}
+                </section>
+                <section className="settings-display-group personalization-card-theme" aria-labelledby="home-card-theme-heading">
+                  <div className="settings-display-group__header">
+                    <div>
+                      <h3 id="home-card-theme-heading">Thème des cartes</h3>
+                      <p>Choisis l’apparence des cartes principales de ta page d’accueil.</p>
+                    </div>
+                  </div>
+                  <div className="personalization-card-theme__grid" role="radiogroup" aria-label="Thème des cartes de la page d’accueil">
+                    {HOME_CARD_THEMES.map((theme) => {
+                      const isSelected = normalizeHomeCardTheme(profileData.preferences?.homeCardTheme) === theme.id
+                      return (
+                        <button
+                          key={theme.id}
+                          type="button"
+                          role="radio"
+                          aria-checked={isSelected}
+                          className={`personalization-card-theme__option personalization-card-theme__option--${theme.id}${isSelected ? " is-selected" : ""}`}
+                          onClick={() => void handleHomeCardThemeChange(theme.id)}
+                          disabled={cardThemeStatus === "saving"}
+                        >
+                          <span className="personalization-card-theme__preview" aria-hidden="true">
+                            <span className="personalization-card-theme__preview-image" />
+                            <span className="personalization-card-theme__preview-body">
+                              <span />
+                              <span />
+                            </span>
+                          </span>
+                          <span className="personalization-card-theme__copy">
+                            <strong>{theme.name}</strong>
+                            <small>{theme.description}</small>
+                          </span>
+                          {isSelected ? <span className="personalization-card-theme__check" aria-hidden="true">✓</span> : null}
+                        </button>
+                      )
+                    })}
+                  </div>
+                  {cardThemeStatus === "saving" ? <p className="personalization-color__status">Enregistrement…</p> : null}
+                  {cardThemeStatus === "saved" ? <p className="personalization-color__status is-success">Thème enregistré</p> : null}
+                  {cardThemeStatus === "error" ? <p className="personalization-color__status is-error">Impossible d’enregistrer le thème</p> : null}
+                </section>
+                <section className="settings-display-group personalization-calendar-palette" aria-labelledby="calendar-palette-heading">
+                  <div className="settings-display-group__header">
+                    <div>
+                      <h3 id="calendar-palette-heading">Couleurs du calendrier</h3>
+                      <p>Choisis la palette utilisée pour distinguer les catégories de tes événements.</p>
+                    </div>
+                  </div>
+                  <div className="personalization-calendar-palette__grid" role="radiogroup" aria-label="Palette des événements du calendrier">
+                    {CALENDAR_EVENT_PALETTES.map((palette) => {
+                      const isSelected = normalizeCalendarEventPalette(profileData.preferences?.calendarEventPalette) === palette.id
+                      return (
+                        <button
+                          key={palette.id}
+                          type="button"
+                          role="radio"
+                          aria-checked={isSelected}
+                          className={`personalization-calendar-palette__option${isSelected ? " is-selected" : ""}`}
+                          onClick={() => void handleCalendarPaletteChange(palette.id)}
+                          disabled={calendarPaletteStatus === "saving"}
+                        >
+                          <span className="personalization-calendar-palette__swatches" aria-hidden="true">
+                            {CALENDAR_EVENT_CATEGORIES.map((category) => (
+                              <span key={category} style={{ backgroundColor: palette.colors[category] }} />
+                            ))}
+                          </span>
+                          <span className="personalization-calendar-palette__name">{palette.name}</span>
+                          {isSelected ? <span className="personalization-calendar-palette__check" aria-hidden="true">✓</span> : null}
+                        </button>
+                      )
+                    })}
+                  </div>
+                  <div className="personalization-calendar-palette__legend" aria-label="Ordre des couleurs">
+                    {CALENDAR_EVENT_CATEGORIES.map((category) => <span key={category}>{category}</span>)}
+                  </div>
+                  {calendarPaletteStatus === "saving" ? <p className="personalization-color__status">Enregistrement…</p> : null}
+                  {calendarPaletteStatus === "saved" ? <p className="personalization-color__status is-success">Palette enregistrée</p> : null}
+                  {calendarPaletteStatus === "error" ? <p className="personalization-color__status is-error">Impossible d’enregistrer la palette</p> : null}
+                </section>
               </div>
             ) : (
               <>

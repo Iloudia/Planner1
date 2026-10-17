@@ -1913,4 +1913,77 @@ body.workout-page--lux .workout-card__menu-panel.workout-card__menu-panel--float
   box-shadow: none;
 }
 
+/* Shared card themes preserve every workout card's layout and interactions. */
+.workout-page.card-theme--sand .workout-card,
+.workout-page.card-theme--sand .workout-video-card {
+  background: #eee4d8;
+  border-color: rgba(92, 72, 57, 0.28);
+}
+
+.workout-page.card-theme--glass .workout-card,
+.workout-page.card-theme--glass .workout-video-card {
+  background: rgba(255, 255, 255, 0.62);
+  border-color: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 10px 28px rgba(31, 27, 22, 0.1);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+.workout-page.card-theme--ebony .workout-card,
+.workout-page.card-theme--ebony .workout-video-card {
+  background: #241d18;
+  border-color: #241d18;
+}
+
+.workout-page.card-theme--ebony .workout-card__body h3,
+.workout-page.card-theme--ebony .workout-video-card__body p,
+.workout-page.card-theme--ebony .workout-video-card__source {
+  color: #ffffff;
+}
+
+.workout-page.card-theme--blush .workout-card,
+.workout-page.card-theme--blush .workout-video-card {
+  background: #f1dfe2;
+  border-color: rgba(99, 61, 69, 0.26);
+}
+
+.workout-page.card-theme--blush .workout-card__body h3,
+.workout-page.card-theme--blush .workout-video-card__body p {
+  color: #633d45;
+}
+
+.workout-page.card-theme--sage .workout-card,
+.workout-page.card-theme--sage .workout-video-card {
+  background: #dfe6dc;
+  border-color: rgba(55, 67, 58, 0.25);
+}
+
+.workout-page.card-theme--sage .workout-card__body h3,
+.workout-page.card-theme--sage .workout-video-card__body p {
+  color: #37433a;
+}
+
+.workout-page.card-theme--terracotta .workout-card,
+.workout-page.card-theme--terracotta .workout-video-card {
+  background: #e8c0b3;
+  border-color: rgba(105, 60, 49, 0.28);
+}
+
+.workout-page.card-theme--terracotta .workout-card__body h3,
+.workout-page.card-theme--terracotta .workout-video-card__body p {
+  color: #693c31;
+}
+
+.workout-page.card-theme--midnight .workout-card,
+.workout-page.card-theme--midnight .workout-video-card {
+  background: #1f2a3a;
+  border-color: #1f2a3a;
+}
+
+.workout-page.card-theme--midnight .workout-card__body h3,
+.workout-page.card-theme--midnight .workout-video-card__body p,
+.workout-page.card-theme--midnight .workout-video-card__source {
+  color: #ffffff;
+}
+
 

@@ -24,6 +24,9 @@ import { type FirebaseUserDocument } from "../models/firebase"
 import { buildApiUrl, fetchApi, getApiTargetLabel } from "../utils/apiUrl"
 import { app, auth } from "../utils/firebase"
 import { buildUserScopedKey, normalizeUserEmail } from "../utils/userScopedKey"
+import { normalizePageBackground } from "../utils/pageBackground"
+import { normalizeHomeCardTheme } from "../utils/homeCardTheme"
+import { normalizeCalendarEventPalette } from "../utils/calendarEventPalette"
 import {
   type AccountActionResult,
   type AccountStatus,
@@ -108,6 +111,7 @@ const nowIso = () => new Date().toISOString()
 const emptyUserProfile: UserProfileData = {
   personalInfo: {},
   identityInfo: {},
+  preferences: {},
 }
 
 const readLocalProfile = (email: string | null | undefined): UserProfileData => {
@@ -126,6 +130,7 @@ const readLocalProfile = (email: string | null | undefined): UserProfileData => 
     return {
       personalInfo: parsed.personalInfo ?? {},
       identityInfo: parsed.identityInfo ?? {},
+      preferences: parsed.preferences ?? {},
     }
   } catch {
     // ignore malformed storage entries
@@ -146,6 +151,7 @@ const writeLocalProfile = (email: string | null | undefined, profile: UserProfil
       JSON.stringify({
         personalInfo: profile.personalInfo ?? {},
         identityInfo: profile.identityInfo ?? {},
+        preferences: profile.preferences ?? {},
       }),
     )
   } catch {
@@ -166,7 +172,34 @@ const mergeProfileData = (base: UserProfileData, fallback?: UserProfileData, ema
     gender: base.identityInfo?.gender?.trim() || fallback?.identityInfo?.gender?.trim() || "",
   }
 
-  return { personalInfo, identityInfo }
+  const pageBackground = normalizePageBackground(
+    base.preferences?.pageBackground ?? fallback?.preferences?.pageBackground,
+  )
+  const pageBackgroundPresetId =
+    base.preferences?.pageBackgroundPresetId?.trim() || fallback?.preferences?.pageBackgroundPresetId?.trim() || ""
+  const pageBackgroundImageUrl =
+    base.preferences?.pageBackgroundImageUrl?.trim() || fallback?.preferences?.pageBackgroundImageUrl?.trim() || ""
+  const pageBackgroundImagePath =
+    base.preferences?.pageBackgroundImagePath?.trim() || fallback?.preferences?.pageBackgroundImagePath?.trim() || ""
+  const homeCardTheme = normalizeHomeCardTheme(
+    base.preferences?.homeCardTheme ?? fallback?.preferences?.homeCardTheme,
+  )
+  const calendarEventPalette = normalizeCalendarEventPalette(
+    base.preferences?.calendarEventPalette ?? fallback?.preferences?.calendarEventPalette,
+  )
+
+  return {
+    personalInfo,
+    identityInfo,
+    preferences: {
+      pageBackground,
+      pageBackgroundPresetId,
+      pageBackgroundImageUrl,
+      pageBackgroundImagePath,
+      homeCardTheme,
+      calendarEventPalette,
+    },
+  }
 }
 
 const hasProfileDiff = (left: UserProfileData, right: UserProfileData) =>
@@ -362,6 +395,7 @@ export const FirebaseAuthBridge = ({ onValue }: FirebaseAuthBridgeProps) => {
           {
             personalInfo: data.personalInfo,
             identityInfo: data.identityInfo,
+            preferences: data.preferences,
           },
           localProfile,
           nextUser.email,
@@ -374,6 +408,7 @@ export const FirebaseAuthBridge = ({ onValue }: FirebaseAuthBridgeProps) => {
           const updates: Partial<FirebaseUserDocument> = {
             personalInfo: mergedProfile.personalInfo,
             identityInfo: mergedProfile.identityInfo,
+            preferences: mergedProfile.preferences,
             updatedAt: nowIso(),
           }
           await setDoc(doc(db, "users", nextUser.uid), updates, { merge: true })
@@ -386,6 +421,7 @@ export const FirebaseAuthBridge = ({ onValue }: FirebaseAuthBridgeProps) => {
         writeLocalProfile(nextUser.email, {
           personalInfo: data.personalInfo ?? {},
           identityInfo: data.identityInfo ?? {},
+          preferences: data.preferences ?? {},
         })
 
         return data
@@ -594,6 +630,7 @@ export const FirebaseAuthBridge = ({ onValue }: FirebaseAuthBridgeProps) => {
       const updates: Partial<FirebaseUserDocument> = {
         personalInfo: mergedProfile.personalInfo,
         identityInfo: mergedProfile.identityInfo,
+        preferences: mergedProfile.preferences,
         updatedAt: nowIso(),
       }
 
@@ -1034,6 +1071,7 @@ export const FirebaseAuthBridge = ({ onValue }: FirebaseAuthBridgeProps) => {
       {
         personalInfo: userDoc?.personalInfo,
         identityInfo: userDoc?.identityInfo,
+        preferences: userDoc?.preferences,
       },
       undefined,
       email,
@@ -1085,6 +1123,7 @@ export const FirebaseAuthBridge = ({ onValue }: FirebaseAuthBridgeProps) => {
     userDoc?.admin,
     userDoc?.identityInfo,
     userDoc?.personalInfo,
+    userDoc?.preferences,
     userId,
     verifyPassword,
   ])

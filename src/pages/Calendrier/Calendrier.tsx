@@ -8,6 +8,7 @@ import useUserSportDashboard from '../../hooks/useUserSportDashboard'
 import ModalCloseButton from '../../components/ModalCloseButton'
 import PremiumCalendarModal from '../../components/PremiumCalendarModal'
 import { confirmPremiumCheckoutSession, createPremiumPortalSession } from '../../services/premium/api'
+import { CALENDAR_EVENT_CATEGORIES, getCalendarEventColors, type CalendarEventColors } from '../../utils/calendarEventPalette'
 import './CalendarPage.css'
 const weekDays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
 const recurrenceWeekdays = [
@@ -24,13 +25,7 @@ const hourHeight = 56
 const newTaskColors = ['#D9E1E8', '#C7D0D8', '#E7DDCF', '#EFE8DE', '#D6C8BA', '#CBB8A6', '#BCA692']
 const dayStartMinutes = 6 * 60
 const dayEndMinutes = 23 * 60
-const legendColors = {
-  Perso: '#7F96A8',
-  Travail: '#C8B39B',
-  Sport: '#E3C9A4',
-  'Rendez-vous': '#F2D9C7',
-  Repos: '#F8EFE5',
-}
+const defaultCalendarEventColors = getCalendarEventColors('classic')
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
 
@@ -59,7 +54,7 @@ const createNewTaskForm = (dateKey: string): NewTaskFormState => {
     title: '',
     start: formatMinutesToTime(startMinutes),
     end: formatMinutesToTime(endMinutes),
-    color: legendColors.Perso,
+    color: defaultCalendarEventColors.Perso,
     repeatStart: dateKey,
     repeatEnd: dateKey,
     category: 'Perso',
@@ -114,7 +109,10 @@ const withAlpha = (hexColor: string, alpha: number) => {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`
 }
 
-const getTaskDisplayColor = (task: Pick<ScheduledTask, 'tag' | 'color'>) => legendColors[task.tag as keyof typeof legendColors] ?? task.color
+const getTaskDisplayColor = (
+  task: Pick<ScheduledTask, 'tag' | 'color'>,
+  colors: CalendarEventColors,
+) => colors[task.tag as keyof CalendarEventColors] ?? task.color
 
 type CalendarTaskItem = ScheduledTask & {
   source: 'calendar' | 'sport'
@@ -214,7 +212,8 @@ const getWeeklyTaskPositions = (dayTasks: CalendarTaskItem[]) => {
 
 const CalendrierPage = () => {
   const { tasks, isLoading, error, addTask, updateTask, removeTask } = useTasks()
-  const { isPremium } = useAuth()
+  const { isPremium, userProfile } = useAuth()
+  const calendarEventColors = getCalendarEventColors(userProfile.preferences?.calendarEventPalette)
   const premiumReturnHandledRef = useRef(false)
   useEffect(() => {
     document.body.classList.add('calendar-page--lux')
@@ -448,7 +447,7 @@ const CalendrierPage = () => {
         start: day.startTime,
         end: day.endTime,
         date: day.dateISO,
-        color: legendColors.Sport,
+        color: calendarEventColors.Sport,
         tag: 'Sport',
         source: 'sport',
         done: day.done,
@@ -462,7 +461,7 @@ const CalendrierPage = () => {
     })
 
     return map
-  }, [recurrenceRangeEndKey, recurrenceRangeStartKey, sportBoard.days, tasks])
+  }, [calendarEventColors, recurrenceRangeEndKey, recurrenceRangeStartKey, sportBoard.days, tasks])
 
   const activeDateTasks = activeDateKey ? tasksByDate.get(activeDateKey) ?? [] : []
   const showCompactModalToggle = isCompact && calendarView === 'monthly'
@@ -743,7 +742,7 @@ const CalendrierPage = () => {
     setNewTaskForm((previous) => ({
       ...previous,
       category,
-      color: legendColors[category] ?? previous.color,
+      color: calendarEventColors[category] ?? previous.color,
     }))
   }
 
@@ -827,7 +826,7 @@ for (let cursor = new Date(startDate); cursor.getTime() <= endDate.getTime(); cu
 }
 
 const endTime = newTaskForm.end.trim().length > 0 ? newTaskForm.end : "10:00"
-const color = legendColors[newTaskForm.category] ?? (newTaskForm.color || newTaskColors[0])
+const color = calendarEventColors[newTaskForm.category] ?? (newTaskForm.color || newTaskColors[0])
 
     try {
       await Promise.all(
@@ -1089,7 +1088,7 @@ return (
                       className="calendar-mobile__event-dot"
                       style={
                         {
-                          '--event-color': getTaskDisplayColor(task),
+                          '--event-color': getTaskDisplayColor(task, calendarEventColors),
                         } as CSSProperties
                       }
                       aria-hidden="true"
@@ -1098,9 +1097,9 @@ return (
                       className="calendar-mobile__event-card"
                       style={
                         {
-                          '--event-color': getTaskDisplayColor(task),
-                          background: getTaskDisplayColor(task),
-                          borderColor: withAlpha(getTaskDisplayColor(task), 0.4),
+                          '--event-color': getTaskDisplayColor(task, calendarEventColors),
+                          background: getTaskDisplayColor(task, calendarEventColors),
+                          borderColor: withAlpha(getTaskDisplayColor(task, calendarEventColors), 0.4),
                         } as CSSProperties
                       }
                     >
@@ -1227,8 +1226,8 @@ return (
                         style={{
                           top: `${position.top}px`,
                           height: `${position.height}px`,
-                          background: getTaskDisplayColor(task),
-                          border: `1px solid ${withAlpha(getTaskDisplayColor(task), 0.4)}`,
+                          background: getTaskDisplayColor(task, calendarEventColors),
+                          border: `1px solid ${withAlpha(getTaskDisplayColor(task, calendarEventColors), 0.4)}`,
                         }}
                         onClick={(event) => {
                           event.stopPropagation()
@@ -1324,7 +1323,7 @@ return (
                       <><div
                     className="calendar-day__preview"
                     style={{
-                      background: getTaskDisplayColor(cell.tasks[0]),
+                      background: getTaskDisplayColor(cell.tasks[0], calendarEventColors),
                     }}
                   >
                     <span className="calendar-day__preview-time">
@@ -1439,7 +1438,7 @@ return (
                     </button>
                     {isCategoryMenuOpen ? (
                       <div className="calendar-select__menu" role="listbox">
-                        {Object.keys(legendColors).map((category) => (
+                        {CALENDAR_EVENT_CATEGORIES.map((category) => (
                           <button
                             key={category}
                             type="button"
@@ -1508,8 +1507,8 @@ return (
                           isSportTaskItem(task) ? " calendar-task--readonly" : ""
                         }`}
                         style={{
-                          background: getTaskDisplayColor(task),
-                          borderColor: withAlpha(getTaskDisplayColor(task), 0.4),
+                          background: getTaskDisplayColor(task, calendarEventColors),
+                          borderColor: withAlpha(getTaskDisplayColor(task, calendarEventColors), 0.4),
                         }}
                         onClick={() => {
                           if (isSportTaskItem(task)) {

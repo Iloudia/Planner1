@@ -67,7 +67,8 @@
   --lux-ink-soft: #5b5249;
   --color-border-strong: rgba(15, 23, 42, 0.12);
 
-  --page-background: #f8f6f1;
+  --page-background-color: #f8f6f1;
+  --page-background: var(--page-background-color);
   --panel: var(--color-surface);
   --panel-alt: #f1ece4;
   --card: var(--color-caramel);
@@ -179,8 +180,6 @@ body {
   background: var(--page-background);
   padding: 0;
 }
-
-
 
 .playfair-display-regular {
   font-family: "Playfair Display", serif;
@@ -317,6 +316,14 @@ p {
   flex-direction: column;
   gap: 18px;
   min-height: 100vh;
+}
+
+.page-background-media {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .main-area {
