@@ -99,24 +99,25 @@ const BlogPage = () => {
   return (
     <div className="blog-page">
       <BlogAdminActions />
-      <header className="blog-header">
-        <div className="blog-header__media">
-          <ResponsiveSiteImage src={blogHeroImage} alt="Bouquet de lys roses éclatants" sizes="100vw" preload />
-          <div className="blog-header__headline">
-            <span className="blog-eyebrow">Le blog Me&amp;rituals</span>
-            <h1>Bienvenue sur le blog</h1>
+      <div className="blog-page__surface">
+        <header className="blog-header">
+          <div className="blog-header__media">
+            <ResponsiveSiteImage src={blogHeroImage} alt="Bouquet de lys roses éclatants" sizes="100vw" preload />
+            <div className="blog-header__headline">
+              <span className="blog-eyebrow">Le blog Me&amp;rituals</span>
+              <h1>Bienvenue sur le blog</h1>
+            </div>
           </div>
-        </div>
-        <div className="blog-header__intro">
-          <span className="blog-eyebrow">À découvrir</span>
-          <h2>Des conseils pour un quotidien plus équilibré</h2>
-          <p>Retrouve des articles autour du bien-être, de la santé et de la beauté, du mental, de la mode, du sport, de la nutrition et du lifestyle.</p>
-          <p>Des conseils concrets, des idées inspirantes et des ressources accessibles pour prendre soin de toi.</p>
-          <a className="blog-button sport-workout-button-match" href="#articles-a-la-une">Découvrir les articles</a>
-        </div>
-      </header>
+          <div className="blog-header__intro">
+            <span className="blog-eyebrow">À découvrir</span>
+            <h2>Des conseils pour un quotidien plus équilibré</h2>
+            <p>Retrouve des articles autour du bien-être, de la santé et de la beauté, du mental, de la mode, du sport, de la nutrition et du lifestyle.</p>
+            <p>Des conseils concrets, des idées inspirantes et des ressources accessibles pour prendre soin de toi.</p>
+            <a className="blog-button sport-workout-button-match" href="#articles-a-la-une">Découvrir les articles</a>
+          </div>
+        </header>
 
-      <section className="blog-section" id="articles-a-la-une" aria-labelledby="featured-title">
+        <section className="blog-section" id="articles-a-la-une" aria-labelledby="featured-title">
         <header className="blog-section__header">
           <span className="blog-eyebrow">Sélection</span>
           <h2 id="featured-title">Articles à la une</h2>
@@ -129,9 +130,9 @@ const BlogPage = () => {
         ) : !isAdmin ? (
           <p className="blog-empty-state">Aucun article n’a encore été publié.</p>
         ) : null}
-      </section>
+        </section>
 
-      {editorialArticle ? <section className="blog-editorial" id="article-focus" aria-labelledby="editorial-title">
+        {editorialArticle ? <section className="blog-editorial" id="article-focus" aria-labelledby="editorial-title">
         <div className="blog-editorial__media">
           <ResponsiveSiteImage
             src={editorialArticle.image}
@@ -148,11 +149,11 @@ const BlogPage = () => {
           <p>Apprends à reconnaître les boucles mentales et à retrouver davantage de calme et de recul au quotidien.</p>
           <Link className="blog-button sport-workout-button-match" to={editorialArticle.href}>Lire l’article</Link>
         </div>
-      </section> : null}
+        </section> : null}
 
-      <EditorialQuote className="blog-quote" quote="« Avancer doucement reste une façon d’avancer. »" />
+        <EditorialQuote className="blog-quote" quote="« Avancer doucement reste une façon d’avancer. »" />
 
-      <section className="blog-section" id="tous-les-articles" aria-labelledby="all-articles-title">
+        <section className="blog-section" id="tous-les-articles" aria-labelledby="all-articles-title">
         <header className="blog-section__header">
           <span className="blog-eyebrow">À parcourir</span>
           <h2 id="all-articles-title">Derniers articles</h2>
@@ -165,9 +166,9 @@ const BlogPage = () => {
         ) : !isAdmin ? (
           <p className="blog-empty-state">Aucun article n’a encore été publié.</p>
         ) : null}
-      </section>
+        </section>
 
-      <section className="blog-ebook" aria-labelledby="blog-ebook-title">
+        <section className="blog-ebook" aria-labelledby="blog-ebook-title">
         <Link
           className="blog-ebook__media"
           to="/boutique/produit/le-guide-complet-pour-devenir-la-meilleure-version-de-toi-meme-1774631866049"
@@ -194,7 +195,8 @@ const BlogPage = () => {
             Découvrir l’ebook
           </Link>
         </div>
-      </section>
+        </section>
+      </div>
     </div>
   )
 }

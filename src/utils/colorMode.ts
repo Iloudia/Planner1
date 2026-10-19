@@ -11,10 +11,16 @@ export const COLOR_MODE_STORAGE_KEY = "planner.color-mode.v1"
 export const normalizeColorMode = (value: unknown): ColorMode =>
   value === "dark" ? "dark" : DEFAULT_COLOR_MODE
 
-export const applyColorMode = (value: unknown) => {
+type ApplyColorModeOptions = {
+  persist?: boolean
+}
+
+export const applyColorMode = (value: unknown, { persist = true }: ApplyColorModeOptions = {}) => {
   const mode = normalizeColorMode(value)
   document.documentElement.dataset.colorMode = mode
   document.documentElement.style.colorScheme = mode
+
+  if (!persist) return
 
   try {
     window.localStorage.setItem(COLOR_MODE_STORAGE_KEY, mode)

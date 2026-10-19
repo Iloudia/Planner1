@@ -235,7 +235,8 @@ const BoutiquePage = () => {
         </div>
       </section>
 
-      <section className="boutique-section boutique-section--olive reveal" id="categories" aria-labelledby="boutique-categories-title">
+      <div className="boutique-page__surface">
+        <section className="boutique-section boutique-section--olive reveal" id="categories" aria-labelledby="boutique-categories-title">
         <div className="boutique-section__header">
           <span className="boutique-eyebrow">Favoris</span>
           <h2 id="boutique-categories-title">Les favoris du moment.</h2>
@@ -380,7 +381,8 @@ const BoutiquePage = () => {
         </div>
       </section>
 
-      <section className="boutique-legal"></section>
+        <section className="boutique-legal"></section>
+      </div>
     </div>
   )
 }

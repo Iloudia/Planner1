@@ -5972,16 +5972,17 @@ const DietClassicPage = () => {
     
 
     <main className="diet-gymgirl-page">
+      <header className="diet-classic-page__heading">
+        <div>
+          <span className="diet-classic-page__heading-eyebrow">Ma</span>
+          <h1>Diet</h1>
+        </div>
+        <p>Un espace pour découvrir tes recettes, retrouver tes favoris et nourrir ton équilibre au quotidien.</p>
+      </header>
+      <div className="diet-page__surface">
       {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer tes recettes et favoris.</p> : null}
       {error ? <p className="routine-note__composer-hint">{error}</p> : null}
       <article className="diet-blog">
-        <header className="diet-classic-page__heading">
-          <div>
-            <span className="diet-classic-page__heading-eyebrow">Ma</span>
-            <h1>Diet</h1>
-          </div>
-          <p>Un espace pour découvrir tes recettes, retrouver tes favoris et nourrir ton équilibre au quotidien.</p>
-        </header>
         <div className="diet-crosslink">
           <div>
             <h2 className="diet-crosslink__label">Planifier ta semaine</h2>
@@ -6346,6 +6347,7 @@ const DietClassicPage = () => {
           </div>
         )}
         </section>
+      </div>
       </div>
 
         {isCreateOpen ? (

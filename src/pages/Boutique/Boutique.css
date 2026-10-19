@@ -18,6 +18,19 @@ body.boutique-page--tone {
   font-family: "Playfair Display", "Times New Roman", serif;
 }
 
+html:not([data-color-mode="dark"]) .boutique-page__surface {
+  background: #ffffff;
+  border: 1px solid var(--lux-line);
+  padding: clamp(0.75rem, 1.4vw, 1.25rem);
+}
+
+.boutique-page__surface {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: inherit;
+}
+
 .boutique-page--loading {
   min-height: 100vh;
   min-height: 100svh;
@@ -289,7 +302,6 @@ body.boutique-page--tone {
   padding: 2rem 0;
   padding-inline: clamp(1.2rem, 3vw, 2.4rem);
   border: 1px solid var(--line);
-  border-top: none;
 }
 
 .boutique-section::before {
@@ -317,10 +329,6 @@ body.boutique-page--tone {
 
 .boutique-section[aria-labelledby="boutique-benefits-title"]::before {
   background: transparent;
-}
-
-.boutique-section:first-of-type {
-  border-top: none;
 }
 
 .boutique-section__header {

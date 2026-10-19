@@ -398,32 +398,33 @@ const SportPage = () => {
         </div>
         <p>Un espace pour bouger à ton rythme, prendre soin de ton énergie et célébrer chaque progrès.</p>
       </header>
-      {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer ton espace sport.</p> : null}
-      {error ? <p className="routine-note__composer-hint">{error}</p> : null}
+      <div className="sport-page__surface">
+        {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer ton espace sport.</p> : null}
+        {error ? <p className="routine-note__composer-hint">{error}</p> : null}
 
-      <section className="sport-quick-panels">
-        <div className="sport-quick-panel">
-          <div className="sport-quick-panel__header">
-            <h2 className="sport-quick-panel__title">My Life</h2>
+        <section className="sport-quick-panels">
+          <div className="sport-quick-panel">
+            <div className="sport-quick-panel__header">
+              <h2 className="sport-quick-panel__title">My Life</h2>
+            </div>
+            <div className="sport-quick-panel__cards">
+              {lifeCardDefinitions.map((card) => {
+                const media = dashboard.lifeCardMedia[card.key]
+                const image = media?.url || card.image
+                return (
+                  <Link key={card.id} className="sport-life-card" to={card.route} aria-label={`Ouvrir ${card.label}`}>
+                    <div className="sport-life-card__media">
+                      <img src={image} alt={card.key === "workout" ? "Chaussures de sport et accessoires d’entraînement" : card.key === "diet" ? "Petit-déjeuner composé de tartines, fruits et café" : "Femme réalisant un exercice au sol en tenue de sport"} loading="lazy" decoding="async" />
+                    </div>
+                    <h3>{card.label}</h3>
+                  </Link>
+                )
+              })}
+            </div>
           </div>
-          <div className="sport-quick-panel__cards">
-            {lifeCardDefinitions.map((card) => {
-              const media = dashboard.lifeCardMedia[card.key]
-              const image = media?.url || card.image
-              return (
-                <Link key={card.id} className="sport-life-card" to={card.route} aria-label={`Ouvrir ${card.label}`}>
-                  <div className="sport-life-card__media">
-                    <img src={image} alt={card.key === "workout" ? "Chaussures de sport et accessoires d’entraînement" : card.key === "diet" ? "Petit-déjeuner composé de tartines, fruits et café" : "Femme réalisant un exercice au sol en tenue de sport"} loading="lazy" decoding="async" />
-                  </div>
-                  <h3>{card.label}</h3>
-                </Link>
-              )
-            })}
-          </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="sport-board">
+        <section className="sport-board">
         <header className="sport-section-header">
           <div>
             <h2>Planning de sport</h2>
@@ -600,7 +601,8 @@ const SportPage = () => {
             ) : null}
           </div>
         </div>
-      </section>
+        </section>
+      </div>
     </div>
   )
 }

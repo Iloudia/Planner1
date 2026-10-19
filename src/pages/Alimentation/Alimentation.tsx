@@ -434,8 +434,9 @@ function DietPage() {
   return (
     <>
       {menuHeading}
-      {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer ton espace alimentation.</p> : null}
-      {error ? <p className="routine-note__composer-hint">{error}</p> : null}
+      <div className="menu-page__surface">
+        {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer ton espace alimentation.</p> : null}
+        {error ? <p className="routine-note__composer-hint">{error}</p> : null}
         <section className="page-section diet-crosslink">
           <div>
             <h2 className="diet-crosslink__label">Besoin d'idées ?</h2>
@@ -578,6 +579,7 @@ function DietPage() {
             </div>
           </div>
         </section>
+      </div>
 
         {isDuplicateDialogOpen ? (
           <div className="diet-week-duplicate" role="presentation">

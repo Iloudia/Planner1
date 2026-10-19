@@ -744,7 +744,6 @@ html[data-color-mode="dark"] .main-area .mental-article-placeholder :is(h1, p, s
 html[data-color-mode="dark"] .main-area .self-love-rituals.mental-article-recommendations {
   background: #24211d !important;
   color: #f4efe8 !important;
-  border-color: rgba(244, 239, 232, 0.18) !important;
 }
 
 html[data-color-mode="dark"] .main-area .legal-section.contact-form {

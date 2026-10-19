@@ -493,7 +493,8 @@ const RoutinePage = () => {
         </div>
         <p>Des gestes simples, choisis avec intention, pour prendre soin de soi chaque jour et créer un équilibre durable, en douceur.</p>
       </header>
-      <section className="routine-page__stats" aria-label="Résumé des routines">
+      <div className="routine-page__surface">
+        <section className="routine-page__stats" aria-label="Résumé des routines">
         <div className="routine-page__stat">
           <h2>{currentStreakDays} {currentStreakDays === 1 ? "jour" : "jours"}</h2>
           <h4>Série actuelle</h4>
@@ -510,11 +511,11 @@ const RoutinePage = () => {
           <h2>{completionPercentage}%</h2>
           <h4>Complétion du jour</h4>
         </div>
-      </section>
-      {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer tes routines.</p> : null}
-      {error ? <p className="routine-note__composer-hint">{error}</p> : null}
+        </section>
+        {!canEdit ? <p className="routine-note__composer-hint">Connecte-toi pour enregistrer tes routines.</p> : null}
+        {error ? <p className="routine-note__composer-hint">{error}</p> : null}
 
-      <div className="routine-notes">
+        <div className="routine-notes">
         {!isMobileRoutineView || activeRoutinePeriod === "morning" ? (
         <section className="routine-note routine-note--morning">
           <div className="routine-note__top">
@@ -582,6 +583,7 @@ const RoutinePage = () => {
           </div>
         </section>
         ) : null}
+        </div>
       </div>
       <PremiumCalendarModal isOpen={isPremiumModalOpen} onClose={() => setIsPremiumModalOpen(false)} />
     </div>

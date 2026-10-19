@@ -128,7 +128,8 @@ const CartPage = () => {
         </Link>
       </section>
 
-      {lineItems.length === 0 ? (
+      <div className="cart-page__surface">
+        {lineItems.length === 0 ? (
         <section className="cart-empty">
           <h4>Ton panier est vide pour le moment.</h4>
           <Link to="/boutique" className="boutique-button boutique-button--primary sport-workout-button-match">
@@ -202,7 +203,8 @@ const CartPage = () => {
             </div>
           </aside>
         </section>
-      )}
+        )}
+      </div>
     </div>
   )
 }

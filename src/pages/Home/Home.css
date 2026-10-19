@@ -890,6 +890,12 @@ body.home-page--lux {
   color: var(--lux-ink);
 }
 
+html:not([data-color-mode="dark"]) .page.home-page {
+  background: #ffffff;
+  border: 1px solid var(--lux-line);
+  padding: clamp(0.75rem, 1.4vw, 1.25rem);
+}
+
 .page.home-page::before,
 .page.home-page::after {
   content: none;

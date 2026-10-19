@@ -10,10 +10,22 @@
         const supportedLanguage = browserLanguages.find((language) => /^(fr|en)(-|$)/i.test(String(language)))
         const initialLanguage = storedLanguage || (String(supportedLanguage || "fr").toLowerCase().startsWith("en") ? "en" : "fr")
         document.documentElement.lang = String(initialLanguage).toLowerCase().startsWith("en") ? "en" : "fr"
+        const personalizedRoutePrefixes = [
+          "/bienvenue", "/home", "/sport", "/journaling", "/mindset", "/self-love",
+          "/manifestation", "/wishlist", "/calendrier", "/finances", "/routine", "/goals",
+          "/diet", "/menu", "/alimentation", "/profil", "/archives", "/mes-achats",
+          "/project", "/parametres", "/admin",
+        ]
+        const currentPath = window.location.pathname.toLowerCase().replace(/\/$/, "") || "/"
+        const isPersonalizedRoute = currentPath === "/blog/nouvel-article"
+          || personalizedRoutePrefixes.some((prefix) => currentPath === prefix || currentPath.startsWith(`${prefix}/`))
         const storedColorMode = localStorage.getItem("planner.color-mode.v1")
-        if (storedColorMode === "dark" || storedColorMode === "light") {
+        if (isPersonalizedRoute && (storedColorMode === "dark" || storedColorMode === "light")) {
           document.documentElement.dataset.colorMode = storedColorMode
           document.documentElement.style.colorScheme = storedColorMode
+        } else {
+          document.documentElement.dataset.colorMode = "light"
+          document.documentElement.style.colorScheme = "light"
         }
       } catch {
         // Le mode sera synchronisé par l'application si le stockage local est indisponible.

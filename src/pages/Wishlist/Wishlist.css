@@ -136,7 +136,7 @@
   gap: clamp(1.5rem, 2.5vw, 2rem);
   padding: clamp(1.5rem, 2.5vw, 2rem);
   background: #ffffff;
-  border: 1px solid #e5dcd4;
+  border: 1px solid var(--lux-line);
 }
 
 .wishlist-toolbar__filters,
@@ -374,7 +374,7 @@
   aspect-ratio: 3 / 4;
   display: flex;
   align-items: stretch;
-  border: 1px solid rgba(114, 92, 63, 0.25);
+  border: 1px solid var(--lux-line);
   box-shadow: none;
   background: transparent;
   padding: 0;
@@ -2387,7 +2387,7 @@ body.wishlist-page--lux .wishlist-modal__header h2 {
 
 body.wishlist-page--lux .wishlist-card {
   background: transparent;
-  border: 1px solid rgba(114, 92, 63, 0.25);
+  border: 1px solid var(--lux-line);
   border-radius: 0;
   box-shadow: none;
 }

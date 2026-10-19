@@ -90,6 +90,39 @@ const CartPage = lazy(() => import("./pages/Cart/CartPage"))
 const PurchasesPage = lazy(() => import("./pages/Purchases/PurchasesPage"))
 const ProjectPage = lazy(() => import("./pages/Project/ProjectPage"))
 
+const PERSONALIZED_ROUTE_PREFIXES = [
+  "/bienvenue",
+  "/home",
+  "/sport",
+  "/journaling",
+  "/mindset",
+  "/self-love",
+  "/manifestation",
+  "/wishlist",
+  "/calendrier",
+  "/finances",
+  "/routine",
+  "/goals",
+  "/diet",
+  "/menu",
+  "/alimentation",
+  "/profil",
+  "/archives",
+  "/mes-achats",
+  "/project",
+  "/parametres",
+  "/admin",
+] as const
+
+const isPersonalizedRoute = (pathname: string) => {
+  const normalizedPath = pathname.toLowerCase().replace(/\/$/, "") || "/"
+  if (normalizedPath === "/blog/nouvel-article") return true
+
+  return PERSONALIZED_ROUTE_PREFIXES.some(
+    (prefix) => normalizedPath === prefix || normalizedPath.startsWith(`${prefix}/`),
+  )
+}
+
 const pageTitleKeys: Record<string, string> = {
   "/login": "titles.login",
   "/register": "titles.register",
@@ -384,7 +417,7 @@ type PageBackgroundMediaProps = {
 const PageBackgroundMedia = ({ color, imageUrl, isReady }: PageBackgroundMediaProps) => {
   const [resolvedImageUrl, setResolvedImageUrl] = useState("")
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!isReady) return
     setResolvedImageUrl("")
     applyPageBackground(color || DEFAULT_PAGE_BACKGROUND)
@@ -411,12 +444,17 @@ const PageBackgroundMedia = ({ color, imageUrl, isReady }: PageBackgroundMediaPr
 function App() {
   const { isPreferenceCenterOpen, preferences } = useCookieConsent()
   const { isAuthReady, isAuthenticated, userProfile } = useAuth()
+  const { pathname } = useLocation()
+  const personalizationEnabled = isAuthenticated && isPersonalizedRoute(pathname)
   const selectedBackgroundPreset = getPageBackgroundPreset(userProfile.preferences?.pageBackgroundPresetId)
 
   useLayoutEffect(() => {
     if (!isAuthReady) return
-    applyColorMode(isAuthenticated ? userProfile.preferences?.colorMode : DEFAULT_COLOR_MODE)
-  }, [isAuthReady, isAuthenticated, userProfile.preferences?.colorMode])
+    applyColorMode(
+      personalizationEnabled ? userProfile.preferences?.colorMode : DEFAULT_COLOR_MODE,
+      { persist: personalizationEnabled },
+    )
+  }, [isAuthReady, personalizationEnabled, userProfile.preferences?.colorMode])
 
   useEffect(() => {
     void updateAnalyticsConsent(preferences.analytics)
@@ -425,8 +463,8 @@ function App() {
   return (
     <div className="app-shell">
       <PageBackgroundMedia
-        color={isAuthenticated ? userProfile.preferences?.pageBackground : DEFAULT_PAGE_BACKGROUND}
-        imageUrl={isAuthenticated ? selectedBackgroundPreset?.src || userProfile.preferences?.pageBackgroundImageUrl : undefined}
+        color={personalizationEnabled ? userProfile.preferences?.pageBackground : DEFAULT_PAGE_BACKGROUND}
+        imageUrl={personalizationEnabled ? selectedBackgroundPreset?.src || userProfile.preferences?.pageBackgroundImageUrl : undefined}
         isReady={isAuthReady}
       />
       <PageTitle />

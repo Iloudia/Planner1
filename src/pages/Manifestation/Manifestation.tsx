@@ -61,7 +61,8 @@ const ManifestationPage = () => {
         <p>Un espace pour clarifier tes intentions, nourrir ta vision et avancer chaque jour vers ce que tu souhaites créer.</p>
       </header>
 
-      <section className="manifestation-tracker" aria-labelledby="manifestation-tracker-title">
+      <div className="manifestation-page__surface">
+        <section className="manifestation-tracker" aria-labelledby="manifestation-tracker-title">
         <div className="sport-habits__table-wrapper">
           <div className="sport-habits__header">
             <div className="sport-habits__header-content">
@@ -103,9 +104,9 @@ const ManifestationPage = () => {
             ))}
           </div>
         </div>
-      </section>
+        </section>
 
-      <section className="manifestation-journal" aria-labelledby="manifestation-journal-title">
+        <section className="manifestation-journal" aria-labelledby="manifestation-journal-title">
         <header className="manifestation-section-heading">
           <h2 id="manifestation-journal-title">Mon espace de manifestation</h2>
         </header>
@@ -121,7 +122,8 @@ const ManifestationPage = () => {
             </label>
           ))}
         </div>
-      </section>
+        </section>
+      </div>
     </div>
   )
 }

@@ -1286,6 +1286,12 @@ body.journaling-page--lux .journaling-closure__block h4 {
   padding: 0;
 }
 
+html:not([data-color-mode="dark"]) .journaling-sections-shell {
+  background: #ffffff;
+  border: 1px solid var(--lux-line);
+  padding: clamp(0.75rem, 1.4vw, 1.25rem);
+}
+
 .journaling-sections-shell > .journaling-section {
   background: #ffffff;
   box-shadow: none;

@@ -1118,6 +1118,19 @@ body.diet-page--lux {
   background: transparent;
 }
 
+html:not([data-color-mode="dark"]) .diet-page__surface {
+  background: #ffffff;
+  border: 1px solid var(--lux-line);
+  padding: clamp(0.75rem, 1.4vw, 1.25rem);
+}
+
+.diet-page__surface {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: inherit;
+}
+
 .diet-gymgirl-page h1,
 .diet-gymgirl-page h2,
 .diet-gymgirl-page h3,

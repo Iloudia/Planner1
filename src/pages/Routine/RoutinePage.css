@@ -101,6 +101,24 @@
   gap: 2.5rem;
 }
 
+html:not([data-color-mode="dark"]) .routine-page__surface {
+  margin-top: -1.7rem;
+  background: #ffffff;
+  border: 1px solid var(--lux-line);
+  padding: clamp(0.75rem, 1.4vw, 1.25rem);
+}
+
+html:not([data-color-mode="dark"]) .routine-page__surface > .routine-page__stats {
+  margin-top: 0;
+}
+
+.routine-page__surface {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: inherit;
+}
+
 .routine-page--loading {
   min-height: 60vh;
   padding: 0;
@@ -926,6 +944,10 @@ body.routine-page--lux .routine-note__item-detail {
 }
 
 @media (max-width: 640px) {
+  html:not([data-color-mode="dark"]) .routine-page__surface {
+    margin-top: -0.8rem;
+  }
+
   .routine-page__stats {
     grid-template-columns: repeat(2, 1fr);
     margin-top: -0.8rem;

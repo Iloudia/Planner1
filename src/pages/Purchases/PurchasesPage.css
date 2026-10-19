@@ -5,6 +5,19 @@
   padding: clamp(2.4rem, 6vw, 4.2rem) clamp(1.2rem, 4vw, 3rem) clamp(3rem, 8vw, 5rem);
 }
 
+html:not([data-color-mode="dark"]) .purchases-page__surface {
+  background: #ffffff;
+  border: 1px solid var(--lux-line);
+  padding: clamp(0.75rem, 1.4vw, 1.25rem);
+}
+
+.purchases-page__surface {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: inherit;
+}
+
 .purchases-hero {
   display: flex;
   flex-wrap: wrap;

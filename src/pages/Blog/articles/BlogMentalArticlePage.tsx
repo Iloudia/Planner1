@@ -475,7 +475,6 @@ const BlogMentalArticlePage = () => {
           {!staticArticle && cmsArticle ? <BlogMarkdownContent content={cmsArticle.content} /> : renderMarkdown(articleBody, article.illustrations)}
         </div>
         <BlogPublicationDate className="mental-article__published-date" href={`/blog/mental/${articleSlug}`} />
-      </article>
 
       <section className="self-love-rituals mental-article-recommendations" aria-labelledby="mental-article-recommendations-title">
         <header className="self-love-rituals__header">
@@ -499,6 +498,7 @@ const BlogMentalArticlePage = () => {
           ))}
         </div>
       </section>
+      </article>
 
     </div>
   )

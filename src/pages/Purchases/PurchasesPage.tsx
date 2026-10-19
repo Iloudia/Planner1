@@ -82,7 +82,8 @@ const PurchasesPage = () => {
         </Link>
       </section>
 
-      {error ? (
+      <div className="purchases-page__surface">
+        {error ? (
         <section className="purchases-empty">
           <p className="boutique-checkout-error">{error}</p>
           <Link to="/boutique" className="boutique-button boutique-button--primary">
@@ -125,7 +126,8 @@ const PurchasesPage = () => {
             </article>
           ))}
         </section>
-      )}
+        )}
+      </div>
     </div>
   )
 }

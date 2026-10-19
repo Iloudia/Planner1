@@ -875,6 +875,19 @@ body.alimentation-page--lux {
   --lux-accent-strong: #9b8976;
 }
 
+html:not([data-color-mode="dark"]) .menu-page__surface {
+  background: #ffffff;
+  border: 1px solid var(--lux-line);
+  padding: clamp(0.75rem, 1.4vw, 1.25rem);
+}
+
+.menu-page__surface {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2rem;
+}
+
 body.alimentation-page--lux .content-page.diet-page {
   background: transparent;
 }

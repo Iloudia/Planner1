@@ -581,9 +581,10 @@ const WorkoutPage = () => {
         </div>
         <p>Un espace pour composer tes séances, suivre tes séries et progresser à ton rythme.</p>
       </header>
-      {error || sportBoardError ? <p className="routine-note__composer-hint">{error ?? sportBoardError}</p> : null}
+      <div className="workout-page__surface">
+        {error || sportBoardError ? <p className="routine-note__composer-hint">{error ?? sportBoardError}</p> : null}
 
-      <div className="workout-layout">
+        <div className="workout-layout">
         <section className="workout-exercises">
           <header className="workout-exercises__header">
             <div className="workout-section-header">
@@ -932,6 +933,7 @@ const WorkoutPage = () => {
           ) : null}
         </section>
 
+        </div>
       </div>
       <div className="workout-page__footer-bar" aria-hidden="true" />
 

@@ -72,6 +72,12 @@
   padding: 0;
 }
 
+html:not([data-color-mode="dark"]) .self-love-page__content {
+  background: #ffffff;
+  border: 1px solid var(--lux-line);
+  padding: clamp(0.75rem, 1.4vw, 1.25rem);
+}
+
 .self-love-page--loading {
   min-height: 60vh;
   padding: 0;

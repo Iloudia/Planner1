@@ -230,23 +230,38 @@ const ProfilePage = () => {
 
   const handlePageBackgroundChange = async (value: string) => {
     const pageBackground = normalizePageBackground(value)
+    const previousProfileData = profileData
+    const previousPath = profileData.preferences?.pageBackgroundImagePath
     const nextProfileData = {
       ...profileData,
       preferences: {
         ...profileData.preferences,
         pageBackground,
+        pageBackgroundPresetId: "",
+        pageBackgroundImageUrl: "",
+        pageBackgroundImagePath: "",
       },
     }
 
     setProfileData(nextProfileData)
-    applyPageBackground(pageBackground, getProfileBackgroundImage(nextProfileData))
+    applyPageBackground(pageBackground)
     setPersonalizationStatus("saving")
+    setBackgroundImageError("")
+    setBackgroundImageStatus("")
 
     try {
       await persistProfileData(nextProfileData)
-      applyPageBackground(pageBackground, getProfileBackgroundImage(nextProfileData))
+      applyPageBackground(pageBackground)
+      if (previousPath) {
+        void deleteMedia(previousPath).catch(() => undefined)
+      }
       setPersonalizationStatus("saved")
     } catch {
+      setProfileData(previousProfileData)
+      applyPageBackground(
+        previousProfileData.preferences?.pageBackground,
+        getProfileBackgroundImage(previousProfileData),
+      )
       setPersonalizationStatus("error")
     }
   }
@@ -903,10 +918,7 @@ const ProfilePage = () => {
                       <input
                         type="color"
                         value={normalizePageBackground(profileData.preferences?.pageBackground)}
-                        onInput={(event) => applyPageBackground(
-                          event.currentTarget.value,
-                          getProfileBackgroundImage(profileData),
-                        )}
+                        onInput={(event) => applyPageBackground(event.currentTarget.value)}
                         onChange={(event) => void handlePageBackgroundChange(event.target.value)}
                         aria-label="Choisir la couleur de fond des pages"
                       />
@@ -919,7 +931,10 @@ const ProfilePage = () => {
                       type="button"
                       className="personalization-color__reset"
                       onClick={() => void handlePageBackgroundChange(DEFAULT_PAGE_BACKGROUND)}
-                      disabled={normalizePageBackground(profileData.preferences?.pageBackground) === DEFAULT_PAGE_BACKGROUND}
+                      disabled={
+                        normalizePageBackground(profileData.preferences?.pageBackground) === DEFAULT_PAGE_BACKGROUND
+                        && !activeBackgroundImage
+                      }
                     >
                       Réinitialiser
                     </button>

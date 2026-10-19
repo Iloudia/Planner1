@@ -14,6 +14,19 @@ body.project-page--lux {
   color: var(--project-ink);
 }
 
+html:not([data-color-mode="dark"]) .project-page__surface {
+  background: #ffffff;
+  border: 1px solid var(--lux-line);
+  padding: clamp(0.75rem, 1.4vw, 1.25rem);
+}
+
+.project-page__surface {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: inherit;
+}
+
 .project-page__heading {
   position: relative;
   min-height: clamp(16rem, 23vw, 20rem);

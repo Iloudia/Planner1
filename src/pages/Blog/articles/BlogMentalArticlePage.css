@@ -329,7 +329,7 @@ body.mental-article-page--tone {
 
 .self-love-rituals.mental-article-recommendations {
   padding: clamp(1.5rem, 3.5vw, 3rem);
-  border: 1px solid var(--color-border-strong);
+  border: 0;
   background: #ffffff;
 }
 
