@@ -1,5 +1,6 @@
 import { PropsWithChildren } from "react";
 import { useCookieConsent } from "../context/CookieConsentContext";
+import { useTranslation } from "react-i18next";
 
 const InstagramIcon = ({ className = "" }: { className?: string }) => (
   <svg
@@ -25,6 +26,7 @@ const FooterLink = ({ href, children }: PropsWithChildren<{ href: string }>) => 
 );
 
 const Footer = () => {
+  const { t } = useTranslation();
   const instagramUrl =
     "https://www.instagram.com/meandrituals?igsh=YmdwbmRmbTB1cW4w&utm_source=qr";
   const { openPreferences } = useCookieConsent();
@@ -34,26 +36,30 @@ const Footer = () => {
     <footer className="site-footer">
       <div className="site-footer__inner">
         <div className="site-footer__brand">
-          <h2 className="site-footer__title">Organise ton esprit.<br /> Aligne ton énergie.<br /> Créer la vie qui te ressemble.</h2>
+          <h2 className="site-footer__title">
+            {t("footer.motto").split("\n").map((line, index) => (
+              <span key={line}>{index > 0 ? <br /> : null}{line}</span>
+            ))}
+          </h2>
         </div>
 
-        <div className="site-footer__sections" aria-label="Navigation complementaire">
+        <div className="site-footer__sections" aria-label={t("footer.complementaryNavigation")}>
           <div className="site-footer__section">
-            <h3 className="site-footer__section-title">À propos</h3>
-            <FooterLink href="/a-propos">À propos de moi</FooterLink>
-            <FooterLink href="/contact">Contacte-moi</FooterLink>
+            <h3 className="site-footer__section-title">{t("footer.about")}</h3>
+            <FooterLink href="/a-propos">{t("footer.aboutMe")}</FooterLink>
+            <FooterLink href="/contact">{t("footer.contactMe")}</FooterLink>
             <FooterLink href="/faq">FAQ</FooterLink>
           </div>
 
           <div className="site-footer__section">
-            <h3 className="site-footer__section-title">Infos</h3>
-            <FooterLink href="/mentions-legales">Mentions légales</FooterLink>
-            <FooterLink href="/confidentialite">Politique de confidentialité</FooterLink>
-            <FooterLink href="/cookies">Gestion des cookies</FooterLink>
+            <h3 className="site-footer__section-title">{t("footer.info")}</h3>
+            <FooterLink href="/mentions-legales">{t("footer.legal")}</FooterLink>
+            <FooterLink href="/confidentialite">{t("footer.privacy")}</FooterLink>
+            <FooterLink href="/cookies">{t("footer.cookies")}</FooterLink>
           </div>
 
           <div className="site-footer__section">
-            <h3 className="site-footer__section-title">Suis-moi</h3>
+            <h3 className="site-footer__section-title">{t("footer.follow")}</h3>
             <a className="site-footer__social-link" href={instagramUrl} target="_blank" rel="noreferrer noopener">
               <InstagramIcon className="site-footer__social-icon" />
               Instagram
@@ -64,7 +70,7 @@ const Footer = () => {
 
       <div className="site-footer__bottom">
         <span>© 2025 Me&rituals.</span>
-        <span>Tous droits réservés. 4 décembre 2025</span>
+        <span>{t("footer.rights")} {t("footer.date")}</span>
       </div>
     </footer>
   );

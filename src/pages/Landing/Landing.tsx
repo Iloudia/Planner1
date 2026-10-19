@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../../context/AuthContext"
+import { useTranslation } from "react-i18next"
 import "./Landing.css"
 
 import heroBackdrop from "../../assets/frances-leynes-dupe.webp"
@@ -40,25 +41,18 @@ import cardSportCompact from "../../assets/sport-640.webp"
 import cardSportMobile from "../../assets/sport-mobile.webp"
 
 const carouselItems = [
-  { title: "Sport", text: "Planifie tes séances de sport.", image: cardSport, smallImage: cardSportSmall, compactImage: cardSportCompact, mobileImage: cardSportMobile, width: 1650 },
-  { title: "Journaling", text: "Écris et clarifie tes pensées.", image: cardMallika, smallImage: cardMallikaSmall, compactImage: cardMallikaCompact, mobileImage: cardMallikaMobile, width: 1650 },
-  { title: "Mindset", text: "Apprends à mieux te connaître.", image: cardSelflove, smallImage: cardSelfloveSmall, compactImage: cardSelfloveCompact, mobileImage: cardSelfloveMobile, width: 1467 },
-  { title: "Wishlist", text: "Garde tes envies au même endroit.", image: cardMedhanshi, smallImage: cardMedhanshiSmall, compactImage: cardMedhanshiCompact, mobileImage: cardMedhanshiMobile, width: 1549 },
-  { title: "Calendrier", text: "Organise ton mois.", image: cardKatieHuber, smallImage: cardKatieHuberSmall, compactImage: cardKatieHuberCompact, mobileImage: cardKatieHuberMobile, width: 1650 },
-  { title: "Finances", text: "Suis ton budget et tes dépenses.", image: cardEbony, smallImage: cardEbonySmall, compactImage: cardEbonyCompact, mobileImage: cardEbonyMobile, width: 1650 },
-  { title: "Routine", text: "Structure tes routines du matin et du soir.", image: cardLB, smallImage: cardLBSmall, compactImage: cardLBCompact, mobileImage: cardLBMobile, width: 1440 },
-  { title: "Menu de la semaine", text: "Planifie tes repas de la semaine.", image: cardKatieMansfield, smallImage: cardKatieMansfieldSmall, compactImage: cardKatieMansfieldCompact, mobileImage: cardKatieMansfieldMobile, width: 1650 },
-]
-
-const differentiatorHighlights = [
-  "Alléger ta charge mentale",
-  "T’aider à te sentir plus sereine",
-  "Reprendre le contrôle de ton temps",
-  "Créer une vie qui te ressemble",
-  "Te reconnecter à toi-même",
+  { id: "sport", image: cardSport, smallImage: cardSportSmall, compactImage: cardSportCompact, mobileImage: cardSportMobile, width: 1650 },
+  { id: "journaling", image: cardMallika, smallImage: cardMallikaSmall, compactImage: cardMallikaCompact, mobileImage: cardMallikaMobile, width: 1650 },
+  { id: "mindset", image: cardSelflove, smallImage: cardSelfloveSmall, compactImage: cardSelfloveCompact, mobileImage: cardSelfloveMobile, width: 1467 },
+  { id: "wishlist", image: cardMedhanshi, smallImage: cardMedhanshiSmall, compactImage: cardMedhanshiCompact, mobileImage: cardMedhanshiMobile, width: 1549 },
+  { id: "calendar", image: cardKatieHuber, smallImage: cardKatieHuberSmall, compactImage: cardKatieHuberCompact, mobileImage: cardKatieHuberMobile, width: 1650 },
+  { id: "finances", image: cardEbony, smallImage: cardEbonySmall, compactImage: cardEbonyCompact, mobileImage: cardEbonyMobile, width: 1650 },
+  { id: "routine", image: cardLB, smallImage: cardLBSmall, compactImage: cardLBCompact, mobileImage: cardLBMobile, width: 1440 },
+  { id: "menu", image: cardKatieMansfield, smallImage: cardKatieMansfieldSmall, compactImage: cardKatieMansfieldCompact, mobileImage: cardKatieMansfieldMobile, width: 1650 },
 ]
 
 const LandingPage = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
   const { isAuthenticated, userEmail, logout } = useAuth()
@@ -101,6 +95,7 @@ const LandingPage = () => {
   )
 
   const carouselDotIndexes = useMemo(() => carouselItems.map((_, index) => index), [])
+  const differentiatorHighlights = t("landing.benefits", { returnObjects: true }) as string[]
 
   const handleCarouselPrev = () => {
     setCarouselIndex((prev) => (prev - 1 + carouselItems.length) % carouselItems.length)
@@ -137,24 +132,24 @@ const LandingPage = () => {
           />
         </picture>
         <div className="landing-hero__content">
-          <span className="landing-hero__eyebrow">Planifie · Respire · Avance</span>
-          <h1>L’espace qui transforme ton quotidien en une vie plus fluide, plus douce et plus alignée.</h1>
-          <p className="landing-hero__accent">Parce que tu mérites une vie sans pression, et où tout est plus simple.</p>
+          <span className="landing-hero__eyebrow">{t("landing.eyebrow")}</span>
+          <h1>{t("landing.heroTitle")}</h1>
+          <p className="landing-hero__accent">{t("landing.heroAccent")}</p>
           <div className="landing-hero__actions">
             <button type="button" className="landing-cta-button" onClick={() => navigate("/login")}>
-              Commencer mon organisation
+              {t("landing.start")}
             </button>
             {isAuthenticated ? (
               <button type="button" className="landing-secondary-button" onClick={() => navigate("/home")}>
-                Reprendre ma planification
+                {t("landing.resume")}
               </button>
             ) : null}
           </div>
           {isAuthenticated ? (
             <div className="landing-hero__status">
-              Connecté en tant que <strong>{userEmail}</strong>
+              {t("landing.signedInAs")} <strong>{userEmail}</strong>
               <button type="button" onClick={logout}>
-                Se déconnecter
+                {t("landing.logout")}
               </button>
             </div>
           ) : null}
@@ -163,18 +158,18 @@ const LandingPage = () => {
 
       <section className="landing-daily-hub" aria-labelledby="landing-daily-hub-title">
         <div className="landing-section-heading landing-daily-hub__heading">
-          <h2 id="landing-daily-hub-title">Tout ton quotidien, réuni au même endroit</h2>
-          <p>Planifie, organise et prends soin de toi grâce à des outils pensés pour avancer avec plus de clarté et de sérénité.</p>
+          <h2 id="landing-daily-hub-title">{t("landing.hubTitle")}</h2>
+          <p>{t("landing.hubText")}</p>
         </div>
         <div className="landing-carousel">
-          <button type="button" className="landing-carousel__arrow landing-carousel__arrow--left" aria-label="Cartes précédentes" onClick={handleCarouselPrev}>
+          <button type="button" className="landing-carousel__arrow landing-carousel__arrow--left" aria-label={t("landing.previousCards")} onClick={handleCarouselPrev}>
             <svg className="workout-form__select-chevron landing-carousel__chevron landing-carousel__chevron--left" viewBox="0 0 20 20" aria-hidden="true">
               <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
           <div className="landing-carousel__grid" aria-live="polite" style={{ gridTemplateColumns: `repeat(${cardsPerView}, minmax(0, 1fr))` }}>
             {visibleCards.map((card) => (
-              <article key={card.title} className="landing-carousel__card">
+              <article key={card.id} className="landing-carousel__card">
                 <div className="landing-carousel__image">
                   <img
                     src={card.image}
@@ -186,25 +181,25 @@ const LandingPage = () => {
                   />
                 </div>
                 <div className="landing-carousel__body">
-                  <h3>{card.title}</h3>
-                  <p>{card.text}</p>
+                  <h3>{t(`landing.cards.${card.id}.title`)}</h3>
+                  <p>{t(`landing.cards.${card.id}.text`)}</p>
                 </div>
               </article>
             ))}
           </div>
-          <button type="button" className="landing-carousel__arrow landing-carousel__arrow--right" aria-label="Cartes suivantes" onClick={handleCarouselNext}>
+          <button type="button" className="landing-carousel__arrow landing-carousel__arrow--right" aria-label={t("landing.nextCards")} onClick={handleCarouselNext}>
             <svg className="workout-form__select-chevron landing-carousel__chevron landing-carousel__chevron--right" viewBox="0 0 20 20" aria-hidden="true">
               <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
         </div>
-        <div className="landing-carousel__dots" aria-label="Position dans le carousel">
+        <div className="landing-carousel__dots" aria-label={t("landing.carouselPosition")}>
           {carouselDotIndexes.map((index) => (
             <button
               key={index}
               type="button"
               className={`landing-carousel__dot${index === carouselIndex ? " is-active" : ""}`}
-              aria-label={`Afficher les cartes ${index + 1}`}
+              aria-label={t("landing.showCards", { number: index + 1 })}
               aria-pressed={index === carouselIndex}
               onClick={() => setCarouselIndex(index)}
             />
@@ -214,12 +209,9 @@ const LandingPage = () => {
 
       <section className="landing-differentiator" aria-labelledby="landing-differentiator-title">
         <div className="landing-section-heading landing-differentiator__heading">
-          <span className="landing-differentiator__eyebrow">Une approche plus douce</span>
-          <h2 id="landing-differentiator-title">Bien plus qu'un outil d'organisation</h2>
-          <p>
-            Fini les carnets éparpillés, les notes sur ton téléphone et les applis dans tous les sens. Ici, tout est centralisé pour
-            simplifier ton quotidien et te libérer de la charge mentale.
-          </p>
+          <span className="landing-differentiator__eyebrow">{t("landing.gentleEyebrow")}</span>
+          <h2 id="landing-differentiator-title">{t("landing.differentiatorTitle")}</h2>
+          <p>{t("landing.differentiatorText")}</p>
         </div>
         <ul className="landing-differentiator__list">
           {differentiatorHighlights.map((highlight) => (
@@ -234,11 +226,11 @@ const LandingPage = () => {
         style={{ backgroundImage: `url(${finalCtaBackdrop})` }}
       >
         <div className="landing-final-cta__content">
-          <span className="landing-final-cta__eyebrow">Ton espace, à ton rythme</span>
-          <h2 id="landing-final-cta-title">Et si tu t'offrais enfin une organisation qui te fait du bien ?</h2>
-          <p>Parfois, tout commence par un espace qui offre de l’air, de la clarté et la possibilité de s’épanouir pleinement.</p>
+          <span className="landing-final-cta__eyebrow">{t("landing.finalEyebrow")}</span>
+          <h2 id="landing-final-cta-title">{t("landing.finalTitle")}</h2>
+          <p>{t("landing.finalText")}</p>
           <button type="button" className="landing-cta-button" onClick={() => navigate("/register")}>
-            Créer mon espace
+            {t("landing.createSpace")}
           </button>
         </div>
       </section>

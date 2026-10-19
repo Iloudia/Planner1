@@ -1,5 +1,8 @@
 import type { HomeCardTheme } from "../utils/homeCardTheme"
 import type { CalendarEventPaletteId } from "../utils/calendarEventPalette"
+import type { ColorMode } from "../utils/colorMode"
+import type { HomeWelcomeFont } from "../utils/homeWelcomeFont"
+import type { AppLanguage } from "../i18n"
 
 export type FirebaseUserDocument = {
   email: string
@@ -29,6 +32,10 @@ export type FirebaseUserDocument = {
     pageBackgroundImagePath?: string
     homeCardTheme?: HomeCardTheme
     calendarEventPalette?: CalendarEventPaletteId
+    colorMode?: ColorMode
+    homeWelcomeMessage?: string
+    homeWelcomeFont?: HomeWelcomeFont
+    interfaceLanguage?: AppLanguage
   }
   onboarding?: {
     source?: string

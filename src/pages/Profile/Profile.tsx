@@ -9,12 +9,17 @@ import { auth } from "../../utils/firebase"
 import { applyPageBackground, DEFAULT_PAGE_BACKGROUND, normalizePageBackground } from "../../utils/pageBackground"
 import { HOME_CARD_THEMES, normalizeHomeCardTheme, type HomeCardTheme } from "../../utils/homeCardTheme"
 import { CALENDAR_EVENT_CATEGORIES, CALENDAR_EVENT_PALETTES, normalizeCalendarEventPalette, type CalendarEventPaletteId } from "../../utils/calendarEventPalette"
+import { applyColorMode, COLOR_MODES, normalizeColorMode, type ColorMode } from "../../utils/colorMode"
+import { HOME_WELCOME_FONTS, normalizeHomeWelcomeFont, type HomeWelcomeFont } from "../../utils/homeWelcomeFont"
 import { deleteMedia } from "../../services/media/api"
 import { getPageBackgroundPreset, pageBackgroundPresets, type PageBackgroundPreset } from "../../data/pageBackgroundPresets"
 import defaultProfilePhoto from "../../assets/katie-huber-rhoades-dupe (1).webp"
 import MediaImage from "../../components/MediaImage"
 import PageHeading from "../../components/PageHeading"
 import PageLoader from "../../components/PageLoader"
+import SettingsLanguages from "../Settings/SettingsLanguages"
+import type { AppLanguage } from "../../i18n"
+import { useTranslation } from "react-i18next"
 import "./Profile.css"
 
 const CHANGE_LIMITS_KEY = "planner.profile.changeLimits.v1"
@@ -37,6 +42,10 @@ type ProfileData = {
     pageBackgroundImagePath?: string
     homeCardTheme?: HomeCardTheme
     calendarEventPalette?: CalendarEventPaletteId
+    colorMode?: ColorMode
+    homeWelcomeMessage?: string
+    homeWelcomeFont?: HomeWelcomeFont
+    interfaceLanguage?: AppLanguage
   }
 }
 
@@ -66,12 +75,6 @@ const accountRows: AccountRow[] = [
   { key: "username", label: "Pseudo" },
 ]
 
-const settingsSections = [
-  { id: "account", title: "Ton compte", description: "Gérer les informations personnelles et la sécurité." },
-  { id: "personalization", title: "Personnalisation", description: "Choisir la couleur de fond de tes pages." },
-  { id: "languages", title: "Langues", description: "Choisir la langue principale de l'interface." },
-]
-
 const MS_IN_DAY = 1000 * 60 * 60 * 24
 
 const getProfileBackgroundImage = (profile: ProfileData) =>
@@ -80,7 +83,8 @@ const getProfileBackgroundImage = (profile: ProfileData) =>
   || ""
 
 const ProfilePage = () => {
-  const { isAuthReady, userEmail, userProfile, updateUserProfile, changePassword, deactivateAccount, deleteAccount, verifyPassword } = useAuth()
+  const { t, i18n } = useTranslation()
+  const { isAuthReady, userEmail, userProfile, previewUserProfile, updateUserProfile, changePassword, deactivateAccount, deleteAccount, verifyPassword } = useAuth()
   const [activeId, setActiveId] = useState("account")
   const [profileData, setProfileData] = useState<ProfileData>({})
   const [editingKey, setEditingKey] = useState<EditableKey | null>(null)
@@ -106,6 +110,8 @@ const ProfilePage = () => {
   const [isBackgroundImageBusy, setIsBackgroundImageBusy] = useState(false)
   const [cardThemeStatus, setCardThemeStatus] = useState<"" | "saving" | "saved" | "error">("")
   const [calendarPaletteStatus, setCalendarPaletteStatus] = useState<"" | "saving" | "saved" | "error">("")
+  const [colorModeStatus, setColorModeStatus] = useState<"" | "saving" | "saved" | "error">("")
+  const [welcomeFontStatus, setWelcomeFontStatus] = useState<"" | "saving" | "saved" | "error">("")
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const panelRef = useRef<HTMLDivElement | null>(null)
   const navigate = useNavigate()
@@ -124,9 +130,15 @@ const ProfilePage = () => {
   const safeEmail = userEmail ?? "anonymous"
   const changeLimitsKey = useMemo(() => buildUserScopedKey(safeEmail, CHANGE_LIMITS_KEY), [safeEmail])
 
+  const settingsSections = useMemo(() => [
+    { id: "account", title: t("profile.accountTitle"), description: t("profile.accountDescription") },
+    { id: "personalization", title: t("profile.personalizationTitle"), description: t("profile.personalizationDescription") },
+    { id: "languages", title: t("profile.languagesTitle"), description: t("profile.languagesDescription") },
+  ], [i18n.resolvedLanguage, t])
+
   const activeSection = useMemo(
     () => settingsSections.find((section) => section.id === activeId) ?? settingsSections[0],
-    [activeId]
+    [activeId, settingsSections]
   )
 
   useEffect(() => {
@@ -227,11 +239,12 @@ const ProfilePage = () => {
     }
 
     setProfileData(nextProfileData)
-    applyPageBackground(pageBackground, getProfileBackgroundImage(profileData))
+    applyPageBackground(pageBackground, getProfileBackgroundImage(nextProfileData))
     setPersonalizationStatus("saving")
 
     try {
       await persistProfileData(nextProfileData)
+      applyPageBackground(pageBackground, getProfileBackgroundImage(nextProfileData))
       setPersonalizationStatus("saved")
     } catch {
       setPersonalizationStatus("error")
@@ -251,6 +264,7 @@ const ProfilePage = () => {
     }
 
     setProfileData(nextProfileData)
+    previewUserProfile(nextProfileData)
     setCardThemeStatus("saving")
 
     try {
@@ -258,6 +272,7 @@ const ProfilePage = () => {
       setCardThemeStatus("saved")
     } catch {
       setProfileData(previousProfileData)
+      previewUserProfile(previousProfileData)
       setCardThemeStatus("error")
     }
   }
@@ -275,6 +290,7 @@ const ProfilePage = () => {
     }
 
     setProfileData(nextProfileData)
+    previewUserProfile(nextProfileData)
     setCalendarPaletteStatus("saving")
 
     try {
@@ -282,7 +298,61 @@ const ProfilePage = () => {
       setCalendarPaletteStatus("saved")
     } catch {
       setProfileData(previousProfileData)
+      previewUserProfile(previousProfileData)
       setCalendarPaletteStatus("error")
+    }
+  }
+
+  const handleColorModeChange = async (colorMode: ColorMode) => {
+    if (normalizeColorMode(profileData.preferences?.colorMode) === colorMode) return
+
+    const previousProfileData = profileData
+    const previousMode = normalizeColorMode(previousProfileData.preferences?.colorMode)
+    const nextProfileData = {
+      ...profileData,
+      preferences: {
+        ...profileData.preferences,
+        colorMode,
+      },
+    }
+
+    setProfileData(nextProfileData)
+    setColorModeStatus("saving")
+    applyColorMode(colorMode)
+
+    try {
+      await persistProfileData(nextProfileData)
+      setColorModeStatus("saved")
+    } catch {
+      setProfileData(previousProfileData)
+      applyColorMode(previousMode)
+      setColorModeStatus("error")
+    }
+  }
+
+  const handleWelcomeFontChange = async (homeWelcomeFont: HomeWelcomeFont) => {
+    if (normalizeHomeWelcomeFont(profileData.preferences?.homeWelcomeFont) === homeWelcomeFont) return
+
+    const previousProfileData = profileData
+    const nextProfileData = {
+      ...profileData,
+      preferences: {
+        ...profileData.preferences,
+        homeWelcomeFont,
+      },
+    }
+
+    setProfileData(nextProfileData)
+    previewUserProfile(nextProfileData)
+    setWelcomeFontStatus("saving")
+
+    try {
+      await persistProfileData(nextProfileData)
+      setWelcomeFontStatus("saved")
+    } catch {
+      setProfileData(previousProfileData)
+      previewUserProfile(previousProfileData)
+      setWelcomeFontStatus("error")
     }
   }
 
@@ -307,6 +377,7 @@ const ProfilePage = () => {
 
     try {
       await persistProfileData(nextProfileData)
+      applyPageBackground(nextProfileData.preferences.pageBackground)
       if (previousPath) {
         void deleteMedia(previousPath).catch(() => undefined)
       }
@@ -348,6 +419,7 @@ const ProfilePage = () => {
 
     try {
       await persistProfileData(nextProfileData)
+      applyPageBackground(nextProfileData.preferences.pageBackground, preset.src)
       if (previousPath) {
         void deleteMedia(previousPath).catch(() => undefined)
       }
@@ -562,10 +634,10 @@ const ProfilePage = () => {
 
   return (
     <>
-      <PageHeading eyebrow="Paramètres" title="Personnalise ton expérience" />
+      <PageHeading eyebrow={t("settings.eyebrow")} title={t("settings.title")} />
       <div className="content-page settings-page">
         <section className="settings-layout">
-          <nav className="settings-nav" aria-label="Sections profil">
+          <nav className="settings-nav" aria-label={t("profile.sectionsLabel")}>
             <ul>
               {settingsSections.map((section) => (
                 <li key={section.id}>
@@ -831,6 +903,10 @@ const ProfilePage = () => {
                       <input
                         type="color"
                         value={normalizePageBackground(profileData.preferences?.pageBackground)}
+                        onInput={(event) => applyPageBackground(
+                          event.currentTarget.value,
+                          getProfileBackgroundImage(profileData),
+                        )}
                         onChange={(event) => void handlePageBackgroundChange(event.target.value)}
                         aria-label="Choisir la couleur de fond des pages"
                       />
@@ -940,6 +1016,39 @@ const ProfilePage = () => {
                   {cardThemeStatus === "saved" ? <p className="personalization-color__status is-success">Thème enregistré</p> : null}
                   {cardThemeStatus === "error" ? <p className="personalization-color__status is-error">Impossible d’enregistrer le thème</p> : null}
                 </section>
+                <section className="settings-display-group personalization-welcome-font" aria-labelledby="welcome-font-heading">
+                  <div className="settings-display-group__header">
+                    <div>
+                      <h3 id="welcome-font-heading">Typographie du message d’accueil</h3>
+                      <p>Choisis la typographie utilisée pour ton message personnalisé sur la page d’accueil.</p>
+                    </div>
+                  </div>
+                  <div className="personalization-welcome-font__grid" role="radiogroup" aria-label="Typographie du message d’accueil">
+                    {HOME_WELCOME_FONTS.map((font) => {
+                      const isSelected = normalizeHomeWelcomeFont(profileData.preferences?.homeWelcomeFont) === font.id
+                      return (
+                        <button
+                          key={font.id}
+                          type="button"
+                          role="radio"
+                          aria-checked={isSelected}
+                          className={`personalization-welcome-font__option personalization-welcome-font__option--${font.id}${isSelected ? " is-selected" : ""}`}
+                          onClick={() => void handleWelcomeFontChange(font.id)}
+                          disabled={welcomeFontStatus === "saving"}
+                        >
+                          <span className="personalization-welcome-font__preview" style={{ fontFamily: font.family }} aria-hidden="true">
+                            Bonjour
+                          </span>
+                          <span className="personalization-welcome-font__name">{font.name}</span>
+                          {isSelected ? <span className="personalization-welcome-font__check" aria-hidden="true">✓</span> : null}
+                        </button>
+                      )
+                    })}
+                  </div>
+                  {welcomeFontStatus === "saving" ? <p className="personalization-color__status">Enregistrement…</p> : null}
+                  {welcomeFontStatus === "saved" ? <p className="personalization-color__status is-success">Typographie enregistrée</p> : null}
+                  {welcomeFontStatus === "error" ? <p className="personalization-color__status is-error">Impossible d’enregistrer la typographie</p> : null}
+                </section>
                 <section className="settings-display-group personalization-calendar-palette" aria-labelledby="calendar-palette-heading">
                   <div className="settings-display-group__header">
                     <div>
@@ -978,7 +1087,47 @@ const ProfilePage = () => {
                   {calendarPaletteStatus === "saved" ? <p className="personalization-color__status is-success">Palette enregistrée</p> : null}
                   {calendarPaletteStatus === "error" ? <p className="personalization-color__status is-error">Impossible d’enregistrer la palette</p> : null}
                 </section>
+                <section className="settings-display-group personalization-color-mode" aria-labelledby="color-mode-heading">
+                  <div className="settings-display-group__header">
+                    <div>
+                      <h3 id="color-mode-heading">Mode d’affichage</h3>
+                      <p>Choisis une interface claire ou sombre pour l’ensemble de ton espace.</p>
+                    </div>
+                  </div>
+                  <div className="personalization-color-mode__options" role="radiogroup" aria-label="Mode d’affichage du site">
+                    {COLOR_MODES.map((mode) => {
+                      const isSelected = normalizeColorMode(profileData.preferences?.colorMode) === mode.id
+                      return (
+                        <button
+                          key={mode.id}
+                          type="button"
+                          role="radio"
+                          aria-checked={isSelected}
+                          className={`personalization-color-mode__option personalization-color-mode__option--${mode.id}${isSelected ? " is-selected" : ""}`}
+                          onClick={() => void handleColorModeChange(mode.id)}
+                          disabled={colorModeStatus === "saving"}
+                        >
+                          <span className="personalization-color-mode__preview" aria-hidden="true">
+                            <span />
+                            <span />
+                            <span />
+                          </span>
+                          <span className="personalization-color-mode__copy">
+                            <strong>{mode.name}</strong>
+                            <small>{mode.description}</small>
+                          </span>
+                          {isSelected ? <span className="personalization-color-mode__check" aria-hidden="true">✓</span> : null}
+                        </button>
+                      )
+                    })}
+                  </div>
+                  {colorModeStatus === "saving" ? <p className="personalization-color__status">Enregistrement…</p> : null}
+                  {colorModeStatus === "saved" ? <p className="personalization-color__status is-success">Mode enregistré</p> : null}
+                  {colorModeStatus === "error" ? <p className="personalization-color__status is-error">Impossible d’enregistrer le mode</p> : null}
+                </section>
               </div>
+            ) : activeSection?.id === "languages" ? (
+              <SettingsLanguages />
             ) : (
               <>
                 <div className="settings-panel__header">

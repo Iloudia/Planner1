@@ -1,6 +1,8 @@
 import { useCookieConsent } from "../context/CookieConsentContext"
+import { useTranslation } from "react-i18next"
 
 const CookieBanner = () => {
+  const { t } = useTranslation()
   const { shouldShowBanner, acceptAll, rejectAll, openPreferences } = useCookieConsent()
 
   if (!shouldShowBanner) {
@@ -10,34 +12,31 @@ const CookieBanner = () => {
   return (
     <>
       <div className="cookie-banner__backdrop" aria-hidden="true" />
-      <section className="cookie-banner" role="region" aria-label="Consentement aux cookies">
+      <section className="cookie-banner" role="region" aria-label={t("cookies.consent")}>
         <div className="cookie-banner__content">
-          <h2>Cookies & confidentialité</h2>
-          <p>
-            Nous utilisons des stockages essentiels pour faire fonctionner Me&rituals. Avec ton accord, nous pouvons
-            aussi mémoriser tes préférences et mesurer l’audience. Les traceurs optionnels restent désactivés par défaut.
-          </p>
+          <h2>{t("cookies.title")}</h2>
+          <p>{t("cookies.description")}</p>
           <ul className="cookie-banner__list">
             <li>
-              <strong>Essentiels :</strong> connexion sécurisée, sauvegarde, navigation.
+              <strong>{t("cookies.essentialLabel")}</strong> {t("cookies.essentialShort")}
             </li>
             <li>
-              <strong>Préférences :</strong> garder ton thème, ta langue, tes vues favorites.
+              <strong>{t("cookies.preferencesLabel")}</strong> {t("cookies.preferencesShort")}
             </li>
             <li>
-              <strong>Mesure d’audience :</strong> comprendre l’utilisation du site pour l’améliorer.
+              <strong>{t("cookies.analyticsLabel")}</strong> {t("cookies.analyticsShort")}
             </li>
           </ul>
         </div>
         <div className="cookie-banner__actions">
           <button type="button" className="cookie-banner__action cookie-banner__action--ghost sport-cancel-button-match" onClick={rejectAll}>
-            Refuser
+            {t("cookies.reject")}
           </button>
           <button type="button" className="cookie-banner__action cookie-banner__action--outline sport-cancel-button-match" onClick={openPreferences}>
-            Personnaliser
+            {t("cookies.customize")}
           </button>
           <button type="button" className="cookie-banner__action cookie-banner__action--primary sport-workout-button-match" onClick={acceptAll}>
-            Accepter
+            {t("cookies.accept")}
           </button>
         </div>
       </section>

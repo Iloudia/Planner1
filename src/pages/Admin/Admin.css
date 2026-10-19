@@ -416,6 +416,10 @@ body.admin-page--tone {
   background: var(--page-background);
 }
 
+html:not([data-color-mode="dark"]) .admin-quality-highlight {
+  background: #f8f6f1;
+}
+
 .admin-quality-highlight span,
 .admin-quality-highlight small {
   color: #71675e;
@@ -564,6 +568,10 @@ body.admin-page--tone {
   background: var(--page-background);
   color: #715740;
   font-size: 0.92rem;
+}
+
+html:not([data-color-mode="dark"]) .admin-users-summary {
+  background: #f8f6f1;
 }
 
 .admin-user-list {
@@ -730,6 +738,10 @@ body.admin-page--tone {
   border-radius: 0;
   background: var(--page-background);
   border: 1px solid var(--lux-line);
+}
+
+html:not([data-color-mode="dark"]) .admin-detail-list div {
+  background: #f8f6f1;
 }
 
 .admin-detail-list dt {

@@ -101,9 +101,9 @@ body.project-page--lux h2 {
 .project-reminder { display: flex; flex-direction: column; justify-content: center; }
 .project-reminder p { margin: 0; color: var(--project-ink-soft); line-height: 1.65; text-align: center; }
 
-.project-workspace { display: grid; grid-template-columns: minmax(255px, 0.78fr) minmax(0, 1.75fr); gap: 1.25rem; align-items: stretch; }
-.project-projects { display: flex; }
-.project-projects__list { display: flex; flex: 1; flex-direction: column; gap: 0.6rem; padding: 0.65rem; }
+.project-workspace { display: grid; width: 100%; min-width: 0; grid-template-columns: minmax(255px, 0.78fr) minmax(0, 1.75fr); gap: 1.25rem; align-items: stretch; }
+.project-projects { display: flex; min-width: 0; }
+.project-projects__list { display: flex; width: 100%; min-width: 0; max-width: 100%; flex: 1; flex-direction: column; gap: 0.6rem; padding: 0.65rem; }
 .project-archive { overflow: hidden; border: 1px solid var(--project-line); background: #ffffff; }
 .project-archive summary { display: flex; align-items: center; justify-content: space-between; min-height: 58px; padding: 0.85rem 1.15rem; color: var(--project-ink); cursor: pointer; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
 .project-archive summary::before { content: "Archives terminées"; }
@@ -116,11 +116,12 @@ body.project-page--lux h2 {
 .project-archive button { flex: 0 0 auto; border: 1px solid #725c3f; border-radius: 0; background: #725c3f; color: #ffffff; padding: 0.58rem 0.75rem; font: inherit; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; }
 .project-archive button:hover { background: #5f4d35; border-color: #5f4d35; }
 
-.project-list-card { display: grid; grid-template-columns: 72px minmax(0, 1fr) auto; align-items: center; gap: 0.75rem; padding: 0.55rem; border: 1px solid var(--project-line); background: #ffffff; }
+.project-list-card { display: grid; width: 100%; min-width: 0; max-width: 100%; grid-template-columns: 72px minmax(0, 1fr) auto; align-items: center; gap: 0.75rem; padding: 0.55rem; border: 1px solid var(--project-line); background: #ffffff; }
 .project-list-card { cursor: pointer; }
 .project-list-card.is-selected { border-color: rgba(31, 27, 22, 0.48); background: var(--project-muted); }
 .project-list-card img { width: 72px; height: 72px; object-fit: cover; }
-.project-list-card h3 { margin: 0 0 0.35rem; color: var(--project-ink); font-size: 0.95rem; }
+.project-list-card__content { min-width: 0; }
+.project-list-card h3 { margin: 0 0 0.35rem; overflow-wrap: anywhere; color: var(--project-ink); font-size: 0.95rem; }
 .project-list-card > strong { align-self: end; color: var(--project-ink-soft); font-size: 0.78rem; }
 
 .project-status, .project-priority { display: inline-flex; align-items: center; padding: 0.27rem 0.5rem; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
@@ -135,7 +136,7 @@ body.project-page--lux h2 {
 .project-list-card:has(.project-status--terminé) .project-progress > span { background: #96a287; }
 .project-add-button, .project-add-task { border: 0; border-top: 1px solid var(--project-line); background: transparent; color: var(--project-ink); padding: 0.65rem; font: inherit; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-align: left; text-transform: uppercase; cursor: pointer; }
 
-.project-active { display: flex; flex-direction: column; }
+.project-active { display: flex; width: 100%; min-width: 0; max-width: 100%; flex-direction: column; }
 .project-active > h2 { margin-bottom: 0.6rem; }
 .project-active__card { order: 1; }
 .project-active > .project-tasks { order: 2; }
@@ -580,5 +581,52 @@ body.project-page--lux h2 {
   }
 }
 
-@media (max-width: 960px) { .project-top-grid, .project-workspace, .project-bottom-grid, .project-active__support, .project-active__collections { grid-template-columns: 1fr; }.project-overview__stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 600px) { .project-page { gap: 0.85rem; }.project-active__progress, .project-modal__fields { grid-template-columns: 1fr; gap: 0.8rem; }.project-active__header { grid-template-columns: 42px minmax(0, 1fr); }.project-active__header > img { width: 42px; height: 42px; }.project-active__header .project-status { grid-column: 2; justify-self: start; }.project-active__meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }.project-active__meta div:nth-child(2) { border-right: 0; }.project-active__meta div:nth-child(-n + 2) { border-bottom: 1px solid var(--project-line); }.project-tasks__table { overflow-x: auto; }.project-tasks__row { min-width: 590px; }.project-bottom-grid { gap: 0.85rem; }.project-list-card { grid-template-columns: 62px minmax(0, 1fr) auto; }.project-list-card img { width: 62px; height: 62px; } }
+@media (max-width: 960px) {
+  .project-top-grid,
+  .project-workspace,
+  .project-bottom-grid,
+  .project-active__support,
+  .project-active__collections {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .project-overview__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .project-projects__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+    align-items: stretch;
+  }
+
+  .project-projects__list > h2,
+  .project-projects__list > .project-add-button {
+    grid-column: 1 / -1;
+  }
+
+  .project-list-card {
+    height: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .project-page { gap: 0.85rem; }
+  .project-active__progress, .project-modal__fields { grid-template-columns: 1fr; gap: 0.8rem; }
+  .project-active__header { grid-template-columns: 42px minmax(0, 1fr); }
+  .project-active__header > img { width: 42px; height: 42px; }
+  .project-active__header .project-status { grid-column: 2; justify-self: start; }
+  .project-active__meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .project-active__meta div:nth-child(2) { border-right: 0; }
+  .project-active__meta div:nth-child(-n + 2) { border-bottom: 1px solid var(--project-line); }
+  .project-tasks__table { overflow-x: auto; }
+  .project-tasks__row { min-width: 590px; }
+  .project-bottom-grid { gap: 0.85rem; }
+  .project-projects__list { grid-template-columns: minmax(0, 1fr); }
+  .project-list-card {
+    width: 100%;
+    max-width: 100%;
+    grid-template-columns: 62px minmax(0, 1fr) auto;
+  }
+  .project-list-card img { width: 62px; height: 62px; }
+}

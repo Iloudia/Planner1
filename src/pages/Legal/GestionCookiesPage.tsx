@@ -79,10 +79,10 @@ const GestionCookiesPage = () => {
                   <td>Nécessaire</td>
                 </tr>
                 <tr>
-                  <td>planner.language.preference (stockage local)</td>
+                  <td>planner.language.preference.v2 (stockage local)</td>
                   <td>Mémoriser la langue choisie</td>
-                  <td>Jusqu’au retrait du consentement</td>
-                  <td>Personnalisation</td>
+                  <td>Jusqu’à suppression</td>
+                  <td>Nécessaire</td>
                 </tr>
                 <tr>
                   <td>planner.display.preferences (stockage local)</td>
@@ -94,12 +94,6 @@ const GestionCookiesPage = () => {
                   <td>planner.auth.remember, planner.auth.email_history.v1 (stockage local)</td>
                   <td>Mémoriser la connexion et les adresses utilisées récemment</td>
                   <td>Jusqu’au retrait du consentement</td>
-                  <td>Personnalisation</td>
-                </tr>
-                <tr>
-                  <td>googtrans (cookie)</td>
-                  <td>Préférences de traduction (Google Translate)</td>
-                  <td>Session</td>
                   <td>Personnalisation</td>
                 </tr>
                 <tr>

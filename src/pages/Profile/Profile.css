@@ -959,6 +959,91 @@
   font-weight: 700;
 }
 
+.personalization-welcome-font {
+  gap: 1rem;
+}
+
+.personalization-welcome-font__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.personalization-welcome-font__option {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 6.5rem;
+  padding: 0.85rem;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.7rem;
+  border: 1px solid rgba(31, 27, 22, 0.2);
+  background: #ffffff;
+  color: #1f1b16;
+  text-align: left;
+  cursor: pointer;
+}
+
+.personalization-welcome-font__option:hover {
+  border-color: rgba(31, 27, 22, 0.48);
+}
+
+.personalization-welcome-font__option:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.personalization-welcome-font__option.is-selected {
+  border-color: #1f1b16;
+  box-shadow: inset 0 0 0 1px #1f1b16;
+}
+
+.personalization-welcome-font__option:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.personalization-welcome-font__preview {
+  display: block;
+  max-width: 100%;
+  padding-right: 1.5rem;
+  overflow: hidden;
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.personalization-welcome-font__option--kapakana .personalization-welcome-font__preview {
+  font-size: 2.15rem;
+  line-height: 1;
+}
+
+.personalization-welcome-font__name {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--lux-ink-soft, #5b5249);
+}
+
+.personalization-welcome-font__check {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.65rem;
+  display: grid;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  background: #1f1b16;
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
 .personalization-calendar-palette {
   gap: 1rem;
 }
@@ -1049,6 +1134,135 @@
   text-align: center;
 }
 
+.personalization-color-mode {
+  gap: 1rem;
+}
+
+.personalization-color-mode__options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.personalization-color-mode__option {
+  position: relative;
+  display: grid;
+  grid-template-columns: 5.2rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+  padding: 0.8rem;
+  border: 1px solid rgba(31, 27, 22, 0.2);
+  background: #ffffff;
+  color: #1f1b16;
+  text-align: left;
+  cursor: pointer;
+}
+
+.personalization-color-mode__option:hover {
+  border-color: rgba(31, 27, 22, 0.48);
+}
+
+.personalization-color-mode__option:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.personalization-color-mode__option.is-selected {
+  border-color: #1f1b16;
+  box-shadow: inset 0 0 0 1px #1f1b16;
+}
+
+.personalization-color-mode__option:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.personalization-color-mode__preview {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  grid-template-rows: 0.7rem 1fr;
+  gap: 0.35rem;
+  height: 4.2rem;
+  padding: 0.5rem;
+  border: 1px solid rgba(31, 27, 22, 0.18);
+  background: #f8f6f1;
+}
+
+.personalization-color-mode__preview span:first-child {
+  grid-column: 1 / -1;
+  background: #ffffff;
+}
+
+.personalization-color-mode__preview span:nth-child(2),
+.personalization-color-mode__preview span:nth-child(3) {
+  background: #ffffff;
+  border: 1px solid rgba(31, 27, 22, 0.12);
+}
+
+.personalization-color-mode__option--dark {
+  background: #1c1a17;
+  color: #f4efe8;
+  border-color: rgba(244, 239, 232, 0.24);
+}
+
+.personalization-color-mode__option--dark .personalization-color-mode__preview {
+  background: #12110f;
+  border-color: rgba(244, 239, 232, 0.18);
+}
+
+.personalization-color-mode__option--dark .personalization-color-mode__preview span:first-child {
+  background: #24211d;
+}
+
+.personalization-color-mode__option--dark .personalization-color-mode__preview span:nth-child(2),
+.personalization-color-mode__option--dark .personalization-color-mode__preview span:nth-child(3) {
+  background: #1c1a17;
+  border-color: rgba(244, 239, 232, 0.14);
+}
+
+.personalization-color-mode__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.22rem;
+  min-width: 0;
+  padding-right: 1.4rem;
+  font-family: var(--font-body);
+}
+
+.personalization-color-mode__copy strong {
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.personalization-color-mode__copy small {
+  color: inherit;
+  font-size: 0.78rem;
+  font-weight: 400;
+  line-height: 1.35;
+  opacity: 0.72;
+}
+
+.personalization-color-mode__check {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.65rem;
+  display: grid;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  background: #1f1b16;
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.personalization-color-mode__option--dark .personalization-color-mode__check {
+  background: #f4efe8;
+  color: #1c1a17;
+}
+
 @media (max-width: 700px) {
   .personalization-library__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1058,12 +1272,20 @@
     grid-template-columns: 1fr;
   }
 
+  .personalization-welcome-font__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .personalization-calendar-palette__grid {
     grid-template-columns: 1fr;
   }
 
   .personalization-calendar-palette__legend {
     display: none;
+  }
+
+  .personalization-color-mode__options {
+    grid-template-columns: 1fr;
   }
 }
 

@@ -457,7 +457,7 @@
   top: 10px;
   right: 10px;
   border: none;
-  background: rgba(15, 23, 42, 0.32);
+  background: var(--profile-menu-background);
   color: #fff;
   border-radius: 50%;
   width: 34px;

@@ -3,43 +3,46 @@ import { createPortal } from "react-dom"
 import { createPremiumCheckoutSession, type PremiumPlanId } from "../services/premium/api"
 import ModalCloseButton from "./ModalCloseButton"
 import "./PremiumCalendarModal.css"
+import { useTranslation } from "react-i18next"
 
 type PremiumCalendarModalProps = {
   isOpen: boolean
   onClose: () => void
 }
 
-export const PremiumFeatureCrown = () => (
-  <span className="premium-feature-crown" aria-label="Fonctionnalité Premium">
+export const PremiumFeatureCrown = () => {
+  const { t } = useTranslation()
+  return <span className="premium-feature-crown" aria-label={t("premium.feature")}>
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M3 7l4.4 4L12 4l4.6 7L21 7l-2.1 10H5.1L3 7Zm2.6 12h12.8v2H5.6v-2Z" />
     </svg>
   </span>
-)
+}
 
 const plans: Array<{
   id: PremiumPlanId
-  label: string
-  price: string
-  detail: string
-  badge?: string
+  labelKey: string
+  priceKey: string
+  detailKey: string
+  badgeKey?: string
 }> = [
   {
     id: "yearly",
-    label: "Annuel",
-    price: "49,99 € / an",
-    detail: "Soit 4,17 € / mois · économie de 30 %",
-    badge: "Meilleur tarif",
+    labelKey: "premium.yearly",
+    priceKey: "premium.yearlyPrice",
+    detailKey: "premium.yearlyDetail",
+    badgeKey: "premium.bestPrice",
   },
   {
     id: "monthly",
-    label: "Mensuel",
-    price: "5,99 € / mois",
-    detail: "Facturé chaque mois",
+    labelKey: "premium.monthly",
+    priceKey: "premium.monthlyPrice",
+    detailKey: "premium.monthlyDetail",
   },
 ]
 
 const PremiumCalendarModal = ({ isOpen, onClose }: PremiumCalendarModalProps) => {
+  const { t } = useTranslation()
   const [selectedPlan, setSelectedPlan] = useState<PremiumPlanId>("yearly")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -84,7 +87,7 @@ const PremiumCalendarModal = ({ isOpen, onClose }: PremiumCalendarModalProps) =>
       const checkoutUrl = await createPremiumCheckoutSession(selectedPlan)
       window.location.assign(checkoutUrl)
     } catch (checkoutError) {
-      setError(checkoutError instanceof Error ? checkoutError.message : "Impossible de lancer le paiement.")
+      setError(checkoutError instanceof Error ? checkoutError.message : t("premium.checkoutError"))
       setIsSubmitting(false)
     }
   }
@@ -97,10 +100,10 @@ const PremiumCalendarModal = ({ isOpen, onClose }: PremiumCalendarModalProps) =>
         type="button"
         className="premium-calendar-modal__backdrop"
         onClick={isSubmitting ? undefined : onClose}
-        aria-label="Fermer la présentation Premium"
+        aria-label={t("premium.closePresentation")}
       />
       <div className="premium-calendar-modal__panel" ref={panelRef} tabIndex={-1}>
-        <ModalCloseButton onClick={onClose} ariaLabel="Fermer" />
+        <ModalCloseButton onClick={onClose} ariaLabel={t("common.close")} />
 
         <div className="premium-calendar-modal__intro">
           <span className="premium-calendar-modal__eyebrow">Me&amp;rituals Premium</span>
@@ -109,25 +112,18 @@ const PremiumCalendarModal = ({ isOpen, onClose }: PremiumCalendarModalProps) =>
               <path d="M5 7.5h14v11H5zM8 7.5V5.8A4 4 0 0 1 12 2a4 4 0 0 1 4 3.8v1.7M8.5 12h7M12 9.5v5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </span>
-          <h2 id="premium-calendar-title">Organise tout ton quotidien avec Premium.</h2>
-          <p>Débloque les outils avancés du calendrier, des repas, de tes routines, de tes entraînements, de ta Wishlist et de tes archives.</p>
+          <h2 id="premium-calendar-title">{t("premium.title")}</h2>
+          <p>{t("premium.intro")}</p>
         </div>
 
         <ul className="premium-calendar-modal__benefits">
-          <li><span aria-hidden="true">✓</span> Duplique tes événements et crée des récurrences dans le calendrier</li>
-          <li><span aria-hidden="true">✓</span> Reprends ton planning de repas de la semaine précédente en un clic</li>
-          <li><span aria-hidden="true">✓</span> Crée et conserve tes propres recettes</li>
-          <li><span aria-hidden="true">✓</span> Ajoute directement une recette à ton planning de repas</li>
-          <li><span aria-hidden="true">✓</span> Programme tes exercices dans ta semaine sportive</li>
-          <li><span aria-hidden="true">✓</span> Enregistre et organise tes vidéos d’entraînement</li>
-          <li><span aria-hidden="true">✓</span> Crée autant de catégories et d’éléments que tu veux dans ta Wishlist</li>
-          <li><span aria-hidden="true">✓</span> Ajoute autant d’actions que tu veux à tes routines du matin et du soir</li>
-          <li><span aria-hidden="true">✓</span> Retrouve l’historique de ton mindset, de ton journaling et de tes projets</li>
-          <li><span aria-hidden="true">✓</span> Gère autant de projets actifs que tu veux</li>
+          {(t("premium.benefits", { returnObjects: true }) as string[]).map((benefit) => (
+            <li key={benefit}><span aria-hidden="true">✓</span> {benefit}</li>
+          ))}
         </ul>
 
         <fieldset className="premium-calendar-modal__plans">
-          <legend>Choisis ta formule</legend>
+          <legend>{t("premium.choosePlan")}</legend>
           {plans.map((plan) => (
             <label key={plan.id} className={`premium-calendar-plan${selectedPlan === plan.id ? " is-selected" : ""}`}>
               <input
@@ -140,12 +136,12 @@ const PremiumCalendarModal = ({ isOpen, onClose }: PremiumCalendarModalProps) =>
               <span className="premium-calendar-plan__control" aria-hidden="true" />
               <span className="premium-calendar-plan__copy">
                 <span className="premium-calendar-plan__heading">
-                  <strong>{plan.label}</strong>
-                  {plan.badge ? <span className="premium-calendar-plan__badge">{plan.badge}</span> : null}
+                  <strong>{t(plan.labelKey)}</strong>
+                  {plan.badgeKey ? <span className="premium-calendar-plan__badge">{t(plan.badgeKey)}</span> : null}
                 </span>
-                <span className="premium-calendar-plan__detail">{plan.detail}</span>
+                <span className="premium-calendar-plan__detail">{t(plan.detailKey)}</span>
               </span>
-              <strong className="premium-calendar-plan__price">{plan.price}</strong>
+              <strong className="premium-calendar-plan__price">{t(plan.priceKey)}</strong>
             </label>
           ))}
         </fieldset>
@@ -158,13 +154,18 @@ const PremiumCalendarModal = ({ isOpen, onClose }: PremiumCalendarModalProps) =>
           onClick={handleSubscribe}
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Redirection sécurisée…" : `Choisir ${selectedPlanConfig.label.toLowerCase()} · ${selectedPlanConfig.price}`}
+          {isSubmitting
+            ? t("premium.redirecting")
+            : t("premium.choose", {
+              plan: t(selectedPlanConfig.labelKey).toLocaleLowerCase(),
+              price: t(selectedPlanConfig.priceKey),
+            })}
         </button>
         <button type="button" className="premium-calendar-modal__continue" onClick={onClose} disabled={isSubmitting}>
-          Continuer gratuitement
+          {t("premium.continueFree")}
         </button>
         <p className="premium-calendar-modal__legal">
-          Prix TTC. Renouvellement automatique à chaque période. Résiliation possible à tout moment.
+          {t("premium.legal")}
         </p>
       </div>
     </div>,

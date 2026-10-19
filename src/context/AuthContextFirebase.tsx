@@ -27,6 +27,8 @@ import { buildUserScopedKey, normalizeUserEmail } from "../utils/userScopedKey"
 import { normalizePageBackground } from "../utils/pageBackground"
 import { normalizeHomeCardTheme } from "../utils/homeCardTheme"
 import { normalizeCalendarEventPalette } from "../utils/calendarEventPalette"
+import { normalizeColorMode } from "../utils/colorMode"
+import { normalizeHomeWelcomeFont } from "../utils/homeWelcomeFont"
 import {
   type AccountActionResult,
   type AccountStatus,
@@ -187,6 +189,15 @@ const mergeProfileData = (base: UserProfileData, fallback?: UserProfileData, ema
   const calendarEventPalette = normalizeCalendarEventPalette(
     base.preferences?.calendarEventPalette ?? fallback?.preferences?.calendarEventPalette,
   )
+  const colorMode = normalizeColorMode(
+    base.preferences?.colorMode ?? fallback?.preferences?.colorMode,
+  )
+  const homeWelcomeMessage =
+    base.preferences?.homeWelcomeMessage?.trim() || fallback?.preferences?.homeWelcomeMessage?.trim() || ""
+  const homeWelcomeFont = normalizeHomeWelcomeFont(
+    base.preferences?.homeWelcomeFont ?? fallback?.preferences?.homeWelcomeFont,
+  )
+  const interfaceLanguage = base.preferences?.interfaceLanguage ?? fallback?.preferences?.interfaceLanguage
 
   return {
     personalInfo,
@@ -198,6 +209,10 @@ const mergeProfileData = (base: UserProfileData, fallback?: UserProfileData, ema
       pageBackgroundImagePath,
       homeCardTheme,
       calendarEventPalette,
+      colorMode,
+      homeWelcomeMessage,
+      homeWelcomeFont,
+      ...(interfaceLanguage === "en" || interfaceLanguage === "fr" ? { interfaceLanguage } : {}),
     },
   }
 }
@@ -374,6 +389,9 @@ export const FirebaseAuthBridge = ({ onValue }: FirebaseAuthBridgeProps) => {
   useEffect(() => {
     let isMounted = true
     const unsubscribe = onAuthStateChanged(auth, async (nextUser) => {
+      if (isMounted) {
+        setAuthReady(false)
+      }
       setAuthUser(nextUser)
       if (!nextUser) {
         setUserDoc(null)
@@ -387,6 +405,8 @@ export const FirebaseAuthBridge = ({ onValue }: FirebaseAuthBridgeProps) => {
         void clearServerMediaSession()
         return
       }
+
+      setUserDoc(null)
 
       const documentLoadPromise = (async () => {
         let data = await ensureUserDocument(nextUser)
@@ -443,10 +463,6 @@ export const FirebaseAuthBridge = ({ onValue }: FirebaseAuthBridgeProps) => {
           if (isMounted) {
             setIsAdminApproved(false)
             setIsPremiumApproved(false)
-          }
-        } finally {
-          if (isMounted) {
-            setAuthReady(true)
           }
         }
 
@@ -617,6 +633,22 @@ export const FirebaseAuthBridge = ({ onValue }: FirebaseAuthBridgeProps) => {
     } catch (error) {
       console.error("Logout failed", error)
     }
+  }, [])
+
+  const previewUserProfile = useCallback((profile: UserProfileData) => {
+    const currentUser = auth.currentUser
+    const mergedProfile = mergeProfileData(profile, undefined, currentUser?.email)
+    const preview: Partial<FirebaseUserDocument> = {
+      personalInfo: mergedProfile.personalInfo,
+      identityInfo: mergedProfile.identityInfo,
+      preferences: mergedProfile.preferences,
+    }
+
+    setUserDoc((previous) => (
+      previous
+        ? { ...previous, ...preview }
+        : ({ ...preview } as FirebaseUserDocument)
+    ))
   }, [])
 
   const updateUserProfile = useCallback(
@@ -1086,6 +1118,7 @@ export const FirebaseAuthBridge = ({ onValue }: FirebaseAuthBridgeProps) => {
       username,
       userProfile,
       createdAt: accountCreatedAt,
+      previewUserProfile,
       updateUserProfile,
       login,
       register,
@@ -1117,6 +1150,7 @@ export const FirebaseAuthBridge = ({ onValue }: FirebaseAuthBridgeProps) => {
     login,
     loginWithGoogle,
     logout,
+    previewUserProfile,
     register,
     scheduledDeletionDate,
     updateUserProfile,

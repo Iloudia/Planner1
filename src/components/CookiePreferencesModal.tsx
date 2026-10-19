@@ -1,7 +1,9 @@
 ﻿import { useEffect, useState } from "react"
 import { useCookieConsent } from "../context/CookieConsentContext"
+import { useTranslation } from "react-i18next"
 
 const CookiePreferencesModal = () => {
+  const { t } = useTranslation()
   const { isPreferenceCenterOpen, closePreferences, preferences, saveCustomPreferences, acceptAll, rejectAll } =
     useCookieConsent()
   const [preferencesEnabled, setPreferencesEnabled] = useState(preferences.preferences)
@@ -39,10 +41,10 @@ const CookiePreferencesModal = () => {
       <div className="cookie-modal__panel">
         <header className="cookie-modal__header">
           <div>
-            <h2 id="cookie-modal-title">Choisis les cookies que tu acceptes</h2>
-            <p>Les cookies essentiels sont toujours actifs pour des raisons de sécurité.</p>
+            <h2 id="cookie-modal-title">{t("cookies.modalTitle")}</h2>
+            <p>{t("cookies.modalIntro")}</p>
           </div>
-          <button type="button" className="modal__close" aria-label="Fermer" onClick={closePreferences}>
+          <button type="button" className="modal__close" aria-label={t("common.close")} onClick={closePreferences}>
             ×
           </button>
         </header>
@@ -50,23 +52,18 @@ const CookiePreferencesModal = () => {
         <div className="cookie-modal__groups">
           <article className="cookie-modal__group">
             <div>
-              <h3 className="cookie-modal__group-title">Essentiels (toujours actifs)</h3>
-              <p className="cookie-modal__group-text">
-                Accès sécurisé, authentification, conservation de tes paramètres système. Impossible de les désactiver.
-              </p>
+              <h3 className="cookie-modal__group-title">{t("cookies.essentialActive")}</h3>
+              <p className="cookie-modal__group-text">{t("cookies.essentialDetail")}</p>
             </div>
             <div className="cookie-modal__switch cookie-modal__switch--locked">
-              <span>Actifs</span>
+              <span>{t("cookies.activePlural")}</span>
             </div>
           </article>
 
           <article className="cookie-modal__group">
             <div>
-              <h3 className="cookie-modal__group-title">Mesure d’audience</h3>
-              <p className="cookie-modal__group-text">
-                Nous aide à comprendre l’utilisation du site et à l’améliorer grâce à Firebase Analytics. Ces traceurs
-                restent désactivés tant que tu ne les acceptes pas.
-              </p>
+              <h3 className="cookie-modal__group-title">{t("cookies.analytics")}</h3>
+              <p className="cookie-modal__group-text">{t("cookies.analyticsDetail")}</p>
             </div>
             <label className="cookie-modal__switch">
               <input
@@ -74,16 +71,14 @@ const CookiePreferencesModal = () => {
                 checked={analyticsEnabled}
                 onChange={(event) => setAnalyticsEnabled(event.target.checked)}
               />
-              <span>{analyticsEnabled ? "Actif" : "Désactivé"}</span>
+              <span>{analyticsEnabled ? t("cookies.active") : t("cookies.disabled")}</span>
             </label>
           </article>
 
           <article className="cookie-modal__group">
             <div>
-              <h3 className="cookie-modal__group-title">Préférences</h3>
-              <p className="cookie-modal__group-text">
-                Retiennent tes thèmes, ta langue et les dernières vues consultées pour personnaliser ton espace.
-              </p>
+              <h3 className="cookie-modal__group-title">{t("cookies.preferences")}</h3>
+              <p className="cookie-modal__group-text">{t("cookies.preferencesDetail")}</p>
             </div>
             <label className="cookie-modal__switch">
               <input
@@ -91,20 +86,20 @@ const CookiePreferencesModal = () => {
                 checked={preferencesEnabled}
                 onChange={(event) => setPreferencesEnabled(event.target.checked)}
               />
-              <span>{preferencesEnabled ? "Actif" : "Désactivé"}</span>
+              <span>{preferencesEnabled ? t("cookies.active") : t("cookies.disabled")}</span>
             </label>
           </article>
         </div>
 
         <div className="cookie-modal__actions">
           <button type="button" className="cookie-banner__action cookie-banner__action--ghost sport-cancel-button-match" onClick={rejectAll}>
-            Refuser tout
+            {t("cookies.rejectAll")}
           </button>
           <button type="button" className="cookie-banner__action cookie-banner__action--outline sport-cancel-button-match" onClick={acceptAll}>
-            Accepter tout
+            {t("cookies.acceptAll")}
           </button>
           <button type="button" className="cookie-banner__action cookie-banner__action--primary sport-workout-button-match" onClick={handleSave}>
-            Enregistrer mes choix
+            {t("cookies.save")}
           </button>
         </div>
       </div>

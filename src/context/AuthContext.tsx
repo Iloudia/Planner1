@@ -65,6 +65,7 @@ export type AuthContextValue = {
   username: string | null
   userProfile: UserProfileData
   createdAt: string | null
+  previewUserProfile: (profile: UserProfileData) => void
   updateUserProfile: (profile: UserProfileData) => Promise<void>
   login: (credentials: { email: string; password: string; remember?: boolean }) => Promise<AuthAttemptResult>
   register: (credentials: { email: string; password: string; remember?: boolean; profile?: RegistrationProfile }) => Promise<AuthAttemptResult>
@@ -98,6 +99,7 @@ const loadingAuthValue: AuthContextValue = {
   username: null,
   userProfile: { personalInfo: {}, identityInfo: {}, preferences: {} },
   createdAt: null,
+  previewUserProfile: () => undefined,
   updateUserProfile: async () => undefined,
   login: async () => authNotReady(),
   register: async () => authNotReady(),

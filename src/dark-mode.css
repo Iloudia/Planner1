@@ -1,0 +1,1755 @@
+html[data-color-mode="dark"] {
+  color-scheme: dark;
+  --page-background-color: #12110f !important;
+  --page-background: #12110f !important;
+  --profile-menu-background: #24211d;
+  --color-mint: #70735a;
+  --color-chocolate: #d6b99a;
+  --color-caramel: #3a3028;
+  --color-contrast: #f4efe8;
+  --color-muted: #b9afa4;
+  --color-border: rgba(244, 239, 232, 0.16);
+  --color-border-strong: rgba(244, 239, 232, 0.24);
+  --lux-ink: #f4efe8;
+  --lux-ink-soft: #b9afa4;
+  --lux-accent: #c4a78b;
+  --lux-accent-strong: #d6b99a;
+  --lux-line: rgba(244, 239, 232, 0.16);
+  --lux-paper: #1c1a17;
+  --panel: #1c1a17;
+  --panel-alt: #24211d;
+  --card: #24211d;
+  --accent: #d6b99a;
+  --text: #f4efe8;
+  --muted: #b9afa4;
+  --border: rgba(244, 239, 232, 0.16);
+  --color-h2: #f4efe8;
+  --color-h4: #b9afa4;
+  --color-editorial-label: #b9afa4;
+  --shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+}
+
+html[data-color-mode="dark"] body,
+html[data-color-mode="dark"] .app-shell,
+html[data-color-mode="dark"] .main-area,
+html[data-color-mode="dark"] .planner-page--white {
+  background: #12110f !important;
+  color: #f4efe8;
+}
+
+html[data-color-mode="dark"] .site-header,
+html[data-color-mode="dark"] .site-header__inner,
+html[data-color-mode="dark"] .site-footer,
+html[data-color-mode="dark"] .site-header__nav-submenu,
+html[data-color-mode="dark"] .nav-search__mobile-content,
+html[data-color-mode="dark"] .nav-search__mobile-input,
+html[data-color-mode="dark"] .account-menu,
+html[data-color-mode="dark"] .mobile-nav__drawer {
+  background: #171512 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.34) !important;
+}
+
+html[data-color-mode="dark"] :is(
+  .site-header__brand,
+  .site-header__brand-text,
+  .site-header__nav-link,
+  .site-header__nav-submenu a,
+  .site-header__logout,
+  .site-header__login,
+  .site-footer,
+  .site-footer a
+) {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .site-header__inner .account-menu__toggle {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.2) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .site-header__inner .account-menu__toggle:hover,
+html[data-color-mode="dark"] .site-header__inner .account-menu__toggle.is-open {
+  background: #2d2822 !important;
+  border-color: rgba(214, 185, 154, 0.54) !important;
+}
+
+html[data-color-mode="dark"] .site-header__inner .account-menu__toggle :is(.account-menu__icon, .account-menu__caret) {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .site-header__inner .account-menu__toggle .account-menu__icon {
+  background: #3a3028 !important;
+}
+
+html[data-color-mode="dark"] .site-header__inner .account-menu .account-menu__panel {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.18) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .site-header__inner .account-menu .account-menu__item {
+  background: transparent !important;
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .site-header__inner .account-menu .account-menu__item:is(:hover, :focus-visible, .is-selected) {
+  background: #3a3028 !important;
+  color: #ffffff !important;
+}
+
+html[data-color-mode="dark"] .site-header__inner .account-menu .account-menu__item--danger {
+  color: #ffb3ca !important;
+}
+
+html[data-color-mode="dark"] .site-header__inner .header-menu__toggle span {
+  background: #ffffff !important;
+}
+
+html[data-color-mode="dark"] .site-header__inner .header-menu__panel {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.18) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .site-header__inner .header-menu__item {
+  background: transparent !important;
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .site-header__inner .header-menu__item:is(:hover, :focus-visible) {
+  background: #3a3028 !important;
+  color: #ffffff !important;
+}
+
+html[data-color-mode="dark"] .site-header__inner .header-menu__item--danger {
+  color: #ffb3ca !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(h1, h2, h3, h4, h5, h6),
+html[data-color-mode="dark"] .main-area :is(.page-heading__eyebrow, .editorial-field-label, [class$="__heading-eyebrow"]) {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] body .main-area :is(h2, .h2):not([data-dark-heading-contrast="preserve"]) {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(
+  p,
+  li,
+  dt,
+  dd,
+  label,
+  legend,
+  time,
+  small,
+  figcaption,
+  .muted,
+  [class$="__description"],
+  [class$="__subtitle"],
+  [class$="__meta"],
+  [class$="__hint"],
+  [class$="__source"]
+) {
+  color: #d8d0c7 !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(strong, b) {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] body .main-area span:not([data-dark-text-contrast="preserve"]) {
+  color: #d8d0c7 !important;
+}
+
+html[data-color-mode="dark"] body .main-area :is(button, a, [role="button"]) span {
+  color: inherit !important;
+}
+
+html[data-color-mode="dark"] body .main-area :is(strong, b) span {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .main-area .self-love-thought,
+html[data-color-mode="dark"] .main-area .self-love-thought span {
+  color: #d8d0c7 !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(
+  .sport-page__heading,
+  .workout-page__heading,
+  .calendar-page__heading,
+  .diet-page__heading,
+  .diet-classic-page__heading,
+  .project-page__heading,
+  .self-love-page__heading,
+  .routine-page__heading,
+  .wishlist-page__heading,
+  .journaling-page__heading,
+  .manifestation-page__heading,
+  .contact-page__heading,
+  .goals-page__heading,
+  .finance-page__heading
+) {
+  background-color: #24211d !important;
+  background-blend-mode: multiply !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+}
+
+html[data-color-mode="dark"] .main-area .home-hero-strip {
+  background: #1c1a17 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+}
+
+html[data-color-mode="dark"] .main-area .page.home-page .task-time-chip {
+  background: #3a3028 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(214, 185, 154, 0.32) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .main-area .task-date {
+  color: #d8d0c7 !important;
+}
+
+html[data-color-mode="dark"] .main-area .progress-label {
+  color: #d8d0c7 !important;
+}
+
+html[data-color-mode="dark"] .main-area .progress-label :is(
+  span:last-child,
+  .progress-label__value
+) {
+  color: #d6b99a !important;
+}
+
+html[data-color-mode="dark"] .main-area .progress-bar {
+  background: #191714 !important;
+  border-color: rgba(244, 239, 232, 0.2) !important;
+}
+
+html[data-color-mode="dark"] .main-area .progress-fill {
+  background: #d6b99a !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(
+  .content-page,
+  .page-section,
+  .settings-page,
+  .settings-nav,
+  .settings-panel,
+  .settings-section,
+  .settings-display-group,
+  .calendar-weekly,
+  .calendar-weekly__header,
+  .calendar-weekly__layout,
+  .calendar-weekly__grid,
+  .calendar-weekly__day-header,
+  .calendar-weekly__day-column,
+  .calendar-weekly__hour-cell,
+  .calendar-monthly,
+  .calendar-monthly__grid,
+  .calendar-day,
+  .calendar-mobile__panel,
+  .calendar-mobile__agenda,
+  .workout-exercises,
+  .workout-library,
+  .workout-videos,
+  .sport-board,
+  .sport-quick-panel,
+  .sport-board__group,
+  .sport-habits__table-wrapper,
+  .diet-page,
+  .diet-week,
+  .diet-shopping,
+  .diet-ideas,
+  .diet-crosslink,
+  .diet-toggle__categories,
+  .project-section,
+  .routine-note,
+  .wishlist-section
+) {
+  background: #1c1a17 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .main-area .diet-toggle__categories button[type="button"] {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.22) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .main-area .diet-toggle__categories button[type="button"]:hover:not(:disabled):not(.is-active) {
+  background: #2d2822 !important;
+  border-color: rgba(214, 185, 154, 0.62) !important;
+}
+
+html[data-color-mode="dark"] .main-area .diet-toggle__categories button[type="button"].is-active {
+  background: #3a3028 !important;
+  color: #f4efe8 !important;
+  border-color: #d6b99a !important;
+}
+
+html[data-color-mode="dark"] .main-area .pill.pill--diet {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(214, 185, 154, 0.52) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .main-area .pill.pill--diet:hover:not(:disabled) {
+  background: #2d2822 !important;
+  border-color: #d6b99a !important;
+}
+
+html[data-color-mode="dark"] .main-area .sport-board__range {
+  background: #2d2822 !important;
+  color: #d6b99a !important;
+}
+
+html[data-color-mode="dark"] .main-area .sport-board-card__status {
+  background: #2a2024 !important;
+  color: #e3b6c7 !important;
+}
+
+html[data-color-mode="dark"] .main-area .sport-board-card__status.is-done {
+  background: #223028 !important;
+  color: #b9d8bf !important;
+}
+
+html[data-color-mode="dark"] .main-area .goals-page .sport-habits__edit-toggle {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.22) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .main-area .goals-page .sport-habits__edit-toggle:hover:not(:disabled) {
+  background: #2d2822 !important;
+  border-color: rgba(214, 185, 154, 0.62) !important;
+}
+
+html[data-color-mode="dark"] .main-area .goals-page .sport-habits__edit-toggle:focus-visible {
+  outline-color: #d6b99a !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(
+  .self-love-photo-card,
+  .self-love-photo-card__drop,
+  .self-love-photo-card__placeholder
+) {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.18) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .main-area .self-love-photo-card__drop:hover {
+  background: #2d2822 !important;
+  border-color: rgba(214, 185, 154, 0.62) !important;
+}
+
+html[data-color-mode="dark"] .main-area .self-love-photo-card .body-goal-slot__action {
+  background: #191714 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.22) !important;
+}
+
+html[data-color-mode="dark"] .main-area .self-love-future-letter__status {
+  background: #24211d !important;
+  color: #d6b99a !important;
+  border-color: rgba(214, 185, 154, 0.46) !important;
+}
+
+html[data-color-mode="dark"] .main-area .self-love-future-letter__status strong {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .main-area .self-love-future-letter__status.is-locked {
+  background: #191714 !important;
+  color: #b9afa4 !important;
+  border-color: rgba(244, 239, 232, 0.2) !important;
+}
+
+html[data-color-mode="dark"] .main-area .self-love-editorial-section {
+  background: #1c1a17 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .main-area .self-love-blog-banner__content {
+  background: #1c1a17 !important;
+  color: #f4efe8 !important;
+  border: 1px solid rgba(244, 239, 232, 0.16) !important;
+}
+
+html[data-color-mode="dark"] .main-area .self-love-blog-banner__content .self-love-blog-banner__eyebrow {
+  color: #d6b99a !important;
+}
+
+html[data-color-mode="dark"] .main-area .self-love-blog-banner__content p {
+  color: #d8d0c7 !important;
+}
+
+html[data-color-mode="dark"] .main-area .wishlist-toolbar__search {
+  background: #191714 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.22) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .main-area .wishlist-toolbar__search:focus-within {
+  border-color: #d6b99a !important;
+  box-shadow: 0 0 0 3px rgba(214, 185, 154, 0.14) !important;
+}
+
+html[data-color-mode="dark"] .main-area .wishlist-toolbar__search input {
+  background: transparent !important;
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .main-area .wishlist-toolbar__search input::placeholder {
+  color: #8f867d !important;
+}
+
+html[data-color-mode="dark"] .main-area .wishlist-toolbar__search svg {
+  stroke: #b9afa4 !important;
+}
+
+html[data-color-mode="dark"] .main-area .wishlist-page .wishlist-card::after {
+  background: linear-gradient(
+    180deg,
+    rgba(28, 26, 23, 0) 0%,
+    rgba(28, 26, 23, 0.94) 60%,
+    #1c1a17 100%
+  ) !important;
+}
+
+html[data-color-mode="dark"] .main-area .wishlist-page .wishlist-card__content > span {
+  color: #d8d0c7 !important;
+}
+
+html[data-color-mode="dark"] .main-area .workout-page :is(
+  .workout-creator-card span,
+  .workout-card__meta span
+) {
+  color: #d8d0c7 !important;
+}
+
+html[data-color-mode="dark"] .main-area .workout-page :is(
+  .workout-creator-card__platform,
+  .workout-creator-card__meta span,
+  .workout-card__meta span
+) {
+  background: #191714 !important;
+  border-color: rgba(244, 239, 232, 0.18) !important;
+}
+
+html[data-color-mode="dark"] .main-area .workout-page .workout-card__meta span:nth-child(1) {
+  background: #3a3028 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(214, 185, 154, 0.42) !important;
+}
+
+html[data-color-mode="dark"] .main-area .workout-page .workout-card__meta span:nth-child(2) {
+  background: #24211d !important;
+  color: #d8d0c7 !important;
+  border-color: rgba(244, 239, 232, 0.18) !important;
+}
+
+html[data-color-mode="dark"] .main-area .workout-page .workout-creator-card__platform--instagram .workout-creator-card__platform-icon {
+  stroke: #d6b99a !important;
+}
+
+html[data-color-mode="dark"] .main-area .workout-page .workout-creator-card__platform--instagram .workout-creator-card__platform-icon-dot {
+  fill: #d6b99a !important;
+}
+
+html[data-color-mode="dark"] .main-area .diet-week__day {
+  background: #2d2822 !important;
+  color: #d6b99a !important;
+  border-color: rgba(214, 185, 154, 0.42) !important;
+}
+
+html[data-color-mode="dark"] .main-area .routine-note__index {
+  background: #191714 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(214, 185, 154, 0.42) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .main-area .account-danger {
+  background: #2a2022 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(227, 182, 199, 0.28) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .main-area .account-danger :is(
+  .account-danger__label,
+  .account-danger__confirm
+) {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .main-area .account-danger__toggle {
+  background: #3a282d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(227, 182, 199, 0.34) !important;
+}
+
+html[data-color-mode="dark"] .main-area .boutique-section.reveal.is-visible {
+  background: #1c1a17 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .main-area .boutique-section.boutique-section--olive.reveal.is-visible {
+  background: #23251f !important;
+  border-color: rgba(112, 115, 90, 0.46) !important;
+}
+
+html[data-color-mode="dark"] .main-area .boutique-hero__content {
+  background: rgba(28, 26, 23, 0.94) !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.18) !important;
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.28) !important;
+}
+
+html[data-color-mode="dark"] .main-area .boutique-hero .boutique-hero__media::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background: rgba(18, 17, 15, 0.48);
+  pointer-events: none;
+}
+
+html[data-color-mode="dark"] .main-area .boutique-hero .boutique-hero__content {
+  z-index: 2;
+}
+
+html[data-color-mode="dark"] .main-area .boutique-filter {
+  background: #24211d !important;
+  color: #d6b99a !important;
+  border-color: rgba(244, 239, 232, 0.2) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .main-area .boutique-filter:hover:not(:disabled) {
+  background: #2d2822 !important;
+  border-color: rgba(214, 185, 154, 0.58) !important;
+}
+
+html[data-color-mode="dark"] .main-area .boutique-filter.is-active {
+  background: #3a3028 !important;
+  color: #f4efe8 !important;
+  border-color: #d6b99a !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(
+  .cart-hero,
+  .purchases-hero,
+  .blog-section,
+  .blog-header__intro,
+  .blog-ebook__content
+) {
+  background: #1c1a17 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .main-area .cart-empty {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.18) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(
+  .blog-header__media,
+  .blog-ebook__media
+) {
+  background: #191714 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+}
+
+html[data-color-mode="dark"] .main-area .blog-header__media::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background: rgba(18, 17, 15, 0.48);
+  pointer-events: none;
+}
+
+html[data-color-mode="dark"] .main-area .blog-header__media .blog-header__headline {
+  z-index: 2;
+  background: rgba(36, 33, 29, 0.92) !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.22) !important;
+}
+
+html[data-color-mode="dark"] .main-area .blog-header__headline :is(h1, .blog-eyebrow) {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .main-area .blog-editorial__content {
+  background: #1c1a17 !important;
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .main-area .blog-editorial__content :is(h2, p, .blog-eyebrow) {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .main-area .blog-admin-overview {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.18) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22) !important;
+}
+
+html[data-color-mode="dark"] .main-area .blog-admin-overview :is(span, strong, p) {
+  color: #d8d0c7 !important;
+}
+
+html[data-color-mode="dark"] .main-area .blog-admin-overview .blog-admin-overview__error {
+  color: #ffb3aa !important;
+}
+
+html[data-color-mode="dark"] .main-area .blog-card__admin-status--draft {
+  background: rgba(212, 182, 115, 0.22) !important;
+  color: #f0d39a !important;
+}
+
+html[data-color-mode="dark"] .main-area .administrative-page-header::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background: rgba(18, 17, 15, 0.48);
+  pointer-events: none;
+}
+
+html[data-color-mode="dark"] .main-area .administrative-page-header :is(
+  .administrative-page-header__eyebrow,
+  h1
+) {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .main-area .administrative-page-header h1::after {
+  background: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .main-area .mental-article {
+  background: #1c1a17 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+}
+
+html[data-color-mode="dark"] .main-area .mental-article-page {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .main-area .mental-article-page__back,
+html[data-color-mode="dark"] .main-area .mental-article__headline > span,
+html[data-color-mode="dark"] .main-area .mental-article__published-date {
+  color: #d8d0c7 !important;
+}
+
+html[data-color-mode="dark"] .main-area .mental-article :is(
+  .mental-article__header,
+  .mental-article__headline,
+  .mental-article__content
+) {
+  background: transparent !important;
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .main-area .mental-article :is(h1, h2, h3) {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .main-area .mental-article__content :is(p, li) {
+  color: #d8d0c7 !important;
+}
+
+html[data-color-mode="dark"] .main-area .mental-article__content :is(strong, b) {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .main-area .mental-article__content a {
+  color: #e2c29f !important;
+}
+
+html[data-color-mode="dark"] .main-area .mental-article__content hr {
+  background-color: rgba(244, 239, 232, 0.26) !important;
+}
+
+html[data-color-mode="dark"] .main-area .mental-article--nail-care .mental-article__content hr::after {
+  background: #1c1a17 !important;
+  border-color: #d6b99a !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(
+  .mental-article__illustration,
+  .nail-routine-card,
+  .cerne-routine-card,
+  .cosy-activity-card
+) {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+}
+
+html[data-color-mode="dark"] .main-area .hand-cream-feature {
+  background: #24211d !important;
+}
+
+html[data-color-mode="dark"] .main-area .hand-cream-feature__content {
+  background: rgba(28, 26, 23, 0.94) !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.2) !important;
+}
+
+html[data-color-mode="dark"] .main-area .hand-cream-feature__content li {
+  border-color: rgba(244, 239, 232, 0.16) !important;
+}
+
+html[data-color-mode="dark"] .main-area .mental-article-placeholder {
+  background: #1c1a17 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+}
+
+html[data-color-mode="dark"] .main-area .mental-article-placeholder :is(h1, p, span, a) {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .main-area .self-love-rituals.mental-article-recommendations {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.18) !important;
+}
+
+html[data-color-mode="dark"] .main-area .legal-section.contact-form {
+  background: #1c1a17 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+}
+
+html[data-color-mode="dark"] .main-area .contact-info {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.18) !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(
+  .about-article,
+  .about-feature__summary-block,
+  .about-values
+) {
+  --about-ink: #f4efe8;
+  --about-ink-soft: #b9afa4;
+  --about-line: rgba(244, 239, 232, 0.16);
+  background: #1c1a17 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+}
+
+html[data-color-mode="dark"] .main-area .value-block {
+  --about-ink: #f4efe8;
+  --about-ink-soft: #b9afa4;
+  --about-line: rgba(244, 239, 232, 0.18);
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.18) !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(
+  .legal-page.faq-page,
+  .legal-page.legal-page--mentions,
+  .legal-page.legal-page--confidentialite,
+  .legal-page.legal-page--cookies
+) {
+  --lux-ink: #f4efe8 !important;
+  --lux-ink-soft: #b9afa4 !important;
+  --lux-accent: #c4a78b !important;
+  --lux-accent-strong: #d6b99a !important;
+  --lux-line: rgba(244, 239, 232, 0.16) !important;
+  --lux-paper: #1c1a17 !important;
+  background: #1c1a17 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .main-area .sport-habits__table {
+  background: #191714 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.18) !important;
+}
+
+html[data-color-mode="dark"] .main-area .sport-habits__row,
+html[data-color-mode="dark"] .main-area .sport-habits__cell {
+  background: #1c1a17 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.14) !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(
+  .sport-habits__row--head,
+  .sport-habits__cell--head,
+  .sport-habits__cell--label,
+  .sport-habits__cell--total
+) {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .main-area .sport-habits__row:not(.sport-habits__row--head):nth-of-type(odd) .sport-habits__cell {
+  background: #211e1a !important;
+}
+
+html[data-color-mode="dark"] .main-area .sport-habits__cell--checkbox input {
+  accent-color: #d6b99a;
+}
+
+html[data-color-mode="dark"] .main-area .calendar-grid.calendar-grid--preview {
+  background: #1c1a17 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .main-area .calendar-grid--preview .calendar-grid__weekday {
+  background: #24211d !important;
+  color: #b9afa4 !important;
+  border-color: rgba(244, 239, 232, 0.14) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .main-area .calendar-grid--preview :is(.calendar-day, .calendar-day--empty) {
+  background: #211e1a !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.14) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .main-area .calendar-grid--preview .calendar-day--empty {
+  background: #191714 !important;
+}
+
+html[data-color-mode="dark"] .main-area .calendar-grid--preview .calendar-day--today {
+  background: #2d2822 !important;
+  border-color: #d6b99a !important;
+}
+
+html[data-color-mode="dark"] .main-area .calendar-grid--preview :is(
+  .calendar-day__number,
+  .calendar-day__indicator,
+  .calendar-day__empty,
+  .calendar-day__more
+) {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .main-area .calendar-grid--preview .calendar-day__number {
+  background: #191714 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+}
+
+@media (max-width: 767px) {
+  html[data-color-mode="dark"] .main-area .calendar-grid--preview .calendar-day__number {
+    background: transparent !important;
+  }
+}
+
+html[data-color-mode="dark"] .project-page {
+  --project-ink: #f4efe8;
+  --project-ink-soft: #b9afa4;
+  --project-line: rgba(244, 239, 232, 0.16);
+  --project-paper: #1c1a17;
+  --project-muted: #24211d;
+}
+
+html[data-color-mode="dark"] .main-area .project-projects__list,
+html[data-color-mode="dark"] .main-area .project-overview__stats {
+  background: #1c1a17 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+}
+
+html[data-color-mode="dark"] .main-area .project-overview__stats article,
+html[data-color-mode="dark"] .main-area .project-tasks__row.project-tasks__row--head {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(
+  .card,
+  [class$="-card"],
+  [class*="-card "],
+  [class$="__card"],
+  [class*="__card "]
+):not(.calendar-mobile__event-card) {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22) !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(
+  [class$="__panel"],
+  [class*="__panel "],
+  [class$="-panel"],
+  [class*="-panel "]
+) {
+  background: #1c1a17 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(
+  .calendar-task__title,
+  .calendar-task__time,
+  .calendar-weekly__task-title,
+  .calendar-weekly__task-time,
+  .calendar-mobile__event-title,
+  .calendar-mobile__event-hours,
+  .calendar-day__preview-time,
+  .calendar-day__preview-title
+) {
+  color: #171512 !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(
+  .card-body,
+  .workout-card__body,
+  .workout-video-card__body
+) {
+  background: transparent !important;
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(
+  .card h3,
+  .sport-life-card h3,
+  .workout-card__body h3,
+  .workout-video-card__body p,
+  .wishlist-card h3,
+  .project-list-card h3
+) {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(
+  p,
+  .muted,
+  [class$="__description"],
+  [class$="__subtitle"],
+  [class$="__meta"],
+  [class$="__hint"],
+  [class$="__source"]
+) {
+  color: #b9afa4;
+}
+
+html[data-color-mode="dark"] .main-area :is(input, textarea, select),
+html[data-color-mode="dark"] .main-area :is(
+  [class$="__select-trigger"],
+  [class*="__select-trigger "],
+  [class$="__input"],
+  [class*="__input "]
+) {
+  background-color: #191714 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.24) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(input, textarea)::placeholder {
+  color: #8f867d !important;
+  opacity: 1;
+}
+
+html[data-color-mode="dark"] .main-area :is(input, textarea, select):focus,
+html[data-color-mode="dark"] .main-area :is([class$="__select-trigger"], [class*="__select-trigger "]):focus-visible {
+  border-color: #d6b99a !important;
+  outline-color: #d6b99a !important;
+  box-shadow: 0 0 0 3px rgba(214, 185, 154, 0.14) !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(
+  [class$="__menu"],
+  [class*="__menu "],
+  [class$="__popover"],
+  [class*="__popover "],
+  [class$="__dropdown"],
+  [class*="__dropdown "]
+) {
+  background-color: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.18) !important;
+}
+
+html[data-color-mode="dark"] .main-area .home-profile-card__menu {
+  background-color: transparent !important;
+}
+
+html[data-color-mode="dark"] .main-area .workout-card__menu {
+  background-color: transparent !important;
+}
+
+html[data-color-mode="dark"] .main-area .diet-gymgirl-page .diet-recipe-card__content {
+  background: linear-gradient(
+    180deg,
+    rgba(28, 26, 23, 0) 45%,
+    rgba(28, 26, 23, 0.82) 78%,
+    #1c1a17 100%
+  ) !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(
+  .page.home-page .profile-menu,
+  .wishlist-page .profile-menu.wishlist-card__menu,
+  .workout-page .profile-menu
+) {
+  background-color: var(--profile-menu-background) !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(
+  .calendar-select__menu,
+  .workout-form__select-menu,
+  .wishlist-card__menu-popover,
+  .workout-card__menu-panel,
+  .project-select__menu
+) :is(button, a, label) {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(
+  button[class*="ghost"],
+  button[class*="secondary"],
+  button[class*="cancel"],
+  button[class*="reset"],
+  .modal__close
+) {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.22) !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(
+  .personalization-card-theme__option,
+  .personalization-welcome-font__option,
+  .personalization-calendar-palette__option,
+  .personalization-color-mode__option,
+  .premium-calendar-plan,
+  .settings-option
+) {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.18) !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(
+  .personalization-card-theme__option.is-selected,
+  .personalization-welcome-font__option.is-selected,
+  .personalization-calendar-palette__option.is-selected,
+  .personalization-color-mode__option.is-selected,
+  .premium-calendar-plan.is-selected
+) {
+  border-color: #d6b99a !important;
+  box-shadow: inset 0 0 0 1px #d6b99a !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(table, thead, tbody, tr, th, td) {
+  background-color: #1c1a17 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.14) !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(hr, [class$="__divider"], [class*="__divider "]) {
+  border-color: rgba(244, 239, 232, 0.16) !important;
+  background-color: rgba(244, 239, 232, 0.16) !important;
+}
+
+/* Large surfaces that use a hard-coded white background in their page styles. */
+html[data-color-mode="dark"] .main-area :is(
+  .page.home-page .aside-right,
+  .page.home-page .board,
+  .page.home-page .aside-left,
+  .home-moodboard,
+  .account-info-list,
+  .diet-catalog,
+  .diet-recipe-modal__content,
+  .diet-recipe-plan,
+  .workout-creators,
+  .workout-modal__body,
+  .workout-modal__note,
+  .workout-modal__scheduler,
+  .routine-page__stats,
+  .routine-note__body,
+  .routine-note__composer,
+  .wishlist-content,
+  .wishlist-modal__body,
+  .wishlist-modal__actions,
+  .wishlist-create,
+  .wishlist-rename,
+  .project-archive,
+  .project-active__card,
+  .project-tasks__table,
+  .project-notes,
+  .project-active > .project-section[aria-labelledby="timeline-heading"],
+  .journaling-section,
+  .journaling-checkin__block,
+  .journaling-closure__block,
+  .journaling-modal__body,
+  .journaling-modal__footer,
+  .finance-dashboard-shell,
+  .finance-overview,
+  .finance-expense-distribution,
+  .finance-balance-evolution,
+  .finance-budget-card,
+  .finance-recent-transactions,
+  .manifestation-journal,
+  .manifestation-tracker__table,
+  .goals-page,
+  .body-goals,
+  .self-love-letter,
+  .self-love-exercises,
+  .self-love-section,
+  .self-love-sections-row,
+  .self-love-list-pad,
+  .self-love-archive__calendar,
+  .self-love-archive__detail,
+  .self-love-archive-modal__content,
+  .self-love-letter-modal__content,
+  .archives-home__grid,
+  .project-archives-page,
+  .archives-calendar,
+  .archives-detail,
+  .archives-modal__content,
+  .archives-modal__header,
+  .archives-modal__body,
+  .archives-modal__footer
+) {
+  background: #1c1a17 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+  box-shadow: none !important;
+}
+
+/* Raised and repeated content stays distinct without returning to white. */
+html[data-color-mode="dark"] .main-area :is(
+  .today,
+  .notes,
+  .todo-item,
+  .home-moodboard__button,
+  .account-danger__choices button,
+  .personalization-library__item,
+  .personalization-color__reset,
+  .personalization-image__actions button,
+  .diet-shopping__item,
+  .diet-ideas__chips li,
+  .diet-ideas__tips article,
+  .diet-info-pill,
+  .workout-video-empty,
+  .workout-modal__series-list li,
+  .routine-note__item,
+  .routine-item,
+  .wishlist-category-picker__panel,
+  .wishlist-move,
+  .wishlist-create__cover-preview-panel,
+  .project-archive__list article,
+  .project-archives__list article,
+  .project-archives__list button,
+  .journaling-choice__content,
+  .journaling-toggle__label,
+  .journaling-save__confirmation-card,
+  .finance-hero__stats article,
+  .finance-history__item,
+  .finance-archive-card,
+  .finance-transaction-form__types button,
+  .body-goal-slot,
+  .body-goal-slot__upload,
+  .body-goal-slot__action,
+  .self-love-exercise__card,
+  .self-love-saved-letters__list li,
+  .self-love-archive__year-card,
+  .self-love-archive__month-card,
+  .self-love-archive__day-list-item,
+  .self-love-archive__entry,
+  .self-love-note,
+  .self-love-photos-frame,
+  .archives-year-card,
+  .archives-month-card,
+  .archives-month-focus-panel,
+  .archives-day-list-item,
+  .archives-entry-button,
+  .archives-exercise-card,
+  .archives-mindset-copy__exercise-card
+) {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+  box-shadow: none !important;
+}
+
+/* Controls and modal internals use the deepest surface level. */
+html[data-color-mode="dark"] .main-area :is(
+  .account-select__trigger,
+  .account-select__menu,
+  .personalization-color__picker,
+  .calendar-view-toggle,
+  .calendar-view-toggle__button,
+  .calendar-weekly__mini,
+  .calendar-legend,
+  .calendar-mobile-header,
+  .calendar-mobile__day-card,
+  .calendar-task__type-button,
+  .diet-toggle__search,
+  .diet-toggle__sort,
+  .diet-recipe-modal__actions,
+  .workout-form__photo-preview,
+  .workout-form__photo-actions label,
+  .workout-creators__nav,
+  .workout-modal__scheduler-field input,
+  .workout-modal__scheduler-field select,
+  .wishlist-upload__trigger,
+  .wishlist-modal__category-input,
+  .wishlist-create__cover-actions label,
+  .project-tasks__table .project-add-task,
+  .project-archives__toolbar select,
+  .journaling-input,
+  .journaling-section textarea,
+  .finance-page-header__period,
+  .finance-balance-evolution__period,
+  .finance-transaction-form__cancel,
+  .self-love-exercise__textarea,
+  .self-love-future-letter__addresses input,
+  .self-love-future-letter__body textarea,
+  .archives-month-focus-panel__back,
+  .archives-controls input,
+  .archives-controls select,
+  .archives-detail-header input,
+  .archives-detail-header select
+) {
+  background: #191714 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.22) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(
+  .account-info-list,
+  .routine-note__body,
+  .routine-note__composer,
+  .wishlist-modal__actions,
+  .diet-recipe-modal__actions,
+  .journaling-modal__body,
+  .journaling-modal__footer,
+  .archives-modal__header,
+  .archives-modal__body,
+  .archives-modal__footer
+) > * {
+  border-color: rgba(244, 239, 232, 0.14) !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(
+  .settings-nav button,
+  .settings-option__label,
+  .account-avatar-actions button,
+  .account-info-row,
+  .premium-calendar-modal__benefits li,
+  .premium-calendar-modal__plans legend,
+  .premium-calendar-plan__name,
+  .premium-calendar-plan__price
+) {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .main-area :is(
+  .settings-nav button:hover,
+  .settings-nav button.is-active,
+  .premium-calendar-modal__benefits
+) {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.18) !important;
+  box-shadow: none !important;
+}
+
+/* Dialogs are rendered in a portal outside .main-area. */
+html[data-color-mode="dark"] [role="dialog"] :is(
+  [class$="__panel"],
+  [class*="__panel "],
+  [class$="__content"],
+  [class*="__content "],
+  [class$="__body"],
+  [class*="__body "],
+  [class$="__header"],
+  [class*="__header "],
+  [class$="__footer"],
+  [class*="__footer "],
+  [class$="__actions"],
+  [class*="__actions "],
+  [class$="__note"],
+  [class*="__note "],
+  [class$="__scheduler"],
+  [class*="__scheduler "],
+  [class$="__benefits"],
+  [class*="__benefits "]
+) {
+  background: #1c1a17 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] [role="dialog"] :is(
+  input,
+  textarea,
+  select,
+  [class$="__select-trigger"],
+  [class*="__select-trigger "],
+  [class$="__menu"],
+  [class*="__menu "]
+) {
+  background-color: #191714 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.22) !important;
+}
+
+html[data-color-mode="dark"] [role="dialog"] :is(h1, h2, h3, h4, p, li, label, legend) {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .premium-calendar-modal__benefits,
+html[data-color-mode="dark"] .premium-calendar-plan {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.18) !important;
+}
+
+html[data-color-mode="dark"] .finance-balance-evolution__period-chevron--previous,
+html[data-color-mode="dark"] .finance-balance-evolution__period-chevron--next,
+html[data-color-mode="dark"] .finance-page-header__period-chevron--previous,
+html[data-color-mode="dark"] .finance-page-header__period-chevron--next {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+html[data-color-mode="dark"] .site-footer h3 {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .calendar-modal__panel .calendar-select__trigger {
+  background: #191714 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.22) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .calendar-modal__panel .calendar-select__trigger :is(span, .calendar-select__chevron) {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .calendar-modal__panel .calendar-task__header,
+html[data-color-mode="dark"] .calendar-modal__panel .calendar-task__header :is(span, button) {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .calendar-modal__panel :is(
+  .calendar-task__header,
+  .calendar-task__header-actions
+) {
+  background: transparent !important;
+}
+
+html[data-color-mode="dark"] [role="listbox"][class*="menu"] [role="option"]:is(
+  .is-selected,
+  [aria-selected="true"]
+) {
+  background: #3a3028 !important;
+  color: #ffffff !important;
+}
+
+html[data-color-mode="dark"] .project-page :is(
+  .project-priority--moyenne,
+  .project-status--a-commencer
+) {
+  background: rgba(212, 182, 115, 0.22) !important;
+  color: #f0d39a !important;
+}
+
+html[data-color-mode="dark"] .project-page :is(
+  .project-status--en-cours,
+  .project-priority--haute
+) {
+  background: rgba(196, 117, 99, 0.24) !important;
+  color: #efb4a7 !important;
+}
+
+html[data-color-mode="dark"] .project-page :is(
+  .project-status--termine,
+  .project-status--terminé,
+  .project-priority--basse
+) {
+  background: rgba(121, 151, 108, 0.24) !important;
+  color: #c2d9b8 !important;
+}
+
+html[data-color-mode="dark"] .project-page .project-active__progress {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+}
+
+html[data-color-mode="dark"] .project-page .project-active__progress :is(span, strong) {
+  color: #d8d0c7 !important;
+}
+
+html[data-color-mode="dark"] .project-page .project-active__progress .project-progress {
+  background: #191714 !important;
+}
+
+html[data-color-mode="dark"] .project-create {
+  background: #1c1a17 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.18) !important;
+  box-shadow: 0 20px 52px rgba(0, 0, 0, 0.34) !important;
+}
+
+html[data-color-mode="dark"] .project-create :is(
+  .project-create__header,
+  .project-create__actions
+) {
+  background: transparent !important;
+}
+
+html[data-color-mode="dark"] .project-create :is(
+  h2,
+  p,
+  label,
+  .editorial-field-label,
+  .project-create__close
+) {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .project-create :is(input:not([type="file"]), select, textarea) {
+  background: #191714 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.22) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .project-create :is(input, textarea)::placeholder {
+  color: #a9a096 !important;
+}
+
+html[data-color-mode="dark"] .project-create__select .calendar-select__chevron {
+  color: #d8d0c7 !important;
+}
+
+html[data-color-mode="dark"] .project-create__cover-preview-panel {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.22) !important;
+}
+
+html[data-color-mode="dark"] .project-create__cover-preview-panel small {
+  color: #d8d0c7 !important;
+}
+
+html[data-color-mode="dark"] .project-create__cover-preview-panel svg {
+  stroke: #d8d0c7 !important;
+}
+
+html[data-color-mode="dark"] .project-create__side {
+  border-color: rgba(244, 239, 232, 0.16) !important;
+}
+
+html[data-color-mode="dark"] .project-create__actions button[type="button"] {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.28) !important;
+}
+
+html[data-color-mode="dark"] .calendar-modal__panel .calendar-task__button--danger {
+  background: rgba(157, 29, 70, 0.2) !important;
+  color: #ffb3ca !important;
+  border-color: #c94e75 !important;
+}
+
+html[data-color-mode="dark"] .calendar-modal__panel .calendar-task__button--danger:hover {
+  background: rgba(157, 29, 70, 0.32) !important;
+  color: #ffd3df !important;
+  border-color: #dc6a8e !important;
+}
+
+html[data-color-mode="dark"] .faq-page .faq-item__icon {
+  background: #3a3028 !important;
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .admin-page .admin-hero {
+  background: #1c1a17 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .admin-page .admin-hero :is(h1, strong) {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .admin-page .admin-hero :is(p, span) {
+  color: #d8d0c7 !important;
+}
+
+html[data-color-mode="dark"] .admin-page .admin-hero__meta {
+  background: #24211d !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+}
+
+html[data-color-mode="dark"] .admin-page .admin-chart-toggle {
+  background: #191714 !important;
+  border-color: rgba(244, 239, 232, 0.18) !important;
+}
+
+html[data-color-mode="dark"] .admin-page .admin-chart-toggle button {
+  background: transparent !important;
+  color: #d8d0c7 !important;
+}
+
+html[data-color-mode="dark"] .admin-page .admin-chart-toggle button:hover {
+  background: #2d2822 !important;
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .admin-page .admin-chart-toggle button.is-active {
+  background: #3a3028 !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .admin-page .admin-stat-legend li {
+  background: #24211d !important;
+  color: #d8d0c7 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+}
+
+html[data-color-mode="dark"] .admin-page .admin-stat-legend li strong {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .admin-page .admin-user-row.is-selected {
+  background: #3a3028 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(214, 185, 154, 0.62) !important;
+  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.24) !important;
+}
+
+html[data-color-mode="dark"] .admin-page .admin-user-row.is-selected :is(strong, span) {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] body.boutique-page--tone .archives-days-list__header {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] body.boutique-page--tone .archives-days-list__header h3 {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] body.boutique-page--tone .archives-day--empty {
+  background: #1c1a17 !important;
+  color: #a9a096 !important;
+  border-color: rgba(244, 239, 232, 0.1) !important;
+}
+
+html[data-color-mode="dark"] body.boutique-page--tone .archives-day-button {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+}
+
+html[data-color-mode="dark"] body.boutique-page--tone .archives-day-button:is(:hover, :focus-visible, .is-active) {
+  background: #302b25 !important;
+  border-color: rgba(214, 185, 154, 0.72) !important;
+}
+
+html[data-color-mode="dark"] body.boutique-page--tone .archives-day-button.is-today {
+  background: #3a3028 !important;
+}
+
+html[data-color-mode="dark"] body.boutique-page--tone .archives-day-button .archives-day-number {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] body.boutique-page--tone .archives-day-button .archives-day-badge {
+  color: #d6b99a !important;
+}
+
+html[data-color-mode="dark"] body.boutique-page--tone .archives-tag {
+  background: #3a3028 !important;
+  color: #f0c9d5 !important;
+  border-color: rgba(240, 201, 213, 0.32) !important;
+}
+
+html[data-color-mode="dark"] body.boutique-page--tone .archives-tag.archives-tag--muted {
+  background: #24211d !important;
+  color: #d8d0c7 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+}
+
+html[data-color-mode="dark"] .archives-modal__content--journaling .archives-modal__section {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+}
+
+html[data-color-mode="dark"] .archives-modal__content--journaling .archives-modal__section h2 {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .archives-modal__content--journaling .archives-modal__section :is(
+  .archives-modal__detail,
+  .archives-modal__qa
+) {
+  background: #1c1a17 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+}
+
+html[data-color-mode="dark"] .archives-modal__content--journaling .archives-modal__section :is(
+  .archives-modal__detail span,
+  .archives-modal__qa span
+) {
+  color: #d6b99a !important;
+}
+
+html[data-color-mode="dark"] .archives-modal__content--journaling .archives-modal__section :is(
+  .archives-modal__detail p,
+  .archives-modal__qa-question,
+  .archives-modal__qa-answer
+) {
+  background: #191714 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.18) !important;
+}
+
+html[data-color-mode="dark"] .admin-products-page .admin-products-hero {
+  background: #1c1a17 !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.16) !important;
+  box-shadow: none !important;
+}
+
+html[data-color-mode="dark"] .admin-products-page .admin-products-hero h1 {
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .admin-products-page .admin-products-hero p {
+  color: #d8d0c7 !important;
+}
+
+html[data-color-mode="dark"] .home-page button[aria-label="Supprimer la tâche"] {
+  color: #ffffff !important;
+}
+
+html[data-color-mode="dark"] .modal-close-button {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .modal-close-button:hover {
+  background: #302b25 !important;
+}
+
+html[data-color-mode="dark"] .workout-card__menu-panel.workout-card__menu-panel--floating {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.18) !important;
+}
+
+html[data-color-mode="dark"] .workout-card__menu-panel--floating .workout-card__menu-item {
+  background: transparent !important;
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .workout-card__menu-panel--floating .workout-card__menu-item:hover {
+  background: #302b25 !important;
+  color: #ffffff !important;
+}
+
+html[data-color-mode="dark"] .workout-card__menu-panel--floating .workout-card__menu-item--danger {
+  color: #ffb3ca !important;
+}
+
+html[data-color-mode="dark"] .workout-card__menu-panel--floating .workout-card__menu-item--danger:hover {
+  background: rgba(157, 29, 70, 0.22) !important;
+  color: #ffd3df !important;
+}
+
+html[data-color-mode="dark"] .nav-search__suggestions {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.18) !important;
+}
+
+html[data-color-mode="dark"] .nav-search__suggestion {
+  background: transparent !important;
+  color: #f4efe8 !important;
+}
+
+html[data-color-mode="dark"] .nav-search__suggestion:is(:hover, :focus-visible) {
+  background: #302b25 !important;
+  color: #ffffff !important;
+}
+
+html[data-color-mode="dark"] .home-page .profile-welcome__input,
+html[data-color-mode="dark"] .home-page .profile-welcome__actions button {
+  background: #24211d !important;
+  color: #f4efe8 !important;
+  border-color: rgba(244, 239, 232, 0.2) !important;
+}
+
+html[data-color-mode="dark"] .home-page .profile-welcome__actions button:hover:not(:disabled) {
+  background: #302b25 !important;
+}
+
+html[data-color-mode="dark"] .home-page .profile-welcome__error {
+  color: #ffb3ca !important;
+}
+
+html[data-color-mode="dark"] ::selection {
+  background: #d6b99a;
+  color: #171512;
+}
+
+html[data-color-mode="dark"] * {
+  scrollbar-color: #5a4c40 #191714;
+}

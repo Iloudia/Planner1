@@ -3,6 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
+    <script>
+      try {
+        const storedLanguage = localStorage.getItem("planner.language.preference.v2")
+        const browserLanguages = navigator.languages?.length ? navigator.languages : [navigator.language]
+        const supportedLanguage = browserLanguages.find((language) => /^(fr|en)(-|$)/i.test(String(language)))
+        const initialLanguage = storedLanguage || (String(supportedLanguage || "fr").toLowerCase().startsWith("en") ? "en" : "fr")
+        document.documentElement.lang = String(initialLanguage).toLowerCase().startsWith("en") ? "en" : "fr"
+        const storedColorMode = localStorage.getItem("planner.color-mode.v1")
+        if (storedColorMode === "dark" || storedColorMode === "light") {
+          document.documentElement.dataset.colorMode = storedColorMode
+          document.documentElement.style.colorScheme = storedColorMode
+        }
+      } catch {
+        // Le mode sera synchronisé par l'application si le stockage local est indisponible.
+      }
+    </script>
     <title>Me&rituals | Planner, journaling, routines et organisation du quotidien</title>
     <meta
       name="description"
@@ -31,6 +47,7 @@
     />
     <meta name="twitter:image" content="https://meandrituals.com/favicon.ico" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="preload" href="/fonts/kapakana-latin.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
     <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/playfair-display-latin.woff2" as="font" type="font/woff2" crossorigin />
   </head>

@@ -331,7 +331,7 @@ body.blog-page--tone {
   grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
   height: 450px;
   min-height: 0;
-  border: 1px solid var(--color-border-strong);
+  border: 1px solid var(--lux-line);
   background: #ffffff;
 }
 

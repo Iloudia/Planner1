@@ -2,8 +2,17 @@
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react"
 import { useAuth } from "../context/AuthContext"
 import PrimaryActionButton from "./PrimaryActionButton"
+import LanguageSwitcher from "./LanguageSwitcher"
+import { useTranslation } from "react-i18next"
+
+const normalizeSearchValue = (value: string) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase("fr")
 
 function Header() {
+  const { t, i18n } = useTranslation()
   const { isAuthenticated, isAdmin, userEmail, logout } = useAuth()
   const canAccessAdminProducts = (userEmail ?? "").toLowerCase() === "iloudiav@gmail.com"
   const navigate = useNavigate()
@@ -20,37 +29,38 @@ function Header() {
   const accountRef = useRef<HTMLDivElement | null>(null)
   const searchTargets = useMemo(
     () => [
-      { label: "A propos de moi", path: "/a-propos" },
-      { label: "Accueil", path: "/home" },
-      { label: "Boutique", path: "/boutique" },
-      { label: "Mes achats", path: "/mes-achats" },
-      { label: "Mentions legales", path: "/mentions-legales" },
-      { label: "Politique de confidentialite", path: "/confidentialite" },
-      { label: "Contact", path: "/contact" },
-      { label: "Finances", path: "/finances" },
-      { label: "Cuisine", path: "/menu" },
-      { label: "Calendrier mensuel", path: "/calendrier" },
-      { label: "Wishlist", path: "/wishlist" },
-      { label: "Sport", path: "/sport" },
-      { label: "Workout", path: "/sport/workout" },
-      { label: "Journaling", path: "/journaling" },
-      { label: "Diet", path: "/diet" },
-      { label: "Goals", path: "/goals" },
-      { label: "Routine", path: "/routine" },
-      { label: "S'aimer soi-meme", path: "/mindset" },
-      { label: "Archives", path: "/archives" },
-      { label: "FAQ", path: "/faq" },
-      { label: "Cookies", path: "/cookies" },
-      { label: "Paramètres", path: "/parametres" },
+      { label: t("search.aboutMe"), path: "/a-propos" },
+      { label: t("header.home"), path: "/home" },
+      { label: t("header.shop"), path: "/boutique" },
+      { label: t("header.purchases"), path: "/mes-achats" },
+      { label: t("search.legal"), path: "/mentions-legales" },
+      { label: t("search.privacy"), path: "/confidentialite" },
+      { label: t("header.contact"), path: "/contact" },
+      { label: t("search.finances"), path: "/finances" },
+      { label: t("search.projects"), path: "/project" },
+      { label: t("search.cooking"), path: "/menu" },
+      { label: t("search.calendar"), path: "/calendrier" },
+      { label: t("search.wishlist"), path: "/wishlist" },
+      { label: t("search.sport"), path: "/sport" },
+      { label: t("search.workout"), path: "/sport/workout" },
+      { label: t("search.journaling"), path: "/journaling" },
+      { label: t("search.diet"), path: "/diet" },
+      { label: t("search.goals"), path: "/goals" },
+      { label: t("search.routine"), path: "/routine" },
+      { label: t("search.selfLove"), path: "/mindset" },
+      { label: t("header.archives"), path: "/archives" },
+      { label: t("search.faq"), path: "/faq" },
+      { label: t("search.cookies"), path: "/cookies" },
+      { label: t("search.settings"), path: "/parametres" },
     ],
-    [],
+    [i18n.resolvedLanguage, t],
   )
   const filteredSuggestions = useMemo(() => {
-    const query = searchTerm.trim().toLowerCase()
+    const query = normalizeSearchValue(searchTerm.trim())
     if (!query) {
       return []
     }
-    return searchTargets.filter((target) => target.label.toLowerCase().startsWith(query))
+    return searchTargets.filter((target) => normalizeSearchValue(target.label).startsWith(query))
   }, [searchTargets, searchTerm])
 
   const shouldShowSuggestions = searchSuggestionsOpen && filteredSuggestions.length > 0
@@ -66,15 +76,15 @@ function Header() {
   }
 
   const handleSearchSubmit = () => {
-    const query = searchTerm.trim().toLowerCase()
+    const query = normalizeSearchValue(searchTerm.trim())
     if (!query) {
       return
     }
-    const match = searchTargets.find((target) => target.label.toLowerCase().startsWith(query))
+    const match = searchTargets.find((target) => normalizeSearchValue(target.label).startsWith(query))
     if (match) {
       handleSuggestionNavigate(match.path)
     } else {
-      window.alert(`Aucun resultat pour "${searchTerm}".`)
+      window.alert(t("header.noResult", { term: searchTerm }))
     }
   }
 
@@ -211,7 +221,7 @@ function Header() {
               <button
                 type="button"
                 className={`header-menu__toggle${isMenuOpen ? " is-open" : ""}`}
-                aria-label="Ouvrir le menu"
+                aria-label={t("header.openMenu")}
                 aria-expanded={isMenuOpen}
                 aria-controls="header-burger-menu"
                 onClick={() => setIsMenuOpen((prev) => !prev)}
@@ -229,43 +239,43 @@ function Header() {
                         className="header-menu__item"
                         onClick={() => setIsMenuOpen(false)}
                       >
-                        Accueil
+                        {t("header.home")}
                       </Link>
                     </li>
                     <li>
                       <Link to="/boutique" className="header-menu__item" onClick={() => setIsMenuOpen(false)}>
-                        Boutique
+                        {t("header.shop")}
                       </Link>
                     </li>
                     <li>
                       <Link to="/panier" className="header-menu__item" onClick={() => setIsMenuOpen(false)}>
-                        Panier
+                        {t("header.cart")}
                       </Link>
                     </li>
                     <li>
                       <Link to="/blog" className="header-menu__item" onClick={() => setIsMenuOpen(false)}>
-                        Blog
+                        {t("header.blog")}
                       </Link>
                     </li>
                     <li>
                       <Link to="/a-propos" className="header-menu__item" onClick={() => setIsMenuOpen(false)}>
-                        À propos
+                        {t("header.about")}
                       </Link>
                     </li>
                     <li>
                       <Link to="/contact" className="header-menu__item" onClick={() => setIsMenuOpen(false)}>
-                        Contact
+                        {t("header.contact")}
                       </Link>
                     </li>
                     <li>
                       <Link to="/archives" className="header-menu__item" onClick={() => setIsMenuOpen(false)}>
-                        Archives
+                        {t("header.archives")}
                       </Link>
                     </li>
                     {isAuthenticated ? (
                       <li>
                         <Link to="/mes-achats" className="header-menu__item" onClick={() => setIsMenuOpen(false)}>
-                          Mes achats
+                          {t("header.purchases")}
                         </Link>
                       </li>
                     ) : null}
@@ -280,7 +290,7 @@ function Header() {
                               setIsMenuOpen(false)
                             }}
                           >
-                            Gérer le compte
+                            {t("header.account")}
                           </button>
                         </li>
                         <li>
@@ -292,7 +302,7 @@ function Header() {
                               setIsMenuOpen(false)
                             }}
                           >
-                            Déconnexion
+                            {t("header.logout")}
                           </button>
                         </li>
                       </>
@@ -306,7 +316,7 @@ function Header() {
                             setIsMenuOpen(false)
                           }}
                         >
-                          Se connecter
+                          {t("header.login")}
                         </button>
                       </li>
                     )}
@@ -316,13 +326,13 @@ function Header() {
             </div>
           </div>
 
-          <Link to={isAuthenticated ? "/home" : "/"} className="site-header__brand kapakana-brand" aria-label="Accueil">
+          <Link to={isAuthenticated ? "/home" : "/"} className="site-header__brand kapakana-brand" aria-label={t("header.home")}>
             Me&rituals
           </Link>
 
           <div className="site-header__right">
             <div className={`nav-search${isSearchOpen ? " nav-search--open" : ""}`} ref={searchRef}>
-              <button className="nav-search__button" aria-label="Ouvrir la recherche" onClick={handleSearchToggle}>
+              <button className="nav-search__button" aria-label={t("header.openSearch")} onClick={handleSearchToggle}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="11" cy="11" r="7" />
                   <line x1="16.65" y1="16.65" x2="21" y2="21" />
@@ -333,8 +343,8 @@ function Header() {
                   ref={searchInputRef}
                   className="nav-search__input"
                   type="search"
-                  placeholder="Rechercher"
-                  aria-label="Rechercher"
+                  placeholder={t("header.search")}
+                  aria-label={t("header.search")}
                   value={searchTerm}
                   onChange={handleSearchChange}
                   onKeyDown={(event) => {
@@ -371,7 +381,7 @@ function Header() {
                   className="nav-search__mobile-panel"
                   role="dialog"
                   aria-modal="true"
-                  aria-label="Recherche"
+                  aria-label={t("header.searchDialog")}
                   onClick={(event) => {
                     if (event.target === event.currentTarget) {
                       handleSearchClose()
@@ -384,8 +394,8 @@ function Header() {
                         ref={searchInputRef}
                         className="nav-search__mobile-input"
                         type="search"
-                        placeholder="Rechercher..."
-                        aria-label="Rechercher"
+                        placeholder={`${t("header.search")}...`}
+                        aria-label={t("header.search")}
                         value={searchTerm}
                         onChange={handleSearchChange}
                         onKeyDown={(event) => {
@@ -396,11 +406,11 @@ function Header() {
                         }}
                       />
                       <PrimaryActionButton className="nav-search__mobile-cancel" onClick={handleSearchClose}>
-                        Annuler
+                        {t("common.cancel")}
                       </PrimaryActionButton>
                     </div>
                     <div className="nav-search__mobile-content">
-                      <p className="nav-search__mobile-title">Suggestions</p>
+                      <p className="nav-search__mobile-title">{t("header.suggestions")}</p>
                       {mobileSearchSuggestions.length > 0 ? (
                         <ul className="nav-search__mobile-suggestions" role="listbox">
                           {mobileSearchSuggestions.map((target) => (
@@ -417,13 +427,15 @@ function Header() {
                           ))}
                         </ul>
                       ) : (
-                        <p className="nav-search__mobile-empty">Aucune suggestion</p>
+                        <p className="nav-search__mobile-empty">{t("header.noSuggestion")}</p>
                       )}
                     </div>
                   </div>
                 </div>
               ) : null}
             </div>
+
+            <LanguageSwitcher className="language-switcher--header" />
 
             {isAuthenticated && isAdmin ? (
               <PrimaryActionButton className="admin-button" onClick={() => navigate("/admin")}>
@@ -433,14 +445,14 @@ function Header() {
 
             {!isAuthenticated ? (
               <PrimaryActionButton className="auth-button auth-button--login" onClick={() => navigate("/login")}>
-                Se connecter
+                {t("header.login")}
               </PrimaryActionButton>
             ) : (
               <div className="account-menu" ref={accountRef}>
                 <button
                   type="button"
                   className={`account-menu__toggle${isAccountOpen ? " is-open" : ""}`}
-                  aria-label="Ouvrir le menu du compte"
+                  aria-label={t("header.openAccount")}
                   aria-expanded={isAccountOpen}
                   aria-controls="account-menu-panel"
                   onClick={() => setIsAccountOpen((prev) => !prev)}
@@ -467,7 +479,7 @@ function Header() {
                         setIsAccountOpen(false)
                       }}
                     >
-                      Gérer le compte
+                      {t("header.account")}
                     </button>
                     <button
                       type="button"
@@ -477,7 +489,7 @@ function Header() {
                         setIsAccountOpen(false)
                       }}
                     >
-                      Mes achats
+                      {t("header.purchases")}
                     </button>
                     <button
                       type="button"
@@ -487,7 +499,7 @@ function Header() {
                         setIsAccountOpen(false)
                       }}
                     >
-                      Archives
+                      {t("header.archives")}
                     </button>
                     {isAdmin ? (
                       <button
@@ -498,7 +510,7 @@ function Header() {
                           setIsAccountOpen(false)
                         }}
                       >
-                        Gestion du blog
+                        {t("header.blogManagement")}
                       </button>
                     ) : null}
                     {canAccessAdminProducts ? (
@@ -511,7 +523,7 @@ function Header() {
                             setIsAccountOpen(false)
                           }}
                         >
-                          Fiche produit
+                          {t("header.productSheet")}
                         </button>
                         <button
                           type="button"
@@ -521,7 +533,7 @@ function Header() {
                             setIsAccountOpen(false)
                           }}
                         >
-                          Produits publies
+                          {t("header.publishedProducts")}
                         </button>
                       </>
                     ) : null}
@@ -533,7 +545,7 @@ function Header() {
                         setIsAccountOpen(false)
                       }}
                     >
-                      Déconnexion
+                      {t("header.logout")}
                     </button>
                   </div>
                 ) : null}
@@ -542,23 +554,23 @@ function Header() {
           </div>
         </div>
 
-        <nav className="site-header__nav" aria-label="Navigation principale">
+        <nav className="site-header__nav" aria-label={t("header.mainNavigation")}>
           <NavLink
             to={isAuthenticated ? "/home" : "/"}
             end
             className={({ isActive }) => `site-header__nav-link${isActive ? " is-active" : ""}`}
           >
-            Accueil
+            {t("header.home")}
           </NavLink>
           <NavLink to="/boutique" className={({ isActive }) => `site-header__nav-link${isActive ? " is-active" : ""}`}>
-            Boutique
+            {t("header.shop")}
           </NavLink>
           <NavLink to="/panier" className={({ isActive }) => `site-header__nav-link${isActive ? " is-active" : ""}`}>
-            Panier
+            {t("header.cart")}
           </NavLink>
           {isAuthenticated ? (
             <NavLink to="/mes-achats" className={({ isActive }) => `site-header__nav-link${isActive ? " is-active" : ""}`}>
-              Mes achats
+              {t("header.purchases")}
             </NavLink>
           ) : null}
           <div className="site-header__nav-dropdown">
@@ -568,21 +580,21 @@ function Header() {
                 `site-header__nav-link site-header__nav-link--dropdown${isActive ? " is-active" : ""}`
               }
             >
-              <span>Blog</span>
+              <span>{t("header.blog")}</span>
               <span className="site-header__nav-arrow" aria-hidden="true">
                 ▾
               </span>
             </NavLink>
-            <div className="site-header__nav-submenu" aria-label="Catégories du blog">
-              <Link to="/blog/sante-beaute">Santé &amp; Beauté</Link>
-              <Link to="/blog/mode">Mode</Link>
-              <Link to="/blog/mental">Mental</Link>
-              <Link to="/blog/sport-nutrition">Sport &amp; Nutrition</Link>
-              <Link to="/blog/lifestyle">Lifestyle</Link>
+            <div className="site-header__nav-submenu" aria-label={t("header.blogCategories")}>
+              <Link to="/blog/sante-beaute">{t("header.healthBeauty")}</Link>
+              <Link to="/blog/mode">{t("header.fashion")}</Link>
+              <Link to="/blog/mental">{t("header.mental")}</Link>
+              <Link to="/blog/sport-nutrition">{t("header.sportNutrition")}</Link>
+              <Link to="/blog/lifestyle">{t("header.lifestyle")}</Link>
             </div>
           </div>
           <NavLink to="/contact" className={({ isActive }) => `site-header__nav-link${isActive ? " is-active" : ""}`}>
-            Contact
+            {t("header.contact")}
           </NavLink>
         </nav>
       </div>

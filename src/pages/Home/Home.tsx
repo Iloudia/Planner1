@@ -11,6 +11,7 @@ import { saveHomeTodos, subscribeToHomeTodos, type HomeTodoItem } from "../../se
 import { buildUserScopedKey, normalizeUserEmail } from "../../utils/userScopedKey"
 import { getWeekKey } from "../../utils/weekKey"
 import { getCardThemeClassName } from "../../utils/homeCardTheme"
+import { getHomeWelcomeFontClassName } from "../../utils/homeWelcomeFont"
 
 import planner01 from "../../assets/sport.webp"
 import planner02 from "../../assets/Moodboardsite.webp"
@@ -23,10 +24,10 @@ import planner08 from "../../assets/Routine.webp"
 import planner09 from "../../assets/avocado-toast.webp"
 import projetsImage from "../../assets/Projets.webp"
 import calendrierHomeImage from "../../assets/Calendrierhome.webp"
-import noeudPapillon from "../../assets/noeud-papillon.webp"
 import citationImage from "../../assets/Citation.webp"
 
 import "./Home.css"
+import { useTranslation } from "react-i18next"
 
 const HOME_MOODBOARD_SUFFIX = "planner.home.moodboard"
 const DEFAULT_HOME_MOODBOARD = planner02
@@ -40,12 +41,11 @@ const CARD_STATE_FIX_SUFFIX = "home.card-threshold-fix.v1"
 const CARD_STATE_FIX_TOKEN = "3-click-threshold-reset"
 const CARD_CLICK_THRESHOLD = 3
 const MAX_TODOS = 3
+const MAX_WELCOME_MESSAGE_LENGTH = 120
 
 type CardItem = {
+  id: string
   image: string
-  alt: string
-  kicker: string
-  title: string
   path: string
 }
 
@@ -60,15 +60,15 @@ type TaskDisplay = {
 type TodoItem = HomeTodoItem
 
 const cards: CardItem[] = [
-  { image: planner01, alt: "Baskets blanches entre deux haltères sur le sol d’une salle de sport", kicker: "Énergie", title: "Sport", path: "/sport" },
-  { image: calendrierHomeImage, alt: "Calendrier du mois de janvier avec un stylo et une plante", kicker: "Vue globale", title: "Calendrier", path: "/calendrier" },
-  { image: planner05, alt: "Vêtements blancs suspendus dans une penderie en bois", kicker: "Envies", title: "Wishlist", path: "/wishlist" },
-  { image: planner03, alt: "Carnet ligné ouvert avec un stylo sur une table en bois", kicker: "Reflet", title: "Journaling", path: "/journaling" },
-  { image: planner04, alt: "Ombres de deux personnes formant un cœur avec leurs mains sur le sable", kicker: "Soin", title: "Mindset", path: "/self-love" },
-  { image: planner07, alt: "Ordinateur portable ouvert sur un canapé beige", kicker: "Budget", title: "Finances", path: "/finances" },
-  { image: planner08, alt: "Tasse de matcha posée sur des draps blancs", kicker: "Rythme", title: "Routine", path: "/routine" },
-  { image: planner09, alt: "Tartine à l’avocat garnie d’un œuf poché", kicker: "Saveurs", title: "Menu de la semaine", path: "/menu" },
-  { image: projetsImage, alt: "Carnet d’objectifs, café glacé et lunettes sur une table en marbre", kicker: "Organisation", title: "Projet", path: "/project" },
+  { id: "sport", image: planner01, path: "/sport" },
+  { id: "calendar", image: calendrierHomeImage, path: "/calendrier" },
+  { id: "wishlist", image: planner05, path: "/wishlist" },
+  { id: "journaling", image: planner03, path: "/journaling" },
+  { id: "mindset", image: planner04, path: "/self-love" },
+  { id: "finances", image: planner07, path: "/finances" },
+  { id: "routine", image: planner08, path: "/routine" },
+  { id: "menu", image: planner09, path: "/menu" },
+  { id: "project", image: projetsImage, path: "/project" },
 ]
 
 const CARD_PATHS = cards.map((card) => card.path)
@@ -94,13 +94,13 @@ const clamp = (value: number) => Math.min(100, Math.max(0, value))
 
 const capitalizeFirst = (value: string) => (value ? value.charAt(0).toUpperCase() + value.slice(1) : value)
 
-const formatDate = (dateStr: string) =>
+const formatDate = (dateStr: string, locale: string) =>
   capitalizeFirst(
-    new Date(dateStr).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }),
+    new Date(dateStr).toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long" }),
   )
 
-const todayLabel = () =>
-  new Date().toLocaleDateString("fr-FR", {
+const todayLabel = (locale: string) =>
+  new Date().toLocaleDateString(locale, {
     weekday: "long",
     day: "numeric",
     month: "long",
@@ -440,9 +440,10 @@ async function fileToCompressedFitDataUrl(
 }
 
 function HomePage() {
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const { tasks, isLoading: isTasksLoading, error: tasksError } = useTasks()
-  const { isAuthReady, userEmail, userId, username, userProfile } = useAuth()
+  const { isAuthReady, userEmail, userId, username, userProfile, updateUserProfile } = useAuth()
 
   const safeEmail = userEmail ?? "anonymous"
   const scopedKey = useCallback((suffix: string) => buildUserScopedKey(safeEmail, suffix), [safeEmail])
@@ -485,6 +486,17 @@ function HomePage() {
 
   const [progress, setProgress] = useState(() => computeProgress())
   const profileUsername = useMemo(() => username?.trim() || "", [username])
+  const defaultWelcomeMessage = useMemo(
+    () => t("home.welcome", {
+      name: profileUsername ? t("home.welcomeName", { username: profileUsername }) : "",
+    }),
+    [i18n.resolvedLanguage, profileUsername, t],
+  )
+  const profileWelcomeMessage = userProfile.preferences?.homeWelcomeMessage?.trim() || defaultWelcomeMessage
+  const [isWelcomeEditing, setIsWelcomeEditing] = useState(false)
+  const [welcomeDraft, setWelcomeDraft] = useState("")
+  const [isWelcomeSaving, setIsWelcomeSaving] = useState(false)
+  const [welcomeError, setWelcomeError] = useState("")
   const isTodoLimitReached = todos.length >= MAX_TODOS
   const [showTodoLimitMessage, setShowTodoLimitMessage] = useState(false)
   const [cardOrder, setCardOrder] = useState<string[]>([])
@@ -777,6 +789,43 @@ function HomePage() {
     setTodos((prev) => prev.filter((item) => item.id !== id))
   }
 
+  const startWelcomeEdit = () => {
+    setWelcomeDraft(profileWelcomeMessage)
+    setWelcomeError("")
+    setIsWelcomeEditing(true)
+  }
+
+  const cancelWelcomeEdit = () => {
+    setWelcomeDraft(profileWelcomeMessage)
+    setWelcomeError("")
+    setIsWelcomeEditing(false)
+  }
+
+  const saveWelcomeMessage = async () => {
+    const nextMessage = welcomeDraft.trim()
+    if (!nextMessage) {
+      setWelcomeError(t("home.welcomeRequired"))
+      return
+    }
+
+    setIsWelcomeSaving(true)
+    setWelcomeError("")
+    try {
+      await updateUserProfile({
+        ...userProfile,
+        preferences: {
+          ...userProfile.preferences,
+          homeWelcomeMessage: nextMessage,
+        },
+      })
+      setIsWelcomeEditing(false)
+    } catch {
+      setWelcomeError(t("home.welcomeSaveError"))
+    } finally {
+      setIsWelcomeSaving(false)
+    }
+  }
+
   const handleProfileInput = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (!file) return
@@ -920,11 +969,11 @@ function HomePage() {
       <aside className="aside-right">
         <div className="profile-card">
           <div className="profile-photo">
-            <MediaImage src={profileSrc} alt="Photo de profil" loading="eager" decoding="async" width={220} height={220} />
+            <MediaImage src={profileSrc} alt={t("home.profilePhoto")} loading="eager" decoding="async" width={220} height={220} />
             <div className="home-profile-card__menu">
               <button
                 className="profile-menu"
-                aria-label="Changer la photo de profil"
+                aria-label={t("home.changeProfilePhoto")}
                 type="button"
                 onClick={(event) => {
                   event.stopPropagation()
@@ -938,7 +987,7 @@ function HomePage() {
               ref={fileInputRef}
               type="file"
               accept="image/*"
-              aria-label="Choisir une photo de profil"
+              aria-label={t("home.chooseProfilePhoto")}
               className="profile-file-input"
               onChange={handleProfileInput}
             />
@@ -947,15 +996,60 @@ function HomePage() {
           <div className="profile-actions">{profileError ? <p className="profile-error">{profileError}</p> : null}</div>
         </div>
 
-        <h4 className="profile-welcome">
-          {`C'est un plaisir de te revoir${profileUsername ? `, ${profileUsername}` : ""}`}
-          <img className="profile-welcome__bow" src={noeudPapillon} alt="" aria-hidden="true" loading="eager" decoding="async" />
+        <h4
+          className={`profile-welcome${isWelcomeEditing ? " profile-welcome--editing" : ""}`}
+          role={isWelcomeEditing ? undefined : "button"}
+          tabIndex={isWelcomeEditing ? undefined : 0}
+          aria-label={isWelcomeEditing ? undefined : t("home.editWelcome")}
+          onClick={isWelcomeEditing ? undefined : startWelcomeEdit}
+          onKeyDown={isWelcomeEditing ? undefined : (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault()
+              startWelcomeEdit()
+            }
+          }}
+        >
+          {isWelcomeEditing ? (
+            <>
+              <input
+                className="profile-welcome__input"
+                type="text"
+                value={welcomeDraft}
+                maxLength={MAX_WELCOME_MESSAGE_LENGTH}
+                aria-label={t("home.welcomeLabel")}
+                autoFocus
+                onChange={(event) => setWelcomeDraft(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault()
+                    void saveWelcomeMessage()
+                  }
+                  if (event.key === "Escape") {
+                    cancelWelcomeEdit()
+                  }
+                }}
+              />
+              <span className="profile-welcome__actions">
+                <button type="button" onClick={() => void saveWelcomeMessage()} disabled={isWelcomeSaving}>
+                  {isWelcomeSaving ? t("home.saving") : t("common.save")}
+                </button>
+                <button type="button" onClick={cancelWelcomeEdit} disabled={isWelcomeSaving}>
+                  {t("common.cancel")}
+                </button>
+              </span>
+              {welcomeError ? <span className="profile-welcome__error" role="alert">{welcomeError}</span> : null}
+            </>
+          ) : (
+            <span className={`profile-welcome__content ${getHomeWelcomeFontClassName(userProfile.preferences?.homeWelcomeFont)}`}>
+              {profileWelcomeMessage}
+            </span>
+          )}
         </h4>
 
         <div className="progress-panel">
           <div className="progress-row">
             <div className="progress-label">
-              <span>Année</span>
+              <span>{t("home.year")}</span>
               <span className="progress-label__value">{progress.year.toFixed(1)}%</span>
             </div>
             <div className="progress-bar">
@@ -964,7 +1058,7 @@ function HomePage() {
           </div>
           <div className="progress-row">
             <div className="progress-label">
-              <span>Mois</span>
+              <span>{t("home.month")}</span>
               <span className="progress-label__value">{progress.month.toFixed(1)}%</span>
             </div>
             <div className="progress-bar">
@@ -973,7 +1067,7 @@ function HomePage() {
           </div>
           <div className="progress-row">
             <div className="progress-label">
-              <span>Journée</span>
+              <span>{t("home.day")}</span>
               <span className="progress-label__value">{progress.day.toFixed(1)}%</span>
             </div>
             <div className="progress-bar">
@@ -985,14 +1079,14 @@ function HomePage() {
         <div className="notes">
           <div className="notes-header">
             <div>
-              <h3>Bloc-notes</h3>
+              <h3>{t("home.notes")}</h3>
             </div>
           </div>
 
           <div className="todo-input">
             <input
               type="text"
-              aria-label="Ajouter une note"
+              aria-label={t("home.addNote")}
               value={todoInput}
               maxLength={21}
               onChange={(event) => setTodoInput(event.target.value)}
@@ -1002,9 +1096,9 @@ function HomePage() {
                   addTodo()
                 }
               }}
-              placeholder=" Ex : faire les courses "
+              placeholder={t("home.notePlaceholder")}
             />
-            <button type="button" className="todo-add" onClick={addTodo} aria-label="Ajouter une tâche">
+            <button type="button" className="todo-add" onClick={addTodo} aria-label={t("home.addTask")}>
               +
             </button>
           </div>
@@ -1013,7 +1107,7 @@ function HomePage() {
             <p className="todo-limit-message">Le bloc-notes est limité à 3 notes. Supprime-en une pour en ajouter une autre.</p>
           ) : null}
 
-          {showTodoLimitMessage ? <p className="todo-limit-message">Le bloc-notes est limité à 3 notes.</p> : null}
+          {showTodoLimitMessage ? <p className="todo-limit-message">{t("home.noteLimit")}</p> : null}
 
           <ul className="todo-list">
             {todos.map((item) => (
@@ -1022,7 +1116,7 @@ function HomePage() {
                   <input type="checkbox" checked={item.done} onChange={() => toggleTodo(item.id)} />
                   <span>{item.text}</span>
                 </label>
-                <button type="button" onClick={() => deleteTodo(item.id)} aria-label="Supprimer la tâche">
+                <button type="button" onClick={() => deleteTodo(item.id)} aria-label={t("home.deleteTask")}>
                   x
                 </button>
               </li>
@@ -1034,15 +1128,15 @@ function HomePage() {
       <main className="board">
         <section className="home-hero-strip">
           <div className="home-hero-strip__center">
-            <div className="today">{todayLabel()}</div>
-            <h1>Organise tes journées</h1>
+            <div className="today">{todayLabel(i18n.resolvedLanguage === "en" ? "en-GB" : "fr-FR")}</div>
+            <h1>{t("home.organize")}</h1>
           </div>
         </section>
 
         <section className="card-grid">
           {orderedCards.map((card) => (
             <article
-              key={card.title}
+              key={card.id}
               className="card"
               role="button"
               tabIndex={0}
@@ -1055,13 +1149,13 @@ function HomePage() {
             >
               <img
                 src={card.image}
-                alt={card.alt}
+                alt={t(`home.cards.${card.id}.alt`)}
                 loading="lazy"
                 decoding="async"
                 style={card.path === "/mindset" ? { objectPosition: "center 30%" } : undefined}
               />
               <div className="card-body">
-                <h3>{card.title}</h3>
+                <h3>{t(`home.cards.${card.id}.title`)}</h3>
               </div>
             </article>
           ))}
@@ -1069,12 +1163,12 @@ function HomePage() {
       </main>
 
       <aside className="aside-left">
-        <h2 className="aside-title">Prochains événements</h2>
+        <h2 className="aside-title">{t("home.upcoming")}</h2>
         <div className="task-window">
           <div className="task-list">
             {tasksError ? (
               <article className="task-card" role="button" tabIndex={0} onClick={handleCalendarOpen} onKeyDown={handleCalendarCardKeyDown}>
-                <p className="task-title">Agenda indisponible</p>
+                <p className="task-title">{t("home.calendarUnavailable")}</p>
                 <p className="task-note">{tasksError}</p>
               </article>
             ) : isTasksLoading || isSportBoardLoading ? (
@@ -1087,7 +1181,7 @@ function HomePage() {
                 onKeyDown={handleCalendarCardKeyDown}
               >
                 <span className="home-loading-a11y" role="status" aria-live="polite">
-                  Chargement de l'agenda
+                  {t("home.calendarLoading")}
                 </span>
               </article>
             ) : upcomingTasks.length > 0 ? (
@@ -1101,7 +1195,7 @@ function HomePage() {
                   onKeyDown={handleCalendarCardKeyDown}
                 >
                   <div className="task-card__header">
-                    <p className="task-date">{formatDate(task.date)}</p>
+                    <p className="task-date">{formatDate(task.date, i18n.resolvedLanguage === "en" ? "en-GB" : "fr-FR")}</p>
                   </div>
                   <h4 className="task-title">{task.title}</h4>
                   {task.start || task.end ? (
@@ -1115,8 +1209,8 @@ function HomePage() {
               ))
             ) : (
               <article className="task-card" role="button" tabIndex={0} onClick={handleCalendarOpen} onKeyDown={handleCalendarCardKeyDown}>
-                <p className="task-title">Aucune tâche prévue</p>
-                <h4 className="task-note">Ajoute une tâche dans le calendrier.</h4>
+                <p className="task-title">{t("home.noTask")}</p>
+                <h4 className="task-note">{t("home.addCalendarTask")}</h4>
               </article>
             )}
           </div>
@@ -1125,7 +1219,7 @@ function HomePage() {
 
       <section className="home-moodboard">
         <div className="home-moodboard__top">
-          <h2>Mon visionboard</h2>
+          <h2>{t("home.visionboard")}</h2>
           <input
             ref={moodboardInputRef}
             type="file"
@@ -1138,11 +1232,11 @@ function HomePage() {
         {moodboardError ? <p className="home-moodboard__error">{moodboardError}</p> : null}
 
         <div className="home-moodboard__preview">
-          <img src={homeMoodboardSrc} alt="Tableau d’inspiration personnalisé" loading="lazy" decoding="async" />
+          <img src={homeMoodboardSrc} alt={t("home.visionboardAlt")} loading="lazy" decoding="async" />
           <div className="home-moodboard__menu">
             <button
               className="profile-menu home-moodboard__button"
-              aria-label="Changer l'image du visionboard"
+              aria-label={t("home.changeVisionboard")}
               type="button"
               onClick={(event) => {
                 event.stopPropagation()

@@ -1,18 +1,20 @@
 import { NavLink, Outlet } from "react-router-dom"
 import PageHeading from "../../components/PageHeading"
+import { useTranslation } from "react-i18next"
 import "./SettingsPage.css"
 
-const settingsLinks = [
-  { id: "account", label: "Votre compte", path: "/parametres" },
-  { id: "display", label: "Affichage", path: "/parametres/affichage" },
-  { id: "languages", label: "Langues", path: "/parametres/langues" },
-]
-
 const SettingsLayout = () => {
+  const { t } = useTranslation()
+  const settingsLinks = [
+    { id: "account", label: t("settings.account"), path: "/parametres" },
+    { id: "display", label: t("settings.display"), path: "/parametres/affichage" },
+    { id: "languages", label: t("settings.languages"), path: "/parametres/langues" },
+  ]
+
   return (
     <>
 
-      <PageHeading eyebrow="Paramètres" title="Personnalise ton expérience" />
+      <PageHeading eyebrow={t("settings.eyebrow")} title={t("settings.title")} />
 
       <div className="content-page settings-page">
 

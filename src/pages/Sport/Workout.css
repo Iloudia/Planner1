@@ -721,7 +721,7 @@
 
 .workout-page .profile-menu {
   border: none;
-  background: rgba(15, 23, 42, 0.32);
+  background: var(--profile-menu-background);
   color: #fff;
   width: 34px;
   height: 34px;
@@ -1679,7 +1679,12 @@ body.workout-page--lux .workout-card__menu-panel.workout-card__menu-panel--float
   padding: 0.4rem 0;
 }
 
-.workout-page .profile-menu,
+.workout-page .profile-menu {
+  border: 1px solid var(--lux-line);
+  background: var(--profile-menu-background);
+  color: #ffffff;
+}
+
 .workout-card__menu .workout-video-card__delete,
 .workout-modal__menu .modal__close {
   border: 1px solid var(--lux-line);

@@ -1,4 +1,13 @@
-import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent, type KeyboardEvent } from "react"
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+  type KeyboardEvent,
+  type TouchEvent,
+} from "react"
 import { Link } from "react-router-dom"
 import { useAuth } from "../../context/AuthContext"
 import PageLoader from "../../components/PageLoader"
@@ -79,6 +88,7 @@ const SportPage = () => {
   const activityDraftsRef = useRef<Record<string, string>>({})
   const activitySaveTimeoutsRef = useRef<Record<string, number>>({})
   const [selectedDayId, setSelectedDayId] = useState<string | null>(null)
+  const boardSwipeStartRef = useRef<{ x: number; y: number } | null>(null)
   const boardDraftsStorageKey = useMemo(
     () => buildUserScopedKey(normalizeUserEmail(userEmail), `${SPORT_BOARD_DRAFTS_STORAGE_KEY}.${weekKey}`),
     [userEmail, weekKey],
@@ -232,6 +242,34 @@ const SportPage = () => {
     () => board.days.find((day) => day.id === selectedDayId) ?? board.days[0] ?? null,
     [board.days, selectedDayId],
   )
+
+  const handleBoardSwipeStart = (event: TouchEvent<HTMLElement>) => {
+    const touch = event.touches[0]
+    boardSwipeStartRef.current = touch ? { x: touch.clientX, y: touch.clientY } : null
+  }
+
+  const handleBoardSwipeEnd = (event: TouchEvent<HTMLElement>) => {
+    const swipeStart = boardSwipeStartRef.current
+    const touch = event.changedTouches[0]
+    boardSwipeStartRef.current = null
+
+    if (!swipeStart || !touch || !selectedDay) {
+      return
+    }
+
+    const horizontalDistance = touch.clientX - swipeStart.x
+    const verticalDistance = touch.clientY - swipeStart.y
+    if (Math.abs(horizontalDistance) < 48 || Math.abs(horizontalDistance) <= Math.abs(verticalDistance)) {
+      return
+    }
+
+    const currentIndex = board.days.findIndex((day) => day.id === selectedDay.id)
+    const nextIndex = horizontalDistance < 0 ? currentIndex + 1 : currentIndex - 1
+    const nextDay = board.days[nextIndex]
+    if (nextDay) {
+      setSelectedDayId(nextDay.id)
+    }
+  }
 
   const clearActivitySaveTimeout = (dayId: string) => {
     const timeoutId = activitySaveTimeoutsRef.current[dayId]
@@ -488,6 +526,11 @@ const SportPage = () => {
                 role="tabpanel"
                 id={`sport-board-panel-${selectedDay.id}`}
                 aria-labelledby={`sport-board-tab-${selectedDay.id}`}
+                onTouchStart={handleBoardSwipeStart}
+                onTouchEnd={handleBoardSwipeEnd}
+                onTouchCancel={() => {
+                  boardSwipeStartRef.current = null
+                }}
               >
                 <header className="sport-board-card__header">
                   <div>

@@ -68,7 +68,6 @@ body.boutique-page--tone {
   grid-template-columns: 1fr;
   gap: 0;
   border: 1px solid var(--line);
-  background: var(--paper);
   box-shadow: var(--shadow-soft);
 }
 
@@ -389,6 +388,10 @@ body.boutique-page--tone {
   border: 1px solid var(--line);
   background: var(--page-background);
   padding: 0.4rem;
+}
+
+html:not([data-color-mode="dark"]) .boutique-category-card__image {
+  background: #f5f2ec;
 }
 
 .boutique-category-card__image img {

@@ -248,6 +248,22 @@
   box-shadow: 0 16px 34px rgba(114, 92, 63, 0.15);
 }
 
+.language-row:disabled {
+  cursor: wait;
+}
+
+.language-selection__note,
+.language-selection__current {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.language-selection__current {
+  color: var(--text);
+  font-weight: 600;
+}
+
 .language-empty {
   text-align: center;
   color: var(--muted);

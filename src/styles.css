@@ -39,6 +39,14 @@
 }
 
 @font-face {
+  font-family: "Kapakana Brand";
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url("/fonts/kapakana-latin.woff2") format("woff2");
+}
+
+@font-face {
   font-family: "Libre Baskerville";
   font-style: normal;
   font-weight: 400 700;
@@ -69,6 +77,7 @@
 
   --page-background-color: #f8f6f1;
   --page-background: var(--page-background-color);
+  --profile-menu-background: rgba(15, 23, 42, 0.32);
   --panel: var(--color-surface);
   --panel-alt: #f1ece4;
   --card: var(--color-caramel);
@@ -189,7 +198,7 @@ body {
 }
 
 .kapakana-brand {
-  font-family: "Kapakana", cursive;
+  font-family: "Kapakana Brand", cursive;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
@@ -435,6 +444,43 @@ p {
   display: flex;
   align-items: center;
   gap: clamp(0.6rem, 1.4vw, 1rem);
+}
+
+.language-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: currentColor;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.language-switcher button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: inherit;
+  opacity: 0.48;
+  padding: 0.25rem 0.1rem;
+  transition: opacity 160ms ease;
+}
+
+.language-switcher button:hover,
+.language-switcher button:focus-visible,
+.language-switcher button.is-active {
+  opacity: 1;
+}
+
+.language-switcher button.is-active {
+  font-weight: 700;
+}
+
+.language-switcher button:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 2px;
 }
 
 .header-logout {

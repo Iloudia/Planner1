@@ -280,7 +280,7 @@
   top: 10px;
   right: 10px;
   border: none;
-  background: rgba(15, 23, 42, 0.32);
+  background: var(--profile-menu-background);
   color: #fff;
   width: 34px;
   height: 34px;
@@ -320,14 +320,95 @@
   color: var(--color-chocolate);
 }
 
-.profile-welcome__bow {
-  display: inline-block;
-  width: 64px;
-  height: auto;
-  margin-left: 10px;
-  vertical-align: middle;
+.profile-welcome--editing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
 }
 
+.profile-welcome__content {
+  white-space: pre-wrap;
+}
+
+.page.home-page .profile-welcome__content.profile-welcome-font--playfair {
+  font-family: "Playfair Display", "Times New Roman", serif;
+}
+
+.page.home-page .profile-welcome__content.profile-welcome-font--manrope {
+  font-family: "Manrope", Arial, sans-serif;
+}
+
+.page.home-page .profile-welcome__content.profile-welcome-font--libre {
+  font-family: "Libre Baskerville", Georgia, serif;
+}
+
+.page.home-page .profile-welcome__content.profile-welcome-font--italiana {
+  font-family: "Italiana", Georgia, serif;
+}
+
+.page.home-page .profile-welcome__content.profile-welcome-font--inter {
+  font-family: "Inter", Arial, sans-serif;
+}
+
+.page.home-page .profile-welcome__content.profile-welcome-font--kapakana {
+  font-family: "Kapakana", cursive;
+  font-size: 1.9em;
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+.profile-welcome:not(.profile-welcome--editing) {
+  cursor: pointer;
+}
+
+.profile-welcome:not(.profile-welcome--editing):focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 0.35rem;
+}
+
+.profile-welcome__input {
+  width: min(100%, 320px);
+  box-sizing: border-box;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--lux-line);
+  border-radius: 0;
+  background: #ffffff;
+  color: var(--lux-ink);
+  font: inherit;
+  text-align: center;
+}
+
+.profile-welcome__actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.profile-welcome__actions button {
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--lux-line);
+  border-radius: 0;
+  background: #ffffff;
+  color: var(--lux-ink);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.profile-welcome__actions button:disabled {
+  cursor: wait;
+  opacity: 0.58;
+}
+
+.profile-welcome__error {
+  color: #9d1d46;
+  font-size: 0.72rem;
+  font-weight: 500;
+}
 
 .progress-label__value {
   color: var(--color-chocolate);
@@ -893,9 +974,9 @@ body.home-page--lux {
 }
 
 .page.home-page .profile-menu {
-  background: #ffffff;
+  background: var(--profile-menu-background);
   border: 1px solid var(--lux-line);
-  color: var(--lux-ink);
+  color: #ffffff;
   border-radius: 999px;
 }
 

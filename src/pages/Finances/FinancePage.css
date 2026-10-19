@@ -121,7 +121,12 @@
 
 .finance-page-header__actions {
   display: flex;
+  width: fit-content;
+  min-width: 0;
+  max-width: 100%;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: flex-end;
   gap: 1rem;
 }
 
@@ -132,6 +137,9 @@
   justify-content: center;
   gap: 0.6rem;
   width: 220px;
+  min-width: 0;
+  max-width: 100%;
+  flex: 0 1 220px;
   min-height: 42px;
   padding: 0 0.75rem;
   box-sizing: border-box;
@@ -178,7 +186,8 @@
   font-size: 0.75rem;
 }
 
-.finance-page-header__period > button {
+.finance-page-header__period > button,
+.finance-balance-evolution__period-arrow {
   width: 26px;
   height: 34px;
   padding: 0;
@@ -250,6 +259,8 @@
 }
 
 .finance-page-header__add {
+  min-width: 0;
+  max-width: 100%;
   min-height: 42px;
   padding: 0 1.25rem;
   box-sizing: border-box;
@@ -260,6 +271,8 @@
   font-family: 'Inter', 'Times New Roman', sans-serif;
   font-size: 0.75rem;
   font-weight: 600;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
   cursor: pointer;
   box-shadow: 0 5px 12px rgba(13, 84, 89, 0.14);
 }
@@ -1931,18 +1944,26 @@
   }
 
   .finance-page-header__actions {
+    display: grid;
     width: 100%;
+    max-width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
     gap: 0.6rem;
   }
 
   .finance-page-header__period {
-    flex: 1;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
     justify-content: center;
   }
 
   .finance-page-header__add {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
     padding: 0 0.7rem;
-    white-space: nowrap;
+    white-space: normal;
   }
 
   .finance-transaction-modal__panel {
@@ -2414,24 +2435,7 @@
 }
 
 .finance-balance-evolution__period-arrow {
-  display: inline-grid;
-  width: 1.85rem;
-  height: 1.85rem;
-  place-items: center;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: rgba(15, 23, 42, 0.6);
-  cursor: pointer;
-  font-family: var(--font-body);
-  font-size: 1.3rem;
-  line-height: 1;
-  transition: background-color 160ms ease, color 160ms ease;
-}
-
-.finance-balance-evolution__period-arrow:hover {
-  background: rgba(114, 92, 63, 0.1);
+  flex: 0 0 auto;
 }
 
 .finance-balance-evolution__period-chevron {

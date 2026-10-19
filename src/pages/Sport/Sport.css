@@ -223,6 +223,7 @@
   width: 100%;
   max-width: 100%;
   padding: 1.35rem;
+  touch-action: pan-y;
 }
 
 .sport-board-card__header {

@@ -9,7 +9,10 @@ import { MoodboardProvider } from "./context/MoodboardContext";
 import { BlogPublishingProvider } from "./context/BlogPublishingContext";
 import MobileRuntimeBridge from "./platform/MobileRuntimeBridge";
 import { initializeAppRuntime } from "./platform/runtime";
+import { LanguageProvider } from "./context/LanguageContext";
+import "./i18n";
 import "./styles.css";
+import "./dark-mode.css";
 
 const rootElement = document.getElementById("root");
 
@@ -24,15 +27,17 @@ ReactDOM.createRoot(rootElement).render(
     <BrowserRouter>
       <MobileRuntimeBridge />
       <AuthProvider>
-        <TasksProvider>
-          <CookieConsentProvider>
-            <MoodboardProvider>
-              <BlogPublishingProvider>
-                <App />
-              </BlogPublishingProvider>
-            </MoodboardProvider>
-          </CookieConsentProvider>
-        </TasksProvider>
+        <LanguageProvider>
+          <TasksProvider>
+            <CookieConsentProvider>
+              <MoodboardProvider>
+                <BlogPublishingProvider>
+                  <App />
+                </BlogPublishingProvider>
+              </MoodboardProvider>
+            </CookieConsentProvider>
+          </TasksProvider>
+        </LanguageProvider>
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>

@@ -7,14 +7,16 @@ import { buildUserScopedKey, normalizeUserEmail } from "../../utils/userScopedKe
 import { useMoodboard } from "../../context/MoodboardContext"
 import PageLoader from "../../components/PageLoader"
 import "./Auth.css"
+import { useTranslation } from "react-i18next"
+import type { TFunction } from "i18next"
 
 const REMEMBER_PREFERENCE_KEY = "planner.auth.remember"
 const PROFILE_STORAGE_KEY = "planner.profile.preferences.v1"
 const EMAIL_HISTORY_KEY = "planner.auth.email_history.v1"
 const GENDER_OPTIONS = [
-  { value: "", label: "Ne pas préciser" },
-  { value: "femme", label: "Femme" },
-  { value: "homme", label: "Homme" },
+  { value: "", labelKey: "auth.unspecified" },
+  { value: "femme", labelKey: "auth.woman" },
+  { value: "homme", labelKey: "auth.man" },
 ]
 
 type AuthMode = "login" | "register"
@@ -24,47 +26,47 @@ type AuthFormProps = {
   mode: AuthMode
 }
 
-const getLoginErrorMessage = (errorCode?: string) => {
+const getLoginErrorMessage = (t: TFunction, errorCode?: string) => {
   switch (errorCode) {
     case "auth/missing-credentials":
-      return "Merci de renseigner un email et un mot de passe."
+      return t("auth.errors.missingCredentials")
     case "auth/invalid-email":
-      return "L'adresse email est invalide."
+      return t("auth.errors.invalidEmail")
     case "auth/invalid-credential":
     case "auth/wrong-password":
     case "auth/user-not-found":
-      return "Email ou mot de passe incorrect."
+      return t("auth.errors.wrongCredentials")
     case "auth/user-disabled":
-      return "Ce compte est désactivé. Contacte l'administrateur."
+      return t("auth.errors.disabled")
     case "auth/too-many-requests":
-      return "Trop de tentatives. Réessaie dans quelques minutes."
+      return t("auth.errors.tooMany")
     case "auth/network-request-failed":
-      return "Connexion réseau impossible. Vérifie Internet puis réessaie."
+      return t("auth.errors.network")
     case "auth/operation-not-allowed":
-      return "La connexion email/mot de passe est désactivée sur Firebase."
+      return t("auth.errors.loginNotAllowed")
     case "app/account-deleted":
-      return "Ce compte n'est plus accessible."
+      return t("auth.errors.deleted")
     default:
-      return "Connexion impossible pour le moment. Réessaie."
+      return t("auth.errors.loginDefault")
   }
 }
 
-const getRegisterErrorMessage = (errorCode?: string) => {
+const getRegisterErrorMessage = (t: TFunction, errorCode?: string) => {
   switch (errorCode) {
     case "auth/missing-credentials":
-      return "Merci de renseigner un email et un mot de passe."
+      return t("auth.errors.missingCredentials")
     case "auth/invalid-email":
-      return "L'adresse email est invalide."
+      return t("auth.errors.invalidEmail")
     case "auth/email-already-in-use":
-      return "Un compte existe déjà avec cet email."
+      return t("auth.errors.emailUsed")
     case "auth/weak-password":
-      return "Le mot de passe est trop faible."
+      return t("auth.errors.weakPassword")
     case "auth/network-request-failed":
-      return "Connexion réseau impossible. Vérifie Internet puis réessaie."
+      return t("auth.errors.network")
     case "auth/operation-not-allowed":
-      return "L'inscription email/mot de passe est désactivée sur Firebase."
+      return t("auth.errors.registerNotAllowed")
     default:
-      return "Création de compte impossible pour le moment. Réessaie."
+      return t("auth.errors.registerDefault")
   }
 }
 
@@ -108,6 +110,7 @@ const EyeIcon = ({ crossed }: { crossed?: boolean }) => (
 )
 
 const AuthPage = ({ mode }: AuthFormProps) => {
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
   const { isAuthReady, isAuthenticated, login, register, userEmail, loginWithGoogle } = useAuth()
@@ -161,15 +164,15 @@ const AuthPage = ({ mode }: AuthFormProps) => {
       return from
     }
 
-    if (from?.pathname) {
+    if (typeof from !== "string" && from?.pathname) {
       return `${from.pathname}${from.search ?? ""}`
     }
 
     return "/home"
   }, [location.state])
   const genderLabel = useMemo(
-    () => GENDER_OPTIONS.find((option) => option.value === gender)?.label ?? "Ne pas préciser",
-    [gender],
+    () => t(GENDER_OPTIONS.find((option) => option.value === gender)?.labelKey ?? "auth.unspecified"),
+    [gender, i18n.resolvedLanguage, t],
   )
 
   useEffect(() => {
@@ -299,7 +302,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
 
       if (registerStep === 0) {
         if (!normalizedEmail) {
-          setError("Merci de renseigner un email.")
+          setError(t("auth.errors.emailRequired"))
           return
         }
         setRegisterStep(1)
@@ -307,18 +310,18 @@ const AuthPage = ({ mode }: AuthFormProps) => {
       }
       if (registerStep === 1) {
         if (!firstName.trim() || !lastName.trim() || !username.trim()) {
-          setError("Merci de renseigner le prénom, le nom et le pseudo.")
+          setError(t("auth.errors.identityRequired"))
           return
         }
         setRegisterStep(2)
         return
       }
       if (!password.trim() || !hasMinLength || !hasUpper || !hasLower || !hasDigit || !hasSpecial) {
-        setError("Le mot de passe doit avoir au moins 6 caractères, 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial.")
+        setError(t("auth.errors.passwordRules"))
         return
       }
       if (!acceptTerms) {
-        setError("Merci d’accepter les conditions générales.")
+        setError(t("auth.errors.termsRequired"))
         return
       }
     }
@@ -345,7 +348,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
     if (!attempt.success) {
       skipAutoRedirectRef.current = false
       setError(
-        mode === "register" ? getRegisterErrorMessage(attempt.errorCode) : getLoginErrorMessage(attempt.errorCode),
+        mode === "register" ? getRegisterErrorMessage(t, attempt.errorCode) : getLoginErrorMessage(t, attempt.errorCode),
       )
       return
     }
@@ -373,7 +376,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
     setInfo("")
     const normalizedEmail = email.trim()
     if (!normalizedEmail) {
-      setError("Renseigne ton email pour recevoir un lien de réinitialisation.")
+      setError(t("auth.errors.resetEmailRequired"))
       return
     }
 
@@ -388,12 +391,12 @@ const AuthPage = ({ mode }: AuthFormProps) => {
       const payload = await response.json().catch(() => ({}))
 
       if (!response.ok) {
-        throw new Error(payload?.error || "Impossible d'envoyer l'email de réinitialisation.")
+        throw new Error(payload?.error || t("auth.errors.resetFailed"))
       }
       rememberEmail(normalizedEmail)
-      setInfo(payload?.message || "Si un compte existe avec cette adresse, un email de réinitialisation a été envoyé.")
+      setInfo(payload?.message || t("auth.resetSent"))
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Impossible d'envoyer l'email de réinitialisation.")
+      setError(error instanceof Error ? error.message : t("auth.errors.resetFailed"))
     }
   }
 
@@ -401,19 +404,19 @@ const AuthPage = ({ mode }: AuthFormProps) => {
     setError("")
     const attempt = await loginWithGoogle()
     if (!attempt.success) {
-      setError(getLoginErrorMessage(attempt.errorCode))
+      setError(getLoginErrorMessage(t, attempt.errorCode))
       return
     }
     navigate(destinationPath, { replace: true })
   }
 
-  const heading = mode === "login" ? "Connexion" : "Création de compte"
-  const panelHeading = mode === "login" && loginPanelMode === "forgot" ? "Mot de passe oublié" : heading
-  const switchLabel = mode === "login" ? "Pas encore de compte ?" : "Déjà un compte ?"
+  const heading = mode === "login" ? t("auth.login") : t("auth.register")
+  const panelHeading = mode === "login" && loginPanelMode === "forgot" ? t("auth.forgotTitle") : heading
+  const switchLabel = mode === "login" ? t("auth.noAccount") : t("auth.hasAccount")
   const switchTo = mode === "login" ? "/register" : "/login"
-  const ctaLabel = mode === "login" ? "Se connecter" : registerStep < 2 ? "Continuer" : "Créer mon compte"
+  const ctaLabel = mode === "login" ? t("header.login") : registerStep < 2 ? t("auth.continue") : t("auth.createMyAccount")
   const isRegister = mode === "register"
-  const registerSteps = ["Email", "Identité", "Sécurité"]
+  const registerSteps = [t("auth.email"), t("auth.identity"), t("auth.security")]
   
   const isAuthPageLoading = !isAuthReady
 
@@ -427,43 +430,43 @@ const AuthPage = ({ mode }: AuthFormProps) => {
 
       <div className="auth-hero">
         <div className="auth-visual">
-          <img src={moodboardSrc} alt="Tableau d’inspiration personnalisé" loading="eager" decoding="async" />
+          <img src={moodboardSrc} alt={t("auth.moodboardAlt")} loading="eager" decoding="async" />
           <div className="auth-visual__caption">
             <span>Planner</span>
-            <p>{mode === "login" ? "Un espace calme pour organiser ce qui compte vraiment." : "Crée un espace personnel pour avancer avec plus de clarté et de sérénité."}</p>
+            <p>{mode === "login" ? t("auth.loginCaption") : t("auth.registerCaption")}</p>
           </div>
         </div>
         <div className="auth-panel">
           <header className="auth-panel__header">
-            {mode === "login" && loginPanelMode === "login" ? <span className="auth-panel__eyebrow">Heureuse de te retrouver</span> : null}
-            {mode === "register" ? <span className="auth-panel__eyebrow">Un espace pensé pour toi</span> : null}
+            {mode === "login" && loginPanelMode === "login" ? <span className="auth-panel__eyebrow">{t("auth.welcomeBack")}</span> : null}
+            {mode === "register" ? <span className="auth-panel__eyebrow">{t("auth.designedForYou")}</span> : null}
             <h1 className="auth-title">{panelHeading}</h1>
             {mode === "login" && loginPanelMode === "login" ? (
-              <p className="auth-panel__intro">Reconnecte-toi à ton espace et reprends ton organisation là où tu l’as laissée.</p>
+              <p className="auth-panel__intro">{t("auth.loginIntro")}</p>
             ) : null}
             {mode === "register" ? (
-              <p className="auth-panel__intro">Renseigne quelques informations pour créer ton espace et commencer à organiser ton quotidien.</p>
+              <p className="auth-panel__intro">{t("auth.registerIntro")}</p>
             ) : null}
             {mode === "login" && loginPanelMode === "forgot" ? (
-              <p className="auth-lead">Entre ton email pour recevoir un lien de réinitialisation.</p>
+              <p className="auth-lead">{t("auth.forgotIntro")}</p>
             ) : (
               <div className="auth-switch">
                 <span>{switchLabel}</span>
-                <Link to={switchTo}>{mode === "login" ? "Créer un compte" : "Se connecter"}</Link>
+                <Link to={switchTo}>{mode === "login" ? t("auth.createAccount") : t("header.login")}</Link>
               </div>
             )}
           </header>
 
           {isAuthenticated && mode !== "register" ? (
             <p className="auth-status">
-              Connecté en tant que <strong>{userEmail}</strong>
+              {t("auth.signedInAs")} <strong>{userEmail}</strong>
             </p>
           ) : null}
 
           {mode === "login" && loginPanelMode === "forgot" ? (
             <form className="auth-form" onSubmit={handleForgotSubmit}>
               <label>
-                Email
+                {t("auth.email")}
                 <input
                   type="email"
                   value={email}
@@ -496,10 +499,10 @@ const AuthPage = ({ mode }: AuthFormProps) => {
                     setInfo("")
                   }}
                 >
-                  Retour à la connexion
+                  {t("auth.backToLogin")}
                 </button>
                 <button type="submit" className="auth-submit">
-                  Envoyer le lien
+                  {t("auth.sendLink")}
                 </button>
               </div>
             </form>
@@ -507,7 +510,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
             <>
               <form className="auth-form" onSubmit={handleSubmit}>
                 {isRegister ? (
-                  <div className="auth-steps" aria-label="Progression de création de compte">
+                  <div className="auth-steps" aria-label={t("auth.createProgress")}>
                     {registerSteps.map((label, index) => (
                       <div key={label} className={`auth-step${registerStep === index ? " is-active" : registerStep > index ? " is-done" : ""}`}>
                         <span className="auth-step__index">{index + 1}</span>
@@ -521,7 +524,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
                   <>
                     {registerStep === 0 ? (
                       <label>
-                        Email
+                        {t("auth.email")}
                         <input
                           type="email"
                           value={email}
@@ -546,17 +549,17 @@ const AuthPage = ({ mode }: AuthFormProps) => {
                       <>
                         <div className="auth-form__row">
                           <label>
-                            Prénom
-                            <input type="text" value={firstName} onChange={(event) => setFirstName(event.target.value)} placeholder="Prénom" required />
+                            {t("auth.firstName")}
+                            <input type="text" value={firstName} onChange={(event) => setFirstName(event.target.value)} placeholder={t("auth.firstName")} required />
                           </label>
                           <label>
-                            Nom
-                            <input type="text" value={lastName} onChange={(event) => setLastName(event.target.value)} placeholder="Nom" required />
+                            {t("auth.lastName")}
+                            <input type="text" value={lastName} onChange={(event) => setLastName(event.target.value)} placeholder={t("auth.lastName")} required />
                           </label>
                         </div>
                         <label>
-                          Pseudo
-                          <input type="text" value={username} onChange={(event) => setUsername(event.target.value)} placeholder="Ton pseudo" maxLength={15} required />
+                          {t("auth.username")}
+                          <input type="text" value={username} onChange={(event) => setUsername(event.target.value)} placeholder={t("auth.usernamePlaceholder")} maxLength={15} required />
                         </label>
                       </>
                     ) : null}
@@ -564,7 +567,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
                     {registerStep === 2 ? (
                       <>
                         <label>
-                          Mot de passe
+                          {t("auth.password")}
                           <div className="auth-password-field">
                             <input
                               type={showPassword ? "text" : "password"}
@@ -578,23 +581,23 @@ const AuthPage = ({ mode }: AuthFormProps) => {
                               type="button"
                               className="auth-password-toggle"
                               onClick={() => setShowPassword((prev) => !prev)}
-                              aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                              aria-label={showPassword ? t("auth.hidePassword") : t("auth.showPassword")}
                               aria-pressed={showPassword}
                             >
                               <EyeIcon crossed={!showPassword} />
                             </button>
                           </div>
                           <p className="auth-password-hint">
-                            6 caractères minimum, avec 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial.
+                            {t("auth.passwordHint")}
                           </p>
                         </label>
                         <div className="auth-form__row">
                           <label>
-                            Anniversaire
+                            {t("auth.birthday")}
                             <input type="date" value={birthday} onChange={(event) => setBirthday(event.target.value)} required />
                           </label>
                           <label>
-                            Genre
+                            {t("auth.gender")}
                             <div className="auth-form__select" ref={genderMenuRef}>
                               <button
                                 type="button"
@@ -629,7 +632,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
                                         setIsGenderMenuOpen(false)
                                       }}
                                     >
-                                      {option.label}
+                                      {t(option.labelKey)}
                                     </button>
                                   ))}
                                 </div>
@@ -639,7 +642,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
                         </div>
                         <label className="auth-terms">
                           <input type="checkbox" checked={acceptTerms} onChange={(event) => setAcceptTerms(event.target.checked)} required />
-                          J’accepte les conditions générales.
+                          {t("auth.acceptTerms")}
                         </label>
                       </>
                     ) : null}
@@ -647,7 +650,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
                 ) : (
                   <>
                     <label>
-                      Email
+                      {t("auth.email")}
                       <input
                         type="email"
                         value={email}
@@ -667,7 +670,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
                       </datalist>
                     ) : null}
                     <label>
-                      Mot de passe
+                      {t("auth.password")}
                       <div className="auth-password-field">
                         <input
                           type={showPassword ? "text" : "password"}
@@ -681,7 +684,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
                           type="button"
                           className="auth-password-toggle"
                           onClick={() => setShowPassword((prev) => !prev)}
-                          aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                          aria-label={showPassword ? t("auth.hidePassword") : t("auth.showPassword")}
                           aria-pressed={showPassword}
                         >
                           <EyeIcon crossed={!showPassword} />
@@ -708,20 +711,20 @@ const AuthPage = ({ mode }: AuthFormProps) => {
                           setRemember(event.target.checked)
                         }}
                       />
-                      Se souvenir de moi
+                      {t("auth.rememberMe")}
                     </label>
                     <button type="submit" className="auth-submit">
                       {ctaLabel}
                     </button>
                     <button type="button" className="auth-forgot" onClick={handleForgot}>
-                      Mot de passe oublié ?
+                      {t("auth.forgotPassword")}
                     </button>
                   </>
                 ) : (
                   <div className="auth-step-actions">
                     {registerStep > 0 ? (
                       <button type="button" className="auth-secondary" onClick={() => setRegisterStep((prev) => Math.max(prev - 1, 0))}>
-                        Retour
+                        {t("auth.back")}
                       </button>
                     ) : null}
                     <button type="submit" className="auth-submit">
@@ -733,7 +736,7 @@ const AuthPage = ({ mode }: AuthFormProps) => {
 
               <div className="auth-google">
                 <button type="button" className="auth-secondary auth-google__button" onClick={handleGoogleLogin}>
-                  Continuer avec Google
+                  {t("auth.continueGoogle")}
                 </button>
               </div>
             </>

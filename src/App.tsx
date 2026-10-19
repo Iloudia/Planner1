@@ -4,6 +4,7 @@ import { useCookieConsent } from "./context/CookieConsentContext"
 import { useAuth } from "./context/AuthContext"
 import { applyPageBackground, DEFAULT_PAGE_BACKGROUND } from "./utils/pageBackground"
 import { getPageBackgroundPreset } from "./data/pageBackgroundPresets"
+import { applyColorMode, DEFAULT_COLOR_MODE } from "./utils/colorMode"
 import Header from "./components/Header"
 import Footer from "./components/Footer"
 import ProtectedRoute from "./components/ProtectedRoute"
@@ -18,6 +19,8 @@ import PrimaryActionButton from "./components/PrimaryActionButton"
 import MediaImage from "./components/MediaImage"
 import landingHero from "./assets/frances-leynes-dupe.webp"
 import landingHeroMobile from "./assets/frances-leynes-dupe-mobile.webp"
+import { useTranslation } from "react-i18next"
+import type { TFunction } from "i18next"
 
 let analyticsModulePromise: Promise<typeof import("./utils/firebaseAnalytics")> | null = null
 
@@ -87,76 +90,76 @@ const CartPage = lazy(() => import("./pages/Cart/CartPage"))
 const PurchasesPage = lazy(() => import("./pages/Purchases/PurchasesPage"))
 const ProjectPage = lazy(() => import("./pages/Project/ProjectPage"))
 
-const LANDING_PAGE_TITLE = "Me&rituals | Planner, journaling, routines et organisation du quotidien"
-
-const pageTitles: Record<string, string> = {
-  "/login": "Connexion",
-  "/register": "Création de compte",
+const pageTitleKeys: Record<string, string> = {
+  "/login": "titles.login",
+  "/register": "titles.register",
   "/faq": "Faq",
-  "/a-propos": "À propos",
+  "/a-propos": "titles.about",
   "/blog": "Blog",
-  "/blog/sante-beaute": "Santé & beauté",
-  "/blog/mode": "Mode",
+  "/blog/sante-beaute": "titles.healthBeauty",
+  "/blog/mode": "titles.fashion",
   "/blog/mental": "Mental",
-  "/blog/sport-nutrition": "Sport & nutrition",
+  "/blog/sport-nutrition": "titles.sportNutrition",
   "/blog/lifestyle": "Lifestyle",
   "/boutique": "Boutique",
-  "/panier": "Panier",
-  "/merci": "Merci",
-  "/confidentialite": "Confidentialité",
+  "/panier": "titles.cart",
+  "/merci": "titles.thankYou",
+  "/confidentialite": "titles.privacy",
   "/contact": "Contact",
   "/cookies": "Cookies",
-  "/mentions-legales": "Mentions légales",
-  "/cgv": "Conditions générales de vente",
-  "/bienvenue": "Bienvenue",
-  "/home": "Accueil",
+  "/mentions-legales": "titles.legal",
+  "/cgv": "titles.terms",
+  "/bienvenue": "titles.welcome",
+  "/home": "header.home",
   "/sport": "Sport",
   "/journaling": "Journaling",
   "/mindset": "Mindset",
   "/self-love": "Self love",
   "/manifestation": "Manifestation",
   "/wishlist": "Wishlist",
-  "/calendrier": "Calendrier",
+  "/calendrier": "titles.calendar",
   "/finances": "Finances",
-  "/routine": "Routines",
+  "/routine": "titles.routines",
   "/goals": "Goals",
   "/diet": "Diet",
   "/menu": "Menu",
-  "/profil": "Paramètres",
+  "/profil": "titles.settings",
   "/archives": "Archives",
-  "/archives/mindset": "Archives mindset",
-  "/archives/journaling": "Archives journaling",
-  "/archives/projets": "Archives projets",
-  "/mes-achats": "Mes achats",
-  "/project": "Projets",
-  "/parametres": "Paramètres",
-  "/parametres/affichage": "Affichage",
-  "/parametres/langues": "Langues",
-  "/parametres/cookies": "Paramètres des cookies",
-  "/admin": "Administration",
-  "/admin/produits": "Produits",
-  "/admin/produits/publies": "Produits publiés",
-  "/blog/nouvel-article": "Nouvel article",
+  "/archives/mindset": "titles.mindsetArchives",
+  "/archives/journaling": "titles.journalingArchives",
+  "/archives/projets": "titles.projectArchives",
+  "/mes-achats": "titles.purchases",
+  "/project": "titles.projects",
+  "/parametres": "titles.settings",
+  "/parametres/affichage": "titles.display",
+  "/parametres/langues": "titles.languages",
+  "/parametres/cookies": "titles.cookieSettings",
+  "/admin": "titles.admin",
+  "/admin/produits": "titles.products",
+  "/admin/produits/publies": "titles.publishedProducts",
+  "/blog/nouvel-article": "titles.newArticle",
 }
 
-const getPageTitle = (pathname: string) => {
+const getPageTitle = (pathname: string, t: TFunction) => {
   const normalizedPath = pathname !== "/" ? pathname.replace(/\/$/, "") : pathname
 
   if (normalizedPath === "/") {
-    return LANDING_PAGE_TITLE
+    return t("titles.landing")
   }
 
-  const pageName = pageTitles[normalizedPath]
-    ?? (normalizedPath.startsWith("/sport/workout") ? "Exercices" : undefined)
-    ?? (normalizedPath.startsWith("/blog/") ? "Article de blog" : undefined)
-    ?? (normalizedPath.startsWith("/boutique/produit/") ? "Produit" : undefined)
+  const titleKey = pageTitleKeys[normalizedPath]
+  const pageName = (titleKey ? t(titleKey) : undefined)
+    ?? (normalizedPath.startsWith("/sport/workout") ? t("titles.exercises") : undefined)
+    ?? (normalizedPath.startsWith("/blog/") ? t("titles.article") : undefined)
+    ?? (normalizedPath.startsWith("/boutique/produit/") ? t("titles.product") : undefined)
     ?? (normalizedPath.startsWith("/boutique/") ? "Boutique" : undefined)
-    ?? "Page introuvable"
+    ?? t("titles.missing")
 
   return `${pageName} | Me&rituals`
 }
 
 function NotFound() {
+  const { t } = useTranslation()
   useEffect(() => {
     document.body.classList.add("notfound-page--active")
     return () => document.body.classList.remove("notfound-page--active")
@@ -165,15 +168,15 @@ function NotFound() {
   return (
     <div className="notfound-page">
       <section className="notfound-page__panel" aria-labelledby="notfound-title">
-        <p className="notfound-page__eyebrow">Erreur 404</p>
+        <p className="notfound-page__eyebrow">{t("notFound.eyebrow")}</p>
         <div className="notfound-page__visual" aria-hidden="true">404</div>
         <div className="notfound-page__content">
-          <h1 id="notfound-title">Page introuvable</h1>
+          <h1 id="notfound-title">{t("notFound.title")}</h1>
           <p className="notfound-page__description">
-            La page que tu recherches n’existe plus ou a été déplacée. Tu peux revenir à l’accueil pour poursuivre ta visite.
+            {t("notFound.description")}
           </p>
           <PrimaryActionButton to="/home" className="notfound-page__link">
-            Retour à l’accueil
+            {t("notFound.action")}
             <span aria-hidden="true">→</span>
           </PrimaryActionButton>
         </div>
@@ -322,10 +325,30 @@ function RouteFallback() {
 
 function PageTitle() {
   const { pathname } = useLocation()
+  const { t, i18n } = useTranslation()
 
   useLayoutEffect(() => {
-    document.title = getPageTitle(pathname)
-  }, [pathname])
+    document.title = getPageTitle(pathname, t)
+  }, [i18n.resolvedLanguage, pathname, t])
+
+  return null
+}
+
+function PageMetadata() {
+  const { t, i18n } = useTranslation()
+
+  useLayoutEffect(() => {
+    const language = i18n.resolvedLanguage === "en" ? "en" : "fr"
+    const socialLocale = language === "en" ? "en_GB" : "fr_FR"
+    const description = t("meta.description")
+    const socialDescription = t("meta.socialDescription")
+
+    document.documentElement.lang = language
+    document.querySelector('meta[name="description"]')?.setAttribute("content", description)
+    document.querySelector('meta[property="og:locale"]')?.setAttribute("content", socialLocale)
+    document.querySelector('meta[property="og:description"]')?.setAttribute("content", socialDescription)
+    document.querySelector('meta[name="twitter:description"]')?.setAttribute("content", socialDescription)
+  }, [i18n.resolvedLanguage, t])
 
   return null
 }
@@ -390,46 +413,15 @@ function App() {
   const { isAuthReady, isAuthenticated, userProfile } = useAuth()
   const selectedBackgroundPreset = getPageBackgroundPreset(userProfile.preferences?.pageBackgroundPresetId)
 
+  useLayoutEffect(() => {
+    if (!isAuthReady) return
+    applyColorMode(isAuthenticated ? userProfile.preferences?.colorMode : DEFAULT_COLOR_MODE)
+  }, [isAuthReady, isAuthenticated, userProfile.preferences?.colorMode])
+
   useEffect(() => {
     void updateAnalyticsConsent(preferences.analytics)
   }, [preferences.analytics])
 
-  useEffect(() => {
-    const scriptId = "google-translate-script"
-    const containerId = "google_translate_element"
-
-    if (!preferences.preferences) {
-      const existingScript = document.getElementById(scriptId)
-      if (existingScript) {
-        existingScript.remove()
-      }
-      const existingContainer = document.getElementById(containerId)
-      if (existingContainer) {
-        existingContainer.remove()
-      }
-      return
-    }
-
-    if (document.getElementById(scriptId)) {
-      return
-    }
-    ;(window as any).googleTranslateElementInit = () => {
-      if (!document.getElementById(containerId)) {
-        const container = document.createElement("div")
-        container.id = containerId
-        container.className = "google-translate-element"
-        document.body.appendChild(container)
-      }
-      const google = (window as any).google
-      if (google?.translate?.TranslateElement) {
-        new google.translate.TranslateElement({ pageLanguage: "fr", autoDisplay: false }, containerId)
-      }
-    }
-    const script = document.createElement("script")
-    script.id = scriptId
-    script.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
-    document.body.appendChild(script)
-  }, [preferences.preferences])
   return (
     <div className="app-shell">
       <PageBackgroundMedia
@@ -438,12 +430,10 @@ function App() {
         isReady={isAuthReady}
       />
       <PageTitle />
+      <PageMetadata />
       <PageResourceHints />
       <ScrollToTop />
       <BlogArticleScrollGuard />
-      {preferences.preferences ? (
-        <div id="google_translate_element" className="google-translate-element" aria-hidden="true" />
-      ) : null}
       <Header />
       <main className="main-area">
         <Suspense fallback={<RouteFallback />}>
