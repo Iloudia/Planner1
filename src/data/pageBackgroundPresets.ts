@@ -10,8 +10,12 @@ import liquidSilver from "../assets/Personnalisation/Réseau de verre liquide ar
 import whiteFeathers from "../assets/Personnalisation/Tapis de plumes blanches superposées.png"
 import pastelPeonies from "../assets/Personnalisation/Tapis luxuriant de pivoines pastel.png"
 import leopardFur from "../assets/Personnalisation/Texture de fourrure léopard hyperréaliste.png"
-import fourLeafClover from "../assets/Personnalisation/Trèfle à quatre feuilles aquarellé.png"
 import ivorySatin from "../assets/Personnalisation/Vagues de satin ivoire en lumière douce.png"
+import oliveLace from "../assets/Fond olive encadré de dentelle vintage.png"
+import dreamySwans from "../assets/Cygnes rêveurs sur un lac fleuri.png"
+import goldenCity from "../assets/Panorama nocturne d’une métropole dorée.png"
+import pastelSky from "../assets/Ciel pastel et nuages lumineux.png"
+import crystalPebbles from "../assets/Galets sous l’eau cristalline.png"
 
 export type PageBackgroundPreset = {
   id: string
@@ -32,8 +36,12 @@ export const pageBackgroundPresets: PageBackgroundPreset[] = [
   { id: "white-feathers", name: "Plumes blanches", src: whiteFeathers },
   { id: "pastel-peonies", name: "Pivoines pastel", src: pastelPeonies },
   { id: "leopard-fur", name: "Léopard", src: leopardFur },
-  { id: "four-leaf-clover", name: "Trèfle aquarellé", src: fourLeafClover },
   { id: "ivory-satin", name: "Satin ivoire", src: ivorySatin },
+  { id: "olive-lace", name: "Dentelle olive", src: oliveLace },
+  { id: "dreamy-swans", name: "Cygnes rêveurs", src: dreamySwans },
+  { id: "golden-city", name: "Métropole dorée", src: goldenCity },
+  { id: "pastel-sky", name: "Ciel pastel", src: pastelSky },
+  { id: "crystal-pebbles", name: "Galets cristallins", src: crystalPebbles },
 ]
 
 const legacyPresetIds: Record<string, string> = {
