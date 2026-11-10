@@ -1,5 +1,6 @@
 import {
   deleteDoc,
+  deleteField,
   onSnapshot,
   orderBy,
   setDoc,
@@ -78,7 +79,10 @@ export const createCalendarEvent = async (userId: string, task: ScheduledTask) =
 }
 
 export const updateCalendarEvent = async (userId: string, task: ScheduledTask) => {
-  await updateDoc(calendarEventDocRef(userId, task.id), toCalendarEventPayload(task))
+  await updateDoc(calendarEventDocRef(userId, task.id), {
+    ...toCalendarEventPayload(task),
+    recurrence: task.recurrence ?? deleteField(),
+  })
 }
 
 export const deleteCalendarEvent = async (userId: string, eventId: string) => {

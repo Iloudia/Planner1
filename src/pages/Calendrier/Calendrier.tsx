@@ -20,7 +20,7 @@ const recurrenceWeekdays = [
   { value: 6, shortLabel: 'Sam', label: 'Samedi' },
   { value: 7, shortLabel: 'Dim', label: 'Dimanche' },
 ] as const
-const hours = Array.from({ length: 18 }, (_, index) => index + 6)
+const hours = Array.from({ length: 21 }, (_, index) => (index + 6) % 24)
 const hourHeight = 56
 const newTaskColors = ['#D9E1E8', '#C7D0D8', '#E7DDCF', '#EFE8DE', '#D6C8BA', '#CBB8A6', '#BCA692']
 const dayStartMinutes = 6 * 60
@@ -187,6 +187,14 @@ const parseTimeToMinutes = (value: string) => {
   return (hoursValue ?? 0) * 60 + (minutesValue ?? 0)
 }
 
+const isAllowedCalendarTime = (minutes: number) =>
+  (minutes >= dayStartMinutes && minutes < 24 * 60) || (minutes >= 0 && minutes <= 2 * 60)
+
+const getCalendarTimeMinutes = (value: string) => {
+  const minutes = parseTimeToMinutes(value)
+  return minutes < dayStartMinutes ? minutes + 24 * 60 : minutes
+}
+
 type WeeklyTaskPosition = {
   top: number
   height: number
@@ -197,8 +205,8 @@ const getWeeklyTaskPositions = (dayTasks: CalendarTaskItem[]) => {
   let previousTaskBottom = 0
 
   dayTasks.forEach((task) => {
-    const start = parseTimeToMinutes(task.start)
-    const end = parseTimeToMinutes(task.end)
+    const start = getCalendarTimeMinutes(task.start)
+    const end = getCalendarTimeMinutes(task.end)
     const scheduledTop = (Math.max(0, start - dayStartMinutes) / 60) * hourHeight
     const height = (Math.max(30, end - start || 30) / 60) * hourHeight
     const top = Math.max(scheduledTop, previousTaskBottom + 2)
@@ -234,7 +242,7 @@ const CalendrierPage = () => {
   const [mobileSelectedDateKey, setMobileSelectedDateKey] = useState<string | null>(() => getDateKey(new Date()))
   const [weekAnchorDate, setWeekAnchorDate] = useState(() => new Date())
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
-  const [duplicateTask, setDuplicateTask] = useState<ScheduledTask | null>(null)
+  const [duplicateTask, setDuplicateTask] = useState<CalendarTaskItem | null>(null)
   const [duplicateMode, setDuplicateMode] = useState<'consecutive' | 'weekly'>('consecutive')
   const [duplicateDays, setDuplicateDays] = useState('3')
   const [duplicateWeekdays, setDuplicateWeekdays] = useState<number[]>([])
@@ -456,7 +464,7 @@ const CalendrierPage = () => {
     })
 
     map.forEach((list, key) => {
-      list.sort((a, b) => a.start.localeCompare(b.start))
+      list.sort((a, b) => getCalendarTimeMinutes(a.start) - getCalendarTimeMinutes(b.start))
       map.set(key, list)
     })
 
@@ -531,12 +539,10 @@ const CalendrierPage = () => {
     const editStartMinutes = parseTimeToMinutes(editDraft.start)
     const editEndMinutes = parseTimeToMinutes(editDraft.end)
     if (
-      editStartMinutes < dayStartMinutes ||
-      editStartMinutes > dayEndMinutes ||
-      editEndMinutes < dayStartMinutes ||
-      editEndMinutes > dayEndMinutes
+      !isAllowedCalendarTime(editStartMinutes) ||
+      !isAllowedCalendarTime(editEndMinutes)
     ) {
-      window.alert('Les horaires autorisés sont de 06:00 à 23:00.')
+      window.alert('Les horaires autorisés sont de 06:00 à 02:00.')
       return
     }
     updateTask(task.seriesId ?? task.id, {
@@ -558,16 +564,16 @@ const CalendrierPage = () => {
     setEditingTaskId((previous) => (previous === task.id ? null : previous))
   }
 
-  const handleDuplicateTask = (task: ScheduledTask) => {
+  const handleDuplicateTask = (task: CalendarTaskItem) => {
     if (!isPremium) {
       setIsPremiumModalOpen(true)
       return
     }
     const taskDate = parseDateKey(task.date)
     setDuplicateTask(task)
-    setDuplicateMode('consecutive')
+    setDuplicateMode(task.recurrence ? 'weekly' : 'consecutive')
     setDuplicateDays('3')
-    setDuplicateWeekdays([getIsoWeekday(taskDate)])
+    setDuplicateWeekdays(task.recurrence ? [...task.recurrence.weekdays] : [getIsoWeekday(taskDate)])
     setDuplicateError(null)
   }
 
@@ -585,7 +591,19 @@ const CalendrierPage = () => {
     setIsDuplicating(true)
     setDuplicateError(null)
     try {
-      if (duplicateMode === 'weekly') {
+      if (duplicateMode === 'weekly' && duplicateTask.recurrence) {
+        const selectedWeekdays = [...duplicateWeekdays].sort((left, right) => left - right)
+        const saved = await updateTask(duplicateTask.seriesId ?? duplicateTask.id, {
+          ...(selectedWeekdays.length === 0 ? { date: duplicateTask.date } : {}),
+          recurrence: selectedWeekdays.length > 0
+            ? { ...duplicateTask.recurrence, weekdays: selectedWeekdays }
+            : undefined,
+        })
+        if (!saved) {
+          setDuplicateError('Impossible de modifier la récurrence. Réessaie.')
+          return
+        }
+      } else if (duplicateMode === 'weekly') {
         if (duplicateWeekdays.length === 0) {
           setDuplicateError('Choisis au moins un jour de récurrence.')
           return
@@ -804,12 +822,10 @@ const CalendrierPage = () => {
     const startMinutes = parseTimeToMinutes(startTime)
     const endMinutes = parseTimeToMinutes(newTaskForm.end.trim().length > 0 ? newTaskForm.end : '10:00')
     if (
-      startMinutes < dayStartMinutes ||
-      startMinutes > dayEndMinutes ||
-      endMinutes < dayStartMinutes ||
-      endMinutes > dayEndMinutes
+      !isAllowedCalendarTime(startMinutes) ||
+      !isAllowedCalendarTime(endMinutes)
     ) {
-      setNewTaskError('Les horaires autorisés sont de 06:00 à 23:00.')
+      setNewTaskError('Les horaires autorisés sont de 06:00 à 02:00.')
       return
     }
     if (startDate.toDateString() === todayStart.toDateString()) {
@@ -1644,7 +1660,7 @@ return (
           <div className="calendar-duplicate__panel">
             <header className="calendar-duplicate__header">
               <div className="wishlist-create__header">
-                <h2 id="calendar-duplicate-title">Dupliquer ou répéter</h2>
+                <h2 id="calendar-duplicate-title">{duplicateTask.recurrence ? 'Gérer la récurrence' : 'Dupliquer ou répéter'}</h2>
                 <p>« {duplicateTask.title} »</p>
               </div>
               <button type="button" className="modal__close" onClick={handleCloseDuplicate} aria-label="Fermer">
@@ -1715,7 +1731,13 @@ return (
                     )
                   })}
                 </div>
-                <p>La série continuera sans date de fin. Supprime une occurrence pour arrêter toute la récurrence.</p>
+                <p>
+                  {duplicateTask.recurrence
+                    ? duplicateWeekdays.length === 0
+                      ? 'La récurrence sera supprimée. Seul cet événement sera conservé, à la date sélectionnée.'
+                      : 'Décoche les jours à retirer, puis enregistre. Décoche tous les jours pour supprimer la récurrence.'
+                    : 'La série se répétera chaque semaine aux jours sélectionnés, sans date de fin.'}
+                </p>
               </fieldset>
             )}
             {duplicateError ? <p className="calendar-duplicate__error">{duplicateError}</p> : null}
@@ -1733,7 +1755,11 @@ return (
                 onClick={handleConfirmDuplicate}
                 disabled={isDuplicating}
               >
-                {isDuplicating ? 'Enregistrement...' : duplicateMode === 'weekly' ? 'Créer la récurrence' : 'Dupliquer'}
+                {isDuplicating ? 'Enregistrement...' : duplicateMode === 'weekly'
+                  ? duplicateTask.recurrence
+                    ? duplicateWeekdays.length === 0 ? 'Supprimer la récurrence' : 'Enregistrer les modifications'
+                    : 'Créer la récurrence'
+                  : 'Dupliquer'}
               </button>
             </div>
           </div>

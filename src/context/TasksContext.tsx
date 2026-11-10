@@ -8,7 +8,7 @@ type TasksContextValue = {
   isLoading: boolean
   error: string | null
   addTask: (task: ScheduledTask) => Promise<void>
-  updateTask: (taskId: string, updates: Partial<Pick<ScheduledTask, "start" | "end" | "color" | "date">>) => Promise<void>
+  updateTask: (taskId: string, updates: Partial<Pick<ScheduledTask, "start" | "end" | "color" | "date" | "recurrence">>) => Promise<boolean>
   removeTask: (taskId: string) => Promise<void>
 }
 
@@ -97,18 +97,20 @@ export const TasksProvider = ({ children }: TasksProviderProps) => {
   )
 
   const updateTask = useCallback(
-    async (taskId: string, updates: Partial<Pick<ScheduledTask, "start" | "end" | "color" | "date">>) => {
-      if (!userId) return
+    async (taskId: string, updates: Partial<Pick<ScheduledTask, "start" | "end" | "color" | "date" | "recurrence">>) => {
+      if (!userId) return false
       const currentTask = tasks.find((task) => task.id === taskId)
-      if (!currentTask) return
+      if (!currentTask) return false
 
       try {
         setError(null)
         const { updateCalendarEvent } = await import("../services/firestore/calendarEvents")
         await updateCalendarEvent(userId, { ...currentTask, ...updates })
+        return true
       } catch (updateError) {
         console.error("Calendar event update failed", updateError)
         setError("Impossible de mettre à jour cet événement.")
+        return false
       }
     },
     [tasks, userId],
